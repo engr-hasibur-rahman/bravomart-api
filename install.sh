@@ -47,4 +47,4 @@ fi
 
 echo "Installation Successful!"
 
-echo "- REST Endpoint: http://localhost"
+echo "- Endpoint: http://localhost"
