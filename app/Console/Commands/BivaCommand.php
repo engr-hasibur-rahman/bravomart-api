@@ -32,31 +32,27 @@ class BivaCommand extends Command
     public function handle()
     {
         info('Installing Biva Dependencies...');
-        info('Do you want to migrate Tables?');
         info('If you have already run this command or migrated tables then be aware.');
-        info('Tt will erase all of your data.');
+        info('Do you want to seed dummy data?');
+        
 
         info('Please use arrow key for navigation.');
         if (confirm('Are you sure!')) {
-
-            info('Migrating Tables Now....');
-
-            $this->call('migrate:fresh');
+            $this->call('dewan:sql-seed');
 
             info('Tables Migration completed.');
 
-            if (confirm('Do you want to seed dummy data?')) {
-                $this->call('dewan:sql-seed');
-            }
-
             info('Importing required settings...');
-
 
             $this->call('db:seed');
 
-
             info('Settings import is completed.');
-        } else {
+        } 
+
+        elseif (confirm('Do you want to migrate fresh your database!')){
+            $this->call('migrate:fresh');
+        }
+        else {
             info('Do you want to seed dummy Settings data?');
             info('If "yes", then please follow next steps carefully.');
             if (confirm('Are you sure!')) {
