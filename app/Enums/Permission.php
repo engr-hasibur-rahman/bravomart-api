@@ -2,12 +2,25 @@
 
 namespace App\Enums;
 
-enum Permission
+use ArchTech\Enums\InvokableCases;
+use ArchTech\Enums\Values;
+
+enum Permission: string
 {
-    public const SUPER_ADMIN = 'super_admin';
-    public const STORE_OWNER = 'store_owner';
-    public const STAFF = 'staff';
-    public const CUSTOMER = 'customer';
-    public const DELIVERY_MAN = 'delivery_man';
-    public const FITTER_MAN = 'fitter_man';
+    use InvokableCases;
+    use Values;
+
+
+    case ALL = 'all';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Product Permissions                                     //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADD_PRODUCT = 'add-product';
+    case EDIT_PRODUCT = 'edit-product';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Others Permissions                                     //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case MANAGE_CONFIGURATIONS = 'manage-configurations';
 }

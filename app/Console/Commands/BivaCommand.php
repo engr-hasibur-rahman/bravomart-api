@@ -60,29 +60,6 @@ class BivaCommand extends Command
             }
         }
 
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-
-        Permission::firstOrCreate(['name' => UserPermission::SUPER_ADMIN]);
-        Permission::firstOrCreate(['name' => UserPermission::CUSTOMER]);
-        Permission::firstOrCreate(['name' => UserPermission::STORE_OWNER]);
-        Permission::firstOrCreate(['name' => UserPermission::STAFF]);
-        Permission::firstOrCreate(['name' => UserPermission::DELIVERY_MAN]);
-        Permission::firstOrCreate(['name' => UserPermission::FITTER_MAN]);
-
-        $superAdminPermissions = [UserPermission::SUPER_ADMIN, UserPermission::STORE_OWNER, UserPermission::CUSTOMER];
-        $storeOwnerPermissions = [UserPermission::STORE_OWNER, UserPermission::CUSTOMER];
-        $staffPermissions      = [UserPermission::STAFF, UserPermission::CUSTOMER];
-        $customerPermissions   = [UserPermission::CUSTOMER];
-        $customerPermissions   = [UserPermission::DELIVERY_MAN];
-        $customerPermissions   = [UserPermission::FITTER_MAN];
-
-        Role::firstOrCreate(['name' => UserRole::SUPER_ADMIN])->syncPermissions($superAdminPermissions);
-        Role::firstOrCreate(['name' => UserRole::STORE_OWNER])->syncPermissions($storeOwnerPermissions);
-        Role::firstOrCreate(['name' => UserRole::STAFF])->syncPermissions($staffPermissions);
-        Role::firstOrCreate(['name' => UserRole::CUSTOMER])->syncPermissions($customerPermissions);
-        Role::firstOrCreate(['name' => UserRole::DELIVERY_MAN])->syncPermissions($customerPermissions);
-        Role::firstOrCreate(['name' => UserRole::FITTER_MAN])->syncPermissions($customerPermissions);
-
         $this->call('biva:create-admin'); // creating Admin
 
 
