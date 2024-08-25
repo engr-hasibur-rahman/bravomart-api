@@ -72,14 +72,14 @@ class CreateUserCommand extends Command
                 ]);
                 $user->email_verified_at = now()->timestamp;
                 $user->save();
-                $user->givePermissionTo(
-                    [
-                        UserPermission::SUPER_ADMIN,
-                        UserPermission::STORE_OWNER,
-                        UserPermission::CUSTOMER,
-                    ]
-                );
-                $user->assignRole(UserRole::SUPER_ADMIN);
+                // $user->givePermissionTo(
+                //     [
+                //         UserPermission::SUPER_ADMIN,
+                //         UserPermission::STORE_OWNER,
+                //         UserPermission::CUSTOMER,
+                //     ]
+                // );
+                // $user->assignRole(UserRole::SUPER_ADMIN);
 
                 info('User Creation Successful!');
             }

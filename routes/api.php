@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Permission;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 });
 
 
+Route::apiResource('/permissions', PermissionController::class);
 
 Route::apiResource('/roles', RoleController::class);
 
