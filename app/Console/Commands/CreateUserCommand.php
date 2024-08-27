@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+
 use function Laravel\Prompts\{text, confirm, info, password, error};
 
 class CreateUserCommand extends Command
@@ -72,14 +75,12 @@ class CreateUserCommand extends Command
                 ]);
                 $user->email_verified_at = now()->timestamp;
                 $user->save();
-                // $user->givePermissionTo(
-                //     [
-                //         UserPermission::SUPER_ADMIN,
-                //         UserPermission::STORE_OWNER,
-                //         UserPermission::CUSTOMER,
-                //     ]
-                // );
-                // $user->assignRole(UserRole::SUPER_ADMIN);
+
+                $role = Role::firstOrCreate(['name' => UserRole::SUPER_ADMIN->value], ['name' => UserRole::SUPER_ADMIN->value, 'guard_name' => 'api']);
+                Permission::firstOrCreate(['name' => 'all'], ['name' => 'all', 'guard_name' => 'api']);
+                $role->givePermissionTo('all');
+                
+                $user->assignRole($role);
 
                 info('User Creation Successful!');
             }

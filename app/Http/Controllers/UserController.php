@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Permission;
 use App\Enums\Role;
 use App\Http\Requests\UserCreateRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
@@ -46,13 +47,9 @@ class UserController extends Controller
         ];
     }
 
-    public function user(Request $request)
+    public function me(Request $request)
     {
-        $user = $request->user();
-        if (isset($user)) {
-            return $this->repository
-                ->find($user->id);
-        }
+        return new UserResource(auth()->user());
     }
 
     public function logout(Request $request)

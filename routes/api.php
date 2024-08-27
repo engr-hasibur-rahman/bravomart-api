@@ -22,10 +22,11 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/forget-password', [UserController::class, 'forgetPassword']);
 Route::post('/verify-forget-password-token', [UserController::class, 'verifyForgetPasswordToken']);
 Route::post('/reset-password', [UserController::class, 'resetPassword']);
+Route::post('/logout', [UserController::class, 'logout']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('user', [UserController::class, 'user']);
+    Route::get('me', [UserController::class, 'me']);
 });
 
 
