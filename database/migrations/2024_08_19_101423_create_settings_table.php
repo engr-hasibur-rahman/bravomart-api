@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create('com_options', function (Blueprint $table) {
             $table->id();
-            $table->json('options');
+            $table->string('option_name');
+            $table->json('option_value');
+            $table->boolean('autoload')->default(true);
             $table->timestamps();
-            $table->string('language')->unique()->default(DEFAULT_LANGUAGE);
         });
     }
 
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists('com_options');
     }
 };

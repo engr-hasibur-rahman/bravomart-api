@@ -27,32 +27,33 @@ class SettingSeedCommand extends Command
      */
     public function handle()
     {
-        if (DB::table('settings')->where('id', 1)->exists()) {
+        $this->call('db:seed');
+        // if (DB::table('settings')->where('id', 1)->exists()) {
 
-            if (confirm('Already data exists. Do you want to refresh it with dummy settings?')) {
+        //     if (confirm('Already data exists. Do you want to refresh it with dummy settings?')) {
 
-                info('Seeding necessary settings....');
+        //         info('Seeding necessary settings....');
 
-                DB::table('settings')->truncate();
+        //         DB::table('settings')->truncate();
 
-                info('Importing dummy settings...');
+        //         info('Importing dummy settings...');
 
-                $this->call('db:seed');
+        //         $this->call('db:seed');
 
-                info('Settings were imported successfully');
-            } else {
-                info('Previous settings was kept. Thanks!');
-            }
-        } else {
-            info('Seeding necessary settings....');
+        //         info('Settings were imported successfully');
+        //     } else {
+        //         info('Previous settings was kept. Thanks!');
+        //     }
+        // } else {
+        //     info('Seeding necessary settings....');
 
-            DB::table('settings')->truncate();
+        //     DB::table('settings')->truncate();
 
-            info('Importing dummy settings...');
+        //     info('Importing dummy settings...');
 
-            $this->call('db:seed');
+        //     $this->call('db:seed');
 
-            info('Settings were imported successfully');
-        }
+        //     info('Settings were imported successfully');
+        // }
     }
 }

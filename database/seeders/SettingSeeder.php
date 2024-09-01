@@ -14,15 +14,12 @@ class SettingSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('settings')->insert([
-            'options' => json_encode([
-                "useMustVerifyEmail" => false,
-                "siteTitle" => "Biva Mart",
-                "copyrightText" =>  "Copyright © Biva Mart. All rights reserved worldwide.",
-            ]),
-            "created_at" => Carbon::now(),
-            "updated_at" => Carbon::now(),
-            "language" => DEFAULT_LANGUAGE ?? "en",
-        ]);
+        $data = [
+            ['option_name' => 'com_name', 'option_value' => json_encode(['com_name' => 'BIVA Mart']), 'autoload' => true],
+            ['option_name' => 'com_email', 'option_value' => json_encode(['com_email' => 'bivamart@bivasoft.com']), 'autoload' => true],
+            
+        ];
+
+        DB::table('com_options')->insert($data);
     }
 }
