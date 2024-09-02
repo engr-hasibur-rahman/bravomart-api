@@ -27,6 +27,7 @@ class SettingSeedCommand extends Command
      */
     public function handle()
     {
+        DB::table('com_options')->truncate();
         $this->call('db:seed');
         // if (DB::table('settings')->where('id', 1)->exists()) {
 

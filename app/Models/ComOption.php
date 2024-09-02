@@ -14,4 +14,6 @@ class ComOption extends Model
 
     // Specify which fields can be mass assigned
     protected $fillable = ['option_name', 'option_value', 'autoload'];
+
+    public $timestamps = true;
 }
