@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "archtechx/enums": "^1.1",
+        "dewan/dewan-multilang-slug": "^3.0",
         "dewan/dewan-sql-seeder": "^3.0",
         "laravel/framework": "^11.9",
         "laravel/prompts": "^0.1.24",

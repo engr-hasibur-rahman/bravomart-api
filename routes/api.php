@@ -2,6 +2,7 @@
 
 use App\Enums\Permission;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Route;
  */
 
 
- 
+
 Route::post('/token', [UserController::class, 'token']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/forget-password', [UserController::class, 'forgetPassword']);
@@ -36,6 +37,7 @@ Route::apiResource('/roles', RoleController::class);
 
 
 
+
 /**
  * *****************************************
  * Authorized Route for Super Admin only
@@ -43,9 +45,8 @@ Route::apiResource('/roles', RoleController::class);
  */
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    
+
+    Route::apiResource('product-brands', ProductBrandController::class);
     Route::post('users/block-user', [UserController::class, 'banUser']);
     Route::post('users/unblock-user', [UserController::class, 'activeUser']);
 });
-
-
