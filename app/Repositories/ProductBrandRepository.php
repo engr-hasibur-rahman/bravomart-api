@@ -16,7 +16,7 @@ use Shamim\DewanMultilangSlug\Facades\MultilangSlug;
 class ProductBrandRepository extends BaseRepository
 {
 
-    
+
     protected $dataArray = [
         'brand_name',
         'brand_slug',
@@ -45,16 +45,26 @@ class ProductBrandRepository extends BaseRepository
 
     public function storeProductBrand($request)
     {
-        if (empty($request['slug'])) {
-            $data['slug'] = MultilangSlug::makeSlug(ProductBrand::class, $request['slug']);
+        $data = $request->only($this->dataArray);
+        
+        $data['brand_name'] = $request['brand_name_default'];
+        $data['brand_slug'] = MultilangSlug::makeSlug(ProductBrand::class, $data['brand_name'], 'brand_slug');
+
+        if (isset($request['brand_logo']) && is_array($request['brand_logo'])) {
+            $data['brand_logo'] = json_encode($request['brand_logo']);
         }
-        $brand = $this->create($request->only($this->dataArray));
+        logger($data['brand_logo']);
+        $brand = $this->create($data);
+
         if (isset($request['translations']) && count($request['translations'])) {
             $brand->translations()->createMany($request['translations']);
         }
+
         return $brand;
     }
-    
+
+
+
     public function updateProductBrand($request, $brand)
     {
         // $request['slug'] = $this->makeSlug($request);
@@ -65,5 +75,4 @@ class ProductBrandRepository extends BaseRepository
         $brand->update($data);
         return $this->findOrFail($brand->id);
     }
-
 }

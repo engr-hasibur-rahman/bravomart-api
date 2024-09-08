@@ -51,7 +51,7 @@ class ProductBrandController extends Controller
         return response()->json(['error' => 'Product Brand not found'], 404);
     }
 
-    public function store(StoreProductBrandRequest $request)
+    public function store(Request $request)
     {
         try {
             $brand = $this->repository->storeProductBrand($request);

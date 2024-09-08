@@ -14,6 +14,11 @@ class ProductBrand extends Model
 
     public $guarded = [];
 
+    public function setBrandNameDefaultAttribute($value)
+    {
+        $this->attributes['brand_name'] = $value;
+    }
+
     protected static function booted()
     {
         static::creating(function ($model) {
