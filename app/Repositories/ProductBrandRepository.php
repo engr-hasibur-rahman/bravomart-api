@@ -31,7 +31,7 @@ class ProductBrandRepository extends BaseRepository
         }
     }
 
-    public function storeProductBrand($request)
+    public function storeProductBrand($request, $fileUploadService)
     {
         $data = [];
 
@@ -45,9 +45,8 @@ class ProductBrandRepository extends BaseRepository
 
         if ($request->hasFile('brand_logo')) {
             $file = $request->file('brand_logo');
-            $filePath = $file->store('brand_logos', 'public');
-            $fullUrl = Storage::url($filePath);
-            $data['brand_logo'] = $fullUrl;
+            $filePath = $fileUploadService->uploadFile($file);
+            $data['brand_logo'] = $filePath;
         }
         $brand = $this->create($data);
 

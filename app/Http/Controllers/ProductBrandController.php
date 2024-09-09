@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProductBrandRequest;
 use App\Http\Resources\ProductBrandResource;
 use App\Models\ProductBrand;
 use App\Repositories\ProductBrandRepository;
+use App\Services\FileUploadService;
 use Exception;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -51,15 +52,15 @@ class ProductBrandController extends Controller
         return response()->json(['error' => 'Product Brand not found'], 404);
     }
 
-    public function store(Request $request)
+    public function store(StoreProductBrandRequest $request, FileUploadService $fileUploadService)
     {
         logger($request);
-        // try {
-            $brand = $this->repository->storeProductBrand($request);
+        try {
+            $brand = $this->repository->storeProductBrand($request, $fileUploadService);
             return new ProductBrandResource($brand);
-        // } catch (\Exception $e) {
-        //     throw new \RuntimeException('Could not create the product brand.');
-        // }
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Could not create the product brand.');
+        }
     }
 
     public function update(UpdateProductBrandRequest $request, $id)
