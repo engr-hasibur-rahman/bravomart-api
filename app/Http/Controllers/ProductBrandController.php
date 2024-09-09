@@ -53,12 +53,13 @@ class ProductBrandController extends Controller
 
     public function store(Request $request)
     {
-        try {
+        logger($request);
+        // try {
             $brand = $this->repository->storeProductBrand($request);
             return new ProductBrandResource($brand);
-        } catch (\Exception $e) {
-            throw new \RuntimeException('Could not create the product brand.');
-        }
+        // } catch (\Exception $e) {
+        //     throw new \RuntimeException('Could not create the product brand.');
+        // }
     }
 
     public function update(UpdateProductBrandRequest $request, $id)
