@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\ProductBrand;
+use App\Models\Translation;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
@@ -31,64 +33,120 @@ class ProductBrandRepository extends BaseRepository
         }
     }
 
+
     public function storeProductBrand($request, $fileUploadService)
     {
-        $data = [];
-
-        // Store default brand data
-        $data['brand_name'] = $request['brand_name_default'];
-        $data['brand_slug'] = MultilangSlug::makeSlug(ProductBrand::class, $data['brand_name'], 'brand_slug');
-        $data['meta_title'] = $request['meta_title_default'];
-        $data['meta_description'] = $request['meta_description_default'];
-        $data['display_order'] = 2;
-
-
+        $data = [
+            'brand_name' => $request['brand_name'],
+            'brand_slug' => MultilangSlug::makeSlug(ProductBrand::class, $request['brand_name'], 'brand_slug'),
+            'meta_title' => $request['meta_title'],
+            'meta_description' => $request['meta_description'],
+            'display_order' => 2,
+        ];
+    
         if ($request->hasFile('brand_logo')) {
             $file = $request->file('brand_logo');
             $filePath = $fileUploadService->uploadFile($file);
+    
             $data['brand_logo'] = $filePath;
         }
         $brand = $this->create($data);
-
-        $languages = [
-            'en' => 'english',
-            'ar' => 'arabic',
-        ];
-
-        // Define the keys that need translations
-        $translationKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
-
         $translations = [];
-
-        foreach ($languages as $langCode => $langSuffix) {
-            foreach ($translationKeys as $key) {
-                $requestKey = "{$key}_{$langSuffix}";
-
-                if ($key == 'brand_slug') {
-                    // Generate slug based on the brand name for the specific language
-                    $brandNameKey = "brand_name_{$langSuffix}";
-                    $value = MultilangSlug::makeSlug(ProductBrand::class, $request[$brandNameKey], 'brand_slug');
-                } else {
-                    $value = $request[$requestKey] ?? null;
-                }
-
-                if (!empty($value)) {
-                    $translations[] = [
-                        'language' => $langCode,
-                        'key' => $key,
-                        'value' => $value,
-                    ];
-                }
+        $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
+    
+        foreach ($request['translations'] as $translation) {
+            foreach ($defaultKeys as $key) {
+                $translatedValue = $translation[$key] ?? $data[$key];
+    
+                // if ($key == 'brand_slug') {
+                    
+                //     $translatedValue = MultilangSlug::makeSlug(Translation::class, $translation[$key], 'value');
+                // }else{
+                //     $translatedValue = $request[$key] ?? null;
+                // }
+    
+                $translations[] = [
+                    'language' => $translation['language_code'],
+                    'key' => $key,
+                    'value' => $translatedValue,
+                ];
             }
         }
-
-        // Insert translations into the translations table
         if (!empty($translations)) {
             $brand->translations()->createMany($translations);
         }
 
         return $brand;
     }
+
+
+
+    // public function storeProductBrand($request, $fileUploadService)
+    // {
+    // $data = [];
+
+    // // Store default brand data
+    // $data['brand_name'] = $request['brand_name_default'];
+    // $data['brand_slug'] = MultilangSlug::makeSlug(ProductBrand::class, $data['brand_name'], 'brand_slug');
+    // $data['meta_title'] = $request['meta_title_default'];
+    // $data['meta_description'] = $request['meta_description_default'];
+    // $data['display_order'] = 2;
+
+
+    // if ($request->hasFile('brand_logo')) {
+    //     $file = $request->file('brand_logo');
+    //     // $filePath = $file->store('brand_logos', 'public');
+    //     // $fullUrl = Storage::url($filePath);
+    //     $file = $request->file('file');
+
+    //     // The request has already been validated via FileUploadRequest
+
+    //     // Use the FileUploadService to upload the file
+    //     $filePath = $fileUploadService->uploadFile($file);
+
+    //     $data['brand_logo'] = $filePath;
+    // }
+    // $brand = $this->create($data);
+
+    //     $languages = [
+    //         'en' => 'english',
+    //         'ar' => 'arabic',
+    //     ];
+
+    //     // Define the keys that need translations
+    //     $translationKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
+
+    //     $translations = [];
+
+    //     foreach ($languages as $langCode => $langSuffix) {
+    //         foreach ($translationKeys as $key) {
+    //             $requestKey = "{$key}_{$langSuffix}";
+
+    //             if ($key == 'brand_slug') {
+    //                 // Generate slug based on the brand name for the specific language
+    //                 $brandNameKey = "brand_name_{$langSuffix}";
+    //                 $value = MultilangSlug::makeSlug(ProductBrand::class, $request[$brandNameKey], 'brand_slug');
+    //             } else {
+    //                 $value = $request[$requestKey] ?? null;
+    //             }
+
+    //             if (!empty($value)) {
+    //                 $translations[] = [
+    //                     'language' => $langCode,
+    //                     'key' => $key,
+    //                     'value' => $value,
+    //                 ];
+    //             }
+    //         }
+    //     }
+
+    //     // Insert translations into the translations table
+    //     if (!empty($translations)) {
+    //         $brand->translations()->createMany($translations);
+    //     }
+
+    //     return $brand;
+    // }
 
 
 

@@ -54,13 +54,13 @@ class ProductBrandController extends Controller
 
     public function store(StoreProductBrandRequest $request, FileUploadService $fileUploadService)
     {
-        logger($request);
-        try {
+        logger($request->all());
+        // try {
             $brand = $this->repository->storeProductBrand($request, $fileUploadService);
             return new ProductBrandResource($brand);
-        } catch (\Exception $e) {
-            throw new \RuntimeException('Could not create the product brand.');
-        }
+        // } catch (\Exception $e) {
+        //     throw new \RuntimeException('Could not create the product brand.');
+        // }
     }
 
     public function update(UpdateProductBrandRequest $request, $id)
