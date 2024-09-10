@@ -33,9 +33,9 @@ class ProductBrandRepository extends BaseRepository
         }
     }
 
-
     public function storeProductBrand($request, $fileUploadService)
     {
+        // Prepare data for default brand
         $data = [
             'brand_name' => $request['brand_name'],
             'brand_slug' => MultilangSlug::makeSlug(ProductBrand::class, $request['brand_name'], 'brand_slug'),
@@ -43,114 +43,55 @@ class ProductBrandRepository extends BaseRepository
             'meta_description' => $request['meta_description'],
             'display_order' => 2,
         ];
-    
+
+        // Handle file upload if brand logo exists
         if ($request->hasFile('brand_logo')) {
             $file = $request->file('brand_logo');
             $filePath = $fileUploadService->uploadFile($file);
-    
+
             $data['brand_logo'] = $filePath;
         }
+
+        // Create the brand with default data
         $brand = $this->create($data);
         $translations = [];
         $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
-    
-        foreach ($request['translations'] as $translation) {
-            foreach ($defaultKeys as $key) {
-                $translatedValue = $translation[$key] ?? $data[$key];
-    
-                // if ($key == 'brand_slug') {
-                    
-                //     $translatedValue = MultilangSlug::makeSlug(Translation::class, $translation[$key], 'value');
-                // }else{
-                //     $translatedValue = $request[$key] ?? null;
-                // }
-    
-                $translations[] = [
-                    'language' => $translation['language_code'],
-                    'key' => $key,
-                    'value' => $translatedValue,
-                ];
+
+        // Handle translations
+        if ($request['translations']) {
+            foreach ($request['translations'] as $translation) {
+                foreach ($defaultKeys as $key) {
+
+                    // Fallback value if translation key does not exist
+                    $translatedValue = $translation[$key] ?? $data[$key] ?? null;
+
+                    // If key is brand_slug, generate slug from translated brand_name
+                    if ($key === 'brand_slug') {
+                        // Generate the slug from the translated brand name instead of using the default
+                        $translatedValue = MultilangSlug::makeSlug(
+                            Translation::class,
+                            $translation['brand_name'] ?? $data['brand_name'], // Use translated brand name
+                            'value'
+                        );
+                    }
+
+                    // Collect translation data
+                    $translations[] = [
+                        'language' => $translation['language_code'],
+                        'key' => $key,
+                        'value' => $translatedValue,
+                    ];
+                }
             }
         }
+
+        // Save translations if available
         if (!empty($translations)) {
             $brand->translations()->createMany($translations);
         }
 
         return $brand;
     }
-
-
-
-    // public function storeProductBrand($request, $fileUploadService)
-    // {
-    // $data = [];
-
-    // // Store default brand data
-    // $data['brand_name'] = $request['brand_name_default'];
-    // $data['brand_slug'] = MultilangSlug::makeSlug(ProductBrand::class, $data['brand_name'], 'brand_slug');
-    // $data['meta_title'] = $request['meta_title_default'];
-    // $data['meta_description'] = $request['meta_description_default'];
-    // $data['display_order'] = 2;
-
-
-    // if ($request->hasFile('brand_logo')) {
-    //     $file = $request->file('brand_logo');
-    //     // $filePath = $file->store('brand_logos', 'public');
-    //     // $fullUrl = Storage::url($filePath);
-    //     $file = $request->file('file');
-
-    //     // The request has already been validated via FileUploadRequest
-
-    //     // Use the FileUploadService to upload the file
-    //     $filePath = $fileUploadService->uploadFile($file);
-
-    //     $data['brand_logo'] = $filePath;
-    // }
-    // $brand = $this->create($data);
-
-    //     $languages = [
-    //         'en' => 'english',
-    //         'ar' => 'arabic',
-    //     ];
-
-    //     // Define the keys that need translations
-    //     $translationKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
-
-    //     $translations = [];
-
-    //     foreach ($languages as $langCode => $langSuffix) {
-    //         foreach ($translationKeys as $key) {
-    //             $requestKey = "{$key}_{$langSuffix}";
-
-    //             if ($key == 'brand_slug') {
-    //                 // Generate slug based on the brand name for the specific language
-    //                 $brandNameKey = "brand_name_{$langSuffix}";
-    //                 $value = MultilangSlug::makeSlug(ProductBrand::class, $request[$brandNameKey], 'brand_slug');
-    //             } else {
-    //                 $value = $request[$requestKey] ?? null;
-    //             }
-
-    //             if (!empty($value)) {
-    //                 $translations[] = [
-    //                     'language' => $langCode,
-    //                     'key' => $key,
-    //                     'value' => $value,
-    //                 ];
-    //             }
-    //         }
-    //     }
-
-    //     // Insert translations into the translations table
-    //     if (!empty($translations)) {
-    //         $brand->translations()->createMany($translations);
-    //     }
-
-    //     return $brand;
-    // }
-
-
-
-
 
 
     public function updateProductBrand($request, $brand)

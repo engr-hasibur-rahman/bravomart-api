@@ -15,17 +15,6 @@ class ProductBrand extends Model
     protected $guarded = [];
 
 
-    protected static function booted()
-    {
-        static::creating(function ($model) {
-            $model->created_by = Auth::id();
-        });
-
-        static::updating(function ($model) {
-            $model->updated_by = Auth::id();
-        });
-    }
-
 
     public function translations()
     {

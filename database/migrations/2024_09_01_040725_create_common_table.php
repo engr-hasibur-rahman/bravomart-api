@@ -30,7 +30,7 @@ return new class extends Migration
             $table->id();
             $table->string('brand_name');
             $table->string('brand_slug');
-            $table->string('brand_logo');
+            $table->string('brand_logo')->nullable();
             $table->string('meta_title');
             $table->text('meta_description');
             $table->string('seller_relation_with_brand')->nullable();

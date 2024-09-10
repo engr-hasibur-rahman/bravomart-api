@@ -9,38 +9,41 @@ use App\Models\ProductBrand;
 use App\Repositories\ProductBrandRepository;
 use App\Services\FileUploadService;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductBrandController extends Controller
 {
 
-    public function __construct(public ProductBrandRepository $repository)
-    {
-    }
+    public function __construct(public ProductBrandRepository $repository) {}
 
     public function index(Request $request)
     {
-        $limit = $request->limit ?   $request->limit : 15;
-        $language = $request->language ?? DEFAULT_LANGUAGE;
-        $brands = QueryBuilder::for(ProductBrand::class)
-        // ->leftJoin('translations', function ($join) {
-        //     $join->on('product_brand.id', '=', 'translations.translatable_id')
-        //          ->where('translations.translatable_type', '=', 'App\Models\ProductBrand');
-        // })
-        // ->where('translations.language', $language)
-        // ->allowedFilters([
-            
-        // ])
-        // ->allowedSorts([
-            
-        // ])
-       ->defaultSort('-id')
-       ->paginate($limit);
+        $limit = $request->limit ?? 15;
+        $language = $request->language ? $request->language : null;
+        if ($language) {
+            $brands = QueryBuilder::for(ProductBrand::class)
+                ->whereHas('translations', function (Builder $query) use ($language) {
+                    $query->where('language', '=', $language);
+                })
+                ->allowedFilters([])
+                ->allowedSorts([])
+                ->defaultSort('-id')
+                ->paginate($limit);;
+        } else {
+            $brands = QueryBuilder::for(ProductBrand::class)
+                ->allowedFilters([])
+                ->allowedSorts([])
+                ->defaultSort('-id')
+                ->paginate($limit);
+        }
         return ProductBrandResource::collection($brands);
-
-        
     }
+
+
+
+
 
     public function show($id)
     {
@@ -55,12 +58,12 @@ class ProductBrandController extends Controller
     public function store(StoreProductBrandRequest $request, FileUploadService $fileUploadService)
     {
         logger($request->all());
-        // try {
-            $brand = $this->repository->storeProductBrand($request, $fileUploadService);
-            return new ProductBrandResource($brand);
-        // } catch (\Exception $e) {
-        //     throw new \RuntimeException('Could not create the product brand.');
-        // }
+        try {
+        $brand = $this->repository->storeProductBrand($request, $fileUploadService);
+        return new ProductBrandResource($brand);
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Could not create the product brand.');
+        }
     }
 
     public function update(UpdateProductBrandRequest $request, $id)
