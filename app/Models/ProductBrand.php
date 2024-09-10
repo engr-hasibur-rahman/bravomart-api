@@ -16,6 +16,10 @@ class ProductBrand extends Model
 
 
 
+    public function locales()
+    {
+        return $this->belongsTo(Translation::class, 'id', 'translatable_id');
+    }
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
