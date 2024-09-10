@@ -24,17 +24,17 @@ class ProductBrandController extends Controller
         $limit = $request->limit ?   $request->limit : 15;
         $language = $request->language ?? DEFAULT_LANGUAGE;
         $brands = QueryBuilder::for(ProductBrand::class)
-        ->leftJoin('translations', function ($join) {
-            $join->on('product_brand.id', '=', 'translations.translatable_id')
-                 ->where('translations.translatable_type', '=', 'App\Models\ProductBrand');
-        })
-        ->where('translations.language', $language)
-        ->allowedFilters([
+        // ->leftJoin('translations', function ($join) {
+        //     $join->on('product_brand.id', '=', 'translations.translatable_id')
+        //          ->where('translations.translatable_type', '=', 'App\Models\ProductBrand');
+        // })
+        // ->where('translations.language', $language)
+        // ->allowedFilters([
             
-        ])
-        ->allowedSorts([
+        // ])
+        // ->allowedSorts([
             
-        ])
+        // ])
        ->defaultSort('-id')
        ->paginate($limit);
         return ProductBrandResource::collection($brands);
