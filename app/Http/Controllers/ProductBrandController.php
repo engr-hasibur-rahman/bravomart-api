@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductBrandRequest;
 use App\Http\Requests\UpdateProductBrandRequest;
+use App\Http\Resources\ProductBrandByIdResource;
 use App\Http\Resources\ProductBrandResource;
 use App\Models\ProductBrand;
 use App\Repositories\FileUploadRepository;
@@ -35,9 +36,9 @@ class ProductBrandController extends Controller
     public function show($id)
     {
         $brand = $this->repository->with(['translations', 'image'])->findOrFail($id);
-        return $brand;
+        // return $brand;
         if ($brand) {
-            return $brand;
+            return new ProductBrandByIdResource($brand);
         }
 
         return response()->json(['error' => 'Product Brand not found'], 404);
