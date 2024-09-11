@@ -37,11 +37,13 @@ class FileUploadRepository extends BaseRepository
         $fileName = Str::random(20) . '.' . $file->extension();
         $filePath = Storage::disk('public')->putFileAs('uploads', $file, $fileName);
 
+        $fullUrl = url('storage/uploads/' . $fileName);
+
         // Return the necessary data for database insertion
         return [
             'name' => $file->getClientOriginalName(),
             'type' => $file->getClientMimeType(),
-            'src' => 'uploads/' . $fileName, // File path relative to public directory
+            'src' => $fullUrl, // File path relative to public directory
             'extension' => $extension,
             'description' => $description ?? 'Default description',
             'path' => 'uploads/' . $fileName, // The full path where the file is stored
