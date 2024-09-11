@@ -23,7 +23,7 @@ class ProductBrandController extends Controller
         $limit = $request->limit ?? 10;
 
         $brandsQuery = QueryBuilder::for(ProductBrand::class)
-            ->with('translations') 
+            ->with(['translations', 'image']) 
             ->allowedFilters([])
             ->allowedSorts(['id', 'brand_name'])
             ->defaultSort('-id');
@@ -34,7 +34,7 @@ class ProductBrandController extends Controller
     }
     public function show($id)
     {
-        $brand = $this->repository->with('translations')->findOrFail($id);
+        $brand = $this->repository->with(['translations', 'image'])->findOrFail($id);
         return $brand;
         if ($brand) {
             return $brand;
