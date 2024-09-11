@@ -36,7 +36,6 @@ class ProductBrandController extends Controller
     public function show($id)
     {
         $brand = $this->repository->with(['translations', 'image'])->findOrFail($id);
-        // return $brand;
         if ($brand) {
             return new ProductBrandByIdResource($brand);
         }
@@ -46,12 +45,12 @@ class ProductBrandController extends Controller
 
     public function store(StoreProductBrandRequest $request, FileUploadRepository $fileUploadRepository)
     {
-        // try {
+        try {
             $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
             return new ProductBrandResource($brand);
-        // } catch (\Exception $e) {
-        //     throw new \RuntimeException('Could not create the product brand.');
-        // }
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Could not create the product brand.');
+        }
     }
 
     public function update(UpdateProductBrandRequest $request, $id)
