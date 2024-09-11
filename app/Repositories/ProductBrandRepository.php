@@ -7,8 +7,8 @@ use App\Models\Translation;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Prettus\Repository\Criteria\RequestCriteria;
-use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Exceptions\RepositoryException;
+use Prettus\Repository\Eloquent\BaseRepository;
 use Shamim\DewanMultilangSlug\Facades\MultilangSlug;
 
 /**
@@ -33,7 +33,7 @@ class ProductBrandRepository extends BaseRepository
         }
     }
 
-    public function storeProductBrand($request, $fileUploadService)
+    public function storeProductBrand($request, $fileUploadRepository)
     {
         // Prepare data for default brand
         $data = [
@@ -44,16 +44,13 @@ class ProductBrandRepository extends BaseRepository
             'display_order' => 2,
         ];
 
-        // Handle file upload if brand logo exists
-        if ($request->hasFile('brand_logo')) {
-            $file = $request->file('brand_logo');
-            $filePath = $fileUploadService->uploadFile($file);
-
-            $data['brand_logo'] = $filePath;
-        }
-
-        // Create the brand with default data
         $brand = $this->create($data);
+        if ($request->hasFile('brand_logo')) { 
+            $file = $request->file('brand_logo'); // Only call this once
+        
+            $fileData = $fileUploadRepository->uploadFile($file);
+            $brand->media()->create($fileData);
+        }
         $translations = [];
         $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
 
@@ -63,7 +60,7 @@ class ProductBrandRepository extends BaseRepository
                 foreach ($defaultKeys as $key) {
 
                     // Fallback value if translation key does not exist
-                    $translatedValue = $translation[$key] ?? $data[$key] ?? null;
+                    $translatedValue = $translation[$key] ?? null;
 
                     // If key is brand_slug, generate slug from translated brand_name
                     if ($key === 'brand_slug') {

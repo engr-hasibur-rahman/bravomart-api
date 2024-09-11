@@ -6,17 +6,17 @@ use App\Http\Requests\StoreProductBrandRequest;
 use App\Http\Requests\UpdateProductBrandRequest;
 use App\Http\Resources\ProductBrandResource;
 use App\Models\ProductBrand;
+use App\Repositories\FileUploadRepository;
 use App\Repositories\ProductBrandRepository;
-use App\Services\FileUploadService;
-use Exception;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductBrandController extends Controller
 {
 
-    public function __construct(public ProductBrandRepository $repository) {}
+    public function __construct(
+        public ProductBrandRepository $repository, 
+        public FileUploadRepository $fileUploadRepository) {}
 
     public function index(Request $request)
     {
@@ -25,7 +25,7 @@ class ProductBrandController extends Controller
         $brandsQuery = QueryBuilder::for(ProductBrand::class)
             ->with('translations') 
             ->allowedFilters([])
-            ->allowedSorts([])
+            ->allowedSorts(['id', 'brand_name'])
             ->defaultSort('-id');
 
         $brands = $brandsQuery->paginate($limit);
@@ -34,22 +34,23 @@ class ProductBrandController extends Controller
     }
     public function show($id)
     {
-        $brand = $this->repository->findOrFail($id);
+        $brand = $this->repository->with('translations')->findOrFail($id);
+        return $brand;
         if ($brand) {
-            return new ProductBrandResource($brand);
+            return $brand;
         }
 
         return response()->json(['error' => 'Product Brand not found'], 404);
     }
 
-    public function store(StoreProductBrandRequest $request, FileUploadService $fileUploadService)
+    public function store(StoreProductBrandRequest $request, FileUploadRepository $fileUploadRepository)
     {
-        try {
-            $brand = $this->repository->storeProductBrand($request, $fileUploadService);
+        // try {
+            $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
             return new ProductBrandResource($brand);
-        } catch (\Exception $e) {
-            throw new \RuntimeException('Could not create the product brand.');
-        }
+        // } catch (\Exception $e) {
+        //     throw new \RuntimeException('Could not create the product brand.');
+        // }
     }
 
     public function update(UpdateProductBrandRequest $request, $id)

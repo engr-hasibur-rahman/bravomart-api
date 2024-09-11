@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Facades\Auth;
 
 class ProductBrand extends Model
@@ -14,12 +16,17 @@ class ProductBrand extends Model
 
     protected $guarded = [];
 
-
-
-    public function locales()
-    {
-        return $this->belongsTo(Translation::class, 'id', 'translatable_id');
-    }
+     // Single media file (e.g., brand logo)
+     public function image(): MorphOne
+     {
+         return $this->morphOne(Media::class, 'fileable');
+     }
+ 
+     // Multiple media files (e.g., product photos)
+     public function media()
+     {
+         return $this->morphMany(Media::class, 'fileable');
+     }
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');

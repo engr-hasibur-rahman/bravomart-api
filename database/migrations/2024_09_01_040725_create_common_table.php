@@ -16,7 +16,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('translatable_id'); // ID of the related model
             $table->string('translatable_type'); // Model type (e.g., App\Models\Category)
-            $table->string('language')->default(DEFAULT_LANGUAGE);;
+            $defaultLanguage = config('bivamart.default_language', 'en');
+            $table->string('language')->default($defaultLanguage);
             $table->string('key');
             $table->text('value');
             $table->timestamps();
@@ -61,6 +62,20 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->boolean('status')->default(1);
+            $table->timestamps();
+        });
+        Schema::create('media', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('fileable_id');
+            $table->string('fileable_type');
+            $table->string('type');
+            $table->string('name');
+            $table->string('src');
+            $table->string('extension');
+            $table->string('path');
+            $table->string('description');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }
