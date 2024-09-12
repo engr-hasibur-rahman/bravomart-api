@@ -10,6 +10,7 @@ use App\Models\ProductBrand;
 use App\Repositories\FileUploadRepository;
 use App\Repositories\ProductBrandRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductBrandController extends Controller
@@ -22,18 +23,31 @@ class ProductBrandController extends Controller
 
     public function index(Request $request)
     {
+        logger($request);
         $limit = $request->limit ?? 10;
+        $language = 'en'; // Default language
+    
 
-        $brandsQuery = QueryBuilder::for(ProductBrand::class)
-            ->with(['translations', 'image'])
-            ->allowedFilters([])
-            ->allowedSorts(['id', 'brand_name'])
-            ->defaultSort('-id');
 
-        $brands = $brandsQuery->paginate($limit);
 
+        // Raw SQL query to handle sorting by translations or default brand name
+        $brands = ProductBrand::
+            leftJoin('translations', function ($join) use ($language) {
+                $join->on('product_brand.id', '=', 'translations.translatable_id')
+                    ->where('translations.translatable_type', '=', ProductBrand::class)
+                    ->where('translations.language', '=', $language)
+                    ->where('translations.key', '=', 'brand_name');
+            })
+            ->select(
+                'product_brand.*',
+                DB::raw('COALESCE(translations.value, product_brand.brand_name) as brand_name')
+            )
+            ->orderBy($request->sortField, $request->sort) // Sorting by translated or default brand_name
+            ->paginate($limit);
+    
         return ProductBrandResource::collection($brands);
     }
+    
     public function show($id)
     {
         $brand = $this->repository->with(['translations', 'image'])->findOrFail($id);
@@ -48,13 +62,8 @@ class ProductBrandController extends Controller
     {
 
         try {
-            // if (!$request->id) {
-                $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
-                return new ProductBrandResource($brand);
-            // } else {
-                
-            //     return new ProductBrandResource($this->repository->updateProductBrand($request, $fileUploadRepository));
-            // }
+            $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
+            return new ProductBrandResource($brand);
         } catch (\Exception $e) {
             throw new \RuntimeException('Could not create the product brand.');
         }
