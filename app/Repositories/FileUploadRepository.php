@@ -28,7 +28,7 @@ class FileUploadRepository extends BaseRepository
         }
     }
 
-    public function uploadFile($file, string $description = null, string $type = null)
+    public function uploadFile($file, $brandId = null, $brand, string $description = null, string $type = null)
     {
         // Prepare file extension and type
         $extension = $file->extension();
@@ -38,6 +38,18 @@ class FileUploadRepository extends BaseRepository
         $filePath = Storage::disk('public')->putFileAs('uploads', $file, $fileName);
 
         $fullUrl = url('storage/uploads/' . $fileName);
+        if ($brandId) {
+            $existingMedia = $brand->media()->first();
+
+            if ($existingMedia) {
+                $ildPath = $existingMedia->path;
+
+                if (Storage::disk('public')->exists($ildPath)) {
+                    Storage::disk('public')->delete($ildPath);
+                }
+                $existingMedia->delete();
+            }
+        }
 
         // Return the necessary data for database insertion
         return [
@@ -46,7 +58,7 @@ class FileUploadRepository extends BaseRepository
             'src' => $fullUrl, // File path relative to public directory
             'extension' => $extension,
             'description' => $description ?? 'Default description',
-            'path' => 'uploads/' . $fileName, // The full path where the file is stored
+            'path' => $filePath, // The full path where the file is stored
         ];
     }
 

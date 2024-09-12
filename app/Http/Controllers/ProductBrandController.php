@@ -16,15 +16,16 @@ class ProductBrandController extends Controller
 {
 
     public function __construct(
-        public ProductBrandRepository $repository, 
-        public FileUploadRepository $fileUploadRepository) {}
+        public ProductBrandRepository $repository,
+        public FileUploadRepository $fileUploadRepository
+    ) {}
 
     public function index(Request $request)
     {
         $limit = $request->limit ?? 10;
 
         $brandsQuery = QueryBuilder::for(ProductBrand::class)
-            ->with(['translations', 'image']) 
+            ->with(['translations', 'image'])
             ->allowedFilters([])
             ->allowedSorts(['id', 'brand_name'])
             ->defaultSort('-id');
@@ -45,20 +46,27 @@ class ProductBrandController extends Controller
 
     public function store(StoreProductBrandRequest $request, FileUploadRepository $fileUploadRepository)
     {
-        
+
         try {
-            if(!$request->id){
+            // if (!$request->id) {
                 $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
                 return new ProductBrandResource($brand);
-            }else{
-                logger('update');
-            }
-            
+            // } else {
+                
+            //     return new ProductBrandResource($this->repository->updateProductBrand($request, $fileUploadRepository));
+            // }
         } catch (\Exception $e) {
             throw new \RuntimeException('Could not create the product brand.');
         }
     }
 
+    public function update(UpdateProductBrandRequest $request, $id)
+    {
+        $request->id = $id;
+
+        $brand = $this->repository->findOrFail($request->id);
+        return new ProductBrandResource($this->repository->updateProductBrand($request, $brand));
+    }
 
     public function destroy($id)
     {

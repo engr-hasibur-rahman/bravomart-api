@@ -35,6 +35,86 @@ class ProductBrandRepository extends BaseRepository
 
     public function storeProductBrand($request, $fileUploadRepository)
     {
+        // Check if an id is present in the request
+        $brandId = $request->input('id');
+    
+        // Prepare data for brand
+        $data = [
+            'brand_name' => $request['brand_name'],
+            'brand_slug' => MultilangSlug::makeSlug(ProductBrand::class, $request['brand_name'], 'brand_slug'),
+            'meta_title' => $request['meta_title'],
+            'meta_description' => $request['meta_description'],
+            'display_order' => 2,
+        ];
+    
+        if ($brandId) {
+            // Update existing brand
+            $brand = ProductBrand::findOrFail($brandId);
+            $brand->update($data);
+        } else {
+            // Create new brand
+            $brand = $this->create($data);
+        }
+    
+        // Handle file upload if available
+        if ($request->hasFile('brand_logo')) {
+            $file = $request->file('brand_logo'); // Only call this once
+            
+            $fileData = $fileUploadRepository->uploadFile($file, $brandId, $brand);
+            // Add the new media
+            $brand->media()->create($fileData);
+        }
+    
+        $translations = [];
+        $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
+    
+        // Handle translations
+        if ($request['translations']) {
+            foreach ($request['translations'] as $translation) {
+                foreach ($defaultKeys as $key) {
+    
+                    // Fallback value if translation key does not exist
+                    $translatedValue = $translation[$key] ?? null;
+    
+                    // If key is brand_slug, generate slug from translated brand_name
+                    if ($key === 'brand_slug') {
+                        // Generate the slug from the translated brand name instead of using the default
+                        $translatedValue = MultilangSlug::makeSlug(
+                            Translation::class,
+                            $translation['brand_name'] ?? $data['brand_name'], // Use translated brand name
+                            'value'
+                        );
+                    }
+    
+                    // Collect translation data
+                    $translations[] = [
+                        'language' => $translation['language_code'],
+                        'key' => $key,
+                        'value' => $translatedValue,
+                    ];
+                }
+            }
+        }
+    
+        // Save translations if available
+        if (!empty($translations)) {
+            // If updating, delete existing translations first
+            if ($brandId) {
+                $brand->translations()->delete();
+            }
+            $brand->translations()->createMany($translations);
+        }
+    
+        return $brand;
+    }
+    
+    
+
+
+
+
+    public function updateProductBrand($request, $brand, $fileUploadRepository)
+    {
         // Prepare data for default brand
         $data = [
             'brand_name' => $request['brand_name'],
@@ -44,10 +124,12 @@ class ProductBrandRepository extends BaseRepository
             'display_order' => 2,
         ];
 
-        $brand = $this->create($data);
-        if ($request->hasFile('brand_logo')) { 
+        $brand = $this->findOrFail($request->id)->update($data);
+
+        // $brand = $this->create($data);
+        if ($request->hasFile('brand_logo')) {
             $file = $request->file('brand_logo'); // Only call this once
-        
+
             $fileData = $fileUploadRepository->uploadFile($file);
             $brand->media()->create($fileData);
         }
@@ -88,17 +170,5 @@ class ProductBrandRepository extends BaseRepository
         }
 
         return $brand;
-    }
-
-
-    public function updateProductBrand($request, $brand)
-    {
-        // $request['slug'] = $this->makeSlug($request);
-        $data = $request->only($this->dataArray);
-        if (isset($request['translations']) && count($request['translations'])) {
-            $brand->translations()->createMany($request['translations']);
-        }
-        $brand->update($data);
-        return $this->findOrFail($brand->id);
     }
 }
