@@ -45,21 +45,20 @@ class ProductBrandController extends Controller
 
     public function store(StoreProductBrandRequest $request, FileUploadRepository $fileUploadRepository)
     {
+        
         try {
-            $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
-            return new ProductBrandResource($brand);
+            if(!$request->id){
+                $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
+                return new ProductBrandResource($brand);
+            }else{
+                logger('update');
+            }
+            
         } catch (\Exception $e) {
             throw new \RuntimeException('Could not create the product brand.');
         }
     }
 
-    public function update(UpdateProductBrandRequest $request, $id)
-    {
-        $request->id = $id;
-
-        $brand = $this->repository->findOrFail($request->id);
-        return new ProductBrandResource($this->repository->updateProductBrand($request, $brand));
-    }
 
     public function destroy($id)
     {
