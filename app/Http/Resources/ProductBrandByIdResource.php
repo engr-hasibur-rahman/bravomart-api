@@ -37,7 +37,7 @@ class ProductBrandByIdResource extends JsonResource
             'brand_name' => $this->brand_name,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
-            'brand_logo' => $this->image->src,
+            'brand_logo' => $this->image?->src,
             'translations' => $transformedData,
         ];
     }
