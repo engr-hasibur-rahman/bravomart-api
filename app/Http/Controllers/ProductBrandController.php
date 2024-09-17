@@ -42,8 +42,8 @@ class ProductBrandController extends Controller
         // Apply search filter if search parameter exists
         if ($search) {
             $brands->where(function ($query) use ($search) {
-                $query->where('product_brand.brand_name', 'like', "%{$search}%")
-                    ->orWhere('translations.value', 'like', "%{$search}%");
+                $query->where('translations.value', 'like', "%{$search}%")
+                    ->orWhere('product_brand.brand_name', 'like', "%{$search}%");
             });
         }
         $brands = $brands->orderBy($request->sortField, $request->sort)
