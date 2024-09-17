@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ExportProductBrand;
 use App\Http\Requests\StoreProductBrandRequest;
 use App\Http\Requests\UpdateProductBrandRequest;
 use App\Http\Resources\ProductBrandByIdResource;
@@ -11,6 +12,7 @@ use App\Repositories\FileUploadRepository;
 use App\Repositories\ProductBrandRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductBrandController extends Controller
@@ -79,5 +81,9 @@ class ProductBrandController extends Controller
         'message' => 'Product brand status updated successfully',
         'status' => $productBrand->status
     ]);
+    }
+
+    public function exportProductBrand() {
+        return Excel::download(new ExportProductBrand, 'product_brand.xlsx');
     }
 }
