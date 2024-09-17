@@ -23,14 +23,8 @@ class ProductBrandController extends Controller
 
     public function index(Request $request)
     {
-        logger($request);
         $limit = $request->limit ?? 10;
-        $language = 'en'; // Default language
-    
-
-
-
-        // Raw SQL query to handle sorting by translations or default brand name
+        $language = $request->language ?? DEFAULT_LANGUAGE; 
         $brands = ProductBrand::
             leftJoin('translations', function ($join) use ($language) {
                 $join->on('product_brand.id', '=', 'translations.translatable_id')
@@ -42,7 +36,7 @@ class ProductBrandController extends Controller
                 'product_brand.*',
                 DB::raw('COALESCE(translations.value, product_brand.brand_name) as brand_name')
             )
-            ->orderBy($request->sortField, $request->sort) // Sorting by translated or default brand_name
+            ->orderBy($request->sortField, $request->sort)
             ->paginate($limit);
     
         return ProductBrandResource::collection($brands);
