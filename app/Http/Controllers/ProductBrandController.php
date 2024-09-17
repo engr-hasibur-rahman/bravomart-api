@@ -24,9 +24,10 @@ class ProductBrandController extends Controller
     public function index(Request $request)
     {
         $limit = $request->limit ?? 10;
-        $language = $request->language ?? DEFAULT_LANGUAGE; 
-        $brands = ProductBrand::
-            leftJoin('translations', function ($join) use ($language) {
+        $language = $request->language ?? DEFAULT_LANGUAGE;
+        $search = $request->search;
+
+        $brands = ProductBrand::leftJoin('translations', function ($join) use ($language) {
                 $join->on('product_brand.id', '=', 'translations.translatable_id')
                     ->where('translations.translatable_type', '=', ProductBrand::class)
                     ->where('translations.language', '=', $language)
@@ -35,13 +36,20 @@ class ProductBrandController extends Controller
             ->select(
                 'product_brand.*',
                 DB::raw('COALESCE(translations.value, product_brand.brand_name) as brand_name')
-            )
-            ->orderBy($request->sortField, $request->sort)
+            );
+        // Apply search filter if search parameter exists
+        if ($search) {
+            $brands->where(function ($query) use ($search) {
+                $query->where('product_brand.brand_name', 'like', "%{$search}%")
+                    ->orWhere('translations.value', 'like', "%{$search}%");
+            });
+        }
+        $brands = $brands->orderBy($request->sortField, $request->sort)
             ->paginate($limit);
-    
+
         return ProductBrandResource::collection($brands);
     }
-    
+
     public function show($id)
     {
         $brand = $this->repository->with(['translations', 'image'])->findOrFail($id);
@@ -54,7 +62,6 @@ class ProductBrandController extends Controller
 
     public function store(StoreProductBrandRequest $request, FileUploadRepository $fileUploadRepository)
     {
-
         try {
             $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
             return new ProductBrandResource($brand);
@@ -63,17 +70,14 @@ class ProductBrandController extends Controller
         }
     }
 
-    public function update(UpdateProductBrandRequest $request, $id)
-    {
-        $request->id = $id;
-
-        $brand = $this->repository->findOrFail($request->id);
-        return new ProductBrandResource($this->repository->updateProductBrand($request, $brand));
-    }
-
-    public function destroy($id)
-    {
-        $this->repository->delete($id);
-        return response()->json(['message' => 'Product Brand deleted successfully']);
+    public function productBrandStatus($id) {
+    $productBrand = ProductBrand::findOrFail($id);
+    $productBrand->status = !$productBrand->status;
+    $productBrand->save();
+    return response()->json([
+        'success' => true,
+        'message' => 'Product brand status updated successfully',
+        'status' => $productBrand->status
+    ]);
     }
 }

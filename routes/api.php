@@ -43,10 +43,11 @@ Route::apiResource('/roles', RoleController::class);
  * Authorized Route for Super Admin only
  * *****************************************
  */
-Route::apiResource('product-brands', ProductBrandController::class);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-
+    Route::apiResource('product-brands', ProductBrandController::class);
+    Route::patch('product-brands/status/{id}', [ProductBrandController::class, 'productBrandStatus']);
+    
     Route::post('users/block-user', [UserController::class, 'banUser']);
     Route::post('users/unblock-user', [UserController::class, 'activeUser']);
 });
