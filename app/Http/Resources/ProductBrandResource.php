@@ -14,7 +14,7 @@ class ProductBrandResource extends JsonResource
      * @return array
      */
 
-     public function toArray($request)
+    public function toArray($request)
     {
         $language = $request->language;
         $locales = $this->translations->where('language', $language)->keyBy('key')->toArray();
@@ -22,7 +22,7 @@ class ProductBrandResource extends JsonResource
             'id' => $this->id,
             'brand_name' => $locales['brand_name']['value'] ?? $this->brand_name,
             'brand_slug' => $locales['brand_slug']['value'] ?? $this->brand_slug,
-            'brand_logo' => $this->image?->src,
+            'brand_logo' => $this->getFirstMediaUrl('brand_logo'), // Fetch the URL of the brand logo
             'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
             'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
             'display_order' => $this->display_order,

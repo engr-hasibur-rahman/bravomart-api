@@ -7,26 +7,37 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Facades\Auth;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class ProductBrand extends Model
+class ProductBrand extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $table = 'product_brand';
 
     protected $guarded = [];
 
-     // Single media file (e.g., brand logo)
-     public function image(): MorphOne
-     {
-         return $this->morphOne(Media::class, 'fileable');
-     }
- 
-     // Multiple media files (e.g., product photos)
-     public function media()
-     {
-         return $this->morphMany(Media::class, 'fileable');
-     }
+    // Single media file (e.g., brand logo)
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Media::class, 'fileable');
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->fit(Fit::Contain, 300, 300)
+            ->nonQueued();
+    }
+    // Multiple media files (e.g., product photos)
+    //  public function media()
+    //  {
+    //      return $this->morphMany(Media::class, 'fileable');
+    //  }
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');

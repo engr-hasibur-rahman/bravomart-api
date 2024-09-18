@@ -30,15 +30,16 @@ class ProductBrandController extends Controller
         $search = $request->search;
 
         $brands = ProductBrand::leftJoin('translations', function ($join) use ($language) {
-                $join->on('product_brand.id', '=', 'translations.translatable_id')
-                    ->where('translations.translatable_type', '=', ProductBrand::class)
-                    ->where('translations.language', '=', $language)
-                    ->where('translations.key', '=', 'brand_name');
-            })
+            $join->on('product_brand.id', '=', 'translations.translatable_id')
+                ->where('translations.translatable_type', '=', ProductBrand::class)
+                ->where('translations.language', '=', $language)
+                ->where('translations.key', '=', 'brand_name');
+        })
             ->select(
                 'product_brand.*',
                 DB::raw('COALESCE(translations.value, product_brand.brand_name) as brand_name')
             );
+
         // Apply search filter if search parameter exists
         if ($search) {
             $brands->where(function ($query) use ($search) {
@@ -46,15 +47,19 @@ class ProductBrandController extends Controller
                     ->orWhere('product_brand.brand_name', 'like', "%{$search}%");
             });
         }
-        $brands = $brands->orderBy($request->sortField, $request->sort)
+
+        // Apply sorting and pagination
+        $brands = $brands->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
 
+        // Return a collection of ProductBrandResource (including the image)
         return ProductBrandResource::collection($brands);
     }
 
+
     public function show($id)
     {
-        $brand = $this->repository->with(['translations', 'image'])->findOrFail($id);
+        $brand = $this->repository->with(['translations'])->findOrFail($id);
         if ($brand) {
             return new ProductBrandByIdResource($brand);
         }
@@ -66,24 +71,29 @@ class ProductBrandController extends Controller
     {
         try {
             $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
-            return new ProductBrandResource($brand);
+
+            return response()->json([
+                'success' => 'Success'
+            ]);
         } catch (\Exception $e) {
             throw new \RuntimeException('Could not create the product brand.');
         }
     }
 
-    public function productBrandStatus($id) {
-    $productBrand = ProductBrand::findOrFail($id);
-    $productBrand->status = !$productBrand->status;
-    $productBrand->save();
-    return response()->json([
-        'success' => true,
-        'message' => 'Product brand status updated successfully',
-        'status' => $productBrand->status
-    ]);
+    public function productBrandStatus($id)
+    {
+        $productBrand = ProductBrand::findOrFail($id);
+        $productBrand->status = !$productBrand->status;
+        $productBrand->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Product brand status updated successfully',
+            'status' => $productBrand->status
+        ]);
     }
 
-    public function exportProductBrand() {
+    public function exportProductBrand()
+    {
         return Excel::download(new ExportProductBrand, 'product_brand.xlsx');
     }
 }

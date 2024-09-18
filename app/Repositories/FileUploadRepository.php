@@ -28,6 +28,15 @@ class FileUploadRepository extends BaseRepository
         }
     }
 
+    function attachment($file, $brandId = null, $brand)
+    {
+        if ($brandId && $brand->hasMedia('brand_logo')) {
+            $brand->clearMediaCollection('brand_logo');
+        }
+        $brand->addMedia($file)->toMediaCollection('brand_logo');
+    }
+
+
     public function uploadFile($file, $brandId = null, $brand, string $description = null, string $type = null)
     {
         // Prepare file extension and type
