@@ -44,7 +44,7 @@ class ProductBrandRepository extends BaseRepository
             'brand_slug' => MultilangSlug::makeSlug(ProductBrand::class, $request['brand_name'], 'brand_slug'),
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
-            'display_order' => 2,
+            'display_order' => $request['display_order'],
         ];
     
         if ($brandId) {
