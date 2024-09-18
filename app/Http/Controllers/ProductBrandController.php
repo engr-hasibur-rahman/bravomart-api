@@ -80,9 +80,9 @@ class ProductBrandController extends Controller
         }
     }
 
-    public function productBrandStatus($id)
+    public function productBrandStatus(Request $request)
     {
-        $productBrand = ProductBrand::findOrFail($id);
+        $productBrand = ProductBrand::findOrFail($request->id);
         $productBrand->status = !$productBrand->status;
         $productBrand->save();
         return response()->json([
@@ -90,10 +90,5 @@ class ProductBrandController extends Controller
             'message' => 'Product brand status updated successfully',
             'status' => $productBrand->status
         ]);
-    }
-
-    public function exportProductBrand()
-    {
-        return Excel::download(new ExportProductBrand, 'product_brand.xlsx');
     }
 }

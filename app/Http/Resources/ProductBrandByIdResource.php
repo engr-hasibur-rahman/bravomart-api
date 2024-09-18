@@ -35,6 +35,7 @@ class ProductBrandByIdResource extends JsonResource
         return [
             'id' => $this->id,
             'brand_name' => $this->brand_name,
+            'display_order' => $this->display_order,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'brand_logo' => $this->getFirstMediaUrl('brand_logo'), // Fetch the URL of the brand logo
