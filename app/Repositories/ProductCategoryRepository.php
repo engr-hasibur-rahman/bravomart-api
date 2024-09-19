@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\ProductBrand;
+use App\Models\ProductCategory;
 use App\Models\Translation;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -15,12 +16,12 @@ use Shamim\DewanMultilangSlug\Facades\MultilangSlug;
  *
  * @package namespace App\Repositories;
  */
-class ProductBrandRepository extends BaseRepository
+class ProductCategoryRepository extends BaseRepository
 {
 
     public function model()
     {
-        return ProductBrand::class;
+        return ProductCategory::class;
     }
 
     public function boot()
@@ -63,8 +64,6 @@ class ProductBrandRepository extends BaseRepository
 
         $translations = [];
         $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
-
-        logger($request);
         // Handle translations
         if ($request['translations']) {
             foreach ($request['translations'] as $translation) {

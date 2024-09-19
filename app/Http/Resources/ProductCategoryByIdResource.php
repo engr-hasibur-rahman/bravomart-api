@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 
-class ProductBrandByIdResource extends JsonResource
+class ProductCategoryByIdResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,9 +24,9 @@ class ProductBrandByIdResource extends JsonResource
         foreach ($translations as $language => $items) {
             $itemData = [
                 'language' => $language,
-                'brand_name' => $items->where('key', 'brand_name')->first()->value ?? "",
-                'meta_title' => $items->where('key', 'meta_title')->first()->value ?? "",
-                'meta_description' => $items->where('key', 'meta_description')->first()->value ?? "",
+                'brand_name' => $items->where('key', 'brand_name')->first()->value ?? null,
+                'meta_title' => $items->where('key', 'meta_title')->first()->value ?? null,
+                'meta_description' => $items->where('key', 'meta_description')->first()->value ?? null,
             ];
 
             $transformedData[] = $itemData;
