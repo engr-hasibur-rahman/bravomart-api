@@ -37,7 +37,7 @@ class ProductBrandRepository extends BaseRepository
     {
         // Check if an id is present in the request
         $brandId = $request->input('id');
-    
+
         // Prepare data for brand
         $data = [
             'brand_name' => $request['brand_name'],
@@ -46,7 +46,7 @@ class ProductBrandRepository extends BaseRepository
             'meta_description' => $request['meta_description'],
             'display_order' => $request['display_order'],
         ];
-    
+
         if ($brandId) {
             // Update existing brand
             $brand = ProductBrand::findOrFail($brandId);
@@ -55,24 +55,30 @@ class ProductBrandRepository extends BaseRepository
             // Create new brand
             $brand = $this->create($data);
         }
-    
+
         // Handle file upload if available
         if ($request->hasFile('brand_logo')) {
             $file = $request->file('brand_logo');
             $fileUploadRepository->attachment($file, $brandId, $brand);
         }
-    
+
         $translations = [];
         $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
-    
+
+        logger($request);
         // Handle translations
         if ($request['translations']) {
             foreach ($request['translations'] as $translation) {
                 foreach ($defaultKeys as $key) {
-    
+
                     // Fallback value if translation key does not exist
                     $translatedValue = $translation[$key] ?? null;
-    
+
+                    // Skip translation if the value is NULL
+                    if ($translatedValue === null) {
+                        continue; // Skip this field if it's NULL
+                    }
+
                     // If key is brand_slug, generate slug from translated brand_name
                     if ($key === 'brand_slug') {
                         // Generate the slug from the translated brand name instead of using the default
@@ -82,7 +88,7 @@ class ProductBrandRepository extends BaseRepository
                             'value'
                         );
                     }
-    
+
                     // Collect translation data
                     $translations[] = [
                         'language' => $translation['language_code'],
@@ -92,7 +98,7 @@ class ProductBrandRepository extends BaseRepository
                 }
             }
         }
-    
+
         // Save translations if available
         if (!empty($translations)) {
             // If updating, delete existing translations first
@@ -101,11 +107,11 @@ class ProductBrandRepository extends BaseRepository
             }
             $brand->translations()->createMany($translations);
         }
-    
+
         return $brand;
     }
-    
-    
+
+
 
 
 
