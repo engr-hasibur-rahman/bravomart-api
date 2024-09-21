@@ -26,8 +26,8 @@ class StoreProductCategoryRequest extends FormRequest
         return [
             'category_name' => 'required|string|max:255',
             // 'brand_slug' => 'required|string|max:255|unique:product_brand',
-            // 'brand_logo' => 'required|mimes:jpeg,png|max:2048',
-            'category_logo' => 'nullable',
+            // 'category_banner' => 'required|mimes:jpeg,png|max:2048',
+            // 'category_banner' => 'nullable',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'display_order' => 'nullable|integer',

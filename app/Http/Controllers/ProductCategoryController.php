@@ -54,6 +54,8 @@ class ProductCategoryController extends Controller
         $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
 
+            logger($categories);
+
         // Return a collection of ProductBrandResource (including the image)
         return ProductBrandResource::collection($categories);
     }
