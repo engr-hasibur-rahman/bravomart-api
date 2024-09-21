@@ -3,6 +3,7 @@
 use App\Enums\Permission;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
+use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -47,7 +48,9 @@ Route::apiResource('/roles', RoleController::class);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('product-brands', ProductBrandController::class);
     Route::post('product-brands/status', [ProductBrandController::class, 'productBrandStatus']);
-    Route::get('/export-product-brands',[ProductBrandController::class, 'exportProductBrand']);
+
+    Route::apiResource('product-categories', ProductCategoryController::class);
+    Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);
     
     Route::post('users/block-user', [UserController::class, 'banUser']);
     Route::post('users/unblock-user', [UserController::class, 'activeUser']);

@@ -50,9 +50,9 @@ return new class extends Migration
             $table->string('category_slug');
             $table->string('category_name_paths');
             $table->string('parent_path');
-            $table->integer('parent_id');
+            $table->integer('parent_id')->nullable();
             $table->boolean('is_featured')->default(false);
-            $table->double('admin_commission_rate');
+            $table->double('admin_commission_rate')->nullable();
             $table->string('category_banner');
             $table->string('category_icon');
             $table->string('category_cover_image');

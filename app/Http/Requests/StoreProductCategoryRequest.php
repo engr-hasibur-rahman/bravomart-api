@@ -24,10 +24,10 @@ class StoreProductCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'brand_name' => 'required|string|max:255',
+            'category_name' => 'required|string|max:255',
             // 'brand_slug' => 'required|string|max:255|unique:product_brand',
-            'brand_logo' => 'required|mimes:jpeg,png|max:2048',
-            'brand_logo' => 'nullable',
+            // 'brand_logo' => 'required|mimes:jpeg,png|max:2048',
+            'category_logo' => 'nullable',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'display_order' => 'nullable|integer',

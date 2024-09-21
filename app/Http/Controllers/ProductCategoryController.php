@@ -72,7 +72,7 @@ class ProductCategoryController extends Controller
     public function store(StoreProductCategoryRequest $request, FileUploadRepository $fileUploadRepository)
     {
         try {
-            $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
+            $brand = $this->repository->storeProductCategory($request, $fileUploadRepository);
 
             return response()->json([
                 'success' => 'Success'
@@ -82,7 +82,7 @@ class ProductCategoryController extends Controller
         }
     }
 
-    public function productBrandStatus(Request $request)
+    public function productCategoryStatus(Request $request)
     {
         $productBrand = ProductCategory::findOrFail($request->id);
         $productBrand->status = !$productBrand->status;

@@ -28,12 +28,12 @@ class FileUploadRepository extends BaseRepository
         }
     }
 
-    function attachment($file, $brandId = null, $brand)
+    function attachment($file, $collectionName, $id = null, $collection)
     {
-        if ($brandId && $brand->hasMedia('brand_logo')) {
-            $brand->clearMediaCollection('brand_logo');
+        if ($id && $collection->hasMedia($collectionName)) {
+            $collection->clearMediaCollection($collectionName);
         }
-        $brand->addMedia($file)->toMediaCollection('brand_logo');
+        $collection->addMedia($file)->toMediaCollection($collectionName);
     }
 
 

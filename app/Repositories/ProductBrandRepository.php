@@ -58,7 +58,7 @@ class ProductBrandRepository extends BaseRepository
         // Handle file upload if available
         if ($request->hasFile('brand_logo')) {
             $file = $request->file('brand_logo');
-            $fileUploadRepository->attachment($file, $brandId, $brand);
+            $fileUploadRepository->attachment($file, 'brand_logo', $brandId, $brand);
         }
 
         $translations = [];

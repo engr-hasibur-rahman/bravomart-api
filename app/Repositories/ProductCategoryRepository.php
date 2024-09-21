@@ -33,37 +33,47 @@ class ProductCategoryRepository extends BaseRepository
         }
     }
 
-    public function storeProductBrand($request, $fileUploadRepository)
+    public function storeProductCategory($request, $fileUploadRepository)
     {
+        logger($request);
         // Check if an id is present in the request
-        $brandId = $request->input('id');
+        $categoryId = $request->input('id');
 
         // Prepare data for brand
         $data = [
-            'brand_name' => $request['brand_name'],
-            'brand_slug' => MultilangSlug::makeSlug(ProductBrand::class, $request['brand_name'], 'brand_slug'),
+            'category_name' => $request['category_name'],
+            'category_slug' => MultilangSlug::makeSlug(ProductCategory::class, $request['category_name'], 'category_slug'),
+            'category_name_paths' => '1/2/3',
+            'parent_path' => '1/2/3',
+            'parent_id' => $request['parent_id'],
+            'is_featured' => $request['is_featured'],
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => $request['display_order'],
         ];
 
-        if ($brandId) {
+        if ($categoryId) {
             // Update existing brand
-            $brand = ProductBrand::findOrFail($brandId);
-            $brand->update($data);
+            $category = ProductBrand::findOrFail($categoryId);
+            $category->update($data);
         } else {
             // Create new brand
-            $brand = $this->create($data);
+            $category = $this->create($data);
         }
 
         // Handle file upload if available
-        if ($request->hasFile('brand_logo')) {
-            $file = $request->file('brand_logo');
-            $fileUploadRepository->attachment($file, $brandId, $brand);
+        if ($request->hasFile('category_banner')) {
+            $file = $request->file('category_banner');
+            $fileUploadRepository->attachment($file, 'category_banner', $categoryId, $category);
+        }
+        // Handle file upload if available
+        if ($request->hasFile('category_cover_image')) {
+            $file = $request->file('category_cover_image');
+            $fileUploadRepository->attachment($file, 'category_cover_image', $categoryId, $category);
         }
 
         $translations = [];
-        $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
+        $defaultKeys = ['category_name', 'category_slug', 'meta_title', 'meta_description'];
         // Handle translations
         if ($request['translations']) {
             foreach ($request['translations'] as $translation) {
@@ -77,12 +87,12 @@ class ProductCategoryRepository extends BaseRepository
                         continue; // Skip this field if it's NULL
                     }
 
-                    // If key is brand_slug, generate slug from translated brand_name
-                    if ($key === 'brand_slug') {
+                    // If key is brand_slug, generate slug from translated category_name
+                    if ($key === 'category_slug') {
                         // Generate the slug from the translated brand name instead of using the default
                         $translatedValue = MultilangSlug::makeSlug(
                             Translation::class,
-                            $translation['brand_name'] ?? $data['brand_name'], // Use translated brand name
+                            $translation['category_name'] ?? $data['category_name'], // Use translated brand name
                             'value'
                         );
                     }
@@ -100,13 +110,13 @@ class ProductCategoryRepository extends BaseRepository
         // Save translations if available
         if (!empty($translations)) {
             // If updating, delete existing translations first
-            if ($brandId) {
-                $brand->translations()->delete();
+            if ($categoryId) {
+                $category->translations()->delete();
             }
-            $brand->translations()->createMany($translations);
+            $category->translations()->createMany($translations);
         }
 
-        return $brand;
+        return $category;
     }
 
 
