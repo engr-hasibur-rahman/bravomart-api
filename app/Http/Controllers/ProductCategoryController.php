@@ -71,15 +71,15 @@ class ProductCategoryController extends Controller
 
     public function store(StoreProductCategoryRequest $request, FileUploadRepository $fileUploadRepository)
     {
-        try {
-            $brand = $this->repository->storeProductCategory($request, $fileUploadRepository);
+        // try {
+            $this->repository->storeProductCategory($request, $fileUploadRepository);
 
             return response()->json([
                 'success' => 'Success'
             ]);
-        } catch (\Exception $e) {
-            throw new \RuntimeException('Could not create the product brand.');
-        }
+        // } catch (\Exception $e) {
+        //     throw new \RuntimeException('Could not create the product brand.');
+        // }
     }
 
     public function productCategoryStatus(Request $request)

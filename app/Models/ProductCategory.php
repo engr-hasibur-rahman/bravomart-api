@@ -16,7 +16,7 @@ class ProductCategory extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
-    protected $table = 'product_brand';
+    protected $table = 'product_category';
 
     protected $guarded = [];
 

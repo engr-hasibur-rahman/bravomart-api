@@ -39,25 +39,27 @@ class ProductCategoryRepository extends BaseRepository
         // Check if an id is present in the request
         $categoryId = $request->input('id');
 
-        // Prepare data for brand
+        // Prepare data for category
         $data = [
             'category_name' => $request['category_name'],
             'category_slug' => MultilangSlug::makeSlug(ProductCategory::class, $request['category_name'], 'category_slug'),
             'category_name_paths' => '1/2/3',
             'parent_path' => '1/2/3',
             'parent_id' => $request['parent_id'],
-            'is_featured' => $request['is_featured'],
+            'is_featured' => filter_var($request['is_featured'], FILTER_VALIDATE_BOOLEAN),
+            'admin_commission_rate' => false,
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => $request['display_order'],
         ];
 
         if ($categoryId) {
-            // Update existing brand
-            $category = ProductBrand::findOrFail($categoryId);
+            // Update existing category
+            logger('aaaaaaaaaaaaaaaaaaaaa');
+            $category = ProductCategory::findOrFail($categoryId);
             $category->update($data);
         } else {
-            // Create new brand
+            // Create new category
             $category = $this->create($data);
         }
 
@@ -89,10 +91,10 @@ class ProductCategoryRepository extends BaseRepository
 
                     // If key is brand_slug, generate slug from translated category_name
                     if ($key === 'category_slug') {
-                        // Generate the slug from the translated brand name instead of using the default
+                        // Generate the slug from the translated category name instead of using the default
                         $translatedValue = MultilangSlug::makeSlug(
                             Translation::class,
-                            $translation['category_name'] ?? $data['category_name'], // Use translated brand name
+                            $translation['category_name'] ?? $data['category_name'], // Use translated category name
                             'value'
                         );
                     }
@@ -126,10 +128,10 @@ class ProductCategoryRepository extends BaseRepository
 
     public function updateProductBrand($request, $brand, $fileUploadRepository)
     {
-        // Prepare data for default brand
+        // Prepare data for default category
         $data = [
             'brand_name' => $request['brand_name'],
-            'brand_slug' => MultilangSlug::makeSlug(ProductBrand::class, $request['brand_name'], 'brand_slug'),
+            'brand_slug' => MultilangSlug::makeSlug(ProductCategory::class, $request['brand_name'], 'brand_slug'),
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => 2,
@@ -157,10 +159,10 @@ class ProductCategoryRepository extends BaseRepository
 
                     // If key is brand_slug, generate slug from translated brand_name
                     if ($key === 'brand_slug') {
-                        // Generate the slug from the translated brand name instead of using the default
+                        // Generate the slug from the translated category name instead of using the default
                         $translatedValue = MultilangSlug::makeSlug(
                             Translation::class,
-                            $translation['brand_name'] ?? $data['brand_name'], // Use translated brand name
+                            $translation['brand_name'] ?? $data['brand_name'], // Use translated category name
                             'value'
                         );
                     }
