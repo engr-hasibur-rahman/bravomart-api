@@ -31,31 +31,31 @@ class ProductCategoryController extends Controller
         $language = $request->language ?? DEFAULT_LANGUAGE;
         $search = $request->search;
 
-        $brands = ProductCategory::leftJoin('translations', function ($join) use ($language) {
-            $join->on('product_brand.id', '=', 'translations.translatable_id')
+        $categories = ProductCategory::leftJoin('translations', function ($join) use ($language) {
+            $join->on('product_category.id', '=', 'translations.translatable_id')
                 ->where('translations.translatable_type', '=', ProductCategory::class)
                 ->where('translations.language', '=', $language)
-                ->where('translations.key', '=', 'brand_name');
+                ->where('translations.key', '=', 'category_name');
         })
             ->select(
-                'product_brand.*',
-                DB::raw('COALESCE(translations.value, product_brand.brand_name) as brand_name')
+                'product_category.*',
+                DB::raw('COALESCE(translations.value, product_category.category_name) as category_name')
             );
 
         // Apply search filter if search parameter exists
         if ($search) {
-            $brands->where(function ($query) use ($search) {
+            $categories->where(function ($query) use ($search) {
                 $query->where('translations.value', 'like', "%{$search}%")
-                    ->orWhere('product_brand.brand_name', 'like', "%{$search}%");
+                    ->orWhere('product_category.category_name', 'like', "%{$search}%");
             });
         }
 
         // Apply sorting and pagination
-        $brands = $brands->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+        $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
 
         // Return a collection of ProductBrandResource (including the image)
-        return ProductBrandResource::collection($brands);
+        return ProductBrandResource::collection($categories);
     }
 
 
