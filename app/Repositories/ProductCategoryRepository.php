@@ -35,7 +35,6 @@ class ProductCategoryRepository extends BaseRepository
 
     public function storeProductCategory($request, $fileUploadRepository)
     {
-        logger($request);
         // Check if an id is present in the request
         $categoryId = $request->input('id');
 
@@ -55,7 +54,6 @@ class ProductCategoryRepository extends BaseRepository
 
         if ($categoryId) {
             // Update existing category
-            logger('aaaaaaaaaaaaaaaaaaaaa');
             $category = ProductCategory::findOrFail($categoryId);
             $category->update($data);
         } else {

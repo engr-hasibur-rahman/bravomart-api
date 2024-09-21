@@ -73,26 +73,26 @@ class ProductCategoryController extends Controller
 
     public function store(StoreProductCategoryRequest $request, FileUploadRepository $fileUploadRepository)
     {
-        // try {
+        try {
             $this->repository->storeProductCategory($request, $fileUploadRepository);
 
             return response()->json([
                 'success' => 'Success'
             ]);
-        // } catch (\Exception $e) {
-        //     throw new \RuntimeException('Could not create the product brand.');
-        // }
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Could not create the product brand.');
+        }
     }
 
     public function productCategoryStatus(Request $request)
     {
-        $productBrand = ProductCategory::findOrFail($request->id);
-        $productBrand->status = !$productBrand->status;
-        $productBrand->save();
+        $productCategory = ProductCategory::findOrFail($request->id);
+        $productCategory->status = !$productCategory->status;
+        $productCategory->save();
         return response()->json([
             'success' => true,
             'message' => 'Product brand status updated successfully',
-            'status' => $productBrand->status
+            'status' => $productCategory->status
         ]);
     }
 }

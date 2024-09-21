@@ -24,7 +24,7 @@ class ProductCategoryByIdResource extends JsonResource
         foreach ($translations as $language => $items) {
             $itemData = [
                 'language' => $language,
-                'brand_name' => $items->where('key', 'brand_name')->first()->value ?? null,
+                'category_name' => $items->where('key', 'category_name')->first()->value ?? null,
                 'meta_title' => $items->where('key', 'meta_title')->first()->value ?? null,
                 'meta_description' => $items->where('key', 'meta_description')->first()->value ?? null,
             ];
@@ -34,11 +34,14 @@ class ProductCategoryByIdResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'brand_name' => $this->brand_name,
+            'category_name' => $this->category_name,
             'display_order' => $this->display_order,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
-            'brand_logo' => $this->getFirstMediaUrl('brand_logo'), // Fetch the URL of the brand logo
+            'category_banner' => $this->getFirstMediaUrl('category_banner'), // Fetch the URL of the brand logo
+            'category_cover_image' => $this->getFirstMediaUrl('category_cover_image'), // Fetch the URL of the brand logo
+            'parent_id' => $this->parent_id,
+            'is_featured' => $this->is_featured,
             'translations' => $transformedData,
         ];
     }
