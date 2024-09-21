@@ -8,6 +8,7 @@ use App\Http\Requests\StoreProductCategoryRequest;
 use App\Http\Requests\UpdateProductBrandRequest;
 use App\Http\Resources\ProductBrandByIdResource;
 use App\Http\Resources\ProductBrandResource;
+use App\Http\Resources\ProductCategoryByIdResource;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Repositories\FileUploadRepository;
@@ -63,9 +64,9 @@ class ProductCategoryController extends Controller
 
     public function show($id)
     {
-        $brand = $this->repository->with(['translations'])->findOrFail($id);
-        if ($brand) {
-            return new ProductBrandByIdResource($brand);
+        $category = $this->repository->with(['translations'])->findOrFail($id);
+        if ($category) {
+            return new ProductCategoryByIdResource($category);
         }
 
         return response()->json(['error' => 'Product Brand not found'], 404);
