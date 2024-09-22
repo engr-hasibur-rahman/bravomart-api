@@ -21,6 +21,8 @@ class ProductBrandResource extends JsonResource
         return [
             'id' => $this->id,
             'category_name' => $locales['category_name']['value'] ?? $this->category_name,
+            'parent_id' => $this->parent_id,
+            'childrenRecursive' => $this->childrenRecursive,
             'category_slug' => $locales['category_slug']['value'] ?? $this->category_slug,
             'category_banner' => $this->getFirstMediaUrl('category_banner'), // Fetch the URL of the brand logo
             'category_cover_image' => $this->getFirstMediaUrl('category_cover_image'), // Fetch the URL of the brand logo
