@@ -42,8 +42,8 @@ class ProductCategoryRepository extends BaseRepository
         $data = [
             'category_name' => $request['category_name'],
             'category_slug' => MultilangSlug::makeSlug(ProductCategory::class, $request['category_name'], 'category_slug'),
-            'category_name_paths' => '1/2/3',
-            'parent_path' => '1/2/3',
+            'category_name_paths' => $request['category_name_paths'] ?? 'electric/mobile/nokia',
+            'parent_path' => $request['parent_path'] ?? '2/4/5',
             'parent_id' => $request['parent_id'],
             'is_featured' => filter_var($request['is_featured'], FILTER_VALIDATE_BOOLEAN),
             'admin_commission_rate' => false,

@@ -28,6 +28,8 @@ class ProductBrandResource extends JsonResource
             'category_cover_image' => $this->getFirstMediaUrl('category_cover_image'), // Fetch the URL of the brand logo
             'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
             'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
+            'category_name_paths' => $this->category_name_paths,
+            'parent_path' => $this->parent_path,
             'display_order' => $this->display_order,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,
