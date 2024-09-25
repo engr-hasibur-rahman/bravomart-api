@@ -11,6 +11,8 @@ enum PermissionModule: string
     use Values;
 
     case GENERAL = 'general';
+    case PRODUCT_BRAND = 'product_brand';
+    case PRODUCT_CATEGORY = 'product_category';
     case PRODUCT = 'product';
     case OTHERS = 'others';
 }

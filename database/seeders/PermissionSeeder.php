@@ -24,6 +24,18 @@ class PermissionSeeder extends Seeder
             PermissionModule::GENERAL->value => [
                 Permission::ALL->value,
             ],
+            PermissionModule::PRODUCT_BRAND->value => [
+                Permission::PRODUCT_BRAND_LIST->value,
+                Permission::ADD_PRODUCT_BRAND->value,
+                Permission::EDIT_PRODUCT_BRAND->value,
+                Permission::PRODUCT_BRAND_STATUS->value,
+            ],
+            PermissionModule::PRODUCT_CATEGORY->value => [
+                Permission::PRODUCT_CATEGORY_LIST->value,
+                Permission::ADD_PRODUCT_CATEGORY->value,
+                Permission::EDIT_PRODUCT_CATEGORY->value,
+                Permission::PRODUCT_CATEGORY_STATUS->value,
+            ],
             PermissionModule::PRODUCT->value => [
                 Permission::ADD_PRODUCT->value,
                 Permission::EDIT_PRODUCT->value,
