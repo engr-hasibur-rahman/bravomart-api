@@ -56,9 +56,16 @@ class ProductCategoryRepository extends BaseRepository
             // Update existing category
             $category = ProductCategory::findOrFail($categoryId);
             $category->update($data);
+            $category["category_name_paths"] = $category["category_name_paths"]."/".$category["category_name"];
+            $category["parent_path"] = $category["parent_path"]."/".$category["id"];
+            $category->save();
         } else {
+
             // Create new category
             $category = $this->create($data);
+            $category["category_name_paths"] = $category["category_name_paths"]."/".$category["category_name"];
+            $category["parent_path"] = $category["parent_path"]."/".$category["id"];
+            $category->save();
         }
 
         // Handle file upload if available
