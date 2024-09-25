@@ -29,6 +29,7 @@ class ProductCategoryController extends Controller
 
     public function index(Request $request)
     {
+        
         $limit = $request->limit ?? 10;
         $language = $request->language ?? DEFAULT_LANGUAGE;
         $search = $request->search;
@@ -53,11 +54,14 @@ class ProductCategoryController extends Controller
         }
 
         // Apply sorting and pagination
-        $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+        if($request->pagintion == "false"){
+            $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->get();
+            
+        }else {
+            $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
-
-            logger($categories);
-
+        }
         // Return a collection of ProductBrandResource (including the image)
         return ProductCategoryResource::collection($categories);
     }
