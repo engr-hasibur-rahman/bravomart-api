@@ -14,28 +14,25 @@ class ProductBrandResource extends JsonResource
      * @return array
      */
 
-    public function toArray($request)
-    {
-        $language = $request->language;
-        $locales = $this->translations->where('language', $language)->keyBy('key')->toArray();
-        return [
-            'id' => $this->id,
-            'category_name' => $locales['category_name']['value'] ?? $this->category_name,
-            'parent_id' => $this->parent_id,
-            'childrenRecursive' => $this->childrenRecursive,
-            'category_slug' => $locales['category_slug']['value'] ?? $this->category_slug,
-            'category_banner' => $this->getFirstMediaUrl('category_banner'), // Fetch the URL of the brand logo
-            'category_cover_image' => $this->getFirstMediaUrl('category_cover_image'), // Fetch the URL of the brand logo
-            'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
-            'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
-            'category_name_paths' => $this->category_name_paths,
-            'parent_path' => $this->parent_path,
-            'display_order' => $this->display_order,
-            'created_by' => $this->created_by,
-            'updated_by' => $this->updated_by,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ];
-    }
+     public function toArray($request)
+     {
+         $language = $request->language;
+         $locales = $this->translations->where('language', $language)->keyBy('key')->toArray();
+         return [
+             'id' => $this->id,
+             'brand_name' => $locales['brand_name']['value'] ?? $this->brand_name,
+             'brand_slug' => $locales['brand_slug']['value'] ?? $this->brand_slug,
+             'brand_logo' => $this->getFirstMediaUrl('brand_logo'), // Fetch the URL of the brand logo
+             'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
+             'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
+             'parent_id' => $this->parent_id,
+             'is_featured' => $this->is_featured,
+             'display_order' => $this->display_order,
+             'created_by' => $this->created_by,
+             'updated_by' => $this->updated_by,
+             'status' => $this->status,
+             'created_at' => $this->created_at,
+             'updated_at' => $this->updated_at,
+         ];
+     }
 }

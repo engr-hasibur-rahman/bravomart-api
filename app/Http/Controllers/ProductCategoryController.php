@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateProductBrandRequest;
 use App\Http\Resources\ProductBrandByIdResource;
 use App\Http\Resources\ProductBrandResource;
 use App\Http\Resources\ProductCategoryByIdResource;
+use App\Http\Resources\ProductCategoryResource;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Repositories\FileUploadRepository;
@@ -58,7 +59,7 @@ class ProductCategoryController extends Controller
             logger($categories);
 
         // Return a collection of ProductBrandResource (including the image)
-        return ProductBrandResource::collection($categories);
+        return ProductCategoryResource::collection($categories);
     }
 
 
