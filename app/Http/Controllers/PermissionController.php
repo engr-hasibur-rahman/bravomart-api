@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PermissionResource;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -14,7 +15,7 @@ class PermissionController extends Controller
     public function index()
     {
         $permissions = QueryBuilder::for(Permission::class)->get();
-        return response()->json(['permissions' => $permissions]);
+        return PermissionResource::collection($permissions);
 
     }
 
