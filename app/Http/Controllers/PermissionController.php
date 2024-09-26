@@ -16,36 +16,23 @@ class PermissionController extends Controller
     {
         $limit = $request->limit ?? 10;
         $permissions = QueryBuilder::for(Permission::class)
-        ->when($request->filled('available_for'), function ($query) use ($request) {
-            $query->where('available_for', $request->available_for);
-        })
-        ->paginate($limit);
+            ->when($request->filled('available_for'), function ($query) use ($request) {
+                $query->where('available_for', $request->available_for);
+            })
+            ->paginate($limit);
         return PermissionResource::collection($permissions);
-
     }
 
 
     public function permissionForStoreOwner(Request $request)
-{
-    // Find the permission by ID
-    $permission = Permission::findOrFail($request->id);
-
-    // Toggle between 'admin' and 'store_owner'
-    if ($permission->available_for === 'super_admin') {
-        $permission->available_for = 'store_owner';
-    } elseif ($permission->available_for === 'store_owner') {
-        $permission->available_for = 'super_admin';
+    {
+        $permission = Permission::findOrFail($request->id);
+        $permission->available_for = $permission->available_for === 'super_admin' ? 'store_owner' : 'super_admin';
+        $permission->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Permission for store owner toggled successfully',
+            'status' => $permission
+        ]);
     }
-
-    // Save the updated permission
-    $permission->save();
-
-    // Return a response with the updated permission
-    return response()->json([
-        'success' => true,
-        'message' => 'Permission for store owner toggled successfully',
-        'status' => $permission
-    ]);
-}
-
 }

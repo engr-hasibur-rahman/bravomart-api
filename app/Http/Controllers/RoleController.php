@@ -78,14 +78,14 @@ class RoleController extends Controller
         return response()->json('Role deleted');
     }
 
-    public function permissionForStoreOwner(Request $request)
+    public function roleForStoreOwner(Request $request)
     {
         $role = Role::findOrFail($request->id);
-        $role->available_for = $request->available_for;
+        $permission->available_for = $permission->available_for === 'super_admin' ? 'store_owner' : 'super_admin';
         $role->save();
         return response()->json([
             'success' => true,
-            'message' => 'Product brand status updated successfully',
+            'message' => 'Role for store owner toggled successfully',
             'status' => $role
         ]);
     }

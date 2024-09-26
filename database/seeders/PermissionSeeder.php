@@ -40,6 +40,10 @@ class PermissionSeeder extends Seeder
                 Permission::ADD_PRODUCT->value,
                 Permission::EDIT_PRODUCT->value,
             ],
+            PermissionModule::USERS->value => [
+                Permission::BAN_USER->value,
+                Permission::ACTIVE_USER->value,
+            ],
             PermissionModule::OTHERS->value => [
                 Permission::MANAGE_CONFIGURATIONS->value,
             ]
@@ -61,6 +65,8 @@ class PermissionSeeder extends Seeder
         }
 
         if ($total_permission_count_in_enum != $total_permission_count_in_array) {
+            logger($total_permission_count_in_enum);
+            logger($total_permission_count_in_array);
             $missed_permissions = array_diff(Permission::values(), $copy_permissions);
             logger('Permission missing', ['missed_permissions' => $missed_permissions]);
             logger()->error('Permission count mismatch', ['enum' => $total_permission_count_in_enum, 'array' => $total_permission_count_in_array]);

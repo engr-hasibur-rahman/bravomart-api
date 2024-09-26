@@ -27,36 +27,34 @@ Route::post('/reset-password', [UserController::class, 'resetPassword']);
 Route::post('/logout', [UserController::class, 'logout']);
 
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('me', [UserController::class, 'me']);
-});
-
-
-// Route::get('/permissions', PermissionController::class);
-Route::get('permissions', [PermissionController::class, 'index']);
-Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
-
-// Route::apiResource('/roles', RoleController::class);
-Route::get('roles', [RoleController::class, 'index']);
-Route::post('roles-for-store-owner', [RoleController::class, 'roleForStoreOwner']);
-
-
-
 
 /**
  * *****************************************
- * Authorized Route for Super Admin only
+ * Authorized Route
  * *****************************************
  */
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    // Route::apiResource('product-brands', ProductBrandController::class);
 
+
+    Route::get('me', [UserController::class, 'me']);
+
+    
+    // Route::get('/permissions', PermissionController::class);
+    Route::get('permissions', [PermissionController::class, 'index']);
+    Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
+
+
+    // Route::apiResource('/roles', RoleController::class);
+    Route::get('roles', [RoleController::class, 'index']);
+    Route::post('roles-for-store-owner', [RoleController::class, 'roleForStoreOwner']);
+
+
+    // Route::apiResource('product-brands', ProductBrandController::class);
     Route::group(['middleware' => [getPermissionMiddleware('brand-list')]], function () {
         Route::get('product-brands', [ProductBrandController::class, 'index']);
     });
     Route::group(['middleware' => [getPermissionMiddleware('add-product-brand')]], function () {
-
         Route::post('product-brands', [ProductBrandController::class, 'store']);
     });
     Route::group(['middleware' => [getPermissionMiddleware('edit-product-brand')]], function () {
@@ -70,11 +68,24 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 
     // Route::apiResource('product-categories', ProductCategoryController::class);
-    Route::get('product-categories', [ProductCategoryController::class, 'index']);
-    Route::post('product-categories', [ProductCategoryController::class, 'store']);
-    Route::get('product-categories/{id}', [ProductCategoryController::class, 'show']);
-    Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);
+    Route::group(['middleware' => [getPermissionMiddleware('category-list')]], function () {
+        Route::get('product-categories', [ProductCategoryController::class, 'index']);
+    });
+    Route::group(['middleware' => [getPermissionMiddleware('category-store')]], function () {
+        Route::post('product-categories', [ProductCategoryController::class, 'store']);
+    });
+    Route::group(['middleware' => [getPermissionMiddleware('category-show')]], function () {
+        Route::get('product-categories/{id}', [ProductCategoryController::class, 'show']);
+    });
+    Route::group(['middleware' => [getPermissionMiddleware('category-status')]], function () {
+        Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);
+    });
 
-    Route::post('users/block-user', [UserController::class, 'banUser']);
-    Route::post('users/unblock-user', [UserController::class, 'activeUser']);
+
+    Route::group(['middleware' => [getPermissionMiddleware('ban-user')]], function () {
+        Route::post('users/block-user', [UserController::class, 'banUser']);
+    });
+    Route::group(['middleware' => [getPermissionMiddleware('active-user')]], function () {
+        Route::post('users/unblock-user', [UserController::class, 'activeUser']);
+    });
 });

@@ -14,5 +14,6 @@ enum PermissionModule: string
     case PRODUCT_BRAND = 'product_brand';
     case PRODUCT_CATEGORY = 'product_category';
     case PRODUCT = 'product';
+    case USERS = 'users';
     case OTHERS = 'others';
 }
