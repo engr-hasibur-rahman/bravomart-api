@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoleRequest;
+use App\Http\Resources\RoleResource;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -14,18 +15,11 @@ class RoleController extends Controller
      */
     public function index()
     {
+        $limit = $request->limit ?? 10;
         $roles = QueryBuilder::for(Role::class)
         ->allowedIncludes(['permissions'])
-        ->get();
-        return response()->json(['roles' => $roles]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        ->paginate($limit);
+        return RoleResource::collection($roles);
     }
 
     /**
@@ -53,14 +47,6 @@ class RoleController extends Controller
         return QueryBuilder::for(Role::class)
             ->allowedIncludes(['permissions'])
             ->findOrFail($id);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
