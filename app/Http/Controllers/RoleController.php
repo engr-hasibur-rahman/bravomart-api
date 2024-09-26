@@ -17,10 +17,10 @@ class RoleController extends Controller
     {
         $limit = $request->limit ?? 10;
         $roles = QueryBuilder::for(Role::class)
+        ->with(['permissions'])
         ->when($request->filled('available_for'), function ($query) use ($request) {
             $query->where('available_for', $request->available_for);
         })
-        ->allowedIncludes(['permissions'])
         ->paginate($limit);
         return RoleResource::collection($roles);
     }

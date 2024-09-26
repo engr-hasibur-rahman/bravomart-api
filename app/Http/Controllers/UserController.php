@@ -186,7 +186,7 @@ class UserController extends Controller
         if (isset($request->roles)) {
             $user->syncRoles($request->roles);
         }
-        return redirect()->route('users')->with('success', 'Role assing successfull!');
+        return redirect()->route('users')->with('success', 'Role assign successfully!');
     }
 
     public function assignPermissions(Request $request)
@@ -197,7 +197,9 @@ class UserController extends Controller
         }
         return response()->json([
             'success' => true,
-            'message' => 'Role assign successfully!',
+            'message' => 'Permission assign successfully!',
         ]);
     }
 }
+
+
