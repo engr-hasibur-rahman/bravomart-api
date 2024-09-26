@@ -179,4 +179,25 @@ class UserController extends Controller
             return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
         }
     }
+
+    public function assignRole(Request $request)
+    {
+        $user = User::findOrFail($request->user_id);
+        if (isset($request->roles)) {
+            $user->syncRoles($request->roles);
+        }
+        return redirect()->route('users')->with('success', 'Role assing successfull!');
+    }
+
+    public function assignPermissions(Request $request)
+    {
+        $user = User::findOrFail($request->user_id);
+        if (isset($request->permissions)) {
+            $user->syncPermissions($request->permissions);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Role assign successfully!',
+        ]);
+    }
 }
