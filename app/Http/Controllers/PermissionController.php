@@ -12,9 +12,11 @@ class PermissionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $permissions = QueryBuilder::for(Permission::class)->get();
+        $limit = $request->limit ?? 10;
+        $permissions = QueryBuilder::for(Permission::class)
+        ->paginate($limit);
         return PermissionResource::collection($permissions);
 
     }
