@@ -32,9 +32,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 });
 
 
-Route::apiResource('/permissions', PermissionController::class);
+// Route::get('/permissions', PermissionController::class);
+Route::get('permissions', [PermissionController::class, 'index']);
+Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
 
-Route::apiResource('/roles', RoleController::class);
+// Route::apiResource('/roles', RoleController::class);
+Route::get('roles', [RoleController::class, 'index']);
+Route::post('roles-for-store-owner', [RoleController::class, 'roleForStoreOwner']);
 
 
 

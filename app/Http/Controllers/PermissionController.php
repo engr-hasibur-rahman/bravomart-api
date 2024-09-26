@@ -65,4 +65,16 @@ class PermissionController extends Controller
     {
         //
     }
+
+    public function permissionForStoreOwner(Request $request)
+    {
+        $permission = Permission::findOrFail($request->id);
+        $permission->available_for = $request->available_for;
+        $permission->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Product brand status updated successfully',
+            'status' => $permission
+        ]);
+    }
 }

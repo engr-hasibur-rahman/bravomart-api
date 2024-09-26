@@ -14,7 +14,10 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        $roles = QueryBuilder::for(Role::class)
+        ->allowedIncludes(['permissions'])
+        ->get();
+        return response()->json(['roles' => $roles]);
     }
 
     /**
@@ -84,5 +87,17 @@ class RoleController extends Controller
         $role->delete();
 
         return response()->json('Role deleted');
+    }
+
+    public function permissionForStoreOwner(Request $request)
+    {
+        $role = Role::findOrFail($request->id);
+        $role->available_for = $request->available_for;
+        $role->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Product brand status updated successfully',
+            'status' => $role
+        ]);
     }
 }
