@@ -14,6 +14,8 @@ class PermissionController extends Controller
      */
     public function index(Request $request)
     {
+
+        logger('ok');
         $limit = $request->limit ?? 10;
         $permissions = QueryBuilder::for(Permission::class)
             ->when($request->filled('available_for'), function ($query) use ($request) {
@@ -22,6 +24,19 @@ class PermissionController extends Controller
             ->paginate($limit);
         return PermissionResource::collection($permissions);
     }
+
+    public function moduleWisePermissions(Request $request)
+    {
+        logger('okdfffffffffffff');
+        $permissions = QueryBuilder::for(Permission::class)
+            ->when($request->filled('available_for'), function ($query) use ($request) {
+                $query->where('available_for', $request->available_for);
+            })
+            ->get()
+            ->groupBy('module');
+        return PermissionResource::collection($permissions);
+    }
+
 
 
     public function permissionForStoreOwner(Request $request)

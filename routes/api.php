@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // Route::get('/permissions', PermissionController::class);
     Route::get('permissions', [PermissionController::class, 'index']);
     Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
+    Route::get('module-wise-permissions', [PermissionController::class, 'moduleWisePermissions']);
 
 
     // Route::apiResource('/roles', RoleController::class);
