@@ -44,5 +44,6 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Others Permissions                                      //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case PRODUCT_ATTRIBUTE = 'product-attribute';
     case MANAGE_CONFIGURATIONS = 'manage-configurations';
 }

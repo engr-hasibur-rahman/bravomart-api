@@ -2,6 +2,7 @@
 
 use App\Enums\Permission;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProductAttributeController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
@@ -39,7 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('me', [UserController::class, 'me']);
 
-    
+
     // Route::get('/permissions', PermissionController::class);
     Route::get('permissions', [PermissionController::class, 'index']);
     Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
@@ -89,4 +90,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['middleware' => [getPermissionMiddleware('active-user')]], function () {
         Route::post('users/unblock-user', [UserController::class, 'activeUser']);
     });
+
+    Route::group(['middleware' => [getPermissionMiddleware('product-attribute')]], function () {
+        Route::apiResource('/product-attribute', ProductAttributeController::class);
+    });
 });
+

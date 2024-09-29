@@ -27,7 +27,6 @@ class PermissionController extends Controller
 
     public function moduleWisePermissions(Request $request)
     {
-        logger('okdfffffffffffff');
         $permissions = QueryBuilder::for(Permission::class)
             ->when($request->filled('available_for'), function ($query) use ($request) {
                 $query->where('available_for', $request->available_for);

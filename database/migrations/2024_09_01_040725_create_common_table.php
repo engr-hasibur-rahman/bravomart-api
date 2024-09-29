@@ -64,6 +64,41 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->timestamps();
         });
+
+        Schema::create('product_attributes', function (Blueprint $table) {
+            $table->id();
+            $table->string('attribute_name');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->boolean('status')->default(1);
+            $table->timestamps();
+        });
+
+        // Schema::create('product_attribute_group', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->unsignedBigInteger('product_attribute_id');
+        //     $table->foreign('product_attribute_id')->references('id')->on('product_attributes')->onDelete('cascade');
+        //     $table->string('size_label');
+        //     $table->string('color_label');
+        //     $table->string('material_label');
+        //     $table->string('attribute_list');
+        //     $table->unsignedBigInteger('created_by')->nullable();
+        //     $table->unsignedBigInteger('updated_by')->nullable();
+        //     $table->boolean('status')->default(1);
+        //     $table->timestamps();
+        // });
+
+        // Schema::create('product_attribute_line', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->unsignedBigInteger('product_attribute_id');
+        //     $table->foreign('product_attribute_id')->references('id')->on('product_attributes')->onDelete('cascade');
+        //     $table->string('attribute_line_name');
+        //     $table->unsignedBigInteger('created_by')->nullable();
+        //     $table->unsignedBigInteger('updated_by')->nullable();
+        //     $table->boolean('status')->default(1);
+        //     $table->timestamps();
+        // });
+
         // Schema::create('media', function (Blueprint $table) {
         //     $table->id();
         //     $table->unsignedBigInteger('fileable_id');
@@ -90,5 +125,6 @@ return new class extends Migration
         Schema::dropIfExists('translations');
         Schema::dropIfExists('product_brand');
         Schema::dropIfExists('product_category');
+        Schema::dropIfExists('product_attributes');
     }
 };

@@ -45,6 +45,7 @@ class PermissionSeeder extends Seeder
                 Permission::ACTIVE_USER->value,
             ],
             PermissionModule::OTHERS->value => [
+                Permission::PRODUCT_ATTRIBUTE->value,
                 Permission::MANAGE_CONFIGURATIONS->value,
             ]
         ];

@@ -35,4 +35,7 @@ return [
     'active-user' => [
         Permission::ACTIVE_USER->value,
     ],
+    'product-attribute' => [
+        Permission::PRODUCT_ATTRIBUTE->value,
+    ],
 ];
