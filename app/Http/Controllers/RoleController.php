@@ -30,7 +30,6 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
-        logger($request);
         $role = Role::updateOrCreate([
             'name' => $request->role_name,
             'guard_name' => 'api',
