@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductAttributeController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -40,6 +41,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('me', [UserController::class, 'me']);
 
+    Route::apiResource('/staff', StaffController::class);
 
     // Route::get('/permissions', PermissionController::class);
     Route::get('permissions', [PermissionController::class, 'index']);

@@ -86,6 +86,25 @@ class UserController extends Controller
         ];
     }
 
+    public function toggleUserStatus(Request $request)
+    {
+        $userToToggle = User::findOrFail($request->id);
+        $user = $request->user();
+        if ($user && $user->hasPermissionTo(UserRole::SUPER_ADMIN) && $user->id != $request->id) {
+            $userToToggle->is_active = !$userToToggle->is_active;
+            $userToToggle->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User status updated successfully',
+                'status' => $userToToggle->is_active
+            ]);
+        }
+
+        throw new AuthorizationException(NOT_AUTHORIZED);
+    }
+
+
     public function banUser(Request $request)
     {
         try {
@@ -198,5 +217,3 @@ class UserController extends Controller
         ]);
     }
 }
-
-
