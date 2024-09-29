@@ -30,8 +30,9 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
-        $role = Role::firstOrCreate([
-            'name' => $request->name,
+        logger($request);
+        $role = Role::updateOrCreate([
+            'name' => $request->role_name,
             'guard_name' => 'api',
         ]);
 
@@ -48,7 +49,7 @@ class RoleController extends Controller
     public function show(string $id)
     {
         return QueryBuilder::for(Role::class)
-            ->allowedIncludes(['permissions'])
+            ->with(['permissions'])
             ->findOrFail($id);
     }
 

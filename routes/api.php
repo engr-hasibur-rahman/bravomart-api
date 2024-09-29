@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     // Route::apiResource('/roles', RoleController::class);
     Route::get('roles', [RoleController::class, 'index']);
+    Route::post('roles', [RoleController::class, 'store']);
     Route::post('roles-for-store-owner', [RoleController::class, 'roleForStoreOwner']);
 
 
