@@ -17,11 +17,11 @@ class RoleController extends Controller
     {
         $limit = $request->limit ?? 10;
         $roles = QueryBuilder::for(Role::class)
-        ->with(['permissions'])
-        ->when($request->filled('available_for'), function ($query) use ($request) {
-            $query->where('available_for', $request->available_for);
-        })
-        ->paginate($limit);
+            ->with(['permissions'])
+            ->when($request->filled('available_for'), function ($query) use ($request) {
+                $query->where('available_for', $request->available_for);
+            })
+            ->paginate($limit);
         return RoleResource::collection($roles);
     }
 
@@ -30,10 +30,18 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
-        $role = Role::updateOrCreate([
-            'name' => $request->role_name,
-            'guard_name' => 'api',
-        ]);
+
+        $roleId = $request->input('id');
+
+        if ($roleId) {
+            $role = Role::findOrFail($roleId);
+            $role->update(['name' => $request->role_name, 'guard_name' => 'api']);
+        } else {
+            $role = Role::create([
+                'name' => $request->role_name,
+                'guard_name' => 'api',
+            ]);
+        }
 
         if ($request->permissions) {
             $role->syncPermissions($request->permissions);
