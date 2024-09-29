@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Permission;
-use App\Enums\Role;
+use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -63,15 +63,13 @@ class UserController extends Controller
 
     public function register(UserCreateRequest $request)
     {
-        $notAllowedPermissions = [Permission::SUPER_ADMIN];
-        if ((isset($request->permission->value) && in_array($request->permission->value, $notAllowedPermissions)) || (isset($request->permission) && in_array($request->permission, $notAllowedPermissions))) {
+        $notAllowedRoles = [UserRole::SUPER_ADMIN];
+        if ((isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) || (isset($request->roles) && in_array($request->roles, $notAllowedRoles))) {
             throw new AuthorizationException(NOT_AUTHORIZED);
         }
-        $permissions = [Permission::CUSTOMER];
-        $role = Role::CUSTOMER;
-        if (isset($request->permission)) {
-            $permissions[] = isset($request->permission->value) ? $request->permission->value : $request->permission;
-            $role = Role::STORE_OWNER;
+        $roles = [UserRole::CUSTOMER];
+        if (isset($request->roles)) {
+            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
         $user = $this->repository->create([
             'name'     => $request->name,
@@ -79,8 +77,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $user->givePermissionTo($permissions);
-        $user->assignRole($role);
+        $user->assignRole($roles);
 
         return [
             "token" => $user->createToken('auth_token')->plainTextToken,
@@ -93,7 +90,7 @@ class UserController extends Controller
     {
         try {
             $user = $request->user();
-            if ($user && $user->hasPermissionTo(Permission::SUPER_ADMIN) && $user->id != $request->id) {
+            if ($user && $user->hasPermissionTo(UserRole::SUPER_ADMIN) && $user->id != $request->id) {
                 $banUser =  User::find($request->id);
                 $banUser->is_active = false;
                 $banUser->save();
@@ -109,7 +106,7 @@ class UserController extends Controller
     {
         try {
             $user = $request->user();
-            if ($user && $user->hasPermissionTo(Permission::SUPER_ADMIN) && $user->id != $request->id) {
+            if ($user && $user->hasPermissionTo(UserRole::SUPER_ADMIN) && $user->id != $request->id) {
                 $activeUser =  User::find($request->id);
                 $activeUser->is_active = true;
                 $activeUser->save();
