@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('activity_scope')->default('SHOP_AREA'); //SHOP_AREA/ADMIN_AREA/FIELD_AREA/KITCHEN_AREA ,        Restricting User Sothat He can't login to Unauthorized area
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

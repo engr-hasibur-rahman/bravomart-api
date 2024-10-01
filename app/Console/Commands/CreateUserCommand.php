@@ -25,11 +25,11 @@ class CreateUserCommand extends Command
             if (confirm('Do you want to create an admin?')) {
 
                 info('Provide admin credentials info to create an admin user for you.');
-                $name = text(label: 'Enter admin name', required: 'Admin Name is required');
+                $name = text(label: 'Enter admin name', required: 'Admin Name is required',default:'BivaMart Admin');
 
                 // Manually validate the email input
                 do {
-                    $email = text(label: 'Enter admin email', required: 'Admin Email is required');
+                    $email = text(label: 'Enter admin email', required: 'Admin Email is required',default:'admin@bivasoft.com');
                     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         info('Invalid email address format. Please enter a valid email.');
                     } else {
@@ -71,6 +71,7 @@ class CreateUserCommand extends Command
                 $user = User::create([
                     'name' =>  $name,
                     'email' =>  $email,
+                    'activity_scope' =>  'ADMIN_AREA',
                     'password' =>  Hash::make($password),
                 ]);
                 $user->email_verified_at = now()->timestamp;
