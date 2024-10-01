@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
+use Spatie\QueryBuilder\QueryBuilder;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 
 class StaffController extends Controller
 {
@@ -21,9 +24,16 @@ class StaffController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $limit = $request->limit ?? 10;
+        $roles = QueryBuilder::for(User::class)
+            ->with(['permissions'])
+            ->when($request->filled('available_for'), function ($query) use ($request) {
+                $query->where('available_for', $request->available_for);
+            })
+            ->paginate($limit);
+        return UserResource::collection($roles);
     }
 
     /**
