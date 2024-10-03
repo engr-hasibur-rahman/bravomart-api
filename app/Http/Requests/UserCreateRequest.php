@@ -26,7 +26,7 @@ class UserCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'     => ['required', 'string', 'max:255'],
+            'first_name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'unique:users'],
             'password' => ['required', 'string']
         ];
@@ -40,9 +40,9 @@ class UserCreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required'      => 'Name is required',
-            'name.string'        => 'Name is not a valid string',
-            'name.max:255'       => 'Name can not be more than 255 character',
+            'first_name.required'      => 'Name is required',
+            'first_name.string'        => 'Name is not a valid string',
+            'first_name.max:255'       => 'Name can not be more than 255 character',
             'email.required'     => 'email is required',
             'email.email'        => 'email is not a valid email address',
             'email.unique:users' => 'email must be unique',

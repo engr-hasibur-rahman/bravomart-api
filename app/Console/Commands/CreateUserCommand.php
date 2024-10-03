@@ -25,7 +25,7 @@ class CreateUserCommand extends Command
             if (confirm('Do you want to create an admin?')) {
 
                 info('Provide admin credentials info to create an admin user for you.');
-                $name = text(label: 'Enter admin name', required: 'Admin Name is required',default:'BivaMart Admin');
+                $first_name = text(label: 'Enter admin name', required: 'Admin Name is required',default:'BivaMart Admin');
 
                 // Manually validate the email input
                 do {
@@ -49,13 +49,13 @@ class CreateUserCommand extends Command
                 info('Please wait, Creating an admin profile for you...');
                 $validator = Validator::make(
                     [
-                        'name' =>  $name,
+                        'first_name'  =>  $first_name,
                         'email' =>  $email,
                         'password' =>  $password,
                         'confirmPassword' =>  $confirmPassword,
                     ],
                     [
-                        'name'     => 'required|string',
+                        'first_name'      => 'required|string',
                         'email'    => 'required|email|unique:users,email',
                         'password' => 'required',
                         'confirmPassword' => 'required|same:password',
@@ -69,16 +69,17 @@ class CreateUserCommand extends Command
                     return;
                 }
                 $user = User::create([
-                    'name' =>  $name,
+                    'first_name'  =>  $first_name,
                     'email' =>  $email,
                     'activity_scope' =>  'ADMIN_AREA',
+                    'perm_roles' =>  json_encode(Array('super_admin','store_owner')),
                     'password' =>  Hash::make($password),
                 ]);
                 $user->email_verified_at = now()->timestamp;
                 $user->save();
 
-                $role = Role::firstOrCreate(['name' => UserRole::SUPER_ADMIN->value], ['name' => UserRole::SUPER_ADMIN->value, 'guard_name' => 'api']);
-                Permission::firstOrCreate(['name' => 'all'], ['name' => 'all', 'guard_name' => 'api']);
+                $role = Role::firstOrCreate(['name'  => UserRole::SUPER_ADMIN->value], ['name'  => UserRole::SUPER_ADMIN->value, 'guard_name' => 'api']);
+                Permission::firstOrCreate(['name'  => 'all'], ['name'  => 'all', 'guard_name' => 'api']);
                 $role->givePermissionTo('all');
                 
                 $user->assignRole($role);
