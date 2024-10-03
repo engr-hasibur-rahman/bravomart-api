@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -20,13 +21,17 @@ use Illuminate\Support\Facades\Route;
  */
 
 
-
+/* Admin Login */
 Route::post('/token', [UserController::class, 'token']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/forget-password', [UserController::class, 'forgetPassword']);
 Route::post('/verify-forget-password-token', [UserController::class, 'verifyForgetPasswordToken']);
 Route::post('/reset-password', [UserController::class, 'resetPassword']);
 Route::post('/logout', [UserController::class, 'logout']);
+
+
+/* Partner (Shop Owner/Shop Staff/Delivery-Man/FitterMan Login) Login */
+Route::post('/v1/partner/login', [PartnerLoginController::class, 'login']);
 
 
 

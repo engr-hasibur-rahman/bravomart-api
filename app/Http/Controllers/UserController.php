@@ -25,6 +25,7 @@ class UserController extends Controller
     {
         $this->repository = $repository;
     }
+    
     public function token(Request $request)
     {
         $request->validate([
