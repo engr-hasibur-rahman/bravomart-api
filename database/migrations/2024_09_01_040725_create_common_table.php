@@ -142,6 +142,8 @@ return new class extends Migration
             $table->boolean('shop_is_featured')->nullable();
             $table->string('opening_time')->nullable();
             $table->string('closing_time')->nullable();
+            $table->double('subscription_type')->nullable();
+            $table->double('package_id')->nullable();
             $table->double('admin_commi_percent')->nullable();
             $table->double('admin_commi_amount')->nullable();
             $table->double('delivery_charge')->nullable();
@@ -152,6 +154,9 @@ return new class extends Migration
             $table->boolean('veg_status')->nullable();
             $table->string('off_day')->nullable();
             $table->boolean('enable_saling');
+            $table->string('meta_title')->nullable();
+            $table->string('meta_description')->nullable();
+            $table->string('meta_image')->nullable();
             $table->string('status');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
