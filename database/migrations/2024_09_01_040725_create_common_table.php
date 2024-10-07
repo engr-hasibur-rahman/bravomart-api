@@ -114,10 +114,11 @@ return new class extends Migration
         //     $table->timestamps();
         // });
 
+        //https://github.com/grimzy/laravel-mysql-spatial
         Schema::create('com_areas', function (Blueprint $table) {
             $table->id();
             $table->string('name'); 
-            $table->polygon('coordinates')->nullable();
+            $table->string('coordinates')->nullable();
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
@@ -127,30 +128,31 @@ return new class extends Migration
         Schema::create('com_shops', function (Blueprint $table) {
             $table->id();
             $table->string('area_id'); 
-            $table->string('shop_type');
+            $table->string('shop_type')->nullable();
             $table->string('shop_name');
-            $table->string('shop_phone');
-            $table->string('shop_email');
-            $table->string('shop_logo');
-            $table->string('shop_banner');
-            $table->string('shop_address');
-            $table->string('shop_latitude');
-            $table->string('shop_longitude');
+            $table->string('shop_phone')->nullable();
+            $table->string('shop_email')->nullable();
+            $table->string('shop_logo')->nullable();
+            $table->string('shop_banner')->nullable();
+            $table->string('shop_address')->nullable();
+            $table->string('shop_latitude')->nullable();
+            $table->string('shop_longitude')->nullable();
             $table->string('shop_slug');
-            $table->string('shop_vat_tax_number');
-            $table->boolean('shop_is_featured');
-            $table->string('opening_time');
-            $table->string('closing_time');
-            $table->string('admin_commi_percent');
-            $table->string('admin_commi_amount');
-            $table->string('delivery_charge');
-            $table->string('delivery_time');
-            $table->string('delivery_self_system');
-            $table->string('delivery_take_away');
-            $table->string('order_minimum');
-            $table->string('veg_status');
-
-            $table->boolean('status')->default(1);
+            $table->string('shop_vat_tax_number')->nullable();
+            $table->boolean('shop_is_featured')->nullable();
+            $table->string('opening_time')->nullable();
+            $table->string('closing_time')->nullable();
+            $table->double('admin_commi_percent')->nullable();
+            $table->double('admin_commi_amount')->nullable();
+            $table->double('delivery_charge')->nullable();
+            $table->string('delivery_time')->nullable();
+            $table->boolean('delivery_self_system')->nullable();
+            $table->boolean('delivery_take_away')->nullable();
+            $table->double('order_minimum')->nullable();
+            $table->boolean('veg_status')->nullable();
+            $table->string('off_day')->nullable();
+            $table->boolean('enable_saling');
+            $table->string('status');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
