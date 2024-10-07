@@ -114,11 +114,11 @@ return new class extends Migration
         //     $table->timestamps();
         // });
 
-        //https://github.com/grimzy/laravel-mysql-spatial
+        //https://github.com/MatanYadaev/laravel-eloquent-spatial
         Schema::create('com_areas', function (Blueprint $table) {
             $table->id();
             $table->string('name'); 
-            $table->string('coordinates')->nullable();
+            $table->geometry('coordinates', subtype: 'polygon')->nullable();
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
