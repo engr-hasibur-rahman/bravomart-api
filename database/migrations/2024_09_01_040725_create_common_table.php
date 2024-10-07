@@ -113,6 +113,48 @@ return new class extends Migration
         //     $table->unsignedBigInteger('updated_by')->nullable();
         //     $table->timestamps();
         // });
+
+        Schema::create('com_areas', function (Blueprint $table) {
+            $table->id();
+            $table->string('name'); 
+            $table->polygon('coordinates')->nullable();
+            $table->boolean('status')->default(1);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->timestamps();
+        });        
+
+        Schema::create('com_shops', function (Blueprint $table) {
+            $table->id();
+            $table->string('area_id'); 
+            $table->string('shop_type');
+            $table->string('shop_name');
+            $table->string('shop_phone');
+            $table->string('shop_email');
+            $table->string('shop_logo');
+            $table->string('shop_banner');
+            $table->string('shop_address');
+            $table->string('shop_latitude');
+            $table->string('shop_longitude');
+            $table->string('shop_slug');
+            $table->string('shop_vat_tax_number');
+            $table->boolean('shop_is_featured');
+            $table->string('opening_time');
+            $table->string('closing_time');
+            $table->string('admin_commi_percent');
+            $table->string('admin_commi_amount');
+            $table->string('delivery_charge');
+            $table->string('delivery_time');
+            $table->string('delivery_self_system');
+            $table->string('delivery_take_away');
+            $table->string('order_minimum');
+            $table->string('veg_status');
+
+            $table->boolean('status')->default(1);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->timestamps();
+        });        
     }
 
     /**
