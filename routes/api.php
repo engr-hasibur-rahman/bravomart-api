@@ -47,6 +47,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('me', [UserController::class, 'me']);
 
     Route::apiResource('/staff', StaffController::class);
+    Route::get('staff/{id}', [StaffController::class, 'show']);
 
     // Route::get('/permissions', PermissionController::class);
     Route::get('permissions', [PermissionController::class, 'index']);

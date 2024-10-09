@@ -58,7 +58,7 @@ return new class extends Migration
             $table->string('category_cover_image')->nullable();
             $table->string('meta_title');
             $table->text('meta_description');
-            $table->integer('display_order');
+            $table->integer('display_order')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->boolean('status')->default(1);
