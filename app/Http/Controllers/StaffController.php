@@ -69,12 +69,7 @@ class StaffController extends Controller
      */
     public function show(string $id)
     {
-        $category = $this->repository->with(['translations'])->findOrFail($id);
-        if ($category) {
-            return new UserResource($category);
-        }
-
-        return response()->json(['error' => 'Product Brand not found'], 404);
+        return QueryBuilder::for(User::class)->findOrFail($id);
     }
 
     /**

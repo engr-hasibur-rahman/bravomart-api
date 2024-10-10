@@ -29,7 +29,7 @@ class CreateUserCommand extends Command
 
                 // Manually validate the email input
                 do {
-                    $email = text(label: 'Enter admin email', required: 'Admin Email is required',default:'admin@bivasoft.com');
+                    $email = text(label: 'Enter admin email', required: 'Admin Email is required',default:'admin@gmail.com');
                     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         info('Invalid email address format. Please enter a valid email.');
                     } else {

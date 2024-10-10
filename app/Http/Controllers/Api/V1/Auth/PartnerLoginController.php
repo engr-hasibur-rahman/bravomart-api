@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class PartnerLoginController extends Controller
 {
@@ -41,9 +42,16 @@ class PartnerLoginController extends Controller
         }
         $email_verified = $user->hasVerifiedEmail();
 
+        $rolse = json_decode($user->perm_roles);
+        $permissions = Role::whereIn('name', $rolse)->with('permissions')->get();
+        $user_permissions = [];
+        foreach($permissions as $permission) {
+            $user_permissions[] = $permission->permissions->pluck('module');
+        }
+
         return [
             "token" => $user->createToken('auth_token')->plainTextToken,
-            "permissions" => $user->getPermissionNames(),
+            "permissions" => $user_permissions,
             "email_verified" => $email_verified,
             "role" => $user->getRoleNames()->first()
         ];
