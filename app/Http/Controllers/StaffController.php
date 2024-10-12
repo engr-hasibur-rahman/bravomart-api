@@ -50,9 +50,11 @@ class StaffController extends Controller
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
         $user = $this->repository->create([
-            'name'     => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
+            'perm_roles' => $request->roles
         ]);
 
         $user->assignRole($roles);
