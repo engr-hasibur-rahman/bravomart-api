@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::apiResource('/staff', StaffController::class);
     Route::get('staff/{id}', [StaffController::class, 'show']);
+    Route::post('staff/status', [StaffController::class, 'update']);
 
     // Route::get('/permissions', PermissionController::class);
     Route::get('permissions', [PermissionController::class, 'index']);

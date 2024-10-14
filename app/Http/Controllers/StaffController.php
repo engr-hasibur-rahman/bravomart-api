@@ -99,12 +99,13 @@ class StaffController extends Controller
         }
 
         $user = User::findOrFail($id);
+        //$user = User::find($id);
         $user->first_name =$request->first_name;
         $user->last_name = $request->last_name;
         $user->email    = $request->email;
         $user->password = Hash::make($request->password);
         $user->save();
-
+        DB::table('model_has_roles')->where('model_id',$id)->delete();
         $user->assignRole($roles);
 
         return $user;
