@@ -25,7 +25,7 @@ class User extends Authenticatable
         'email',
         'activity_scope',
         'password',
-        'perm_roles',
+        //'perm_roles',
     ];
 
 

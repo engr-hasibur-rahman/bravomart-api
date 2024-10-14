@@ -54,7 +54,7 @@ class StaffController extends Controller
             'last_name' => $request->last_name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'perm_roles' => $request->roles
+            //'perm_roles' => $request->roles
         ]);
 
         $user->assignRole($roles);
@@ -71,7 +71,13 @@ class StaffController extends Controller
      */
     public function show(string $id)
     {
-        return QueryBuilder::for(User::class)->findOrFail($id);
+        return QueryBuilder::for(User::class)->with(['permissions'])->findOrFail($id);
+        /*return [
+            QueryBuilder::for(User::class)->findOrFail($id),
+            "permissions" => $this->repository->getPermissionNames(),
+            "role" => $this->repository->getRoleNames()->first(),
+            "Test"=>$this->repository->getAllPermissions()
+        ];*/
     }
 
     /**
@@ -85,9 +91,23 @@ class StaffController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserCreateRequest $request, string $id)
     {
-        //
+        $roles = [UserRole::CUSTOMER];
+        if (isset($request->roles)) {
+            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+        }
+
+        $user = User::findOrFail($id);
+        $user->first_name =$request->first_name;
+        $user->last_name = $request->last_name;
+        $user->email    = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        $user->assignRole($roles);
+
+        return $user;
     }
 
     /**
