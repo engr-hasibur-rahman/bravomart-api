@@ -72,7 +72,6 @@ class CreateUserCommand extends Command
                     'first_name'  =>  $first_name,
                     'email' =>  $email,
                     'activity_scope' =>  'ADMIN_AREA',
-                    'perm_roles' =>  json_encode(Array('super_admin','store_owner')),
                     'password' =>  Hash::make($password),
                 ]);
                 $user->email_verified_at = now()->timestamp;

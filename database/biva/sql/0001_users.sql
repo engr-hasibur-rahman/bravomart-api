@@ -8,7 +8,6 @@ INSERT INTO `users` (
         `email_verified_at`,
         `password`,
         `remember_token`,
-        `perm_roles`,
         `created_at`,
         `updated_at`,
         `is_active`
@@ -20,7 +19,6 @@ VALUES (
         'SHOP_AREA',
         NULL,
         '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
-        NULL,
         NULL,
         '2021-06-27 04:13:00',
         '2023-10-02 06:53:37',
@@ -34,7 +32,6 @@ VALUES (
         NULL,
         '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
         NULL,
-        NULL,
         '2021-08-18 10:30:29',
         '2021-08-18 13:17:53',
         1
@@ -46,7 +43,6 @@ VALUES (
         'KITCHEN_AREA',
         NULL,
         '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
-        NULL,
         NULL,
         '2021-08-18 10:30:29',
         '2021-08-18 13:17:53',
@@ -60,7 +56,6 @@ VALUES (
         NULL,
         '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
         NULL,
-        NULL,
         '2022-03-17 14:15:08',
         '2022-03-17 14:15:08',
         1
@@ -73,7 +68,6 @@ VALUES (
         NULL,
         '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
         NULL,
-        NULL,
         '2022-03-17 16:25:39',
         '2022-03-17 16:25:39',
         1
@@ -85,7 +79,6 @@ VALUES (
         'FITTING_AREA',
         NULL,
         '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
-        NULL,
         NULL,
         '2022-03-17 16:25:39',
         '2022-03-17 16:25:39',

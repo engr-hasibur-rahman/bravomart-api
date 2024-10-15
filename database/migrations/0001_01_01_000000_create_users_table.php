@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('user_image')->nullable();
             $table->string('def_lang')->nullable();
             $table->string('cm_firebase_token')->nullable();
-            $table->string('perm_roles')->nullable();
             $table->timestamps();
             $table->boolean('is_active')->default(1);
         });

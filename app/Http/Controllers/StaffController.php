@@ -120,6 +120,7 @@ class StaffController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
         //DB::table('model_has_roles')->where('model_id',$id)->delete();
+        //$user->removeRole(roles);
         $user->syncRoles($roles);
         //$user->assignRole($roles);
 
