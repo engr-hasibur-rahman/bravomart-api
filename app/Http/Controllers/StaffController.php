@@ -53,6 +53,7 @@ class StaffController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email'    => $request->email,
+            'phone'    => $request->phone,
             'password' => Hash::make($request->password),
             //'perm_roles' => $request->roles
         ]);
@@ -115,6 +116,7 @@ class StaffController extends Controller
         $user->first_name =$request->first_name;
         $user->last_name = $request->last_name;
         $user->email    = $request->email;
+        $user->phone    = $request->phone;
         $user->password = Hash::make($request->password);
         $user->save();
         DB::table('model_has_roles')->where('model_id',$id)->delete();
