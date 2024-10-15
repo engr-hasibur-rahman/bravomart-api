@@ -70,14 +70,26 @@ class StaffController extends Controller
      * Display the specified resource.
      */
     public function show(string $id)
-    {
-        return QueryBuilder::for(User::class)->with(['permissions'])->findOrFail($id);
-        /*return [
-            QueryBuilder::for(User::class)->findOrFail($id),
-            "permissions" => $this->repository->getPermissionNames(),
-            "role" => $this->repository->getRoleNames()->first(),
-            "Test"=>$this->repository->getAllPermissions()
-        ];*/
+    {     
+     
+
+        // return QueryBuilder::for(User::class)->with(['permissions'])->findOrFail($id);
+
+        $user = User::with('permissions')->findOrFail($id);
+        return new UserResource($user);
+        // return [
+        //     "permissions" => $user->getPermissionNames(),
+        //     "role" => $user->getRoleNames()->first()
+        // ];
+
+
+        // return [
+        //     "user" => new UserResource($user),
+        //     //QueryBuilder::for(User::class)->findOrFail($id),
+        //     "permissions" => $this->repository->getPermissionNames(),
+        //     "role" => $this->repository->getRoleNames(),
+        //     "Test"=>$this->repository->getAllPermissions(),
+        // ];
     }
 
     /**
