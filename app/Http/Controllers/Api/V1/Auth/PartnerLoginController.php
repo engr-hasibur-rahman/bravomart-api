@@ -43,17 +43,19 @@ class PartnerLoginController extends Controller
         $email_verified = $user->hasVerifiedEmail();
 
         $rolse = json_decode($user->perm_roles);
-        $permissions = Role::whereIn('name', $rolse)->with('permissions')->get();
-        $user_permissions = [];
-        foreach($permissions as $permission) {
-            $user_permissions[] = $permission->permissions->pluck('module');
-        }
+        //$permissions = Role::whereIn('name', $rolse)->with('permissions')->get();
+        $permissions = [];
+        $permissions = $user->permissions->pluck('name')->toArray();
 
+        foreach ($user->roles as $role) {
+            $permissions = array_merge($permissions, $role->permissions->pluck('name')->toArray());
+        }
+                
         return [
             "token" => $user->createToken('auth_token')->plainTextToken,
-            "permissions" => $user_permissions,
+            "permissions" => $permissions,
             "email_verified" => $email_verified,
-            "role" => $user->getRoleNames()->first()
+            "role" => $user->getRoleNames()
         ];
     }
 

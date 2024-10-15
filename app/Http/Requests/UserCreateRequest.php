@@ -27,7 +27,9 @@ class UserCreateRequest extends FormRequest
     {
         return [
             'first_name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'unique:users'],
+            //'email' => ['required', 'email', \Illuminate\Validation\Rule::unique('users')->ignore($this->user()->id)],
+            //'email'    => ['required', 'email', 'unique:users'],
+            'email' => 'required|email|unique:users,email,' . $this->id,
             'password' => ['required', 'string']
         ];
     }
