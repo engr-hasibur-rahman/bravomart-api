@@ -96,9 +96,18 @@ class StaffController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function changestatus(int $id,int $is_active)
     {
-        //
+        $roles = null;
+        if (isset($request->roles)) {
+            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+        }
+       
+        $user = User::findOrFail($id);
+        $user->is_active =$is_active;
+        $user->save();
+
+        return $user;
     }
 
     /**
