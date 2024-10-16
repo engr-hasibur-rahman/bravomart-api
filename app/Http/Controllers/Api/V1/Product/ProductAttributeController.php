@@ -9,6 +9,7 @@ use App\Repositories\ProductAttributeRepository;
 use App\Models\ProductAttribute;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Support\Facades\DB;
 
 class ProductAttributeController extends Controller
 {
@@ -35,7 +36,8 @@ class ProductAttributeController extends Controller
                 ->where('translations.language', '=', $language)
                 ->where('translations.key', '=', 'attribute_name');
         })
-            ->select('product_attributes.*', DB::raw('COALESCE(translations.value, product_attributes.attribute_name) as attribute_name'));
+            ->select('product_attributes.*', 
+            DB::raw('COALESCE(translations.value, product_attributes.attribute_name) as attribute_name'));
 
         // Apply search filter if search parameter exists
         if ($search) {
