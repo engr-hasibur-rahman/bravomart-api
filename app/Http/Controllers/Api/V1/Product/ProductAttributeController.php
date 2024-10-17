@@ -63,8 +63,10 @@ class ProductAttributeController extends Controller
             $brand = $this->repository->storeProductAttribute($request);
 
             return response()->json([
-                'success' => 'Success'
-            ]);
+                'success' => true,
+                'message' => 'Product Attribute Added Successfully',
+            ]);   
+
         } catch (\Exception $e) {
             throw new \RuntimeException('Could not create the product Attribute.');
         }
@@ -97,15 +99,33 @@ class ProductAttributeController extends Controller
             throw new \RuntimeException('Could not create the product Attribute.'.$e);
         }        
     }
-
+    
+    public function status_update(Request $request)
+    {
+        $attribute = ProductAttribute::findOrFail($request->id);
+        $data_name =$attribute->attribute_name;
+        $attribute->status = !$attribute->status;
+        $attribute->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Product Attribute: '.$data_name.' status updated successfully',
+            'status' => $attribute->status
+        ]);
+    }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
         $attribute = ProductAttribute::findOrFail($id);
+        $data_name =$attribute->attribute_name;
+        $attribute->translations()->delete();
         $attribute->delete();
 
-        return response()->json('Attribute deleted');
+        return response()->json([
+            'success' => true,
+            'message' => 'Product Attribute: '.$data_name.' Removed from Database!',
+            'status' => $attribute->status
+        ],200);
     }
 }
