@@ -18,6 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
         },        
     )
     ->withMiddleware(function (Middleware $middleware) {
+
+        // $middleware->web(append:[
+        //     \App\Http\Middleware\LocaleMiddleware::class,
+        // ]);
+        $middleware->append(\App\Http\Middleware\LocaleMiddleware::class);
+
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,

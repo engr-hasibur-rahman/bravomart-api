@@ -36,6 +36,7 @@
         },
         "files": [
             "app/Helpers/PermissionHelpers.php",
+            "app/Helpers/ComHelper.php",
             "app/helpers.php"
         ]
     },

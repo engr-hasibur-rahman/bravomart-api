@@ -62,10 +62,10 @@ class ProductAttributeController extends Controller
         try {
             $brand = $this->repository->storeProductAttribute($request);
 
-            return $this->success(translate('Product Attribute Added Successfully'));
+            return $this->success(translate('message.save_success'));
 
         } catch (\Exception $e) {
-            return $this->failed(translate('Could not create the product Attribute.'));
+            return $this->failed(translate('message.Could not create the product Attribute.'));
         }
     }
 

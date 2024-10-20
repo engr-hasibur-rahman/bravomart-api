@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 
-class CommonHelper
+class ComHelper
 {
 
     public static function remove_invalid_charcaters($str)
