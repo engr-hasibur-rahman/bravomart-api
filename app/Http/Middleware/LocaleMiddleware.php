@@ -18,7 +18,9 @@ class LocaleMiddleware
     {
         //$locale = Session::get('locale') ?? 'en';
         $locale = $request->header('X-localization') ?? 'en';
-        //$locale='ar';
+        //$defaultLocale = 'en';
+        //$locale = ($request->hasHeader('X-localization')) ? $request->header('X-localization') : $defaultLocale;
+
         App::setLocale($locale);
         return $next($request);
     }
