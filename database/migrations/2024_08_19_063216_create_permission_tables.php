@@ -31,6 +31,8 @@ return new class extends Migration
             $table->string('available_for')->default(RoleType::SUPER_ADMIN); 
             $table->string('name');       // For MyISAM use string('name', 225); // (or 166 for InnoDB with Redundant/Compact row format)
             $table->string('guard_name'); // For MyISAM use string('guard_name', 25);
+            $table->string('module_title')->nullable();
+            $table->string('perm_title')->nullable();
             $table->timestamps();
 
             $table->unique(['name', 'guard_name']);
