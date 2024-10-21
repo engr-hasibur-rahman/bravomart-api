@@ -86,7 +86,7 @@ class ProductAttributeController extends Controller
 
         try {
 
-            $attribute = $this->repository->storeProductAttribute($request,$id);
+            $attribute = $this->repository->storeProductAttribute($request);
 
             return $this->success(translate('messages.update_success', ['name' => $attribute->attribute_name]));
 
@@ -110,9 +110,9 @@ class ProductAttributeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request,string $id)
     {
-        $attribute = ProductAttribute::findOrFail($id);
+        $attribute = ProductAttribute::findOrFail($request->id);
         $data_name =$attribute->attribute_name;
         $attribute->translations()->delete();
         $attribute->delete();

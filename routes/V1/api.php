@@ -78,6 +78,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('product/attribute/add', [ProductAttributeController::class, 'store']);
         Route::post('product/attribute/update/{id}', [ProductAttributeController::class, 'update']);
         Route::post('product/attribute/status/{id}', [ProductAttributeController::class, 'status_update']);
-        Route::get('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
+        Route::post('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
     });
 });
