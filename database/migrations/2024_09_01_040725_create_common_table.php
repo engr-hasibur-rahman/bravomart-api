@@ -125,21 +125,21 @@ return new class extends Migration
             $table->timestamps();
         });        
 
-        Schema::create('com_shops', function (Blueprint $table) {
+        Schema::create('com_stores', function (Blueprint $table) {
             $table->id();
             $table->string('area_id'); 
-            $table->string('shop_type')->nullable();
-            $table->string('shop_name');
-            $table->string('shop_phone')->nullable();
-            $table->string('shop_email')->nullable();
-            $table->string('shop_logo')->nullable();
-            $table->string('shop_banner')->nullable();
-            $table->string('shop_address')->nullable();
-            $table->string('shop_latitude')->nullable();
-            $table->string('shop_longitude')->nullable();
-            $table->string('shop_slug');
-            $table->string('shop_vat_tax_number')->nullable();
-            $table->boolean('shop_is_featured')->nullable();
+            $table->string('type')->nullable();
+            $table->string('name');
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->string('logo')->nullable();
+            $table->string('banner')->nullable();
+            $table->string('address')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->string('slug');
+            $table->string('vat_tax_number')->nullable();
+            $table->boolean('is_featured')->nullable();
             $table->string('opening_time')->nullable();
             $table->string('closing_time')->nullable();
             $table->double('subscription_type')->nullable();
