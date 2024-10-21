@@ -104,7 +104,8 @@ class StaffController extends Controller
         }
        
         $user = User::findOrFail($id);
-        $user->is_active =$is_active;
+        //$user->is_active =$is_active;
+        $user->is_active = !$user->is_active;
         $user->save();
 
         return $user;
