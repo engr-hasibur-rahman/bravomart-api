@@ -14,11 +14,11 @@ INSERT INTO `users` (
     )
 VALUES (
         1,
-        'Store Owner',
-        'vendor@demo.com',
+        'Shop Owner',
+        'owner@shop.com',
         'SHOP_AREA',
         NULL,
-        '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
+        '$2y$12$2d9OwXdotMjLabK6fUn8T.W7iSHekzxzdvbPL4rq9IaPFcBuXEGVy',
         NULL,
         '2021-06-27 04:13:00',
         '2023-10-02 06:53:37',
