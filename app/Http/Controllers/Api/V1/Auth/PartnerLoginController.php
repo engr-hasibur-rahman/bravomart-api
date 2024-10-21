@@ -38,7 +38,7 @@ class PartnerLoginController extends Controller
         $user = User::where('email', $request->email)->where('activity_scope', 'STORE_AREA')->where('is_active', true)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return ["token" => null, "permissions" => []];
+            return ["success" => false,"token" => null, "permissions" => []];
         }
         $email_verified = $user->hasVerifiedEmail();
 
@@ -52,6 +52,7 @@ class PartnerLoginController extends Controller
         }
                 
         return [
+            "success" => true,
             "token" => $user->createToken('auth_token')->plainTextToken,
             "permissions" => $permissions,
             "email_verified" => $email_verified,
