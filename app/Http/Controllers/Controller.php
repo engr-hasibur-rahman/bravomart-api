@@ -21,7 +21,7 @@ class Controller extends BaseController
         ],$status_code);
     }
 
-    public function failed($message,$status_code=403)
+    public function failed($message,$status_code=200)
     {
         return response()->json([
             'success' => false,

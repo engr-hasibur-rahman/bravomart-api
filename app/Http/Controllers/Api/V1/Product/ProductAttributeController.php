@@ -65,7 +65,7 @@ class ProductAttributeController extends Controller
             return $this->success(translate('messages.save_success', ['name' => $attribute->attribute_name]));
 
         } catch (\Exception $e) {
-            return $this->failed(translate('message.Could not create the product Attribute.'));
+            return $this->failed(translate('messages.save_failed', ['name' => 'Product Attribute']));
         }
     }
 
@@ -91,7 +91,7 @@ class ProductAttributeController extends Controller
             return $this->success(translate('messages.update_success', ['name' => $attribute->attribute_name]));
 
         } catch (\Exception $e) {
-            throw new \RuntimeException('Could not create the product Attribute.'.$e);
+            return $this->failed(translate('messages.update_failed', ['name' => 'Product Attribute']));
         }        
     }
     
@@ -103,7 +103,7 @@ class ProductAttributeController extends Controller
         $attribute->save();
         return response()->json([
             'success' => true,
-            'message' => 'Product Attribute: '.$data_name.' status updated successfully',
+            'message' => 'Product Attribute: '.$data_name.' status Changed successfully',
             'status' => $attribute->status
         ]);
     }
@@ -117,10 +117,6 @@ class ProductAttributeController extends Controller
         $attribute->translations()->delete();
         $attribute->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Product Attribute: '.$data_name.' Removed from Database!',
-            'status' => $attribute->status
-        ],200);
+        return $this->success(translate('messages.delete_success', ['name' => $data_name]));
     }
 }
