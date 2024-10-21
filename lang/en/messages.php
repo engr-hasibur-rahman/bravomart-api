@@ -3,7 +3,8 @@
 // lang/en/messages.php
  
 return [
-    'save_success' => 'Product Attribute Added Successfully!',
+    'save_success' => ':name Added Successfully!',
+    'update_success' => ':name Updated Successfully!',
 ];
 
 

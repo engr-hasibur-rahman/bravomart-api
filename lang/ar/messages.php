@@ -3,7 +3,7 @@
 // lang/en/messages.php
  
 return [
-    'save_success' => 'تمت إضافة سمات المنتج بنجاح',
+    'save_success' => ':name النجاح بمساعدة!',
 ];
 
 

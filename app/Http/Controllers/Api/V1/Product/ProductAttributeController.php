@@ -60,9 +60,9 @@ class ProductAttributeController extends Controller
     public function store(ProductAttributeRequest $request)
     {
         try {
-            $brand = $this->repository->storeProductAttribute($request);
+            $attribute = $this->repository->storeProductAttribute($request);
 
-            return $this->success(translate('messages.save_success'));
+            return $this->success(translate('messages.save_success', ['name' => $attribute->attribute_name]));
 
         } catch (\Exception $e) {
             return $this->failed(translate('message.Could not create the product Attribute.'));
@@ -85,12 +85,10 @@ class ProductAttributeController extends Controller
     {
 
         try {
-            $brand = $this->repository->storeProductAttribute($request,$id);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Product Attribute updated successfully',
-            ]);      
+            $attribute = $this->repository->storeProductAttribute($request,$id);
+
+            return $this->success(translate('messages.update_success', ['name' => $attribute->attribute_name]));
 
         } catch (\Exception $e) {
             throw new \RuntimeException('Could not create the product Attribute.'.$e);
