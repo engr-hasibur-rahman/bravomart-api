@@ -25,8 +25,9 @@ return new class extends Migration
             $table->string('user_image')->nullable();
             $table->string('def_lang')->nullable();
             $table->string('cm_firebase_token')->nullable();
-            $table->timestamps();
             $table->boolean('is_active')->default(1);
+            $table->boolean('store_owner')->default(0);
+            $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

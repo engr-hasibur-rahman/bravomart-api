@@ -48,6 +48,42 @@ class UserController extends Controller
         ];
     }
 
+       /**
+     * Store a newly created resource in storage.
+     */
+    public function StoreOwnerRegistration(UserCreateRequest $request)
+    {
+        $notAllowedRoles = [UserRole::STORE_OWNER];
+        if ((isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) || (isset($request->roles) && in_array($request->roles, $notAllowedRoles))) {
+            throw new AuthorizationException(NOT_AUTHORIZED);
+        }
+        $roles = [UserRole::CUSTOMER];
+        if (isset($request->roles)) {
+            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+        }
+        $user = $this->repository->create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email'    => $request->email,
+            'phone'    => $request->phone,
+            'password' => Hash::make($request->password),
+            'activity_scope'    => 'STORE_AREA',
+            'store_owner'    => 1,
+        ]);
+
+        $user->assignRole($roles);
+
+        return [
+            'success' => true,
+            "token" => $user->createToken('auth_token')->plainTextToken,
+            "user" => $user,
+            "permissions" => $user->getPermissionNames(),
+            "role" => $user->getRoleNames(),
+            "next_stage" => "2" // Just completed stage 1, Now go to Store Information. 
+            //"role" => $user->getRoleNames()->first()
+        ];
+    }
+
     public function me(Request $request)
     {
         return new UserResource(auth()->user());

@@ -31,6 +31,7 @@ class UserResource extends JsonResource
             'permissions' => $permissions,
             'roles' => $this->roles->pluck('name'),
             'is_active' => $this->is_active,
+            'store_owner' => $this->store_owner,
         ];
     }
 }

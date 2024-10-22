@@ -125,9 +125,25 @@ return new class extends Migration
             $table->timestamps();
         });        
 
+        Schema::create('com_merchant', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+            $table->double('rating'); 
+            $table->integer('num_of_reviews'); 
+            $table->integer('num_of_sale'); 
+            $table->boolean('status')->default(1);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->timestamps();
+        });  
+
         Schema::create('com_stores', function (Blueprint $table) {
             $table->id();
-            $table->string('area_id'); 
+            $table->unsignedBigInteger('area_id')->nullable();
+            $table->foreign('area_id')->references('id')->on('com_areas')->nullOnDelete();
+            $table->unsignedBigInteger('merchant_id')->nullable();
+            $table->foreign('merchant_id')->references('id')->on('com_merchant');
             $table->string('type')->nullable();
             $table->string('name');
             $table->string('phone')->nullable();
@@ -175,5 +191,6 @@ return new class extends Migration
         Schema::dropIfExists('product_brand');
         Schema::dropIfExists('product_category');
         Schema::dropIfExists('product_attributes');
+        Schema::dropIfExists('com_stores');
     }
 };
