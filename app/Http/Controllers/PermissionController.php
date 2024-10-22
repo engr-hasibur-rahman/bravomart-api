@@ -37,7 +37,6 @@ class PermissionController extends Controller
     }
 
 
-
     public function permissionForStoreOwner(Request $request)
     {
         $permission = Permission::findOrFail($request->id);
