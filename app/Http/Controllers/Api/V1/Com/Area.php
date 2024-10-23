@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProductAttributeRequest;
-use App\Http\Resources\ProductAttributeResource;
+use App\Http\Requests\AreaCreateRequest;
+use App\Http\Resources\ComAreaResource;
 use App\Repositories\ComAreaRepository;
 use App\Models\ComArea;
 use Illuminate\Http\Request;
@@ -49,13 +49,13 @@ class AreaController extends Controller
         $attributes = $attributes->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')->paginate($limit);
 
         // Return a collection of ProductBrandResource (including the image)
-        return ProductAttributeResource::collection($attributes);
+        return ComAreaResource::collection($attributes);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProductAttributeRequest $request)
+    public function store(AreaCreateRequest $request)
     {
         try {
             $attribute = $this->repository->storeProductAttribute($request);
@@ -79,7 +79,7 @@ class AreaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductAttributeRequest $request, string $id='')
+    public function update(AreaCreateRequest $request, string $id='')
     {
 
         try {

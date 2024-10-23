@@ -117,6 +117,7 @@ return new class extends Migration
         //https://github.com/MatanYadaev/laravel-eloquent-spatial
         Schema::create('com_areas', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->nullable(); 
             $table->string('name'); 
             $table->geometry('coordinates', subtype: 'polygon')->nullable();
             $table->boolean('status')->default(1);

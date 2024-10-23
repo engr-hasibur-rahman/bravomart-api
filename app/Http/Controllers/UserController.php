@@ -54,10 +54,6 @@ class UserController extends Controller
      */
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
-        $notAllowedRoles = [UserRole::SUPER_ADMIN];
-        if ((isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) || (isset($request->roles) && in_array($request->roles, $notAllowedRoles))) {
-            throw new AuthorizationException(NOT_AUTHORIZED);
-        }
         $roles = [UserRole::STORE_OWNER];
         // if (isset($request->roles)) {
         //     $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
