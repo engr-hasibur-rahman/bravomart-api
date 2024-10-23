@@ -7,6 +7,7 @@ use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\ComMerchant;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -42,8 +43,7 @@ class PartnerLoginController extends Controller
         }
         $email_verified = $user->hasVerifiedEmail();
 
-        $rolse = json_decode($user->perm_roles);
-        //$permissions = Role::whereIn('name', $rolse)->with('permissions')->get();
+        $merchant = ComMerchant::where('user_id',$user->id)->first();
         $permissions = [];
         $permissions = $user->permissions->pluck('name')->toArray();
 
@@ -56,6 +56,7 @@ class PartnerLoginController extends Controller
             "token" => $user->createToken('auth_token')->plainTextToken,
             "permissions" => $permissions,
             "email_verified" => $email_verified,
+            "merchant_id" => $merchant->id,
             "role" => $user->getRoleNames()
         ];
     }

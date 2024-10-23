@@ -129,9 +129,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
-            $table->double('rating'); 
-            $table->integer('num_of_reviews'); 
-            $table->integer('num_of_sale'); 
+            $table->double('rating')->nullable(); 
+            $table->integer('num_of_reviews')->nullable(); 
+            $table->integer('num_of_sale')->nullable(); 
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();

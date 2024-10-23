@@ -7,6 +7,7 @@ use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\ComMerchant;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Exception;
@@ -72,6 +73,11 @@ class UserController extends Controller
         ]);
 
         $user->assignRole($roles);
+
+
+        ComMerchant::updateOrInsert([
+            'user_id' => $user->id,
+        ]);        
 
         return [
             'success' => true,
