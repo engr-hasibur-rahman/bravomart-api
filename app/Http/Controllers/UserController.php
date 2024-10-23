@@ -54,14 +54,14 @@ class UserController extends Controller
      */
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
-        $notAllowedRoles = [UserRole::STORE_OWNER];
+        $notAllowedRoles = [UserRole::SUPER_ADMIN];
         if ((isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) || (isset($request->roles) && in_array($request->roles, $notAllowedRoles))) {
             throw new AuthorizationException(NOT_AUTHORIZED);
         }
-        $roles = [UserRole::CUSTOMER];
-        if (isset($request->roles)) {
-            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
-        }
+        $roles = [UserRole::STORE_OWNER];
+        // if (isset($request->roles)) {
+        //     $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+        // }
         $user = $this->repository->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -82,7 +82,11 @@ class UserController extends Controller
         return [
             'success' => true,
             "token" => $user->createToken('auth_token')->plainTextToken,
-            "user" => $user,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email'    => $request->email,
+            'phone'    => $request->phone,
+            //"user" => $user,
             "permissions" => $user->getPermissionNames(),
             "role" => $user->getRoleNames(),
             "next_stage" => "2" // Just completed stage 1, Now go to Store Information. 

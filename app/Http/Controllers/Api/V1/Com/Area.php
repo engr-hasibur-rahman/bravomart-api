@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductAttributeRequest;
 use App\Http\Resources\ProductAttributeResource;
 use App\Repositories\ComAreaRepository;
-use App\Models\ProductAttribute;
+use App\Models\ComArea;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Support\Facades\DB;
@@ -24,14 +24,14 @@ class AreaController extends Controller
     public function index(Request $request)
     {
         $limit = $request->limit ?? 10;
-        $language = $request->language ?? DEFAULT_LANGUAGE;
+        $language = app()->getLocale() ?? DEFAULT_LANGUAGE;
         $search = $request->search;
 
         $limit = $request->limit ?? 10;
 
-        $attributes = ProductAttribute::leftJoin('translations', function ($join) use ($language) {
+        $attributes = ComArea::leftJoin('translations', function ($join) use ($language) {
             $join->on('com_areas.id', '=', 'translations.translatable_id')
-                ->where('translations.translatable_type', '=', ProductAttribute::class)
+                ->where('translations.translatable_type', '=', ComArea::class)
                 ->where('translations.language', '=', $language)
                 ->where('translations.key', '=', 'name');
         })
@@ -41,8 +41,7 @@ class AreaController extends Controller
         // Apply search filter if search parameter exists
         if ($search) {
             $attributes->where(function ($query) use ($search) {
-                $query->where('translations.value', 'like', "%{$search}%")
-                    ->orWhere('com_areas.name', 'like', "%{$search}%");
+                $query->where(DB::raw('concat(com_areas.name,translations.value)'), 'like', "%{$search}%");
             });
         }
 
@@ -73,7 +72,7 @@ class AreaController extends Controller
      */
     public function show(string $id)
     {
-        return QueryBuilder::for(ProductAttribute::class)
+        return QueryBuilder::for(ComArea::class)
             ->findOrFail($id);
     }
 
@@ -96,7 +95,7 @@ class AreaController extends Controller
     
     public function status_update(Request $request)
     {
-        $attribute = ProductAttribute::findOrFail($request->id);
+        $attribute = ComArea::findOrFail($request->id);
         $data_name =$attribute->attribute_name;
         $attribute->status = !$attribute->status;
         $attribute->save();
@@ -111,7 +110,7 @@ class AreaController extends Controller
      */
     public function destroy(Request $request,string $id)
     {
-        $attribute = ProductAttribute::findOrFail($request->id);
+        $attribute = ComArea::findOrFail($request->id);
         $data_name =$attribute->attribute_name;
         $attribute->translations()->delete();
         $attribute->delete();
