@@ -27,7 +27,7 @@ class AreaCreateRequest extends FormRequest
     {
         return [
             'name'     => ['required', 'string', 'max:255'],
-            'code' => 'required|unique:com_areas,code,' . $this->id
+            'code' => 'required|string|unique:com_areas,code,' . $this->id
         ];
     }
 
@@ -44,6 +44,7 @@ class AreaCreateRequest extends FormRequest
             'name.max:255'       => 'Name can not be more than 255 character',
 
             'code.required'     => 'email is required',
+            'code.string'        => 'Name is not a valid string',
             'code.max:255'       => 'Name can not be more than 255 character',
             'code.unique:com_areas' => 'email must be unique'
         ];
