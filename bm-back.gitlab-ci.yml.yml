@@ -1,10 +1,15 @@
-stages:
-  - deploy
+image: mwienk/docker-git-ftp
 
-deploy:
-  stage: deploy
-  image: mwienk/docker-lftp:latest
-  script:
-    - lftp -c "set ssl:verify-certificate no; set ftp:ssl-allow no; open -u $FTP_USER,$FTP_PASS $FTP_HOST; mirror -Rnev ./ $DIR_PATH --no-symlinks --ignore-time --parallel=10 --exclude-glob .git* --exclude .git/"
-  only:
-    - dewan_develop
+
+    deploy_all:
+      stage: deploy
+      script:
+        - git config git-ftp.url "ftp://192.168.88.225:23/"
+        - git config git-ftp.password "Topd868KLe5"
+        - git config git-ftp.user "bivamartftpuser"
+        - git ftp init
+        #- git ftp push  -m "Add new content"
+
+      only:
+        - develop
+
