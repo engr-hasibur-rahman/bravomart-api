@@ -5,10 +5,8 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
+use App\Http\Controllers\Api\V1\Com\AreaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -74,10 +72,17 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['middleware' => [getPermissionMiddleware('product-attribute')]], function () {
         Route::get('product/attribute/list', [ProductAttributeController::class, 'index']);
         Route::get('product/attribute/{id}', [ProductAttributeController::class, 'show']);
-
         Route::post('product/attribute/add', [ProductAttributeController::class, 'store']);
         Route::post('product/attribute/update/{id}', [ProductAttributeController::class, 'update']);
         Route::post('product/attribute/status/{id}', [ProductAttributeController::class, 'status_update']);
         Route::post('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
     });
+
+    Route::get('com/area/list', [AreaController::class, 'index']);
+    Route::get('com/area/{id}', [AreaController::class, 'show']);
+    Route::post('com/area/add', [AreaController::class, 'store']);
+    Route::put('com/area/update/{id}', [AreaController::class, 'update']);
+    Route::PUT('com/area/status/{id}', [AreaController::class, 'status_update']);
+    Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
+
 });

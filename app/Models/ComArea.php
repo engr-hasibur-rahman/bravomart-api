@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
 class ComArea extends Model
 {
@@ -12,6 +13,16 @@ class ComArea extends Model
     protected $table = 'com_areas';
 
     protected $guarded = [];
+
+    protected $fillable = [
+        'name',
+        'code',
+        'coordinates',
+    ];
+
+    protected $casts = [
+        'coordinates' => Polygon::class,
+    ];
 
     public function translations()
     {

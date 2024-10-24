@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AreaCreateRequest;
 use App\Http\Resources\ComAreaResource;
 use App\Repositories\ComAreaRepository;
+use App\Services\AreaService;
 use App\Models\ComArea;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class AreaController extends Controller
 {
     public function __construct(
-        public ComAreaRepository $repository
+        protected ComAreaRepository $repository,
     ) {}
 
 
@@ -28,7 +29,7 @@ class AreaController extends Controller
         $search = $request->search;
 
         $limit = $request->limit ?? 10;
-
+        //$model->getTable().
         $attributes = ComArea::leftJoin('translations', function ($join) use ($language) {
             $join->on('com_areas.id', '=', 'translations.translatable_id')
                 ->where('translations.translatable_type', '=', ComArea::class)
@@ -58,12 +59,13 @@ class AreaController extends Controller
     public function store(AreaCreateRequest $request)
     {
         try {
-            $attribute = $this->repository->storeProductAttribute($request);
+            $attribute = $this->repository->storeArea($request);
 
-            return $this->success(translate('messages.save_success', ['name' => $attribute->attribute_name]));
+            return $this->success(translate('messages.save_success', ['name' => $attribute->name]));
 
         } catch (\Exception $e) {
-            return $this->failed(translate('messages.save_failed', ['name' => 'Area']));
+            //return $this->failed(translate('messages.save_failed', ['name' => 'Area']));
+            return $e;
         }
     }
 
