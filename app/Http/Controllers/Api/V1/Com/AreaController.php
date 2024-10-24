@@ -64,8 +64,8 @@ class AreaController extends Controller
             return $this->success(translate('messages.save_success', ['name' => $attribute->name]));
 
         } catch (\Exception $e) {
-            //return $this->failed(translate('messages.save_failed', ['name' => 'Area']));
-            return $e;
+            return $this->failed(translate('messages.save_failed', ['name' => 'Area']));
+            //return $e;
         }
     }
 
