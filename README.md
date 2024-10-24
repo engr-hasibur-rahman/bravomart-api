@@ -33,3 +33,30 @@ sail up
 Connect database to local from docker if need. credentials are in .env file
 
 
+### Available command
+This command freshed migration and seed data seed file and .sql file (follow the instruction)
+
+```
+sail artisan biva:install
+
+or 
+
+php artisan biva:install
+```
+
+
+
+// permission doc
+
+/**
+ * *****************************************
+ * step-1 
+ * bind route "getPermissionMiddleware" method with a any name
+ * step- 2
+ * Assign permission in "config/middleware.php"
+ * step- 3
+ * Create permission in "app/Enums/Permission.php"
+ * step- 4
+ * seed this permission module wise in "database/seeders/PermissionSeeder.php"
+ * *****************************************
+ */
