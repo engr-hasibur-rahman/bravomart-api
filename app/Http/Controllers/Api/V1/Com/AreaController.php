@@ -29,6 +29,7 @@ class AreaController extends Controller
         $search = $request->search;
 
         $limit = $request->limit ?? 10;
+        
         //$model->getTable().
         $attributes = ComArea::leftJoin('translations', function ($join) use ($language) {
             $join->on('com_areas.id', '=', 'translations.translatable_id')
