@@ -66,8 +66,6 @@ class AreaController extends Controller
         } catch (\Exception $e) {
             return $this->failed(translate('messages.save_failed', ['name' => 'Area']));
             //return $e;
-            //Text Added
-            //This is The Big Cnahge
         }
     }
 
