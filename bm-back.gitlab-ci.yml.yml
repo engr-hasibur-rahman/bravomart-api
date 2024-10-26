@@ -20,7 +20,7 @@ deploy:
       - "*.htaccess"
       #- "src/**/*.ts"
       when: never
-
     - when: always    
+    
   only:
     - develop
