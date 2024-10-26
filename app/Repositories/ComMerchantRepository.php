@@ -14,7 +14,7 @@ use Shamim\DewanMultilangSlug\Facades\MultilangSlug;
  *
  * @package namespace App\Repositories;
  */
-class ProductCategoryRepository extends BaseRepository
+class ComMerchantRepository extends BaseRepository
 {
 
     public function model()

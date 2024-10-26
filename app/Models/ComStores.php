@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
+//use App\Models
 
-class ComMerchant extends Model
+class ComStores extends Model
 {
     use HasFactory, InteractsWithMedia;
 
@@ -14,10 +15,10 @@ class ComMerchant extends Model
 
     protected $guarded = [];
 
-    public function area()
-    {
-        return $this->belongsTo(ComAreas::class,'area_id');
-    }
+    // public function area()
+    // {
+    //     return $this->belongsTo(ComAreas::class,'area_id');
+    // }
 
     public function merchant()
     {
