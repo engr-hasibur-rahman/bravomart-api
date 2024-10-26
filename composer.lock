@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "60c18acb069a6f8675d4fdc7b23b11f8",
+    "content-hash": "925726fc20dda8173ecdcf2dfb32c516",
     "packages": [
         {
             "name": "archtechx/enums",
@@ -317,59 +317,6 @@
                 "source": "https://github.com/shamimdewan390/dewan-multilang-slug-generator/tree/v3.0.2"
             },
             "time": "2024-08-10T06:38:24+00:00"
-        },
-        {
-            "name": "dewan/dewan-sql-seeder",
-            "version": "v3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/shamimdewan390/dewan-sql-seeder.git",
-                "reference": "26b13aaa38a7c86be1d9fbfb3c511b862220b7cc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/shamimdewan390/dewan-sql-seeder/zipball/26b13aaa38a7c86be1d9fbfb3c511b862220b7cc",
-                "reference": "26b13aaa38a7c86be1d9fbfb3c511b862220b7cc",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.4"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Shamim\\DewanSqlSeeder\\DewanSqlSeederServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Shamim\\DewanSqlSeeder\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "shamim",
-                    "email": "shamimdewan343@gmail.com"
-                }
-            ],
-            "description": "laravel sql file seed",
-            "homepage": "https://github.com/shamimdewan390/dewan-sql-seeder",
-            "keywords": [
-                "Shamim Dewan",
-                "dewan-sql-seeder",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/shamimdewan390/dewan-sql-seeder/issues",
-                "source": "https://github.com/shamimdewan390/dewan-sql-seeder/tree/v3.0.0"
-            },
-            "time": "2024-08-03T09:59:33+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -1353,16 +1300,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v11.28.1",
+            "version": "v11.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "3ef5c8a85b4c598d5ffaf98afd72f6a5d6a0be2c"
+                "reference": "425054512c362835ba9c0307561973c8eeac7385"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/3ef5c8a85b4c598d5ffaf98afd72f6a5d6a0be2c",
-                "reference": "3ef5c8a85b4c598d5ffaf98afd72f6a5d6a0be2c",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/425054512c362835ba9c0307561973c8eeac7385",
+                "reference": "425054512c362835ba9c0307561973c8eeac7385",
                 "shasum": ""
             },
             "require": {
@@ -1558,7 +1505,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-10-16T16:32:21+00:00"
+            "time": "2024-10-22T14:13:31+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -7333,16 +7280,16 @@
         },
         {
             "name": "laravel/sail",
-            "version": "v1.36.0",
+            "version": "v1.37.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sail.git",
-                "reference": "f184d3d687155d06bc8cb9ff6dc48596a138460c"
+                "reference": "5d385f2e698f0f774cdead82aff5d989fb95309b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sail/zipball/f184d3d687155d06bc8cb9ff6dc48596a138460c",
-                "reference": "f184d3d687155d06bc8cb9ff6dc48596a138460c",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/5d385f2e698f0f774cdead82aff5d989fb95309b",
+                "reference": "5d385f2e698f0f774cdead82aff5d989fb95309b",
                 "shasum": ""
             },
             "require": {
@@ -7392,7 +7339,7 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
-            "time": "2024-10-10T13:26:02+00:00"
+            "time": "2024-10-21T17:13:38+00:00"
         },
         {
             "name": "mockery/mockery",

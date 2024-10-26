@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\DB;
 
 use function Laravel\Prompts\{text, confirm, info, error, table};
 
@@ -39,7 +41,8 @@ class BivaCommandAuto extends Command
 
 
         info('Please use arrow key for navigation.');
-        $this->call('dewan:sql-seed');
+        
+        $this->clearDemoData();
 
         info('Tables Migration completed.');
 
@@ -114,5 +117,40 @@ class BivaCommandAuto extends Command
 
         info('Everything is successful. Now clearing all cached...');
         $this->call('optimize:clear');
+    }
+
+    public function clearDemoData()
+    {
+        info('If Yes! then it will erase all of your data.');
+        info('And seeding all data from sql files.');
+        //if (confirm('Are you sure! ')) {
+
+            info('Dropping all tables started...');
+            $this->call('migrate:fresh');
+            info('Dropping all tables ended...');
+
+            info('Database seeding started...');
+            $this->seedDemoData();
+            
+            info('Database seeding completed.');
+            return 0;
+        //}
+    }
+    public function seedDemoData()
+    {
+        info('Copying necessary files for seeding....');
+
+        (new Filesystem)->copyDirectory(config('sql-seeder.sql_file_path'), public_path('sql'));
+        
+        info('File copying successful');
+        
+        info('Seeding....');
+
+        $get_sql_files_path = (new Filesystem)->files(public_path('sql'));
+        foreach($get_sql_files_path as $key => $path){
+            $file_sql = file_get_contents($path);
+            DB::statement($file_sql);
+        }
+        info('Seed completed successfully!');
     }
 }
