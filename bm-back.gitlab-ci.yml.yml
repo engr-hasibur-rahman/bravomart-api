@@ -11,23 +11,12 @@ deploy:
   cache:
     untracked: true    
   script:
-    #- lftp -c "set ssl:verify-certificate no; set ftp:ssl-allow no; open -u $FTP_USER_S,$FTP_PASS_S $FTP_HOST_S; mirror -Rnev ./ $DIR_PATH --no-symlinks --ignore-time --parallel=10 --exclude-glob .git* --exclude .git/  --no-perms" 
+    - lftp -c "set ssl:verify-certificate no; set ftp:ssl-allow no; open -u $FTP_USER_S,$FTP_PASS_S $FTP_HOST_S; mirror -Rnev ./ $DIR_PATH --no-symlinks --ignore-time --parallel=10 --exclude-glob .git* --exclude .git/" 
     #- composer install
     #- composer dump-autoload
     #- php artisan cache:clear
     #- php artisan config:clear
     #- php artisan optimize:clear    
-    const="set ftp:ssl-allow no; open -u $FTP_USER_S,$FTP_PASS_S $FTP_HOST_S"
-    # wait until file exists
-    while lftp -c "$const; df lockfile"; do sleep 1; done
-    # create the lockfile
-    lftp -c "$const; mkdir lockfile"
-    # the work
-    lftp -c "$const; glob -a rm -r ./httpdocs/*"
-    lftp -c "$const; mirror -R public/ httpdocs  --ignore-time --parallel=50 --exclude-glob .git* --exclude .git/"
-    # remove lockfile
-    lftp -c "$const; rmdir lockfile"
-    
     
   only:
     - develop
