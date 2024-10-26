@@ -10,6 +10,7 @@ class ComArea extends Model
 {
     use HasFactory;
 
+    //Will Manage Shop Area
     protected $table = 'com_areas';
 
     protected $guarded = [];
