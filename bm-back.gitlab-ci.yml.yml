@@ -12,7 +12,7 @@ deploy:
     untracked: true    
   script:
     - lftp -c "set ssl:verify-certificate no; set ftp:ssl-allow no; open -u $FTP_USER_S,$FTP_PASS_S $FTP_HOST_S; mirror -Rnev ./ $DIR_PATH --no-symlinks --ignore-time --parallel=10 --exclude-glob .git* --exclude .git/  --no-perms" 
-    - composer install
+    #- composer install
     #- composer dump-autoload
     #- php artisan cache:clear
     #- php artisan config:clear
