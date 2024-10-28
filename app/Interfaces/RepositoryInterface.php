@@ -9,5 +9,6 @@ interface RepositoryInterface
     public function getById($id);
     public function store(array $data);
     public function update(array $data,$id);
+    public function changeStatus(int|string $id,string $status="");
     public function delete($id);
 }

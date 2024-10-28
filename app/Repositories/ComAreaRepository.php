@@ -56,13 +56,6 @@ class ComAreaRepository implements ComAreaInterface
         ];
     }
 
-    public function delete($id)
-    {
-        $area = $this->area->findOrFail($id);
-        $area->translations()->delete();
-        $area->delete();
-        return true;
-    }
 
     public function store(array $data): string|object
     {
@@ -89,5 +82,22 @@ class ComAreaRepository implements ComAreaInterface
         $area->save();
 
         return $area;
+    }
+
+
+    public function changeStatus(int|string $id, string $status = "")
+    {
+        $area = $this->area->findOrFail($id);
+        $area->status = !$area->status;
+        $area->save();
+        return $area;
+    }
+
+    public function delete($id)
+    {
+        $area = $this->area->findOrFail($id);
+        $area->translations()->delete();
+        $area->delete();
+        return true;
     }
 }

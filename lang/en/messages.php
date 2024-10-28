@@ -11,6 +11,9 @@ return [
 
     'delete_success' => ':name has been successfully deleted!',
     'delete_failed' => 'Failed to Delete :name',
+
+    'status_change_success' => 'Status has been successfully changed!',
+    'status_change_failed' => 'Failed to Delete :name',
 ];
 
 

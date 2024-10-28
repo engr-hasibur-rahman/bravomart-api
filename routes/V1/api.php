@@ -83,7 +83,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::get('com/area/{id}', [AreaController::class, 'show']);
     Route::post('com/area/add', [AreaController::class, 'store']);
     Route::post('com/area/update/{id}', [AreaController::class, 'update']);
-    Route::put('com/area/status/{id}', [AreaController::class, 'status_update']);
+    Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
     Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
 
 });

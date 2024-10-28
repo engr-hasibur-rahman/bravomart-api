@@ -101,17 +101,15 @@ class AreaController extends Controller
         }
     }
 
-    public function status_update(Request $request)
+    public function changeStatus(int|string $id,string $status="")
     {
-        $attribute = ComArea::findOrFail($request->id);
-        $data_name = $attribute->attribute_name;
-        $attribute->status = !$attribute->status;
-        $attribute->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'Product Attribute: ' . $data_name . ' status Changed successfully',
-            'status' => $attribute->status
-        ]);
+        try {
+        $this->areaRepo->changeStatus($id,$status="");
+        return $this->success(translate('messages.status_change_success'));
+    } catch (\Exception $e) {
+        //return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
+        return $e;
+    }
     }
     /**
      * Remove the specified resource from storage.

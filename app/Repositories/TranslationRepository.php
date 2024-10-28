@@ -107,6 +107,10 @@ class TranslationRepository implements TranslationInterface
     {
         // To be Implemented
     }
+    public function changeStatus(int|string $id,string $status="")
+    {
+        // To be Implemented
+    }
     public function delete($id)
     {
         // To be Implemented

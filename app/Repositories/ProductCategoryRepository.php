@@ -6,11 +6,10 @@ use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\Translation;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
 use Prettus\Repository\Eloquent\BaseRepository;
-use Shamim\DewanMultilangSlug\Facades\MultilangSlug;
+use App\Helpers\MultilangSlug;
 
 /**
  *
@@ -121,10 +120,6 @@ class ProductCategoryRepository extends BaseRepository
     }
 
 
-
-
-
-
     public function updateProductBrand($request, $brand, $fileUploadRepository)
     {
         // Prepare data for default category
@@ -138,7 +133,6 @@ class ProductCategoryRepository extends BaseRepository
 
         $brand = $this->findOrFail($request->id)->update($data);
 
-        // $brand = $this->create($data);
         if ($request->hasFile('brand_logo')) {
             $file = $request->file('brand_logo'); // Only call this once
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "925726fc20dda8173ecdcf2dfb32c516",
+    "content-hash": "6829961845c85a4c65afc43718339bd5",
     "packages": [
         {
             "name": "archtechx/enums",
@@ -261,62 +261,6 @@
                 }
             ],
             "time": "2024-09-19T14:15:21+00:00"
-        },
-        {
-            "name": "dewan/dewan-multilang-slug",
-            "version": "v3.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/shamimdewan390/dewan-multilang-slug-generator.git",
-                "reference": "d7c906e0ff6c208da4e6830729cb5a7a237b2051"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/shamimdewan390/dewan-multilang-slug-generator/zipball/d7c906e0ff6c208da4e6830729cb5a7a237b2051",
-                "reference": "d7c906e0ff6c208da4e6830729cb5a7a237b2051",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.4"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Shamim\\DewanMultilangSlug\\MultilangSlugServiceProvider"
-                    ],
-                    "aliases": {
-                        "MultilangSlug": "Shamim\\DewanMultilangSlug\\Facade\\MultilangSlug"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Shamim\\DewanMultilangSlug\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "shamim",
-                    "email": "shamimdewan343@gmail.com"
-                }
-            ],
-            "description": "It takes a string, a model,  a filed, and a divider, and returns a unique string with a number or random string appended to it if the slug already exists in the database.",
-            "homepage": "https://github.com/shamimdewan390/dewan-multilang-slug-generator",
-            "keywords": [
-                "Shamim Dewan",
-                "dewan-multilang-slug",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/shamimdewan390/dewan-multilang-slug-generator/issues",
-                "source": "https://github.com/shamimdewan390/dewan-multilang-slug-generator/tree/v3.0.2"
-            },
-            "time": "2024-08-10T06:38:24+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
