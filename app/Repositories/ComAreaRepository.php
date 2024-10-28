@@ -3,111 +3,91 @@
 namespace App\Repositories;
 
 use App\Models\ComArea;
-use App\Models\Translation;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Prettus\Repository\Criteria\RequestCriteria;
-use Prettus\Repository\Exceptions\RepositoryException;
-use Prettus\Repository\Eloquent\BaseRepository;
-use Shamim\DewanMultilangSlug\Facades\MultilangSlug;
-use MatanYadaev\EloquentSpatial\Objects\LineString;
-use MatanYadaev\EloquentSpatial\Objects\Point;
-use MatanYadaev\EloquentSpatial\Objects\Polygon;
+use App\Interfaces\ComAreaInterface;
 
 
 /**
  *
  * @package namespace App\Repositories;
  */
-class ComAreaRepository extends BaseRepository
+class ComAreaRepository implements ComAreaInterface
 {
+
+    public function __construct(protected ComArea $area) {}
 
     public function model()
     {
         return ComArea::class;
     }
 
-    public function boot()
+    public function translationKeys()
     {
-        try {
-            $this->pushCriteria(app(RequestCriteria::class));
-        } catch (RepositoryException $e) {
-            //
-        }
+        return  $this->area->translationKeys;
     }
 
-    public function storeArea($request)
+    public function index()
     {
-        // Check if an id is present in the request
-        $attributeId = $request->input('id');
+        return null;
+    }
 
-        $coordinates = $request['coordinates'];
-        $location = '';
-        $coordinates = json_decode($request['coordinates'], true);
-        //$coordinates=json_decode(json_encode($request['coordinates']), true);
-        foreach ($coordinates as $index => $loc) {
-            //$location=$location.$locations['lat'].$locations['lng'];
-            if ($index == 0) {
-                $lastLoc = $loc;
+    public function getById($id)
+    {
+        $area = $this->area->findOrFail($id);
+        $translations = $area->translations()->get()->groupBy('language');
+
+        // Initialize an array to hold the transformed data
+        $transformedData = [];
+
+        foreach ($translations as $language => $items) {
+            $languageInfo = ['language' => $language];
+            /* iterate all Column to Assign Language Value */
+            foreach ($this->area->translationKeys as $columnName) {
+                $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
             }
-            $polygon[] = new Point($loc['lat'], $loc['lng']);
+            $transformedData[] = $languageInfo;
         }
-        $polygon[] = new Point($lastLoc['lat'], $lastLoc['lng']);
 
-        //logger($polygon);
-
-        // Prepare data for Attribute
-        $data = [
-            'name' => $request['name'],
-            'code' => $request['code'],
-            'coordinates' => new Polygon([new LineString($polygon)]),
+        return [
+            'id' => $area->id,
+            'code' => $area->code,
+            'name' => $area->name,
+            'coordinates' => $area->coordinates,
+            'translations' => $transformedData,
         ];
+    }
 
-        if ($attributeId) {
-            // Update existing Attribute
-            $attribute = ComArea::findOrFail($attributeId);
-            $attribute->update($data);
-        } else {
-            // Create new Aattribute
-            $attribute = $this->create($data);
-        }
+    public function delete($id)
+    {
+        $area = $this->area->findOrFail($id);
+        $area->translations()->delete();
+        $area->delete();
+        return true;
+    }
 
-        $translations = [];
-        $defaultKeys = ['name'];
-
-
-        // Handle translations
-        if ($request['translations']) {
-            foreach ($request['translations'] as $translation) {
-                foreach ($defaultKeys as $key) {
-
-                    // Fallback value if translation key does not exist
-                    $translatedValue = $translation[$key] ?? null;
-
-                    // Skip translation if the value is NULL
-                    if ($translatedValue === null) {
-                        continue; // Skip this field if it's NULL
-                    }
-
-                    // Collect translation data
-                    $translations[] = [
-                        'language' => $translation['language_code'],
-                        'key' => $key,
-                        'value' => $translatedValue,
-                    ];
-                }
+    public function store(array $data): string|object
+    {
+        $area = $this->area->newInstance();
+        foreach ($data as $column => $value) {
+            if ($column != 'translations') {
+                $area[$column] = $value;
             }
         }
+        $area->save();
 
-        // Save translations if available
-        if (!empty($translations)) {
-            // If updating, delete existing translations first
-            if ($attributeId) {
-                $attribute->translations()->delete();
+        return $area;
+    }
+
+    public function update(array $data, $id): string|object
+    {
+        $area = $this->area->findOrFail($id);
+
+        foreach ($data as $column => $value) {
+            if ($column <> 'translations') {
+                $area[$column] = $value;
             }
-            $attribute->translations()->createMany($translations);
         }
+        $area->save();
 
-        return $attribute;
+        return $area;
     }
 }

@@ -28,7 +28,6 @@ class ProductAttributeController extends Controller
         $search = $request->search;
 
         $limit = $request->limit ?? 10;
-        //$attributes = QueryBuilder::for(ProductAttribute::class)->paginate($limit);
 
         $attributes = ProductAttribute::leftJoin('translations', function ($join) use ($language) {
             $join->on('product_attributes.id', '=', 'translations.translatable_id')

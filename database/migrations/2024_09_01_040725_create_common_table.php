@@ -22,6 +22,9 @@ return new class extends Migration
             $table->text('value');
             $table->timestamps();
 
+            //Unique Key
+            //$table->unique(array('translatable_id', 'translatable_type','language','key'),'unique_translation');
+
             // Indexes for better performance
             $table->index(['translatable_id', 'translatable_type']);
             $table->index(['language', 'key']);

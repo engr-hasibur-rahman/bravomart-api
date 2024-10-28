@@ -10,7 +10,20 @@ class Translation extends Model
     use HasFactory;
 
 
-    protected $guarded = [];
+    public $timestamps = false;
+
+
+    protected $casts = [
+        'translatable_id' => 'integer',
+    ];
+    
+    protected $fillable = [
+        'translatable_type',
+        'translatable_id',
+        'language',
+        'key',
+        'value',
+    ];
 
     public function translatable()
     {

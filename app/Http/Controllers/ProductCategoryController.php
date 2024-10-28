@@ -2,22 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\ExportProductBrand;
-use App\Http\Requests\StoreProductBrandRequest;
 use App\Http\Requests\StoreProductCategoryRequest;
-use App\Http\Requests\UpdateProductBrandRequest;
-use App\Http\Resources\ProductBrandByIdResource;
-use App\Http\Resources\ProductBrandResource;
 use App\Http\Resources\ProductCategoryByIdResource;
 use App\Http\Resources\ProductCategoryResource;
-use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Repositories\FileUploadRepository;
 use App\Repositories\ProductCategoryRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductCategoryController extends Controller
 {

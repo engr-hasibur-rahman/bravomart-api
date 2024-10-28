@@ -25,6 +25,11 @@ class ComArea extends Model
         'coordinates' => Polygon::class,
     ];
 
+    public $translationKeys = [
+        'name'
+    ];
+
+
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');

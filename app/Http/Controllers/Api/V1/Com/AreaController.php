@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AreaCreateRequest;
-use App\Http\Resources\ComAreaResource;
-use App\Repositories\ComAreaRepository;
+use App\Interfaces\ComAreaInterface;
+use App\Interfaces\TranslationInterface;
 use App\Services\AreaService;
 use App\Models\ComArea;
 use Illuminate\Http\Request;
@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\DB;
 class AreaController extends Controller
 {
     public function __construct(
-        protected ComAreaRepository $repository,
+        protected ComAreaInterface $areaRepo,
+        protected TranslationInterface $transRepo,
+        protected AreaService $areaService,
     ) {}
 
     /**
@@ -23,34 +25,37 @@ class AreaController extends Controller
      */
     public function index(Request $request)
     {
+        // Set default values for limit and language
         $limit = $request->limit ?? 10;
         $language = app()->getLocale() ?? DEFAULT_LANGUAGE;
         $search = $request->search;
 
-        $limit = $request->limit ?? 10;
-
-        //$model->getTable().
+        // Query the ComArea model with a left join on translations
         $attributes = ComArea::leftJoin('translations', function ($join) use ($language) {
             $join->on('com_areas.id', '=', 'translations.translatable_id')
                 ->where('translations.translatable_type', '=', ComArea::class)
                 ->where('translations.language', '=', $language)
                 ->where('translations.key', '=', 'name');
         })
-            ->select('product_attributes.*', 
-            DB::raw('COALESCE(translations.value, com_areas.name) as name'));
+            ->select(
+                'com_areas.*',
+                DB::raw('COALESCE(translations.value, com_areas.name) as name')
+            );
 
         // Apply search filter if search parameter exists
         if ($search) {
             $attributes->where(function ($query) use ($search) {
-                $query->where(DB::raw('concat(com_areas.name,translations.value)'), 'like', "%{$search}%");
+                $query->where(DB::raw("CONCAT_WS(' ', com_areas.name, translations.value)"), 'like', "%{$search}%");
             });
         }
 
         // Apply sorting and pagination
-        $attributes = $attributes->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')->paginate($limit);
+        $attributes = $attributes
+            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->paginate($limit);
 
-        // Return a collection of ProductBrandResource (including the image)
-        return ComAreaResource::collection($attributes);
+        // Return the result
+        return $attributes;
     }
 
     /**
@@ -59,10 +64,10 @@ class AreaController extends Controller
     public function store(AreaCreateRequest $request)
     {
         try {
-            $attribute = $this->repository->storeArea($request);
+            $area = $this->areaRepo->store($this->areaService->prepareAddData($request));
+           $this->transRepo->storeTranslation($request,$area->id,'App\Models\ComArea',$this->areaRepo->translationKeys());
 
-            return $this->success(translate('messages.save_success', ['name' => $attribute->name]));
-
+            return $this->success(translate('messages.save_success', ['name' => $request->name]));
         } catch (\Exception $e) {
             return $this->failed(translate('messages.save_failed', ['name' => 'Area']));
             //return $e;
@@ -74,49 +79,47 @@ class AreaController extends Controller
      */
     public function show(string $id)
     {
-        return QueryBuilder::for(ComArea::class)
-            ->findOrFail($id);
+        return $this->areaRepo->getById($id);
+        //return QueryBuilder::for(ComArea::class)->findOrFail($id);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(AreaCreateRequest $request, string $id='')
+    public function update(AreaCreateRequest $request)
     {
 
         try {
 
-            $attribute = $this->repository->storeProductAttribute($request);
+            $area = $this->areaRepo->update($this->areaService->prepareAddData($request), $request->id);
+            $this->transRepo->updateTranslation($request,$area->id,'App\Models\ComArea',$this->areaRepo->translationKeys());
 
-            return $this->success(translate('messages.update_success', ['name' => $attribute->attribute_name]));
-
+            return $this->success(translate('messages.update_success', ['name' => $area->name]));
         } catch (\Exception $e) {
             return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
-        }        
+            //return $e;
+        }
     }
-    
+
     public function status_update(Request $request)
     {
         $attribute = ComArea::findOrFail($request->id);
-        $data_name =$attribute->attribute_name;
+        $data_name = $attribute->attribute_name;
         $attribute->status = !$attribute->status;
         $attribute->save();
         return response()->json([
             'success' => true,
-            'message' => 'Product Attribute: '.$data_name.' status Changed successfully',
+            'message' => 'Product Attribute: ' . $data_name . ' status Changed successfully',
             'status' => $attribute->status
         ]);
     }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request,string $id)
+    public function destroy(string $id)
     {
-        $attribute = ComArea::findOrFail($request->id);
-        $data_name =$attribute->attribute_name;
-        $attribute->translations()->delete();
-        $attribute->delete();
+        $this->areaRepo->delete($id);
 
-        return $this->success(translate('messages.delete_success', ['name' => $data_name]));
+        return $this->success(translate('messages.delete_success', ['name' => '']));
     }
 }

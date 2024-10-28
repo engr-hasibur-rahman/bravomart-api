@@ -74,15 +74,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('product/attribute/{id}', [ProductAttributeController::class, 'show']);
         Route::post('product/attribute/add', [ProductAttributeController::class, 'store']);
         Route::post('product/attribute/update/{id}', [ProductAttributeController::class, 'update']);
-        Route::post('product/attribute/status/{id}', [ProductAttributeController::class, 'status_update']);
-        Route::post('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
+        Route::put('product/attribute/status/{id}', [ProductAttributeController::class, 'status_update']);
+        Route::delete('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
     });
+
 
     Route::get('com/area/list', [AreaController::class, 'index']);
     Route::get('com/area/{id}', [AreaController::class, 'show']);
     Route::post('com/area/add', [AreaController::class, 'store']);
-    Route::put('com/area/update/{id}', [AreaController::class, 'update']);
-    Route::PUT('com/area/status/{id}', [AreaController::class, 'status_update']);
+    Route::post('com/area/update/{id}', [AreaController::class, 'update']);
+    Route::put('com/area/status/{id}', [AreaController::class, 'status_update']);
     Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
 
 });

@@ -9,29 +9,21 @@ use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
 class AreaService
 {
-    /**
-     * Create a new class instance.
-     */
-    public function __construct()
+
+    public function prepareAddData(Object $request): array
     {
-        //
-    }
-
-    public function OrganizeData(Object $request): array
-    {
-        $value = $request['coordinates'];
-
-
-        foreach(explode('),(',trim($value,'()')) as $index=>$single_array){
-            if($index == 0)
-            {
-                $lastCord = explode(',',$single_array);
+        $coordinates = $request['coordinates'];
+        $location = '';
+        $coordinates = json_decode($request['coordinates'], true);
+        foreach ($coordinates as $index => $loc) {
+            if ($index == 0) {
+                $lastLoc = $loc;
             }
-            $coords = explode(',',$single_array);
-
-            $polygon[] = new Point($coords[0], $coords[1]);
+            $polygon[] = new Point($loc['lat'], $loc['lng']);
         }
-        $polygon[] = new Point($lastCord[0], $lastCord[1]);
+        $polygon[] = new Point($lastLoc['lat'], $lastLoc['lng']);
+        
+
         return [
             'name' => $request->name,
             'code' => $request->code,
