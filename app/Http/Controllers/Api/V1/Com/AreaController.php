@@ -65,7 +65,7 @@ class AreaController extends Controller
     {
         try {
             $area = $this->areaRepo->store($this->areaService->prepareAddData($request));
-           $this->transRepo->storeTranslation($request,$area->id,'App\Models\ComArea',$this->areaRepo->translationKeys());
+            $this->transRepo->storeTranslation($request, $area->id, 'App\Models\ComArea', $this->areaRepo->translationKeys());
 
             return $this->success(translate('messages.save_success', ['name' => $request->name]));
         } catch (\Exception $e) {
@@ -92,7 +92,7 @@ class AreaController extends Controller
         try {
 
             $area = $this->areaRepo->update($this->areaService->prepareAddData($request), $request->id);
-            $this->transRepo->updateTranslation($request,$area->id,'App\Models\ComArea',$this->areaRepo->translationKeys());
+            $this->transRepo->updateTranslation($request, $area->id, 'App\Models\ComArea', $this->areaRepo->translationKeys());
 
             return $this->success(translate('messages.update_success', ['name' => $area->name]));
         } catch (\Exception $e) {
@@ -101,15 +101,15 @@ class AreaController extends Controller
         }
     }
 
-    public function changeStatus(int|string $id,string $status="")
+    public function changeStatus(int|string $id, string $status = "")
     {
         try {
-        $this->areaRepo->changeStatus($id,$status="");
-        return $this->success(translate('messages.status_change_success'));
-    } catch (\Exception $e) {
-        //return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
-        return $e;
-    }
+            $this->areaRepo->changeStatus($id, $status = "");
+            return $this->success(translate('messages.status_change_success'));
+        } catch (\Exception $e) {
+            //return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
+            return $e;
+        }
     }
     /**
      * Remove the specified resource from storage.
