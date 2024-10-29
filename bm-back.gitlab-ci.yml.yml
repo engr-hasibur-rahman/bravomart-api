@@ -13,7 +13,7 @@ deploy:
   script:
     #https://stackoverflow.com/questions/41633518/automated-gitlab-ci-yml-lftp-configuration
     #- lftp -c "set ssl:verify-certificate no; set ftp:ssl-allow no; open -u $FTP_USER_S,$FTP_PASS_S $FTP_HOST_S; mirror -Rnev ./ $DIR_PATH --no-symlinks --ignore-time --only-newer --parallel=10 --exclude-glob .git* --exclude .git/ --exclude *.htaccess --exclude *.env --exclude vendor/  --no-perms bye;" 
-    - lftp -c "set ssl:verify-certificate no; set ftp:ssl-allow no; open -u $FTP_USER_S,$FTP_PASS_S $FTP_HOST_S; mirror -Rnev ./ $DIR_PATH --no-symlinks --ignore-time --only-newer --parallel=10 --exclude-glob .git* --exclude .git/ --exclude .htaccess --exclude .env --exclude vendor/  --no-perms bye;" 
+    - lftp -c "set ssl:verify-certificate no; set ftp:ssl-allow no; open -u $FTP_USER_S,$FTP_PASS_S $FTP_HOST_S; mirror -Rnev ./ $DIR_PATH --no-symlinks --ignore-time --only-newer --parallel=10 --exclude-glob .git* --exclude .git/ --exclude .htaccess --exclude .env --exclude vendor/  --no-perms" 
     #- php composer.phar install
     #- composer dump-autoload
     #- php artisan cache:clear
