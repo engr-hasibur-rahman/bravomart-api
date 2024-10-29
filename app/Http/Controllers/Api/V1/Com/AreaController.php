@@ -31,7 +31,7 @@ class AreaController extends Controller
         $search = $request->search;
 
         // Query the ComArea model with a left join on translations
-        $attributes = ComArea::leftJoin('translations', function ($join) use ($language) {
+        $areas = ComArea::leftJoin('translations', function ($join) use ($language) {
             $join->on('com_areas.id', '=', 'translations.translatable_id')
                 ->where('translations.translatable_type', '=', ComArea::class)
                 ->where('translations.language', '=', $language)
@@ -44,18 +44,18 @@ class AreaController extends Controller
 
         // Apply search filter if search parameter exists
         if ($search) {
-            $attributes->where(function ($query) use ($search) {
+            $areas->where(function ($query) use ($search) {
                 $query->where(DB::raw("CONCAT_WS(' ', com_areas.name, translations.value)"), 'like', "%{$search}%");
             });
         }
 
         // Apply sorting and pagination
-        $attributes = $attributes
+        $areas = $areas
             ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
 
         // Return the result
-        return $attributes;
+        return $areas;
     }
 
     /**
