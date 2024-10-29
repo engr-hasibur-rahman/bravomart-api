@@ -12,9 +12,11 @@ class AreaService
 
     public function prepareAddData(Object $request): array
     {
+        //logger($request);
         $coordinates = $request['coordinates'];
         $location = '';
-        $coordinates = json_decode($request['coordinates'], true);
+        //$coordinates = json_decode($request['coordinates'], true);
+        $coordinates = $request['coordinates'];
         foreach ($coordinates as $index => $loc) {
             if ($index == 0) {
                 $lastLoc = $loc;
