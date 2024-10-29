@@ -48,14 +48,12 @@ class ComAreaRepository implements ComAreaInterface
             $transformedData[] = $languageInfo;
         }
         $formated_coordinates = json_decode($area->coordinates[0]->toJson(),true);
-        logger($formated_coordinates['coordinates']);
 
         return [
             'id' => $area->id,
             'code' => $area->code,
             'name' => $area->name,
-            'coordinates' => $area->coordinates,
-            'formated_coordinates' => ComHelper::format_coordiantes($formated_coordinates['coordinates']),
+            'coordinates' => ComHelper::format_coordiantes($formated_coordinates['coordinates']),
             'translations' => $transformedData,
         ];
     }
