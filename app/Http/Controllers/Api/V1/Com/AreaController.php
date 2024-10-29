@@ -21,7 +21,7 @@ class AreaController extends Controller
     ) {}
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource. Change
      */
     public function index(Request $request)
     {
