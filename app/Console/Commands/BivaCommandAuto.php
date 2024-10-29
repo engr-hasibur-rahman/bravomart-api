@@ -99,16 +99,23 @@ class BivaCommandAuto extends Command
         $user = User::create([
             'first_name'  =>  $first_name,
             'email' =>  $email,
-            'activity_scope' =>  'ADMIN_AREA',
+            'activity_scope' =>  'system_level',
             'password' =>  Hash::make($password),
         ]);
         $user->email_verified_at = now()->timestamp;
         $user->save();
 
+        //Assign Permission to Super Admin Role
         $role = Role::firstOrCreate(['name'  => UserRole::SUPER_ADMIN->value], ['name'  => UserRole::SUPER_ADMIN->value, 'guard_name' => 'api']);
         Permission::firstOrCreate(['name'  => 'all'], ['name'  => 'all', 'guard_name' => 'api']);
-        $role->givePermissionTo('all');
+        $role->givePermissionTo(Permission::whereIn('available_for',['system_level','COMMON'])->get());
+        $user->assignRole($role);
 
+        //Assign Permission to Store Owner Role
+        $role = Role::where('id',2)->first();
+        $role->givePermissionTo(Permission::whereIn('available_for',['store_level','COMMON'])->get());
+        $user = User::whereEmail('owner@store.com')->first();
+        // Assign default Store User to a Specific Role
         $user->assignRole($role);
 
         info('User Creation Successful!');

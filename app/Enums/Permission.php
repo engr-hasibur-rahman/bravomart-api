@@ -14,6 +14,22 @@ enum Permission: string
     case ALL = 'all';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Central Settings     Admin                              //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_AREA_LIST = 'area-list';
+    case ADMIN_AREA_ADD = 'add-area';
+    case ADMIN_AREA_UPDATE = 'update-area';
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Store Management                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_STORE_LIST = 'store-list';
+    case ADMIN_STORE_ADD = 'store-add';
+    case STORE_STORE_ADD_UPDATE = 'store-add-update'; // Add if user have no store added. Update if existis 
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Brand Permissions                               //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_BRAND_LIST = 'product-brand-list';

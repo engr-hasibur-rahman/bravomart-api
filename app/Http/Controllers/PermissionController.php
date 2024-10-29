@@ -40,7 +40,7 @@ class PermissionController extends Controller
     public function permissionForStoreOwner(Request $request)
     {
         $permission = Permission::findOrFail($request->id);
-        $permission->available_for = $permission->available_for === 'super_admin' ? 'store_owner' : 'super_admin';
+        $permission->available_for = $permission->available_for === 'system_level' ? 'store_level' : 'system_level';
         $permission->save();
         return response()->json([
             'success' => true,

@@ -89,7 +89,7 @@ class RoleController extends Controller
     public function roleForStoreOwner(Request $request)
     {
         $role = Role::findOrFail($request->id);
-        $role->available_for = $role->available_for === 'super_admin' ? 'store_owner' : 'super_admin';
+        $role->available_for = $role->available_for === 'system_level' ? 'store_level' : 'system_level';
         $role->save();
         return response()->json([
             'success' => true,
