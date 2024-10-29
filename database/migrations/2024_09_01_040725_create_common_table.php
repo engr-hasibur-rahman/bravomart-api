@@ -148,7 +148,7 @@ return new class extends Migration
             $table->foreign('area_id')->references('id')->on('com_areas')->nullOnDelete();
             $table->unsignedBigInteger('merchant_id')->nullable();
             $table->foreign('merchant_id')->references('id')->on('com_merchant');
-            $table->string('type')->nullable();
+            $table->string('store_type')->nullable();
             $table->string('name');
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
