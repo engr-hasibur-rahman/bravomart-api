@@ -13,17 +13,9 @@ use Illuminate\Support\Facades\Route;
 
 
 /**
- * ******************************************
- * Available Public Routes
- * ******************************************
- */
-
-
-
-
-/**
  * *****************************************
  * Authorized Route
+ * https://spatie.be/docs/laravel-permission/v6/basic-usage/middleware
  * *****************************************
  */
 
@@ -73,26 +65,22 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('product/attribute/list', [ProductAttributeController::class, 'index']);
         Route::get('product/attribute/{id}', [ProductAttributeController::class, 'show']);
         Route::post('product/attribute/add', [ProductAttributeController::class, 'store']);
-        Route::post('product/attribute/update/{id}', [ProductAttributeController::class, 'update']);
+        Route::post('product/attribute/update', [ProductAttributeController::class, 'update']);
         Route::put('product/attribute/status/{id}', [ProductAttributeController::class, 'status_update']);
         Route::delete('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
     });
 
 
-    //Route::group(['middleware' => [getPermissionMiddleware(Permission::ADMIN_AREA_ADD->value)]], function () {
+    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);
+    });
+    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value . '|' . Permission::ADMIN_AREA_UPDATE->value]], function () {
         Route::get('com/area/{id}', [AreaController::class, 'show']);
         Route::post('com/area/add', [AreaController::class, 'store']);
+    });
+    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_UPDATE->value]], function () {
         Route::post('com/area/update/{id}', [AreaController::class, 'update']);
         Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
         Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
-    //});
-    //Route::group(['middleware' => [getPermissionMiddleware(Permission::ADMIN_AREA_UPDATE->value)]], function () {
-        // Route::get('com/area/list', [AreaController::class, 'index']);
-        // Route::get('com/area/{id}', [AreaController::class, 'show']);
-        // Route::post('com/area/add', [AreaController::class, 'store']);
-        // Route::post('com/area/update/{id}', [AreaController::class, 'update']);
-        // Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
-        // Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
-    //});
+    });
 });
