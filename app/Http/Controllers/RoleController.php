@@ -39,6 +39,7 @@ class RoleController extends Controller
         } else {
             $role = Role::create([
                 'name' => $request->role_name,
+                'available_for' => $request->available_for,
                 'guard_name' => 'api',
             ]);
         }
