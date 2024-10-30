@@ -1,0 +1,1 @@
+select * from wc_users;
