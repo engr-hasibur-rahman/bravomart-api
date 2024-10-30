@@ -9,8 +9,8 @@ return [
     'update_success' => ':name Successfully updated!',
     'update_failed' => 'Failed to update :name',
 
-    'delete_success' => ':name has been successfully deleted!',
-    'delete_failed' => 'Failed to Delete :name',
+    'delete_success' => 'Record has been successfully deleted!',
+    'delete_failed' => 'Record Failed to Delete',
 
     'status_change_success' => 'Status has been successfully changed!',
     'status_change_failed' => 'Failed to Delete :name',

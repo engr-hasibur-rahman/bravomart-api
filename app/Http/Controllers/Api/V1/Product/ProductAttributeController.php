@@ -116,6 +116,6 @@ class ProductAttributeController extends Controller
         $attribute->translations()->delete();
         $attribute->delete();
 
-        return $this->success(translate('messages.delete_success', ['name' => $data_name]));
+        return $this->success(translate('messages.delete_success'));
     }
 }

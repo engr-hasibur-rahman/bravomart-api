@@ -88,7 +88,6 @@ class AreaController extends Controller
      */
     public function update(AreaCreateRequest $request)
     {
-
         try {
 
             $area = $this->areaRepo->update($this->areaService->prepareAddData($request), $request->id);
@@ -97,7 +96,6 @@ class AreaController extends Controller
             return $this->success(translate('messages.update_success', ['name' => $area->name]));
         } catch (\Exception $e) {
             return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
-            //return $e;
         }
     }
 
@@ -107,8 +105,7 @@ class AreaController extends Controller
             $this->areaRepo->changeStatus($id, $status = "");
             return $this->success(translate('messages.status_change_success'));
         } catch (\Exception $e) {
-            //return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
-            return $e;
+            return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
         }
     }
     /**
@@ -118,6 +115,6 @@ class AreaController extends Controller
     {
         $this->areaRepo->delete($id);
 
-        return $this->success(translate('messages.delete_success', ['name' => '']));
+        return $this->success(translate('messages.delete_success'));
     }
 }
