@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Permission;
-use App\Enums\PermissionModule;
+use App\Enums\MenuGroup;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission as ModelsPermission;
@@ -23,8 +23,8 @@ class PermissionSeeder extends Seeder
         $page_list = [
 
             [
-                'module' => PermissionModule::GENERAL->value,
-                'module_tile' => 'General',
+                'module' => MenuGroup::GENERAL->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::GENERAL->value),
                 'permissions' => [
                     [
                         'PermissionName' => Permission::ALL->value,
@@ -34,8 +34,8 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
-                'module' => PermissionModule::CENTRAL->value,
-                'module_tile' => 'Central Settings',
+                'module' => MenuGroup::CENTRAL->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::CENTRAL->value),
                 'permissions' => [
                     [
                         'PermissionName' => Permission::ADMIN_AREA_LIST->value,
@@ -56,8 +56,8 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
-                'module' => PermissionModule::STORES->value,
-                'module_tile' => 'Store Management',
+                'module' => MenuGroup::STORES->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::STORES->value),
                 'permissions' => [
                     [
                         'PermissionName' => Permission::ADMIN_STORE_LIST->value,
@@ -77,8 +77,8 @@ class PermissionSeeder extends Seeder
                     ]                ]
             ],
             [
-                'module' => PermissionModule::PRODUCT_BRAND->value,
-                'module_tile' => 'Product Brand',
+                'module' => MenuGroup::PRODUCT_BRAND->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_BRAND->value),
                 'permissions' => [
                     [
                         'PermissionName' => Permission::PRODUCT_BRAND_LIST->value,
@@ -104,8 +104,8 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
-                'module' => PermissionModule::PRODUCT_CATEGORY->value,
-                'module_tile' => 'Product Category',
+                'module' => MenuGroup::PRODUCT_CATEGORY->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_CATEGORY->value),
                 'permissions' => [
                     [
                         'PermissionName' => Permission::PRODUCT_CATEGORY_LIST->value,
@@ -131,8 +131,8 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
-                'module' => PermissionModule::PRODUCT->value,
-                'module_tile' => 'Product',
+                'module' => MenuGroup::PRODUCT->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT->value),
                 'permissions' => [
                     [
                         'PermissionName' => Permission::ADD_PRODUCT->value,
@@ -147,8 +147,8 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
-                'module' => PermissionModule::USERS->value,
-                'module_tile' => 'Users',
+                'module' => MenuGroup::USERS->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::USERS->value),
                 'permissions' => [
                     [
                         'PermissionName' => Permission::BAN_USER->value,
@@ -163,8 +163,8 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
-                'module' => PermissionModule::OTHERS->value,
-                'module_tile' => 'Users',
+                'module' => MenuGroup::OTHERS->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::OTHERS->value),
                 'permissions' => [
                     [
                         'PermissionName' => Permission::PRODUCT_ATTRIBUTE->value,
@@ -182,30 +182,30 @@ class PermissionSeeder extends Seeder
 
 /*
         $modules_permissions = [
-            PermissionModule::GENERAL->value => [
+            MenuGroup::GENERAL->value => [
                 Permission::ALL->value,
             ],
-            PermissionModule::PRODUCT_BRAND->value => [
+            MenuGroup::PRODUCT_BRAND->value => [
                 Permission::PRODUCT_BRAND_LIST->value,
                 Permission::ADD_PRODUCT_BRAND->value,
                 Permission::EDIT_PRODUCT_BRAND->value,
                 Permission::PRODUCT_BRAND_STATUS->value,
             ],
-            PermissionModule::PRODUCT_CATEGORY->value => [
+            MenuGroup::PRODUCT_CATEGORY->value => [
                 Permission::PRODUCT_CATEGORY_LIST->value,
                 Permission::ADD_PRODUCT_CATEGORY->value,
                 Permission::EDIT_PRODUCT_CATEGORY->value,
                 Permission::PRODUCT_CATEGORY_STATUS->value,
             ],
-            PermissionModule::PRODUCT->value => [
+            MenuGroup::PRODUCT->value => [
                 Permission::ADD_PRODUCT->value,
                 Permission::EDIT_PRODUCT->value,
             ],
-            PermissionModule::USERS->value => [
+            MenuGroup::USERS->value => [
                 Permission::BAN_USER->value,
                 Permission::ACTIVE_USER->value,
             ],
-            PermissionModule::OTHERS->value => [
+            MenuGroup::OTHERS->value => [
                 Permission::PRODUCT_ATTRIBUTE->value,
                 Permission::MANAGE_CONFIGURATIONS->value,
             ]
