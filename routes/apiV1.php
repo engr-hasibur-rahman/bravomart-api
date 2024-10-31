@@ -40,16 +40,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
 
     // Route::apiResource('product-categories', ProductCategoryController::class);
-    Route::group(['middleware' => [getPermissionMiddleware(Permission::PRODUCT_CATEGORY_LIST->value)]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_LIST->value]], function () {
         Route::get('product-categories', [ProductCategoryController::class, 'index']);
     });
-    Route::group(['middleware' => [getPermissionMiddleware('category-store')]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::ADD_PRODUCT_CATEGORY->value]], function () {
         Route::post('product-categories', [ProductCategoryController::class, 'store']);
     });
-    Route::group(['middleware' => [getPermissionMiddleware('category-show')]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::EDIT_PRODUCT_CATEGORY->value]], function () {
         Route::get('product-categories/{id}', [ProductCategoryController::class, 'show']);
     });
-    Route::group(['middleware' => [getPermissionMiddleware('category-status')]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_STATUS->value]], function () {
         Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);
     });
 
