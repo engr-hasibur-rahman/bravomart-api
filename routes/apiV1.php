@@ -79,7 +79,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('com/area/add', [AreaController::class, 'store']);
     });
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_UPDATE->value]], function () {
-        Route::post('com/area/update/{id}', [AreaController::class, 'update']);
+        Route::post('com/area/update', [AreaController::class, 'update']);
         Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
         Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
     });
