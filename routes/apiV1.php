@@ -40,7 +40,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
 
     // Route::apiResource('product-categories', ProductCategoryController::class);
-    Route::group(['middleware' => [getPermissionMiddleware('category-list')]], function () {
+    Route::group(['middleware' => [getPermissionMiddleware(Permission::PRODUCT_CATEGORY_LIST->value)]], function () {
         Route::get('product-categories', [ProductCategoryController::class, 'index']);
     });
     Route::group(['middleware' => [getPermissionMiddleware('category-store')]], function () {

@@ -56,6 +56,7 @@ class ProductCategoryController extends Controller
         }
         // Return a collection of ProductBrandResource (including the image)
         return ProductCategoryResource::collection($categories);
+        //return $categories;
     }
 
 
