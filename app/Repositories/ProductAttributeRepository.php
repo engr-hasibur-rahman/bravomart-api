@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Storage;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
 use Prettus\Repository\Eloquent\BaseRepository;
-use Shamim\DewanMultilangSlug\Facades\MultilangSlug;
 
 /**
  *

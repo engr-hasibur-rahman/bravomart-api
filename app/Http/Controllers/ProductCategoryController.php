@@ -78,7 +78,8 @@ class ProductCategoryController extends Controller
                 'success' => 'Success'
             ]);
         } catch (\Exception $e) {
-            throw new \RuntimeException('Could not create the product Category.');
+            throw new \RuntimeException('Could not create the product Category.'.$e);
+            //return $e;
         }
     }
 

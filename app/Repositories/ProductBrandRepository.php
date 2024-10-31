@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
 use Prettus\Repository\Eloquent\BaseRepository;
-use Shamim\DewanMultilangSlug\Facades\MultilangSlug;
+use App\Helpers\MultilangSlug;
 
 /**
  *
@@ -64,7 +64,6 @@ class ProductBrandRepository extends BaseRepository
         $translations = [];
         $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
 
-        logger($request);
         // Handle translations
         if ($request['translations']) {
             foreach ($request['translations'] as $translation) {
