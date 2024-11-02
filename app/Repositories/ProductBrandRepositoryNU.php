@@ -9,14 +9,12 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
 use Prettus\Repository\Eloquent\BaseRepository;
 use App\Helpers\MultilangSlug;
-use App\Helpers\ComHelper;
-use App\Enums\UploadDirectory;
 
 /**
  *
  * @package namespace App\Repositories;
  */
-class ProductBrandRepository extends BaseRepository
+class ProductBrandRepositoryNU extends BaseRepository
 {
 
     public function model()
@@ -45,7 +43,6 @@ class ProductBrandRepository extends BaseRepository
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => $request['display_order'],
-            'brand_logo' => $request->has('brand_logo') ? ComHelper::upload(UploadDirectory::BRAND->value, 'png', $request->file('brand_logo')):"",
         ];
 
         if ($brandId) {
@@ -55,6 +52,12 @@ class ProductBrandRepository extends BaseRepository
         } else {
             // Create new brand
             $brand = $this->create($data);
+        }
+
+        // Handle file upload if available
+        if ($request->hasFile('brand_logo')) {
+            $file = $request->file('brand_logo');
+            $fileUploadRepository->attachment($file, 'brand_logo', $brandId, $brand,['dir_name'=>'brand','']);
         }
 
         $translations = [];

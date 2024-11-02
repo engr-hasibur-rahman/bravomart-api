@@ -32,12 +32,6 @@ Route::post('/logout', [UserController::class, 'logout']);
 
 Route::post('/store/ownerreg', [UserController::class, 'StoreOwnerRegistration']);
 
-Route::get('storage/{filename}', function ($filename)
-{
-    return Image::make(storage_path('public/' . $filename))->response();
-});
-
-
 /* Partner (Shop Owner/Shop Staff/Delivery-Man/FitterMan Login) Login */
 Route::post('partner/login', [PartnerLoginController::class, 'login']);
 

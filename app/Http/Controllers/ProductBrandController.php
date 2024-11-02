@@ -76,7 +76,7 @@ class ProductBrandController extends Controller
                 'success' => 'Success'
             ]);
         } catch (\Exception $e) {
-            throw new \RuntimeException('Could not create the product brand.');
+            throw new \RuntimeException('Could not create the product brand.'.$e);
         }
     }
 
