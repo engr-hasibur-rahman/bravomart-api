@@ -29,10 +29,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['middleware' => [getPermissionMiddleware('add-product-brand')]], function () {
         Route::post('product-brands', [ProductBrandController::class, 'store']);
     });
-    Route::group(['middleware' => [getPermissionMiddleware('edit-product-brand')]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::EDIT_PRODUCT_BRAND->value]], function () {
         Route::get('product-brands/{id}', [ProductBrandController::class, 'show']);
     });
-    Route::group(['middleware' => [getPermissionMiddleware('product-brand-status')]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_STATUS->value]], function () {
         Route::post('product-brands/status', [ProductBrandController::class, 'productBrandStatus']);
     });
 
