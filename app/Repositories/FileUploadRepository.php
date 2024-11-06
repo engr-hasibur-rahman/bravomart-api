@@ -41,7 +41,9 @@ class FileUploadRepository extends BaseRepository
         $collection->addMedia($file)->withCustomProperties($custom_properties)->toMediaCollection($collectionName);
     }
 
-
+    /*
+    Upload File to Direcotry
+    */
     public function uploadFile($file, $brandId = null, $brand, string $description = null, string $type = null)
     {
         // Prepare file extension and type
