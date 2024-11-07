@@ -24,7 +24,7 @@ class ProductBrandResource extends JsonResource
              'brand_name' => $locales['brand_name']['value'] ?? $this->brand_name,
              'brand_slug' => $locales['brand_slug']['value'] ?? $this->brand_slug,
              //'brand_logo' => $this->getFirstMediaUrl('brand_logo'), // Fetch the URL of the brand logo
-             'brand_logo' => UploadDirectory::BRAND->value.'/'.$this->brand_logo, // Fetch the URL of the brand logo
+             'brand_logo' => '/'.UploadDirectory::BRAND->value.'/'.$this->brand_logo, // Fetch the URL of the brand logo
              'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
              'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
              'parent_id' => $this->parent_id,

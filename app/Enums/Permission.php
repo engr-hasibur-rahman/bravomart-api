@@ -33,8 +33,8 @@ enum Permission: string
     //                                  Product Brand Permissions                               //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_BRAND_LIST = 'product-brand-list';
-    case ADD_PRODUCT_BRAND = 'add-product-brand';
-    case EDIT_PRODUCT_BRAND = 'edit-product-brand';
+    case ADD_PRODUCT_BRAND = 'product-brand-add';
+    case EDIT_PRODUCT_BRAND = 'product-brand-edit';
     case PRODUCT_BRAND_STATUS = 'product-brand-status';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//

@@ -22,11 +22,11 @@ use Illuminate\Support\Facades\Route;
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
 
 
-    // Route::apiResource('product-brands', ProductBrandController::class);
-    Route::group(['middleware' => [getPermissionMiddleware('brand-list')]], function () {
+    // Product Brand Routing
+    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_LIST->value]], function () {
         Route::get('product-brands', [ProductBrandController::class, 'index']);
     });
-    Route::group(['middleware' => [getPermissionMiddleware('add-product-brand')]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::ADD_PRODUCT_BRAND->value]], function () {
         Route::post('product-brands', [ProductBrandController::class, 'store']);
     });
     Route::group(['middleware' => ['permission:' .Permission::EDIT_PRODUCT_BRAND->value]], function () {
@@ -36,10 +36,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('product-brands/status', [ProductBrandController::class, 'productBrandStatus']);
     });
 
-
-
-
-    // Route::apiResource('product-categories', ProductCategoryController::class);
+    // Product Category Routing
     Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_LIST->value]], function () {
         Route::get('product-categories', [ProductCategoryController::class, 'index']);
     });
@@ -53,7 +50,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);
     });
 
-
+    // User Management
     Route::group(['middleware' => [getPermissionMiddleware('ban-user')]], function () {
         Route::post('users/block-user', [UserController::class, 'banUser']);
     });
@@ -61,6 +58,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('users/unblock-user', [UserController::class, 'activeUser']);
     });
 
+    //Product Attribute Management
     Route::group(['middleware' => [getPermissionMiddleware('product-attribute')]], function () {
         Route::get('product/attribute/list', [ProductAttributeController::class, 'index']);
         Route::get('product/attribute/{id}', [ProductAttributeController::class, 'show']);
@@ -71,6 +69,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
 
 
+    // Marketing Area Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);
     });
@@ -83,4 +82,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
         Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
     });
+
+    
 });

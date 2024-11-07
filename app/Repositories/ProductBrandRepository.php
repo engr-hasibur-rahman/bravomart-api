@@ -33,11 +33,14 @@ class ProductBrandRepository extends BaseRepository
         }
     }
 
-    public function storeProductBrand($request, $fileUploadRepository)
+    public function storeProductBrand($request)
     {
         // Check if an id is present in the request
         $brandId = $request->input('id');
-
+        if ($brandId) {
+            // Update existing brand
+            $brand = ProductBrand::findOrFail($brandId);
+        }
         // Prepare data for brand
         $data = [
             'brand_name' => $request['brand_name'],
@@ -45,12 +48,11 @@ class ProductBrandRepository extends BaseRepository
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => $request['display_order'],
-            'brand_logo' => $request->has('brand_logo') ? ComHelper::upload(UploadDirectory::BRAND->value, 'png', $request->file('brand_logo')):"",
+            'brand_logo' => $request->has('brand_logo') ? ComHelper::upload(UploadDirectory::BRAND->value, 'png', $request->file('brand_logo'),$brand->brand_logo):"",
         ];
 
         if ($brandId) {
             // Update existing brand
-            $brand = ProductBrand::findOrFail($brandId);
             $brand->update($data);
         } else {
             // Create new brand
