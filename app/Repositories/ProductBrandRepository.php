@@ -48,7 +48,7 @@ class ProductBrandRepository extends BaseRepository
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => $request['display_order'],
-            'brand_logo' => $request->has('brand_logo') ? ComHelper::upload(UploadDirectory::BRAND->value, 'png', $request->file('brand_logo'),$brand->brand_logo):"",
+            'brand_logo' => $request->has('brand_logo') ? ComHelper::uploadSingle(UploadDirectory::BRAND->value, $request->file('brand_logo'),$brandId!=null? $brand->brand_logo:""):"",
         ];
 
         if ($brandId) {

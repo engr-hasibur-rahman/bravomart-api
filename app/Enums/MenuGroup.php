@@ -20,7 +20,13 @@ enum MenuGroup: string
     case OTHERS = 'others';
     case ORDER_MANAGEMENT = 'order_management';
     case PRODUCT_MANAGEMENT = 'product_management';
-
+    
+    /**
+     * moduleTitle
+     *
+     * @param  mixed $name
+     * @return string
+     */
     public static function moduleTitle(string $name): string
     {
         switch ($name) {

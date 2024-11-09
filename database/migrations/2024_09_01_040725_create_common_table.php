@@ -56,9 +56,8 @@ return new class extends Migration
             $table->integer('parent_id')->nullable();
             $table->boolean('is_featured')->default(1);
             $table->double('admin_commission_rate')->nullable();
+            $table->string('category_thumb')->nullable();
             $table->string('category_banner')->nullable();
-            $table->string('category_icon')->nullable();
-            $table->string('category_cover_image')->nullable();
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->integer('display_order')->nullable();
