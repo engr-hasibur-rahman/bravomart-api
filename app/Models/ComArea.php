@@ -35,9 +35,14 @@ class ComArea extends Model
         return $this->morphMany(Translation::class, 'translatable');
     }
 
+    public function stores()
+    {
+        return $this->hasMany(ComStores::class,'area_id');
+    }
+
     // Method to get translation by language and key
     public function getTranslation(string $key, string $language)
     {
         return $this->translations()->where('language', $language)->where('key', $key)->first()->value ?? null;
-    }   
+    }
 }

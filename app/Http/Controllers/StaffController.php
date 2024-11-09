@@ -63,7 +63,6 @@ class StaffController extends Controller
             "user" => $user,
             "permissions" => $user->getPermissionNames(),
             "role" => $user->getRoleNames()
-            //"role" => $user->getRoleNames()->first()
         ];
     }
 
@@ -72,25 +71,8 @@ class StaffController extends Controller
      */
     public function show(string $id)
     {     
-     
-
-        // return QueryBuilder::for(User::class)->with(['permissions'])->findOrFail($id);
-
         $user = User::with('permissions')->findOrFail($id);
         return new UserResource($user);
-        // return [
-        //     "permissions" => $user->getPermissionNames(),
-        //     "role" => $user->getRoleNames()->first()
-        // ];
-
-
-        // return [
-        //     "user" => new UserResource($user),
-        //     //QueryBuilder::for(User::class)->findOrFail($id),
-        //     "permissions" => $this->repository->getPermissionNames(),
-        //     "role" => $this->repository->getRoleNames(),
-        //     "Test"=>$this->repository->getAllPermissions(),
-        // ];
     }
 
     /**
@@ -116,29 +98,17 @@ class StaffController extends Controller
      */
     public function update(UserCreateRequest $request)
     {
-        //$roles = [UserRole::CUSTOMER];
         $roles = null;
         if (isset($request->roles)) {
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
        
-        // $user = $this->repository->update([
-        //     'first_name' => $request->first_name,
-        //     'last_name' => $request->last_name,
-        //     //'email'    => $request->email,
-        //     'phone'    => $request->phone,
-        //     'password' => Hash::make($request->password),
-        // ],$request->id);
-
         $user = User::findOrFail($request->id);
         $user->last_name =$request->last_name;
         $user->first_name =$request->first_name;
         $user->phone =$request->phone;
         $user->save();
-        //$user->removeRole('fitter_man');
-        //$user->roles()->detach();
         $user->syncRoles($roles);
-        //$user->assignRole($roles);
 
         return $user;
     }

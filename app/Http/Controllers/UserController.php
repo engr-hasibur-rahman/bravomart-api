@@ -70,10 +70,11 @@ class UserController extends Controller
 
         $user->assignRole($roles);
 
-
-        ComMerchant::updateOrInsert([
-            'user_id' => $user->id,
-        ]);        
+        // Create Merchant ID for the user registered as BusinessMan. In future this will be create on User Approval
+        $merchant=ComMerchant::updateOrInsert(['user_id'=>$user->id]);
+        // Keeping Merchant id in Users table. Though it is Bad concept: circular reference
+        $user->merchant_id=$merchant->id;
+        $user->save();
 
         return [
             'success' => true,

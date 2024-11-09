@@ -67,9 +67,9 @@ class ProductCategoryRepository extends BaseRepository
             $fileUploadRepository->attachment($file, 'category_banner', $categoryId, $category);
         }
         // Handle file upload if available
-        if ($request->hasFile('category_cover_image')) {
-            $file = $request->file('category_cover_image');
-            $fileUploadRepository->attachment($file, 'category_cover_image', $categoryId, $category);
+        if ($request->hasFile('category_thumb')) {
+            $file = $request->file('category_thumb');
+            $fileUploadRepository->attachment($file, 'category_thumb', $categoryId, $category);
         }
 
         $translations = [];
@@ -139,6 +139,7 @@ class ProductCategoryRepository extends BaseRepository
             $fileData = $fileUploadRepository->uploadFile($file);
             $brand->media()->create($fileData);
         }
+
         $translations = [];
         $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
 

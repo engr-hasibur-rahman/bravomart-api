@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
 class ComMerchant extends Model
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
 
     protected $table = 'com_merchant';
 

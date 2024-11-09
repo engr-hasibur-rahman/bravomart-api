@@ -27,6 +27,8 @@ return new class extends Migration
             $table->string('cm_firebase_token')->nullable();
             $table->boolean('is_active')->default(1);
             $table->boolean('store_owner')->default(0);
+            $table->unsignedBigInteger('merchant_id')->nullable();
+            $table->string('stores')->nullable();
             $table->timestamps();
         });
 

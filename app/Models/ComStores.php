@@ -4,21 +4,32 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\InteractsWithMedia;
 //use App\Models
 
 class ComStores extends Model
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
 
     protected $table = 'com_stores';
 
     protected $guarded = [];
 
-    // public function area()
-    // {
-    //     return $this->belongsTo(ComAreas::class,'area_id');
-    // }
+    protected $fillable = [
+        'name',
+        'code',
+        'coordinates',
+    ];
+
+    public $translationKeys = [
+        'name'
+    ];
+
+
+
+    public function area()
+    {
+        return $this->belongsTo(ComArea::class,'area_id');
+    }
 
     public function merchant()
     {
