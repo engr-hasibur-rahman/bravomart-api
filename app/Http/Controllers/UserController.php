@@ -55,26 +55,24 @@ class UserController extends Controller
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
         $roles = [UserRole::STORE_OWNER];
-        // if (isset($request->roles)) {
-        //     $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
-        // }
         $user = $this->repository->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email'    => $request->email,
             'phone'    => $request->phone,
             'password' => Hash::make($request->password),
-            'activity_scope'    => 'STORE_AREA',
+            'activity_scope'    => 'store_level',
             'store_owner'    => 1,
         ]);
 
         $user->assignRole($roles);
 
         // Create Merchant ID for the user registered as BusinessMan. In future this will be create on User Approval
-        $merchant=ComMerchant::updateOrInsert(['user_id'=>$user->id]);
+        $merchant=ComMerchant::create(['user_id'=>$user->id]);
         // Keeping Merchant id in Users table. Though it is Bad concept: circular reference
         $user->merchant_id=$merchant->id;
         $user->save();
+
 
         return [
             'success' => true,
@@ -83,11 +81,12 @@ class UserController extends Controller
             'last_name' => $request->last_name,
             'email'    => $request->email,
             'phone'    => $request->phone,
-            //"user" => $user,
             "permissions" => $user->getPermissionNames(),
             "role" => $user->getRoleNames(),
+            "store_owner" => $user->store_owner,
+            "merchant_id" => $user->merchant_id,
+            "stores" => json_decode($user->stores),
             "next_stage" => "2" // Just completed stage 1, Now go to Store Information. 
-            //"role" => $user->getRoleNames()->first()
         ];
     }
 

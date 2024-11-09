@@ -36,14 +36,14 @@ class PartnerLoginController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->where('activity_scope', 'STORE_AREA')->where('is_active', true)->first();
+        $user = User::where('email', $request->email)->where('activity_scope', 'store_level')->where('is_active', true)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return ["success" => false,"token" => null, "permissions" => []];
         }
         $email_verified = $user->hasVerifiedEmail();
 
-        $merchant = ComMerchant::where('user_id',$user->id)->first();
+        //$merchant = ComMerchant::where('user_id',$user->id)->first();
         $permissions = [];
         $permissions = $user->permissions->pluck('name')->toArray();
 
@@ -54,9 +54,15 @@ class PartnerLoginController extends Controller
         return [
             "success" => true,
             "token" => $user->createToken('auth_token')->plainTextToken,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'email'    => $user->email,
+            'phone'    => $user->phone,
             "permissions" => $permissions,
             "email_verified" => $email_verified,
-            "merchant_id" => $merchant->id,
+            "store_owner" => $user->store_owner,
+            "merchant_id" => $user->merchant_id,
+            "stores" => $user->stores,
             "role" => $user->getRoleNames()
         ];
     }
