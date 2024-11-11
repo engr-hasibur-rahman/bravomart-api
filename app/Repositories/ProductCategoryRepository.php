@@ -64,12 +64,12 @@ class ProductCategoryRepository extends BaseRepository
         // Handle file upload if available
         if ($request->hasFile('category_banner')) {
             $file = $request->file('category_banner');
-            $fileUploadRepository->attachment($file, 'category_banner', $categoryId, $category);
+            $fileUploadRepository->attachment($file, 'category_banner', $categoryId, $category, ['dir_name'=>'category']);
         }
         // Handle file upload if available
         if ($request->hasFile('category_thumb')) {
             $file = $request->file('category_thumb');
-            $fileUploadRepository->attachment($file, 'category_thumb', $categoryId, $category);
+            $fileUploadRepository->attachment($file, 'category_thumb', $categoryId, $category, ['dir_name'=>'category']);
         }
 
         $translations = [];

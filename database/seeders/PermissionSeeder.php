@@ -86,12 +86,12 @@ class PermissionSeeder extends Seeder
                         'activity_scope' => 'system_level'
                     ],                    
                     [
-                        'PermissionName' => Permission::ADD_PRODUCT_BRAND->value,
+                        'PermissionName' => Permission::PRODUCT_BRAND_ADD->value,
                         'PermissionTitle' => 'Add Product Brand',
                         'activity_scope' => 'system_level'
                     ],                    
                     [
-                        'PermissionName' => Permission::EDIT_PRODUCT_BRAND->value,
+                        'PermissionName' => Permission::PRODUCT_BRAND_EDIT->value,
                         'PermissionTitle' => 'Edit Product Brand',
                         'activity_scope' => 'system_level'
                     ],                    
@@ -113,12 +113,12 @@ class PermissionSeeder extends Seeder
                         'activity_scope' => 'system_level'
                     ],                    
                     [
-                        'PermissionName' => Permission::ADD_PRODUCT_CATEGORY->value,
+                        'PermissionName' => Permission::PRODUCT_CATEGORY_ADD->value,
                         'PermissionTitle' => 'Add Product Category',
                         'activity_scope' => 'system_level'
                     ],                    
                     [
-                        'PermissionName' => Permission::EDIT_PRODUCT_CATEGORY->value,
+                        'PermissionName' => Permission::PRODUCT_CATEGORY_EDIT->value,
                         'PermissionTitle' => 'Edit Product Category',
                         'activity_scope' => 'system_level'
                     ],                    
@@ -135,12 +135,12 @@ class PermissionSeeder extends Seeder
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT->value),
                 'permissions' => [
                     [
-                        'PermissionName' => Permission::ADD_PRODUCT->value,
+                        'PermissionName' => Permission::PRODUCT_PRODUCT_ADD->value,
                         'PermissionTitle' => 'Add Product',
                         'activity_scope' => 'system_level'
                     ],
                     [
-                        'PermissionName' => Permission::EDIT_PRODUCT->value,
+                        'PermissionName' => Permission::PRODUCT_PRODUCT_EDIT->value,
                         'PermissionTitle' => 'Edit Product',
                         'activity_scope' => 'system_level'
                     ]
@@ -151,12 +151,12 @@ class PermissionSeeder extends Seeder
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::USERS->value),
                 'permissions' => [
                     [
-                        'PermissionName' => Permission::BAN_USER->value,
+                        'PermissionName' => Permission::USERS_BAN->value,
                         'PermissionTitle' => 'Ban User',
                         'activity_scope' => 'system_level'
                     ],
                     [
-                        'PermissionName' => Permission::ACTIVE_USER->value,
+                        'PermissionName' => Permission::USERS_ACTIVE->value,
                         'PermissionTitle' => 'Active User',
                         'activity_scope' => 'system_level'
                     ]
@@ -167,7 +167,7 @@ class PermissionSeeder extends Seeder
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::OTHERS->value),
                 'permissions' => [
                     [
-                        'PermissionName' => Permission::PRODUCT_ATTRIBUTE->value,
+                        'PermissionName' => Permission::PRODUCT_ATTRIBUTE_ADD->value,
                         'PermissionTitle' => 'Product Attribute',
                         'activity_scope' => 'system_level'
                     ],
@@ -180,45 +180,9 @@ class PermissionSeeder extends Seeder
             ]
         ];
 
-/*
-        $modules_permissions = [
-            MenuGroup::GENERAL->value => [
-                Permission::ALL->value,
-            ],
-            MenuGroup::PRODUCT_BRAND->value => [
-                Permission::PRODUCT_BRAND_LIST->value,
-                Permission::ADD_PRODUCT_BRAND->value,
-                Permission::EDIT_PRODUCT_BRAND->value,
-                Permission::PRODUCT_BRAND_STATUS->value,
-            ],
-            MenuGroup::PRODUCT_CATEGORY->value => [
-                Permission::PRODUCT_CATEGORY_LIST->value,
-                Permission::ADD_PRODUCT_CATEGORY->value,
-                Permission::EDIT_PRODUCT_CATEGORY->value,
-                Permission::PRODUCT_CATEGORY_STATUS->value,
-            ],
-            MenuGroup::PRODUCT->value => [
-                Permission::ADD_PRODUCT->value,
-                Permission::EDIT_PRODUCT->value,
-            ],
-            MenuGroup::USERS->value => [
-                Permission::BAN_USER->value,
-                Permission::ACTIVE_USER->value,
-            ],
-            MenuGroup::OTHERS->value => [
-                Permission::PRODUCT_ATTRIBUTE->value,
-                Permission::MANAGE_CONFIGURATIONS->value,
-            ]
-        ];
-
-        $total_permission_count_in_enum = count(Permission::values());
-        $total_permission_count_in_array = 0;
-        $copy_permissions = [];
-*/
 
         foreach ($page_list as $x_mod) {
             foreach ($x_mod['permissions'] as $x_page) {
-                //echo 'Module: '.$x_mod['module'].' Title->'.$x_mod['module_tile'].', Page->'.$x_page['PermissionTitle'].'<br/>';
                 ModelsPermission::updateOrCreate(
                                 ['name' => $x_page['PermissionName'],
                                 'perm_title' => $x_page['PermissionTitle'], 
@@ -231,27 +195,5 @@ class PermissionSeeder extends Seeder
             }
             
         }
-        
-
-        // foreach ($modules_permissions as $module => $permissions) {
-        //     foreach ($permissions as $permission) {
-        //         $total_permission_count_in_array++;
-        //         $copy_permissions[] = $permission;
-        //         ModelsPermission::updateOrCreate(
-        //             ['name' => $permission, 'guard_name' => 'api'],
-        //             ['name' => $permission, 'guard_name' => 'api', 'module' => $module]
-        //         );
-        //     }
-        // }
-
-        //if ($total_permission_count_in_enum != $total_permission_count_in_array) {
-            //logger($total_permission_count_in_enum);
-            //logger($total_permission_count_in_array);
-            //$missed_permissions = array_diff(Permission::values(), $copy_permissions);
-            //logger('Permission missing', ['missed_permissions' => $missed_permissions]);
-            //logger()->error('Permission count mismatch', ['enum' => $total_permission_count_in_enum, 'array' => $total_permission_count_in_array]);
-            //throw new \Exception('Permission count mismatch');
-        //}
-        //logger('Seeding Permissions Completed');
     }
 }

@@ -46,7 +46,7 @@ class ComHelper
      * @param  mixed $name Name of the Option
      * @return string Json Decoded string
      */
-    public static function get_com_settings($name): string
+    public static function get_com_settings($name)
     {
         $config = null;
 
@@ -71,6 +71,18 @@ class ComHelper
 
         return isset($config) ? ($config == 0 ? 's3' : 'public') : 'public';
     }
+    
+    /**
+     * get_image_base_url
+     * Get Base Url for image to Show
+     * @return void
+     */
+    public static function get_image_base_url()
+    {
+        //For Dynamic URL. Like AWS/CloudFront/Local
+        return env('APP_URL').'/storage';
+    }
+
 
     /**
      * Upload Single document to folder

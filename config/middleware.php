@@ -8,10 +8,10 @@ return [
         Permission::PRODUCT_BRAND_LIST->value,
     ],
     'add-product-brand' => [
-        Permission::ADD_PRODUCT_BRAND->value,
+        Permission::PRODUCT_BRAND_ADD->value,
     ],
     'edit-product-brand' => [
-        Permission::EDIT_PRODUCT_BRAND->value,
+        Permission::PRODUCT_BRAND_EDIT->value,
     ],
     'product-brand-status' => [
         Permission::PRODUCT_BRAND_STATUS->value,
@@ -21,21 +21,21 @@ return [
         Permission::PRODUCT_CATEGORY_LIST->value,
     ],
     'category-store' => [
-        Permission::ADD_PRODUCT_CATEGORY->value,
+        Permission::PRODUCT_CATEGORY_ADD->value,
     ],
     'category-show' => [
-        Permission::EDIT_PRODUCT_CATEGORY->value,
+        Permission::PRODUCT_CATEGORY_EDIT->value,
     ],
     'category-status' => [
         Permission::PRODUCT_CATEGORY_STATUS->value,
     ],
     'ban-user' => [
-        Permission::BAN_USER->value,
+        Permission::USERS_BAN->value,
     ],
     'active-user' => [
-        Permission::ACTIVE_USER->value,
+        Permission::USERS_ACTIVE->value,
     ],
     'product-attribute' => [
-        Permission::PRODUCT_ATTRIBUTE->value,
+        Permission::PRODUCT_ATTRIBUTE_LIST->value,
     ],
 ];

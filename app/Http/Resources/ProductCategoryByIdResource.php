@@ -39,7 +39,7 @@ class ProductCategoryByIdResource extends JsonResource
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'category_banner' => $this->getFirstMediaUrl('category_banner'), // Fetch the URL of the brand logo
-            'category_cover_image' => $this->getFirstMediaUrl('category_cover_image'), // Fetch the URL of the brand logo
+            'category_thumb' => $this->getFirstMediaUrl('category_thumb'), // Fetch the URL of the brand logo
             'parent_id' => $this->parent_id,
             'category_name_paths' => $this->category_name_paths,
             'parent_path' => $this->parent_path,

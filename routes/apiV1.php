@@ -26,10 +26,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_LIST->value]], function () {
         Route::get('product-brands', [ProductBrandController::class, 'index']);
     });
-    Route::group(['middleware' => ['permission:' .Permission::ADD_PRODUCT_BRAND->value]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_ADD->value]], function () {
         Route::post('product-brands', [ProductBrandController::class, 'store']);
     });
-    Route::group(['middleware' => ['permission:' .Permission::EDIT_PRODUCT_BRAND->value]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_EDIT->value]], function () {
         Route::get('product-brands/{id}', [ProductBrandController::class, 'show']);
     });
     Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_STATUS->value]], function () {
@@ -40,10 +40,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_LIST->value]], function () {
         Route::get('product-categories', [ProductCategoryController::class, 'index']);
     });
-    Route::group(['middleware' => ['permission:' .Permission::ADD_PRODUCT_CATEGORY->value]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_ADD->value]], function () {
         Route::post('product-categories', [ProductCategoryController::class, 'store']);
     });
-    Route::group(['middleware' => ['permission:' .Permission::EDIT_PRODUCT_CATEGORY->value]], function () {
+    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_EDIT->value]], function () {
         Route::get('product-categories/{id}', [ProductCategoryController::class, 'show']);
     });
     Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_STATUS->value]], function () {
