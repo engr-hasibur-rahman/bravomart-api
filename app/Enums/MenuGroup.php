@@ -19,6 +19,7 @@ enum MenuGroup: string
     case BOOK_AUTHORS = 'authors';
     case USERS = 'users';
     case STORES = 'stores_management';
+    case STORE_SETTINGS = 'stores_settings';
     case CENTRAL = 'central_settings';
     case OTHERS = 'others';
     case ORDER_MANAGEMENT = 'order_management';
@@ -79,6 +80,24 @@ enum MenuGroup: string
                 break;
             case MenuGroup::PRODUCT_FAB_COMB->value:
                 return "Fabric Combination(For Furniture Only)";
+                break;
+            case MenuGroup::STORE_SETTINGS->value:
+                return "Store Settings";
+                break;
+            case MenuGroup::OTHERS->value:
+                return "";
+                break;
+            case MenuGroup::OTHERS->value:
+                return "";
+                break;
+            case MenuGroup::OTHERS->value:
+                return "";
+                break;
+            case MenuGroup::OTHERS->value:
+                return "";
+                break;
+            case MenuGroup::OTHERS->value:
+                return "";
                 break;
             case MenuGroup::OTHERS->value:
                 return "";

@@ -342,6 +342,125 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
+                'module' => MenuGroup::FINANCIAL_MANAGEMENT->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::FINANCIAL_MANAGEMENT->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::FINANCIAL_TRANSACTIONS->value,
+                        'PermissionTitle' => 'Transactions',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FINANCIAL_WITHDRAWLS->value,
+                        'PermissionTitle' => 'Withdrawals',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FINANCIAL_MYINCOME->value,
+                        'PermissionTitle' => 'My Income',
+                        'activity_scope' => 'store_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::FEEDBACK_MANAGEMENT->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::FEEDBACK_MANAGEMENT->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::FEEDBACK_REVIEWS->value,
+                        'PermissionTitle' => 'Reviews',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FEEDBACK_QUESTIONS->value,
+                        'PermissionTitle' => 'Questions/Chat',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FEEDBACK_QUERIES->value,
+                        'PermissionTitle' => 'Product Queries',
+                        'activity_scope' => 'store_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::PROMOTION_MANAGEMENT->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PROMOTION_MANAGEMENT->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::PROMOTION_DEALS_AVAILABLE->value,
+                        'PermissionTitle' => 'Available flash deals',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PROMOTION_MY_PRODUCT_IN_DEALS->value,
+                        'PermissionTitle' => 'My products in deals',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PROMOTION_ASK_FOR_ENROLL->value,
+                        'PermissionTitle' => 'Ask for enrollment',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PROMOTION_COUPONS->value,
+                        'PermissionTitle' => 'Cuopons',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PROMOTION_BANNERS->value,
+                        'PermissionTitle' => 'Banners',
+                        'activity_scope' => 'store_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::STORE_SETTINGS->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::STORE_SETTINGS->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::STORE_STORE_NOTICE->value,
+                        'PermissionTitle' => 'Store Notice',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_STORE_MESSAGE->value,
+                        'PermissionTitle' => 'Message',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_STORE_CONFIG->value,
+                        'PermissionTitle' => 'STORE CONFIG',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_MY_SHOP->value,
+                        'PermissionTitle' => 'MY SHOP',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_BUSINESS_PLAN->value,
+                        'PermissionTitle' => 'My Business Plan',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_WALLET->value,
+                        'PermissionTitle' => 'My Wallet',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_DISBURSE_METHOD->value,
+                        'PermissionTitle' => 'Disbursement Method',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_POS_CONFIG->value,
+                        'PermissionTitle' => 'POS Configuration',
+                        'activity_scope' => 'store_level'
+                    ]
+                ]
+            ],
+            [
                 'module' => MenuGroup::USERS->value,
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::USERS->value),
                 'permissions' => [
@@ -353,6 +472,21 @@ class PermissionSeeder extends Seeder
                     [
                         'PermissionName' => Permission::USERS_ACTIVE->value,
                         'PermissionTitle' => 'Active User',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::USERS_ROLES_STORE->value,
+                        'PermissionTitle' => 'Staff Roles',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::USERS_STAFF_ADD_STORE->value,
+                        'PermissionTitle' => 'Add New',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::USERS_STAFF_LIST_STORE->value,
+                        'PermissionTitle' => 'List',
                         'activity_scope' => 'system_level'
                     ]
                 ]
