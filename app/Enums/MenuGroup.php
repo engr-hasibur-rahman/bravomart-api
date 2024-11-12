@@ -14,13 +14,18 @@ enum MenuGroup: string
     case PRODUCT_BRAND = 'product_brand';
     case PRODUCT_CATEGORY = 'product_category';
     case PRODUCT = 'product';
+    case PRODUCT_ADONS = 'product_adons';
+    case PRODUCT_FAB_COMB = 'fabric_combination';
+    case BOOK_AUTHORS = 'authors';
     case USERS = 'users';
     case STORES = 'stores_management';
     case CENTRAL = 'central_settings';
     case OTHERS = 'others';
     case ORDER_MANAGEMENT = 'order_management';
-    case PRODUCT_MANAGEMENT = 'product_management';
-    
+    case FINANCIAL_MANAGEMENT = 'financial_management';
+    case FEEDBACK_MANAGEMENT = 'feedback_management';
+    case PROMOTION_MANAGEMENT = 'promotion_management';
+
     /**
      * moduleTitle
      *
@@ -57,17 +62,23 @@ enum MenuGroup: string
             case MenuGroup::ORDER_MANAGEMENT->value:
                 return "Order management";
                 break;
-            case MenuGroup::PRODUCT_MANAGEMENT->value:
-                return "Product management";
+            case MenuGroup::FINANCIAL_MANAGEMENT->value:
+                return "Financial management";
                 break;
-            case MenuGroup::OTHERS->value:
-                return "";
+            case MenuGroup::FEEDBACK_MANAGEMENT->value:
+                return "Feedback Management";
                 break;
-            case MenuGroup::OTHERS->value:
-                return "";
+            case MenuGroup::PROMOTION_MANAGEMENT->value:
+                return "Promotion Management";
                 break;
-            case MenuGroup::OTHERS->value:
-                return "";
+            case MenuGroup::BOOK_AUTHORS->value:
+                return "Book Authors";
+                break;
+            case MenuGroup::PRODUCT_ADONS->value:
+                return "Adons (For Food Only)";
+                break;
+            case MenuGroup::PRODUCT_FAB_COMB->value:
+                return "Fabric Combination(For Furniture Only)";
                 break;
             case MenuGroup::OTHERS->value:
                 return "";

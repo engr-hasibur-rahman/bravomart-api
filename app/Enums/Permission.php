@@ -48,6 +48,8 @@ enum Permission: string
     case PRODUCT_BRAND_ADD = 'product-brand-add';
     case PRODUCT_BRAND_EDIT = 'product-brand-edit';
     case PRODUCT_BRAND_STATUS = 'product-brand-status';
+    case PRODUCT_BRAND_LIST_STORE = 'brand-list-store';
+    case PRODUCT_BRAND_REQUESTED_FROM_STORE = 'brand-req-from-store';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product category Permissions                            //
@@ -56,13 +58,13 @@ enum Permission: string
     case PRODUCT_CATEGORY_ADD = 'add-product-category';
     case PRODUCT_CATEGORY_EDIT = 'edit-product-category';
     case PRODUCT_CATEGORY_STATUS = 'product-category-status';
-    case PRODUCT_CATEGORY_LIST_STORE = 'product-category-list';
+    case PRODUCT_CATEGORY_LIST_STORE = 'product-category-list-store';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Attribute                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_ATTRIBUTE_LIST = 'attributes';
-    case PRODUCT_ATTRIBUTE_ADD = 'product-attribute-add';
+    case PRODUCT_ATTRIBUTE_ADD = 'product-attribute-add';   
     case PRODUCT_ATTRIBUTE_EDIT = 'product-attribute-edit';
     case PRODUCT_ATTRIBUTE_DELETE = 'product-attribute-delete';
     case PRODUCT_ATTRIBUTE_LIST_STORE = 'attribute-list';
@@ -75,6 +77,9 @@ enum Permission: string
     case PRODUCT_AUTHORS_ADD = 'author-add';
     case PRODUCT_AUTHORS_EDIT = 'author-edit';
     case PRODUCT_AUTHORS_DELETE = 'author-delete';
+    case PRODUCT_AUTHORS_LIST_STORE = 'author-list-store';
+    case PRODUCT_AUTHORS_REQUESTED_FROM_STORE = 'author-req-from-store';
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //               Product Fabric Combination(For Furniture Only)                             //
@@ -98,6 +103,7 @@ enum Permission: string
     case PRODUCT_PRODUCT_LIST = 'product-list';
     case PRODUCT_PRODUCT_ADD = 'product-add';
     case PRODUCT_PRODUCT_EDIT = 'product-edit';
+    case PRODUCT_PRODUCT_DELETE = 'product-delete';
     case PRODUCT_PRODUCT_LOW_STOCK = 'product-low-stock';
     case PRODUCT_PRODUCT_TEMPLATE = 'product-template';
     case PRODUCT_PRODUCT_BULK_IMPORT = 'product-import';
@@ -116,13 +122,12 @@ enum Permission: string
     case ORDERS_DELIVERED = 'order-delivered';
     case ORDERS_FITTING_SCHEDULE = 'order-fitting-schedule';
     case ORDERS_RETURNED_OR_REFUND = 'order-refund';
-    //case ORDERS_REVIEWS = 'order-reviews';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Financial Management                                    //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case FINANCIAL_TRANSACTIONS = 'transactions';
-    case FINANCIAL_WITHDRAWLS = 'withdrawals';
+    case FINANCIAL_TRANSACTIONS = 'my-transactions';
+    case FINANCIAL_WITHDRAWLS = 'my-withdrawals';
     case FINANCIAL_MYINCOME = 'my-income';
 
 
@@ -138,9 +143,9 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PROMOTION_DEALS_AVAILABLE = 'deals-available';
     case PROMOTION_MY_PRODUCT_IN_DEALS = 'myproduct-in-deals';
-    case PROMOTION_ASK_FOR_ENROLL = 'product-enrollment';
-    case PROMOTION_COUPONS = 'coupons';
-    case PROMOTION_BANNERS = 'banners';
+    case PROMOTION_ASK_FOR_ENROLL = 'product-deal-enrollment';
+    case PROMOTION_COUPONS = 'coupon-list';
+    case PROMOTION_BANNERS = 'banner-list';
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//

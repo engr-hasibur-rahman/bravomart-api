@@ -68,13 +68,13 @@ class PermissionSeeder extends Seeder
                         'PermissionName' => Permission::ADMIN_STORE_ADD->value,
                         'PermissionTitle' => 'Store Add',
                         'activity_scope' => 'system_level'
-                    ]
-                    ,
+                    ],
                     [
                         'PermissionName' => Permission::STORE_STORE_ADD_UPDATE->value,
                         'PermissionTitle' => 'Store Add/Update',
                         'activity_scope' => 'store_level'
-                    ]                ]
+                    ]
+                ]
             ],
             [
                 'module' => MenuGroup::PRODUCT_BRAND->value,
@@ -84,20 +84,67 @@ class PermissionSeeder extends Seeder
                         'PermissionName' => Permission::PRODUCT_BRAND_LIST->value,
                         'PermissionTitle' => 'Product Brand List',
                         'activity_scope' => 'system_level'
-                    ],                    
+                    ],
                     [
                         'PermissionName' => Permission::PRODUCT_BRAND_ADD->value,
                         'PermissionTitle' => 'Add Product Brand',
                         'activity_scope' => 'system_level'
-                    ],                    
+                    ],
                     [
                         'PermissionName' => Permission::PRODUCT_BRAND_EDIT->value,
                         'PermissionTitle' => 'Edit Product Brand',
                         'activity_scope' => 'system_level'
-                    ],                    
+                    ],
                     [
                         'PermissionName' => Permission::PRODUCT_BRAND_STATUS->value,
                         'PermissionTitle' => 'Change Brand Status',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_BRAND_LIST_STORE->value,
+                        'PermissionTitle' => 'Brand/Manufacturers/Publications',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_BRAND_REQUESTED_FROM_STORE->value,
+                        'PermissionTitle' => 'Approve Brand Request From Store',
+                        'activity_scope' => 'system_level'
+                    ]
+
+                ]
+            ],
+            [
+                'module' => MenuGroup::BOOK_AUTHORS->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::BOOK_AUTHORS->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::PRODUCT_AUTHORS_LIST->value,
+                        'PermissionTitle' => 'Author\'s List',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_AUTHORS_ADD->value,
+                        'PermissionTitle' => 'Add Book Author',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_AUTHORS_EDIT->value,
+                        'PermissionTitle' => 'Edit Author\'s Name',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_AUTHORS_DELETE->value,
+                        'PermissionTitle' => 'Delete Author\'s Name ',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_AUTHORS_LIST_STORE->value,
+                        'PermissionTitle' => 'Author\'s List',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_AUTHORS_REQUESTED_FROM_STORE->value,
+                        'PermissionTitle' => 'Approve Author Enlist Request From Store',
                         'activity_scope' => 'system_level'
                     ]
 
@@ -111,21 +158,26 @@ class PermissionSeeder extends Seeder
                         'PermissionName' => Permission::PRODUCT_CATEGORY_LIST->value,
                         'PermissionTitle' => 'Product Category List',
                         'activity_scope' => 'system_level'
-                    ],                    
+                    ],
                     [
                         'PermissionName' => Permission::PRODUCT_CATEGORY_ADD->value,
                         'PermissionTitle' => 'Add Product Category',
                         'activity_scope' => 'system_level'
-                    ],                    
+                    ],
                     [
                         'PermissionName' => Permission::PRODUCT_CATEGORY_EDIT->value,
                         'PermissionTitle' => 'Edit Product Category',
                         'activity_scope' => 'system_level'
-                    ],                    
+                    ],
                     [
                         'PermissionName' => Permission::PRODUCT_CATEGORY_STATUS->value,
                         'PermissionTitle' => 'Change Category Status',
                         'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_CATEGORY_LIST_STORE->value,
+                        'PermissionTitle' => 'Category List',
+                        'activity_scope' => 'store_level'
                     ]
 
                 ]
@@ -135,14 +187,157 @@ class PermissionSeeder extends Seeder
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT->value),
                 'permissions' => [
                     [
+                        'PermissionName' => Permission::PRODUCT_PRODUCT_LIST->value,
+                        'PermissionTitle' => 'Manage Products',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
                         'PermissionName' => Permission::PRODUCT_PRODUCT_ADD->value,
-                        'PermissionTitle' => 'Add Product',
-                        'activity_scope' => 'system_level'
+                        'PermissionTitle' => 'Add New Product',
+                        'activity_scope' => 'store_level'
                     ],
                     [
                         'PermissionName' => Permission::PRODUCT_PRODUCT_EDIT->value,
                         'PermissionTitle' => 'Edit Product',
-                        'activity_scope' => 'system_level'
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_PRODUCT_DELETE->value,
+                        'PermissionTitle' => 'Delete Product',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_PRODUCT_LOW_STOCK->value,
+                        'PermissionTitle' => 'All Low-Stock/Out of Stock Product',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_PRODUCT_TEMPLATE->value,
+                        'PermissionTitle' => 'Product Template',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_PRODUCT_BULK_IMPORT->value,
+                        'PermissionTitle' => 'Bulk Import',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_PRODUCT_BULK_EXPORT->value,
+                        'PermissionTitle' => 'Bulk Export',
+                        'activity_scope' => 'store_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::PRODUCT_ADONS->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_ADONS->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::PRODUCT_ADONS_LIST->value,
+                        'PermissionTitle' => 'Manage Adons',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_ADONS_ADD->value,
+                        'PermissionTitle' => 'Add New Adon',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_ADONS_EDIT->value,
+                        'PermissionTitle' => 'Edit Adon',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_ADONS_DELETE->value,
+                        'PermissionTitle' => 'Delete Adon',
+                        'activity_scope' => 'store_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::PRODUCT_FAB_COMB->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_FAB_COMB->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::PRODUCT_FAB_COMB_LIST->value,
+                        'PermissionTitle' => 'Manage Combinations',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_FAB_COMB_ADD->value,
+                        'PermissionTitle' => 'Add Combinations',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_FAB_COMB_EDIT->value,
+                        'PermissionTitle' => 'Edit Combinations',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_FAB_COMB_DELETE->value,
+                        'PermissionTitle' => 'Delete Combinations',
+                        'activity_scope' => 'store_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::ORDER_MANAGEMENT->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::ORDER_MANAGEMENT->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::ORDERS_ALL->value,
+                        'PermissionTitle' => 'All Orders',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_PENDING->value,
+                        'PermissionTitle' => 'Pending',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_CONFIRMED->value,
+                        'PermissionTitle' => 'Confirmed',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_SCHEDULED->value,
+                        'PermissionTitle' => 'Scheduled',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_COOKING->value,
+                        'PermissionTitle' => 'Cooking (For Restaurant)',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_READY_FOR_DELIVERY->value,
+                        'PermissionTitle' => 'Ready For Delivery',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_PRODUCT_ON_THE_WAY->value,
+                        'PermissionTitle' => 'Item On The Way',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_DELIVERED->value,
+                        'PermissionTitle' => 'Delivered',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_FITTING_SCHEDULE->value,
+                        'PermissionTitle' => 'Fitting Schedule Done(Furniture)',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_RETURNED_OR_REFUND->value,
+                        'PermissionTitle' => 'Returned or Refunded',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDERS_RETURNED_OR_REFUND->value,
+                        'PermissionTitle' => 'Returned or Refunded',
+                        'activity_scope' => 'store_level'
                     ]
                 ]
             ],
@@ -184,16 +379,16 @@ class PermissionSeeder extends Seeder
         foreach ($page_list as $x_mod) {
             foreach ($x_mod['permissions'] as $x_page) {
                 ModelsPermission::updateOrCreate(
-                                ['name' => $x_page['PermissionName'],
-                                'perm_title' => $x_page['PermissionTitle'], 
-                                'guard_name' => 'api', 
-                                'module' => $x_mod['module'],
-                                'module_title' => $x_mod['module_tile'],
-                                'available_for' => $x_page['activity_scope']
-                                ]
-                            );
+                    [
+                        'name' => $x_page['PermissionName'],
+                        'perm_title' => $x_page['PermissionTitle'],
+                        'guard_name' => 'api',
+                        'module' => $x_mod['module'],
+                        'module_title' => $x_mod['module_tile'],
+                        'available_for' => $x_page['activity_scope']
+                    ]
+                );
             }
-            
         }
     }
 }

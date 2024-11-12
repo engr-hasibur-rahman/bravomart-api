@@ -8,7 +8,7 @@ use App\Models\Media;
 
 class ComHelper
 {
-    
+
     /**
      * remove_invalid_charcaters
      * Remove unaccepteable charecters from the text
@@ -21,7 +21,7 @@ class ComHelper
     {
         return str_ireplace(['\'', '<', '>'], '"', ';', ' ', $str);
     }
-    
+
     /**
      * format_coordiantes
      * Format geometry coordiantes to make it useable for front-end 
@@ -38,7 +38,7 @@ class ComHelper
         return $data;
     }
 
-    
+
     /**
      * get_com_settings
      * get settings otpion from database
@@ -58,7 +58,7 @@ class ComHelper
 
         return $config;
     }
-    
+
     /**
      * getDirectory
      * Get Direcotry Name
@@ -71,7 +71,7 @@ class ComHelper
 
         return isset($config) ? ($config == 0 ? 's3' : 'public') : 'public';
     }
-    
+
     /**
      * get_image_base_url
      * Get Base Url for image to Show
@@ -80,7 +80,7 @@ class ComHelper
     public static function get_image_base_url()
     {
         //For Dynamic URL. Like AWS/CloudFront/Local
-        return env('APP_URL').'/storage';
+        return env('APP_URL') . '/storage';
     }
 
 
