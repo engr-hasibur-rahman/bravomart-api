@@ -14,7 +14,14 @@ enum Permission: string
     case ALL = 'all';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Central Settings     Admin                              //
+    //                                  POS Management                                          //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case POS_SALES = 'pos-sales';
+    case POS_SETTINGS_ADMIN = 'pos-settings-admin';
+    case POS_SETTINGS_STORE = 'pos-settings-store';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Area Management                                         //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_AREA_LIST = 'area-list';
     case ADMIN_AREA_ADD = 'add-area';
@@ -122,6 +129,15 @@ enum Permission: string
     case ORDERS_DELIVERED = 'order-delivered';
     case ORDERS_FITTING_SCHEDULE = 'order-fitting-schedule';
     case ORDERS_RETURNED_OR_REFUND = 'order-refund';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Flash Sales                                             //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case FLASH_SALES_ALL_CAMPAIGNS = 'flash-ales-list';
+    case FLASH_SALES_JOIN = 'flash-ales-join'; // A list of Flash sales to show in Store where and option for store to join that program
+    case FLASH_SALES_ADD_CAMPAIGN_ADMIN = 'flash-ales-add-admin';
+    case FLASH_SALES_ADD_CAMPAIGN_STORE = 'flash-ales-add-store';
+    case FLASH_SALES_APPROVE_CAMPAIGN = 'flash-ales-approve';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Financial Management                                    //

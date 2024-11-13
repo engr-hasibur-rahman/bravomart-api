@@ -29,7 +29,7 @@ class PermissionSeeder extends Seeder
                     [
                         'PermissionName' => Permission::ALL->value,
                         'PermissionTitle' => 'All',
-                        'activity_scope' => 'COMMON'
+                        'activity_scope' => 'common'
                     ]
                 ]
             ],
@@ -287,57 +287,57 @@ class PermissionSeeder extends Seeder
                     [
                         'PermissionName' => Permission::ORDERS_ALL->value,
                         'PermissionTitle' => 'All Orders',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_PENDING->value,
                         'PermissionTitle' => 'Pending',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_CONFIRMED->value,
                         'PermissionTitle' => 'Confirmed',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_SCHEDULED->value,
                         'PermissionTitle' => 'Scheduled',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_COOKING->value,
                         'PermissionTitle' => 'Cooking (For Restaurant)',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_READY_FOR_DELIVERY->value,
                         'PermissionTitle' => 'Ready For Delivery',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_PRODUCT_ON_THE_WAY->value,
                         'PermissionTitle' => 'Item On The Way',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_DELIVERED->value,
                         'PermissionTitle' => 'Delivered',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_FITTING_SCHEDULE->value,
                         'PermissionTitle' => 'Fitting Schedule Done(Furniture)',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_RETURNED_OR_REFUND->value,
                         'PermissionTitle' => 'Returned or Refunded',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::ORDERS_RETURNED_OR_REFUND->value,
                         'PermissionTitle' => 'Returned or Refunded',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ]
                 ]
             ],
