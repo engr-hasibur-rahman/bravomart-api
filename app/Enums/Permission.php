@@ -13,33 +13,33 @@ enum Permission: string
 
     case ALL = 'all';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  POS Management                                          //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  POS Management                                          //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case POS_SALES = 'pos-sales';
     case POS_SETTINGS_ADMIN = 'pos-settings-admin';
     case POS_SETTINGS_STORE = 'pos-settings-store';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Area Management                                         //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Area Management                                         //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_AREA_LIST = 'area-list';
     case ADMIN_AREA_ADD = 'add-area';
     case ADMIN_AREA_UPDATE = 'update-area';
 
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Store Management                                        //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Store Management                                        //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_STORE_LIST = 'store-list';
     case ADMIN_STORE_ADD = 'store-add';
     case STORE_STORE_ADD_UPDATE = 'store-add-update'; // Add if user have no store added. Update if existis
     case STORE_RECOMMENDED = 'store-recommended';
     case STORE_APPROVAL = 'store-approval';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Store Settings                                        //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Store Settings                                        //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case STORE_STORE_NOTICE = 'store-notice';
     case STORE_STORE_MESSAGE = 'store-message';
     case STORE_STORE_CONFIG = 'store-config';
@@ -50,9 +50,9 @@ enum Permission: string
     case STORE_POS_CONFIG = 'pos-config';
 
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //               Product Brand/Manufacturers/Publications (For Book Only)                   //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //               Product Brand/Manufacturers/Publications (For Book Only)                   //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_BRAND_LIST = 'product-brand-list';
     case PRODUCT_BRAND_ADD = 'product-brand-add';
     case PRODUCT_BRAND_EDIT = 'product-brand-edit';
@@ -60,36 +60,36 @@ enum Permission: string
     case PRODUCT_BRAND_LIST_STORE = 'brand-list-store';
     case PRODUCT_BRAND_REQUESTED_FROM_STORE = 'brand-req-from-store';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Product category Permissions                            //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Product category Permissions                            //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_CATEGORY_LIST = 'product-category-list';
     case PRODUCT_CATEGORY_ADD = 'add-product-category';
     case PRODUCT_CATEGORY_EDIT = 'edit-product-category';
     case PRODUCT_CATEGORY_STATUS = 'product-category-status';
     case PRODUCT_CATEGORY_LIST_STORE = 'product-category-list-store';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Product Attribute                                     //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Product Attribute                                     //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_ATTRIBUTE_LIST = 'attributes';
     case PRODUCT_ATTRIBUTE_ADD = 'product-attribute-add';
     case PRODUCT_ATTRIBUTE_EDIT = 'product-attribute-edit';
     case PRODUCT_ATTRIBUTE_DELETE = 'product-attribute-delete';
     case PRODUCT_ATTRIBUTE_LIST_STORE = 'attribute-list';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Product Warranty                                        //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Product Warranty                                        //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_WARRANTY_LIST = 'product-warranty';
     case PRODUCT_WARRANTY_ADD = 'product-warranty-add';
     case PRODUCT_WARRANTY_EDIT = 'product-warranty-edit';
     case PRODUCT_WARRANTY_LIST_STORE = 'product-warranty-list';
 
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                          Product Authors (For Book Only)                                 //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                          Product Authors (For Book Only)                                 //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_AUTHORS_LIST = 'author-list';
     case PRODUCT_AUTHORS_ADD = 'author-add';
     case PRODUCT_AUTHORS_EDIT = 'author-edit';
@@ -98,25 +98,25 @@ enum Permission: string
     case PRODUCT_AUTHORS_REQUESTED_FROM_STORE = 'author-req-from-store';
 
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //               Product Fabric Combination(For Furniture Only)                             //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //               Product Fabric Combination(For Furniture Only)                             //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_FAB_COMB_LIST = 'fabcomb-list';
     case PRODUCT_FAB_COMB_ADD = 'fabcomb-add';
     case PRODUCT_FAB_COMB_EDIT = 'fabcomb-edit';
     case PRODUCT_FAB_COMB_DELETE = 'fabcomb-delete';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                          Product addons (For Food Only)                                   //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                          Product addons (For Food Only)                                   //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_ADDONS_LIST = 'addons-list';
     case PRODUCT_ADDONS_ADD = 'addons-add';
     case PRODUCT_ADDONS_EDIT = 'addons-edit';
     case PRODUCT_ADDONS_DELETE = 'addons-delete';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Product Permissions                                     //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Product Permissions                                     //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_PRODUCT_LIST = 'product-list';
     case PRODUCT_PRODUCT_ADD = 'product-add';
     case PRODUCT_PRODUCT_EDIT = 'product-edit';
@@ -126,9 +126,9 @@ enum Permission: string
     case PRODUCT_PRODUCT_BULK_IMPORT = 'product-import';
     case PRODUCT_PRODUCT_BULK_EXPORT = 'product-export';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Order Permissions                                       //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Order Permissions                                       //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ORDERS_ALL = 'order-all';
     case ORDERS_PENDING = 'order-pending';
     case ORDERS_CONFIRMED = 'order-confirmed';
@@ -140,33 +140,33 @@ enum Permission: string
     case ORDERS_FITTING_SCHEDULE = 'order-fitting-schedule';
     case ORDERS_RETURNED_OR_REFUND = 'order-refund';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Flash Sales                                             //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case FLASH_SALES_ALL_CAMPAIGNS = 'flash-ales-list';
-    case FLASH_SALES_JOIN = 'flash-ales-join'; // A list of Flash sales to show in Store where and option for store to join that program
-    case FLASH_SALES_ADD_CAMPAIGN_ADMIN = 'flash-ales-add-admin';
-    case FLASH_SALES_ADD_CAMPAIGN_STORE = 'flash-ales-add-store';
-    case FLASH_SALES_APPROVE_CAMPAIGN = 'flash-ales-approve';
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Flash Sales                                             //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case FLASH_SALES_ALL_CAMPAIGNS = 'flash-sales-list';
+    case FLASH_SALES_JOIN = 'flash-sales-join'; // A list of Flash sales to show in Store where and option for store to join that program
+    case FLASH_SALES_ADD_CAMPAIGN_ADMIN = 'flash-sales-add-admin';
+    case FLASH_SALES_ADD_CAMPAIGN_STORE = 'flash-sales-add-store';
+    case FLASH_SALES_APPROVE_CAMPAIGN = 'flash-sales-approve';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Financial Management                                    //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Financial Management                                    //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case FINANCIAL_TRANSACTIONS = 'my-transactions';
     case FINANCIAL_WITHDRAWLS = 'my-withdrawals';
     case FINANCIAL_MYINCOME = 'my-income';
 
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Feedback Management                                     //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Feedback Management                                     //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case FEEDBACK_REVIEWS = 'reviews';
     case FEEDBACK_QUESTIONS = 'questions-Chat';
     case FEEDBACK_QUERIES = 'product-queries';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Promotion Management                                   //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Promotion Management                                   //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PROMOTION_DEALS_AVAILABLE = 'deals-available';
     case PROMOTION_MY_PRODUCT_IN_DEALS = 'myproduct-in-deals';
     case PROMOTION_ASK_FOR_ENROLL = 'product-deal-enrollment';
@@ -174,18 +174,89 @@ enum Permission: string
     case PROMOTION_BANNERS = 'banner-list';
 
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  User Permissions                                        //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  User Permissions                                        //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case USERS_BAN = 'user-ban';
     case USERS_ACTIVE = 'active-ban';
     case USERS_ROLES_STORE = 'store-staff-role';
     case USERS_STAFF_ADD_STORE = 'store-staff-add';
     case USERS_STAFF_LIST_STORE = 'store-staff-list';
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Others Permissions                                      //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                                  Others Permissions                                      //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case MANAGE_CONFIGURATIONS = 'manage-configurations';
 
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //           User Related Functionality/Deliveryman management                              //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case DELIVERY_VEHICLE_CATEGORY = 'vehicle-category';
+    case DELIVERY_PERSON_ADD = 'delivery-person-add';
+    case DELIVERY_PERSON_LIST = 'delivery-person-list';
+    case DELIVERY_PERSONS_REVIEW = 'delivery-person-review';
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                          Customer management                                             //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case CUSTOMER_LIST = 'customer-list';
+    case CUSTOMER_WALLET_ADD_FUND = 'customer-wallet-add-fund';
+    case CUSTOMER_WALLET_REPORT = 'customer-wallet-report';
+    case CUSTOMER_WALLET_BONUS = 'customer-wallet-bonus';
+    case CUSTOMER_LOYALTY_POINT = 'customer-loyalty-point';
+    case CUSTOMER_SUBSCRIBED_MAIL_LIST = 'customer-subscribe-email-list';
+    case CUSTOMER_CONTACT_MESSAGES = 'customer-contact-messages';
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //       Transacton & Reports Related Functionality                                         //
+        //              Financial Activity                                                          //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case FINANCIAL_WITHDRAW_REQUESTS = 'withdraw-requests';
+    case FINANCIAL_STORE_DISBURSEMENT = 'store-disbursement';
+    case FINANCIAL_DELIVERY_MAN_DISBURSEMENT = 'delivery-man-disbursement';
+    case FINANCIAL_COLLECT_CASH = 'collect-cash';
+    case FINANCIAL_DELIVERY_MAN_PAYMENTS = 'delivery-man-payments';
+    case FINANCIAL_WITHDRAW_METHOD = 'withdraw-method';
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //                          Report and analytics                                            //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case TRANSACTION_REPORT = 'transaction-report';
+    case ITEM_REPORT = 'item-report';
+    case STORE_WISE_REPORT = 'store-wise-report';
+    case EXPENSE_REPORT = 'expense-report';
+    case DISBURSEMENT_REPORT = 'disbursement-report';
+    case ORDER_REPORT = 'order-report';
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //       Ssettings Related Functionality                                        //
+        //              Business management                                                          //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case BUSINESS_SETTINGS = 'business-settings';
+    case SUBSCRIPTION_PACKAGE = 'subscription-package';
+    case SUBSCRIBER_LIST = 'subscriber-list';
+    case SUBSCRIPTION_SETTINGS = 'subscription-settings';
+    case MEDIA_SOCIAL_MEDIA = 'media-social-media';
+    case MEDIA_ADMIN_LANDING_PAGE = 'media-admin-landing-page';
+    case MEDIA_REACT_LANDING_PAGE = 'media-react-landing-page';
+    case MEDIA_FLUTTER_LANDING_PAGE = 'media-flutter-landing-page';
+    case PAGE_TERMS_AND_CONDITION = 'page-terms-and-condition';
+    case PAGE_PRIVACY_POLICY = 'page-privacy-policy';
+    case PAGE_ABOUT_US = 'page-about-us';
+    case PAGE_REFUND_POLICY = 'page-refund-policy';
+    case PAGE_CANCELLATION_POLICY = 'page-cancel-policy';
+    case PAGE_SHIPPING_POLICY = 'page-shipping-policy';
+    case IMAGE_GALLERY = 'image-gallery';
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+        //              System management                                                           //
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case THIRD_PARTY = 'third-party';
+    case FIREBASE_NOTIFICATION = 'firebase-notification';
+    case OFFLINE_PAYMENT_SETUP = 'offline-payment-setup';
+    case LOGIN_SETUP = 'login-setup';
+    case REACT_SITE = 'react-site';
+    case EMAIL_TEMPLATE = 'email-template';
+    case APP_SETTINGS = 'app-settings';
+    case NOTIFICATION_CHANNELS = 'notification-channels';
 }

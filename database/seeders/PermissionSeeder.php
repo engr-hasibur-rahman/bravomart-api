@@ -81,6 +81,21 @@ class PermissionSeeder extends Seeder
                         'PermissionName' => Permission::STORE_STORE_ADD_UPDATE->value,
                         'PermissionTitle' => 'Store Add/Update',
                         'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::POS_SALES->value,
+                        'PermissionTitle' => 'Pos Sales',
+                        'activity_scope' => 'common'
+                    ],
+                    [
+                        'PermissionName' => Permission::POS_SETTINGS_ADMIN->value,
+                        'PermissionTitle' => 'Pos Settings',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::POS_SETTINGS_STORE->value,
+                        'PermissionTitle' => 'Pos Settings',
+                        'activity_scope' => 'store_level'
                     ]
                 ]
             ],
@@ -449,10 +464,111 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
+                'module' => MenuGroup::DELIVERYMAN_MANAGEMENT->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::DELIVERYMAN_MANAGEMENT->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::DELIVERY_VEHICLE_CATEGORY->value,
+                        'PermissionTitle' => 'Vehicles category',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::DELIVERY_PERSON_ADD->value,
+                        'PermissionTitle' => 'Add Delivery Man',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::DELIVERY_PERSON_LIST->value,
+                        'PermissionTitle' => 'Delivery Man List',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::DELIVERY_PERSONS_REVIEW->value,
+                        'PermissionTitle' => 'Reviews',
+                        'activity_scope' => 'system_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::CUSTOMER_MANAGEMENT->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::CUSTOMER_MANAGEMENT->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::CUSTOMER_LIST->value,
+                        'PermissionTitle' => 'Customers',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::CUSTOMER_WALLET_ADD_FUND->value,
+                        'PermissionTitle' => 'Add Fund',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::CUSTOMER_WALLET_REPORT->value,
+                        'PermissionTitle' => 'Report',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::CUSTOMER_WALLET_BONUS->value,
+                        'PermissionTitle' => 'Bonus',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::CUSTOMER_LOYALTY_POINT->value,
+                        'PermissionTitle' => 'Customer Loyalty Point',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::CUSTOMER_SUBSCRIBED_MAIL_LIST->value,
+                        'PermissionTitle' => 'Subscribe Mail List',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::CUSTOMER_CONTACT_MESSAGES->value,
+                        'PermissionTitle' => 'Contact Messages',
+                        'activity_scope' => 'system_level'
+                    ]
+                ]
+            ],
+            [
                 'module' => MenuGroup::PROMOTION_MANAGEMENT->value,
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::PROMOTION_MANAGEMENT->value),
                 'permissions' => [
                     [
+                        'PermissionName' => Permission::FLASH_SALES_ALL_CAMPAIGNS->value,
+                        'PermissionTitle' => 'Flash Sales List',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FLASH_SALES_ADD_CAMPAIGN_ADMIN->value,
+                        'PermissionTitle' => 'Add Flash Sales',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FLASH_SALES_APPROVE_CAMPAIGN->value,
+                        'PermissionTitle' => 'Flash Sales Request Approve',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FLASH_SALES_JOIN->value,
+                        'PermissionTitle' => 'Available flash deals',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FLASH_SALES_ADD_CAMPAIGN_STORE->value,
+                        'PermissionTitle' => 'Add Flash Sales',
+                        'activity_scope' => 'store_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PROMOTION_COUPONS->value,
+                        'PermissionTitle' => 'Coupons',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PROMOTION_BANNERS->value,
+                        'PermissionTitle' => 'Banners',
+                        'activity_scope' => 'store_level'
+                    ],[
                         'PermissionName' => Permission::PROMOTION_DEALS_AVAILABLE->value,
                         'PermissionTitle' => 'Available flash deals',
                         'activity_scope' => 'store_level'
@@ -465,11 +581,6 @@ class PermissionSeeder extends Seeder
                     [
                         'PermissionName' => Permission::PROMOTION_ASK_FOR_ENROLL->value,
                         'PermissionTitle' => 'Ask for enrollment',
-                        'activity_scope' => 'store_level'
-                    ],
-                    [
-                        'PermissionName' => Permission::PROMOTION_COUPONS->value,
-                        'PermissionTitle' => 'Coupons',
                         'activity_scope' => 'store_level'
                     ],
                     [
@@ -526,6 +637,160 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
+                'module' => MenuGroup::FINANCIAL_ACTIVITY->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::FINANCIAL_ACTIVITY->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::FINANCIAL_WITHDRAW_REQUESTS->value,
+                        'PermissionTitle' => 'Withdraw Requests',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FINANCIAL_STORE_DISBURSEMENT->value,
+                        'PermissionTitle' => 'Store Disbursement',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FINANCIAL_DELIVERY_MAN_DISBURSEMENT->value,
+                        'PermissionTitle' => 'Delivery Man Disbursement',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FINANCIAL_COLLECT_CASH->value,
+                        'PermissionTitle' => 'Collect Cash',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FINANCIAL_DELIVERY_MAN_PAYMENTS->value,
+                        'PermissionTitle' => 'Delivery Man Payments',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FINANCIAL_WITHDRAW_METHOD->value,
+                        'PermissionTitle' => 'Withdraw Method',
+                        'activity_scope' => 'system_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::REPORTS_ANALYTICS->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::REPORTS_ANALYTICS->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::TRANSACTION_REPORT->value,
+                        'PermissionTitle' => 'Transaction Report',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ITEM_REPORT->value,
+                        'PermissionTitle' => 'Item Report',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_WISE_REPORT->value,
+                        'PermissionTitle' => 'Store-wise Report',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::EXPENSE_REPORT->value,
+                        'PermissionTitle' => 'Expense Report',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::DISBURSEMENT_REPORT->value,
+                        'PermissionTitle' => 'Disbursement Report',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::ORDER_REPORT->value,
+                        'PermissionTitle' => 'Order Report',
+                        'activity_scope' => 'system_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::BUSINESS_MANAGEMENT->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::BUSINESS_MANAGEMENT->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::BUSINESS_SETTINGS->value,
+                        'PermissionTitle' => 'Business Settings',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::SUBSCRIPTION_PACKAGE->value,
+                        'PermissionTitle' => 'Subscription Package',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::SUBSCRIBER_LIST->value,
+                        'PermissionTitle' => 'Subscriber List',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::SUBSCRIPTION_SETTINGS->value,
+                        'PermissionTitle' => 'Settings',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::MEDIA_SOCIAL_MEDIA->value,
+                        'PermissionTitle' => 'Social Media',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::MEDIA_ADMIN_LANDING_PAGE->value,
+                        'PermissionTitle' => 'Admin landing page',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::MEDIA_REACT_LANDING_PAGE->value,
+                        'PermissionTitle' => 'React landing page',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::MEDIA_FLUTTER_LANDING_PAGE->value,
+                        'PermissionTitle' => 'Flutter landing page',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PAGE_TERMS_AND_CONDITION->value,
+                        'PermissionTitle' => 'Terms and condition',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PAGE_PRIVACY_POLICY->value,
+                        'PermissionTitle' => 'Privacy policy',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PAGE_ABOUT_US->value,
+                        'PermissionTitle' => 'About us',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PAGE_REFUND_POLICY->value,
+                        'PermissionTitle' => 'Refund Policy',
+                        'activity_scope' => 'system_level'
+                    ]
+                    ,
+                    [
+                        'PermissionName' => Permission::PAGE_CANCELLATION_POLICY->value,
+                        'PermissionTitle' => 'Cancellation Policy',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PAGE_SHIPPING_POLICY->value,
+                        'PermissionTitle' => 'Shipping Policy',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::IMAGE_GALLERY->value,
+                        'PermissionTitle' => 'Gallery',
+                        'activity_scope' => 'system_level'
+                    ]
+                ]
+            ],
+            [
                 'module' => MenuGroup::USERS->value,
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::USERS->value),
                 'permissions' => [
@@ -552,6 +817,52 @@ class PermissionSeeder extends Seeder
                     [
                         'PermissionName' => Permission::USERS_STAFF_LIST_STORE->value,
                         'PermissionTitle' => 'List',
+                        'activity_scope' => 'system_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::SYSTEM_MANAGEMENT->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::SYSTEM_MANAGEMENT->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::THIRD_PARTY->value,
+                        'PermissionTitle' => '3rd party',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::FIREBASE_NOTIFICATION->value,
+                        'PermissionTitle' => 'Firebase notification',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::OFFLINE_PAYMENT_SETUP->value,
+                        'PermissionTitle' => 'Offline Payment Setup',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::LOGIN_SETUP->value,
+                        'PermissionTitle' => 'Login setup',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::REACT_SITE->value,
+                        'PermissionTitle' => 'React site',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::EMAIL_TEMPLATE->value,
+                        'PermissionTitle' => 'Email template',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::APP_SETTINGS->value,
+                        'PermissionTitle' => 'App settings',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::NOTIFICATION_CHANNELS->value,
+                        'PermissionTitle' => 'Notification Channels',
                         'activity_scope' => 'system_level'
                     ]
                 ]
