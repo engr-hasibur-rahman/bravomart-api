@@ -564,11 +564,6 @@ class PermissionSeeder extends Seeder
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::OTHERS->value),
                 'permissions' => [
                     [
-                        'PermissionName' => Permission::PRODUCT_ATTRIBUTE_ADD->value,
-                        'PermissionTitle' => 'Product Attribute',
-                        'activity_scope' => 'system_level'
-                    ],
-                    [
                         'PermissionName' => Permission::MANAGE_CONFIGURATIONS->value,
                         'PermissionTitle' => 'Manage Configuration',
                         'activity_scope' => 'system_level'
