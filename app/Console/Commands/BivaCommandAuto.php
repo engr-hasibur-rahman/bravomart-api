@@ -106,8 +106,8 @@ class BivaCommandAuto extends Command
         $user->save();
 
         //Assign Permission to Super Admin Role
-        $role = Role::firstOrCreate(['name'  => UserRole::SUPER_ADMIN->value], ['name'  => UserRole::SUPER_ADMIN->value, 'guard_name' => 'api']);
-        Permission::firstOrCreate(['name'  => 'all'], ['name'  => 'all', 'guard_name' => 'api']);
+        $role = Role::where(['available_for'  => 'system_level'])->first();
+        //Permission::firstOrCreate(['name'  => 'all'], ['name'  => 'all', 'guard_name' => 'api']);
         $role->givePermissionTo(Permission::whereIn('available_for',['system_level','COMMON'])->get());
         $user->assignRole($role);
 
