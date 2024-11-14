@@ -34,6 +34,8 @@ enum Permission: string
     case ADMIN_STORE_LIST = 'store-list';
     case ADMIN_STORE_ADD = 'store-add';
     case STORE_STORE_ADD_UPDATE = 'store-add-update'; // Add if user have no store added. Update if existis 
+    case STORE_RECOMMENDED = 'store-recommended'; 
+    case STORE_APPROVAL = 'store-approval'; 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Store Settings                                        //
@@ -75,6 +77,14 @@ enum Permission: string
     case PRODUCT_ATTRIBUTE_EDIT = 'product-attribute-edit';
     case PRODUCT_ATTRIBUTE_DELETE = 'product-attribute-delete';
     case PRODUCT_ATTRIBUTE_LIST_STORE = 'attribute-list';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Product Warrenty                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case PRODUCT_WARRENTY_LIST = 'product-warrenty';
+    case PRODUCT_WARRENTY_ADD = 'product-warrenty-add';   
+    case PRODUCT_WARRENTY_EDIT = 'product-warrenty-edit';
+    case PRODUCT_WARRENTY_LIST_STORE = 'product-warrenty-list';
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//

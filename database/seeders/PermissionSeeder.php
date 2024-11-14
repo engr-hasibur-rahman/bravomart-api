@@ -59,19 +59,87 @@ class PermissionSeeder extends Seeder
                 'module' => MenuGroup::STORES->value,
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::STORES->value),
                 'permissions' => [
-                    [
-                        'PermissionName' => Permission::ADMIN_STORE_LIST->value,
-                        'PermissionTitle' => 'Store List',
-                        'activity_scope' => 'system_level'
-                    ],
+                    
                     [
                         'PermissionName' => Permission::ADMIN_STORE_ADD->value,
                         'PermissionTitle' => 'Store Add',
                         'activity_scope' => 'system_level'
                     ],
                     [
+                        'PermissionName' => Permission::ADMIN_STORE_LIST->value,
+                        'PermissionTitle' => 'Store List',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_RECOMMENDED->value,
+                        'PermissionTitle' => 'Recomended Store',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::STORE_APPROVAL->value,
+                        'PermissionTitle' => 'Pending Approval/ Rejected',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
                         'PermissionName' => Permission::STORE_STORE_ADD_UPDATE->value,
                         'PermissionTitle' => 'Store Add/Update',
+                        'activity_scope' => 'store_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::PRODUCT_ATTRIBUTE->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_ATTRIBUTE->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::PRODUCT_ATTRIBUTE_LIST->value,
+                        'PermissionTitle' => 'Attribute List',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_ATTRIBUTE_ADD->value,
+                        'PermissionTitle' => 'Add Attribute',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_ATTRIBUTE_EDIT->value,
+                        'PermissionTitle' => 'Edit Attribute',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_ATTRIBUTE_DELETE->value,
+                        'PermissionTitle' => 'Delete Attribute',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_ATTRIBUTE_LIST_STORE->value,
+                        'PermissionTitle' => 'Attributes',
+                        'activity_scope' => 'store_level'
+                    ]
+                ]
+            ],
+            [
+                'module' => MenuGroup::PRODUCT_WARRENTY->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_WARRENTY->value),
+                'permissions' => [
+                    [
+                        'PermissionName' => Permission::PRODUCT_WARRENTY_LIST->value,
+                        'PermissionTitle' => 'Warrenty List',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_WARRENTY_ADD->value,
+                        'PermissionTitle' => 'Add Warrenty',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_WARRENTY_EDIT->value,
+                        'PermissionTitle' => 'Edit Warrenty',
+                        'activity_scope' => 'system_level'
+                    ],
+                    [
+                        'PermissionName' => Permission::PRODUCT_WARRENTY_LIST_STORE->value,
+                        'PermissionTitle' => 'Warrenty',
                         'activity_scope' => 'store_level'
                     ]
                 ]
@@ -189,22 +257,22 @@ class PermissionSeeder extends Seeder
                     [
                         'PermissionName' => Permission::PRODUCT_PRODUCT_LIST->value,
                         'PermissionTitle' => 'Manage Products',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::PRODUCT_PRODUCT_ADD->value,
                         'PermissionTitle' => 'Add New Product',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::PRODUCT_PRODUCT_EDIT->value,
                         'PermissionTitle' => 'Edit Product',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::PRODUCT_PRODUCT_DELETE->value,
                         'PermissionTitle' => 'Delete Product',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::PRODUCT_PRODUCT_LOW_STOCK->value,
@@ -219,12 +287,12 @@ class PermissionSeeder extends Seeder
                     [
                         'PermissionName' => Permission::PRODUCT_PRODUCT_BULK_IMPORT->value,
                         'PermissionTitle' => 'Bulk Import',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ],
                     [
                         'PermissionName' => Permission::PRODUCT_PRODUCT_BULK_EXPORT->value,
                         'PermissionTitle' => 'Bulk Export',
-                        'activity_scope' => 'store_level'
+                        'activity_scope' => 'common'
                     ]
                 ]
             ],

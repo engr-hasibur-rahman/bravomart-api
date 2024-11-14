@@ -14,6 +14,8 @@ enum MenuGroup: string
     case PRODUCT_BRAND = 'product_brand';
     case PRODUCT_CATEGORY = 'product_category';
     case PRODUCT = 'product';
+    case PRODUCT_ATTRIBUTE = 'product_attribute';
+    case PRODUCT_WARRENTY = 'product_warrenty';
     case PRODUCT_ADONS = 'product_adons';
     case PRODUCT_FAB_COMB = 'fabric_combination';
     case BOOK_AUTHORS = 'authors';
@@ -26,6 +28,15 @@ enum MenuGroup: string
     case FINANCIAL_MANAGEMENT = 'financial_management';
     case FEEDBACK_MANAGEMENT = 'feedback_management';
     case PROMOTION_MANAGEMENT = 'promotion_management';
+    case DELIVERYMAN_MANAGEMENT = 'promotion_management';
+    case CUSTOMER_MANAGEMENT = 'promotion_management';
+    case EMPLOYEE_MANAGEMENT = 'promotion_management';
+    case FINANCIAL_ACTIVITY = 'business_reports';
+    case REPORTS_ANALYTICS = 'business_reports';
+    case BUSINESS_MANAGEMENT = 'business_reports';
+    case SYSTEM_MANAGEMENT = 'business_reports';
+    case DISPATCH_MANAGEMENT = 'business_reports';
+    
 
     /**
      * moduleTitle
@@ -84,14 +95,14 @@ enum MenuGroup: string
             case MenuGroup::STORE_SETTINGS->value:
                 return "Store Settings";
                 break;
-            case MenuGroup::OTHERS->value:
-                return "";
+            case MenuGroup::PRODUCT_ATTRIBUTE->value:
+                return "Product Attribute";
                 break;
-            case MenuGroup::OTHERS->value:
-                return "";
+            case MenuGroup::PRODUCT_WARRENTY->value:
+                return "Product Warrenty";
                 break;
-            case MenuGroup::OTHERS->value:
-                return "";
+            case MenuGroup::BUSINESS_REPORTS->value:
+                return "B";
                 break;
             case MenuGroup::OTHERS->value:
                 return "";
