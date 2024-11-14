@@ -33,9 +33,9 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_STORE_LIST = 'store-list';
     case ADMIN_STORE_ADD = 'store-add';
-    case STORE_STORE_ADD_UPDATE = 'store-add-update'; // Add if user have no store added. Update if existis 
-    case STORE_RECOMMENDED = 'store-recommended'; 
-    case STORE_APPROVAL = 'store-approval'; 
+    case STORE_STORE_ADD_UPDATE = 'store-add-update'; // Add if user have no store added. Update if existis
+    case STORE_RECOMMENDED = 'store-recommended';
+    case STORE_APPROVAL = 'store-approval';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Store Settings                                        //
@@ -73,18 +73,18 @@ enum Permission: string
     //                                  Product Attribute                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_ATTRIBUTE_LIST = 'attributes';
-    case PRODUCT_ATTRIBUTE_ADD = 'product-attribute-add';   
+    case PRODUCT_ATTRIBUTE_ADD = 'product-attribute-add';
     case PRODUCT_ATTRIBUTE_EDIT = 'product-attribute-edit';
     case PRODUCT_ATTRIBUTE_DELETE = 'product-attribute-delete';
     case PRODUCT_ATTRIBUTE_LIST_STORE = 'attribute-list';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Product Warrenty                                        //
+    //                                  Product Warranty                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_WARRENTY_LIST = 'product-warrenty';
-    case PRODUCT_WARRENTY_ADD = 'product-warrenty-add';   
-    case PRODUCT_WARRENTY_EDIT = 'product-warrenty-edit';
-    case PRODUCT_WARRENTY_LIST_STORE = 'product-warrenty-list';
+    case PRODUCT_WARRANTY_LIST = 'product-warranty';
+    case PRODUCT_WARRANTY_ADD = 'product-warranty-add';
+    case PRODUCT_WARRANTY_EDIT = 'product-warranty-edit';
+    case PRODUCT_WARRANTY_LIST_STORE = 'product-warranty-list';
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -107,12 +107,12 @@ enum Permission: string
     case PRODUCT_FAB_COMB_DELETE = 'fabcomb-delete';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                          Product Adons (For Food Only)                                   //
+    //                          Product addons (For Food Only)                                   //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_ADONS_LIST = 'adons-list';
-    case PRODUCT_ADONS_ADD = 'adons-add';
-    case PRODUCT_ADONS_EDIT = 'adons-edit';
-    case PRODUCT_ADONS_DELETE = 'adons-delete';
+    case PRODUCT_ADDONS_LIST = 'addons-list';
+    case PRODUCT_ADDONS_ADD = 'addons-add';
+    case PRODUCT_ADDONS_EDIT = 'addons-edit';
+    case PRODUCT_ADDONS_DELETE = 'addons-delete';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Permissions                                     //

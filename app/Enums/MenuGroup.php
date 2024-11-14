@@ -15,8 +15,8 @@ enum MenuGroup: string
     case PRODUCT_CATEGORY = 'product_category';
     case PRODUCT = 'product';
     case PRODUCT_ATTRIBUTE = 'product_attribute';
-    case PRODUCT_WARRENTY = 'product_warrenty';
-    case PRODUCT_ADONS = 'product_adons';
+    case PRODUCT_WARRANTY = 'product_warrenty';
+    case PRODUCT_ADDONS = 'product_addons';
     case PRODUCT_FAB_COMB = 'fabric_combination';
     case BOOK_AUTHORS = 'authors';
     case USERS = 'users';
@@ -36,7 +36,7 @@ enum MenuGroup: string
     case BUSINESS_MANAGEMENT = 'business_management';
     case SYSTEM_MANAGEMENT = 'system_management';
     case DISPATCH_MANAGEMENT = 'dispatch_management';
-    
+
 
     /**
      * moduleTitle
@@ -46,76 +46,34 @@ enum MenuGroup: string
      */
     public static function moduleTitle(string $name): string
     {
-        switch ($name) {
-            case MenuGroup::GENERAL->value:
-                return "General";
-                break;
-            case MenuGroup::PRODUCT_BRAND->value:
-                return "Product Brand";
-                break;
-            case MenuGroup::PRODUCT_CATEGORY->value:
-                return "Product Category";
-                break;
-            case MenuGroup::USERS->value:
-                return "Staff/User Management";
-                break;
-            case MenuGroup::STORES->value:
-                return "Store Management";
-                break;
-            case MenuGroup::CENTRAL->value:
-                return "Central Settings";
-                break;
-            case MenuGroup::OTHERS->value:
-                return "Others";
-                break;
-            case MenuGroup::PRODUCT->value:
-                return "Product";
-                break;
-            case MenuGroup::ORDER_MANAGEMENT->value:
-                return "Order management";
-                break;
-            case MenuGroup::FINANCIAL_MANAGEMENT->value:
-                return "Financial management";
-                break;
-            case MenuGroup::FEEDBACK_MANAGEMENT->value:
-                return "Feedback Management";
-                break;
-            case MenuGroup::PROMOTION_MANAGEMENT->value:
-                return "Promotion Management";
-                break;
-            case MenuGroup::BOOK_AUTHORS->value:
-                return "Book Authors";
-                break;
-            case MenuGroup::PRODUCT_ADONS->value:
-                return "Adons (For Food Only)";
-                break;
-            case MenuGroup::PRODUCT_FAB_COMB->value:
-                return "Fabric Combination(For Furniture Only)";
-                break;
-            case MenuGroup::STORE_SETTINGS->value:
-                return "Store Settings";
-                break;
-            case MenuGroup::PRODUCT_ATTRIBUTE->value:
-                return "Product Attribute";
-                break;
-            case MenuGroup::PRODUCT_WARRENTY->value:
-                return "Product Warrenty";
-                break;
-            case MenuGroup::BUSINESS_REPORTS->value:
-                return "B";
-                break;
-            case MenuGroup::OTHERS->value:
-                return "";
-                break;
-            case MenuGroup::OTHERS->value:
-                return "";
-                break;
-            case MenuGroup::OTHERS->value:
-                return "";
-                break;
-            default:
-                return "";
-                break;
-        }
+        return match ($name) {
+            MenuGroup::GENERAL->value => "General",
+            MenuGroup::PRODUCT_BRAND->value => "Product Brand",
+            MenuGroup::PRODUCT_CATEGORY->value => "Product Category",
+            MenuGroup::USERS->value => "Staff/User Management",
+            MenuGroup::STORES->value => "Store Management",
+            MenuGroup::CENTRAL->value => "Central Settings",
+            MenuGroup::PRODUCT->value => "Product",
+            MenuGroup::ORDER_MANAGEMENT->value => "Order management",
+            MenuGroup::FINANCIAL_MANAGEMENT->value => "Financial management",
+            MenuGroup::FEEDBACK_MANAGEMENT->value => "Feedback Management",
+            MenuGroup::PROMOTION_MANAGEMENT->value => "Promotion Management",
+            MenuGroup::BOOK_AUTHORS->value => "Book Authors",
+            MenuGroup::PRODUCT_ADDONS->value => "addons (For Food Only)",
+            MenuGroup::PRODUCT_FAB_COMB->value => "Fabric Combination(For Furniture Only)",
+            MenuGroup::STORE_SETTINGS->value => "Store Settings",
+            MenuGroup::PRODUCT_ATTRIBUTE->value => "Product Attribute",
+            MenuGroup::PRODUCT_WARRANTY->value => "Product Warranty",
+            MenuGroup::DELIVERYMAN_MANAGEMENT->value => "Deliveryman management",
+            MenuGroup::CUSTOMER_MANAGEMENT->value => "Customer management",
+            MenuGroup::EMPLOYEE_MANAGEMENT->value => "Employee Management",
+            MenuGroup::FINANCIAL_ACTIVITY->value => "Financial Activity",
+            MenuGroup::REPORTS_ANALYTICS->value => "Report and analytics",
+            MenuGroup::BUSINESS_MANAGEMENT->value => "Business management",
+            MenuGroup::SYSTEM_MANAGEMENT->value => "System management",
+            MenuGroup::DISPATCH_MANAGEMENT->value => "Dispatch management",
+            MenuGroup::OTHERS->value => "Others",
+            default => "",
+        };
     }
 }

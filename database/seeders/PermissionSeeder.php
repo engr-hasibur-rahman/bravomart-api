@@ -5,9 +5,7 @@ namespace Database\Seeders;
 use App\Enums\Permission;
 use App\Enums\MenuGroup;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission as ModelsPermission;
-use function PHPUnit\Framework\throwException;
 
 class PermissionSeeder extends Seeder
 {
@@ -15,7 +13,6 @@ class PermissionSeeder extends Seeder
      * Run the database seeds.
      *
      * @return void
-     * @throws \Exception
      */
     public function run()
     {
@@ -59,7 +56,7 @@ class PermissionSeeder extends Seeder
                 'module' => MenuGroup::STORES->value,
                 'module_tile' => MenuGroup::moduleTitle(MenuGroup::STORES->value),
                 'permissions' => [
-                    
+
                     [
                         'PermissionName' => Permission::ADMIN_STORE_ADD->value,
                         'PermissionTitle' => 'Store Add',
@@ -72,7 +69,7 @@ class PermissionSeeder extends Seeder
                     ],
                     [
                         'PermissionName' => Permission::STORE_RECOMMENDED->value,
-                        'PermissionTitle' => 'Recomended Store',
+                        'PermissionTitle' => 'Recommended Store',
                         'activity_scope' => 'system_level'
                     ],
                     [
@@ -119,27 +116,27 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
-                'module' => MenuGroup::PRODUCT_WARRENTY->value,
-                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_WARRENTY->value),
+                'module' => MenuGroup::PRODUCT_WARRANTY->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_WARRANTY->value),
                 'permissions' => [
                     [
-                        'PermissionName' => Permission::PRODUCT_WARRENTY_LIST->value,
-                        'PermissionTitle' => 'Warrenty List',
+                        'PermissionName' => Permission::PRODUCT_WARRANTY_LIST->value,
+                        'PermissionTitle' => 'Warranty List',
                         'activity_scope' => 'system_level'
                     ],
                     [
-                        'PermissionName' => Permission::PRODUCT_WARRENTY_ADD->value,
-                        'PermissionTitle' => 'Add Warrenty',
+                        'PermissionName' => Permission::PRODUCT_WARRANTY_ADD->value,
+                        'PermissionTitle' => 'Add Warranty',
                         'activity_scope' => 'system_level'
                     ],
                     [
-                        'PermissionName' => Permission::PRODUCT_WARRENTY_EDIT->value,
-                        'PermissionTitle' => 'Edit Warrenty',
+                        'PermissionName' => Permission::PRODUCT_WARRANTY_EDIT->value,
+                        'PermissionTitle' => 'Edit Warranty',
                         'activity_scope' => 'system_level'
                     ],
                     [
-                        'PermissionName' => Permission::PRODUCT_WARRENTY_LIST_STORE->value,
-                        'PermissionTitle' => 'Warrenty',
+                        'PermissionName' => Permission::PRODUCT_WARRANTY_LIST_STORE->value,
+                        'PermissionTitle' => 'Warranty',
                         'activity_scope' => 'store_level'
                     ]
                 ]
@@ -297,27 +294,27 @@ class PermissionSeeder extends Seeder
                 ]
             ],
             [
-                'module' => MenuGroup::PRODUCT_ADONS->value,
-                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_ADONS->value),
+                'module' => MenuGroup::PRODUCT_ADDONS->value,
+                'module_tile' => MenuGroup::moduleTitle(MenuGroup::PRODUCT_ADDONS->value),
                 'permissions' => [
                     [
-                        'PermissionName' => Permission::PRODUCT_ADONS_LIST->value,
-                        'PermissionTitle' => 'Manage Adons',
+                        'PermissionName' => Permission::PRODUCT_ADDONS_LIST->value,
+                        'PermissionTitle' => 'Manage addons',
                         'activity_scope' => 'store_level'
                     ],
                     [
-                        'PermissionName' => Permission::PRODUCT_ADONS_ADD->value,
-                        'PermissionTitle' => 'Add New Adon',
+                        'PermissionName' => Permission::PRODUCT_ADDONS_ADD->value,
+                        'PermissionTitle' => 'Add New addon',
                         'activity_scope' => 'store_level'
                     ],
                     [
-                        'PermissionName' => Permission::PRODUCT_ADONS_EDIT->value,
-                        'PermissionTitle' => 'Edit Adon',
+                        'PermissionName' => Permission::PRODUCT_ADDONS_EDIT->value,
+                        'PermissionTitle' => 'Edit addon',
                         'activity_scope' => 'store_level'
                     ],
                     [
-                        'PermissionName' => Permission::PRODUCT_ADONS_DELETE->value,
-                        'PermissionTitle' => 'Delete Adon',
+                        'PermissionName' => Permission::PRODUCT_ADDONS_DELETE->value,
+                        'PermissionTitle' => 'Delete addon',
                         'activity_scope' => 'store_level'
                     ]
                 ]
@@ -472,7 +469,7 @@ class PermissionSeeder extends Seeder
                     ],
                     [
                         'PermissionName' => Permission::PROMOTION_COUPONS->value,
-                        'PermissionTitle' => 'Cuopons',
+                        'PermissionTitle' => 'Coupons',
                         'activity_scope' => 'store_level'
                     ],
                     [
