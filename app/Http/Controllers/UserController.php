@@ -26,7 +26,7 @@ class UserController extends Controller
     {
         $this->repository = $repository;
     }
-    
+
     public function token(Request $request)
     {
         $request->validate([
@@ -41,9 +41,9 @@ class UserController extends Controller
         }
         $email_verified = $user->hasVerifiedEmail();
 
-        
+
         $permissions_indv = [];
-        //Take Individaul Permission
+        //Take Individual Permission
         $permissions_indv = $user->permissions->map(function ($permission) {
             return [
                 'group' => $permission->module,
@@ -53,7 +53,7 @@ class UserController extends Controller
             ];
         })->toArray();
 
-        //Get Role Permisson and Merge Them
+        //Get Role Permission and Merge Them
         foreach ($user->roles as $role) {
             $permissions = array_merge($permissions_indv,$role->permissions->map(function ($permission) {
                 return [
@@ -110,7 +110,7 @@ class UserController extends Controller
             "store_owner" => $user->store_owner,
             "merchant_id" => $user->merchant_id,
             "stores" => json_decode($user->stores),
-            "next_stage" => "2" // Just completed stage 1, Now go to Store Information. 
+            "next_stage" => "2" // Just completed stage 1, Now go to Store Information.
         ];
     }
 

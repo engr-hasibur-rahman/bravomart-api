@@ -14,11 +14,27 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $permissions = [];
-        $permissions = $this->permissions->pluck('name')->toArray();
 
+        //Take Individual Permission
+        $permissions_indv = $this->permissions->map(function ($permission) {
+            return [
+                'group' => $permission->module,
+                'group_title' => $permission->module_title,
+                'perm_name' => $permission->name,
+                'perm_title' => $permission->perm_title,
+            ];
+        })->toArray();
+
+        //Get Role Permission and Merge Them
         foreach ($this->roles as $role) {
-            $permissions = array_merge($permissions, $role->permissions->pluck('name')->toArray());
+            $permissions = array_merge($permissions_indv,$role->permissions->map(function ($permission) {
+                return [
+                    'group' => $permission->module,
+                    'group_title' => $permission->module_title,
+                    'perm_name' => $permission->name,
+                    'perm_title' => $permission->perm_title,
+                ];
+            })->toArray());
         }
 
         return [
