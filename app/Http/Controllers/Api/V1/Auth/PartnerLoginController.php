@@ -44,11 +44,27 @@ class PartnerLoginController extends Controller
         $email_verified = $user->hasVerifiedEmail();
 
         //$merchant = ComMerchant::where('user_id',$user->id)->first();
-        $permissions = [];
-        $permissions = $user->permissions->pluck('name')->toArray();
+        $permissions_indv = [];
+        //Take Individaul Permission
+        $permissions_indv = $user->permissions->map(function ($permission) {
+            return [
+                'group' => $permission->module,
+                'group_title' => $permission->module_title,
+                'perm_name' => $permission->name,
+                'perm_title' => $permission->perm_title,
+            ];
+        })->toArray();
 
+        //Get Role Permisson and Merge Them
         foreach ($user->roles as $role) {
-            $permissions = array_merge($permissions, $role->permissions->pluck('name')->toArray());
+            $permissions = array_merge($permissions_indv,$role->permissions->map(function ($permission) {
+                return [
+                    'group' => $permission->module,
+                    'group_title' => $permission->module_title,
+                    'perm_name' => $permission->name,
+                    'perm_title' => $permission->perm_title,
+                    ];
+            })->toArray());
         }
                 
         return [
