@@ -8,6 +8,7 @@ use App\Interfaces\ComAreaInterface;
 use App\Interfaces\TranslationInterface;
 use App\Services\AreaService;
 use App\Models\ComArea;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Support\Facades\DB;
@@ -25,43 +26,18 @@ class AreaController extends Controller
      */
     public function index(Request $request)
     {
-        // Set default values for limit and language
-        $limit = $request->limit ?? 10;
-        $language = app()->getLocale() ?? DEFAULT_LANGUAGE;
-        $search = $request->search;
-
-        // Query the ComArea model with a left join on translations
-        $areas = ComArea::leftJoin('translations', function ($join) use ($language) {
-            $join->on('com_areas.id', '=', 'translations.translatable_id')
-                ->where('translations.translatable_type', '=', ComArea::class)
-                ->where('translations.language', '=', $language)
-                ->where('translations.key', '=', 'name');
-        })
-            ->select(
-                'com_areas.*',
-                DB::raw('COALESCE(translations.value, com_areas.name) as name')
-            );
-
-        // Apply search filter if search parameter exists
-        if ($search) {
-            $areas->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', com_areas.name, translations.value)"), 'like', "%{$search}%");
-            });
-        }
-
-        // Apply sorting and pagination
-        $areas = $areas
-            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
-            ->paginate($limit);
-
-        // Return the result
-        return $areas;
+        return $this->areaRepo->getPaginatedList($request->limit ?? 10
+            ,$request->page ?? 1
+            ,app()->getLocale() ?? DEFAULT_LANGUAGE
+            ,$request->search??""
+            ,$request->sortField ?? 'id'
+            ,$request->sort ?? 'asc',[]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(AreaCreateRequest $request)
+    public function store(AreaCreateRequest $request): JsonResponse
     {
         try {
             $area = $this->areaRepo->store($this->areaService->prepareAddData($request));
@@ -86,7 +62,7 @@ class AreaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(AreaCreateRequest $request)
+    public function update(AreaCreateRequest $request): JsonResponse
     {
         try {
 
@@ -99,7 +75,7 @@ class AreaController extends Controller
         }
     }
 
-    public function changeStatus(int|string $id, string $status = "")
+    public function changeStatus(int|string $id, string $status = ""): JsonResponse
     {
         try {
             $this->areaRepo->changeStatus($id, $status = "");
@@ -111,7 +87,7 @@ class AreaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         $this->areaRepo->delete($id);
 

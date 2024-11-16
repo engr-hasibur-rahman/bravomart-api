@@ -32,7 +32,7 @@ class ComStoreRepository implements ComAreaInterface
         return null;
     }
 
-    public function getById($id)
+    public function getById($id): array
     {
         $store = $this->store->findOrFail($id);
         $translations = $store->translations()->get()->groupBy('language');
@@ -99,5 +99,13 @@ class ComStoreRepository implements ComAreaInterface
         $store->translations()->delete();
         $store->delete();
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPaginatedList(int|string $limit,int $page, string $language, string $search, string $sortField, string $sort,array $filters): mixed
+    {
+        // TODO: Implement getPaginationList() method.
     }
 }

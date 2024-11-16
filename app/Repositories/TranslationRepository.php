@@ -115,4 +115,12 @@ class TranslationRepository implements TranslationInterface
     {
         // To be Implemented
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPaginatedList(int|string $limit,int $page, string $language, string $search, string $sortField, string $sort,array $filters): mixed
+    {
+        // TODO: Implement getPaginationList() method.
+    }
 }

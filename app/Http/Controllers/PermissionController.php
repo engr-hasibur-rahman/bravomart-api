@@ -15,7 +15,6 @@ class PermissionController extends Controller
     public function index(Request $request)
     {
 
-        logger('ok');
         $limit = $request->limit ?? 10;
         $permissions = QueryBuilder::for(Permission::class)
             ->when($request->filled('available_for'), function ($query) use ($request) {

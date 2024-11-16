@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Helpers\ComHelper;
 use App\Models\ComArea;
 use App\Interfaces\ComAreaInterface;
+use Illuminate\Support\Facades\DB;
 
 
 /**
@@ -16,22 +17,50 @@ class ComAreaRepository implements ComAreaInterface
 
     public function __construct(protected ComArea $area) {}
 
-    public function model()
+    public function model(): string
     {
         return ComArea::class;
     }
 
-    public function translationKeys()
+    public function translationKeys(): mixed
     {
         return  $this->area->translationKeys;
     }
 
-    public function index()
+    public function index(): mixed
     {
         return null;
     }
 
-    public function getById($id)
+    public function getPaginatedList(int|string $limit,int $page,string $language,string $search,string $sortField,string $sort,array $filters)
+    {
+        // Query the ComArea model with a left join on translations
+        $areas = ComArea::leftJoin('translations', function ($join) use ($language) {
+            $join->on('com_areas.id', '=', 'translations.translatable_id')
+                ->where('translations.translatable_type', '=', ComArea::class)
+                ->where('translations.language', '=', $language)
+                ->where('translations.key', '=', 'name');
+        })
+            ->select(
+                'com_areas.*',
+                DB::raw('COALESCE(translations.value, com_areas.name) as name')
+            );
+
+        // Apply search filter if search parameter exists
+        if ($search) {
+            $areas->where(function ($query) use ($search) {
+                $query->where(DB::raw("CONCAT_WS(' ', com_areas.name, translations.value)"), 'like', "%{$search}%");
+            });
+        }
+
+        // Apply sorting and pagination
+        // Return the result
+        return $areas
+            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->paginate($limit);
+    }
+
+    public function getById($id): mixed
     {
         $area = $this->area->findOrFail($id);
         $translations = $area->translations()->get()->groupBy('language');
@@ -87,7 +116,7 @@ class ComAreaRepository implements ComAreaInterface
     }
 
 
-    public function changeStatus(int|string $id, string $status = "")
+    public function changeStatus(int|string $id, string $status = ""): mixed
     {
         $area = $this->area->findOrFail($id);
         $area->status = !$area->status;
@@ -95,7 +124,7 @@ class ComAreaRepository implements ComAreaInterface
         return $area;
     }
 
-    public function delete($id)
+    public function delete($id): true
     {
         $area = $this->area->findOrFail($id);
         $area->translations()->delete();
