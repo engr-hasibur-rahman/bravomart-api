@@ -70,7 +70,7 @@ class PartnerLoginController extends Controller
         }
 
         $stores = ComStore::whereIn('id', json_decode($user->stores))
-            ->select(['id', 'name'])
+            ->select(['id', 'name','store_type'])
             ->get()
             ->toArray();
 
