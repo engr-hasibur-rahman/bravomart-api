@@ -161,7 +161,7 @@ return new class extends Migration
             $table->boolean('is_featured')->nullable();
             $table->string('opening_time')->nullable();
             $table->string('closing_time')->nullable();
-            $table->double('subscription_type')->nullable();
+            $table->string('subscription_type')->nullable();
             $table->double('package_id')->nullable();
             $table->double('admin_commi_percent')->nullable();
             $table->double('admin_commi_amount')->nullable();

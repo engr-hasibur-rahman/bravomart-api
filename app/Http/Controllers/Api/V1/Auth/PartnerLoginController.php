@@ -6,6 +6,7 @@ use App\Enums\Permission;
 use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\ComStore;
 use App\Models\User;
 use App\Models\ComMerchant;
 use App\Repositories\UserRepository;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+use function Laravel\Prompts\select;
 
 class PartnerLoginController extends Controller
 {
@@ -28,7 +30,7 @@ class PartnerLoginController extends Controller
     {
         $this->repository = $repository;
     }
-    
+
     public function login(Request $request)
     {
         $request->validate([
@@ -44,8 +46,8 @@ class PartnerLoginController extends Controller
         $email_verified = $user->hasVerifiedEmail();
 
         //$merchant = ComMerchant::where('user_id',$user->id)->first();
-        $permissions_indv = [];
-        //Take Individaul Permission
+        $permissions = [];
+        //Take Individual Permission
         $permissions_indv = $user->permissions->map(function ($permission) {
             return [
                 'group' => $permission->module,
@@ -55,7 +57,7 @@ class PartnerLoginController extends Controller
             ];
         })->toArray();
 
-        //Get Role Permisson and Merge Them
+        //Get Role Permission and Merge Them
         foreach ($user->roles as $role) {
             $permissions = array_merge($permissions_indv,$role->permissions->map(function ($permission) {
                 return [
@@ -66,7 +68,12 @@ class PartnerLoginController extends Controller
                     ];
             })->toArray());
         }
-                
+
+        $stores = ComStore::whereIn('id', json_decode($user->stores))
+            ->select(['id', 'name'])
+            ->get()
+            ->toArray();
+
         return [
             "success" => true,
             "token" => $user->createToken('auth_token')->plainTextToken,
@@ -74,11 +81,11 @@ class PartnerLoginController extends Controller
             'last_name' => $user->last_name,
             'email'    => $user->email,
             'phone'    => $user->phone,
-            "permissions" => $permissions,
             "email_verified" => $email_verified,
             "store_owner" => $user->store_owner,
             "merchant_id" => $user->merchant_id,
-            "stores" => $user->stores,
+            "stores" => $stores,
+            "permissions" => $permissions,
             "role" => $user->getRoleNames()
         ];
     }

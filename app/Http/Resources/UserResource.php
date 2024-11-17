@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ComStore;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,6 +16,7 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
 
+        $permissions=[];
         //Take Individual Permission
         $permissions_indv = $this->permissions->map(function ($permission) {
             return [
@@ -37,6 +39,11 @@ class UserResource extends JsonResource
             })->toArray());
         }
 
+        $stores = ComStore::whereIn('id', json_decode($this->stores))
+            ->select(['id', 'name'])
+            ->get()
+            ->toArray();
+
         return [
             'id' => $this->id,
             'first_name' => $this->first_name,
@@ -45,10 +52,11 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'activity_scope' => $this->activity_scope,
             'email_verified_at' => $this->email_verified_at,
-            'permissions' => $permissions,
+            "store_owner" => $this->store_owner,
+            "merchant_id" => $this->merchant_id,
+            "stores" => $stores,
             'roles' => $this->roles->pluck('name'),
-            'is_active' => $this->is_active,
-            'store_owner' => $this->store_owner,
+            'permissions' => $permissions,
         ];
     }
 }

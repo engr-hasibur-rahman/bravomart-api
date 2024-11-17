@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -40,7 +41,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    
+
 
     /**
      * Get the attributes that should be cast.
@@ -55,8 +56,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function children() {
-        return $this->hasMany(ComMerchant::class, 'user_id');
-    }
+//    public function merchant() {
+//        return $this->hasOne(ComMerchant::class, 'user_id');
+//    }
+//    public function stores() {
+//        return $this->hasMany(ComStore::class, 'user_id');
+//    }
 
 }
