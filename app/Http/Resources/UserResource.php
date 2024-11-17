@@ -38,11 +38,13 @@ class UserResource extends JsonResource
                 ];
             })->toArray());
         }
-
-        $stores = ComStore::whereIn('id', json_decode($this->stores))
-            ->select(['id', 'name'])
-            ->get()
-            ->toArray();
+        $stores=[];
+        if($this->stores!='') {
+            $stores = ComStore::whereIn('id', json_decode($this->stores))
+                ->select(['id', 'name'])
+                ->get()
+                ->toArray();
+        }
 
         return [
             'id' => $this->id,
