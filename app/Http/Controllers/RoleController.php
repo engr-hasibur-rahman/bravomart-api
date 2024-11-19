@@ -58,7 +58,13 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        $role = CustomRole::with(['permissions.childrenRecursive'])->findOrFail($id);
+        //$role = CustomRole::with(['permissions.childrenRecursive'])->whereNull('parent_id')->findOrFail($id);
+        $role = CustomRole::with([
+            'permissions' => function ($query) {
+                $query->whereNull('parent_id')->with('childrenRecursive');
+            }
+        ])->findOrFail($id);
+        
         $permissions = $role->permissions;
 
         return [
