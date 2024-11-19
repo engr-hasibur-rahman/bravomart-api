@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Permission;
 use App\Enums\Role as UserRole;
+use App\Helpers\ComHelper;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -41,33 +42,11 @@ class UserController extends Controller
         }
         $email_verified = $user->hasVerifiedEmail();
 
-
-        $permissions_indv = [];
-        //Take Individual Permission
-        $permissions_indv = $user->permissions->map(function ($permission) {
-            return [
-                'group' => $permission->module,
-                'group_title' => $permission->module_title,
-                'perm_name' => $permission->name,
-                'perm_title' => $permission->perm_title,
-            ];
-        })->toArray();
-
-        //Get Role Permission and Merge Them
-        foreach ($user->roles as $role) {
-            $permissions = array_merge($permissions_indv,$role->permissions->map(function ($permission) {
-                return [
-                    'group' => $permission->module,
-                    'group_title' => $permission->module_title,
-                    'perm_name' => $permission->name,
-                    'perm_title' => $permission->perm_title,
-                    ];
-            })->toArray());
-        }
+        $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
 
         return [
             "token" => $user->createToken('auth_token')->plainTextToken,
-            "permissions" => $permissions,
+            "permissions" => ComHelper::buildMenuTree($permissions),
             "email_verified" => $email_verified,
             "role" => $user->getRoleNames()->first()
         ];

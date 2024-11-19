@@ -186,8 +186,8 @@ class ComHelper
                 $children = $data_item->children!='' && count($data_item->children) ? ComHelper::buildMenuTree($data_item->children) : [];
                 $tree[] = [
                     'id' => $data_item->id,
-                    'perm_name' => $data_item->name,
                     'perm_title' => $data_item->perm_title,
+                    'perm_name' => $data_item->name,
                     'options' => json_decode($data_item->options),
                     'children' => $children,
                 ];

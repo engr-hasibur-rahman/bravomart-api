@@ -64,7 +64,7 @@ class RoleController extends Controller
                 $query->whereNull('parent_id')->with('childrenRecursive');
             }
         ])->findOrFail($id);
-        
+
         $permissions = $role->permissions;
 
         return [
