@@ -125,6 +125,7 @@ enum Permission: string
     case PRODUCT_PRODUCT_TEMPLATE = 'product-template';
     case PRODUCT_PRODUCT_BULK_IMPORT = 'product-import';
     case PRODUCT_PRODUCT_BULK_EXPORT = 'product-export';
+    case PRODUCT_PRODUCT_APPROVAL_REQ = 'product-approval-request';
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
         //                                  Order Permissions                                       //

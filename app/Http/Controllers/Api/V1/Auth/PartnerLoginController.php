@@ -2,24 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Enums\Permission;
-use App\Enums\Role as UserRole;
-use App\Http\Requests\UserCreateRequest;
-use App\Http\Resources\UserResource;
+use App\Helpers\ComHelper;
 use App\Models\ComStore;
+use App\Models\CustomPermission;
 use App\Models\User;
-use App\Models\ComMerchant;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
-use Exception;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
-use function Laravel\Prompts\select;
 
 class PartnerLoginController extends Controller
 {
@@ -45,29 +35,11 @@ class PartnerLoginController extends Controller
         }
         $email_verified = $user->hasVerifiedEmail();
 
-        //$merchant = ComMerchant::where('user_id',$user->id)->first();
-        $permissions = [];
-        //Take Individual Permission
-        $permissions_indv = $user->permissions->map(function ($permission) {
-            return [
-                'group' => $permission->module,
-                'group_title' => $permission->module_title,
-                'perm_name' => $permission->name,
-                'perm_title' => $permission->perm_title,
-            ];
-        })->toArray();
+        //$permissions=$user->rolePermissionsQuery()->where('available_for','store_level')->whereNull('parent_id')->with('childrenRecursive')->get();
+        $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
 
-        //Get Role Permission and Merge Them
-        foreach ($user->roles as $role) {
-            $permissions = array_merge($permissions_indv,$role->permissions->map(function ($permission) {
-                return [
-                    'group' => $permission->module,
-                    'group_title' => $permission->module_title,
-                    'perm_name' => $permission->name,
-                    'perm_title' => $permission->perm_title,
-                    ];
-            })->toArray());
-        }
+        //$merchant = ComMerchant::where('user_id',$user->id)->first();
+
 
         $stores = ComStore::whereIn('id', json_decode($user->stores))
             ->select(['id', 'name','store_type'])
@@ -85,9 +57,26 @@ class PartnerLoginController extends Controller
             "store_owner" => $user->store_owner,
             "merchant_id" => $user->merchant_id,
             "stores" => $stores,
-            "permissions" => $permissions,
+            "permissions" => ComHelper::buildMenuTree($permissions),
             "role" => $user->getRoleNames()
         ];
+    }
+
+    public static function buildMenuTree($data_list)
+    {
+        $tree = [];
+        foreach ($data_list as $data_item) {
+
+            if(isset($data_item->children)) {
+                $children = $data_item->children->count() ? ComHelper::buildMenuTree($data_item->children) : [];
+                $tree[] = [
+                    'id' => $data_item->id,
+                    'perm_title' => $data_item->perm_title,
+                    'children' => $children,
+                ];
+            }
+        }
+        return $tree;
     }
 
 }

@@ -12,8 +12,8 @@ class ComHelper
     /**
      * remove_invalid_charcaters
      * Remove unaccepteable charecters from the text
-     * 
-     * 
+     *
+     *
      * @param  mixed $str
      * @return void
      */
@@ -24,8 +24,8 @@ class ComHelper
 
     /**
      * format_coordiantes
-     * Format geometry coordiantes to make it useable for front-end 
-     * 
+     * Format geometry coordiantes to make it useable for front-end
+     *
      * @param  mixed $coordinates
      * @return void Coordinte Array
      */
@@ -91,7 +91,7 @@ class ComHelper
      * @param  object $file Image Object
      * @param  string $old_image Provide old image name to replaec, if data is updating
      * @param  string $format File format/extension, if you want to change file in different format
-     * @return string Image Name only 
+     * @return string Image Name only
      */
     public static function uploadSingle(string $dir, $file, string $old_image = null, string $format = null): string
     {
@@ -176,4 +176,23 @@ class ComHelper
 
         return $fileNames;
     }
+
+
+    public static function buildMenuTree($data_list)
+    {
+        $tree = [];
+        foreach ($data_list as $data_item) {
+
+                $children = $data_item->children!='' && count($data_item->children) ? ComHelper::buildMenuTree($data_item->children) : [];
+                $tree[] = [
+                    'id' => $data_item->id,
+                    'perm_name' => $data_item->name,
+                    'perm_title' => $data_item->perm_title,
+                    'options' => json_decode($data_item->options),
+                    'children' => $children,
+                ];
+        }
+        return $tree;
+    }
+
 }

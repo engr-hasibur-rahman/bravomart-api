@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ComHelper;
 use App\Http\Requests\RoleRequest;
 use App\Http\Resources\RoleResource;
+use App\Models\CustomRole;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -43,7 +45,7 @@ class RoleController extends Controller
                 'guard_name' => 'api',
             ]);
         }
-
+        logger($request->permissions);
         if ($request->permissions) {
             $role->syncPermissions($request->permissions);
         }
@@ -56,9 +58,16 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        return QueryBuilder::for(Role::class)
-            ->with(['permissions'])
-            ->findOrFail($id);
+        $role = CustomRole::with(['permissions.childrenRecursive'])->findOrFail($id);
+        $permissions = $role->permissions;
+
+        return [
+            "id" => $role->id,
+            "available_for" => $role->available_for,
+            "name" => $role->name,
+            "guard_name" => $role->guard_name,
+            "permissions" => ComHelper::buildMenuTree($permissions)
+        ];
     }
 
     /**
