@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\ComHelper;
 use App\Models\ComStore;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,28 +17,7 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        $permissions=[];
-        //Take Individual Permission
-        $permissions_indv = $this->permissions->map(function ($permission) {
-            return [
-                'group' => $permission->module,
-                'group_title' => $permission->module_title,
-                'perm_name' => $permission->name,
-                'perm_title' => $permission->perm_title,
-            ];
-        })->toArray();
-
-        //Get Role Permission and Merge Them
-        foreach ($this->roles as $role) {
-            $permissions = array_merge($permissions_indv,$role->permissions->map(function ($permission) {
-                return [
-                    'group' => $permission->module,
-                    'group_title' => $permission->module_title,
-                    'perm_name' => $permission->name,
-                    'perm_title' => $permission->perm_title,
-                ];
-            })->toArray());
-        }
+        $permissions=$this->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
         $stores=[];
         if($this->stores!='') {
             $stores = ComStore::whereIn('id', json_decode($this->stores))
@@ -58,7 +38,7 @@ class UserResource extends JsonResource
             "merchant_id" => $this->merchant_id,
             "stores" => $stores,
             'roles' => $this->roles->pluck('name'),
-            'permissions' => $permissions,
+            "permissions" => ComHelper::buildMenuTree($permissions),
         ];
     }
 }
