@@ -17,13 +17,14 @@ class PermissionStoreSeeder extends Seeder
      */
     public function run()
     {
-        $admin_main_menu=[];
+        $admin_main_menu = [];
         $shop_menu = [
             [
                 [
                     'PermissionName' => 'dashboard',
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'store_level',
+                    'icon' => '',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Dashboard',
@@ -34,6 +35,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Orders & Reviews',
                     'activity_scope' => 'store_level',
+                    'icon' => '',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Orders & Reviews',
@@ -44,6 +46,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => MenuGroup::ORDER_MANAGEMENT->value,
                             'PermissionTitle' => 'Orders',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Orders',
@@ -54,6 +57,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_ALL->value,
                                     'PermissionTitle' => 'All Orders',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'All Orders',
                                         'ar' => 'جميع الطلبات'
@@ -63,6 +67,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_PENDING->value,
                                     'PermissionTitle' => 'Pending',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Pending',
                                         'ar' => 'قيد الانتظار'
@@ -72,6 +77,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_CONFIRMED->value,
                                     'PermissionTitle' => 'Confirmed',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Confirmed',
                                         'ar' => 'مؤكد'
@@ -81,6 +87,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_SCHEDULED->value,
                                     'PermissionTitle' => 'Scheduled',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Scheduled',
                                         'ar' => 'مجدولة'
@@ -90,6 +97,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_COOKING->value,
                                     'PermissionTitle' => 'Cooking (For Restaurant)',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Cooking',
                                         'ar' => 'طبخ'
@@ -99,6 +107,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_READY_FOR_DELIVERY->value,
                                     'PermissionTitle' => 'Ready For Delivery',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Ready For Delivery',
                                         'ar' => 'جاهز للتسليم'
@@ -108,6 +117,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_PRODUCT_ON_THE_WAY->value,
                                     'PermissionTitle' => 'Item On The Way',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Item On The Way',
                                         'ar' => 'البند في الطريق'
@@ -117,6 +127,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_DELIVERED->value,
                                     'PermissionTitle' => 'Delivered',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Delivered',
                                         'ar' => 'تم التوصيل'
@@ -126,6 +137,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_FITTING_SCHEDULE->value,
                                     'PermissionTitle' => 'Fitting Schedule Done(Furniture)',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Fitting Schedule Done',
                                         'ar' => 'تم الانتهاء من جدول التجهيز'
@@ -135,6 +147,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_RETURNED_OR_REFUND->value,
                                     'PermissionTitle' => 'Returned or Refunded',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Returned or Refunded',
                                         'ar' => 'تم إرجاعه أو استرداده'
@@ -148,6 +161,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Product management',
                     'activity_scope' => 'store_level',
+                    'icon' => '',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Orders & Reviews',
@@ -158,6 +172,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Products',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Products',
@@ -168,6 +183,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::PRODUCT_PRODUCT_LIST->value,
                                     'PermissionTitle' => 'Manage Products',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'options' => ['View', 'Add', 'Edit', 'Delete'],
                                     'translations' => [
                                         'en' => 'Manage Products',
@@ -178,6 +194,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::PRODUCT_PRODUCT_ADD->value,
                                     'PermissionTitle' => 'Add New Product',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Add New Product',
                                         'ar' => 'إضافة منتج جديد'
@@ -187,6 +204,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::PRODUCT_PRODUCT_LOW_STOCK->value,
                                     'PermissionTitle' => 'All Low-Stock/Out of Stock Product',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'All Low-Stock/Out of Stock Product',
                                         'ar' => 'جميع المنتجات منخفضة المخزون/غير متوفرة بالمخزون'
@@ -196,6 +214,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::PRODUCT_PRODUCT_TEMPLATE->value,
                                     'PermissionTitle' => 'Product Template',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Product Template',
                                         'ar' => 'قالب المنتج'
@@ -205,6 +224,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::PRODUCT_PRODUCT_BULK_IMPORT->value,
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Bulk Import',
                                         'ar' => 'الاستيراد بالجملة'
@@ -214,6 +234,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::PRODUCT_PRODUCT_BULK_EXPORT->value,
                                     'PermissionTitle' => 'Bulk Export',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Bulk Export',
                                         'ar' => 'التصدير بالجملة'
@@ -225,6 +246,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::PRODUCT_CATEGORY_LIST_STORE->value,
                             'PermissionTitle' => 'Category List',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Category List',
                                 'ar' => 'قائمة الفئات'
@@ -234,6 +256,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::PRODUCT_ATTRIBUTE_LIST->value,
                             'PermissionTitle' => 'Attribute List',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Attribute List',
                                 'ar' => 'قائمة السمات'
@@ -243,6 +266,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::PRODUCT_BRAND_LIST_STORE->value,
                             'PermissionTitle' => 'Brand/Manufacturers/Publications',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Brand/Manufacturers/Publications',
                                 'ar' => 'العلامة التجارية/الشركات المصنعة/المنشورات'
@@ -252,6 +276,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::PRODUCT_AUTHORS_LIST_STORE->value,
                             'PermissionTitle' => 'Author\'s List',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Author\'s List',
                                 'ar' => 'قائمة المؤلفين'
@@ -261,6 +286,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::PRODUCT_FAB_COMB_ADD->value,
                             'PermissionTitle' => 'Manage Combinations',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Manage Combinations',
                                 'ar' => 'إدارة التركيبات'
@@ -270,6 +296,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::PRODUCT_ADDONS_ADD->value,
                             'PermissionTitle' => 'Addons',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Addons',
                                 'ar' => 'إدارة التركيبات'
@@ -281,6 +308,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Financial Management',
                     'activity_scope' => 'store_level',
+                    'icon' => '',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Financial Management',
@@ -291,6 +319,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::FINANCIAL_TRANSACTIONS->value,
                             'PermissionTitle' => 'Transactions',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Transactions',
                                 'ar' => 'المعاملات'
@@ -300,6 +329,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::FINANCIAL_WITHDRAWLS->value,
                             'PermissionTitle' => 'Withdrawals',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Withdrawals',
                                 'ar' => 'السحوبات'
@@ -309,6 +339,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::FINANCIAL_MYINCOME->value,
                             'PermissionTitle' => 'My Income',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'My Income',
                                 'ar' => 'دخلي'
@@ -320,6 +351,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Feedback control',
                     'activity_scope' => 'store_level',
+                    'icon' => '',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Feedback control',
@@ -330,6 +362,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::FEEDBACK_REVIEWS->value,
                             'PermissionTitle' => 'Reviews',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Reviews',
                                 'ar' => 'المراجعات'
@@ -339,6 +372,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::FEEDBACK_QUESTIONS->value,
                             'PermissionTitle' => 'Questions/Chat',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Questions/Chat',
                                 'ar' => 'الأسئلة/الدردشة'
@@ -348,6 +382,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::FEEDBACK_QUERIES->value,
                             'PermissionTitle' => 'Product Queries',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Product Queries',
                                 'ar' => 'استعلامات المنتج'
@@ -359,6 +394,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'User control',
                     'activity_scope' => 'store_level',
+                    'icon' => '',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'User control',
@@ -369,6 +405,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::USERS_BAN->value,
                             'PermissionTitle' => 'Ban User',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Ban User',
                                 'ar' => 'حظر المستخدم'
@@ -378,6 +415,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::USERS_ACTIVE->value,
                             'PermissionTitle' => 'Active User',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Active User',
                                 'ar' => 'المستخدم النشط'
@@ -387,6 +425,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::USERS_ROLES_STORE->value,
                             'PermissionTitle' => 'Staff Roles',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Staff Roles',
                                 'ar' => 'أدوار الموظفين'
@@ -396,6 +435,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::USERS_STAFF_ADD_STORE->value,
                             'PermissionTitle' => 'Add New',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Add New',
                                 'ar' => 'إضافة جديد'
@@ -405,6 +445,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::USERS_STAFF_LIST_STORE->value,
                             'PermissionTitle' => 'List',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'List',
                                 'ar' => 'قائمة'
@@ -416,6 +457,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Promotional control',
                     'activity_scope' => 'store_level',
+                    'icon' => '',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Promotional control',
@@ -426,6 +468,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Flash Sale',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Flash Sale',
@@ -436,6 +479,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::PROMOTION_DEALS_AVAILABLE->value,
                                     'PermissionTitle' => 'Available flash deals',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Available flash deals',
                                         'ar' => 'عروض فلاش متاحة'
@@ -445,6 +489,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::PROMOTION_MY_PRODUCT_IN_DEALS->value,
                                     'PermissionTitle' => 'My products in deals',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'My products in deals',
                                         'ar' => 'منتجاتي في العروض'
@@ -454,6 +499,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::PROMOTION_ASK_FOR_ENROLL->value,
                                     'PermissionTitle' => 'Ask for enrollment',
                                     'activity_scope' => 'store_level',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'Ask for enrollment',
                                         'ar' => 'اطلب التسجيل'
@@ -465,6 +511,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::PROMOTION_COUPONS->value,
                             'PermissionTitle' => 'Coupons',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Coupons',
                                 'ar' => 'كوبونات'
@@ -474,6 +521,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::PROMOTION_BANNERS->value,
                             'PermissionTitle' => 'Banners',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Banners',
                                 'ar' => 'لافتات'
@@ -485,6 +533,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Store Settings',
                     'activity_scope' => 'store_level',
+                    'icon' => '',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Store Settings',
@@ -495,6 +544,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::STORE_STORE_NOTICE->value,
                             'PermissionTitle' => 'Store Notice',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Store Notice',
                                 'ar' => 'إشعار المتجر'
@@ -504,6 +554,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::STORE_STORE_MESSAGE->value,
                             'PermissionTitle' => 'Message',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Message',
                                 'ar' => 'رسالة'
@@ -513,6 +564,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::STORE_STORE_CONFIG->value,
                             'PermissionTitle' => 'Store Config',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Store Config',
                                 'ar' => 'تكوين المتجر'
@@ -522,6 +574,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::STORE_MY_SHOP->value,
                             'PermissionTitle' => 'My Stores',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'My Stores',
                                 'ar' => 'متاجري'
@@ -531,6 +584,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::STORE_BUSINESS_PLAN->value,
                             'PermissionTitle' => 'My Business Plan',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'My Business Plan',
                                 'ar' => 'خطة عملي'
@@ -540,6 +594,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::STORE_WALLET->value,
                             'PermissionTitle' => 'My Wallet',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'My Wallet',
                                 'ar' => 'محفظتي'
@@ -549,6 +604,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::STORE_DISBURSE_METHOD->value,
                             'PermissionTitle' => 'Disbursement Method',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'Disbursement Method',
                                 'ar' => 'طريقة الصرف'
@@ -558,6 +614,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::STORE_POS_CONFIG->value,
                             'PermissionTitle' => 'POS Configuration',
                             'activity_scope' => 'store_level',
+                            'icon' => '',
                             'translations' => [
                                 'en' => 'POS Configuration',
                                 'ar' => 'تكوين نقاط البيع'
@@ -569,21 +626,21 @@ class PermissionStoreSeeder extends Seeder
         ];
 
 
-
-        $page_list= array_merge($admin_main_menu,$shop_menu);
+        $page_list = array_merge($admin_main_menu, $shop_menu);
 
 
         foreach ($page_list as $x_mod) {
             foreach ($x_mod as $level_1) {
 
                 $trans_level_1 = [];
-                $options_l1=isset($level_1['options']) && is_array($level_1['options'])?$level_1['options']: ['View'];
+                $options_l1 = isset($level_1['options']) && is_array($level_1['options']) ? $level_1['options'] : ['View'];
 
                 $permission_l1 = ModelsPermission::updateOrCreate(
                     [
-                        'name' => $level_1['PermissionName']!=''?$level_1['PermissionName'] : $level_1['PermissionTitle'],
+                        'name' => $level_1['PermissionName'] != '' ? $level_1['PermissionName'] : $level_1['PermissionTitle'],
                         'perm_title' => $level_1['PermissionTitle'],
                         'guard_name' => 'api',
+                        'icon' => $level_1['icon'],
                         'available_for' => $level_1['activity_scope'],
                         'options' => json_encode($options_l1)
                     ]
@@ -604,13 +661,14 @@ class PermissionStoreSeeder extends Seeder
                     foreach ($level_1['submenu'] as $level_2) {
 
                         $trans_level_2 = [];
-                        $options_l2=isset($level_2['options']) && is_array($level_2['options'])?$level_2['options']: ['View'];
+                        $options_l2 = isset($level_2['options']) && is_array($level_2['options']) ? $level_2['options'] : ['View'];
 
                         $permission_l2 = ModelsPermission::updateOrCreate(
                             [
-                                'name' => $level_2['PermissionName']!=''?$level_2['PermissionName'] : $level_2['PermissionTitle'],
+                                'name' => $level_2['PermissionName'] != '' ? $level_2['PermissionName'] : $level_2['PermissionTitle'],
                                 'perm_title' => $level_2['PermissionTitle'],
                                 'guard_name' => 'api',
+                                'icon' => $level_2['icon'],
                                 'available_for' => $level_2['activity_scope'],
                                 'options' => json_encode($options_l2),
                                 'parent_id' => $permission_l1->id
@@ -632,13 +690,14 @@ class PermissionStoreSeeder extends Seeder
                             foreach ($level_2['submenu'] as $level_3) {
 
                                 $trans_level_3 = [];
-                                $options_l3=isset($level_3['options']) && is_array($level_3['options'])?$level_3['options']: ['View'];
+                                $options_l3 = isset($level_3['options']) && is_array($level_3['options']) ? $level_3['options'] : ['View'];
 
                                 $permission_l3 = ModelsPermission::updateOrCreate(
                                     [
                                         'name' => $level_3['PermissionName'],
                                         'perm_title' => $level_3['PermissionTitle'],
                                         'guard_name' => 'api',
+                                        'icon' => $level_3['icon'],
                                         'available_for' => $level_3['activity_scope'],
                                         'options' => json_encode($options_l3),
                                         'parent_id' => $permission_l2->id

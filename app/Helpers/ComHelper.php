@@ -188,6 +188,7 @@ class ComHelper
                     'id' => $data_item->id,
                     'perm_title' => $data_item->perm_title,
                     'perm_name' => $data_item->name,
+                    'icon' => $data_item->icon,
                     'options' => json_decode($data_item->options),
                     'children' => $children,
                 ];

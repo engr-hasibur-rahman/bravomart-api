@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('guard_name'); // For MyISAM use string('guard_name', 25);
             $table->string('module_title')->nullable();
             $table->string('perm_title')->nullable();
+            $table->string('icon')->nullable();
             $table->string('parent_id')->nullable();
             $table->string('options')->nullable();
             $table->timestamps();

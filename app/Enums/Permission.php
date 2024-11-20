@@ -132,6 +132,7 @@ enum Permission: string
     case PRODUCT_PRODUCT_BULK_IMPORT = 'product-import';
     case PRODUCT_PRODUCT_BULK_EXPORT = 'product-export';
     case PRODUCT_PRODUCT_APPROVAL_REQ = 'product-approval-request';
+    case PRODUCT_INVENTORY = 'product-inventory';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Order Permissions                                       //
@@ -271,4 +272,8 @@ enum Permission: string
     case EMAIL_TEMPLATE = 'email-template';
     case APP_SETTINGS = 'app-settings';
     case NOTIFICATION_CHANNELS = 'notification-channels';
+
+    case UNSIGNED_ORDERS_GROCERY = 'unsigned-orders-grocery';
+    case ONGOING_ORDERS_GROCERY = 'ongoing-orders-grocery';
+
 }
