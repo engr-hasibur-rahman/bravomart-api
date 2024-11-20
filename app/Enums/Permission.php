@@ -25,7 +25,6 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_AREA_LIST = '/admin/area';
     case ADMIN_AREA_ADD = '/admin/area/add-area';
-    case ADMIN_AREA_UPDATE = 'update-area';
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -55,8 +54,6 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_BRAND_LIST = '/admin/brand';
     case PRODUCT_BRAND_ADD = '/admin/brand/add-brand';
-    case PRODUCT_BRAND_EDIT = 'product-brand-edit';
-    case PRODUCT_BRAND_STATUS = 'product-brand-status';
     case PRODUCT_BRAND_LIST_STORE = 'brand-list-store';
     case PRODUCT_BRAND_REQUESTED_FROM_STORE = 'brand-req-from-store';
 
@@ -74,8 +71,6 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_ATTRIBUTE_LIST = '/admin/attributes';
     case PRODUCT_ATTRIBUTE_ADD = '/admin/attributes/add-attribute';
-    case PRODUCT_ATTRIBUTE_EDIT = 'product-attribute-edit';
-    case PRODUCT_ATTRIBUTE_DELETE = 'product-attribute-delete';
     case PRODUCT_ATTRIBUTE_LIST_STORE = 'attribute-list';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -83,7 +78,6 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_WARRANTY_LIST = 'product-warranty';
     case PRODUCT_WARRANTY_ADD = 'product-warranty-add';
-    case PRODUCT_WARRANTY_EDIT = 'product-warranty-edit';
     case PRODUCT_WARRANTY_LIST_STORE = 'product-warranty-list';
 
 
@@ -92,8 +86,6 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_AUTHORS_LIST = 'author-list';
     case PRODUCT_AUTHORS_ADD = 'author-add';
-    case PRODUCT_AUTHORS_EDIT = 'author-edit';
-    case PRODUCT_AUTHORS_DELETE = 'author-delete';
     case PRODUCT_AUTHORS_LIST_STORE = 'author-list-store';
     case PRODUCT_AUTHORS_REQUESTED_FROM_STORE = 'author-req-from-store';
 
@@ -103,16 +95,12 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_FAB_COMB_LIST = 'fabcomb-list';
     case PRODUCT_FAB_COMB_ADD = 'fabcomb-add';
-    case PRODUCT_FAB_COMB_EDIT = 'fabcomb-edit';
-    case PRODUCT_FAB_COMB_DELETE = 'fabcomb-delete';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Product addons (For Food Only)                                   //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_ADDONS_LIST = 'addons-list';
     case PRODUCT_ADDONS_ADD = 'addons-add';
-    case PRODUCT_ADDONS_EDIT = 'addons-edit';
-    case PRODUCT_ADDONS_DELETE = 'addons-delete';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Product addons (For Food Only)                                   //
@@ -125,8 +113,6 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_PRODUCT_LIST = '/admin/products';
     case PRODUCT_PRODUCT_ADD = '/admin/products/add-product';
-    case PRODUCT_PRODUCT_EDIT = 'product-edit';
-    case PRODUCT_PRODUCT_DELETE = 'product-delete';
     case PRODUCT_PRODUCT_LOW_STOCK = 'product-low-stock';
     case PRODUCT_PRODUCT_TEMPLATE = 'product-template';
     case PRODUCT_PRODUCT_BULK_IMPORT = 'product-import';

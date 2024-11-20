@@ -28,11 +28,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
     Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_ADD->value]], function () {
         Route::post('product-brands', [ProductBrandController::class, 'store']);
-    });
-    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_EDIT->value]], function () {
         Route::get('product-brands/{id}', [ProductBrandController::class, 'show']);
-    });
-    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_STATUS->value]], function () {
         Route::post('product-brands/status', [ProductBrandController::class, 'productBrandStatus']);
     });
 
@@ -42,11 +38,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
     Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_ADD->value]], function () {
         Route::post('product-categories', [ProductCategoryController::class, 'store']);
-    });
-    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_EDIT->value]], function () {
         Route::get('product-categories/{id}', [ProductCategoryController::class, 'show']);
-    });
-    Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_STATUS->value]], function () {
         Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);
     });
 
@@ -59,7 +51,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
 
     //Product Attribute Management
-    Route::group(['middleware' => [getPermissionMiddleware('product-attribute')]], function () {
+    Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
         Route::get('product/attribute/list', [ProductAttributeController::class, 'index']);
         Route::get('product/attribute/{id}', [ProductAttributeController::class, 'show']);
         Route::post('product/attribute/add', [ProductAttributeController::class, 'store']);
@@ -73,15 +65,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);
     });
-    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value . '|' . Permission::ADMIN_AREA_UPDATE->value]], function () {
+    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         Route::get('com/area/{id}', [AreaController::class, 'show']);
         Route::post('com/area/add', [AreaController::class, 'store']);
-    });
-    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_UPDATE->value]], function () {
         Route::post('com/area/update', [AreaController::class, 'update']);
         Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
         Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
     });
 
-    
 });

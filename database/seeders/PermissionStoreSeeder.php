@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Enums\Permission;
-use App\Enums\MenuGroup;
 use App\Models\Translation;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission as ModelsPermission;
@@ -43,7 +42,7 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => MenuGroup::ORDER_MANAGEMENT->value,
+                            'PermissionName' => '',
                             'PermissionTitle' => 'Orders',
                             'activity_scope' => 'store_level',
                             'icon' => '',
