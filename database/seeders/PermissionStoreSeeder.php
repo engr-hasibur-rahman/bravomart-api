@@ -57,7 +57,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_ALL->value,
                                     'PermissionTitle' => 'All Orders',
                                     'activity_scope' => 'store_level',
-                                    'icon' => '',
+                                    'icon' => '<Component size={20}/>',
                                     'translations' => [
                                         'en' => 'All Orders',
                                         'ar' => 'جميع الطلبات'
