@@ -17,8 +17,7 @@ class PermissionAdminSeeder extends Seeder
      */
     public function run()
     {
-        $admin_main_menu = [];
-        $shop_menu = [
+        $admin_main_menu = [
             [
                 [
                     'PermissionName' => 'dashboard',
@@ -48,6 +47,15 @@ class PermissionAdminSeeder extends Seeder
                             'translations' => [
                                 'en' => 'Instant Sales',
                                 'ar' => 'المبيعات الفورية'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::POS_SETTINGS_ADMIN->value,
+                            'PermissionTitle' => 'Pos Settings',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Pos Settings',
+                                'ar' => 'إعدادات الموضع'
                             ]
                         ]
                     ]
@@ -329,39 +337,243 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_BRAND_LIST_STORE->value,
+                            'PermissionName' => '',
                             'PermissionTitle' => 'Brand/Manufacturers/Publications',
                             'activity_scope' => 'system_level',
                             'translations' => [
                                 'en' => 'Brand/Manufacturers/Publications',
                                 'ar' => 'العلامة التجارية/الشركات المصنعة/المنشورات'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::PRODUCT_BRAND_LIST->value,
+                                    'PermissionTitle' => 'Product Brand List',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Product Brand List',
+                                        'ar' => 'قائمة العلامات التجارية للمنتج'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::PRODUCT_BRAND_ADD->value,
+                                    'PermissionTitle' => 'Add Product Brand',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Add Product Brand',
+                                        'ar' => 'إضافة العلامة التجارية للمنتج'
+                                    ]
+                                ]
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_AUTHORS_LIST_STORE->value,
-                            'PermissionTitle' => 'Author\'s List',
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Warranty',
                             'activity_scope' => 'system_level',
                             'translations' => [
-                                'en' => 'Author\'s List',
+                                'en' => 'Warranty',
+                                'ar' => 'ضمان'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::PRODUCT_WARRANTY_LIST->value,
+                                    'PermissionTitle' => 'Warranty List',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Warranty List',
+                                        'ar' => 'قائمة الضمان'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::PRODUCT_WARRANTY_ADD->value,
+                                    'PermissionTitle' => 'Add Warranty',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Add Warranty',
+                                        'ar' => 'إضافة الضمان'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Tags',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Tags',
+                                'ar' => 'العلامات'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::PRODUCT_TAG_LIST->value,
+                                    'PermissionTitle' => 'Tag List',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Tag List',
+                                        'ar' => 'قائمة العلامات'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::PRODUCT_TAG_ADD->value,
+                                    'PermissionTitle' => 'Add Tag',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Add Tag',
+                                        'ar' => 'إضافة علامة'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Authors (For Book Only)',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Authors (For Book Only)',
                                 'ar' => 'قائمة المؤلفين'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::PRODUCT_AUTHORS_LIST->value,
+                                    'PermissionTitle' => 'Author\'s List',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Author\'s List',
+                                        'ar' => 'قائمة المؤلفين'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::PRODUCT_AUTHORS_ADD->value,
+                                    'PermissionTitle' => 'Add Book Author',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Add Book Author',
+                                        'ar' => 'أضف مؤلف الكتاب'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::PRODUCT_AUTHORS_REQUESTED_FROM_STORE->value,
+                                    'PermissionTitle' => 'Author Add Requested From Store',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Author Add Requested From Store',
+                                        'ar' => 'تم طلب إضافة المؤلف من المتجر'
+                                    ]
+                                ]
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_FAB_COMB_ADD->value,
-                            'PermissionTitle' => 'Manage Combinations',
-                            'activity_scope' => 'system_level',
-                            'translations' => [
-                                'en' => 'Manage Combinations',
-                                'ar' => 'إدارة التركيبات'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => Permission::PRODUCT_ADDONS_ADD->value,
+                            'PermissionName' => '',
                             'PermissionTitle' => 'Addons',
                             'activity_scope' => 'system_level',
                             'translations' => [
                                 'en' => 'Addons',
                                 'ar' => 'إدارة التركيبات'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::PRODUCT_ADDONS_LIST->value,
+                                    'PermissionTitle' => 'Manage addons',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Manage addons',
+                                        'ar' => 'إدارة الإضافات'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::PRODUCT_ADDONS_ADD->value,
+                                    'PermissionTitle' => 'Add New addon',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Add New addon',
+                                        'ar' => 'إضافة وظيفة إضافية جديدة'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Manage Combinations(Furniture Only)',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Manage Combinations',
+                                'ar' => 'إدارة التركيبات'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::PRODUCT_FAB_COMB_LIST->value,
+                                    'PermissionTitle' => 'List',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'List',
+                                        'ar' => 'إدارة التركيبات'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::PRODUCT_FAB_COMB_ADD->value,
+                                    'PermissionTitle' => 'Add Combinations',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Add Combinations',
+                                        'ar' => 'إضافة مجموعات'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Store management',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Store management',
+                        'ar' => 'إدارة المتجر'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => Permission::STORE_APPROVAL->value,
+                            'PermissionTitle' => 'Pending Approval/ Rejected',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Pending Approval/ Rejected',
+                                'ar' => 'في انتظار الموافقة/الرفض'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::ADMIN_STORE_LIST->value,
+                            'PermissionTitle' => 'Store List',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Store List',
+                                'ar' => 'قائمة المتاجر'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::ADMIN_STORE_ADD->value,
+                            'PermissionTitle' => 'Store Add',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Store Add',
+                                'ar' => 'إضافة متجر'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::STORE_RECOMMENDED->value,
+                            'PermissionTitle' => 'Recommended Store',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Recommended Store',
+                                'ar' => 'المتجر الموصى به'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::STORE_STORE_ADD_UPDATE->value,
+                            'PermissionTitle' => 'Store Add/Update',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Store Add/Update',
+                                'ar' => 'إضافة/تحديث المتجر'
                             ]
                         ]
                     ]
@@ -369,8 +581,483 @@ class PermissionAdminSeeder extends Seeder
             ]
         ];
 
+        $admin_user_related_menu = [
+            [
+                [
+                    'PermissionName' => 'User-Dashboard',
+                    'PermissionTitle' => 'User Dashboard',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'User Dashboard',
+                        'ar' => 'قائمة المناطق'
+                    ]
+                ],
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Deliveryman management',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Deliveryman management',
+                        'ar' => 'إدارة التوصيل'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => Permission::DELIVERY_VEHICLE_CATEGORY->value,
+                            'PermissionTitle' => 'Vehicles category',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Vehicles category',
+                                'ar' => 'فئة المركبات'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::DELIVERY_PERSON_ADD->value,
+                            'PermissionTitle' => 'Add Delivery Man',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Add Delivery Man',
+                                'ar' => 'إضافة رجل التوصيل'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::DELIVERY_PERSON_LIST->value,
+                            'PermissionTitle' => 'Delivery Man List',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Delivery Man List',
+                                'ar' => 'قائمة رجال التوصيل'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::DELIVERY_PERSONS_REVIEW->value,
+                            'PermissionTitle' => 'Reviews',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Reviews',
+                                'ar' => 'المراجعات'
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Customer management',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Customer management',
+                        'ar' => 'إدارة العملاء'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => Permission::CUSTOMER_LIST->value,
+                            'PermissionTitle' => 'Customers',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Customers',
+                                'ar' => 'عملاء'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Customer Wallet',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Customer Wallet',
+                                'ar' => 'محفظة العميل'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::CUSTOMER_WALLET_ADD_FUND->value,
+                                    'PermissionTitle' => 'Add Fund',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Add Fund',
+                                        'ar' => 'إضافة صندوق'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::CUSTOMER_WALLET_REPORT->value,
+                                    'PermissionTitle' => 'Report',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Report',
+                                        'ar' => 'تقرير'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::CUSTOMER_WALLET_BONUS->value,
+                                    'PermissionTitle' => 'Bonus',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Bonus',
+                                        'ar' => 'علاوة'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::CUSTOMER_LOYALTY_POINT->value,
+                            'PermissionTitle' => 'Customer Loyalty Point',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Customer Loyalty Point',
+                                'ar' => 'نقطة ولاء العملاء'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::CUSTOMER_SUBSCRIBED_MAIL_LIST->value,
+                            'PermissionTitle' => 'Subscribe Mail List',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Subscribe Mail List',
+                                'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::CUSTOMER_CONTACT_MESSAGES->value,
+                            'PermissionTitle' => 'Contact Messages',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Contact Messages',
+                                'ar' => 'رسائل الاتصال'
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Employee Management',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Employee Management',
+                        'ar' => 'إدارة الموظفين'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Staff Roles',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Staff Roles',
+                                'ar' => 'أدوار الموظفين'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::USERS_ROLE_LIST->value,
+                                    'PermissionTitle' => 'List',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'List',
+                                        'ar' => 'علاوة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::USERS_ROLE_ADD->value,
+                                    'PermissionTitle' => 'Add Role',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Add Role',
+                                        'ar' => 'إضافة دور'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'My Staff',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'My Staff',
+                                'ar' => 'طاقمي'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::USERS_LIST_ADMIN->value,
+                                    'PermissionTitle' => 'List',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'List',
+                                        'ar' => 'علاوة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::USERS_ADD_ADMIN->value,
+                                    'PermissionTitle' => 'Add Staff',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Add Staff',
+                                        'ar' => 'إضافة الموظفين'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $admin_transaction_related_menu = [
+            [
+                [
+                    'PermissionName' => 'Financial-Dashboard',
+                    'PermissionTitle' => 'Financial Dashboard',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Financial Dashboard',
+                        'ar' => 'قائمة المناطق'
+                    ]
+                ],
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Financial Activity',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Financial Activity',
+                        'ar' => 'النشاط المالي'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => Permission::FINANCIAL_WITHDRAW_REQUESTS->value,
+                            'PermissionTitle' => 'Withdraw Requests',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Withdraw Requests',
+                                'ar' => 'طلبات السحب'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::FINANCIAL_STORE_DISBURSEMENT->value,
+                            'PermissionTitle' => 'Store Disbursement',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Store Disbursement',
+                                'ar' => 'صرف المتجر'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::FINANCIAL_DELIVERY_MAN_DISBURSEMENT->value,
+                            'PermissionTitle' => 'Delivery Man Disbursement',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Delivery Man Disbursement',
+                                'ar' => 'صرف رواتب موظف التوصيل'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::FINANCIAL_COLLECT_CASH->value,
+                            'PermissionTitle' => 'Collect Cash',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Collect Cash',
+                                'ar' => 'جمع النقود'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::FINANCIAL_DELIVERY_MAN_PAYMENTS->value,
+                            'PermissionTitle' => 'Delivery Man Payments',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Delivery Man Payments',
+                                'ar' => 'مدفوعات توصيل الطلبات'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::FINANCIAL_WITHDRAW_METHOD->value,
+                            'PermissionTitle' => 'Withdrawal Method',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Withdrawal Method',
+                                'ar' => 'طريقة السحب'
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Report and analytics',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Report and analytics',
+                        'ar' => 'التقارير والتحليلات'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => Permission::TRANSACTION_REPORT->value,
+                            'PermissionTitle' => 'Transaction Report',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Transaction Report',
+                                'ar' => 'تقرير المعاملات'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::ITEM_REPORT->value,
+                            'PermissionTitle' => 'Item Report',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Item Report',
+                                'ar' => 'تقرير العنصر'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::STORE_WISE_REPORT->value,
+                            'PermissionTitle' => 'Store-wise Report',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Store-wise Report',
+                                'ar' => 'تقرير حسب المتجر'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::EXPENSE_REPORT->value,
+                            'PermissionTitle' => 'Expense Report',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Expense Report',
+                                'ar' => 'تقرير المصروفات'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::DISBURSEMENT_REPORT->value,
+                            'PermissionTitle' => 'Disbursement Report',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Disbursement Report',
+                                'ar' => 'تقرير الصرف'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::ORDER_REPORT->value,
+                            'PermissionTitle' => 'Order Report',
+                            'activity_scope' => 'system_level',
+                            'translations' => [
+                                'en' => 'Order Report',
+                                'ar' => 'تقرير الطلب'
+                            ]
+                        ]
+                    ]
+                ],
+            ]
+        ];
 
-        $page_list = array_merge($admin_main_menu, $shop_menu);
+        $admin_settings_related_menu = [
+            [
+                [
+                    'PermissionName' => 'Business-Dashboard',
+                    'PermissionTitle' => 'Business Dashboard',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Business Dashboard',
+                        'ar' => 'قائمة المناطق'
+                    ]
+                ],
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Business management',
+                    'activity_scope' => 'system_level',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Business management',
+                        'ar' => 'إدارة الأعمال'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Area Setup',
+                            'activity_scope' => 'system_level',
+                            'options' => ['View'],
+                            'translations' => [
+                                'en' => 'Area Setup',
+                                'ar' => 'إعداد المنطقة'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::ADMIN_AREA_LIST->value,
+                                    'PermissionTitle' => 'Area List',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Area List',
+                                        'ar' => 'قائمة المناطق'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::ADMIN_AREA_ADD->value,
+                                    'PermissionTitle' => 'Area Add',
+                                    'activity_scope' => 'system_level',
+                                    'translations' => [
+                                        'en' => 'Area Add',
+                                        'ar' => 'إضافة المنطقة'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::BUSINESS_SETTINGS->value,
+                            'PermissionTitle' => 'Business Settings',
+                            'activity_scope' => 'system_level',
+                            'options' => ['View'],
+                            'translations' => [
+                                'en' => 'Business Settings',
+                                'ar' => 'إعدادات الأعمال'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Subscription management',
+                            'activity_scope' => 'system_level',
+                            'options' => ['View'],
+                            'translations' => [
+                                'en' => 'Subscription management',
+                                'ar' => 'إدارة الاشتراكات'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => '',
+                                    'PermissionTitle' => 'Area Setup',
+                                    'activity_scope' => 'system_level',
+                                    'options' => ['View'],
+                                    'translations' => [
+                                        'en' => 'Area Setup',
+                                        'ar' => 'إعداد المنطقة'
+                                    ],
+                                    'submenu' => [
+                                        [
+                                            'PermissionName' => Permission::ADMIN_AREA_LIST->value,
+                                            'PermissionTitle' => 'Area List',
+                                            'activity_scope' => 'system_level',
+                                            'translations' => [
+                                                'en' => 'Area List',
+                                                'ar' => 'قائمة المناطق'
+                                            ]
+                                        ],
+                                        [
+                                            'PermissionName' => Permission::ADMIN_AREA_ADD->value,
+                                            'PermissionTitle' => 'Area Add',
+                                            'activity_scope' => 'system_level',
+                                            'translations' => [
+                                                'en' => 'Area Add',
+                                                'ar' => 'إضافة المنطقة'
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+
+
+            ]
+        ];
+
+        $page_list = array_merge($admin_main_menu, $admin_user_related_menu, $admin_transaction_related_menu, $admin_settings_related_menu);
 
 
         foreach ($page_list as $x_mod) {
