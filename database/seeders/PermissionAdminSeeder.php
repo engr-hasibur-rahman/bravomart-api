@@ -45,7 +45,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => Permission::POS_SALES->value,
                             'PermissionTitle' => 'Instant Sales',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'BadgeCent',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Instant Sales',
@@ -56,7 +56,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => Permission::POS_SETTINGS_ADMIN->value,
                             'PermissionTitle' => 'Pos Settings',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'RouteOff',
                             'translations' => [
                                 'en' => 'Pos Settings',
                                 'ar' => 'إعدادات الموضع'
@@ -79,7 +79,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => MenuGroup::ORDER_MANAGEMENT->value,
                             'PermissionTitle' => 'Orders',
                             'activity_scope' => 'system_level',
-                            'icon' => 'Component',
+                            'icon' => 'BringToFront',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Orders',
@@ -205,7 +205,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Products',
                             'activity_scope' => 'system_level',
-                            'icon' => 'fa fa-list',
+                            'icon' => 'Codesandbox',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Products',
@@ -289,7 +289,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => Permission::PRODUCT_INVENTORY->value,
                             'PermissionTitle' => 'Product Inventory',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Cog',
                             'translations' => [
                                 'en' => 'Product Inventory',
                                 'ar' => 'مخزون المنتج'
@@ -299,7 +299,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Category',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Layers3',
                             'translations' => [
                                 'en' => 'Category List',
                                 'ar' => 'قائمة الفئات'
@@ -351,7 +351,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Attribute',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Ratio',
                             'translations' => [
                                 'en' => 'Attribute',
                                 'ar' => 'قائمة السمات'
@@ -587,7 +587,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Store management',
                     'activity_scope' => 'system_level',
-                    'icon' => '',
+                    'icon' => 'Layers3',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Store management',
@@ -1079,7 +1079,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Area Setup',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Locate',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Area Setup',
