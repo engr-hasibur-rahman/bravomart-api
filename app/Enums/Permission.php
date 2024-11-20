@@ -53,7 +53,7 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //               Product Brand/Manufacturers/Publications (For Book Only)                   //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_BRAND_LIST = 'product-brand-list';
+    case PRODUCT_BRAND_LIST = '/admin/brand';
     case PRODUCT_BRAND_ADD = 'product-brand-add';
     case PRODUCT_BRAND_EDIT = 'product-brand-edit';
     case PRODUCT_BRAND_STATUS = 'product-brand-status';
@@ -63,7 +63,7 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product category Permissions                            //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_CATEGORY_LIST = 'product-category-list';
+    case PRODUCT_CATEGORY_LIST = '/admin/categories';
     case PRODUCT_CATEGORY_ADD = 'add-product-category';
     case PRODUCT_CATEGORY_EDIT = 'edit-product-category';
     case PRODUCT_CATEGORY_STATUS = 'product-category-status';
@@ -72,7 +72,7 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Attribute                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_ATTRIBUTE_LIST = 'attributes';
+    case PRODUCT_ATTRIBUTE_LIST = '/admin/attributes';
     case PRODUCT_ATTRIBUTE_ADD = 'product-attribute-add';
     case PRODUCT_ATTRIBUTE_EDIT = 'product-attribute-edit';
     case PRODUCT_ATTRIBUTE_DELETE = 'product-attribute-delete';
@@ -123,7 +123,7 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Permissions                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_PRODUCT_LIST = 'product-list';
+    case PRODUCT_PRODUCT_LIST = '/admin/products';
     case PRODUCT_PRODUCT_ADD = 'product-add';
     case PRODUCT_PRODUCT_EDIT = 'product-edit';
     case PRODUCT_PRODUCT_DELETE = 'product-delete';
