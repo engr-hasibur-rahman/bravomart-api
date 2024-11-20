@@ -23,16 +23,16 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Area Management                                         //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ADMIN_AREA_LIST = 'area-list';
-    case ADMIN_AREA_ADD = 'add-area';
+    case ADMIN_AREA_LIST = '/admin/area';
+    case ADMIN_AREA_ADD = '/admin/area/add-area';
     case ADMIN_AREA_UPDATE = 'update-area';
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Store Management                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ADMIN_STORE_LIST = 'store-list';
-    case ADMIN_STORE_ADD = 'store-add';
+    case ADMIN_STORE_LIST = '/admin/store';
+    case ADMIN_STORE_ADD = '/admin/store/add-store';
     case STORE_STORE_ADD_UPDATE = 'store-add-update'; // Add if user have no store added. Update if existis
     case STORE_RECOMMENDED = 'store-recommended';
     case STORE_APPROVAL = 'store-approval';
@@ -54,7 +54,7 @@ enum Permission: string
     //               Product Brand/Manufacturers/Publications (For Book Only)                   //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_BRAND_LIST = '/admin/brand';
-    case PRODUCT_BRAND_ADD = 'product-brand-add';
+    case PRODUCT_BRAND_ADD = '/admin/brand/add-brand';
     case PRODUCT_BRAND_EDIT = 'product-brand-edit';
     case PRODUCT_BRAND_STATUS = 'product-brand-status';
     case PRODUCT_BRAND_LIST_STORE = 'brand-list-store';
@@ -64,7 +64,7 @@ enum Permission: string
     //                                  Product category Permissions                            //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_CATEGORY_LIST = '/admin/categories';
-    case PRODUCT_CATEGORY_ADD = 'add-product-category';
+    case PRODUCT_CATEGORY_ADD = '/admin/categories/add-category';
     case PRODUCT_CATEGORY_EDIT = 'edit-product-category';
     case PRODUCT_CATEGORY_STATUS = 'product-category-status';
     case PRODUCT_CATEGORY_LIST_STORE = 'product-category-list-store';
@@ -73,7 +73,7 @@ enum Permission: string
     //                                  Product Attribute                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_ATTRIBUTE_LIST = '/admin/attributes';
-    case PRODUCT_ATTRIBUTE_ADD = 'product-attribute-add';
+    case PRODUCT_ATTRIBUTE_ADD = '/admin/attributes/add-attribute';
     case PRODUCT_ATTRIBUTE_EDIT = 'product-attribute-edit';
     case PRODUCT_ATTRIBUTE_DELETE = 'product-attribute-delete';
     case PRODUCT_ATTRIBUTE_LIST_STORE = 'attribute-list';
@@ -124,7 +124,7 @@ enum Permission: string
     //                                  Product Permissions                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_PRODUCT_LIST = '/admin/products';
-    case PRODUCT_PRODUCT_ADD = 'product-add';
+    case PRODUCT_PRODUCT_ADD = '/admin/products/add-product';
     case PRODUCT_PRODUCT_EDIT = 'product-edit';
     case PRODUCT_PRODUCT_DELETE = 'product-delete';
     case PRODUCT_PRODUCT_LOW_STOCK = 'product-low-stock';
@@ -137,7 +137,7 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Order Permissions                                       //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ORDERS_ALL = '/admin/area';
+    case ORDERS_ALL = '/';
     case ORDERS_PENDING = 'order-pending';
     case ORDERS_CONFIRMED = 'order-confirmed';
     case ORDERS_SCHEDULED = 'order-scheduled';
@@ -190,10 +190,10 @@ enum Permission: string
     case USERS_ROLES_STORE = 'store-staff-role';
     case USERS_STAFF_ADD_STORE = 'store-staff-add';
     case USERS_STAFF_LIST_STORE = 'store-staff-list';
-    case USERS_ROLE_ADD = 'user-role-add';
-    case USERS_ROLE_LIST = 'user-role-list';
-    case USERS_LIST_ADMIN = 'user-list';
-    case USERS_ADD_ADMIN = 'user-add';
+    case USERS_ROLE_ADD = '/admin/roles/add-role';
+    case USERS_ROLE_LIST = '/admin/roles';
+    case USERS_LIST_ADMIN = '/admin/users';
+    case USERS_ADD_ADMIN = '/admin/users/add-user';
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//

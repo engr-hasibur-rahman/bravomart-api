@@ -79,7 +79,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => MenuGroup::ORDER_MANAGEMENT->value,
                             'PermissionTitle' => 'Orders',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Component',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Orders',
@@ -205,7 +205,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Products',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'fa fa-list',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Products',
