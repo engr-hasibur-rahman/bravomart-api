@@ -54,7 +54,7 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_BRAND_LIST = '/admin/brand';
     case PRODUCT_BRAND_ADD = '/admin/brand/add-brand';
-    case PRODUCT_BRAND_LIST_STORE = 'brand-list-store';
+    case PRODUCT_BRAND_LIST_STORE = '/store/brand';
     case PRODUCT_BRAND_REQUESTED_FROM_STORE = 'brand-req-from-store';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -64,14 +64,14 @@ enum Permission: string
     case PRODUCT_CATEGORY_ADD = '/admin/categories/add-category';
     case PRODUCT_CATEGORY_EDIT = 'edit-product-category';
     case PRODUCT_CATEGORY_STATUS = 'product-category-status';
-    case PRODUCT_CATEGORY_LIST_STORE = 'product-category-list-store';
+    case PRODUCT_CATEGORY_LIST_STORE = '/store/categories';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Attribute                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_ATTRIBUTE_LIST = '/admin/attributes';
     case PRODUCT_ATTRIBUTE_ADD = '/admin/attributes/add-attribute';
-    case PRODUCT_ATTRIBUTE_LIST_STORE = 'attribute-list';
+    case PRODUCT_ATTRIBUTE_LIST_STORE = '/store/attributes';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Warranty                                        //

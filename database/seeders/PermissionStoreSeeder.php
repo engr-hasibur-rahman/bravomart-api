@@ -45,7 +45,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Orders',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'BringToFront',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Orders',
@@ -56,7 +56,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionName' => Permission::ORDERS_ALL->value,
                                     'PermissionTitle' => 'All Orders',
                                     'activity_scope' => 'store_level',
-                                    'icon' => '<Component size={20}/>',
+                                    'icon' => '',
                                     'translations' => [
                                         'en' => 'All Orders',
                                         'ar' => 'جميع الطلبات'
@@ -171,7 +171,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Products',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'Codesandbox',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Products',
@@ -245,17 +245,17 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => Permission::PRODUCT_CATEGORY_LIST_STORE->value,
                             'PermissionTitle' => 'Category List',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'Layers3',
                             'translations' => [
                                 'en' => 'Category List',
                                 'ar' => 'قائمة الفئات'
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_ATTRIBUTE_LIST->value,
+                            'PermissionName' => Permission::PRODUCT_ATTRIBUTE_LIST_STORE->value,
                             'PermissionTitle' => 'Attribute List',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'Ratio',
                             'translations' => [
                                 'en' => 'Attribute List',
                                 'ar' => 'قائمة السمات'
