@@ -34,7 +34,7 @@ class UserController extends Controller
             'email'    => 'required|email',
             'password' => 'required',
         ]);
-
+        //->where('activity_scope', 'system_level')
         $user = User::where('email', $request->email)->where('is_active', true)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {

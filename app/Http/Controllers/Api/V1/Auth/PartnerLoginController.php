@@ -57,7 +57,7 @@ class PartnerLoginController extends Controller
             "store_owner" => $user->store_owner,
             "merchant_id" => $user->merchant_id,
             "stores" => $stores,
-            "permissions" => ComHelper::buildMenuTree($permissions),
+            "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(),$permissions),
             "role" => $user->getRoleNames()
         ];
     }
