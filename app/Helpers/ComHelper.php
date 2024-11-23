@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ComOption;
 use App\Models\Media;
@@ -178,18 +179,33 @@ class ComHelper
     }
 
 
-    public static function buildMenuTree($data_list)
+    public static function buildMenuTree(array $role_id,$data_list )
     {
         $tree = [];
         foreach ($data_list as $data_item) {
 
-                $children = $data_item->children!='' && count($data_item->children) ? ComHelper::buildMenuTree($data_item->children) : [];
+            $children = $data_item->children!='' && count($data_item->children) ? ComHelper::buildMenuTree($role_id,$data_item->children) : [];
+            $users = DB::table('role_has_permissions')->where('permission_id',$data_item->id)->whereIn('role_id',$role_id)->first();
+
+            $options=[];
+            if($users) {
+                foreach (json_decode($data_item->options) as $allowedValue) {
+                    $options[]=[$allowedValue=>isset($users->$allowedValue) ?? $users->$allowedValue];
+                }
+            }
+            else
+            {
+                foreach (json_decode($data_item->options) as $allowedValue) {
+                    $options[]=[$allowedValue=>false];
+                }
+            }
+
                 $tree[] = [
                     'id' => $data_item->id,
                     'perm_title' => $data_item->perm_title,
                     'perm_name' => $data_item->name,
                     'icon' => $data_item->icon,
-                    'options' => json_decode($data_item->options),
+                    'options' => $options,
                     'children' => $children,
                 ];
         }

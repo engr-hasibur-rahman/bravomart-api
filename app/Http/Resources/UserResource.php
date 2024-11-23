@@ -38,7 +38,7 @@ class UserResource extends JsonResource
             "merchant_id" => $this->merchant_id,
             "stores" => $stores,
             'roles' => $this->roles->pluck('name'),
-            "permissions" => ComHelper::buildMenuTree($permissions),
+            "permissions" => ComHelper::buildMenuTree($this->roles->pluck('id')->toArray(),$permissions),
         ];
     }
 }

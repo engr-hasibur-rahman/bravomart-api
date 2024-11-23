@@ -65,14 +65,22 @@ class RoleController extends Controller
             }
         ])->findOrFail($id);
 
-        $permissions = $role->permissions;
+        $role2 = CustomRole::with([
+            'permissions', // Eager-load the permissions relationship
+            'childrenRecursive.permissions' => function ($query) {
+                // Apply condition to the permissions of the children
+                $query->whereNull('parent_id')->with('childrenRecursive');
+            },
+        ])->findOrFail($id);
+
+       $permissions = $role->permissions;
 
         return [
             "id" => $role->id,
             "available_for" => $role->available_for,
             "name" => $role->name,
             "guard_name" => $role->guard_name,
-            "permissions" => ComHelper::buildMenuTree($permissions)
+            "permissions" => ComHelper::buildMenuTree([$role->id],$permissions)
         ];
     }
 

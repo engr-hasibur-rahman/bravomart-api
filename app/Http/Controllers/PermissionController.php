@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ComHelper;
 use App\Http\Resources\PermissionResource;
+use App\Models\CustomPermission;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class PermissionController extends Controller
 {
@@ -32,7 +36,16 @@ class PermissionController extends Controller
             })
             ->get()
             ->groupBy('module');
-        return PermissionResource::collection($permissions);
+
+        $permissions = QueryBuilder::for(CustomPermission::class)
+            ->when($request->filled('available_for'), function (Builder $query) use ($request) {
+                $query->where('available_for', $request->available_for);
+            })
+            ->whereNull('parent_id') // Start with top-level permissions
+            ->with('childrenRecursive') // Include recursive children
+            ->get();
+        return  ComHelper::buildMenuTree([0],$permissions);
+        //return PermissionResource::collection($permissions);
     }
 
 

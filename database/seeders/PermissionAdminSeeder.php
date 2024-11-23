@@ -23,7 +23,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Dashboard',
                         'ar' => 'قائمة المناطق'
@@ -34,7 +34,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Pos section',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Pos section',
                         'ar' => 'قسم المواضع'
@@ -45,7 +45,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Instant Sales',
                             'activity_scope' => 'system_level',
                             'icon' => 'BadgeCent',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Instant Sales',
                                 'ar' => 'المبيعات الفورية'
@@ -68,7 +68,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Orders & Reviews',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Orders & Reviews',
                         'ar' => 'قائمة المناطق'
@@ -79,7 +79,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Orders',
                             'activity_scope' => 'system_level',
                             'icon' => 'BringToFront',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Orders',
                                 'ar' => 'قائمة المناطق'
@@ -194,7 +194,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Product management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Orders & Reviews',
                         'ar' => 'قائمة المناطق'
@@ -205,7 +205,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Products',
                             'activity_scope' => 'system_level',
                             'icon' => 'Codesandbox',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Products',
                                 'ar' => 'منتجات'
@@ -216,7 +216,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Manage Products',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
-                                    'options' => ['View', 'Add', 'Edit', 'Delete'],
+                                    'options' => ['view', 'Add', 'Edit', 'Delete'],
                                     'translations' => [
                                         'en' => 'Manage Products',
                                         'ar' => 'إدارة المنتجات'
@@ -587,7 +587,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Store management',
                     'activity_scope' => 'system_level',
                     'icon' => 'Layers3',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Store management',
                         'ar' => 'إدارة المتجر'
@@ -655,7 +655,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'User Dashboard',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'User Dashboard',
                         'ar' => 'قائمة المناطق'
@@ -666,7 +666,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Deliveryman management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Deliveryman management',
                         'ar' => 'إدارة التوصيل'
@@ -719,7 +719,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Customer management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Customer management',
                         'ar' => 'إدارة العملاء'
@@ -814,7 +814,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Employee Management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Employee Management',
                         'ar' => 'إدارة الموظفين'
@@ -895,7 +895,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Financial Dashboard',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Financial Dashboard',
                         'ar' => 'قائمة المناطق'
@@ -906,7 +906,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Financial Activity',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Financial Activity',
                         'ar' => 'النشاط المالي'
@@ -979,7 +979,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Report and analytics',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Report and analytics',
                         'ar' => 'التقارير والتحليلات'
@@ -1057,7 +1057,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Business Dashboard',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Business Dashboard',
                         'ar' => 'قائمة المناطق'
@@ -1068,7 +1068,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Business management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Business management',
                         'ar' => 'إدارة الأعمال'
@@ -1079,7 +1079,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Area Setup',
                             'activity_scope' => 'system_level',
                             'icon' => 'Locate',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Area Setup',
                                 'ar' => 'إعداد المنطقة'
@@ -1112,7 +1112,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Business Settings',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Business Settings',
                                 'ar' => 'إعدادات الأعمال'
@@ -1123,7 +1123,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Subscription management',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Subscription management',
                                 'ar' => 'إدارة الاشتراكات'
@@ -1166,7 +1166,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Pages & social media',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Pages & social media',
                                 'ar' => 'الصفحات ووسائل التواصل الاجتماعي'
@@ -1219,7 +1219,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Business pages',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Business pages',
                                 'ar' => 'صفحات الأعمال'
@@ -1304,7 +1304,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'System management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'System management',
                         'ar' => 'إدارة النظام'
@@ -1315,7 +1315,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => '3rd party & configurations',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => '3rd party & configurations',
                                 'ar' => 'الطرف الثالث والتكوينات'
@@ -1415,7 +1415,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Dispatch management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Dispatch management',
                         'ar' => 'إدارة الإرسال'
@@ -1426,7 +1426,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Grocery',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Grocery',
                                 'ar' => 'خضروات'
@@ -1466,7 +1466,7 @@ class PermissionAdminSeeder extends Seeder
             foreach ($x_mod as $level_1) {
 
                 $trans_level_1 = [];
-                $options_l1 = isset($level_1['options']) && is_array($level_1['options']) ? $level_1['options'] : ['View'];
+                $options_l1 = isset($level_1['options']) && is_array($level_1['options']) ? $level_1['options'] : ['view'];
 
                 $permission_l1 = ModelsPermission::updateOrCreate(
                     [
@@ -1494,7 +1494,7 @@ class PermissionAdminSeeder extends Seeder
                     foreach ($level_1['submenu'] as $level_2) {
 
                         $trans_level_2 = [];
-                        $options_l2 = isset($level_2['options']) && is_array($level_2['options']) ? $level_2['options'] : ['View'];
+                        $options_l2 = isset($level_2['options']) && is_array($level_2['options']) ? $level_2['options'] : ['view'];
 
                         $permission_l2 = ModelsPermission::updateOrCreate(
                             [
@@ -1523,7 +1523,7 @@ class PermissionAdminSeeder extends Seeder
                             foreach ($level_2['submenu'] as $level_3) {
 
                                 $trans_level_3 = [];
-                                $options_l3 = isset($level_3['options']) && is_array($level_3['options']) ? $level_3['options'] : ['View'];
+                                $options_l3 = isset($level_3['options']) && is_array($level_3['options']) ? $level_3['options'] : ['view'];
 
                                 $permission_l3 = ModelsPermission::updateOrCreate(
                                     [

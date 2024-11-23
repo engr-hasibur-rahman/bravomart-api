@@ -33,7 +33,7 @@ class CustomPermission extends Permission
      */
     public function childrenRecursive()
     {
-        return $this->children()->with('childrenRecursive');
+        return $this->hasMany(CustomPermission::class, 'parent_id')->with('childrenRecursive');
     }
 
     /**

@@ -102,5 +102,4 @@ class User extends Authenticatable
 
         return $directPermissions->merge($rolePermissions)->unique();
     }
-
 }

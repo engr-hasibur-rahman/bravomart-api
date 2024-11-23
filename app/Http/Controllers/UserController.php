@@ -42,11 +42,12 @@ class UserController extends Controller
         }
         $email_verified = $user->hasVerifiedEmail();
 
-        $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
-
+        //DB::enableQueryLog();
+       $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+        //dd(DB::getQueryLog());
         return [
             "token" => $user->createToken('auth_token')->plainTextToken,
-            "permissions" => ComHelper::buildMenuTree($permissions),
+            "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(),$permissions),
             "email_verified" => $email_verified,
             "role" => $user->getRoleNames()->first()
         ];

@@ -110,6 +110,11 @@ return new class extends Migration
         Schema::create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames, $pivotRole, $pivotPermission) {
             $table->unsignedBigInteger($pivotPermission);
             $table->unsignedBigInteger($pivotRole);
+            $table->boolean('view')->nullable();
+            $table->boolean('insert')->nullable();
+            $table->boolean('update')->nullable();
+            $table->boolean('delete')->nullable();
+            $table->boolean('others')->nullable();
 
             $table->foreign($pivotPermission)
                 ->references('id') // permission id
