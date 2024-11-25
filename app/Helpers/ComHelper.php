@@ -190,13 +190,13 @@ class ComHelper
             $options=[];
             if($users) {
                 foreach (json_decode($data_item->options) as $allowedValue) {
-                    $options[]=[$allowedValue=>isset($users->$allowedValue) ?? $users->$allowedValue];
+                    $options[]=[['label'=> $allowedValue],['value'=>isset($users->$allowedValue) ?? $users->$allowedValue]];
                 }
             }
             else
             {
                 foreach (json_decode($data_item->options) as $allowedValue) {
-                    $options[]=[$allowedValue=>false];
+                    $options[]=['label'=> $allowedValue,'value'=>false];
                 }
             }
 
