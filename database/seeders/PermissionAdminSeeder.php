@@ -23,7 +23,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['view'],
+                    'options' => ['view', 'Add', 'Edit', 'Delete'],
                     'translations' => [
                         'en' => 'Dashboard',
                         'ar' => 'قائمة المناطق'

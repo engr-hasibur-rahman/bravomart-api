@@ -189,15 +189,21 @@ class ComHelper
 
             $options=[];
             if($users) {
-                foreach (json_decode($data_item->options) as $allowedValue) {
-                    $options[]=[['label'=> $allowedValue],['value'=>isset($users->$allowedValue) ?? $users->$allowedValue]];
-                }
+                $options = array_map(function ($allowedValue) use ($users) {
+                    return [
+                        'label' => $allowedValue,
+                        'value' => $users->$allowedValue ?? null, // Use null if the property doesn't exist
+                    ];
+                }, json_decode($data_item->options, true)); // Decode as associative array
             }
             else
             {
-                foreach (json_decode($data_item->options) as $allowedValue) {
-                    $options[]=['label'=> $allowedValue,'value'=>false];
-                }
+                $options = array_map(function ($allowedValue) use ($users) {
+                    return [
+                        'label' => $allowedValue,
+                        'value' => null
+                    ];
+                }, json_decode($data_item->options, true)); // Decode as associative array
             }
 
                 $tree[] = [

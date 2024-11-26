@@ -123,7 +123,7 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Order Permissions                                       //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ORDERS_ALL = '/';
+    case ORDERS_ALL = 'all-orders';
     case ORDERS_PENDING = 'order-pending';
     case ORDERS_CONFIRMED = 'order-confirmed';
     case ORDERS_SCHEDULED = 'order-scheduled';

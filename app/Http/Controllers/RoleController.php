@@ -33,6 +33,7 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
 
+        logger($request->permissions);
         $roleId = $request->input('id');
 
         if ($roleId) {
@@ -45,7 +46,7 @@ class RoleController extends Controller
                 'guard_name' => 'api',
             ]);
         }
-        logger($request->permissions);
+
         if ($request->permissions) {
             $role->syncPermissions($request->permissions);
         }

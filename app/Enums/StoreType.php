@@ -8,7 +8,7 @@ enum StoreType: string
     case BAKERY = 'bakery';
     case MEDICINE = 'medicine';
     case MAKEUP = 'makeup';
-    case BAGS = 'bats';
+    case BAGS = 'bags';
     case CLOTHING = 'clothing';
     case FURNITURE = 'furniture';
     case BOOKS = 'books';
