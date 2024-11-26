@@ -23,7 +23,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['view', 'Add', 'Edit', 'Delete'],
+                    'options' => ['view', 'insert', 'update', 'delete'],
                     'translations' => [
                         'en' => 'Dashboard',
                         'ar' => 'قائمة المناطق'
@@ -216,7 +216,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Manage Products',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
-                                    'options' => ['view', 'Add', 'Edit', 'Delete'],
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
                                         'en' => 'Manage Products',
                                         'ar' => 'إدارة المنتجات'

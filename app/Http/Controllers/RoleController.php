@@ -33,7 +33,7 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
 
-        //logger($request);
+        logger($request);
         $roleId = $request->input('role_id');
 
         if ($roleId) {
@@ -56,7 +56,11 @@ class RoleController extends Controller
             $syncData = [];
             foreach ($request->permissions as $item) {
                 $syncData[$item['id']] = [
-                    'view' => $item['view'], // Handle the `view` column if applicable
+                    'view' => $item['view'] ?? null, // Handle the `view` column if applicable
+                    'insert' => $item['insert'] ?? null, // Handle the `insert` column if applicable
+                    'update' => $item['update'] ?? null, // Handle the `update` column if applicable
+                    'delete' => $item['delete'] ?? null, // Handle the `delete` column if applicable
+                    'others' => $item['others'] ?? null, // Handle the `others` column if applicable
                 ];
             }
             //$role->syncPermissions($request->$syncData);
