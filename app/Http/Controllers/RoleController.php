@@ -33,8 +33,8 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
 
-        logger($request->permissions);
-        $roleId = $request->input('id');
+        //logger($request);
+        $roleId = $request->input('role_id');
 
         if ($roleId) {
             $role = Role::findOrFail($roleId);
@@ -48,7 +48,19 @@ class RoleController extends Controller
         }
 
         if ($request->permissions) {
-            $role->syncPermissions($request->permissions);
+//            $permissionsToSync = [];
+//
+//            foreach ($request->permissions as $perms) {
+//                $permissionsToSync[$perms->id] = ['view' => true];
+//            }
+            $syncData = [];
+            foreach ($request->permissions as $item) {
+                $syncData[$item['id']] = [
+                    'view' => $item['view'], // Handle the `view` column if applicable
+                ];
+            }
+            //$role->syncPermissions($request->$syncData);
+            $role->permissions()->sync($syncData);
         }
 
         return response()->json('roles added');
