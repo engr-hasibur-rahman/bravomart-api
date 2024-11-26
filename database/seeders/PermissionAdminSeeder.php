@@ -323,26 +323,6 @@ class PermissionAdminSeeder extends Seeder
                                         'en' => 'Add Product Category',
                                         'ar' => 'إضافة فئة المنتج'
                                     ]
-                                ],
-                                [
-                                    'PermissionName' => Permission::PRODUCT_CATEGORY_EDIT->value,
-                                    'PermissionTitle' => 'Edit Product Category',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Edit Product Category',
-                                        'ar' => 'تعديل فئة المنتج'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => Permission::PRODUCT_CATEGORY_STATUS->value,
-                                    'PermissionTitle' => 'Change Category Status',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Change Category Status',
-                                        'ar' => 'تغيير حالة الفئة'
-                                    ]
                                 ]
                             ]
                         ],

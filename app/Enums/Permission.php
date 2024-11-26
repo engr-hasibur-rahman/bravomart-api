@@ -62,8 +62,6 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case PRODUCT_CATEGORY_LIST = '/admin/categories';
     case PRODUCT_CATEGORY_ADD = '/admin/categories/add-category';
-    case PRODUCT_CATEGORY_EDIT = 'edit-product-category';
-    case PRODUCT_CATEGORY_STATUS = 'product-category-status';
     case PRODUCT_CATEGORY_LIST_STORE = '/store/categories';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
