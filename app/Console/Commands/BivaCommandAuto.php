@@ -41,7 +41,7 @@ class BivaCommandAuto extends Command
 
 
         info('Please use arrow key for navigation.');
-        
+
         $this->clearDemoData();
 
         info('Tables Migration completed.');
@@ -118,6 +118,9 @@ class BivaCommandAuto extends Command
         // Assign default Store User to a Specific Role
         $user->assignRole($role);
 
+        // Update View Option For All permission
+        DB::table('role_has_permissions')->update(['view' => true]);
+
         info('User Creation Successful!');
 
 
@@ -138,7 +141,7 @@ class BivaCommandAuto extends Command
 
             info('Database seeding started...');
             $this->seedDemoData();
-            
+
             info('Database seeding completed.');
             return 0;
         //}
@@ -148,9 +151,9 @@ class BivaCommandAuto extends Command
         info('Copying necessary files for seeding....');
 
         (new Filesystem)->copyDirectory(config('sql-seeder.sql_file_path'), public_path('sql'));
-        
+
         info('File copying successful');
-        
+
         info('Seeding....');
 
         $get_sql_files_path = (new Filesystem)->files(public_path('sql'));
@@ -158,6 +161,7 @@ class BivaCommandAuto extends Command
             $file_sql = file_get_contents($path);
             DB::statement($file_sql);
         }
+
         info('Seed completed successfully!');
     }
 }

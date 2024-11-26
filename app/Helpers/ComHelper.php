@@ -192,7 +192,7 @@ class ComHelper
                 $options = array_map(function ($allowedValue) use ($users) {
                     return [
                         'label' => $allowedValue,
-                        'value' => $users->$allowedValue ?? null, // Use null if the property doesn't exist
+                        'value' => (bool) ($users->$allowedValue ?? false), // Use null if the property doesn't exist
                     ];
                 }, json_decode($data_item->options, true)); // Decode as associative array
             }
