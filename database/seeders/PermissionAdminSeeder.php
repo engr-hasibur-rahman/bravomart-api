@@ -330,7 +330,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Attribute',
                             'activity_scope' => 'system_level',
-                            'icon' => 'Ratio',
+                            'icon' => 'AttributeIcon',
                             'translations' => [
                                 'en' => 'Attribute',
                                 'ar' => 'قائمة السمات'
@@ -362,7 +362,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Brand/Manufacturers/Publications',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'VectorIcon',
                             'translations' => [
                                 'en' => 'Brand/Manufacturers/Publications',
                                 'ar' => 'العلامة التجارية/الشركات المصنعة/المنشورات'
