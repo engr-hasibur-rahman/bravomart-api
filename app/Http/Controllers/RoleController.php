@@ -85,7 +85,7 @@ class RoleController extends Controller
         ])->findOrFail($id);
 
         // Load all permissions
-        $allPermissions = CustomPermission::with('childrenRecursive')
+        $allPermissions = CustomPermission::with('childrenRecursive')->where('available_for',$role->available_for)
             ->whereNull('parent_id') // Adjust condition based on your hierarchy
             ->get();
 

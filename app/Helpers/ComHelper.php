@@ -208,7 +208,7 @@ class ComHelper
 
                 $tree[] = [
                     'id' => $data_item->id,
-                    'is_assigned' =>(bool) ($data_item->is_assigned?? false),
+                    //'is_assigned' =>(bool) ($data_item->is_assigned?? false),
                     'perm_title' => $data_item->perm_title,
                     'perm_name' => $data_item->name,
                     'icon' => $data_item->icon,
@@ -219,4 +219,21 @@ class ComHelper
         return $tree;
     }
 
+   public  static  function markAssignedPermissions($permissions, $rolePermissions)
+    {
+        return $permissions->map(function ($permission) use ($rolePermissions) {
+            // Check if the current permission is assigned
+            $permission->is_assigned = $rolePermissions->contains('id', $permission->id);
+
+            // Recursively mark children permissions
+            if ($permission->relationLoaded('childrenRecursive')) {
+                $permission->children = ComHelper::markAssignedPermissions(
+                    $permission->children,
+                    $rolePermissions
+                );
+            }
+
+            return $permission;
+        });
+    }
 }
