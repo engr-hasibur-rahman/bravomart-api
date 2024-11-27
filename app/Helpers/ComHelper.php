@@ -208,6 +208,7 @@ class ComHelper
 
                 $tree[] = [
                     'id' => $data_item->id,
+                    'is_assigned' =>(bool) ($data_item->is_assigned?? false),
                     'perm_title' => $data_item->perm_title,
                     'perm_name' => $data_item->name,
                     'icon' => $data_item->icon,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ComHelper;
 use App\Http\Requests\RoleRequest;
 use App\Http\Resources\RoleResource;
+use App\Models\CustomPermission;
 use App\Models\CustomRole;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -75,29 +76,33 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        //$role = CustomRole::with(['permissions.childrenRecursive'])->whereNull('parent_id')->findOrFail($id);
+        //return QueryBuilder::for(Role::class)->with(['permissions'])->findOrFail($id);
+
         $role = CustomRole::with([
             'permissions' => function ($query) {
                 $query->whereNull('parent_id')->with('childrenRecursive');
             }
         ])->findOrFail($id);
 
-        $role2 = CustomRole::with([
-            'permissions', // Eager-load the permissions relationship
-            'childrenRecursive.permissions' => function ($query) {
-                // Apply condition to the permissions of the children
-                $query->whereNull('parent_id')->with('childrenRecursive');
-            },
-        ])->findOrFail($id);
+        // Load all permissions
+        $allPermissions = CustomPermission::with('childrenRecursive')
+            ->whereNull('parent_id') // Adjust condition based on your hierarchy
+            ->get();
 
-       $permissions = $role->permissions;
+        // Mark permissions associated with the role
+        $allPermissions = $allPermissions->map(function ($permission) use ($role) {
+            $permission->is_assigned = $role->permissions->contains('id', $permission->id);
+            return $permission;
+        });
+
+        //return $allPermissions;
 
         return [
             "id" => $role->id,
             "available_for" => $role->available_for,
             "name" => $role->name,
             "guard_name" => $role->guard_name,
-            "permissions" => ComHelper::buildMenuTree([$role->id],$permissions)
+            "permissions" => ComHelper::buildMenuTree([$role->id],$allPermissions)
         ];
     }
 
