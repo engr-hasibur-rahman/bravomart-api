@@ -370,11 +370,12 @@ class PermissionAdminSeeder extends Seeder
                             'submenu' => [
                                 [
                                     'PermissionName' => Permission::PRODUCT_BRAND_LIST->value,
-                                    'PermissionTitle' => 'Product Brand List',
+                                    'PermissionTitle' => 'Brand List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
-                                        'en' => 'Product Brand List',
+                                        'en' => 'Brand List',
                                         'ar' => 'قائمة العلامات التجارية للمنتج'
                                     ]
                                 ],
