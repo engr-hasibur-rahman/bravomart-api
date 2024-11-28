@@ -21,7 +21,7 @@ class ProductCategoryController extends Controller
 
     public function index(Request $request)
     {
-        
+
         $limit = $request->limit ?? 10;
         $language = $request->language ?? DEFAULT_LANGUAGE;
         $search = $request->search;
@@ -47,9 +47,9 @@ class ProductCategoryController extends Controller
 
         // Apply sorting and pagination
         if($request->pagintion == "false"){
-            $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            $categories = $categories->whereNull('parent_id')->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->get();
-            
+
         }else {
             $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
