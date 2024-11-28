@@ -46,7 +46,7 @@ class ProductCategoryController extends Controller
         }
 
         // Apply sorting and pagination
-        if($request->pagintion == "false"){
+        if($request->pagination == "false"){
             $categories = $categories->whereNull('parent_id')->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->get();
 
