@@ -201,7 +201,7 @@ class ComHelper
                 $options = array_map(function ($allowedValue) use ($users) {
                     return [
                         'label' => $allowedValue,
-                        'value' => null
+                        'value' => false
                     ];
                 }, json_decode($data_item->options, true)); // Decode as associative array
             }

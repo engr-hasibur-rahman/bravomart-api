@@ -330,7 +330,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Attribute',
                             'activity_scope' => 'system_level',
-                            'icon' => 'Ratio',
+                            'icon' => 'AttributeIcon',
                             'translations' => [
                                 'en' => 'Attribute',
                                 'ar' => 'قائمة السمات'
@@ -362,7 +362,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Brand/Manufacturers/Publications',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'VectorIcon',
                             'translations' => [
                                 'en' => 'Brand/Manufacturers/Publications',
                                 'ar' => 'العلامة التجارية/الشركات المصنعة/المنشورات'
@@ -370,11 +370,12 @@ class PermissionAdminSeeder extends Seeder
                             'submenu' => [
                                 [
                                     'PermissionName' => Permission::PRODUCT_BRAND_LIST->value,
-                                    'PermissionTitle' => 'Product Brand List',
+                                    'PermissionTitle' => 'Brand List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
-                                        'en' => 'Product Brand List',
+                                        'en' => 'Brand List',
                                         'ar' => 'قائمة العلامات التجارية للمنتج'
                                     ]
                                 ],
