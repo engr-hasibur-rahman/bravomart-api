@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('shop_id');
             $table->unsignedBigInteger('category_id')->nullable();
@@ -44,7 +44,6 @@ return new class extends Migration
             $table->timestamp('available_time_ends')->nullable();
             $table->timestamps();
         });
-
     }
 
     /**
@@ -52,6 +51,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //Will Remove while Child Table variant removed
+        Schema::dropIfExists('products');
     }
 };
