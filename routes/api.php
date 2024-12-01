@@ -36,7 +36,6 @@ Route::post('/store/ownerreg', [UserController::class, 'StoreOwnerRegistration']
 Route::post('partner/login', [PartnerLoginController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-
     Route::get('me', [UserController::class, 'me']);
     Route::apiResource('/staff', StaffController::class);
     Route::get('staff/{id}', [StaffController::class, 'show']);

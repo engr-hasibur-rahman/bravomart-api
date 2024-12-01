@@ -227,6 +227,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Add New Product',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert'],
                                     'translations' => [
                                         'en' => 'Add New Product',
                                         'ar' => 'إضافة منتج جديد'

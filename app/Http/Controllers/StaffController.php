@@ -32,7 +32,7 @@ class StaffController extends Controller
             ->when($request->filled('available_for'), function ($query) use ($request) {
                 $query->where('available_for', $request->available_for);
             })
-            ->paginate($limit);
+            ->paginate($limit); 
         return UserResource::collection($roles);
     }
 
