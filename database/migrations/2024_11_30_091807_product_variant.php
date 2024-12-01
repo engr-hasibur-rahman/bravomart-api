@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_product_variant', function (Blueprint $table) {
+        Schema::create('product_variant', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id')->nullable();
-            $table->foreign('product_id')->references('id')->on('product_product')->onDelete('cascade');
             $table->string('variant_slug')->nullable();
             $table->string('sku')->nullable();
             $table->decimal('pack_quantity')->nullable();

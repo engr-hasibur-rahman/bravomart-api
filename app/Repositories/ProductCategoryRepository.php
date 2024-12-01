@@ -56,10 +56,10 @@ class ProductCategoryRepository extends BaseRepository
             $category = ProductCategory::findOrFail($categoryId);
             $category->update($data);
         } else {
-
             // Create new category
             $category = $this->create($data);
         }
+
 
         // Handle file upload if available
         if ($request->hasFile('category_banner')) {
