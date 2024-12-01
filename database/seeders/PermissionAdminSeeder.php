@@ -310,6 +310,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Product Category List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
                                         'en' => 'Product Category List',
                                         'ar' => 'قائمة فئات المنتجات'
@@ -320,6 +321,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Add Product Category',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert'],
                                     'translations' => [
                                         'en' => 'Add Product Category',
                                         'ar' => 'إضافة فئة المنتج'
