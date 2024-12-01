@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Permission;
+use App\Http\Controllers\Api\V1\Backend\ProductController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\ProductBrandController;
@@ -58,6 +59,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('product/attribute/update', [ProductAttributeController::class, 'update']);
         Route::put('product/attribute/status/{id}', [ProductAttributeController::class, 'status_update']);
         Route::delete('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
+    });
+
+
+
+     //Product Management 
+     Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::get('product/list', [ProductController::class, 'index']);
+        Route::get('product/{id}', [ProductController::class, 'show']);
+        Route::post('product/add', [ProductController::class, 'store']);
+        Route::post('product/update', [ProductAttributeController::class, 'update']);
+        Route::put('product/status/{id}', [ProductController::class, 'status_update']);
+        Route::delete('product/remove/{id}', [ProductController::class, 'destroy']);
     });
 
 
