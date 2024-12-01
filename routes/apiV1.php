@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Permission;
+use App\Http\Controllers\Api\V1\AdminMediaController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\ProductBrandController;
@@ -72,5 +73,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
         Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
     });
+
+    // Media uploader
+    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::post('image-upload', [AdminMediaController::class, 'mediaUpload']);
+    });
+
 
 });
