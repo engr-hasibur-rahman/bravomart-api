@@ -34,7 +34,6 @@ class FileUploadRepository extends BaseRepository
     */
     function attachment($file, $collectionName, $id = null, $collection, ?array $custom_properties)
     {
-        
         if ($id && $collection->hasMedia($collectionName)) {
             $collection->clearMediaCollection($collectionName);
         }

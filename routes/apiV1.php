@@ -1,13 +1,14 @@
 <?php
 
 use App\Enums\Permission;
-use App\Http\Controllers\Api\V1\Backend\ProductController;
+use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
+use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -72,7 +73,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::put('product/status/{id}', [ProductController::class, 'status_update']);
         Route::delete('product/remove/{id}', [ProductController::class, 'destroy']);
     });
-
+    // Product Author Management
+    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
+        Route::get('product/author/list', [ProductAuthorController::class, 'index']);
+    });
 
     // Marketing Area Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {

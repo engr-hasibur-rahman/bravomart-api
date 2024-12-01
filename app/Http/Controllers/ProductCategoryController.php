@@ -66,7 +66,6 @@ class ProductCategoryController extends Controller
         if ($category) {
             return new ProductCategoryByIdResource($category);
         }
-
         return response()->json(['error' => 'Product Brand not found'], 404);
     }
 

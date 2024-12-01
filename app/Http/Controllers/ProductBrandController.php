@@ -25,10 +25,13 @@ class ProductBrandController extends Controller
 
     public function index(Request $request)
     {
+        // If request has limit
         $limit = $request->limit ?? 10;
+        // If request has language
         $language = $request->language ?? DEFAULT_LANGUAGE;
+        //Search parameters
         $search = $request->search;
-
+        // Extract brands table with translations table with condition
         $brands = ProductBrand::leftJoin('translations', function ($join) use ($language) {
             $join->on('product_brand.id', '=', 'translations.translatable_id')
                 ->where('translations.translatable_type', '=', ProductBrand::class)
@@ -59,11 +62,13 @@ class ProductBrandController extends Controller
 
     public function show($id)
     {
+        // Extract selected id data 
         $brand = $this->repository->with(['translations'])->findOrFail($id);
+        // If found the data return resource
         if ($brand) {
             return new ProductBrandByIdResource($brand);
         }
-
+        // If not found throw error
         return response()->json(['error' => 'Product Brand not found'], 404);
     }
 
