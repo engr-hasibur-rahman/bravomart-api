@@ -53,7 +53,6 @@ class ProductAttributeRepository extends BaseRepository
         $translations = [];
         $defaultKeys = ['attribute_name'];
 
-        logger($request);
         // Handle translations
         if ($request['translations']) {
             foreach ($request['translations'] as $translation) {

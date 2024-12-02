@@ -26,19 +26,14 @@ class InterfaceServiceProvider extends ServiceProvider
         $interfaceDir = app_path('Interfaces');
         $repositoryFiles = File::files($repositoriesDir);
         foreach ($repositoryFiles as $file) {
-            //logger($file);
             $repositoryFileName = pathinfo($file, PATHINFO_FILENAME);
-            //logger($repositoryFileName);
             $interfaceName = str_replace('Repository', '', $repositoryFileName) . 'Interface';
             $interfacePath = $interfaceDir . DIRECTORY_SEPARATOR . $interfaceName . '.php';
-            //logger($interfacePath.'-'.$repositoryFileName);
-            //logger($interfacePath);
 
             if (File::exists($interfacePath)) {
                 $interface = 'App\Interfaces\\' . $interfaceName;
                 $repository = 'App\Repositories\\' . $repositoryFileName;
                 $this->app->bind($interface, $repository);
-                //logger($interfaceName.'-'.$repositoryFileName);
             }
         }
 

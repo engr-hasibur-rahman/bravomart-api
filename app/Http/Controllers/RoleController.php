@@ -34,7 +34,6 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
 
-        logger($request);
         $roleId = $request->input('role_id');
 
         if ($roleId) {

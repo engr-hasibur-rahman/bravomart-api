@@ -12,7 +12,6 @@ class AreaService
 
     public function prepareAddData(Object $request): array
     {
-        //logger($request);
         $coordinates = $request['coordinates'];
         $location = '';
         //$coordinates = json_decode($request['coordinates'], true);
@@ -24,7 +23,7 @@ class AreaService
             $polygon[] = new Point($loc['lat'], $loc['lng']);
         }
         $polygon[] = new Point($lastLoc['lat'], $lastLoc['lng']);
-        
+
 
         return [
             'name' => $request->name,
