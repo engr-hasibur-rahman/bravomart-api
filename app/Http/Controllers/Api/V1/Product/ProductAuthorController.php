@@ -18,9 +18,12 @@ class ProductAuthorController extends Controller
     {
         return $this->authorRepo->getPaginatedAuthor(
             $request->limit ?? 10,
+            $request->page ?? 1,
+            app()->getLocale() ?? DEFAULT_LANGUAGE,
             $request->search ?? "",
             $request->sortField ?? 'id',
             $request->sort ?? 'asc',
+            []
         );
     }
     public function store(ProductAuthorRequest $request): JsonResponse
@@ -28,6 +31,7 @@ class ProductAuthorController extends Controller
         $slug = slug_generator($request->name,ProductAuthor::class);
         $request['slug'] = $slug;
         $author = $this->authorRepo->store($request->all());
+        $this->authorRepo->storeTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
         if ($author) {
             return $this->success(translate('messages.save_success', ['name' => 'Author']));
         } else {

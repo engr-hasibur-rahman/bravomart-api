@@ -88,22 +88,20 @@ class ComAreaRepository implements ComAreaInterface
             'translations' => $transformedData,
         ];
     }
-
-
     public function store(array $data): string|object
     {
         $area = $this->area->newInstance();
-        foreach ($data as $column => $value) {
+       
+        foreach ($data as $column => $value) {        
             // skips the translation field
             if ($column <> 'translations') {
                 $area[$column] = $value;
             }
         }
+     
         $area->save();
-
         return $area;
     }
-
     public function update(array $data, $id): string|object
     {
         $area = $this->area->findOrFail($id);
@@ -116,8 +114,6 @@ class ComAreaRepository implements ComAreaInterface
         $area->save();
         return $area;
     }
-
-
     public function changeStatus(int|string $id, string $status = ""): mixed
     {
         $area = $this->area->findOrFail($id);

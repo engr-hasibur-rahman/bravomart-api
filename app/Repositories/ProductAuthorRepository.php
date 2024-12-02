@@ -5,7 +5,10 @@ namespace App\Repositories;
 use App\Helpers\ComHelper;
 use App\Models\ProductAuthor;
 use App\Interfaces\ProductAuthorInterface;
+use App\Models\Translation;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 
 /**
@@ -14,7 +17,11 @@ use Illuminate\Support\Facades\DB;
  */
 class ProductAuthorRepository implements ProductAuthorInterface
 {
-    public function __construct(protected ProductAuthor $author) {}
+    public function __construct(protected ProductAuthor $author, protected Translation $translation) {}
+    public function translationKeys(): mixed
+    {
+        return $this->author->translationKeys;
+    }
     public function model(): string
     {
         return ProductAuthor::class;
@@ -23,22 +30,38 @@ class ProductAuthorRepository implements ProductAuthorInterface
     {
         return null;
     }
-    public function getPaginatedAuthor(int|string $limit, string $search, string $sortField, string $sort)
+    public function getPaginatedAuthor(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $author = ProductAuthor::orderBy($request->sortField ?? 'id', $request->sort ?? 'asc');
+        $author = ProductAuthor::leftJoin('translations', function ($join) use ($language) {
+            $join->on('product_authors.id', '=', 'translations.translatable_id')
+                ->where('translations.translatable_type', '=', ProductAuthor::class)
+                ->where('translations.language', '=', $language)
+                ->where('translations.key', '=', 'name');
+        })
+            ->select(
+                'tags.*',
+                DB::raw('COALESCE(translations.value, product_authors.name) as name')
+            );
+
+
+        // Apply search filter if search parameter exists
         if ($search) {
             $author->where(function ($query) use ($search) {
-                $query->where("name", 'like', "%{$search}%");
+                $query->where(DB::raw("CONCAT_WS(' ', product_authors.name, translations.value)"), 'like', "%{$search}%");
             });
         }
+        // Apply sorting and pagination
+        // Return the result
         return $author
+            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
     }
     public function store(array $data)
     {
         try {
+            $data = Arr::except($data, ['translations']);
             $author = ProductAuthor::create($data);
-            return true;
+            return $author->id;
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -48,6 +71,7 @@ class ProductAuthorRepository implements ProductAuthorInterface
         try {
             $author = ProductAuthor::findOrFail($data['id']);
             if ($author) {
+                $data = Arr::except($data, ['translations']);
                 $author->update($data);
                 return true;
             } else {
@@ -61,9 +85,21 @@ class ProductAuthorRepository implements ProductAuthorInterface
     {
         try {
             $author = ProductAuthor::find($id);
+            $translations = $author->translations()->get()->groupBy('language');
+            // Initialize an array to hold the transformed data
+            $transformedData = [];
+            foreach ($translations as $language => $items) {
+                $languageInfo = ['language' => $language];
+                /* iterate all Column to Assign Language Value */
+                foreach ($this->author->translationKeys as $columnName) {
+                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
+                }
+                $transformedData[] = $languageInfo;
+            }
             if ($author) {
                 return response()->json([
                     "data" => $author->toArray(),
+                    'translations' => $transformedData,
                     "massage" => "Data was found"
                 ], 201);
             } else {
@@ -91,5 +127,35 @@ class ProductAuthorRepository implements ProductAuthorInterface
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+    public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+    {
+        $translations = [];
+        if ($request['translations']) {
+            foreach ($request['translations'] as $translation) {
+                foreach ($colNames as $key) {
+
+                    // Fallback value if translation key does not exist
+                    $translatedValue = $translation[$key] ?? null;
+
+                    // Skip translation if the value is NULL
+                    if ($translatedValue === null) {
+                        continue; // Skip this field if it's NULL
+                    }
+                    // Collect translation data
+                    $translations[] = [
+                        'translatable_type' => $refPath,
+                        'translatable_id' => $refid,
+                        'language' => $translation['language_code'],
+                        'key' => $key,
+                        'value' => $translatedValue,
+                    ];
+                }
+            }
+        }
+        if (count($translations)) {
+            $this->translation->insert($translations);
+        }
+        return true;
     }
 }

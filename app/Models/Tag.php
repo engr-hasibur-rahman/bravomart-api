@@ -11,4 +11,13 @@ class Tag extends Model
         "order",
         "created_by"
     ];
+    public $translationKeys = [
+        'name'
+    ];
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
+
+
 }
