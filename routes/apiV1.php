@@ -3,6 +3,7 @@
 use App\Enums\Permission;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\AdminMediaController;
+use App\Http\Controllers\Api\V1\TagManageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\ProductBrandController;
@@ -86,6 +87,17 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::delete('product/author/remove/{id}', [ProductAuthorController::class, 'destroy']);
         Route::post('product/author/status', [ProductAuthorController::class, 'changeStatus']);
     });
+    // Tag Management
+    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
+        Route::get('tag/list', [TagManageController::class, 'index']);
+    });
+    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::post('tag/add', [TagManageController::class, 'store']);
+        Route::get('tag/{id}', [TagManageController::class, 'show']);
+        Route::post('tag/update', [TagManageController::class, 'update']);
+        Route::delete('tag/remove/{id}', [TagManageController::class, 'destroy']);
+    });
+
     // Marketing Area Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);
