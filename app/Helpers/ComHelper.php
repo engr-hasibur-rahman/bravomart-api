@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Translation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ComOption;
@@ -186,6 +187,8 @@ class ComHelper
 
             $children = $data_item->children!='' && count($data_item->children) ? ComHelper::buildMenuTree($role_id,$data_item->children) : [];
             $users = DB::table('role_has_permissions')->where('permission_id',$data_item->id)->whereIn('role_id',$role_id)->first();
+            //$translations= Translation::where('translatable_type','App\Models\Permissions')->where('translatable_id',$data_item->id)->get()->groupBy('language');
+            //logger($translations);
 
             $options=[];
             if($users) {

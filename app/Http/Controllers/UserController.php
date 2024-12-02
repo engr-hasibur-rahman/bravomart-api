@@ -7,6 +7,7 @@ use App\Enums\Role as UserRole;
 use App\Helpers\ComHelper;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Translation;
 use App\Models\User;
 use App\Models\ComMerchant;
 use App\Repositories\UserRepository;
@@ -41,10 +42,8 @@ class UserController extends Controller
             return ["token" => null, "permissions" => []];
         }
         $email_verified = $user->hasVerifiedEmail();
+        $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
 
-        //DB::enableQueryLog();
-       $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
-        //dd(DB::getQueryLog());
         return [
             "token" => $user->createToken('auth_token')->plainTextToken,
             "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(),$permissions),
