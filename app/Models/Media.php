@@ -14,7 +14,7 @@ class Media extends Model
     protected $fillable = [
         'user_id',
         'format',
-        'title',
+        'name',
         'file_size',
         'alt_text',
         'path',
