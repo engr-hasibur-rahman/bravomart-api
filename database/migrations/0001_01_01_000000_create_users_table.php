@@ -13,11 +13,22 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('first_name');
+            $table->string('last_name')->nullable();
+            $table->string('phone')->nullable();
             $table->string('email')->unique();
+            $table->string('activity_scope')->nullable(); //SHOP_AREA/ADMIN_AREA/FIELD_AREA/KITCHEN_AREA ,        Restricting User Sothat He can't login to Unauthorized area
+            $table->timestamp('phone_verified_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->string('user_image')->nullable();
+            $table->string('def_lang')->nullable();
+            $table->string('cm_firebase_token')->nullable();
+            $table->boolean('is_active')->default(1);
+            $table->boolean('store_owner')->default(0);
+            $table->unsignedBigInteger('merchant_id')->nullable();
+            $table->string('stores')->nullable();
             $table->timestamps();
         });
 
