@@ -5,7 +5,7 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use App\Models\Media;
 use Illuminate\Support\Str;
-use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\Facades\Image;
 
 
 class MediaService
@@ -16,6 +16,7 @@ class MediaService
      * @param UploadedFile $file
      * @return Media
      */
+
     public static function fetch_media_image($request,$type='admin')
     {
         $image_query = Media::query();
