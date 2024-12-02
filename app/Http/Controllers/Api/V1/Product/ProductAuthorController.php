@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductAuthorRequest;
 use App\Interfaces\ProductAuthorInterface;
+use App\Models\ProductAuthor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -24,6 +25,8 @@ class ProductAuthorController extends Controller
     }
     public function store(ProductAuthorRequest $request): JsonResponse
     {
+        $slug = slug_generator($request->name,ProductAuthor::class);
+        $request['slug'] = $slug;
         $author = $this->authorRepo->store($request->all());
         if ($author) {
             return $this->success(translate('messages.save_success', ['name' => 'Author']));
