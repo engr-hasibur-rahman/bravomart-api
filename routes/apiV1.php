@@ -76,8 +76,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     // Product Author Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('product/author/list', [ProductAuthorController::class, 'index']);
+        
     });
-
+    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::post('product/author/add', [ProductAuthorController::class, 'store']);
+        Route::get('product/author/{id}', [ProductAuthorController::class, 'show']);
+        Route::post('product/author/update', [ProductAuthorController::class, 'update']);
+        Route::delete('product/author/remove/{id}', [ProductAuthorController::class, 'destroy']);
+        Route::post('product/author/status', [ProductAuthorController::class, 'changeStatus']);
+    });
     // Marketing Area Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);
