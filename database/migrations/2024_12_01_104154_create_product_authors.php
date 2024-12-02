@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('slug')->nullable();
             $table->string('bio')->nullable();
-            $table->dateTime('born_date')->nullable();
-            $table->dateTime('death_date')->nullable();
+            $table->date('born_date')->nullable();
+            $table->date('death_date')->nullable();
             $table->string('status')->nullable(); //1. Active or empty, 2. Inactive
             $table->timestamps();
         });

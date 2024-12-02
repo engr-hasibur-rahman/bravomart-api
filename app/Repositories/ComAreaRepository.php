@@ -32,7 +32,7 @@ class ComAreaRepository implements ComAreaInterface
         return null;
     }
 
-    public function getPaginatedList(int|string $limit,int $page,string $language,string $search,string $sortField,string $sort,array $filters)
+    public function getPaginatedList(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         // Query the ComArea model with a left join on translations
         $areas = ComArea::leftJoin('translations', function ($join) use ($language) {
@@ -62,7 +62,9 @@ class ComAreaRepository implements ComAreaInterface
 
     public function getById($id): mixed
     {
+        // Find the area by id
         $area = $this->area->findOrFail($id);
+        // Fetch translation which is initialized in ComArea Model grouped by language
         $translations = $area->translations()->get()->groupBy('language');
 
         // Initialize an array to hold the transformed data
@@ -76,7 +78,7 @@ class ComAreaRepository implements ComAreaInterface
             }
             $transformedData[] = $languageInfo;
         }
-        $formated_coordinates = json_decode($area->coordinates[0]->toJson(),true);
+        $formated_coordinates = json_decode($area->coordinates[0]->toJson(), true);
 
         return [
             'id' => $area->id,
@@ -92,7 +94,8 @@ class ComAreaRepository implements ComAreaInterface
     {
         $area = $this->area->newInstance();
         foreach ($data as $column => $value) {
-            if ($column != 'translations') {
+            // skips the translation field
+            if ($column <> 'translations') {
                 $area[$column] = $value;
             }
         }
@@ -104,14 +107,13 @@ class ComAreaRepository implements ComAreaInterface
     public function update(array $data, $id): string|object
     {
         $area = $this->area->findOrFail($id);
-
         foreach ($data as $column => $value) {
+            // skips the translation field
             if ($column <> 'translations') {
                 $area[$column] = $value;
             }
         }
         $area->save();
-
         return $area;
     }
 

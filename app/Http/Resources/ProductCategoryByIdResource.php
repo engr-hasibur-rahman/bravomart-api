@@ -28,10 +28,8 @@ class ProductCategoryByIdResource extends JsonResource
                 'meta_title' => $items->where('key', 'meta_title')->first()->value ?? null,
                 'meta_description' => $items->where('key', 'meta_description')->first()->value ?? null,
             ];
-
             $transformedData[] = $itemData;
         }
-
         return [
             'id' => $this->id,
             'category_name' => $this->category_name,
