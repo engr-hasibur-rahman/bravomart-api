@@ -19,5 +19,12 @@ class ProductAuthor extends Model
         "death_date",
         "status",
     ];
+    public $translationKeys = [
+        'name'
+    ];
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
 
 }
