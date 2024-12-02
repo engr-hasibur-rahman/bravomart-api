@@ -26,12 +26,15 @@ class AreaController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->areaRepo->getPaginatedList($request->limit ?? 10
-            ,$request->page ?? 1
-            ,app()->getLocale() ?? DEFAULT_LANGUAGE
-            ,$request->search??""
-            ,$request->sortField ?? 'id'
-            ,$request->sort ?? 'asc',[]);
+        return $this->areaRepo->getPaginatedList(
+            $request->limit ?? 10,
+            $request->page ?? 1,
+            app()->getLocale() ?? DEFAULT_LANGUAGE,
+            $request->search ?? "",
+            $request->sortField ?? 'id',
+            $request->sort ?? 'asc',
+            []
+        );
     }
 
     /**

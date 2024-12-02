@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Permission;
+use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\AdminMediaController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
+use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -62,6 +64,28 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
 
 
+
+     //Product Management 
+     Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::get('product/list', [ProductController::class, 'index']);
+        Route::get('product/{id}', [ProductController::class, 'show']);
+        Route::post('product/add', [ProductController::class, 'store']);
+        Route::post('product/update', [ProductAttributeController::class, 'update']);
+        Route::put('product/status/{id}', [ProductController::class, 'status_update']);
+        Route::delete('product/remove/{id}', [ProductController::class, 'destroy']);
+    });
+    // Product Author Management
+    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
+        Route::get('product/author/list', [ProductAuthorController::class, 'index']);
+        
+    });
+    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::post('product/author/add', [ProductAuthorController::class, 'store']);
+        Route::get('product/author/{id}', [ProductAuthorController::class, 'show']);
+        Route::post('product/author/update', [ProductAuthorController::class, 'update']);
+        Route::delete('product/author/remove/{id}', [ProductAuthorController::class, 'destroy']);
+        Route::post('product/author/status', [ProductAuthorController::class, 'changeStatus']);
+    });
     // Marketing Area Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);
