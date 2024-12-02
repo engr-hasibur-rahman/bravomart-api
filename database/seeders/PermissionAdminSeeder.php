@@ -10,7 +10,7 @@ use Spatie\Permission\Models\Permission as ModelsPermission;
 class PermissionAdminSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Create Admin Menu
      *
      * @return void
      */
@@ -387,6 +387,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Add Product Brand',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert'],
                                     'translations' => [
                                         'en' => 'Add Product Brand',
                                         'ar' => 'إضافة العلامة التجارية للمنتج'
