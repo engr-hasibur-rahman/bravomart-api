@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\Permission;
-use App\Http\Controllers\Api\V1\Backend\ProductController;
+use App\Http\Controllers\Api\V1\AdminMediaController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\ProductBrandController;
@@ -62,18 +62,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
 
 
-
-     //Product Management 
-     Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-        Route::get('product/list', [ProductController::class, 'index']);
-        Route::get('product/{id}', [ProductController::class, 'show']);
-        Route::post('product/add', [ProductController::class, 'store']);
-        Route::post('product/update', [ProductAttributeController::class, 'update']);
-        Route::put('product/status/{id}', [ProductController::class, 'status_update']);
-        Route::delete('product/remove/{id}', [ProductController::class, 'destroy']);
-    });
-
-
     // Marketing Area Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);
@@ -85,5 +73,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
         Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
     });
+
+    // Media uploader
+    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::post('image-upload', [AdminMediaController::class, 'mediaUpload']);
+    });
+
 
 });

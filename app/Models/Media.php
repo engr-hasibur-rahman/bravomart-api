@@ -10,14 +10,17 @@ class Media extends Model
 {
 
     protected $table = 'media';
-    
     use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'format',
+        'title',
+        'file_size',
+        'alt_text',
+        'path',
+        'dimensions'
+    ];
 
-    protected $guarded = [];
-
-     /**
-     * Get the parent imageable model (user or post).
-     */
     public function fileable(): MorphTo
     {
         return $this->morphTo();
