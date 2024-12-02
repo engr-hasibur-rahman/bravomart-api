@@ -8,14 +8,16 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
     apt-get install -y \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     zlib1g-dev \
     libicu-dev \
     g++ \
     && rm -rf /var/lib/apt/lists/*  # Clean up apt cache to reduce image size
 
-# Install PHP extensions
-RUN docker-php-ext-configure intl && \
-    docker-php-ext-install exif gd intl zip
+# Install PHP extensions including GD and other required extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install gd exif intl zip
 
 # Set up the group and user with appropriate IDs
 ARG WWWGROUP=${WWWGROUP:-1000}  # Default to 1000 if not provided
