@@ -130,26 +130,61 @@ class MediaService
     public static function insert_media_image($request,$type='admin',$file_field_name = 'file'){
 
         if ($request->hasFile($file_field_name)) {
+//            $image = $request->$file_field_name;
+//            $image_dimension = getimagesize($image);
+//            $image_width = $image_dimension[0];
+//            $image_height = $image_dimension[1];
+//            $image_dimension_for_db = $image_width . ' x ' . $image_height . ' pixels';
+//            $image_size_for_db = $image->getSize();
+//
+//            $image_extenstion = $image->getClientOriginalExtension();
+//            $image_name_with_ext = $image->getClientOriginalName();
+//
+//            $image_name = pathinfo($image_name_with_ext, PATHINFO_FILENAME);
+//            $image_name = strtolower(Str::slug($image_name));
+//
+//            $image_db = $image_name . time() . '.' . $image_extenstion;
+//            $image_grid = 'grid-' . $image_db;
+//            $image_large = 'large-' . $image_db;
+//            $image_thumb = 'thumb-' . $image_db;
+//            $image_semi_large = 'semi-large-' . $image_db;
+//
+//            $folder_path = 'uploads/media-uploader/';
+//            $resize_grid_image = Image::make($image)->resize(350, null, function ($constraint) {
+//                $constraint->aspectRatio();
+//            });
+//
+//            $resize_large_image = Image::make($image)->resize(740, null, function ($constraint) {
+//                $constraint->aspectRatio();
+//            });
+//
+//            $resize_semi_large_image = Image::make($image)->resize(540, 350, function ($constraint) {
+//                $constraint->aspectRatio();
+//            });
+//            $resize_thumb_image = Image::make($image)->resize(150, 150);
+//
+//            $resize_full_image = Image::make($request->$file_field_name)->resize($image_width, $image_height,function ($constraint) {
+//                $constraint->aspectRatio();
+//            });
+//
+//            $resize_full_image->save($folder_path .'/'. $image_db);
+
             $image = $request->$file_field_name;
+
+            // Get image details
             $image_dimension = getimagesize($image);
             $image_width = $image_dimension[0];
             $image_height = $image_dimension[1];
             $image_dimension_for_db = $image_width . ' x ' . $image_height . ' pixels';
             $image_size_for_db = $image->getSize();
-
             $image_extenstion = $image->getClientOriginalExtension();
             $image_name_with_ext = $image->getClientOriginalName();
-
-            $image_name = pathinfo($image_name_with_ext, PATHINFO_FILENAME);
-            $image_name = strtolower(Str::slug($image_name));
+            $image_name = strtolower(Str::slug(pathinfo($image_name_with_ext, PATHINFO_FILENAME)));
 
             $image_db = $image_name . time() . '.' . $image_extenstion;
-            $image_grid = 'grid-' . $image_db;
-            $image_large = 'large-' . $image_db;
-            $image_thumb = 'thumb-' . $image_db;
-            $image_semi_large = 'semi-large-' . $image_db;
+            $folder_path = 'uploads/media-uploader';
 
-            $folder_path = 'assets/uploads/media-uploader/';
+            // Resize and save images
             $resize_grid_image = Image::make($image)->resize(350, null, function ($constraint) {
                 $constraint->aspectRatio();
             });
@@ -161,18 +196,33 @@ class MediaService
             $resize_semi_large_image = Image::make($image)->resize(540, 350, function ($constraint) {
                 $constraint->aspectRatio();
             });
-            $resize_thumb_image = Image::make($image)->resize(150, 150);
 
-            $resize_full_image = Image::make($request->$file_field_name)->resize($image_width, $image_height,function ($constraint) {
+            $resize_thumb_image = Image::make($image)->resize(150, 150);
+            $resize_full_image = Image::make($image)->resize($image_width, $image_height, function ($constraint) {
                 $constraint->aspectRatio();
             });
 
-            $resize_full_image->save($folder_path .'/'. $image_db);
+            // Save images to storage
+            $resize_full_image->save(storage_path("app/public/{$folder_path}/{$image_db}"));
+            $resize_thumb_image->save(storage_path("app/public/{$folder_path}/thumb-{$image_db}"));
+            $resize_grid_image->save(storage_path("app/public/{$folder_path}/grid-{$image_db}"));
+            $resize_large_image->save(storage_path("app/public/{$folder_path}/large-{$image_db}"));
+            $resize_semi_large_image->save(storage_path("app/public/{$folder_path}/semi-large-{$image_db}"));
 
-            $test = Media::create([
+//            $test = Media::create([
+//                'title' => $image_name_with_ext,
+//                'size' => formatBytes($image_size_for_db),
+//                'path' => $image_db,
+//                'dimensions' => $image_dimension_for_db,
+//                'type' => $type,
+//                'user_id' => auth($type)->id(),
+//            ]);
+
+            // Save to the database
+            $media = Media::create([
                 'title' => $image_name_with_ext,
                 'size' => formatBytes($image_size_for_db),
-                'path' => $image_db,
+                'path' => "{$folder_path}/{$image_db}",
                 'dimensions' => $image_dimension_for_db,
                 'type' => $type,
                 'user_id' => auth($type)->id(),
@@ -186,7 +236,7 @@ class MediaService
             }
 
             return response()->json([
-               'image' => $test,
+               'image' => $media,
             ]);
         }
 
