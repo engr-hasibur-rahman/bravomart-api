@@ -10,7 +10,7 @@ use Spatie\Permission\Models\Permission as ModelsPermission;
 class PermissionAdminSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Create Admin Menu
      *
      * @return void
      */
