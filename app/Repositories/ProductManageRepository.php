@@ -22,20 +22,27 @@ class ProductManageRepository implements ProductManageInterface
     }
     public function getPaginatedProduct(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $product = Product::leftJoin('translations', function ($join) use ($language) {
-            $join->on('products.id', '=', 'translations.translatable_id')
-                ->where('translations.translatable_type', '=', Product::class)
-                ->where('translations.language', '=', $language)
-                ->where('translations.key', '=', 'name');
+        $product = Product::leftJoin('translations as name_translations', function ($join) use ($language) {
+            $join->on('products.id', '=', 'name_translations.translatable_id')
+                ->where('name_translations.translatable_type', '=', Product::class)
+                ->where('name_translations.language', '=', $language)
+                ->where('name_translations.key', '=', 'name');
         })
+            ->leftJoin('translations as description_translations', function ($join) use ($language) {
+                $join->on('products.id', '=', 'description_translations.translatable_id')
+                    ->where('description_translations.translatable_type', '=', Product::class)
+                    ->where('description_translations.language', '=', $language)
+                    ->where('description_translations.key', '=', 'description');
+            })
             ->select(
                 'products.*',
-                DB::raw('COALESCE(translations.value, products.name) as name')
+                DB::raw('COALESCE(name_translations.value, products.name) as name'),
+                DB::raw('COALESCE(description_translations.value, products.description) as description')
             );
         // Apply search filter if search parameter exists
         if ($search) {
             $product->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', products.name, translations.value)"), 'like', "%{$search}%");
+                $query->where(DB::raw("CONCAT_WS(' ', products.name, name_translations.value, products.description, description_translations.value)"), 'like', "%{$search}%");
             });
         }
         // Apply sorting and pagination

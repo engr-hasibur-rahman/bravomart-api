@@ -27,7 +27,8 @@ class ProductController extends Controller
     }
     public function store(ProductRequest $request): JsonResponse
     {
-        $slug = MultilangSlug::
+        $slug = MultilangSlug::makeSlug(Product::class, $request->name,'slug');
+        $request['slug'] = $slug;
         $product = $this->productRepo->store($request->all());
         $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         
