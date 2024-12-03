@@ -81,7 +81,7 @@ class MediaService
                 'file_size' => formatBytes($image_size_for_db),
                 'path' => "{$folder_path}/{$image_db}",
                 'dimensions' => $image_dimension_for_db,
-                'user_id' => Auth::guard('sanctum')->user()->id(),
+                'user_id' => auth('sanctum')->id(),
             ]);
         }
 
@@ -89,7 +89,7 @@ class MediaService
     }
     public function load_more_images($request){
         $image_query = Media::query();
-        $image_query->where('user_id', auth('sanctum')->user()->id());
+        $image_query->where('user_id', auth('sanctum')->id());
         $all_images = $image_query
             ->orderBy('id', 'DESC')
             ->skip($request->skip)
@@ -129,7 +129,7 @@ class MediaService
 
     public function image_alt_change($request){
         $update = Media::where('id', $request->image_id)
-            ->where('user_id', auth('sanctum')->user()->id)
+            ->where('user_id', auth('sanctum')->id())
             ->update([
                 'alt_text' => $request->alt,
             ]);
@@ -171,7 +171,7 @@ class MediaService
         }
 
         // Delete the image record from the database
-        $image_find = Media::where('user_id', auth('sanctum')->user()->id())
+        $image_find = Media::where('user_id', auth('sanctum')->id())
             ->where('id', $request->image_id)
             ->delete();
 
