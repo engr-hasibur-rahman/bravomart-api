@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Product;
 
+use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Interfaces\ProductManageInterface;
@@ -26,6 +27,7 @@ class ProductController extends Controller
     }
     public function store(ProductRequest $request): JsonResponse
     {
+        $slug = MultilangSlug::
         $product = $this->productRepo->store($request->all());
         $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         

@@ -187,8 +187,17 @@ class ComHelper
 
             $children = $data_item->children!='' && count($data_item->children) ? ComHelper::buildMenuTree($role_id,$data_item->children) : [];
             $users = DB::table('role_has_permissions')->where('permission_id',$data_item->id)->whereIn('role_id',$role_id)->first();
-            //$translations= Translation::where('translatable_type','App\Models\Permissions')->where('translatable_id',$data_item->id)->get()->groupBy('language');
+            $translations= Translation::where('translatable_type','App\Models\Permissions')->where('translatable_id',$data_item->id)->get()->groupBy('language');
             //logger($translations);
+            $transformedData = [];
+
+            foreach ($translations as $language => $items) {
+                $itemData = [
+                    'language' => $language,
+                    'perm_title' => $items->where('key', 'perm_title')->first()->value ?? null,
+                ];
+                $transformedData[] = $itemData;
+            }
 
             $options=[];
             if($users) {
@@ -215,6 +224,7 @@ class ComHelper
                     'perm_title' => $data_item->perm_title,
                     'perm_name' => $data_item->name,
                     'icon' => $data_item->icon,
+                    'translations' => $transformedData,
                     'options' => $options,
                     'children' => $children,
                 ];

@@ -39,7 +39,7 @@ class ProductAuthorRepository implements ProductAuthorInterface
                 ->where('translations.key', '=', 'name');
         })
             ->select(
-                'tags.*',
+                'product_authors.*',
                 DB::raw('COALESCE(translations.value, product_authors.name) as name')
             );
 
