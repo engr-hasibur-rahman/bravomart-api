@@ -66,7 +66,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
 
 
-
+// =====================================================================FAYSAL IBNEA HASAN JESAN========================================================================================
      //Product Management 
      Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
         Route::get('product/list', [ProductController::class, 'index']);
@@ -108,6 +108,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('unit/update', [UnitManageController::class, 'update']);
         Route::delete('unit/remove/{id}', [UnitManageController::class, 'destroy']);
     });
+    // =====================================================================FAYSAL IBNEA HASAN JESAN========================================================================================
     // Marketing Area Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);

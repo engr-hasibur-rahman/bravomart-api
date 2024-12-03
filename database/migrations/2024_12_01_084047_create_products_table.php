@@ -40,7 +40,7 @@ return new class extends Migration
             $table->integer('order_count')->nullable();
             $table->string('attributes')->nullable();
             $table->integer('views')->default(0);
-           $table->enum('status', array_map(fn($enum) => $enum->value, StatusType::cases()))->nullable();
+            $table->enum('status', array_map(fn($enum) => $enum->value, StatusType::cases()))->nullable();
             $table->timestamp('available_time_starts')->nullable();
             $table->timestamp('available_time_ends')->nullable();
             $table->timestamps();
