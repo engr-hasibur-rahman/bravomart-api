@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('bio')->nullable();
             $table->date('born_date')->nullable();
             $table->date('death_date')->nullable();
-            $table->string('status')->nullable(); //1. Active or empty, 2. Inactive
+            $table->integer('status')->default('0')->comment('1 = active, 0 = inactive'); //1. Active or empty, 2. Inactive
             $table->timestamps();
         });
     }
