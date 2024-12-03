@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+    protected $table = "products";
     protected $fillable = [
         "shop_id",
         "category_id",
@@ -37,8 +38,17 @@ class Product extends Model
         "status",
         "available_time_starts",
         "available_time_ends",
-    ] ;
-    public function variant(){
-        return $this->hasMany(ProductVariant::class,"product_id");
+    ];
+    public $translationKeys = [
+        'name',
+        'description'
+    ];
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
+    public function variant()
+    {
+        return $this->hasMany(ProductVariant::class, "product_id");
     }
 }

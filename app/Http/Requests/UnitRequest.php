@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 
-class ProductAuthorRequest extends FormRequest
+class UnitRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,17 +25,16 @@ class ProductAuthorRequest extends FormRequest
     {
         return [
             "name" => "required",
-            "born_date" => "required|date_format:Y-m-d",
-            "death_date"=> "nullable|date_format:Y-m-d",
+            "order" => "required|integer|unique:units,order," . $this->id,
         ];
     }
     public function messages()
     {
         return [
             "name.required" => "Name field is required!",
-            "born_date.required" => "Born date field is required!",
-            "born_date.date_format"=> "Incorrect date format!",
-            "death_date.date_format"=> "Incorrect date format!",
+            "order.required" => "Order field is required!",
+            "order.integer" => "Input type must be integer!",
+            "order.unique" => "This order has been already taken!",
         ];
     }
     public function failedValidation(Validator $validator)
