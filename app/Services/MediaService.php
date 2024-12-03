@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use App\Models\Media;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -18,117 +19,7 @@ class MediaService
      * @return Media
      */
 
-    public static function fetch_media_image($request,$type='admin')
-    {
-        $image_query = Media::query();
-
-        if ($type === 'web'){
-            $image_query->where(['user_id' => auth($type)->id()]);
-        }
-        $all_images = $image_query->where(['type' => $type])->orderBy('id', 'DESC')->take(20)->get();
-        $selected_image = Media::find($request->selected);
-
-        $all_image_files = [];
-        if (!empty($selected_image)){
-            if (file_exists('assets/uploads/media-uploader/'.$selected_image->path)) {
-
-                $image_url = asset('assets/uploads/media-uploader/' . $selected_image->path);
-                if (file_exists('assets/uploads/media-uploader/grid-' . $selected_image->path)) {
-                    $image_url = asset('assets/uploads/media-uploader/grid-' . $selected_image->path);
-                    $image_url = asset('assets/uploads/media-uploader/semi-large-' . $selected_image->path);
-                }
-
-                $all_image_files[] = [
-                    'image_id' => $selected_image->id,
-                    'title' => $selected_image->title,
-                    'dimensions' => $selected_image->dimensions,
-                    'alt' => $selected_image->alt,
-                    'size' => $selected_image->size,
-                    'path' => $selected_image->path,
-                    'img_url' => $image_url,
-                    'upload_at' => date_format($selected_image->created_at, 'd M y')
-                ];
-            }
-
-        }
-        foreach ($all_images as $image){
-            if (file_exists('assets/uploads/media-uploader/'.$image->path)){
-                $image_url = asset('assets/uploads/media-uploader/'.$image->path);
-                if (file_exists('assets/uploads/media-uploader/grid-' . $image->path)) {
-                    $image_url = asset('assets/uploads/media-uploader/grid-' . $image->path);
-                }
-                $all_image_files[] = [
-                    'image_id' => $image->id,
-                    'title' => $image->title,
-                    'dimensions' => $image->dimensions,
-                    'alt' => $image->alt,
-                    'size' => $image->size,
-                    'path' => $image->path,
-                    'img_url' => $image_url,
-                    'upload_at' => date_format($image->created_at, 'd M y')
-                ];
-
-            }
-        }
-        return $all_image_files;
-    }
-
-
-    public static function delete_user_media_image($image_id,$type ='web')
-    {
-        $get_image_details = Media::find($image_id);
-        if (file_exists('assets/uploads/media-uploader/' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/' . $get_image_details->path);
-        }
-        if (file_exists('assets/uploads/media-uploader/grid-' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/grid-' . $get_image_details->path);
-        }
-        if (file_exists('assets/uploads/media-uploader/large-' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/large-' . $get_image_details->path);
-        }
-        if (file_exists('assets/uploads/media-uploader/semi-large-' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/semi-large-' . $get_image_details->path);
-        }
-        if (file_exists('assets/uploads/media-uploader/thumb-' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/thumb-' . $get_image_details->path);
-        }
-
-        $image_query = Media::query();
-
-        if ($type === 'web'){
-            $image_query->where(['type' => $type,'user_id' => auth($type)->id()]);
-        }
-        $image_query->where(['id' => $image_id])->delete();
-    }
-
-    public static function delete_media_image($request,$type ='admin')
-    {
-        $get_image_details = MediaUpload::find($request->img_id);
-        if (file_exists('assets/uploads/media-uploader/' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/' . $get_image_details->path);
-        }
-        if (file_exists('assets/uploads/media-uploader/grid-' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/grid-' . $get_image_details->path);
-        }
-        if (file_exists('assets/uploads/media-uploader/large-' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/large-' . $get_image_details->path);
-        }
-        if (file_exists('assets/uploads/media-uploader/semi-large-' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/semi-large-' . $get_image_details->path);
-        }
-        if (file_exists('assets/uploads/media-uploader/thumb-' . $get_image_details->path) && !is_dir('assets/uploads/media-uploader/' . $get_image_details->path)) {
-            unlink('assets/uploads/media-uploader/thumb-' . $get_image_details->path);
-        }
-
-        $image_query = Media::query();
-
-        if ($type === 'web'){
-            $image_query->where(['type' => $type,'user_id' => auth($type)->id()]);
-        }
-        $image_query->where(['id' => $request->img_id])->delete();
-    }
-
-    public static function insert_media_image($request,$type='admin',$file_field_name = 'file'){
+    public function insert_media_image($request,$type='admin',$file_field_name = 'file'){
 
         if ($request->hasFile($file_field_name)) {
             $image = $request->$file_field_name;
@@ -190,37 +81,42 @@ class MediaService
                 'file_size' => formatBytes($image_size_for_db),
                 'path' => "{$folder_path}/{$image_db}",
                 'dimensions' => $image_dimension_for_db,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::guard('sanctum')->user()->id(),
             ]);
         }
 
         return null;
     }
-
-
-    public static function load_more_images($request,$type = 'admin'){
-
-        $image_query = MediaUpload::query();
-
-        if ($type === 'web'){
-            $image_query->where(['type' => $type,'user_id' => auth($type)->id()]);
-        }
-
-        $all_images = $image_query->orderBy('id', 'DESC')->skip($request->skip)->take(20)->get();
+    public function load_more_images($request){
+        $image_query = Media::query();
+        $image_query->where('user_id', auth('sanctum')->user()->id());
+        $all_images = $image_query
+            ->orderBy('id', 'DESC')
+            ->skip($request->skip)
+            ->take(20)
+            ->get();
 
         $all_image_files = [];
         foreach ($all_images as $image){
-            if (file_exists('assets/uploads/media-uploader/'.$image->path)){
-                $image_url = asset('assets/uploads/media-uploader/'.$image->path);
-                if (file_exists('assets/uploads/media-uploader/grid-' . $image->path)) {
-                    $image_url = asset('assets/uploads/media-uploader/grid-' . $image->path);
+            $base_path = 'uploads/media-uploader/';
+            $image_path = public_path("storage/{$image->path}");
+
+            if (file_exists($image_path)){
+                // Generate public URL
+                $image_url = asset("storage/{$image->path}");
+                $grid_image_path = public_path("storage/{$base_path}grid-" . basename($image->path));
+
+                // Check if the grid version exists and use it
+                if (file_exists($grid_image_path)) {
+                    $image_url = asset("storage/{$base_path}grid-" . basename($image->path));
                 }
+
                 $all_image_files[] = [
                     'image_id' => $image->id,
-                    'title' => $image->title,
+                    'name' => $image->name,
                     'dimensions' => $image->dimensions,
-                    'alt' => $image->alt,
-                    'size' => $image->size,
+                    'alt' => $image->alt_text,
+                    'size' => $image->file_size,
                     'path' => $image->path,
                     'img_url' => $image_url,
                     'upload_at' => date_format($image->created_at, 'd M y')
@@ -230,4 +126,68 @@ class MediaService
         }
         return $all_image_files;
     }
+
+    public function image_alt_change($request){
+        $update = Media::where('id', $request->image_id)
+            ->where('user_id', auth('sanctum')->user()->id)
+            ->update([
+                'alt_text' => $request->alt,
+            ]);
+        return [
+            'msg' => $update ? 'Alt text updated successfully' : 'Failed to update alt text',
+            'success' => (bool) $update,
+        ];
+    }
+
+    public function delete_media_image($request)
+    {
+        $get_image_details = Media::find($request->image_id);
+
+        // Check if the image exists
+        if (!$get_image_details) {
+            return [
+                'msg' => 'Image not found',
+                'success' => false,
+            ];
+        }
+
+        $folder_path = dirname($get_image_details->path);
+        $base_path = storage_path('app/public/uploads/media-uploader/');
+
+        $image_path = $base_path . $get_image_details->path;
+        $image_variants = ['grid-', 'large-', 'semi-large-', 'thumb-'];
+
+        // Delete image variants if they exist
+        foreach ($image_variants as $variant) {
+            $variant_path = $base_path . $folder_path . '/' . $variant . basename($get_image_details->path);
+            if (file_exists($variant_path)) {
+                unlink($variant_path);
+            }
+        }
+
+        // Delete the main image if it exists
+        if (file_exists($image_path)) {
+            unlink($image_path);
+        }
+
+        // Delete the image record from the database
+        $image_find = Media::where('user_id', auth('sanctum')->user()->id())
+            ->where('id', $request->image_id)
+            ->delete();
+
+        if ($image_find) {
+            return [
+                'msg' => 'Image and its variants deleted successfully',
+                'success' => true,
+            ];
+        } else {
+            return [
+                'msg' => 'Failed to delete the image',
+                'success' => false,
+            ];
+        }
+    }
+
+
+
 }

@@ -2,7 +2,7 @@
 
 use App\Enums\Permission;
 use App\Http\Controllers\Api\V1\Product\ProductController;
-use App\Http\Controllers\Api\V1\AdminMediaController;
+use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\TagManageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
@@ -112,7 +112,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
     // Media uploader
     Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
-        Route::post('image-upload', [AdminMediaController::class, 'mediaUpload']);
+        Route::group(['prefix' => 'media-upload'], function () {
+            Route::controller(MediaController::class)->group(function () {
+                Route::post('/store','mediaUpload');
+                Route::post('/load-more','load_more');
+                Route::post('/alt','alt_change');
+                Route::post('/delete','delete_media');
+            });
+        });
     });
 
 
