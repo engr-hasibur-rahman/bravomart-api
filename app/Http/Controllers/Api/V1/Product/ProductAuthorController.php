@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Product;
 
+use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductAuthorRequest;
 use App\Interfaces\ProductAuthorInterface;
@@ -28,7 +29,8 @@ class ProductAuthorController extends Controller
     }
     public function store(ProductAuthorRequest $request): JsonResponse
     {
-        $slug = slug_generator($request->name,ProductAuthor::class);
+        //$slug = slug_generator($request->name,ProductAuthor::class);
+        $slug = MultilangSlug::makeSlug(ProductAuthor::class, $request->name,'slug');
         $request['slug'] = $slug;
         $author = $this->authorRepo->store($request->all());
         $this->authorRepo->storeTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
