@@ -97,33 +97,30 @@ class MediaService
             ->get();
 
         $all_image_files = [];
+
         foreach ($all_images as $image){
-            $base_path = 'uploads/media-uploader/';
-            $image_path = public_path("storage/{$image->path}");
+            // Generate the public URL directly
+            $image_url = asset("storage/{$image->path}");
+            // Check if the grid version exists (without file_exists, use URL generation)
+            $grid_image_url = asset("storage/uploads/media-uploader/grid-" . basename($image->path));
 
-            if (file_exists($image_path)){
-                // Generate public URL
-                $image_url = asset("storage/{$image->path}");
-                $grid_image_path = public_path("storage/{$base_path}grid-" . basename($image->path));
-
-                // Check if the grid version exists and use it
-                if (file_exists($grid_image_path)) {
-                    $image_url = asset("storage/{$base_path}grid-" . basename($image->path));
-                }
-
-                $all_image_files[] = [
-                    'image_id' => $image->id,
-                    'name' => $image->name,
-                    'dimensions' => $image->dimensions,
-                    'alt' => $image->alt_text,
-                    'size' => $image->file_size,
-                    'path' => $image->path,
-                    'img_url' => $image_url,
-                    'upload_at' => date_format($image->created_at, 'd M y')
-                ];
-
+            // If the grid version URL is valid, use that
+            if ($grid_image_url) {
+                $image_url = $grid_image_url;
             }
-        }
+
+            $all_image_files[] = [
+                'image_id' => $image->id,
+                'name' => $image->name,
+                'dimensions' => $image->dimensions,
+                'alt' => $image->alt_text,
+                'size' => $image->file_size,
+                'path' => $image->path,
+                'img_url' => $image_url,
+                'upload_at' => date_format($image->created_at, 'd M y')
+            ];
+         }
+
         return $all_image_files;
     }
 
