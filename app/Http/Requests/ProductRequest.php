@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Behaviour;
 use App\Enums\StatusType;
 use App\Enums\StoreType;
 use Illuminate\Foundation\Http\FormRequest;
@@ -34,13 +35,13 @@ class ProductRequest extends FormRequest
             "tag_id" => "required",
             "type" => "required|in:" . implode(',', array_column(StoreType::cases(), 'value')),
             "name" => "required",
-            "slug" => "required",
             "description" => "required",
             "image" => "nullable",
             "gallery_images" => "nullable",
             "warranty" => "nullable",
             "return_in_dsays" => "nullable",
             "cash_on_delivery" => "nullable",
+            "behaviour" => "required|in:" . implode(',', array_column(Behaviour::cases(), 'value')),
             "delivery_time_min" => "nullable",
             "delivery_time_max" => "nullable",
             "delivery_time_text" => "nullable",
@@ -59,6 +60,8 @@ class ProductRequest extends FormRequest
             "tag_id.required" => "The tag ID is required.",
             "type.required" => "The status is required. Valid statuses are: " . $this->getEnumValues(StoreType::class),
             "type.in" => "The selected status is invalid. Valid statuses are: " . $this->getEnumValues(StoreType::class),
+            "behaviour.required" => "The status is required. Valid statuses are: " . $this->getEnumValues(Behaviour::class),
+            "behaviour.in" => "The selected status is invalid. Valid statuses are: " . $this->getEnumValues(Behaviour::class),
             "name.required" => "The product name is required.",
             "slug.required" => "The slug is required and must be unique.",
             "description.required" => "The product description is required.",
