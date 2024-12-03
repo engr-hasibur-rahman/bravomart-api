@@ -81,7 +81,7 @@ class MediaService
                 'file_size' => formatBytes($image_size_for_db),
                 'path' => "{$folder_path}/{$image_db}",
                 'dimensions' => $image_dimension_for_db,
-                'user_id' => Auth::guard('sanctum')->user()->id(),
+                'user_id' => auth('sanctum')->id(),
             ]);
         }
 
@@ -89,7 +89,7 @@ class MediaService
     }
     public function load_more_images($request){
         $image_query = Media::query();
-        $image_query->where('user_id', auth('sanctum')->user()->id());
+        $image_query->where('user_id', auth('sanctum')->id());
         $all_images = $image_query
             ->orderBy('id', 'DESC')
             ->skip($request->skip)
@@ -97,39 +97,36 @@ class MediaService
             ->get();
 
         $all_image_files = [];
+
         foreach ($all_images as $image){
-            $base_path = 'uploads/media-uploader/';
-            $image_path = public_path("storage/{$image->path}");
+            // Generate the public URL directly
+            $image_url = asset("storage/{$image->path}");
+            // Check if the grid version exists (without file_exists, use URL generation)
+            $grid_image_url = asset("storage/uploads/media-uploader/grid-" . basename($image->path));
 
-            if (file_exists($image_path)){
-                // Generate public URL
-                $image_url = asset("storage/{$image->path}");
-                $grid_image_path = public_path("storage/{$base_path}grid-" . basename($image->path));
-
-                // Check if the grid version exists and use it
-                if (file_exists($grid_image_path)) {
-                    $image_url = asset("storage/{$base_path}grid-" . basename($image->path));
-                }
-
-                $all_image_files[] = [
-                    'image_id' => $image->id,
-                    'name' => $image->name,
-                    'dimensions' => $image->dimensions,
-                    'alt' => $image->alt_text,
-                    'size' => $image->file_size,
-                    'path' => $image->path,
-                    'img_url' => $image_url,
-                    'upload_at' => date_format($image->created_at, 'd M y')
-                ];
-
+            // If the grid version URL is valid, use that
+            if ($grid_image_url) {
+                $image_url = $grid_image_url;
             }
-        }
+
+            $all_image_files[] = [
+                'image_id' => $image->id,
+                'name' => $image->name,
+                'dimensions' => $image->dimensions,
+                'alt' => $image->alt_text,
+                'size' => $image->file_size,
+                'path' => $image->path,
+                'img_url' => $image_url,
+                'upload_at' => date_format($image->created_at, 'd M y')
+            ];
+         }
+
         return $all_image_files;
     }
 
     public function image_alt_change($request){
         $update = Media::where('id', $request->image_id)
-            ->where('user_id', auth('sanctum')->user()->id)
+            ->where('user_id', auth('sanctum')->id())
             ->update([
                 'alt_text' => $request->alt,
             ]);
@@ -171,7 +168,7 @@ class MediaService
         }
 
         // Delete the image record from the database
-        $image_find = Media::where('user_id', auth('sanctum')->user()->id())
+        $image_find = Media::where('user_id', auth('sanctum')->id())
             ->where('id', $request->image_id)
             ->delete();
 

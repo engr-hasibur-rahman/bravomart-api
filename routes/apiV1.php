@@ -4,7 +4,6 @@ use App\Enums\Permission;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\TagManageController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
@@ -12,8 +11,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\UnitManageController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 
@@ -124,12 +121,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     // Media uploader
     Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         Route::group(['prefix' => 'media-upload'], function () {
-            Route::controller(MediaController::class)->group(function () {
-                Route::post('/store','mediaUpload');
-                Route::post('/load-more','load_more');
-                Route::post('/alt','alt_change');
-                Route::post('/delete','delete_media');
-            });
+            Route::post('/store',[MediaController::class, 'mediaUpload']);
+            Route::post('/load-more',[MediaController::class, 'load_more']);
+            Route::post('/alt',[MediaController::class, 'alt_change']);
+            Route::post('/delete',[MediaController::class, 'delete_media']);
         });
     });
 
