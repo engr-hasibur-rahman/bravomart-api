@@ -25,16 +25,17 @@ class TagRequest extends FormRequest
     {
         return [
             "name" => "required",
-            "order" => "required|integer|unique:tags,order",
+            "order" => "required|integer|unique:tags,order," . $this->id,
         ];
     }
-    public function messages() {
+    public function messages()
+    {
         return [
-            "name.required"=> "Name field is required!",
-            "order.required"=> "Order field is required!",
-            "order.integer"=> "Input type must be integer!",
-            "order.unique"=> "This order has been already taken!",
-        ] ;
+            "name.required" => "Name field is required!",
+            "order.required" => "Order field is required!",
+            "order.integer" => "Input type must be integer!",
+            "order.unique" => "This order has been already taken!",
+        ];
     }
     public function failedValidation(Validator $validator)
     {

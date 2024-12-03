@@ -3,9 +3,52 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UnitRequest;
+use App\Interfaces\UnitInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UnitManageController extends Controller
 {
-    //
+    public function __construct(protected UnitInterface $unitRepo) {}
+    public function index(Request $request)
+    {
+        return $this->unitRepo->getPaginatedUnit(
+            $request->limit ?? 10,
+            $request->page ?? 1,
+            app()->getLocale() ?? DEFAULT_LANGUAGE,
+            $request->search ?? "",
+            $request->sortField ?? 'id',
+            $request->sort ?? 'asc',
+            []
+        );
+    }
+    public function store(UnitRequest $request): JsonResponse
+    {
+        $unit = $this->unitRepo->store($request->all());
+        $this->unitRepo->storeTranslation($request, $unit, 'App\Models\Unit', $this->unitRepo->translationKeys());
+        if ($unit) {
+            return $this->success(translate('messages.save_success', ['name' => 'Unit']));
+        } else {
+            return $this->failed(translate('messages.save_failed', ['name' => 'Unit']));
+        }
+    }
+    public function show(Request $request)
+    {
+        return $this->unitRepo->getUnitById($request->id);
+    }
+    public function update(UnitRequest $request)
+    {
+        $unit = $this->unitRepo->update($request->all());
+        if ($unit) {
+            return $this->success(translate('messages.update_success', ['name' => 'Unit']));
+        } else {
+            return $this->failed(translate('messages.update_failed', ['name' => 'Unit']));
+        }
+    }
+    public function destroy($id)
+    {
+        $this->unitRepo->delete($id);
+        return $this->success(translate('messages.delete_success'));
+    }
 }
