@@ -14,7 +14,7 @@ class MultilangSlug
      * 
      * @return string A string
      */
-    public static function makeSlug($model, $slugText, string $field = '', string $divider = null): string
+    public static function makeSlug(string $model, $slugText, string $field = '', string $divider = null): string
     {
         $slugText = match (true) {
             !empty($slugText)  => $slugText,
