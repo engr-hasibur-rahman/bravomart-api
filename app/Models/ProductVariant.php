@@ -9,17 +9,33 @@ class ProductVariant extends Model
 {
     use HasFactory;
     protected $fillable = [
-        "product_id",
-        "variant_slug",
-        "sku",
-        "pack_quantity",
-        "weight_major",
-        "weight_gross",
-        "weight_net",
-        "variant_image",
-        "variant_order_count",
-        "status",
+        'product_id',
+        'variant_slug',
+        'sku',
+        'pack_quantity',
+        'weight_major',
+        'weight_gross',
+        'weight_net',
+        'color',
+        'size',
+        'special_price',
+        'stock_quantity',
+        'unit_id',
+        'length',
+        'width',
+        'height',
+        'image',
+        'order_count',
+        'status',
     ] ;
+
+    protected $casts = [
+        'pack_quantity' => 'decimal:2',
+        'weight_major' => 'decimal:2',
+        'weight_gross' => 'decimal:2',
+        'weight_net' => 'decimal:2',
+    ];
+
     public function product(){
         return $this->belongsTo(Product::class,"product_id");
     }
