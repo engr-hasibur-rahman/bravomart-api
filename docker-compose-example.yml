@@ -1,6 +1,5 @@
-# For more information: https://laravel.com/docs/sail
 services:
-  biva_mart.test: # This name should be same as your env APP_SERVICE value
+  biva_mart.test:
     build:
       context: ./vendor/laravel/sail/runtimes/8.2
       dockerfile: Dockerfile
@@ -34,6 +33,16 @@ services:
       - "biva_mart_mysql:/var/lib/mysql"
     networks:
       - sail
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "8081:80"
+    networks:
+      - sail
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      PMA_HOST: mysql
+      PMA_PORT: 3306
   redis:
     image: "redis:alpine"
     ports:

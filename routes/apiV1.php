@@ -11,6 +11,7 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
+use App\Http\Controllers\Api\V1\UnitManageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -65,7 +66,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
 
 
-
+// =====================================================================FAYSAL IBNEA HASAN JESAN========================================================================================
      //Product Management 
      Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
         Route::get('product/list', [ProductController::class, 'index']);
@@ -97,7 +98,17 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('tag/update', [TagManageController::class, 'update']);
         Route::delete('tag/remove/{id}', [TagManageController::class, 'destroy']);
     });
-
+    // Unit Management
+    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
+        Route::get('unit/list', [UnitManageController::class, 'index']);
+    });
+    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::post('unit/add', [UnitManageController::class, 'store']);
+        Route::get('unit/{id}', [UnitManageController::class, 'show']);
+        Route::post('unit/update', [UnitManageController::class, 'update']);
+        Route::delete('unit/remove/{id}', [UnitManageController::class, 'destroy']);
+    });
+    // =====================================================================FAYSAL IBNEA HASAN JESAN========================================================================================
     // Marketing Area Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);
