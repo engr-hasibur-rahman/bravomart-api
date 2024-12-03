@@ -637,6 +637,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'App\\Exports\\ExportProductBrand' => __DIR__ . '/../..' . '/app/Exports/ExportProductBrand.php',
         'App\\Helpers\\ComHelper' => __DIR__ . '/../..' . '/app/Helpers/ComHelper.php',
         'App\\Helpers\\MultilangSlug' => __DIR__ . '/../..' . '/app/Helpers/MultilangSlug.php',
+        'App\\Http\\Controllers\\ApiMediaUploadController' => __DIR__ . '/../..' . '/app/Http/Controllers/ApiMediaUploadController.php',
         'App\\Http\\Controllers\\Api\\V1\\AdminMediaController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/AdminMediaController.php',
         'App\\Http\\Controllers\\Api\\V1\\Admin\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Admin/AdminController.php',
         'App\\Http\\Controllers\\Api\\V1\\Auth\\PartnerLoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/V1/Auth/PartnerLoginController.php',
