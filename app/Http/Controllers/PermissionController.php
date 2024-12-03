@@ -48,7 +48,20 @@ class PermissionController extends Controller
         //return PermissionResource::collection($permissions);
     }
 
-
+    public function getpermissions(Request $request)
+    {
+        $user = auth()->user();
+        $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+        return [
+            'id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'phone' => $user->phone,
+            'email' => $user->email,
+            'activity_scope' => $user->activity_scope,
+            "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(),$permissions)
+        ];
+    }
     public function permissionForStoreOwner(Request $request)
     {
         $permission = Permission::findOrFail($request->id);
