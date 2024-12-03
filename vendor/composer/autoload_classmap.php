@@ -20,6 +20,7 @@ return array(
     'App\\Exports\\ExportProductBrand' => $baseDir . '/app/Exports/ExportProductBrand.php',
     'App\\Helpers\\ComHelper' => $baseDir . '/app/Helpers/ComHelper.php',
     'App\\Helpers\\MultilangSlug' => $baseDir . '/app/Helpers/MultilangSlug.php',
+    'App\\Http\\Controllers\\ApiMediaUploadController' => $baseDir . '/app/Http/Controllers/ApiMediaUploadController.php',
     'App\\Http\\Controllers\\Api\\V1\\AdminMediaController' => $baseDir . '/app/Http/Controllers/Api/V1/AdminMediaController.php',
     'App\\Http\\Controllers\\Api\\V1\\Admin\\AdminController' => $baseDir . '/app/Http/Controllers/Api/V1/Admin/AdminController.php',
     'App\\Http\\Controllers\\Api\\V1\\Auth\\PartnerLoginController' => $baseDir . '/app/Http/Controllers/Api/V1/Auth/PartnerLoginController.php',
