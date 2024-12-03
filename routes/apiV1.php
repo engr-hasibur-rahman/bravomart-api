@@ -122,7 +122,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         Route::group(['prefix' => 'media-upload'], function () {
             Route::post('/store',[MediaController::class, 'mediaUpload']);
-            Route::post('/load-more',[MediaController::class, 'load_more']);
+            Route::get('/load-more',[MediaController::class, 'load_more']);
             Route::post('/alt',[MediaController::class, 'alt_change']);
             Route::post('/delete',[MediaController::class, 'delete_media']);
         });

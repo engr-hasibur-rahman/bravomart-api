@@ -121,6 +121,7 @@ class MediaService
             ];
          }
 
+
         return $all_image_files;
     }
 
