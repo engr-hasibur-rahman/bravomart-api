@@ -90,6 +90,7 @@ class MediaService
     public function load_more_images($request){
         $image_query = Media::query();
         $image_query->where('user_id', auth('sanctum')->id());
+        dd($request->skip);
         $all_images = $image_query
             ->orderBy('id', 'DESC')
             ->skip($request->skip)
