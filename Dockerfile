@@ -1,43 +1,45 @@
-# Start from the Laravel Sail PHP 8.1 Composer image
-FROM laravelsail/php81-composer
-
-# Set environment variables to avoid interactive prompts during package installation
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Update and install required dependencies
-RUN apt-get update -y && \
-    apt-get install -y \
-        libpng-dev \
-        libjpeg-dev \
-        libfreetype6-dev \
-        zlib1g-dev \
-        libicu-dev \
-        g++ \
-        zip \
-        unzip \
-        git \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd exif intl zip
-
-# Set up the group and user with appropriate IDs
-ARG WWWGROUP=1000
-ARG WWWUSER=1000
-
-RUN echo "Creating group with GID: $WWWGROUP and user with UID: $WWWUSER" && \
-    groupadd -g $WWWGROUP sail || true && \
-    useradd -m -u $WWWUSER -g $WWWGROUP -s /bin/bash sail
+# Use the official PHP image as a base
+FROM php:8.2-fpm
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Expose the application port
-EXPOSE 80
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    zip \
+    unzip \
+    git \
+    libzip-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip pdo pdo_mysql
 
-# Switch to 'sail' user for security
-USER sail
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Default command to run PHP-FPM
+# Copy application files
+COPY . .
+
+# Set appropriate permissions
+RUN chown -R www-data:www-data /var/www/html
+
+# Install PHP extensions
+RUN docker-php-ext-install bcmath
+
+# Install Node.js and npm
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
+# Run Composer install
+RUN composer install --no-dev --optimize-autoloader
+
+# Run npm install and build
+RUN npm install && npm run build
+
+# Expose the port Laravel runs on
+EXPOSE 9000
+
+# Start PHP-FPM server
 CMD ["php-fpm"]
