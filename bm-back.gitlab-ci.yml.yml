@@ -15,7 +15,8 @@ deploy:
     #- lftp -c "set ssl:verify-certificate no; set ftp:ssl-allow no; open -u $FTP_USER_S,$FTP_PASS_S $FTP_HOST_S; mirror -Rnev ./ $DIR_PATH --no-symlinks --ignore-time --only-newer --parallel=10 --exclude-glob .git* --exclude .git/ --exclude *.htaccess --exclude *.env --exclude vendor/  --no-perms bye;"
     #- composer update --no-interaction --prefer-dist --optimize-autoloader
     - lftp -c "set ssl:verify-certificate no; set ftp:ssl-allow no; open -u $FTP_USER_S,$FTP_PASS_S $FTP_HOST_S; mirror -Rnev ./ $DIR_PATH --no-symlinks --ignore-time --only-newer --parallel=10 --exclude-glob .git* --exclude .git/ --exclude bootstrap/cache/ --exclude storage/media-library/temp --exclude public/error_log --exclude storage/ --exclude .htaccess --exclude .env --exclude vendor/  --no-perms"
-    - php artisan biva:autoinstall
+    #- php artisan biva:autoinstall
+    - "D:\xampp\php\php.exe artisan biva:autoinstall" # Explicit path to PHP
     #- php composer.phar install
     #- composer dump-autoload
     #- php artisan cache:clear
