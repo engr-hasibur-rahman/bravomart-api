@@ -11,6 +11,12 @@ services:
         environment:
             WWWUSER: "${WWWUSER}"
             LARAVEL_SAIL: 1
+            DB_CONNECTION: "${DB_CONNECTION}"
+            DB_HOST: "${DB_HOST}"
+            DB_PORT: "${DB_PORT}"
+            DB_DATABASE: "${DB_DATABASE}"
+            DB_USERNAME: "${DB_USERNAME}"
+            DB_PASSWORD: "${DB_PASSWORD}"
         volumes:
             - ".:/var/www/html"
         networks:
