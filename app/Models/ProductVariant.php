@@ -12,6 +12,7 @@ class ProductVariant extends Model
         'product_id',
         'variant_slug',
         'sku',
+        'price',
         'pack_quantity',
         'weight_major',
         'weight_gross',
