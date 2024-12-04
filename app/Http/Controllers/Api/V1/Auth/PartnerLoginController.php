@@ -34,7 +34,7 @@ class PartnerLoginController extends Controller
             return ["success" => false,"token" => null, "permissions" => []];
         }
         $email_verified = $user->hasVerifiedEmail();
-
+        //Get Permission
         //$permissions=$user->rolePermissionsQuery()->where('available_for','store_level')->whereNull('parent_id')->with('childrenRecursive')->get();
         $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
 
