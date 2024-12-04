@@ -90,11 +90,11 @@ class MediaService
     public function load_more_images($request){
         $image_query = Media::query();
         $image_query->where('user_id', auth('sanctum')->id());
-        dd($request->skip);
+        $offset = $request->get('offset', 0);
         $all_images = $image_query
-            ->orderBy('id', 'DESC')
-            ->skip($request->skip)
-            ->take(20)
+            ->orderBy('id', 'ASC')
+            ->skip($offset)
+            ->take(2)
             ->get();
 
         $all_image_files = [];
@@ -103,7 +103,7 @@ class MediaService
             // Generate the public URL directly
             $image_url = asset("storage/{$image->path}");
             // Check if the grid version exists (without file_exists, use URL generation)
-            $grid_image_url = asset("storage/uploads/media-uploader/grid-" . basename($image->path));
+            $grid_image_url = asset("storage/uploads/media-uploader/default/grid-" . basename($image->path));
 
             // If the grid version URL is valid, use that
             if ($grid_image_url) {
