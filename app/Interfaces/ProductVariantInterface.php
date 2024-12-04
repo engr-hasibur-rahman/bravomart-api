@@ -8,4 +8,5 @@ interface ProductVariantInterface{
     public function update(array $data);
     public function delete(int|string $id);
     public function getVariantById(int|string $id);
+    public function records(bool $onlyDeleted);
 }

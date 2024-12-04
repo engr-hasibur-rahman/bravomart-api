@@ -61,4 +61,12 @@ class ProductVariantController extends Controller
         $this->productVariantRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
     }
+    public function deleted_records(){
+        $records = $this->productVariantRepo->records(true);
+
+        return response ()->json([
+            "data"=> $records,
+            "massage" => "Records were restored successfully!"
+        ],201);
+    }
 }

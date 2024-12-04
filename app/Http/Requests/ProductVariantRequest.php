@@ -25,7 +25,9 @@ class ProductVariantRequest extends FormRequest
     {
         return [
             // Validate that 'product_id' is either null or exists in the 'products' table.
-            'product_id' => 'nullable|exists:products,id',
+            'product_id' => 'required|exists:products,id',
+            // Validate that 'product_id' is either null or exists in the 'products' table.
+            // 'product_id' => 'nullable|exists:products,id',
 
             // Ensure 'variant_slug' is a unique string with a maximum length of 255 characters.
             // Exclude the current record (for update scenarios) using $this->id.
@@ -63,8 +65,10 @@ class ProductVariantRequest extends FormRequest
             // Ensure 'stock_quantity' is a required integer that cannot be negative.
             'stock_quantity' => 'required|integer|min:0',
 
-            // Validate that 'unit_id' is either null or exists in the 'units' table.
-            'unit_id' => 'nullable|exists:units,id',
+            // Validate that 'unit_id' is either null.
+            'unit_id' => 'nullable',
+            // // Validate that 'unit_id' is either null or exists in the 'units' table.
+            // 'unit_id' => 'nullable|exists:units,id',
 
             // Validate 'length' as a nullable numeric value that cannot be negative.
             'length' => 'nullable|numeric|min:0',
@@ -89,11 +93,12 @@ class ProductVariantRequest extends FormRequest
     {
         return [
             // Custom messages for each validation rule to provide user-friendly feedback.
+            'product_id.required' => 'The product is required. ',
             'product_id.exists' => 'The selected product does not exist.',
             'variant_slug.unique' => 'The variant slug must be unique.',
             'sku.unique' => 'The SKU must be unique.',
             'special_price.lte' => 'The special price must be less than or equal to the base price.',
-            'unit_id.exists' => 'The selected unit does not exist.',
+            //'unit_id.exists' => 'The selected unit does not exist.',
             'stock_quantity.required' => 'Stock quantity is required.',
             'status.in' => 'The status must be either 0 (inactive) or 1 (active).',
         ];

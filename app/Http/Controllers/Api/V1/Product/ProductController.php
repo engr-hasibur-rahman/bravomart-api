@@ -56,4 +56,11 @@ class ProductController extends Controller
         $this->productRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
     }
+    public function deleted_records(){
+        $records = $this->productRepo->records(true);
+        return response ()->json([
+            "data"=> $records,
+            "massage" => "Records were restored successfully!"
+        ],201);
+    }
 }

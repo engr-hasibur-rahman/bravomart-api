@@ -45,6 +45,7 @@ return new class extends Migration
             $table->enum('status', array_map(fn($enum) => $enum->value, StatusType::cases()))->nullable(); //pending, approved, inactive, suspended
             $table->timestamp('available_time_starts')->nullable(); //Only for Food Item
             $table->timestamp('available_time_ends')->nullable(); //Only for Food Item
+            $table->softDeletes();
             $table->timestamps();
         });
     }

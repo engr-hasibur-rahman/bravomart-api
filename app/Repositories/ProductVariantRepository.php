@@ -60,7 +60,7 @@ class ProductVariantRepository implements ProductVariantInterface
     public function getVariantById(int|string $id)
     {
         try {
-            $variant = ProductVariant::find($id);
+            $variant = ProductVariant::with(['product', 'unit'])->find($id);
             if ($variant) {
                 return response()->json([
                     "data" => $variant->toArray(),
@@ -81,6 +81,23 @@ class ProductVariantRepository implements ProductVariantInterface
             $variant = ProductVariant::findOrFail($id);
             $variant->delete();
             return true;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+    public function records(bool $onlyDeleted = false)
+    {
+        try {
+            switch ($onlyDeleted) {
+                case true:
+                    $records = ProductVariant::onlyTrashed()->get();
+                    break;
+
+                default:
+                    $records = ProductVariant::withTrashed()->get();
+                    break;
+            }
+            return $records;
         } catch (\Throwable $th) {
             throw $th;
         }

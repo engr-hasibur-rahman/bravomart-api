@@ -144,4 +144,21 @@ class ProductManageRepository implements ProductManageInterface
         }
         return true;
     }
+    public function records(bool $onlyDeleted = false)
+    {
+        try {
+            switch ($onlyDeleted) {
+                case true:
+                    $records = Product::onlyTrashed()->get();
+                    break;
+
+                default:
+                    $records = Product::withTrashed()->get();
+                    break;
+            }
+            return $records;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 }
