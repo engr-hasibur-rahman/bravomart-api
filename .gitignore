@@ -4,6 +4,7 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/framework/views/
 /vendor
 .env
 .env.backup
@@ -21,3 +22,4 @@ yarn-error.log
 docker-compose.yml
 temp
 logs
+vendor
