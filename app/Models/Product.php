@@ -51,4 +51,13 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class, "product_id");
     }
+    public function tag()
+    {
+        return $this->belongsTo(Tag::class, "tag_id");
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, "unit_id");
+    }
 }

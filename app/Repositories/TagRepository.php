@@ -1,15 +1,14 @@
 <?php
 
 namespace App\Repositories;
-
 use App\Interfaces\TagInterface;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+
 use App\Models\Tag;
 use App\Models\Translation;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Arr;
-
-
 class TagRepository implements TagInterface
 {
     public function __construct(protected Tag $tag, protected Translation $translation) {}

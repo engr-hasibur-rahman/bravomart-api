@@ -27,7 +27,7 @@ class ProductVariant extends Model
         'image',
         'order_count',
         'status',
-    ] ;
+    ];
 
     protected $casts = [
         'pack_quantity' => 'decimal:2',
@@ -36,7 +36,12 @@ class ProductVariant extends Model
         'weight_net' => 'decimal:2',
     ];
 
-    public function product(){
-        return $this->belongsTo(Product::class,"product_id");
+    public function product()
+    {
+        return $this->belongsTo(Product::class, "product_id");
+    }
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, "unit_id");
     }
 }

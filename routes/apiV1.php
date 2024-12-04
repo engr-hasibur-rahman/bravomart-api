@@ -69,9 +69,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('product/list', [ProductController::class, 'index']);
         Route::get('product/{id}', [ProductController::class, 'show']);
         Route::post('product/add', [ProductController::class, 'store']);
-        Route::post('product/update', [ProductAttributeController::class, 'update']);
+        Route::post('product/update', [ProductController::class, 'update']);
         Route::put('product/status/{id}', [ProductController::class, 'status_update']);
         Route::delete('product/remove/{id}', [ProductController::class, 'destroy']);
+    });
+     //Product Variant Management 
+     Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::get('product/variant/list', [ProductController::class, 'index']);
+        Route::get('product/variant/{id}', [ProductController::class, 'show']);
+        Route::post('product/variant/add', [ProductController::class, 'store']);
+        Route::post('product/variant/update', [ProductAttributeController::class, 'update']);
+        Route::put('product/variant/status/{id}', [ProductController::class, 'status_update']);
+        Route::delete('product/variant/remove/{id}', [ProductController::class, 'destroy']);
     });
     // Product Author Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
