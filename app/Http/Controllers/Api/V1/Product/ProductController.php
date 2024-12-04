@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Api\V1\Product;
 use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
+use App\Http\Requests\ProductVariantRequest;
 use App\Interfaces\ProductManageInterface;
+use App\Interfaces\ProductVariantInterface;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function __construct(protected ProductManageInterface $productRepo) {}
+    public function __construct(protected ProductManageInterface $productRepo, protected ProductVariantInterface $variantRepo) {}
     public function index(Request $request)
     {
         return $this->productRepo->getPaginatedProduct(
@@ -26,12 +28,11 @@ class ProductController extends Controller
         );
     }
     public function store(ProductRequest $request): JsonResponse
-    {
+    {       
         $slug = MultilangSlug::makeSlug(Product::class, $request->name,'slug');
         $request['slug'] = $slug;
         $product = $this->productRepo->store($request->all());
         $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
-        
         if ($product) {
             return $this->success(translate('messages.save_success', ['name' => 'Product']));
         } else {
@@ -46,9 +47,9 @@ class ProductController extends Controller
     {
         $product = $this->productRepo->update($request->all());
         if ($product) {
-            return $this->success(translate('messages.update_success', ['name' => 'Tag']));
+            return $this->success(translate('messages.update_success', ['name' => 'Product']));
         } else {
-            return $this->failed(translate('messages.update_failed', ['name' => 'Tag']));
+            return $this->failed(translate('messages.update_failed', ['name' => 'Product']));
         }
     }
     public function destroy($id)

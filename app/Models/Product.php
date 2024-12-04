@@ -50,7 +50,7 @@ class Product extends Model
     {
         return $this->morphMany(Translation::class, 'translatable');
     }
-    public function variant()
+    public function variants()
     {
         return $this->hasMany(ProductVariant::class, "product_id");
     }

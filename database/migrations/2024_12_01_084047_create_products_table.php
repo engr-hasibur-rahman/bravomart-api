@@ -24,7 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger('tag_id')->nullable();
             $table->enum('type', array_map(fn($enum) => $enum->value, StoreType::cases()))->nullable(); //medicine/ furniture/ DOOR/ FOOD/ GROCERY
             $table->enum('behaviour', array_map(fn($enum) => $enum->value, Behaviour::cases()))->nullable(); //1. product 2. consu 3. combo 4. service
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('slug')->nullable();
             $table->longText('description')->nullable();
             $table->string('image')->nullable();

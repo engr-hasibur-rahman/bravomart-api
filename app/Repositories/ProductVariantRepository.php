@@ -36,9 +36,21 @@ class ProductVariantRepository implements ProductVariantInterface
     }
     public function store(array $data)
     {
+        // try {
+        //     $variant = ProductVariant::create($data);
+        //     return true;
+        // } catch (\Throwable $th) {
+        //     throw $th;
+        // }
         try {
-            $variant = ProductVariant::create($data);
-            return true;
+            // 3. Handle Variants (If available)
+            if (!empty($data['variants'])) {
+                foreach ($data['variants'] as $variantData) {
+
+                    // Create the product variant
+                    ProductVariant::create($variantData);
+                }
+            }
         } catch (\Throwable $th) {
             throw $th;
         }

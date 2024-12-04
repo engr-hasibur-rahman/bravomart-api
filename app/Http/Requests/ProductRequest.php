@@ -25,27 +25,23 @@ class ProductRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
-        return [
+    {       
+
+
+        $rules = [
             "shop_id" => "required",
             "category_id" => "required",
             "brand_id" => "required",
             "unit_id" => "required",
             "attribute_id" => "required",
             "tag_id" => "required",
-            // "shop_id" => "required|exists:shops,id",
-            // "category_id" => "required|exists:categories,id",
-            // "brand_id" => "required|exists:brands,id",
-            // "unit_id" => "required|exists:units,id",
-            // "attribute_id" => "required|exists:attributes,id",
-            // "tag_id" => "required|exists:tags,id",
             "type" => "required|in:" . implode(',', array_column(StoreType::cases(), 'value')),
             "name" => "required",
             "description" => "required",
             "image" => "nullable",
             "gallery_images" => "nullable",
             "warranty" => "nullable",
-            "return_in_dsays" => "nullable",
+            "return_in_days" => "nullable",
             "cash_on_delivery" => "nullable",
             "behaviour" => "required|in:" . implode(',', array_column(Behaviour::cases(), 'value')),
             "delivery_time_min" => "nullable",
@@ -54,40 +50,60 @@ class ProductRequest extends FormRequest
             "attributes" => "required",
             "status" => "required|in:" . implode(',', array_column(StatusType::cases(), 'value')),
         ];
+
+        // Conditional validation for variants
+        //     if ($this->has('variants') && is_array($this->input('variants')) && count($this->input('variants')) > 0) {
+        //     $rules['variants'] = 'required|array';
+        //     $rules['variants.*.variant_slug'] = 'nullable|string|max:255|unique:product_variants,variant_slug';
+        //     $rules['variants.*.sku'] = 'nullable|string|max:255|unique:product_variants,sku';
+        //     $rules['variants.*.pack_quantity'] = 'nullable|numeric|min:0';
+        //     $rules['variants.*.price'] = 'nullable|numeric|min:0';
+        //     $rules['variants.*.stock_quantity'] = 'required|integer|min:0';
+        //     $rules['variants.*.special_price'] = 'nullable|numeric|min:0|lte:variants.*.price';
+        //     $rules['variants.*.color'] = 'nullable|string|max:255';
+        //     $rules['variants.*.size'] = 'nullable|string|max:255';
+        // }
+
+         // Conditional validation for variants
+    if ($this->has('variants') && is_array($this->input('variants')) && count($this->input('variants')) > 0) {
+        $rules['variants'] = 'required|array';
+        $rules['variants.*.variant_slug'] = 'nullable|string|max:255|unique:product_variants,variant_slug,' . ($this->route('product') ?? 0) . ',id'; // Ignore the unique validation for the current record when updating
+        $rules['variants.*.sku'] = 'nullable|string|max:255|unique:product_variants,sku,' . ($this->route('product') ?? 0) . ',id'; // Ignore the unique validation for the current record when updating
+        $rules['variants.*.pack_quantity'] = 'nullable|numeric|min:0';
+        $rules['variants.*.price'] = 'nullable|numeric|min:0';
+        $rules['variants.*.stock_quantity'] = 'required|integer|min:0';
+        $rules['variants.*.special_price'] = 'nullable|numeric|min:0|lte:variants.*.price'; // You might need custom logic for dynamic comparison
+        $rules['variants.*.color'] = 'nullable|string|max:255';
+        $rules['variants.*.size'] = 'nullable|string|max:255';
+    }
+
+        return $rules;
+
     }
     public function messages()
     {
+        
         return [
             "shop_id.required" => "The shop ID is required.",
-            //"shop_id.exists" => "The selected shop does not exist.",
             "category_id.required" => "The category ID is required.",
-            //"category_id.exists" => "The selected category does not exist.",
             "brand_id.required" => "The brand ID is required.",
-            //"brand_id.exists" => "The selected brand does not exist.",
             "unit_id.required" => "The unit ID is required.",
-            //"unit_id.exists" => "The selected unit does not exist.",
             "attribute_id.required" => "The attribute ID is required.",
-            //"attribute_id.exists" => "The selected attribute does not exist.",
             "tag_id.required" => "The tag ID is required.",
-            //"tag_id.exists" => "The selected tag does not exist.",
-            "type.required" => "The status is required. Valid statuses are: " . $this->getEnumValues(StoreType::class),
-            "type.in" => "The selected status is invalid. Valid statuses are: " . $this->getEnumValues(StoreType::class),
-            "behaviour.required" => "The status is required. Valid statuses are: " . $this->getEnumValues(Behaviour::class),
-            "behaviour.in" => "The selected status is invalid. Valid statuses are: " . $this->getEnumValues(Behaviour::class),
+            "type.required" => "The type is required.",
+            "type.in" => "The selected type is invalid.",
             "name.required" => "The product name is required.",
-            "slug.required" => "The slug is required and must be unique.",
             "description.required" => "The product description is required.",
-            // "image.required" => "The main image of the product is required.",
-            // "gallery_images.required" => "Gallery images are required.",
-            // "warranty.required" => "Warranty information is required.",
-            // "return_in_dsays.required" => "The return policy duration is required.",
-            // "cash_on_delivery.required" => "Specify if cash on delivery is available.",
-            // "delivery_time_min.required" => "The minimum delivery time is required.",
-            // "delivery_time_max.required" => "The maximum delivery time is required.",
-            // "delivery_time_text.required" => "Delivery time text is required.",
-            "attributes.required" => "Attributes must be specified.",
-            "status.required" => "The status is required. Valid statuses are: " . $this->getEnumValues(StatusType::class),
-            "status.in" => "The selected status is invalid. Valid statuses are: " . $this->getEnumValues(StatusType::class),
+            "behaviour.required" => "The behaviour is required.",
+            "behaviour.in" => "The selected behaviour is invalid.",
+            "attributes.required" => "Attributes are required.",
+            "status.required" => "The status is required.",
+            "status.in" => "The selected status is invalid.",
+            "variants.required" => "Variants are required when included.",
+            "variants.*.variant_slug.unique" => "Each variant slug must be unique.",
+            "variants.*.sku.unique" => "Each SKU must be unique.",
+            "variants.*.stock_quantity.required" => "Stock quantity is required for each variant.",
+            "variants.*.special_price.lte" => "Special price must be less than or equal to the price.",
         ];
     }
     private function getEnumValues(string $enumClass): string
