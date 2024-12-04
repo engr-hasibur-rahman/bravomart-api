@@ -2,8 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Helpers\MultilangSlug;
 use App\Interfaces\ProductManageInterface;
+use App\Interfaces\ProductVariantInterface;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +14,7 @@ use Illuminate\Support\Arr;
 
 class ProductManageRepository implements ProductManageInterface
 {
-    public function __construct(protected Product $product, protected Translation $translation) {}
+    public function __construct(protected Product $product, protected Translation $translation, protected ProductVariantInterface $variantRepo) {}
     public function translationKeys(): mixed
     {
         return $this->product->translationKeys;
@@ -56,6 +59,23 @@ class ProductManageRepository implements ProductManageInterface
         try {
             $data = Arr::except($data, ['translations']);
             $product = Product::create($data);
+
+            // If variants exist 
+            if (!empty($data['variants']) && is_array($data['variants'])) {
+                $variants = array_map(function ($variant) use ($product) {
+                    // Generate the variant slug
+                    $variant_slug = MultilangSlug::makeSlug(ProductVariant::class, $variant['variant_slug'], 'variant_slug');
+                    $variant['variant_slug'] = $variant_slug; // Assign the generated slug
+
+                    // Generate a SKU for the variant
+                    $sku = generateUniqueSku(); // This function generates a unique SKU
+                    $variant['sku'] = $sku; // Assign the generated SKU
+                    $variant['product_id'] = $product->id;
+                    return $variant;
+                }, $data['variants']);
+                // insert all variants at once
+                ProductVariant::insert($variants);
+            }
             return $product->id;
         } catch (\Throwable $th) {
             throw $th;
@@ -64,14 +84,36 @@ class ProductManageRepository implements ProductManageInterface
     public function update(array $data)
     {
         try {
+            // Retrieve the product by ID
             $product = Product::findOrFail($data['id']);
-            if ($product) {
-                $data = Arr::except($data, ['translations']);
-                $product->update($data);
-                return true;
-            } else {
-                return false;
+
+            // Exclude translations from the update data
+            $data = Arr::except($data, ['translations']);
+
+            // Update the product details
+            $product->update($data);
+
+            // Check if variants exist in the request
+            if (!empty($data['variants']) && is_array($data['variants'])) {
+                foreach ($data['variants'] as $variantData) {
+                    // Handle each variant
+                    $variant = ProductVariant::find($variantData['id']);
+
+                    // If variant doesn't exist, create a new one
+                    if (!$variant) {
+                        $variant = new ProductVariant();
+                    }
+
+                    // Assign the product_id to the variant
+                    $variantData['product_id'] = $product->id;
+
+                    // Update or create the variant
+                    $variant->fill($variantData);
+                    $variant->save();
+                }
             }
+
+            return $product->id;
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -143,5 +185,22 @@ class ProductManageRepository implements ProductManageInterface
             $this->translation->insert($translations);
         }
         return true;
+    }
+    public function records(bool $onlyDeleted = false)
+    {
+        try {
+            switch ($onlyDeleted) {
+                case true:
+                    $records = Product::onlyTrashed()->get();
+                    break;
+
+                default:
+                    $records = Product::withTrashed()->get();
+                    break;
+            }
+            return $records;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
