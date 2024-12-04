@@ -3,6 +3,8 @@
 use App\Helpers;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+
 
 if (! function_exists('remove_invalid_charcaters')) {
     function remove_invalid_charcaters($str)
@@ -45,6 +47,7 @@ if (! function_exists('translate')) {
 
         //return $result;
     }
+    //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
     if (! function_exists('slug_generator')) {
         /**
          * Generate a unique slug for a given model and field.
@@ -70,7 +73,28 @@ if (! function_exists('translate')) {
             return $slug;
         }
     }
-
+    if (!function_exists('generateUniqueSku')) {
+        /**
+         * Generate a unique SKU for a product variant.
+         *
+         * @param string $prefix Prefix for the SKU (optional)
+         * @param int $length Length of the random part of the SKU
+         * @return string Unique SKU
+         */
+        function generateUniqueSku($prefix = '', $length = 8)
+        {
+            do {
+                // Generate a random SKU using a prefix and a random string
+                $sku = strtoupper($prefix) . Str::random($length);
+    
+                // Check if the SKU already exists in the `product_variants` table
+                $exists = DB::table('product_variants')->where('sku', $sku)->exists();
+            } while ($exists); // Repeat until a unique SKU is found
+    
+            return $sku;
+        }
+    }
+    //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
     function formatBytes($size, $precision = 2)
     {
         $base = log($size, 1024);
@@ -78,5 +102,6 @@ if (! function_exists('translate')) {
 
         return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
     }
+    
 
 }

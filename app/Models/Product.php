@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected $dates = ['deleted_at'];
     protected $table = "products";
     protected $fillable = [
         "shop_id",
@@ -47,8 +50,17 @@ class Product extends Model
     {
         return $this->morphMany(Translation::class, 'translatable');
     }
-    public function variant()
+    public function variants()
     {
         return $this->hasMany(ProductVariant::class, "product_id");
+    }
+    public function tag()
+    {
+        return $this->belongsTo(Tag::class, "tag_id");
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, "unit_id");
     }
 }

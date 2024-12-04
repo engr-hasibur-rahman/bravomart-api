@@ -4,14 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class ProductVariant extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
+    protected $dates = ['deleted_at'];
     protected $fillable = [
         'product_id',
         'variant_slug',
         'sku',
+        'price',
         'pack_quantity',
         'weight_major',
         'weight_gross',
@@ -27,7 +31,7 @@ class ProductVariant extends Model
         'image',
         'order_count',
         'status',
-    ] ;
+    ];
 
     protected $casts = [
         'pack_quantity' => 'decimal:2',
@@ -36,7 +40,12 @@ class ProductVariant extends Model
         'weight_net' => 'decimal:2',
     ];
 
-    public function product(){
-        return $this->belongsTo(Product::class,"product_id");
+    public function product()
+    {
+        return $this->belongsTo(Product::class, "product_id");
+    }
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, "unit_id");
     }
 }

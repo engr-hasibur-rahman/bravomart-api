@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
+use App\Http\Controllers\Api\V1\Product\ProductVariantController;
 use App\Http\Controllers\Api\V1\UnitManageController;
 use Illuminate\Support\Facades\Route;
 
@@ -69,9 +70,20 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('product/list', [ProductController::class, 'index']);
         Route::get('product/{id}', [ProductController::class, 'show']);
         Route::post('product/add', [ProductController::class, 'store']);
-        Route::post('product/update', [ProductAttributeController::class, 'update']);
+        Route::post('product/update', [ProductController::class, 'update']);
         Route::put('product/status/{id}', [ProductController::class, 'status_update']);
         Route::delete('product/remove/{id}', [ProductController::class, 'destroy']);
+        Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
+    });
+     //Product Variant Management 
+     Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::get('product/variant/list', [ProductVariantController::class, 'index']);
+        Route::get('product/variant/{id}', [ProductVariantController::class, 'show']);
+        Route::post('product/variant/add', [ProductVariantController::class, 'store']);
+        Route::post('product/variant/update', [ProductVariantController::class, 'update']);
+        Route::put('product/variant/status/{id}', [ProductVariantController::class, 'status_update']);
+        Route::delete('product/variant/remove/{id}', [ProductVariantController::class, 'destroy']);
+        Route::get('product/variant/deleted/records', [ProductVariantController::class, 'deleted_records']);
     });
     // Product Author Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
