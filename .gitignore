@@ -22,3 +22,4 @@ yarn-error.log
 docker-compose.yml
 temp
 logs
+vendor
