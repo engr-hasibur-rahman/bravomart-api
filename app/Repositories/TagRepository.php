@@ -43,7 +43,7 @@ class TagRepository implements TagInterface
         // Apply sorting and pagination
         // Return the result
         return $tag
-            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
     public function store(array $data)

@@ -31,7 +31,7 @@ class ProductVariantRepository implements ProductVariantInterface
         }
         // Apply sorting and pagination
         return $variant
-            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
     public function store(array $data)

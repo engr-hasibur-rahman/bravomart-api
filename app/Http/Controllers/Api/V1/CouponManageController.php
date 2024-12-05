@@ -16,7 +16,7 @@ class CouponManageController extends Controller
         return $this->couponRepo->getPaginatedCoupon(
             $request->limit ?? 10,
             $request->page ?? 1,
-            app()->getLocale() ?? DEFAULT_LANGUAGE,
+            $request->language ?? DEFAULT_LANGUAGE,
             $request->search ?? "",
             $request->sortField ?? 'id',
             $request->sort ?? 'asc',

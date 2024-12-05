@@ -43,7 +43,7 @@ class UnitRepository implements UnitInterface
         // Apply sorting and pagination
         // Return the result
         return $unit
-            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
     public function store(array $data)
