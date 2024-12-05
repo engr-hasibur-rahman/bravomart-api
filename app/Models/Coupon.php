@@ -27,4 +27,8 @@ class Coupon extends Model
     {
         return $this->morphMany(Translation::class, 'translatable');
     }
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 }

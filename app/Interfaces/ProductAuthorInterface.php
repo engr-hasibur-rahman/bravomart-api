@@ -12,5 +12,6 @@ interface ProductAuthorInterface
     public function delete(int|string $id);
     public function changeStatus(array $data);
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames);
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames);
     public function translationKeys();
 }

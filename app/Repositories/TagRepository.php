@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Interfaces\TagInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use App\Models\Tag;
 use App\Models\Translation;
 
 use Illuminate\Support\Arr;
+
 class TagRepository implements TagInterface
 {
     public function __construct(protected Tag $tag, protected Translation $translation) {}
@@ -91,7 +93,7 @@ class TagRepository implements TagInterface
             if ($tag) {
                 $data = Arr::except($data, ['translations']);
                 $tag->update($data);
-                return true;
+                return $tag->id;
             } else {
                 return false;
             }
@@ -103,7 +105,19 @@ class TagRepository implements TagInterface
     {
         try {
             $tag = Tag::findOrFail($id);
+            $this->deleteTranslation($tag->id, Tag::class);
             $tag->delete();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+    private function deleteTranslation(int|string $id, string $translatable_type)
+    {
+        try {
+            $translation = Translation::where('translatable_id', $id)
+                ->where('translatable_type', $translatable_type)
+                ->delete();
             return true;
         } catch (\Throwable $th) {
             throw $th;
@@ -131,6 +145,43 @@ class TagRepository implements TagInterface
                         'key' => $key,
                         'value' => $translatedValue,
                     ];
+                }
+            }
+        }
+        if (count($translations)) {
+            $this->translation->insert($translations);
+        }
+        return true;
+    }
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+    {
+        $translations = [];
+        if ($request['translations']) {
+            foreach ($request['translations'] as $translation) {
+                foreach ($colNames as $key) {
+
+                    // Fallback value if translation key does not exist
+                    $translatedValue = $translation[$key] ?? null;
+
+                    // Skip translation if the value is NULL
+                    if ($translatedValue === null) {
+                        continue; // Skip this field if it's NULL
+                    }
+
+                    $trans = $this->translation->where('translatable_type', $refPath)->where('translatable_id', $refid)
+                        ->where('language', $translation['language_code'])->where('key', $key)->first();
+                    if ($trans != null) {
+                        $trans->value = $translatedValue;
+                        $trans->save();
+                    } else {
+                        $translations[] = [
+                            'translatable_type' => $refPath,
+                            'translatable_id' => $refid,
+                            'language' => $translation['language_code'],
+                            'key' => $key,
+                            'value' => $translatedValue,
+                        ];
+                    }
                 }
             }
         }
