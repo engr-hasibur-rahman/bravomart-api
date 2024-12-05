@@ -130,7 +130,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
     });
 
-    // Media uploader
+    /*--------------------- Media Manage ----------------------------*/
     Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         Route::group(['prefix' => 'media-upload'], function () {
             Route::post('/store',[MediaController::class, 'mediaUpload']);
@@ -140,5 +140,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
     });
 
+    /*--------------------- System management ----------------------------*/
+    // General Settings
+    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['prefix' => 'system-management'], function () {
+            Route::get('/general-settings',[SystemManagement::class, 'generalSettings']);
+        });
+    });
 
 });
