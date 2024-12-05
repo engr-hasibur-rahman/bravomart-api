@@ -54,6 +54,7 @@ return new class extends Migration
             $table->string('category_name_paths')->nullable();
             $table->string('parent_path')->nullable();
             $table->integer('parent_id')->nullable();
+            $table->integer('category_level')->nullable();
             $table->boolean('is_featured')->default(1);
             $table->double('admin_commission_rate')->nullable();
             $table->string('category_thumb')->nullable();

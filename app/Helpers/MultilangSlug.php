@@ -58,7 +58,7 @@ class MultilangSlug
             $query = $model::query();
 
             $cleanString = preg_replace("/[~`{}.'\"\!\@\#\$\%\^\&\*\(\)\_\=\+\/\?\>\<\,\[\]\:\;\|\\\]/", "", $slugText);
-            $cleanString = preg_replace("/[\/_|+ -]+/", '-', $slugText);
+            $cleanString = preg_replace("/[\/_|+ -]+/", '-', $cleanString);
             $slug = strtolower($cleanString);
 
             if ($field) {

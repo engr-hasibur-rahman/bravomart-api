@@ -28,8 +28,8 @@ class ProductCategoryResource extends JsonResource
             'parent_id' => $this->parent_id,
             'childrenRecursive' => ProductChildCategoryResource::collection($this->childrenRecursive),
             'category_slug' => $locales['category_slug']['value'] ?? $this->category_slug,
-            'category_banner' => $this->getFirstMediaUrl('category_banner'), // Fetch the URL of the brand logo
-            'category_thumb' => $this->getFirstMediaUrl('category_thumb'), // Fetch the URL of the brand logo
+            'category_banner' => '', //$this->getFirstMediaUrl('category_banner'), // Fetch the URL of the brand logo
+            'category_thumb' => '', //$this->getFirstMediaUrl('category_thumb'), // Fetch the URL of the brand logo
             'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
             'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
             'category_name_paths' => $this->category_name_paths,
