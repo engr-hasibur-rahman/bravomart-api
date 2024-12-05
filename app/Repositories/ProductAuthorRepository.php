@@ -73,7 +73,7 @@ class ProductAuthorRepository implements ProductAuthorInterface
             if ($author) {
                 $data = Arr::except($data, ['translations']);
                 $author->update($data);
-                return true;
+                return $author->id;
             } else {
                 return false;
             }
@@ -122,7 +122,19 @@ class ProductAuthorRepository implements ProductAuthorInterface
     {
         try {
             $author = ProductAuthor::findOrFail($id);
+            $this->deleteTranslation($author->id, ProductAuthor::class);
             $author->delete();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+    private function deleteTranslation(int|string $id, string $translatable_type)
+    {
+        try {
+            $translation = Translation::where('translatable_id', $id)
+                ->where('translatable_type', $translatable_type)
+                ->delete();
             return true;
         } catch (\Throwable $th) {
             throw $th;
@@ -150,6 +162,43 @@ class ProductAuthorRepository implements ProductAuthorInterface
                         'key' => $key,
                         'value' => $translatedValue,
                     ];
+                }
+            }
+        }
+        if (count($translations)) {
+            $this->translation->insert($translations);
+        }
+        return true;
+    }
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+    {
+        $translations = [];
+        if ($request['translations']) {
+            foreach ($request['translations'] as $translation) {
+                foreach ($colNames as $key) {
+
+                    // Fallback value if translation key does not exist
+                    $translatedValue = $translation[$key] ?? null;
+
+                    // Skip translation if the value is NULL
+                    if ($translatedValue === null) {
+                        continue; // Skip this field if it's NULL
+                    }
+
+                    $trans = $this->translation->where('translatable_type', $refPath)->where('translatable_id', $refid)
+                        ->where('language', $translation['language_code'])->where('key', $key)->first();
+                    if ($trans != null) {
+                        $trans->value = $translatedValue;
+                        $trans->save();
+                    } else {
+                        $translations[] = [
+                            'translatable_type' => $refPath,
+                            'translatable_id' => $refid,
+                            'language' => $translation['language_code'],
+                            'key' => $key,
+                            'value' => $translatedValue,
+                        ];
+                    }
                 }
             }
         }

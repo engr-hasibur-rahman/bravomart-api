@@ -43,6 +43,7 @@ class TagManageController extends Controller
     public function update(TagRequest $request)
     {
         $tag = $this->tagRepo->update($request->all());
+        $this->tagRepo->updateTranslation($request, $tag, 'App\Models\Tag', $this->tagRepo->translationKeys());
         if ($tag) {
             return $this->success(translate('messages.update_success', ['name' => 'Tag']));
         } else {

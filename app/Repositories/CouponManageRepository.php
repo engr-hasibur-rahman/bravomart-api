@@ -2,47 +2,52 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\TagInterface;
+use App\Interfaces\CouponManageInterface;
+use App\Models\Coupon;
+use App\Models\Translation;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 
-use App\Models\Tag;
-use App\Models\Translation;
-
-use Illuminate\Support\Arr;
-
-class TagRepository implements TagInterface
+class CouponManageRepository implements CouponManageInterface
 {
-    public function __construct(protected Tag $tag, protected Translation $translation) {}
+    public function __construct(protected Coupon $coupon, protected Translation $translation) {}
     public function translationKeys(): mixed
     {
-        return $this->tag->translationKeys;
+        return $this->coupon->translationKeys;
     }
     public function model(): string
     {
-        return Tag::class;
+        return Coupon::class;
     }
-    public function getPaginatedTag(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedCoupon(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $tag = Tag::leftJoin('translations', function ($join) use ($language) {
-            $join->on('tags.id', '=', 'translations.translatable_id')
-                ->where('translations.translatable_type', '=', Tag::class)
-                ->where('translations.language', '=', $language)
-                ->where('translations.key', '=', 'name');
+        $coupon = Coupon::leftJoin('translations as name_translations', function ($join) use ($language) {
+            $join->on('coupons.id', '=', 'name_translations.translatable_id')
+                ->where('name_translations.translatable_type', '=', Coupon::class)
+                ->where('name_translations.language', '=', $language)
+                ->where('name_translations.key', '=', 'name');
         })
+            ->leftJoin('translations as description_translations', function ($join) use ($language) {
+                $join->on('coupons.id', '=', 'description_translations.translatable_id')
+                    ->where('description_translations.translatable_type', '=', Coupon::class)
+                    ->where('description_translations.language', '=', $language)
+                    ->where('description_translations.key', '=', 'description');
+            })
             ->select(
-                'tags.*',
-                DB::raw('COALESCE(translations.value, tags.name) as name')
+                'coupons.*',
+                DB::raw('COALESCE(name_translations.value, coupons.title) as title'),
+                DB::raw('COALESCE(description_translations.value, coupons.description) as description')
             );
         // Apply search filter if search parameter exists
         if ($search) {
-            $tag->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', tags.name, translations.value)"), 'like', "%{$search}%");
+            $coupon->where(function ($query) use ($search) {
+                $query->where(DB::raw("CONCAT_WS(' ', coupons.title, name_translations.value, coupons.description, description_translations.value)"), 'like', "%{$search}%");
             });
         }
         // Apply sorting and pagination
         // Return the result
-        return $tag
+        return $coupon
             ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
     }
@@ -50,30 +55,30 @@ class TagRepository implements TagInterface
     {
         try {
             $data = Arr::except($data, ['translations']);
-            $tag = Tag::create($data);
-            return $tag->id;
+            $coupon = Coupon::create($data);
+            return $coupon->id;
         } catch (\Throwable $th) {
             throw $th;
         }
     }
-    public function getTagById(int|string $id)
+    public function getCouponById(int|string $id)
     {
         try {
-            $tag = Tag::find($id);
-            $translations = $tag->translations()->get()->groupBy('language');
+            $coupon = Coupon::find($id);
+            $translations = $coupon->translations()->get()->groupBy('language');
             // Initialize an array to hold the transformed data
             $transformedData = [];
             foreach ($translations as $language => $items) {
                 $languageInfo = ['language' => $language];
                 /* iterate all Column to Assign Language Value */
-                foreach ($this->tag->translationKeys as $columnName) {
+                foreach ($this->coupon->translationKeys as $columnName) {
                     $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
                 }
                 $transformedData[] = $languageInfo;
             }
-            if ($tag) {
+            if ($coupon) {
                 return response()->json([
-                    "data" => $tag->toArray(),
+                    "data" => $coupon->toArray(),
                     'translations' => $transformedData,
                     "massage" => "Data was found"
                 ], 201);
@@ -89,11 +94,11 @@ class TagRepository implements TagInterface
     public function update(array $data)
     {
         try {
-            $tag = Tag::findOrFail($data['id']);
-            if ($tag) {
+            $coupon = Coupon::findOrFail($data['id']);
+            if ($coupon) {
                 $data = Arr::except($data, ['translations']);
-                $tag->update($data);
-                return $tag->id;
+                $coupon->update($data);
+                return $coupon->id;
             } else {
                 return false;
             }
@@ -104,9 +109,9 @@ class TagRepository implements TagInterface
     public function delete(int|string $id)
     {
         try {
-            $tag = Tag::findOrFail($id);
-            $this->deleteTranslation($tag->id, Tag::class);
-            $tag->delete();
+            $coupon = Coupon::findOrFail($id);
+            $this->deleteTranslation($coupon->id,Coupon::class);
+            $coupon->delete();
             return true;
         } catch (\Throwable $th) {
             throw $th;
