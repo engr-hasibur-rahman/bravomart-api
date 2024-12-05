@@ -5,11 +5,8 @@ namespace App\Repositories;
 use App\Interfaces\ProductAttributeInterface;
 use App\Models\ProductAttribute;
 use App\Models\Translation;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Prettus\Repository\Criteria\RequestCriteria;
-use Prettus\Repository\Exceptions\RepositoryException;
-use Prettus\Repository\Eloquent\BaseRepository;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 /**
  *
@@ -17,67 +14,48 @@ use Prettus\Repository\Eloquent\BaseRepository;
  */
 class ProductAttributeRepository implements ProductAttributeInterface
 {
-
+    public function __construct(protected ProductAttribute $attribute, protected Translation $translation) {}
+    public function translationKeys(): mixed
+    {
+        return $this->attribute->translationKeys;
+    }
     public function model()
     {
         return ProductAttribute::class;
     }
-
-    public function storeProductAttribute($request)
+    public function store(array $data)
     {
-        // Check if an id is present in the request
-        $attributeId = $request->input('id');
-
-        // Prepare data for Attribute
-        $data = [
-            'attribute_name' => $request['attribute_name'],
-        ];
-
-        if ($attributeId) {
-            // Update existing Attribute
-            $attribute = ProductAttribute::findOrFail($attributeId);
-            $attribute->update($data);
-        } else {
-            // Create new Aattribute
-            $attribute = $this->create($data);
+        try {
+            $data = Arr::except($data, ['translations']);
+            $attribute = ProductAttribute::create($data);
+            return $attribute->id;
+        } catch (\Throwable $th) {
+            throw $th;
         }
-
-        $translations = [];
-        $defaultKeys = ['attribute_name'];
-
-        // Handle translations
-        if ($request['translations']) {
-            foreach ($request['translations'] as $translation) {
-                foreach ($defaultKeys as $key) {
-
-                    // Fallback value if translation key does not exist
-                    $translatedValue = $translation[$key] ?? null;
-
-                    // Skip translation if the value is NULL
-                    if ($translatedValue === null) {
-                        continue; // Skip this field if it's NULL
-                    }
-
-                    // Collect translation data
-                    $translations[] = [
-                        'language' => $translation['language_code'],
-                        'key' => $key,
-                        'value' => $translatedValue,
-                    ];
-                }
-            }
+    }
+    public function getPaginatedAttribute(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    {
+        $tag = ProductAttribute::leftJoin('translations', function ($join) use ($language) {
+            $join->on('tags.id', '=', 'translations.translatable_id')
+                ->where('translations.translatable_type', '=', ProductAttribute::class)
+                ->where('translations.language', '=', $language)
+                ->where('translations.key', '=', 'name');
+        })
+            ->select(
+                'tags.*',
+                DB::raw('COALESCE(translations.value, tags.name) as name')
+            );
+        // Apply search filter if search parameter exists
+        if ($search) {
+            $tag->where(function ($query) use ($search) {
+                $query->where(DB::raw("CONCAT_WS(' ', tags.name, translations.value)"), 'like', "%{$search}%");
+            });
         }
-
-        // Save translations if available
-        if (!empty($translations)) {
-            // If updating, delete existing translations first
-            if ($attributeId) {
-                $attribute->translations()->delete();
-            }
-            $attribute->translations()->createMany($translations);
-        }
-
-        return $attribute;
+        // Apply sorting and pagination
+        // Return the result
+        return $tag
+            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->paginate($limit);
     }
 
 }

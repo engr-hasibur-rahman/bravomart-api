@@ -13,6 +13,9 @@ class ProductAttribute extends Model
     protected $table = 'product_attributes';
 
     protected $guarded = [];
+    public $translationKeys = [
+        'name'
+    ];
 
     public function translations()
     {
