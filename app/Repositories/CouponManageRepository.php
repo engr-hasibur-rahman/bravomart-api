@@ -48,7 +48,7 @@ class CouponManageRepository implements CouponManageInterface
         // Apply sorting and pagination
         // Return the result
         return $coupon
-            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
     public function store(array $data)

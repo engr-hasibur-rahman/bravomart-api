@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attributes', function (Blueprint $table) {
+        Schema::create('system_management', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // e.g., Color, Size
-            $table->string('slug')->unique(); // Unique identifier for the attribute
-            $table->integer('status')->default(1)->comment('0=inactive, 1=active');
             $table->timestamps();
         });
     }
@@ -25,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('system_management');
     }
 };
