@@ -151,7 +151,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
 
     /*--------------------- System management ----------------------------*/
-    // General Settings
+    // General Settings T
     Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         Route::group(['prefix' => 'system-management'], function () {
             Route::get('/general-settings',[SystemManagement::class, 'generalSettings']);
