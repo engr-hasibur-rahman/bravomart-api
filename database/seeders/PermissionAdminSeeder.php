@@ -1296,6 +1296,16 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
+                            'PermissionName' => Permission::GENERAL_SETTINGS->value,
+                            'PermissionTitle' => 'General Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'General Settings',
+                                'ar' => 'الإعدادات العامة'
+                            ]
+                        ],
+                        [
                             'PermissionName' => '',
                             'PermissionTitle' => '3rd party & configurations',
                             'activity_scope' => 'system_level',
