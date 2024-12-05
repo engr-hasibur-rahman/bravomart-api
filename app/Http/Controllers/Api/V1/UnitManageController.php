@@ -16,7 +16,7 @@ class UnitManageController extends Controller
         return $this->unitRepo->getPaginatedUnit(
             $request->limit ?? 10,
             $request->page ?? 1,
-            app()->getLocale() ?? DEFAULT_LANGUAGE,
+            $request->language ?? DEFAULT_LANGUAGE,
             $request->search ?? "",
             $request->sortField ?? 'id',
             $request->sort ?? 'asc',
@@ -40,6 +40,7 @@ class UnitManageController extends Controller
     public function update(UnitRequest $request)
     {
         $unit = $this->unitRepo->update($request->all());
+        $this->unitRepo->updateTranslation($request, $unit, 'App\Models\Unit', $this->unitRepo->translationKeys());
         if ($unit) {
             return $this->success(translate('messages.update_success', ['name' => 'Unit']));
         } else {

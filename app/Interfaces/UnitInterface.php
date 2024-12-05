@@ -9,6 +9,7 @@ interface UnitInterface {
     public function delete(int|string $id);
     public function getUnitById(int|string $id);
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames);
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames);
     public function translationKeys();
     
 }

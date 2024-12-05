@@ -53,7 +53,7 @@ class ProductAuthorRepository implements ProductAuthorInterface
         // Apply sorting and pagination
         // Return the result
         return $author
-            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
     public function store(array $data)

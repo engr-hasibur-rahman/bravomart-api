@@ -20,7 +20,7 @@ class ProductAuthorController extends Controller
         return $this->authorRepo->getPaginatedAuthor(
             $request->limit ?? 10,
             $request->page ?? 1,
-            app()->getLocale() ?? DEFAULT_LANGUAGE,
+            $request->language ?? DEFAULT_LANGUAGE,
             $request->search ?? "",
             $request->sortField ?? 'id',
             $request->sort ?? 'asc',
@@ -47,7 +47,7 @@ class ProductAuthorController extends Controller
     public function update(ProductAuthorRequest $request)
     {
         $author = $this->authorRepo->update($request->all());
-        $this->authorRepo->updateTranslation($request, $author, 'App\Models\Author', $this->authorRepo->translationKeys());
+        $this->authorRepo->updateTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
         if ($author) {
             return $this->success(translate('messages.update_success', ['name' => 'Author']));
         } else {
