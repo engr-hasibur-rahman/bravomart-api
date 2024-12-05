@@ -1,15 +1,18 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Interfaces\UnitInterface;
 use App\Models\Translation;
 use App\Models\Unit;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-class UnitRepository implements UnitInterface{
-public function __construct(protected Unit $unit, protected Translation $translation){}
-public function translationKeys(): mixed
+
+class UnitRepository implements UnitInterface
+{
+    public function __construct(protected Unit $unit, protected Translation $translation) {}
+    public function translationKeys(): mixed
     {
         return $this->unit->translationKeys;
     }
@@ -60,7 +63,7 @@ public function translationKeys(): mixed
             if ($unit) {
                 $data = Arr::except($data, ['translations']);
                 $unit->update($data);
-                return true;
+                return $unit->id;
             } else {
                 return false;
             }
@@ -72,7 +75,19 @@ public function translationKeys(): mixed
     {
         try {
             $unit = Unit::findOrFail($id);
+            $this->deleteTranslation($unit->id, Unit::class);
             $unit->delete();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+    private function deleteTranslation(int|string $id, string $translatable_type)
+    {
+        try {
+            $translation = Translation::where('translatable_id', $id)
+                ->where('translatable_type', $translatable_type)
+                ->delete();
             return true;
         } catch (\Throwable $th) {
             throw $th;
@@ -130,6 +145,43 @@ public function translationKeys(): mixed
                         'key' => $key,
                         'value' => $translatedValue,
                     ];
+                }
+            }
+        }
+        if (count($translations)) {
+            $this->translation->insert($translations);
+        }
+        return true;
+    }
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+    {
+        $translations = [];
+        if ($request['translations']) {
+            foreach ($request['translations'] as $translation) {
+                foreach ($colNames as $key) {
+
+                    // Fallback value if translation key does not exist
+                    $translatedValue = $translation[$key] ?? null;
+
+                    // Skip translation if the value is NULL
+                    if ($translatedValue === null) {
+                        continue; // Skip this field if it's NULL
+                    }
+
+                    $trans = $this->translation->where('translatable_type', $refPath)->where('translatable_id', $refid)
+                        ->where('language', $translation['language_code'])->where('key', $key)->first();
+                    if ($trans != null) {
+                        $trans->value = $translatedValue;
+                        $trans->save();
+                    } else {
+                        $translations[] = [
+                            'translatable_type' => $refPath,
+                            'translatable_id' => $refid,
+                            'language' => $translation['language_code'],
+                            'key' => $key,
+                            'value' => $translatedValue,
+                        ];
+                    }
                 }
             }
         }

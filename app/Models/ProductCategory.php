@@ -20,19 +20,19 @@ class ProductCategory extends Model implements HasMedia
 
     protected $guarded = [];
 
-    // Single media file (e.g., brand logo)
-    public function image(): MorphOne
-    {
-        return $this->morphOne(Media::class, 'fileable');
-    }
-
-    public function registerMediaConversions(?Media $media = null): void
-    {
-        $this
-            ->addMediaConversion('preview')
-            ->fit(Fit::Contain, 300, 300)
-            ->nonQueued();
-    }
+//    // Single media file (e.g., brand logo)
+//    public function image(): MorphOne
+//    {
+//        return $this->morphOne(Media::class, 'fileable');
+//    }
+//
+//    public function registerMediaConversions(?Media $media = null): void
+//    {
+//        $this
+//            ->addMediaConversion('preview')
+//            ->fit(Fit::Contain, 300, 300)
+//            ->nonQueued();
+//    }
     // Multiple media files (e.g., product photos)
     //  public function media()
     //  {

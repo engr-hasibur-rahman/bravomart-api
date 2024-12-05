@@ -30,7 +30,7 @@ class ProductAuthorController extends Controller
     public function store(ProductAuthorRequest $request): JsonResponse
     {
         //$slug = slug_generator($request->name,ProductAuthor::class);
-        $slug = MultilangSlug::makeSlug(ProductAuthor::class, $request->name,'slug');
+        $slug = MultilangSlug::makeSlug(ProductAuthor::class, $request->name, 'slug');
         $request['slug'] = $slug;
         $author = $this->authorRepo->store($request->all());
         $this->authorRepo->storeTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
@@ -40,11 +40,14 @@ class ProductAuthorController extends Controller
             return $this->failed(translate('messages.save_failed', ['name' => 'Author']));
         }
     }
-    public function show(Request $request){
+    public function show(Request $request)
+    {
         return $this->authorRepo->getAuthorById($request->id);
     }
-    public function update(ProductAuthorRequest $request){
+    public function update(ProductAuthorRequest $request)
+    {
         $author = $this->authorRepo->update($request->all());
+        $this->authorRepo->updateTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
         if ($author) {
             return $this->success(translate('messages.update_success', ['name' => 'Author']));
         } else {
@@ -60,7 +63,8 @@ class ProductAuthorController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Author']));
         }
     }
-    public function destroy($id){
+    public function destroy($id)
+    {
         $this->authorRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
     }

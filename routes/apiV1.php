@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
+use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
 use App\Http\Controllers\Api\V1\UnitManageController;
@@ -84,6 +85,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::put('product/variant/status/{id}', [ProductVariantController::class, 'status_update']);
         Route::delete('product/variant/remove/{id}', [ProductVariantController::class, 'destroy']);
         Route::get('product/variant/deleted/records', [ProductVariantController::class, 'deleted_records']);
+    });
+     //Coupon Management 
+     Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::get('product/coupon/list', [CouponManageController::class, 'index']);
+        Route::get('product/coupon/{id}', [CouponManageController::class, 'show']);
+        Route::post('product/coupon/add', [CouponManageController::class, 'store']);
+        Route::post('product/coupon/update', [CouponManageController::class, 'update']);
+        Route::put('product/coupon/status/{id}', [CouponManageController::class, 'status_update']);
+        Route::delete('product/coupon/remove/{id}', [CouponManageController::class, 'destroy']);
     });
     // Product Author Management
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\ProductAttributeInterface;
 use App\Models\ProductAttribute;
 use App\Models\Translation;
 use Illuminate\Support\Facades\Log;
@@ -14,21 +15,12 @@ use Prettus\Repository\Eloquent\BaseRepository;
  *
  * @package namespace App\Repositories;
  */
-class ProductAttributeRepository extends BaseRepository
+class ProductAttributeRepository implements ProductAttributeInterface
 {
 
     public function model()
     {
         return ProductAttribute::class;
-    }
-
-    public function boot()
-    {
-        try {
-            $this->pushCriteria(app(RequestCriteria::class));
-        } catch (RepositoryException $e) {
-            //
-        }
     }
 
     public function storeProductAttribute($request)
