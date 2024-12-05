@@ -23,6 +23,7 @@ class ProductManageRepository implements ProductManageInterface
     {
         return Product::class;
     }
+    // Fetch all products with parameters
     public function getPaginatedProduct(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $product = Product::leftJoin('translations as name_translations', function ($join) use ($language) {
@@ -54,6 +55,7 @@ class ProductManageRepository implements ProductManageInterface
             ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
     }
+    // Store data
     public function store(array $data)
     {
         try {
@@ -81,6 +83,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+    // Update data
     public function update(array $data)
     {
         try {
@@ -118,6 +121,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+    // Delete data
     public function delete(int|string $id)
     {
         try {
@@ -128,6 +132,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+    // Fetch product data of specific id
     public function getProductById(int|string $id)
     {
         try {
@@ -158,6 +163,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+    // Store translation
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
     {
         $translations = [];
@@ -186,6 +192,7 @@ class ProductManageRepository implements ProductManageInterface
         }
         return true;
     }
+    // Fetch deleted records(true = only trashed records, false = all records with trashed)
     public function records(bool $onlyDeleted = false)
     {
         try {
