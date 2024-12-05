@@ -12,34 +12,26 @@ class ComArea extends Model
 
     //Will Manage Shop Area
     protected $table = 'com_areas';
-
     protected $guarded = [];
-
     protected $fillable = [
         'name',
         'code',
         'coordinates',
     ];
-
     protected $casts = [
         'coordinates' => Polygon::class,
     ];
-
     public $translationKeys = [
         'name'
     ];
-
-
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
     }
-
     public function stores()
     {
-        return $this->hasMany(ComStores::class,'area_id');
+        return $this->hasMany(ComStore::class,'area_id');
     }
-
     // Method to get translation by language and key
     public function getTranslation(string $key, string $language)
     {
