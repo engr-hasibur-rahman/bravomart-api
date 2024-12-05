@@ -20,7 +20,7 @@ class ProductAuthorController extends Controller
         return $this->authorRepo->getPaginatedAuthor(
             $request->limit ?? 10,
             $request->page ?? 1,
-            app()->getLocale() ?? DEFAULT_LANGUAGE,
+            $request->language ?? DEFAULT_LANGUAGE,
             $request->search ?? "",
             $request->sortField ?? 'id',
             $request->sort ?? 'asc',

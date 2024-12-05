@@ -129,7 +129,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::delete('unit/remove/{id}', [UnitManageController::class, 'destroy']);
     });
     // =====================================================================FAYSAL IBNEA HASAN JESAN========================================================================================
-    // Marketing Area Management
+    // Marketing Area Management T
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
         Route::get('com/area/list', [AreaController::class, 'index']);
     });
@@ -152,7 +152,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     });
 
     /*--------------------- System management ----------------------------*/
-    // General Settings
+    // General Settings T
     Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         Route::group(['prefix' => 'system-management'], function () {
             Route::match(['get', 'post'], '/general-settings',[SystemManagementController::class, 'generalSettings']);
