@@ -259,5 +259,6 @@ enum Permission: string
 
     case UNSIGNED_ORDERS_GROCERY = 'unsigned-orders-grocery';
     case ONGOING_ORDERS_GROCERY = 'ongoing-orders-grocery';
+    case GENERAL_SETTINGS = 'general-settings';
 
 }

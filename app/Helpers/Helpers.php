@@ -1,7 +1,10 @@
 <?php
 
 use App\Helpers;
+use App\Models\ComOption;
+use App\Models\Media;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -102,6 +105,92 @@ if (! function_exists('translate')) {
 
         return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
     }
-    
+
+    function com_option_update($key, $value)
+    {
+        $option = ComOption::updateOrCreate(
+            ['option_name' => $key], // Condition: match by option_name
+            ['option_value' => $value] // Update or set option_value
+        );
+        // Clear the cache for the updated option
+        Cache::forget($key);
+        return $option ? true : false;
+
+    }
+
+    function com_option_get($key,$default = null)
+    {
+        $option_name = $key;
+        $value = \Illuminate\Support\Facades\Cache::remember($option_name, 600, function () use($option_name) {
+            try {
+                return ComOption::where('option_name', $option_name)->first();
+            }catch (\Exception $e){
+                return null;
+            }
+        });
+        return $value->option_value ?? $default;
+    }
+
+
+    function com_option_get_id_wise_url($id,$size=null){
+        $return_val =  com_get_attachment_by_id($id,$size);
+        return $return_val['img_url'] ?? '';
+    }
+
+    function com_get_attachment_by_id($id, $size = null, $default = false)
+    {
+        $image_details = Media::find($id);
+        $return_val = [];
+        $image_url = '';
+
+        if ($image_details) {
+            // Construct the base path for the images
+            $base_path = 'storage' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'media-uploader' . DIRECTORY_SEPARATOR . 'default';
+            $image_path = $base_path . DIRECTORY_SEPARATOR . $image_details->path;
+            $image_path = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $image_path); // Normalize path separators
+
+            $image_url = asset("storage/{$image_details->path}");
+            // Check if the grid version exists (without file_exists, use URL generation)
+            $grid_image_url = asset("storage/uploads/media-uploader/default/grid-" . basename($image_details->path));
+
+            // If the grid version URL is valid, use that
+            if ($grid_image_url) {
+                $image_url = $grid_image_url;
+            }
+
+            if (file_exists(public_path($image_path))) {
+                $image_url = asset($image_path);
+            }
+
+            // Handle image variations based on size
+            $size_prefixes = [
+                'large' => 'large-',
+                'grid' => 'grid-',
+                'semi-large' => 'semi-large-',
+                'thumb' => 'thumb-',
+            ];
+
+            if ($size && array_key_exists($size, $size_prefixes)) {
+                $sized_image_path = $base_path . DIRECTORY_SEPARATOR . $size_prefixes[$size] . $image_details->path;
+                $sized_image_path = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $sized_image_path); // Normalize path separators
+
+                if (file_exists(public_path($sized_image_path))) {
+                    $image_url = asset($sized_image_path);
+                }
+            }
+
+            // Set the return values
+            $return_val['image_id'] = $image_details->id;
+            $return_val['path'] = $image_details->path;
+            $return_val['img_url'] = $image_url;
+            $return_val['img_alt'] = $image_details->alt;
+        } elseif ($default) {
+            // Set a default image URL if the image is not found
+            $return_val['img_url'] = asset('storage' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'no-image.png');
+        }
+
+        return $return_val;
+    }
+
 
 }
