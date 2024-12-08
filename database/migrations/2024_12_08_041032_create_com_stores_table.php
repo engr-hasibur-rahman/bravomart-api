@@ -36,8 +36,8 @@ return new class extends Migration
             $table->decimal('admin_commi_amount', 10, 2)->nullable(); // Fixed commission amount
             $table->decimal('delivery_charge', 10, 2)->nullable();
             $table->string('delivery_time', 50)->nullable();
-            $table->boolean('delivery_self_system')->default(false);
-            $table->boolean('delivery_take_away')->default(false);
+            $table->boolean('delivery_self_system')->nullable()->default(false);
+            $table->boolean('delivery_take_away')->nullable()->default(false);
             $table->integer('order_minimum')->default(0);
             $table->integer('veg_status')->default(0)->comment('0 = Non-Vegetarian, 1 = Vegetarian');
             $table->string('off_day', 50)->nullable(); // e.g., 'Sunday'
