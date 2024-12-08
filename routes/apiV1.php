@@ -129,8 +129,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
     });
     /* --------------------- vendor route end ------------------------- */
-   /* --------------------- vendor route start ------------------------- */
-    Route::group(['prefix' => 'vendor/'], function () {
+    /* --------------------- vendor route start ------------------------- */
+    Route::group(['prefix' => 'seller/'], function () {
         // staff manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::apiResource('/staff', StaffController::class);
