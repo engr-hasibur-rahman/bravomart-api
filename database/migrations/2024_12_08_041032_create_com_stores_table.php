@@ -27,7 +27,7 @@ return new class extends Migration
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->string('vat_tax_number')->nullable();
-            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_featured')->nullable()->default(false);
             $table->time('opening_time')->nullable();
             $table->time('closing_time')->nullable();
             $table->string('subscription_type', 50)->nullable();
