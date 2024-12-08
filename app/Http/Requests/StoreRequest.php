@@ -25,8 +25,8 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'area_id' => 'nullable|exists:areas,id',
-            'merchant_id' => 'nullable|exists:merchants,id',
+            //'area_id' => 'nullable|exists:areas,id',
+            //'merchant_id' => 'nullable|exists:merchants,id',
             'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class), 
             'name' => 'required|string|max:255',
             'slug' => 'required|string|unique:com_stores,slug,' . $this->id,
@@ -42,7 +42,7 @@ class StoreRequest extends FormRequest
             'opening_time' => 'nullable|date_format:H:i',
             'closing_time' => 'nullable|date_format:H:i',
             'subscription_type' => 'nullable|string|max:50',
-            'package_id' => 'nullable|exists:packages,id',
+            //'package_id' => 'nullable|exists:packages,id',
             'admin_commi_percent' => 'nullable|numeric|between:0,100',
             'admin_commi_amount' => 'nullable|numeric|min:0',
             'delivery_charge' => 'nullable|numeric|min:0',
@@ -64,9 +64,9 @@ class StoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'area_id.exists' => 'The selected area does not exist.',
-            'merchant_id.exists' => 'The selected merchant does not exist.',
-            'store_type.in' => 'The store type must be one of the following:' . $this->getEnumValues(StoreType::class),
+            //'area_id.exists' => 'The selected area does not exist.',
+            //'merchant_id.exists' => 'The selected merchant does not exist.',
+            'store_type.in' => 'The store type must be one of the following: ' . $this->getEnumValues(StoreType::class),
             'name.required' => 'The name field is required.',
             'name.max' => 'The name may not be greater than 255 characters.',
             'slug.required' => 'The slug field is required.',

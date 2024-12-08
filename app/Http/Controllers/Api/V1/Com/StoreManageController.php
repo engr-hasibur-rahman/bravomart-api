@@ -25,6 +25,7 @@ class StoreManageController extends Controller
     }
     public function store(StoreRequest $request): JsonResponse
     {
+        dd($request->all());
         $store = $this->storeRepo->store($request->all());
         $this->storeRepo->storeTranslation($request, $store, 'App\Models\ComStore', $this->storeRepo->translationKeys());
         if ($store) {
