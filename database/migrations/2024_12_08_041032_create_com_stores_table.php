@@ -27,7 +27,7 @@ return new class extends Migration
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->string('vat_tax_number')->nullable();
-            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_featured')->nullable()->default(false);
             $table->time('opening_time')->nullable();
             $table->time('closing_time')->nullable();
             $table->string('subscription_type', 50)->nullable();
@@ -36,16 +36,16 @@ return new class extends Migration
             $table->decimal('admin_commi_amount', 10, 2)->nullable(); // Fixed commission amount
             $table->decimal('delivery_charge', 10, 2)->nullable();
             $table->string('delivery_time', 50)->nullable();
-            $table->boolean('delivery_self_system')->default(false);
-            $table->boolean('delivery_take_away')->default(false);
-            $table->integer('order_minimum')->default(0);
-            $table->integer('veg_status')->default(0)->comment('0 = Non-Vegetarian, 1 = Vegetarian');
+            $table->boolean('delivery_self_system')->nullable()->default(false);
+            $table->boolean('delivery_take_away')->nullable()->default(false);
+            $table->integer('order_minimum')->nullable()->default(0);
+            $table->integer('veg_status')->nullable()->default(0)->comment('0 = Non-Vegetarian, 1 = Vegetarian');
             $table->string('off_day', 50)->nullable(); // e.g., 'Sunday'
-            $table->integer('enable_saling')->default(0)->comment('0 = Sales disabled, 1 = Sales enabled');
+            $table->integer('enable_saling')->nullable()->default(0)->comment('0 = Sales disabled, 1 = Sales enabled');
             $table->string('meta_title', 255)->nullable();
             $table->text('meta_description')->nullable();
             $table->string('meta_image')->nullable();
-            $table->integer('status')->default(0)->comment('0 = Pending, 1 = Active, 2 = Inactive');
+            $table->integer('status')->nullable()->default(0)->comment('0 = Pending, 1 = Active, 2 = Inactive');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->softDeletes();

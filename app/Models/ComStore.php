@@ -50,7 +50,11 @@ class ComStore extends Model
         'updated_by',
     ];
     public $translationKeys = [
-        'name'
+        'name',
+        'slug',
+        'address',
+        'meta_title',
+        'meta_description',
     ];
     protected $casts = [
         'coordinates' => Polygon::class,
