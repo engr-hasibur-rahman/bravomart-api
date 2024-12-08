@@ -82,7 +82,7 @@ class ProductCategoryRepository extends BaseRepository
                     // Fallback value if translation key does not exist
                     $translatedValue = $translation[$key] ?? null;
 
-                    // Skip translation if the value is NULL G
+                    // Skip translation if the value is NULL GU
                     if ($translatedValue === null) {
                         continue; // Skip this field if it's NULL
                     }

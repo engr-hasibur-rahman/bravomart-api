@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
+use App\Http\Controllers\Api\V1\Com\StoreManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
@@ -67,6 +68,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
 
 // =====================================================================FAYSAL IBNEA HASAN JESAN========================================================================================
+     //Store Management 
+     Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::get('store/list', [StoreManageController::class, 'index']);
+        Route::get('store/{id}', [StoreManageController::class, 'show']);
+        Route::post('store/add', [StoreManageController::class, 'store']);
+        Route::post('store/update', [StoreManageController::class, 'update']);
+        Route::put('store/status/{id}', [StoreManageController::class, 'status_update']);
+        Route::delete('store/remove/{id}', [StoreManageController::class, 'destroy']);
+        Route::get('store/deleted/records', [StoreManageController::class, 'deleted_records']);
+    });
      //Product Management 
      Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
         Route::get('product/list', [ProductController::class, 'index']);
