@@ -260,5 +260,11 @@ enum Permission: string
     case UNSIGNED_ORDERS_GROCERY = 'unsigned-orders-grocery';
     case ONGOING_ORDERS_GROCERY = 'ongoing-orders-grocery';
     case GENERAL_SETTINGS = 'general-settings';
+    case APPEARANCE_SETTINGS = 'appearance_settings';
+    case MENU_MANAGE = 'menu-manage';
+    case COLOR_CUSTOMIZATION = 'color-customization';
+    case TYPOGRAPHY_CUSTOMIZATION = 'typography-customization';
+    case FOOTER_CUSTOMIZATION = 'footer-customization';
+    case MAINTENANCE_SETTINGS = 'maintenance-customization';
 
 }

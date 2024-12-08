@@ -1306,6 +1306,80 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' =>  Permission::APPEARANCE_SETTINGS->value,
+                            'PermissionTitle' => 'Appearance Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Appearance Settings',
+                                'ar' => 'إعدادات المظهر'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::MENU_MANAGE->value,
+                                    'PermissionTitle' => 'Menu Manage',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Menu Manage',
+                                        'ar' => 'إدارة القائمة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::COLOR_CUSTOMIZATION->value,
+                                    'PermissionTitle' => 'Color Customization',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Color Customization',
+                                        'ar' => 'تخصيص الألوان'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::TYPOGRAPHY_CUSTOMIZATION->value,
+                                    'PermissionTitle' => 'Typography Customization',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Typography Customization',
+                                        'ar' => 'تخصيص الطباعة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::FOOTER_CUSTOMIZATION->value,
+                                    'PermissionTitle' => 'Footer Customization',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Footer Customization',
+                                        'ar' => 'تخصيص التذييل'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::MAINTENANCE_SETTINGS->value,
+                                    'PermissionTitle' => 'Maintenance Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Maintenance Settings',
+                                        'ar' => 'إعدادات الصيانة'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'SEO Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'SEO Settings',
+                                'ar' => 'إعدادات تحسين محركات البحث'
+                            ]
+                        ],
+                        [
                             'PermissionName' => '',
                             'PermissionTitle' => '3rd party & configurations',
                             'activity_scope' => 'system_level',
