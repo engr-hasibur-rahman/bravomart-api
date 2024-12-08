@@ -56,9 +56,10 @@ class ComStore extends Model
         'meta_title',
         'meta_description',
     ];
-    protected $casts = [
-        'coordinates' => Polygon::class,
-    ];
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
     public function area()
     {
         return $this->belongsTo(ComArea::class, 'area_id');
