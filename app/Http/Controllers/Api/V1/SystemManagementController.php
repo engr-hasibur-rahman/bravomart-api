@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\ImageModifier;
 use App\Http\Controllers\Controller;
+use App\Interfaces\TranslationInterface;
 use App\Models\SystemManagement;
 use Illuminate\Http\Request;
 
 class SystemManagementController extends Controller
 {
+    public function __construct(protected TranslationInterface $translationRepository) {}
+
     public function generalSettings(Request $request){
         if ($request->isMethod('POST')) {
+
             $this->validate($request, [
                 'com_site_logo' => 'nullable|string',
                 'com_site_favicon' => 'nullable|string',
@@ -27,12 +31,33 @@ class SystemManagementController extends Controller
                   com_option_update($field, $value);
 
             }
+
+
+            // Define the fields that need to be translated
+            $fields = ['com_site_title', 'com_site_subtitle'];
+            $translationsData = [];
+            foreach ($fields as $field) {
+                $translationKey = $field . '_translation';
+                if ($request->has($translationKey)) {
+                    $translationsData[$field] = $request->input($translationKey);
+                }
+            }
+
+            $this->translationRepository->storeTranslation(
+                $request,
+                $translationsData,
+                'App\Models\ComOption',
+                $this->translationRepository->translationKeys()
+            );
+
             return $this->success(translate('messages.update_success', ['name' => 'General Settings']));
         }else{
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
-            $com_site_logo = $imageModifier->generateImageUrl(com_option_get('com_site_logo'));
-            $com_site_favicon = $imageModifier->generateImageUrl(com_option_get('com_site_favicon'));
+            $com_site_logo = com_option_get('com_site_logo');
+            $com_site_favicon = com_option_get('com_site_favicon');
+            $com_site_logo_image_url = $imageModifier->generateImageUrl(com_option_get('com_site_logo'));
+            $com_site_favicon_image_url = $imageModifier->generateImageUrl(com_option_get('com_site_favicon'));
             $com_site_title = com_option_get('com_site_title') ?? '';
             $com_site_subtitle = com_option_get('com_site_subtitle') ?? '';
             $com_user_email_verification = com_option_get('com_user_email_verification') ?? '';
@@ -42,6 +67,8 @@ class SystemManagementController extends Controller
             return $this->success([
                 'com_site_logo' => $com_site_logo,
                 'com_site_favicon' => $com_site_favicon,
+                'com_site_logo_image_url' => $com_site_logo_image_url,
+                'com_site_favicon_image_url' => $com_site_favicon_image_url,
                 'com_site_title' => $com_site_title,
                 'com_site_subtitle' => $com_site_subtitle,
                 'com_user_email_verification' => $com_user_email_verification,
