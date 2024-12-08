@@ -34,5 +34,4 @@ class ComStore extends Model
     {
         return $this->belongsTo(ComMerchant::class,'merchant_id');
     }
-
 }
