@@ -12,8 +12,13 @@ class SystemManagementController extends Controller
     public function generalSettings(Request $request){
         if ($request->isMethod('POST')) {
             $this->validate($request, [
-                'com_site_logo' => 'nullable|string', // example only 1 or 2
-                'com_site_favicon' => 'nullable|string', // example only 1 or 2
+                'com_site_logo' => 'nullable|string',
+                'com_site_favicon' => 'nullable|string',
+                'com_site_title' => 'nullable|string',
+                'com_site_subtitle' => 'nullable|string',
+                'com_user_email_verification' => 'nullable|string',
+                'com_user_login_otp' => 'nullable|string',
+                'com_maintenance_mode' => 'nullable|string',
             ]);
             $fields = ['com_site_logo', 'com_site_favicon'];
             foreach ($fields as $field) {
