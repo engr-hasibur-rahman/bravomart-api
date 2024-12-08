@@ -13,6 +13,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
+use App\Http\Controllers\Api\V1\Com\StoreManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
