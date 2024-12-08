@@ -45,7 +45,6 @@ return new class extends Migration
             $table->string('meta_title', 255)->nullable();
             $table->text('meta_description')->nullable();
             $table->string('meta_image')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->integer('status')->default(0)->comment('0 = Pending, 1 = Active, 2 = Inactive');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
