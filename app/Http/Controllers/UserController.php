@@ -59,7 +59,7 @@ class UserController extends Controller
      */
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
-        
+
         $roles = [UserRole::STORE_OWNER];
         $user = $this->repository->create([
             'first_name' => $request->first_name,
@@ -70,7 +70,7 @@ class UserController extends Controller
             'activity_scope'    => 'SHOP_AREA',
             'store_owner'    => 1,
         ]);
-        
+
         $user->assignRole($roles);
 
         // Create Merchant ID for the user registered as BusinessMan. In future this will be create on User Approval
@@ -124,6 +124,7 @@ class UserController extends Controller
             'first_name'     => $request->first_name,
             'last_name' => $request->last_name,
             'email'    => $request->email,
+            //'activity_scope' => UserRole::CUSTOMER,
             'password' => Hash::make($request->password),
         ]);
 
@@ -247,8 +248,8 @@ class UserController extends Controller
     }
 
     public function assignRole(Request $request)
-    {       
-        $user = User::findOrFail($request->user_id);       
+    {
+        $user = User::findOrFail($request->user_id);
         if (isset($request->roles)) {
             $user->syncRoles($request->roles);
         }
