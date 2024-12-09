@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Role as UserRole;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -26,11 +27,11 @@ class UserCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name'     => ['required', 'string', 'max:255'],
+            'first_name'     => 'required|string|max:255',
             //'email' => ['required', 'email', \Illuminate\Validation\Rule::unique('users')->ignore($this->user()->id)],
             //'email'    => ['required', 'email', 'unique:users'],
-            'email' => 'required|email|unique:users,email,' . $this->id,
-            'password' => ['required', 'string']
+            'email' => 'required|string|email|max:255|unique:users,email,' . $this->id,
+            'password' => 'required|string',
         ];
     }
 

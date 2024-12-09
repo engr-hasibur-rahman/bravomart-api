@@ -132,7 +132,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- vendor route end ------------------------- */
     /* --------------------- vendor route start ------------------------- */
     Route::group(['prefix' => 'seller/'], function () {
-
+        Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
         //Store Management
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('store/list', [StoreManageController::class, 'index']);
@@ -200,6 +200,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------------> vendor route end <----------------------------- */
     /* --------------------------> customer route start <------------------------- */
     Route::group(['prefix' => 'customer/'], function () {
+        Route::post('/registration', [UserController::class, 'register']);
         Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
 
         });
