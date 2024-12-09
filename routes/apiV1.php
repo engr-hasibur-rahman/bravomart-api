@@ -111,10 +111,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         /*--------------------- System management ----------------------------*/
-        // General Settings
         Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::group(['prefix' => 'system-management'], function () {
                 Route::match(['get', 'post'], '/general-settings',[SystemManagementController::class, 'generalSettings']);
+                Route::match(['get', 'post'], '/footer-customization',[SystemManagementController::class, 'footerCustomization']);
+                Route::match(['get', 'post'], '/maintenance-settings',[SystemManagementController::class, 'maintenanceSettings']);
+                Route::match(['get', 'post'], '/seo-settings',[SystemManagementController::class, 'seoSettings']);
+                Route::match(['get', 'post'], '/firebase-settings',[SystemManagementController::class, 'firebaseSettings']);
+                Route::match(['get', 'post'], '/social-login-settings',[SystemManagementController::class, 'socialLoginSettings']);
             });
         });
 

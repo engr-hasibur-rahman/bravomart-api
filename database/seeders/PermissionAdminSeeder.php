@@ -1317,36 +1317,6 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => Permission::MENU_MANAGE->value,
-                                    'PermissionTitle' => 'Menu Manage',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Menu Manage',
-                                        'ar' => 'إدارة القائمة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => Permission::COLOR_CUSTOMIZATION->value,
-                                    'PermissionTitle' => 'Color Customization',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Color Customization',
-                                        'ar' => 'تخصيص الألوان'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => Permission::TYPOGRAPHY_CUSTOMIZATION->value,
-                                    'PermissionTitle' => 'Typography Customization',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Typography Customization',
-                                        'ar' => 'تخصيص الطباعة'
-                                    ]
-                                ],
-                                [
                                     'PermissionName' => Permission::FOOTER_CUSTOMIZATION->value,
                                     'PermissionTitle' => 'Footer Customization',
                                     'activity_scope' => 'system_level',
@@ -1369,7 +1339,7 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => '',
+                            'PermissionName' =>  Permission::SEO_SETTINGS->value,
                             'PermissionTitle' => 'SEO Settings',
                             'activity_scope' => 'system_level',
                             'icon' => '',
@@ -1381,43 +1351,33 @@ class PermissionAdminSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => '3rd party & configurations',
+                            'PermissionTitle' => 'Third-Party Integrations',
                             'activity_scope' => 'system_level',
                             'icon' => '',
                             'options' => ['view'],
                             'translations' => [
-                                'en' => '3rd party & configurations',
-                                'ar' => 'الطرف الثالث والتكوينات'
+                                'en' => 'Third-Party Integrations',
+                                'ar' => 'التكاملات مع جهات خارجية'
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => Permission::THIRD_PARTY->value,
-                                    'PermissionTitle' => '3rd party',
+                                    'PermissionName' => Permission::FIREBASE_SETTINGS->value,
+                                    'PermissionTitle' => 'Firebase Settings',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'translations' => [
-                                        'en' => '3rd party',
-                                        'ar' => 'الطرف الثالث'
+                                        'en' => 'Firebase Settings',
+                                        'ar' => 'إعدادات Firebase'
                                     ]
                                 ],
                                 [
                                     'PermissionName' => Permission::FIREBASE_NOTIFICATION->value,
-                                    'PermissionTitle' => 'Firebase notification',
+                                    'PermissionTitle' => 'Social Login',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'translations' => [
-                                        'en' => 'Firebase notification',
-                                        'ar' => 'إشعار Firebase'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => Permission::OFFLINE_PAYMENT_SETUP->value,
-                                    'PermissionTitle' => 'Offline Payment Setup',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Offline Payment Setup',
-                                        'ar' => 'إعداد الدفع دون اتصال بالإنترنت'
+                                        'en' => 'Social Login',
+                                        'ar' =>  'تسجيل الدخول الاجتماعي'
                                     ]
                                 ]
                             ]
