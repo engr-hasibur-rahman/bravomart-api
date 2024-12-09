@@ -17,18 +17,19 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->unique();
-            $table->string('activity_scope')->nullable(); //SHOP_AREA/ADMIN_AREA/FIELD_AREA/KITCHEN_AREA/CUSTOMER_AREA ,        Restricting User Sothat He can't login to Unauthorized area
-            $table->timestamp('phone_verified_at')->nullable();
+            $table->string('activity_scope')->nullable(); //SHOP_AREA/ADMIN_AREA/FIELD_AREA/KITCHEN_AREA ,
+            $table->text('email_verify_token')->nullable();
+            $table->integer('email_verified')->default(0)->comment('0=unverified, 1=verified');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->string('user_image')->nullable();
+            $table->string('image')->nullable();
             $table->string('def_lang')->nullable();
-            $table->string('cm_firebase_token')->nullable();
-            $table->boolean('is_active')->default(1);
-            $table->boolean('store_owner')->default(0);
+            $table->string('firebase_token')->nullable();
+            $table->unsignedBigInteger('store_owner')->nullable()->comment('1=store_owner');
             $table->unsignedBigInteger('merchant_id')->nullable();
             $table->string('stores')->nullable();
+            $table->integer('status')->default(1)->comment('0=Pending, 1=Active, 2=Inactive, 3=Suspended');
             $table->timestamps();
         });
 
