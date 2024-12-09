@@ -10,7 +10,6 @@ use App\Http\Resources\UserResource;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\ComMerchant;
-use App\Models\LinkedSocialAccount;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Exception;
@@ -19,10 +18,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Spatie\Permission\Contracts\Role;
 use Spatie\Permission\Models\Role as ModelsRole;
-use Laravel\Socialite\Two\User as ProviderUser;
 use Laravel\Socialite\Facades\Socialite;
+use Spatie\Permission\Models\Role;
+use Laravel\Socialite\Two\GoogleProvider;
+
 
 class UserController extends Controller
 {
@@ -34,37 +34,93 @@ class UserController extends Controller
         $this->repository = $repository;
     }
     /* Social login start */
-     public function redirectToProvider($provider)
+    public function redirectToGoogle()
     {
-        return Socialite::driver($provider)->redirect();
+        /** @var \Laravel\Socialite\Two\GoogleProvider  */
+        $driver = Socialite::driver('google');
+
+        return $driver->stateless()->redirect();
     }
-
-    public function handleProviderCallback($provider)
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function handleGoogleCallback()
     {
-        $user = Socialite::driver($provider)->user();
 
-        // Use the user information to log in or register the user
-        $existingUser = User::where('provider_id', $user->id)->first();
+        // Retrieve the user information from Google
+        /** @var \Laravel\Socialite\Two\GoogleProvider  */
+        $user = Socialite::driver('google');
+        $user->stateless()->user();
+        $google_id = $user->user()->id;
+        $google_email = $user->user()->email;
+        $name = $user->user()->name;
+        // Find or create a user in the database
+        $existingUser = User::where('google_id', $google_id)
+            ->orWhere('email', $google_email)->first();
 
         if ($existingUser) {
-            // Log the user in
+            // Update the user's Google ID if it's missing
+            if (!$existingUser->google_id) {
+                $existingUser->update(['google_id' => $google_id]);
+            }
+
+            // Generate a Sanctum token for the existing user
             $token = $existingUser->createToken('api_token')->plainTextToken;
 
-            return response()->json(['token' => $token]);
+            return response()->json([
+                'success' => true,
+                'message' => __('auth.social.login'),
+                'token' => $token,
+                'user' => $existingUser,
+            ], 200);
         } else {
-            // Register and log in
+            // Create a new user in the database
             $newUser = User::create([
-                'name' => $user->name,
-                'email' => $user->email,
-                'provider' => $provider,
-                'provider_id' => $user->id,
+                'first_name' => $name,
+                'email' => $google_email,
+                'slug' => username_slug_generator($name),
+                'google_id' => $google_id,
+                'password' => Hash::make('123456dummy'), // Use a hashed password
             ]);
 
+            // Generate a Sanctum token for the new user
             $token = $newUser->createToken('api_token')->plainTextToken;
 
-            return response()->json(['token' => $token]);
+            return response()->json([
+                'success' => true,
+                'message' => __('auth.social.login'),
+                'token' => $token,
+                'user' => $newUser,
+            ], 201);
         }
     }
+    // public function handleGoogleCallback()
+    // {
+    //     try {
+
+    //         $user = Socialite::driver('google')->user();
+    //         $finduser = User::where('google_id', $user->id)->first();
+
+    //         if ($finduser) {
+    //             Auth::login($finduser);
+    //             return redirect()->intended('home');
+    //         } else {
+    //             $newUser = User::updateOrCreate(['email' => $user->email], [
+    //                 'name' => $user->name,
+    //                 'google_id' => $user->id,
+    //                 'password' => encrypt('123456dummy')
+    //             ]);
+
+    //             Auth::login($newUser);
+
+    //             return $this->success(__('auth.social.login'));
+    //         }
+    //     } catch (Exception $e) {
+    //         dd($e->getMessage());
+    //     }
+    // }
     /* Social login end */
     public function token(Request $request)
     {
@@ -72,7 +128,6 @@ class UserController extends Controller
             'email'    => 'required|email',
             'password' => 'required',
         ]);
-        //->where('activity_scope', 'system_level')
         $user = User::where('email', $request->email)->where('activity_scope', 'system_level')->where('status', 1)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -94,12 +149,17 @@ class UserController extends Controller
      */
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
-
-        $roles = [UserRole::STORE_OWNER];
+        //$roles = [UserRole::STORE_OWNER];
+        // By default role ---->
+        $roles = Role::where('available_for', 'store_level')->pluck('name');
+        // When admin create a seller ---->
+        if (isset($request->roles)) {
+            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+        }
         $user = $this->repository->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'username' => username_slug_generator($request->first_name,$request->last_name),
+            'slug' => username_slug_generator($request->first_name, $request->last_name),
             'email'    => $request->email,
             'phone'    => $request->phone,
             'password' => Hash::make($request->password),
@@ -133,7 +193,7 @@ class UserController extends Controller
 
     public function me(Request $request)
     {
-        return new UserResource(auth()->user());
+        return new UserResource(auth()->guard('api')->user());
     }
 
     public function logout(Request $request)
@@ -142,7 +202,8 @@ class UserController extends Controller
         if (!$user) {
             return true;
         }
-        return $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()->delete();
+        return $this->success(__('auth.logout'));
     }
 
     public function register(UserCreateRequest $request)
@@ -151,14 +212,15 @@ class UserController extends Controller
         if ((isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) || (isset($request->roles) && in_array($request->roles, $notAllowedRoles))) {
             throw new AuthorizationException(NOT_AUTHORIZED);
         }
-        $roles = [UserRole::CUSTOMER];
+        $roles = Role::where('available_for', 'customer_level')->pluck('name');
         if (isset($request->roles)) {
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
+
         $user = $this->repository->create([
             'first_name'     => $request->first_name,
             'last_name' => $request->last_name,
-            'username' => username_slug_generator($request->first_name,$request->last_name),
+            'slug' => username_slug_generator($request->first_name, $request->last_name),
             'email'    => $request->email,
             //'activity_scope' => UserRole::CUSTOMER,
             'password' => Hash::make($request->password),

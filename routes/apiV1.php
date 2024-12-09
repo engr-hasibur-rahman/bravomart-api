@@ -21,11 +21,12 @@ use App\Http\Controllers\Api\V1\UnitManageController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'Api\V1'], function () {
-    Route::get('/auth/{provider}/redirect', [UserController::class, 'redirectToProvider']);
-    Route::get('auth/{provider}/callback', [UserController::class, 'handleProviderCallback']);
+    Route::get('auth/google', [UserController::class, 'redirectToGoogle']);
+    Route::get('auth/google/callback', [UserController::class, 'handleGoogleCallback']);
 });
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
+    Route::get('/logout', [UserController::class, 'logout']);
     Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         // media manage
         Route::group(['prefix' => 'media-upload'], function () {

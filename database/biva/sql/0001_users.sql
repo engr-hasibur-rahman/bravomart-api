@@ -3,7 +3,7 @@
 INSERT INTO `users` (
         `id`,
         `first_name`,
-        `username`,
+        `slug`,
         `email`,
         `activity_scope`,
         `email_verified_at`,

@@ -30,6 +30,9 @@ class User extends Authenticatable
         'password',
         'store_owner',
         'status',
+        'google_id',
+        'facebook_id',
+        'apple_id',
     ];
 
 
