@@ -23,7 +23,11 @@ class TranslationRepository implements TranslationInterface
                 foreach ($colNames as $key) {
 
                     // Fallback value if translation key does not exist
-                    $translatedValue = $translation[$key] ?? null;
+                    if (isset($translation[$key])){
+                        $translatedValue = $translation[$key] ?? null;
+                    }else{
+                        $translatedValue = null;
+                    }
 
                     // Skip translation if the value is NULL
                     if ($translatedValue === null) {

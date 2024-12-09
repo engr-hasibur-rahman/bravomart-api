@@ -24,7 +24,7 @@ class StoreManageController extends Controller
         );
     }
     public function store(StoreRequest $request): JsonResponse
-    {
+    {       
         $store = $this->storeRepo->store($request->all());
         $this->storeRepo->storeTranslation($request, $store, 'App\Models\ComStore', $this->storeRepo->translationKeys());
         if ($store) {
@@ -51,5 +51,12 @@ class StoreManageController extends Controller
     {
         $this->storeRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
+    }
+    public function deleted_records(){
+        $records = $this->storeRepo->records(true);
+        return response ()->json([
+            "data"=> $records,
+            "massage" => "Records were restored successfully!"
+        ],201);
     }
 }

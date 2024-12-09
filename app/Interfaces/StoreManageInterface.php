@@ -14,4 +14,5 @@ interface StoreManageInterface
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames);
     public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames);
     public function translationKeys();
+    public function records(bool $onlyDeleted);
 }
