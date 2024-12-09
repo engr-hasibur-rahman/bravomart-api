@@ -128,7 +128,8 @@ class SystemManagementController extends Controller
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
 
-            $ComOptionGet = ComOption::with('translations')->whereIn('option_name', ['com_site_title', 'com_site_subtitle'])
+            $ComOptionGet = ComOption::with('translations')
+                ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'])
                 ->get(['id']);
 
             // transformed data
@@ -145,26 +146,24 @@ class SystemManagementController extends Controller
                 }
             }
 
-            $com_site_logo = com_option_get('com_site_logo');
-            $com_site_favicon = com_option_get('com_site_favicon');
-            $com_site_logo_image_url = $imageModifier->generateImageUrl(com_option_get('com_site_logo'));
-            $com_site_favicon_image_url = $imageModifier->generateImageUrl(com_option_get('com_site_favicon'));
-            $com_site_title = com_option_get('com_site_title') ?? '';
-            $com_site_subtitle = com_option_get('com_site_subtitle') ?? '';
-            $com_user_email_verification = com_option_get('com_user_email_verification') ?? '';
-            $com_user_login_otp = com_option_get('com_user_login_otp') ?? '';
-            $com_maintenance_mode = com_option_get('com_maintenance_mode') ?? '';
+            $com_meta_title = com_option_get('com_meta_title');
+            $com_meta_description = com_option_get('com_meta_description');
+            $com_meta_tags = com_option_get('com_meta_tags');
+            $com_canonical_url = com_option_get('com_canonical_url');
+            $com_og_title = com_option_get('com_og_title');
+            $com_og_description = com_option_get('com_og_description');
+            $com_og_image =com_option_get('com_og_image');
+            $com_og_image_url = $imageModifier->generateImageUrl(com_option_get('com_og_image'));
 
             return $this->success([
-                'com_site_logo' => $com_site_logo,
-                'com_site_favicon' => $com_site_favicon,
-                'com_site_logo_image_url' => $com_site_logo_image_url,
-                'com_site_favicon_image_url' => $com_site_favicon_image_url,
-                'com_site_title' => $com_site_title,
-                'com_site_subtitle' => $com_site_subtitle,
-                'com_user_email_verification' => $com_user_email_verification,
-                'com_user_login_otp' => $com_user_login_otp,
-                'com_maintenance_mode' => $com_maintenance_mode,
+                'com_meta_title' => $com_meta_title,
+                'com_meta_description' => $com_meta_description,
+                'com_meta_tags' => $com_meta_tags,
+                'com_canonical_url' => $com_canonical_url,
+                'com_og_title' => $com_og_title,
+                'com_og_description' => $com_og_description,
+                'com_og_image' => $com_og_image,
+                'com_og_image_url' => $com_og_image_url,
                 'translations' => $transformedData,
             ]);
         }
