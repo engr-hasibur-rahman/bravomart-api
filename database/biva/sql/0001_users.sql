@@ -3,6 +3,7 @@
 INSERT INTO `users` (
         `id`,
         `first_name`,
+        `username`,
         `email`,
         `activity_scope`,
         `email_verified_at`,
@@ -12,11 +13,13 @@ INSERT INTO `users` (
         `updated_at`,
         `store_owner`,
         `merchant_id`,
-        `stores`
+        `stores`,
+        `status`
     )
 VALUES (
         1,
         'Store Owner',
+        'store-owner',
         'owner@store.com',
         'store_level',
         NULL,
@@ -24,15 +27,16 @@ VALUES (
         NULL,
         '2021-06-27 04:13:00',
         '2023-10-02 06:53:37',
-        
         1,
         1,
-        '[1,2,3,4]'
+        '[1,2,3,4]',
+        1
 
     ),
     (
         2,
         'Kitchen X',
+        'kitchen-x',
         'kitchenx@demo.com',
         'kitchen_level',
         NULL,
@@ -40,14 +44,15 @@ VALUES (
         NULL,
         '2021-08-18 10:30:29',
         '2021-08-18 13:17:53',
-        
         0,
         null,
-        null
+        null,
+        1
     ),
     (
         4,
         'Kitchen',
+        'kitchen',
         'kitchen@demo.com',
         'kitchen_level',
         NULL,
@@ -55,14 +60,15 @@ VALUES (
         NULL,
         '2021-08-18 10:30:29',
         '2021-08-18 13:17:53',
-        
         0,
         null,
-        null
+        null,
+        1
     ),
     (
         5,
         'Kitchen 2',
+        'kitchen-2',
         'kitchen2@demo.com',
         'kitchen_level',
         NULL,
@@ -70,14 +76,15 @@ VALUES (
         NULL,
         '2022-03-17 14:15:08',
         '2022-03-17 14:15:08',
-        
         0,
         null,
-        null
+        null,
+        1
     ),
     (
         6,
         'Delivery Man',
+        'delivery-man',
         'deliveryman@demo.com',
         'delivery_level',
         NULL,
@@ -85,14 +92,15 @@ VALUES (
         NULL,
         '2022-03-17 16:25:39',
         '2022-03-17 16:25:39',
-        
         0,
         null,
-        null
+        null,
+        1
     ),
     (
         7,
         'Fitter Man',
+        'fitter-man',
         'fitterman@demo.com',
         'fitting_level',
         NULL,
@@ -100,8 +108,8 @@ VALUES (
         NULL,
         '2022-03-17 16:25:39',
         '2022-03-17 16:25:39',
-        
         0,
         null,
-        null
+        null,
+        1
     );

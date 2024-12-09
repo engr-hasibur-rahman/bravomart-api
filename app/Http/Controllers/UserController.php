@@ -10,6 +10,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\ComMerchant;
+use App\Models\LinkedSocialAccount;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Exception;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Contracts\Role;
 use Spatie\Permission\Models\Role as ModelsRole;
+use Laravel\Socialite\Two\User as ProviderUser;
+use Laravel\Socialite\Facades\Socialite;
 
 class UserController extends Controller
 {
@@ -30,7 +33,39 @@ class UserController extends Controller
     {
         $this->repository = $repository;
     }
+    /* Social login start */
+     public function redirectToProvider($provider)
+    {
+        return Socialite::driver($provider)->redirect();
+    }
 
+    public function handleProviderCallback($provider)
+    {
+        $user = Socialite::driver($provider)->user();
+
+        // Use the user information to log in or register the user
+        $existingUser = User::where('provider_id', $user->id)->first();
+
+        if ($existingUser) {
+            // Log the user in
+            $token = $existingUser->createToken('api_token')->plainTextToken;
+
+            return response()->json(['token' => $token]);
+        } else {
+            // Register and log in
+            $newUser = User::create([
+                'name' => $user->name,
+                'email' => $user->email,
+                'provider' => $provider,
+                'provider_id' => $user->id,
+            ]);
+
+            $token = $newUser->createToken('api_token')->plainTextToken;
+
+            return response()->json(['token' => $token]);
+        }
+    }
+    /* Social login end */
     public function token(Request $request)
     {
         $request->validate([
@@ -38,7 +73,7 @@ class UserController extends Controller
             'password' => 'required',
         ]);
         //->where('activity_scope', 'system_level')
-        $user = User::where('email', $request->email)->where('activity_scope', 'system_level')->where('is_active', true)->first();
+        $user = User::where('email', $request->email)->where('activity_scope', 'system_level')->where('status', 1)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return ["token" => null, "permissions" => []];
@@ -60,26 +95,26 @@ class UserController extends Controller
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
 
+        $roles = [UserRole::STORE_OWNER];
         $user = $this->repository->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
+            'username' => username_slug_generator($request->first_name,$request->last_name),
             'email'    => $request->email,
             'phone'    => $request->phone,
             'password' => Hash::make($request->password),
             'activity_scope'    => 'SHOP_AREA',
             'store_owner'    => 1,
+            'status' => 1,
         ]);
 
-        $role = \Spatie\Permission\Models\Role::where('available_for','store_level')->first();
-        $user->assignRole($role);
+        $user->assignRole($roles);
 
         // Create Merchant ID for the user registered as BusinessMan. In future this will be create on User Approval
         $merchant = ComMerchant::create(['user_id' => $user->id]);
         // Keeping Merchant id in Users table. Though it is Bad concept: circular reference
         $user->merchant_id = $merchant->id;
         $user->save();
-
-
         return [
             'success' => true,
             "token" => $user->createToken('auth_token')->plainTextToken,
@@ -123,9 +158,11 @@ class UserController extends Controller
         $user = $this->repository->create([
             'first_name'     => $request->first_name,
             'last_name' => $request->last_name,
+            'username' => username_slug_generator($request->first_name,$request->last_name),
             'email'    => $request->email,
             //'activity_scope' => UserRole::CUSTOMER,
             'password' => Hash::make($request->password),
+            'status' => 1
         ]);
 
         $user->assignRole($roles);
