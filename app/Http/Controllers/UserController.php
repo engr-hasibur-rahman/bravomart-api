@@ -34,61 +34,35 @@ class UserController extends Controller
         $this->repository = $repository;
     }
     /* Social login start */
-    public function socialLogin(Request $request){
-
-        try {
-            $accessToken = $request->get('access_token');
-            $provider = $request->get('provider');
-            $providerUser = Socialite::driver($provider)->userFromToken($accessToken);
-
-        } catch (Exception $exception) {
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ]);
-        }
-        if (filled($providerUser)) {
-            $user = $this->findOrCreate($providerUser, $provider);
-        } else {
-            $user = $providerUser;
-        }
-        auth()->guard('api')->login($user);
-        if (auth()->guard('api')->check()) {
-            return response()->json([
-                'message' => 'Logged in successfully',
-                'data' => ['token' => $user->createToken('auth_token')->plainTextToken],
-            ]);
-        } else {
-            return $this->error(
-                message: 'Failed to Login try again',
-                code: 401
-            );
-        }
-    }
-    protected function findOrCreate(ProviderUser $providerUser, string $provider): User
+     public function redirectToProvider($provider)
     {
-        $linkedSocialAccount = LinkedSocialAccount::query()->where('provider_name', $provider)
-            ->where('provider_id', $providerUser->getId())
-            ->first();
+        return Socialite::driver($provider)->redirect();
+    }
 
-        if ($linkedSocialAccount) {
-            return $linkedSocialAccount->user;
+    public function handleProviderCallback($provider)
+    {
+        $user = Socialite::driver($provider)->user();
+
+        // Use the user information to log in or register the user
+        $existingUser = User::where('provider_id', $user->id)->first();
+
+        if ($existingUser) {
+            // Log the user in
+            $token = $existingUser->createToken('api_token')->plainTextToken;
+
+            return response()->json(['token' => $token]);
         } else {
-            $user = null;
-            if ($email = $providerUser->getEmail()) {
-                $user = User::query()->where('email', $email)->first();
-            }
-            if (! $user) {
-                $user = User::query()->create([
-                    'name' => $providerUser->getName(),
-                    'email' => $providerUser->getEmail(),
-                ]);
-                $user->markEmailAsVerified();
-            }
-            $user->linkedSocialAccounts()->create([
-                'provider_id' => $providerUser->getId(),
-                'provider_name' => $provider,
+            // Register and log in
+            $newUser = User::create([
+                'name' => $user->name,
+                'email' => $user->email,
+                'provider' => $provider,
+                'provider_id' => $user->id,
             ]);
-            return $user;
+
+            $token = $newUser->createToken('api_token')->plainTextToken;
+
+            return response()->json(['token' => $token]);
         }
     }
     /* Social login end */
@@ -121,6 +95,7 @@ class UserController extends Controller
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
 
+        $roles = [UserRole::STORE_OWNER];
         $user = $this->repository->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -133,8 +108,7 @@ class UserController extends Controller
             'status' => 1,
         ]);
 
-        $role = \Spatie\Permission\Models\Role::where('available_for','store_level')->first();
-        $user->assignRole($role);
+        $user->assignRole($roles);
 
         // Create Merchant ID for the user registered as BusinessMan. In future this will be create on User Approval
         $merchant = ComMerchant::create(['user_id' => $user->id]);
