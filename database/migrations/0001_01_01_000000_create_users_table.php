@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('email_verified')->default(0)->comment('0=unverified, 1=verified');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->timestamp('password_changed_at')->nullable();
             $table->string('image')->nullable();
             $table->string('def_lang')->nullable();
             $table->string('firebase_token')->nullable();
@@ -30,6 +30,9 @@ return new class extends Migration
             $table->unsignedBigInteger('merchant_id')->nullable();
             $table->string('stores')->nullable();
             $table->integer('status')->default(1)->comment('0=Pending, 1=Active, 2=Inactive, 3=Suspended');
+            $table->boolean('terms_status')->default(1)->comment('1=Agreed, 0=Not Agreed');
+            $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 
