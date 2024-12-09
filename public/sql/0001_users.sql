@@ -3,6 +3,7 @@
 INSERT INTO `users` (
         `id`,
         `first_name`,
+        `username`,
         `email`,
         `activity_scope`,
         `email_verified_at`,
@@ -18,6 +19,7 @@ INSERT INTO `users` (
 VALUES (
         1,
         'Store Owner',
+        'store-owner',
         'owner@store.com',
         'store_level',
         NULL,
@@ -34,6 +36,7 @@ VALUES (
     (
         2,
         'Kitchen X',
+        'kitchen-x',
         'kitchenx@demo.com',
         'kitchen_level',
         NULL,
@@ -49,6 +52,7 @@ VALUES (
     (
         4,
         'Kitchen',
+        'kitchen',
         'kitchen@demo.com',
         'kitchen_level',
         NULL,
@@ -64,6 +68,7 @@ VALUES (
     (
         5,
         'Kitchen 2',
+        'kitchen-2',
         'kitchen2@demo.com',
         'kitchen_level',
         NULL,
@@ -79,6 +84,7 @@ VALUES (
     (
         6,
         'Delivery Man',
+        'delivery-man',
         'deliveryman@demo.com',
         'delivery_level',
         NULL,
@@ -94,6 +100,7 @@ VALUES (
     (
         7,
         'Fitter Man',
+        'fitter-man',
         'fitterman@demo.com',
         'fitting_level',
         NULL,
