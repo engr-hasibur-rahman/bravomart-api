@@ -18,6 +18,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Contracts\Role;
+use Spatie\Permission\Models\Role as ModelsRole;
 
 class UserController extends Controller
 {
@@ -57,6 +59,7 @@ class UserController extends Controller
      */
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
+
         $roles = [UserRole::STORE_OWNER];
         $user = $this->repository->create([
             'first_name' => $request->first_name,
@@ -121,6 +124,7 @@ class UserController extends Controller
             'first_name'     => $request->first_name,
             'last_name' => $request->last_name,
             'email'    => $request->email,
+            //'activity_scope' => UserRole::CUSTOMER,
             'password' => Hash::make($request->password),
         ]);
 
