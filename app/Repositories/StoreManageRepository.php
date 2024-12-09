@@ -187,4 +187,22 @@ class StoreManageRepository implements StoreManageInterface
         }
         return true;
     }
+    // Fetch deleted records(true = only trashed records, false = all records with trashed)
+    public function records(bool $onlyDeleted = false)
+    {
+        try {
+            switch ($onlyDeleted) {
+                case true:
+                    $records = ComStore::onlyTrashed()->get();
+                    break;
+
+                default:
+                    $records = ComStore::withTrashed()->get();
+                    break;
+            }
+            return $records;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 }

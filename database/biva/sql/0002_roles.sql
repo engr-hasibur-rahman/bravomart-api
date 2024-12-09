@@ -25,13 +25,29 @@ VALUES (
     (
         3,
         'store_level',
-        'Customer',
+        'Store Manager',
         'api',
         '2023-08-11 11:57:33',
         '2023-08-11 11:57:33'
     ),
+       (
+           4,
+           'store_level',
+           'Store Officer',
+           'api',
+           '2023-08-11 11:57:33',
+           '2023-08-11 11:57:33'
+       ),
+       (
+           5,
+           'customer_level',
+           'Customer',
+           'api',
+           '2023-08-11 11:57:33',
+           '2023-08-11 11:57:33'
+       ),
     (
-        4,
+        6,
         'delivery_level',
         'Delivery Man',
         'api',
@@ -39,7 +55,7 @@ VALUES (
         '2023-08-11 11:57:33'
     ),
     (
-        5,
+        7,
         'fitting_level',
         'Fitter Man',
         'api',

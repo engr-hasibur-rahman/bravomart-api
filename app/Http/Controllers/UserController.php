@@ -42,17 +42,17 @@ class UserController extends Controller
             return ["token" => null, "permissions" => []];
         }
         $email_verified = $user->hasVerifiedEmail();
-        $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+        $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
 
         return [
             "token" => $user->createToken('auth_token')->plainTextToken,
-            "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(),$permissions),
+            "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
             "email_verified" => $email_verified,
             "role" => $user->getRoleNames()->first()
         ];
     }
 
-       /**
+    /**
      * Store a newly created resource in storage.
      */
     public function StoreOwnerRegistration(UserCreateRequest $request)
@@ -64,16 +64,16 @@ class UserController extends Controller
             'email'    => $request->email,
             'phone'    => $request->phone,
             'password' => Hash::make($request->password),
-            'activity_scope'    => 'store_level',
+            'activity_scope'    => 'SHOP_AREA',
             'store_owner'    => 1,
         ]);
 
         $user->assignRole($roles);
 
         // Create Merchant ID for the user registered as BusinessMan. In future this will be create on User Approval
-        $merchant=ComMerchant::create(['user_id'=>$user->id]);
+        $merchant = ComMerchant::create(['user_id' => $user->id]);
         // Keeping Merchant id in Users table. Though it is Bad concept: circular reference
-        $user->merchant_id=$merchant->id;
+        $user->merchant_id = $merchant->id;
         $user->save();
 
 
@@ -118,7 +118,8 @@ class UserController extends Controller
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
         $user = $this->repository->create([
-            'name'     => $request->name,
+            'first_name'     => $request->first_name,
+            'last_name' => $request->last_name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);

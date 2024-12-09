@@ -86,7 +86,8 @@ class StoreRequest extends FormRequest
     }
     private function getEnumValues(string $enumClass): string
     {
-        return implode(', ', array_map(fn($case) => $case->value, $enumClass::cases()));
+        return implode(',', array_map(fn($case) => $case->value, $enumClass::cases()));
+
     }
     public function failedValidation(Validator $validator)
     {
