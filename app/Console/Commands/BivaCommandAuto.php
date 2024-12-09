@@ -101,6 +101,8 @@ class BivaCommandAuto extends Command
             'email' =>  $email,
             'activity_scope' =>  'system_level',
             'password' =>  Hash::make($password),
+            'status' => 1,
+            'username'=> 'biva-mart'
         ]);
         $user->email_verified_at = now()->timestamp;
         $user->save();

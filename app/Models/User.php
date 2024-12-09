@@ -23,11 +23,13 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
+        'slug',
         'phone',
         'email',
         'activity_scope',
         'password',
         'store_owner',
+        'status',
     ];
 
 
@@ -60,13 +62,13 @@ class User extends Authenticatable
     /**
      * Get roles for the user.
      */
-//    public function roles()
-//    {
-//        return $this->belongsToMany(CustomRole::class, 'model_has_roles', 'model_id', 'role_id')
-//            ->where(function ($query) {
-//                $query->where('model_type', self::class)->orWhereNull('model_type');
-//            });
-//    }
+    //    public function roles()
+    //    {
+    //        return $this->belongsToMany(CustomRole::class, 'model_has_roles', 'model_id', 'role_id')
+    //            ->where(function ($query) {
+    //                $query->where('model_type', self::class)->orWhereNull('model_type');
+    //            });
+    //    }
 
     /**
      * Get permissions directly assigned to the user.
@@ -101,5 +103,10 @@ class User extends Authenticatable
         $rolePermissions = $this->rolePermissions()->pluck('name');
 
         return $directPermissions->merge($rolePermissions)->unique();
+    }
+    /* Get linked social accounts */
+    public function linkedSocialAccounts()
+    {
+        return $this->hasOne(LinkedSocialAccount::class);
     }
 }

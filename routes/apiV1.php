@@ -20,7 +20,10 @@ use App\Http\Controllers\Api\V1\Product\ProductVariantController;
 use App\Http\Controllers\Api\V1\UnitManageController;
 use Illuminate\Support\Facades\Route;
 
-
+Route::group(['namespace' => 'Api\V1'], function () {
+    Route::get('/auth/{provider}/redirect', [UserController::class, 'redirectToProvider']);
+    Route::get('auth/{provider}/callback', [UserController::class, 'handleProviderCallback']);
+});
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {

@@ -76,6 +76,27 @@ if (! function_exists('translate')) {
             return $slug;
         }
     }
+    
+if (!function_exists('username_slug_generator')) {
+    /**
+     * Generate a slug from first name and last name.
+     *
+     * @param string $first_name
+     * @param string|null $last_name
+     * @return string
+     */
+    function username_slug_generator($first_name, $last_name = null)
+    {
+        $username = Str::slug(trim(strtolower($first_name)));
+
+        if ($last_name) {
+            $slugLastName = Str::slug(trim(strtolower($last_name)));
+            return "{$username}-{$slugLastName}";
+        }
+
+        return $username;
+    }
+}
     if (!function_exists('generateUniqueSku')) {
         /**
          * Generate a unique SKU for a product variant.
