@@ -27,6 +27,9 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('def_lang')->nullable();
             $table->string('firebase_token')->nullable();
+            $table->string('google_id')->nullable();
+            $table->string('facebook_id')->nullable();
+            $table->string('apple_id')->nullable();
             $table->unsignedBigInteger('store_owner')->nullable()->comment('1=store_owner');
             $table->unsignedBigInteger('merchant_id')->nullable();
             $table->string('stores')->nullable();
