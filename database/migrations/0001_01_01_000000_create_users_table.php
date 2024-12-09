@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('def_lang')->nullable();
             $table->string('firebase_token')->nullable();
-            $table->unsignedBigInteger('store_owner')->nullable();
+            $table->unsignedBigInteger('store_owner')->nullable()->comment('1=store_owner');
             $table->unsignedBigInteger('merchant_id')->nullable();
             $table->string('stores')->nullable();
             $table->integer('status')->default(1)->comment('0=Pending, 1=Active, 2=Inactive, 3=Suspended');
