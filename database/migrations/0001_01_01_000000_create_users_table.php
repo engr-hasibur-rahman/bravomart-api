@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name')->nullable();
-            $table->string('username')->unique();
+            $table->string('slug')->unique()->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->unique();
             $table->string('activity_scope')->nullable(); //SHOP_AREA/ADMIN_AREA/FIELD_AREA/KITCHEN_AREA ,
