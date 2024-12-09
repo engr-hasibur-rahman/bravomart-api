@@ -18,6 +18,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Contracts\Role;
+use Spatie\Permission\Models\Role as ModelsRole;
 
 class UserController extends Controller
 {
@@ -57,6 +59,7 @@ class UserController extends Controller
      */
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
+        
         $roles = [UserRole::STORE_OWNER];
         $user = $this->repository->create([
             'first_name' => $request->first_name,
@@ -67,7 +70,7 @@ class UserController extends Controller
             'activity_scope'    => 'store_level',
             'store_owner'    => 1,
         ]);
-
+        
         $user->assignRole($roles);
 
         // Create Merchant ID for the user registered as BusinessMan. In future this will be create on User Approval
@@ -244,8 +247,8 @@ class UserController extends Controller
     }
 
     public function assignRole(Request $request)
-    {
-        $user = User::findOrFail($request->user_id);
+    {       
+        $user = User::findOrFail($request->user_id);       
         if (isset($request->roles)) {
             $user->syncRoles($request->roles);
         }
