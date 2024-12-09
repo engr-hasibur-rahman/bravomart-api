@@ -248,9 +248,7 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              System management                                                           //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case THIRD_PARTY = 'third-party';
     case FIREBASE_NOTIFICATION = 'firebase-notification';
-    case OFFLINE_PAYMENT_SETUP = 'offline-payment-setup';
     case LOGIN_SETUP = 'login-setup';
     case REACT_SITE = 'react-site';
     case EMAIL_TEMPLATE = 'email-template';
@@ -259,12 +257,16 @@ enum Permission: string
 
     case UNSIGNED_ORDERS_GROCERY = 'unsigned-orders-grocery';
     case ONGOING_ORDERS_GROCERY = 'ongoing-orders-grocery';
-    case GENERAL_SETTINGS = 'general-settings';
+    case GENERAL_SETTINGS = '/admin/system-management/general-settings';
     case APPEARANCE_SETTINGS = 'appearance_settings';
-    case MENU_MANAGE = 'menu-manage';
-    case COLOR_CUSTOMIZATION = 'color-customization';
-    case TYPOGRAPHY_CUSTOMIZATION = 'typography-customization';
-    case FOOTER_CUSTOMIZATION = 'footer-customization';
-    case MAINTENANCE_SETTINGS = 'maintenance-customization';
+    case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';
+    case MAINTENANCE_SETTINGS = '/admin/system-management/maintenance-settings';
+    case SEO_SETTINGS = '/admin/system-management/seo-settings';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              Third-Party Integrations                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case FIREBASE_SETTINGS = '/admin/system-management/firebase-settings';
+    case SOCIAL_LOGIN_SETTINGS = '/admin/system-management/social-login-settings';
 
 }

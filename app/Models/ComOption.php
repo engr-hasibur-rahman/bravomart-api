@@ -16,7 +16,8 @@ class ComOption extends Model
     protected $fillable = ['option_name', 'option_value', 'autoload'];
 
     public $translationKeys = [
-        'option_name','com_site_title','com_site_subtitle'
+        'option_name','com_site_title','com_site_subtitle','com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description',
+        'com_maintenance_title', 'com_maintenance_description',
     ];
     public function translations()
     {
