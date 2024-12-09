@@ -60,7 +60,6 @@ class UserController extends Controller
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
 
-        $roles = [UserRole::STORE_OWNER];
         $user = $this->repository->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -71,7 +70,8 @@ class UserController extends Controller
             'store_owner'    => 1,
         ]);
 
-        $user->assignRole($roles);
+        $role = \Spatie\Permission\Models\Role::where('available_for','store_level')->first();
+        $user->assignRole($role);
 
         // Create Merchant ID for the user registered as BusinessMan. In future this will be create on User Approval
         $merchant = ComMerchant::create(['user_id' => $user->id]);
