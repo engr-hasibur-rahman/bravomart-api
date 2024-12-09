@@ -64,7 +64,7 @@ class UserController extends Controller
             'email'    => $request->email,
             'phone'    => $request->phone,
             'password' => Hash::make($request->password),
-            'activity_scope'    => 'store_level',
+            'activity_scope'    => 'SHOP_AREA',
             'store_owner'    => 1,
         ]);
 

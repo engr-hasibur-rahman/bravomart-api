@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->unique();
-            $table->string('activity_scope')->nullable(); //SHOP_AREA/ADMIN_AREA/FIELD_AREA/KITCHEN_AREA ,        Restricting User Sothat He can't login to Unauthorized area
+            $table->string('activity_scope')->nullable(); //SHOP_AREA/ADMIN_AREA/FIELD_AREA/KITCHEN_AREA/CUSTOMER_AREA ,        Restricting User Sothat He can't login to Unauthorized area
             $table->timestamp('phone_verified_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
