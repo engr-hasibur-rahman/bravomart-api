@@ -38,7 +38,7 @@ class UserController extends Controller
             'password' => 'required',
         ]);
         //->where('activity_scope', 'system_level')
-        $user = User::where('email', $request->email)->where('activity_scope', 'system_level')->where('is_active', true)->first();
+        $user = User::where('email', $request->email)->where('activity_scope', 'system_level')->where('status', 1)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return ["token" => null, "permissions" => []];
@@ -69,6 +69,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'activity_scope'    => 'SHOP_AREA',
             'store_owner'    => 1,
+            'status' => 1,
         ]);
 
         $user->assignRole($roles);
