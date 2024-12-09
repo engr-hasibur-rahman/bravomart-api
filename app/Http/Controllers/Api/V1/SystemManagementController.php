@@ -314,65 +314,55 @@ class SystemManagementController extends Controller
     public function socialLoginSettings(Request $request){
         if ($request->isMethod('POST')) {
             $this->validate($request, [
-                'com_maintenance_title' => 'nullable|string',
-                'com_maintenance_description' => 'nullable|string',
-                'com_maintenance_start_date' => 'nullable|string',
-                'com_maintenance_end_date' => 'nullable|string',
-                'com_maintenance_image' => 'nullable|string',
+                // google
+                'com_google_login_enabled' => 'nullable|string',
+                'com_google_app_id' => 'nullable|string',
+                'com_google_client_secret' => 'nullable|string',
+                'com_google_client_callback_url' => 'nullable|string',
+                // facebook
+                'com_facebook_login_enabled' => 'nullable|string',
+                'com_facebook_app_id' => 'nullable|string',
+                'com_facebook_client_secret' => 'nullable|string',
+                'com_facebook_client_callback_url' => 'nullable|string',
             ]);
 
-            $fields = ['com_maintenance_title', 'com_maintenance_description', 'com_maintenance_start_date', 'com_maintenance_start_date', 'com_maintenance_image'];
+            $fields = [
+                'com_google_login_enabled',
+                'com_google_app_id',
+                'com_google_client_secret',
+                'com_google_client_callback_url',
+                'com_facebook_login_enabled',
+                'com_facebook_app_id',
+                'com_facebook_client_secret',
+                'com_facebook_client_callback_url',
+            ];
+
             foreach ($fields as $field) {
                   $value = $request->input($field) ?? null;
                   com_option_update($field, $value);
             }
-
-            // Define the fields that need to be translated
-            $fields = ['com_maintenance_title', 'com_maintenance_description'];
-            $com_options = ComOption::whereIn('option_name', $fields)->get(['id']);
-
-            foreach ($com_options as $com_option) {
-                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\ComOption', $this->translationKeys());
-            }
-
-            return $this->success(translate('messages.update_success', ['name' => 'Maintenance Settings']));
+            return $this->success(translate('messages.update_success', ['name' => 'Social Login Settings']));
         }else{
-            // Create an instance of ImageModifier
-            $imageModifier = new ImageModifier();
+            // Retrieve the values using the correct keys
+            $com_google_login_enabled = com_option_get('com_google_login_enabled');
+            $com_google_app_id = com_option_get('com_google_app_id');
+            $com_google_client_secret = com_option_get('com_google_client_secret');
+            $com_google_client_callback_url = com_option_get('com_google_client_callback_url');
 
-            $ComOptionGet = ComOption::with('translations')
-                ->whereIn('option_name', ['com_maintenance_title', 'com_maintenance_description'])
-                ->get(['id']);
-
-            // transformed data
-            $transformedData = [];
-            foreach ($ComOptionGet as $com_option) {
-                $translations = $com_option->translations()->get()->groupBy('language');
-                foreach ($translations as $language => $items) {
-                    $languageInfo = ['language' => $language];
-                    /* iterate all Column to Assign Language Value */
-                    foreach ($this->get_com_option->translationKeys as $columnName) {
-                        $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                    }
-                    $transformedData[] = $languageInfo;
-                }
-            }
-
-            $com_maintenance_title = com_option_get('com_maintenance_title');
-            $com_maintenance_description = com_option_get('com_maintenance_description');
-            $com_maintenance_start_date = com_option_get('com_maintenance_start_date');
-            $com_maintenance_end_date = com_option_get('com_maintenance_end_date');
-            $com_maintenance_image = com_option_get('com_maintenance_image');
-            $com_maintenance_image_url = $imageModifier->generateImageUrl(com_option_get('com_maintenance_image'));
+            $com_facebook_login_enabled = com_option_get('com_facebook_login_enabled');
+            $com_facebook_app_id = com_option_get('com_facebook_app_id');
+            $com_facebook_client_secret = com_option_get('com_facebook_client_secret');
+            $com_facebook_client_callback_url = com_option_get('com_facebook_client_callback_url');
 
             return $this->success([
-                'com_maintenance_title' => $com_maintenance_title,
-                'com_maintenance_description' => $com_maintenance_description,
-                'com_maintenance_start_date' => $com_maintenance_start_date,
-                'com_maintenance_end_date' => $com_maintenance_end_date,
-                'com_maintenance_image' => $com_maintenance_image,
-                'com_maintenance_image_url' => $com_maintenance_image_url,
-                'translations' => $transformedData,
+                'com_google_login_enabled' => $com_google_login_enabled,
+                'com_google_app_id' => $com_google_app_id,
+                'com_google_client_secret' => $com_google_client_secret,
+                'com_google_client_callback_url' => $com_google_client_callback_url,
+                'com_facebook_login_enabled' => $com_facebook_login_enabled,
+                'com_facebook_app_id' => $com_facebook_app_id,
+                'com_facebook_client_secret' => $com_facebook_client_secret,
+                'com_facebook_client_callback_url' => $com_facebook_client_callback_url,
             ]);
         }
 
