@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Permission;
+use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
@@ -103,6 +104,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('unit/update', [UnitManageController::class, 'update']);
             Route::delete('unit/remove/{id}', [UnitManageController::class, 'destroy']);
         });
+        // Blog manage
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
+            Route::get('blog/category/list', [BlogManageController::class, 'blogCategoryIndex']);
+        });
+        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+            Route::post('blog/category/add', [BlogManageController::class, 'blogCategoryStore']);
+            Route::get('blog/category/{id}', [BlogManageController::class, 'blogCategoryShow']);
+            Route::post('blog/category/update', [BlogManageController::class, 'blogCategoryUpdate']);
+            Route::delete('blog/category/remove/{id}', [BlogManageController::class, 'blogCategoryDestroy']);
+        });
 
         // Marketing area manage
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
@@ -161,7 +172,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('staff/add', [StaffController::class, 'store']);
             Route::get('staff/{id}', [StaffController::class, 'show']);
             Route::post('staff/update', [StaffController::class, 'update']);
-            Route::post('staff/change-status/{id}/{is_active}', [StaffController::class, 'changestatus']);
+            Route::post('staff/change-status', [StaffController::class, 'changestatus']);
         });
 
         // Product manage

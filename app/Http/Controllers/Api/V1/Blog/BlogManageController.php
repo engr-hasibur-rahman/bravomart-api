@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Http\Controllers\Api\V1\Blog;
+
+use App\Http\Controllers\Controller;
+use App\Interfaces\BlogManageInterface;
+use App\Models\Blog;
+use App\Models\BlogCategory;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class BlogManageController extends Controller
+{
+    public function __construct(protected BlogManageInterface $blogRepo) {}
+    /* <---------------------------------------------------Blog category start-----------------------------------------------------> */
+    public function blogCategoryIndex(Request $request)
+    {
+        return $this->blogRepo->getPaginatedCategory(
+            $request->limit ?? 10,
+            $request->page ?? 1,
+            $request->language ?? 'en',
+            $request->search ?? "",
+            $request->sortField ?? 'id',
+            $request->sort ?? 'asc',
+            []
+        );
+    }
+    public function blogCategoryStore(Request $request): JsonResponse
+    {
+        try {
+            // Validate input data
+            $validatedCategory = $request->validate([
+                'name' => 'required|unique:blog_categories,name',
+            ]);
+
+            $category = $this->blogRepo->store($validatedCategory, BlogCategory::class);
+            $this->blogRepo->storeTranslation($request, $category, 'App\Models\BlogCategory', $this->blogRepo->translationKeys());
+
+            if ($category) {
+                return $this->success(translate('messages.save_success', ['name' => 'Blog Category']));
+            } else {
+                return $this->failed(translate('messages.save_failed', ['name' => 'Blog Category']));
+            }
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json([
+                'success' => false,
+                'message' => translate('messages.validation_failed', ['name' => 'Blog Category']),
+                'errors' => $validationException->errors(),
+            ], 422);
+        }
+    }
+    public function blogCategoryUpdate(Request $request)
+    {
+
+        try {
+            $validatedCategory = $request->validate([
+                'id' => 'required',
+                'name' => 'required',
+            ]);
+            $category = $this->blogRepo->update($validatedCategory, BlogCategory::class);
+            $this->blogRepo->updateTranslation($request, $category, 'App\Models\BlogCategory', $this->blogRepo->translationKeys());
+            if ($category) {
+                return $this->success(translate('messages.update_success', ['name' => 'Blog Category']));
+            } else {
+                return $this->failed(translate('messages.update_failed', ['name' => 'Blog Category']));
+            }
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json([
+                'success' => false,
+                'message' => translate('messages.validation_failed', ['name' => 'Blog Category']),
+                'errors' => $validationException->errors(),
+            ], 422);
+        }
+    }
+    public function blogCategoryShow(Request $request)
+    {
+        return $this->blogRepo->getCategoryById($request->id);
+    }
+    public function blogCategoryDestroy($id)
+    {
+        $this->blogRepo->delete($id, BlogCategory::class);
+        return $this->success(translate('messages.delete_success'));
+    }
+    /* <---------------------------------------------------Blog category end-----------------------------------------------------> */
+}

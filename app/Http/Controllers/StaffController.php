@@ -11,6 +11,9 @@ use App\Http\Requests\UserCreateRequest;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 
 class StaffController extends Controller
@@ -22,9 +25,7 @@ class StaffController extends Controller
     {
         $this->repository = $repository;
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $limit = $request->limit ?? 10;
@@ -33,97 +34,166 @@ class StaffController extends Controller
             ->when($request->filled('available_for'), function ($query) use ($request) {
                 $query->where('available_for', $request->available_for);
             })
-            ->paginate($limit); 
+            ->paginate($limit);
         return UserResource::collection($roles);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(UserCreateRequest $request)
     {
-        //dd($request->all());
-        $notAllowedRoles = [UserRole::SUPER_ADMIN];
-        if ((isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) || (isset($request->roles) && in_array($request->roles, $notAllowedRoles))) {
-            throw new AuthorizationException(NOT_AUTHORIZED);
-        }
-        // By default role ---->
-        $roles = Role::whereIn('available_for', ['store_level','fitter_level','delivery_level'])
-        ->where('name', '!=', 'Store Owner')
-        ->pluck('name');
-        // If the role is given in request ---->
-        if (isset($request->roles)) {
-            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
-        }
-        $user = $this->repository->create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'slug' => username_slug_generator($request->first_name, $request->last_name),
-            'email'    => $request->email,
-            'phone'    => $request->phone,
-            'status'    => 1,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            // Check for not allowed roles
+            $notAllowedRoles = [UserRole::SUPER_ADMIN];
+            if (
+                (isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) ||
+                (isset($request->roles) && in_array($request->roles, $notAllowedRoles))
+            ) {
+                throw new AuthorizationException(__('messages.authorization_invalid'));
+            }
 
-        $user->assignRole($roles);
+            // Fetch default roles
+            $roles = Role::whereIn('available_for', ['store_level', 'fitter_level', 'delivery_level'])
+                ->where('name', '!=', 'Store Owner')
+                ->pluck('name')
+                ->toArray();
 
-        return [
-            "user" => $user,
-            "permissions" => $user->getPermissionNames(),
-            "role" => $user->getRoleNames()
-        ];
+            // Add role from request if provided
+            if (isset($request->roles)) {
+                $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+            }
+
+            // Create user
+            $user = $this->repository->create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'slug' => username_slug_generator($request->first_name, $request->last_name),
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'status' => 1,
+                'password' => Hash::make($request->password),
+            ]);
+
+            // Assign roles to the user
+            $user->assignRole($roles);
+
+            // Return success response
+            return response()->json([
+                "status" => true,
+                "status_code" => 201,
+                "message" => __('messages.registration_success', ['name' => 'Staff']),
+                "user" => $user,
+                "permissions" => $user->getPermissionNames(),
+                "roles" => $user->getRoleNames(),
+            ], 201);
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "message" => __('messages.validation_failed'),
+                "errors" => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            // Catch unexpected errors
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => __('messages.error'),
+            ], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
-    {     
+    {
         $user = User::with('permissions')->findOrFail($id);
         return new UserResource($user);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function changestatus(int $id,int $is_active)
+    public function changestatus(Request $request)
     {
-        $roles = null;
-        if (isset($request->roles)) {
-            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+        try {
+            // Validate the incoming request
+            $request->validate([
+                'id' => 'required|exists:users,id',
+                'status' => 'required|boolean',
+            ]);
+
+            // Find the user and update status
+            $user = User::findOrFail($request->id);
+            $user->status = $request->status;
+            $user->save();
+
+            // Return success response
+            return response()->json([
+                "status" => true,
+                "status_code" => 200,
+                "message" => __("messages.status_change_success"),
+            ], 200);
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "message" => __("messages.validation_failed"),
+                "errors" => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            // Catch any other unexpected errors
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => __("messages.error"),
+            ], 500);
         }
-       
-        $user = User::findOrFail($id);
-        //$user->is_active =$is_active;
-        $user->is_active = !$user->is_active;
-        $user->save();
-
-        return $user;
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UserCreateRequest $request)
     {
-        $roles = null;
-        if (isset($request->roles)) {
-            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
-        }
-       
-        $user = User::findOrFail($request->id);
-        $user->last_name =$request->last_name;
-        $user->first_name =$request->first_name;
-        $user->phone =$request->phone;
-        $user->save();
-        $user->syncRoles($roles);
+        try {
+            // Validate request
+            $validatedData = $request->validated();
 
-        return $user;
+            // Handle roles if provided in the request
+            $roles = [];
+            if (isset($request->roles)) {
+                $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+            }
+
+            // Find the user and update details
+            $user = User::findOrFail($request->id);
+            $user->last_name = $validatedData['last_name'];
+            $user->first_name = $validatedData['first_name'];
+            $user->phone = $validatedData['phone'];
+            $user->save();
+
+            // Sync roles with the user
+            if (!empty($roles)) {
+                $user->syncRoles($roles);
+            }
+
+            // Return success response with user data
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Staff']),
+                'user' => $user,
+            ], 200);
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            return response()->json([
+                'status' => false,
+                'status_code' => 422,
+                'message' => __('messages.update_failed', ['name' => 'Staff']),
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            // Catch any other unexpected errors
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.error'),
+            ], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
