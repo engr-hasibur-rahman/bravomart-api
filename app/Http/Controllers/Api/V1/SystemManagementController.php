@@ -8,6 +8,10 @@ use App\Interfaces\TranslationInterface;
 use App\Models\ComOption;
 use App\Models\SystemManagement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
+use function PHPUnit\Framework\isJson;
 
 class SystemManagementController extends Controller
 {
@@ -31,9 +35,17 @@ class SystemManagementController extends Controller
                 'com_user_email_verification' => 'nullable|string',
                 'com_user_login_otp' => 'nullable|string',
                 'com_maintenance_mode' => 'nullable|string',
+                // new added
+                'com_site_full_address' => 'nullable|string',
+                'com_site_contact_number' => 'nullable|string',
+                'com_site_website_url' => 'nullable|string',
+                'com_site_email' => 'nullable|string',
+                'com_site_footer_copyright' => 'nullable|string',
             ]);
 
-            $fields = ['com_site_logo', 'com_site_favicon', 'com_site_title', 'com_site_subtitle', 'com_user_email_verification', 'com_user_login_otp', 'com_maintenance_mode'];
+            $fields = ['com_site_logo', 'com_site_favicon', 'com_site_title', 'com_site_subtitle', 'com_user_email_verification','com_user_login_otp', 'com_maintenance_mode',
+                'com_site_full_address','com_site_contact_number', 'com_site_website_url', 'com_site_email', 'com_site_footer_copyright'
+            ];
 
             foreach ($fields as $field) {
                   $value = $request->input($field) ?? null;
@@ -41,7 +53,7 @@ class SystemManagementController extends Controller
             }
 
             // Define the fields that need to be translated
-            $fields = ['com_site_title', 'com_site_subtitle'];
+            $fields = ['com_site_title', 'com_site_subtitle', 'com_site_full_address', 'com_site_contact_number', 'com_site_footer_copyright'];
             $com_options = ComOption::whereIn('option_name', $fields)->get(['id']);
 
             foreach ($com_options as $com_option) {
@@ -80,6 +92,13 @@ class SystemManagementController extends Controller
             $com_user_login_otp = com_option_get('com_user_login_otp') ?? '';
             $com_maintenance_mode = com_option_get('com_maintenance_mode') ?? '';
 
+            // New data
+            $com_site_full_address = com_option_get('com_site_full_address') ?? '';
+            $com_site_footer_copyright = com_option_get('com_site_footer_copyright') ?? '';
+            $com_site_contact_number = com_option_get('com_site_contact_number') ?? '';
+            $com_site_website_url = com_option_get('com_site_website_url') ?? '';
+            $com_site_email = com_option_get('com_site_email') ?? '';
+
             return $this->success([
                 'com_site_logo' => $com_site_logo,
                 'com_site_favicon' => $com_site_favicon,
@@ -90,8 +109,16 @@ class SystemManagementController extends Controller
                 'com_user_email_verification' => $com_user_email_verification,
                 'com_user_login_otp' => $com_user_login_otp,
                 'com_maintenance_mode' => $com_maintenance_mode,
+                // New data
+                'com_site_full_address' => $com_site_full_address,
+                'com_site_footer_copyright' => $com_site_footer_copyright,
+                'com_site_contact_number' => $com_site_contact_number,
+                'com_site_website_url' => $com_site_website_url,
+                'com_site_email' => $com_site_email,
                 'translations' => $transformedData,
             ]);
+
+
         }
 
     }
@@ -173,20 +200,101 @@ class SystemManagementController extends Controller
     public function footerCustomization(Request $request){
         if ($request->isMethod('POST')) {
             $this->validate($request, [
-                'com_meta_title' => 'nullable|string',
-                'com_meta_description' => 'nullable|string',
-                'com_meta_tags' => 'nullable|string',
-                'com_canonical_url' => 'nullable|string',
-                'com_og_title' => 'nullable|string',
-                'com_og_description' => 'nullable|string',
-                'com_og_image' => 'nullable|string',
+                //Quick Access
+                'com_quick_access' => 'nullable|array',
+                'com_quick_access_enable_disable' => 'nullable|string',
+                'com_quick_access.*.com_quick_access_title' => 'nullable|string',
+                'com_quick_access.*.com_quick_access_url' => 'nullable|string',
+                'com_quick_access_title' => 'nullable|string',
+
+                // our info
+                'com_our_info' => 'nullable|array',
+                'com_our_info_enable_disable' => 'nullable|string',
+                'com_our_info.*.title'=> 'nullable|string',
+                'com_our_info.*.name'=> 'nullable|string',
+                'com_our_info.*.url'=> 'nullable|string',
+                'com_our_info_title'=> 'nullable|string',
+
+                // Social Links Section
+                'com_social_links_enable_disable' => 'nullable|string',
+                'com_social_links_title' => 'nullable|string',
+                'com_social_links_facebook_url' => 'nullable|string',
+                'com_social_links_twitter_url' => 'nullable|string',
+                'com_social_links_instagram_url' => 'nullable|string',
+                'com_social_links_linkedin_url' => 'nullable|string',
+                'com_social_links_youtube_url' => 'nullable|string',
+                'com_social_links_pinterest_url' => 'nullable|string',
+                'com_social_links_snapchat_url' => 'nullable|string',
+
+                // Download App Link Section
+                'com_download_app_link_one' => 'nullable|string',
+                'com_download_app_link_two' => 'nullable|string',
+
+                // Accepted Payment Methods Section (multiple methods)
+                'com_payment_methods_enable_disable' => 'nullable|string',
+                'com_payment_methods_image' => 'nullable|string',
             ]);
 
-            $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags', 'com_canonical_url', 'com_og_title', 'com_og_description', 'com_og_image'];
+            $fields = [
+                'com_quick_access_enable_disable',
+                'com_our_info_enable_disable',
+                'com_quick_access_title',
+                'com_our_info_title',
+                'com_social_links_enable_disable',
+                'com_social_links_title',
+                'com_social_links_facebook_url',
+                'com_social_links_twitter_url',
+                'com_social_links_instagram_url',
+                'com_social_links_linkedin_url',
+                'com_social_links_youtube_url',
+                'com_social_links_pinterest_url',
+                'com_social_links_snapchat_url',
+                'com_download_app_link_one',
+                'com_download_app_link_two',
+                'com_payment_methods_enable_disable',
+                'com_payment_methods_image',
+            ];
 
+
+            $fields_multiple = [
+                'com_quick_access',
+                'com_quick_access_enable_disable',
+                'com_quick_access.*.com_quick_access_title',
+                'com_quick_access.*.com_quick_access_name',
+                'com_quick_access.*.com_quick_access_url',
+                'com_quick_access.*.com_quick_access_icon',
+                'com_quick_access.*.com_quick_access_description',
+                'com_quick_access.*.com_quick_access_order',
+                'com_quick_access.*.com_quick_access_target',
+                'com_our_info',
+                'com_our_info.*.title',
+                'com_our_info.*.name',
+                'com_our_info.*.url',
+            ];
+
+            // Basic processing for fields
             foreach ($fields as $field) {
-                  $value = $request->input($field) ?? null;
-                  com_option_update($field, $value);
+                $value = $request->input($field) ?? null;
+                com_option_update($field, $value);
+            }
+
+            // Processing for fields with potential JSON encoding
+            $processedFields = [];
+            foreach ($fields_multiple as $field) {
+                // Handle JSON encoding for specific fields
+                if ($field === 'com_quick_access' && isset($request['data']['com_quick_access'])) {
+                    $value = json_encode($request['data']['com_quick_access']);
+                    if ($value !== false) {
+                        com_option_update('com_quick_access', $value);
+                        $processedFields[] = 'com_quick_access';
+                    }
+                } elseif ($field === 'com_our_info' && isset($request['data']['com_our_info'])) {
+                    $value = json_encode($request['data']['com_our_info']);
+                    if ($value !== false) {
+                        com_option_update($field, $value);
+                        $processedFields[] = $field;
+                    }
+                }
             }
 
             // Define the fields that need to be translated
@@ -197,7 +305,7 @@ class SystemManagementController extends Controller
                 $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\ComOption', $this->translationKeys());
             }
 
-            return $this->success(translate('messages.update_success', ['name' => 'SEO Settings']));
+            return $this->success(translate('messages.update_success', ['name' => 'Footer Settings']));
         }else{
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
@@ -220,25 +328,33 @@ class SystemManagementController extends Controller
                 }
             }
 
-            $com_meta_title = com_option_get('com_meta_title');
-            $com_meta_description = com_option_get('com_meta_description');
-            $com_meta_tags = com_option_get('com_meta_tags');
-            $com_canonical_url = com_option_get('com_canonical_url');
-            $com_og_title = com_option_get('com_og_title');
-            $com_og_description = com_option_get('com_og_description');
-            $com_og_image =com_option_get('com_og_image');
-            $com_og_image_url = $imageModifier->generateImageUrl(com_option_get('com_og_image'));
+
+            $responseData = [
+                'com_quick_access' => json_decode(com_option_get('com_quick_access'), true) ?? [],
+                'com_our_info' => json_decode(com_option_get('com_our_info'), true) ?? [],
+                'com_quick_access_enable_disable' => com_option_get('com_quick_access_enable_disable') ?? '',
+                'com_our_info_enable_disable' => com_option_get('com_our_info_enable_disable') ?? '',
+                'com_quick_access_title' => com_option_get('com_quick_access_title') ?? '',
+                'com_our_info_title' => com_option_get('com_our_info_title') ?? '',
+                'com_social_links_enable_disable' => com_option_get('com_social_links_enable_disable') ?? '',
+                'com_social_links_title' => com_option_get('com_social_links_title') ?? '',
+                'com_social_links_facebook_url' => com_option_get('com_social_links_facebook_url') ?? '',
+                'com_social_links_twitter_url' => com_option_get('com_social_links_twitter_url') ?? '',
+                'com_social_links_instagram_url' => com_option_get('com_social_links_instagram_url') ?? '',
+                'com_social_links_linkedin_url' => com_option_get('com_social_links_linkedin_url') ?? '',
+                'com_social_links_youtube_url' => com_option_get('com_social_links_youtube_url') ?? '',
+                'com_social_links_pinterest_url' => com_option_get('com_social_links_pinterest_url') ?? '',
+                'com_social_links_snapchat_url' => com_option_get('com_social_links_snapchat_url') ?? '',
+                'com_download_app_link_one' => com_option_get('com_download_app_link_one') ?? '',
+                'com_download_app_link_two' => com_option_get('com_download_app_link_two') ?? '',
+                'com_payment_methods_enable_disable' => com_option_get('com_payment_methods_enable_disable') ?? '',
+                'com_payment_methods_image' => com_option_get('com_payment_methods_image') ?? '',
+            ];
+
 
             return $this->success([
-                'com_meta_title' => $com_meta_title,
-                'com_meta_description' => $com_meta_description,
-                'com_meta_tags' => $com_meta_tags,
-                'com_canonical_url' => $com_canonical_url,
-                'com_og_title' => $com_og_title,
-                'com_og_description' => $com_og_description,
-                'com_og_image' => $com_og_image,
-                'com_og_image_url' => $com_og_image_url,
-                'translations' => $transformedData,
+                'data' => $responseData,
+                'translations' => $transformedData, // Assuming this is defined elsewhere in your code
             ]);
         }
 
@@ -254,7 +370,7 @@ class SystemManagementController extends Controller
                 'com_maintenance_image' => 'nullable|string',
             ]);
 
-            $fields = ['com_maintenance_title', 'com_maintenance_description', 'com_maintenance_start_date', 'com_maintenance_start_date', 'com_maintenance_image'];
+            $fields = ['com_maintenance_title', 'com_maintenance_description', 'com_maintenance_start_date', 'com_maintenance_end_date', 'com_maintenance_image'];
             foreach ($fields as $field) {
                   $value = $request->input($field) ?? null;
                   com_option_update($field, $value);
@@ -367,4 +483,35 @@ class SystemManagementController extends Controller
         }
 
     }
+
+    public function firebaseSettings(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $validator = Validator::make($request->all(), [
+                'firebase_json_file' => 'required|file|mimes:json|max:2048',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+            // Ensure the folder exists before storing the file
+            $folderPath = storage_path('app/firebase');
+            if (!file_exists($folderPath)) {
+                mkdir($folderPath, 0755, true); // Create folder with proper permissions
+            }
+
+            $request->file('firebase_json_file')->storeAs('firebase', 'firebase.json', 'local');
+
+            return $this->success(translate('messages.update_success', ['name' => 'Firebase Settings']));
+        } else {
+            $firebaseFileExists = Storage::disk('local')->exists('firebase/firebase.json');
+            return $this->success([
+                'firebase_file' => $firebaseFileExists,
+            ]);
+        }
+    }
+
 }
