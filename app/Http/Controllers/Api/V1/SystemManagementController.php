@@ -197,32 +197,24 @@ class SystemManagementController extends Controller
     public function footerCustomization(Request $request){
         if ($request->isMethod('POST')) {
             $this->validate($request, [
-
                 //Quick Access
                 'com_quick_access' => 'nullable|array',
                 'com_quick_access_enable_disable' => 'nullable|string',
                 'com_quick_access.*.com_quick_access_title' => 'nullable|string',
-                'com_quick_access.*.com_quick_access_name' => 'nullable|string',
                 'com_quick_access.*.com_quick_access_url' => 'nullable|string',
-                'com_quick_access.*.com_quick_access_icon' => 'nullable|string',
-                'com_quick_access.*.com_quick_access_description' => 'nullable|string',
-                'com_quick_access.*.com_quick_access_order' => 'nullable|integer',
-                'com_quick_access.*.com_quick_access_target' => 'nullable|string|in:_self,_blank',
+                'com_quick_access_title' => 'nullable|string',
 
-                //Categories
-                'com_our_info_enable_disable' => 'nullable|string',
-                'com_our_info_title' => 'nullable|string',
-                'com_our_info_name' => 'nullable|string',
-                'com_our_info_url' => 'nullable|string',
-
-                // Categories (multiple entries)
+                // our info
                 'com_our_info' => 'nullable|array',
-                'com_our_info_enable_disable',              // General enable/disable for the section
-                'com_our_info.*.title',                    // Title field for each entry
-                'com_our_info.*.name',                     // Name field for each entry
-                'com_our_info.*.url',                      // URL field for each entry
+                'com_our_info_enable_disable' => 'nullable|string',
+                'com_our_info.*.title'=> 'nullable|string',
+                'com_our_info.*.name'=> 'nullable|string',
+                'com_our_info.*.url'=> 'nullable|string',
+                'com_our_info_title'=> 'nullable|string',
 
                 // Social Links Section
+                'com_social_links_enable_disable' => 'nullable|string',
+                'com_social_links_title' => 'nullable|string',
                 'com_social_links_facebook_url' => 'nullable|string',
                 'com_social_links_twitter_url' => 'nullable|string',
                 'com_social_links_instagram_url' => 'nullable|string',
@@ -236,13 +228,32 @@ class SystemManagementController extends Controller
                 'com_download_app_link_two' => 'nullable|string',
 
                 // Accepted Payment Methods Section (multiple methods)
-                'com_payment_methods' => 'nullable|array',
-                'com_payment_methods.*.method' => 'nullable|string',
-                'com_payment_methods.*.image' => 'nullable|string',
+                'com_payment_methods_enable_disable' => 'nullable|string',
+                'com_payment_methods_image' => 'nullable|string',
             ]);
 
             $fields = [
-                // Quick Access
+                'com_quick_access_enable_disable',
+                'com_our_info_enable_disable',
+                'com_quick_access_title',
+                'com_our_info_title',
+                'com_social_links_enable_disable',
+                'com_social_links_title',
+                'com_social_links_facebook_url',
+                'com_social_links_twitter_url',
+                'com_social_links_instagram_url',
+                'com_social_links_linkedin_url',
+                'com_social_links_youtube_url',
+                'com_social_links_pinterest_url',
+                'com_social_links_snapchat_url',
+                'com_download_app_link_one',
+                'com_download_app_link_two',
+                'com_payment_methods_enable_disable',
+                'com_payment_methods_image',
+            ];
+
+
+            $fields_multiple = [
                 'com_quick_access',
                 'com_quick_access_enable_disable',
                 'com_quick_access.*.com_quick_access_title',
@@ -252,53 +263,35 @@ class SystemManagementController extends Controller
                 'com_quick_access.*.com_quick_access_description',
                 'com_quick_access.*.com_quick_access_order',
                 'com_quick_access.*.com_quick_access_target',
-
-                // Categories (multiple entries)
-                'com_our_info' => 'nullable|array',
-                'com_our_info.*.title' => 'nullable|string',
-                'com_our_info.*.name' => 'nullable|string',
-                'com_our_info.*.url' => 'nullable|string',
-
-                // Social Links Section
-                'com_social_links_facebook_url',
-                'com_social_links_twitter_url',
-                'com_social_links_instagram_url',
-                'com_social_links_linkedin_url',
-                'com_social_links_youtube_url',
-                'com_social_links_pinterest_url',
-                'com_social_links_snapchat_url',
-
-                // Download App Link Section
-                'com_download_app_link_one',
-                'com_download_app_link_two',
-
-                // Accepted Payment Methods Section
-                'com_payment_methods',
-                'com_payment_methods.*.method',
-                'com_payment_methods.*.image',
+                'com_our_info',
+                'com_our_info.*.title',
+                'com_our_info.*.name',
+                'com_our_info.*.url',
             ];
 
+            // Basic processing for fields
             foreach ($fields as $field) {
+                $value = $request->input($field) ?? null;
+                com_option_update($field, $value);
+            }
 
-                  $value = $request->input($field) ?? null;
-                  // if quick access is array store JSON
-                    if(isset($request['data']['com_quick_access'])) {
-                        $value = json_encode($request['data']['com_quick_access']);
-                        if ($value !== false) { // Check if JSON encoding was successful
-                            dd($value);
-                            com_option_update('com_quick_access', $value);
-                        }
+            // Processing for fields with potential JSON encoding
+            $processedFields = [];
+            foreach ($fields_multiple as $field) {
+                // Handle JSON encoding for specific fields
+                if ($field === 'com_quick_access' && isset($request['data']['com_quick_access'])) {
+                    $value = json_encode($request['data']['com_quick_access']);
+                    if ($value !== false) {
+                        com_option_update('com_quick_access', $value);
+                        $processedFields[] = 'com_quick_access';
                     }
-//                    // Encode the array as a JSON string before storing
-//                    if ($field == 'com_payment_methods' && is_array($value)) {
-//                        $value = json_encode($value);
-//                    }
-//
-//                    // Check if any of the com_our_info_* fields are arrays and encode as JSON if needed
-//                    if (preg_match('/^com_our_info(\.\d+)?\.(title|name|url)$/', $field) && is_array($value)) {
-//                        $value = json_encode($value);
-//                    }
-
+                } elseif ($field === 'com_our_info' && isset($request['data']['com_our_info'])) {
+                    $value = json_encode($request['data']['com_our_info']);
+                    if ($value !== false) {
+                        com_option_update($field, $value);
+                        $processedFields[] = $field;
+                    }
+                }
             }
 
             // Define the fields that need to be translated
@@ -334,9 +327,14 @@ class SystemManagementController extends Controller
 
 
             $responseData = [
-                'com_quick_access' => com_option_get('com_quick_access') ?? [],
-                'com_quick_access_enable_disable' => com_option_get('com_quick_access_enable_disable') ?? 'default_value',
-                'com_our_info' => com_option_get('com_our_info') ?? [],
+                'com_quick_access' => json_decode(com_option_get('com_quick_access'), true) ?? [],
+                'com_our_info' => json_decode(com_option_get('com_our_info'), true) ?? [],
+                'com_quick_access_enable_disable' => com_option_get('com_quick_access_enable_disable') ?? '',
+                'com_our_info_enable_disable' => com_option_get('com_our_info_enable_disable') ?? '',
+                'com_quick_access_title' => com_option_get('com_quick_access_title') ?? '',
+                'com_our_info_title' => com_option_get('com_our_info_title') ?? '',
+                'com_social_links_enable_disable' => com_option_get('com_social_links_enable_disable') ?? '',
+                'com_social_links_title' => com_option_get('com_social_links_title') ?? '',
                 'com_social_links_facebook_url' => com_option_get('com_social_links_facebook_url') ?? '',
                 'com_social_links_twitter_url' => com_option_get('com_social_links_twitter_url') ?? '',
                 'com_social_links_instagram_url' => com_option_get('com_social_links_instagram_url') ?? '',
@@ -346,22 +344,10 @@ class SystemManagementController extends Controller
                 'com_social_links_snapchat_url' => com_option_get('com_social_links_snapchat_url') ?? '',
                 'com_download_app_link_one' => com_option_get('com_download_app_link_one') ?? '',
                 'com_download_app_link_two' => com_option_get('com_download_app_link_two') ?? '',
-                'com_payment_methods' => com_option_get('com_payment_methods') ?? [],
-                'com_meta_title' => com_option_get('com_meta_title') ?? '',
-                'com_meta_description' => com_option_get('com_meta_description') ?? '',
-                'com_meta_tags' => com_option_get('com_meta_tags') ?? '',
-                'com_canonical_url' => com_option_get('com_canonical_url') ?? '',
-                'com_og_title' => com_option_get('com_og_title') ?? '',
-                'com_og_description' => com_option_get('com_og_description') ?? '',
-                'com_og_image' => com_option_get('com_og_image') ?? '',
+                'com_payment_methods_enable_disable' => com_option_get('com_payment_methods_enable_disable') ?? '',
+                'com_payment_methods_image' => com_option_get('com_payment_methods_image') ?? '',
             ];
 
-// Ensure the OG image URL is only generated if `com_og_image` is not null
-            if (!empty($responseData['com_og_image'])) {
-                $responseData['com_og_image_url'] = $imageModifier->generateImageUrl($responseData['com_og_image']);
-            } else {
-                $responseData['com_og_image_url'] = ''; // Set to empty if no image URL is generated
-            }
 
             return $this->success([
                 'data' => $responseData,
