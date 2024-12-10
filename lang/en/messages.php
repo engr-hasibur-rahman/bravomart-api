@@ -25,6 +25,9 @@ return [
     'validation_failed' => ':name validation failed!',
 
     'error' => 'Something went wrong!',
+    'authorization_invalid' => 'Not authorized!',
+    'data_found' => 'Data was found successfully!',
+    'data_not_found' => 'Data was not found!',
 ];
 
 

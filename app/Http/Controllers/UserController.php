@@ -154,7 +154,7 @@ class UserController extends Controller
             ], 500);
         }
     }
-    public function StoreOwnerRegistration(UserCreateRequest $request)
+    public function StoreOwnerRegistration(  $request)
     {
         try {
             // By default role ---->
