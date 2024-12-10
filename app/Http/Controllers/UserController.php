@@ -41,15 +41,10 @@ class UserController extends Controller
 
         return $driver->stateless()->redirect();
     }
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function handleGoogleCallback()
     {
 
-        // Retrieve the user information from Google
+        // Retrieve the user information from Google & need to use GoogleProvider for stateless function as laravel socialiate is not compatible with api.
         /** @var \Laravel\Socialite\Two\GoogleProvider  */
         $user = Socialite::driver('google');
         $user->stateless()->user();
@@ -96,31 +91,6 @@ class UserController extends Controller
             ], 201);
         }
     }
-    // public function handleGoogleCallback()
-    // {
-    //     try {
-
-    //         $user = Socialite::driver('google')->user();
-    //         $finduser = User::where('google_id', $user->id)->first();
-
-    //         if ($finduser) {
-    //             Auth::login($finduser);
-    //             return redirect()->intended('home');
-    //         } else {
-    //             $newUser = User::updateOrCreate(['email' => $user->email], [
-    //                 'name' => $user->name,
-    //                 'google_id' => $user->id,
-    //                 'password' => encrypt('123456dummy')
-    //             ]);
-
-    //             Auth::login($newUser);
-
-    //             return $this->success(__('auth.social.login'));
-    //         }
-    //     } catch (Exception $e) {
-    //         dd($e->getMessage());
-    //     }
-    // }
     /* Social login end */
     public function token(Request $request)
     {
@@ -128,7 +98,10 @@ class UserController extends Controller
             'email'    => 'required|email',
             'password' => 'required',
         ]);
-        $user = User::where('email', $request->email)->where('activity_scope', 'system_level')->where('status', 1)->first();
+        $user = User::where('email', $request->email)
+            // ->where('activity_scope', 'system_level')
+            ->where('status', 1)
+            ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return ["token" => null, "permissions" => []];
@@ -136,20 +109,19 @@ class UserController extends Controller
         $email_verified = $user->hasVerifiedEmail();
         $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
 
-        return [
-            "token" => $user->createToken('auth_token')->plainTextToken,
-            "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
-            "email_verified" => $email_verified,
-            "role" => $user->getRoleNames()->first()
-        ];
+        return response()->json(
+            [
+                "status" => true,
+                "token" => $user->createToken('auth_token')->plainTextToken,
+                "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
+                "email_verified" => $email_verified,
+                "role" => $user->getRoleNames()->first()
+            ],
+            200
+        );
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
-        //$roles = [UserRole::STORE_OWNER];
         // By default role ---->
         $roles = Role::where('available_for', 'store_level')->pluck('name');
         // When admin create a seller ---->
@@ -190,12 +162,10 @@ class UserController extends Controller
             "next_stage" => "2" // Just completed stage 1, Now go to Store Information.
         ];
     }
-
     public function me(Request $request)
     {
         return new UserResource(auth()->guard('api')->user());
     }
-
     public function logout(Request $request)
     {
         $user = $request->user();
@@ -205,7 +175,6 @@ class UserController extends Controller
         $request->user()->currentAccessToken()->delete();
         return $this->success(__('auth.logout'));
     }
-
     public function register(UserCreateRequest $request)
     {
         $notAllowedRoles = [UserRole::SUPER_ADMIN];
@@ -216,7 +185,6 @@ class UserController extends Controller
         if (isset($request->roles)) {
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
-
         $user = $this->repository->create([
             'first_name'     => $request->first_name,
             'last_name' => $request->last_name,
@@ -226,16 +194,13 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'status' => 1
         ]);
-
         $user->assignRole($roles);
-
         return [
             "token" => $user->createToken('auth_token')->plainTextToken,
             "permissions" => $user->getPermissionNames(),
             "role" => $user->getRoleNames()->first()
         ];
     }
-
     public function toggleUserStatus(Request $request)
     {
         $userToToggle = User::findOrFail($request->id);
@@ -250,11 +215,8 @@ class UserController extends Controller
                 'status' => $userToToggle->is_active
             ]);
         }
-
         throw new AuthorizationException(NOT_AUTHORIZED);
     }
-
-
     public function banUser(Request $request)
     {
         try {
@@ -270,7 +232,6 @@ class UserController extends Controller
             throw new AuthorizationException(SOMETHING_WENT_WRONG);
         }
     }
-
     public function activeUser(Request $request)
     {
         try {
@@ -286,7 +247,7 @@ class UserController extends Controller
             throw new AuthorizationException(SOMETHING_WENT_WRONG);
         }
     }
-
+    /* <---- Forget password proccess start ----> */
     public function forgetPassword(Request $request)
     {
         $user = $this->repository->findByField('email', $request->email);
@@ -304,14 +265,12 @@ class UserController extends Controller
             $tokenData = DB::table('password_reset_tokens')
                 ->where('email', $request->email)->first();
         }
-
         if ($this->repository->sendResetEmail($request->email, $tokenData->token)) {
             return ['message' => CHECK_INBOX_FOR_PASSWORD_RESET_EMAIL, 'success' => true];
         } else {
             return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
         }
     }
-
     public function verifyForgetPasswordToken(Request $request)
     {
         $tokenData = DB::table('password_reset_tokens')->where('token', $request->token)->first();
@@ -324,7 +283,6 @@ class UserController extends Controller
         }
         return ['message' => TOKEN_IS_VALID, 'success' => true];
     }
-
     public function resetPassword(Request $request)
     {
         try {
@@ -333,19 +291,17 @@ class UserController extends Controller
                 'email' => 'email|required',
                 'token' => 'required|string'
             ]);
-
             $user = $this->repository->where('email', $request->email)->first();
             $user->password = Hash::make($request->password);
             $user->save();
-
             DB::table('password_reset_tokens')->where('email', $user->email)->delete();
-
             return ['message' => PASSWORD_RESET_SUCCESSFUL, 'success' => true];
-        } catch (\Exception $th) {
+        } catch (Exception $th) {
             return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
         }
     }
-
+    /* <---- Forget password proccess end ----> */
+    /* <---- Assign roles & permissions proccess start ----> */
     public function assignRole(Request $request)
     {
         $user = User::findOrFail($request->user_id);
@@ -354,7 +310,6 @@ class UserController extends Controller
         }
         return redirect()->route('users')->with('success', 'Role assign successfully!');
     }
-
     public function assignPermissions(Request $request)
     {
         $user = User::findOrFail($request->user_id);
@@ -366,4 +321,5 @@ class UserController extends Controller
             'message' => 'Permission assign successfully!',
         ]);
     }
+    /* <---- Assign roles & permissions proccess end ----> */
 }

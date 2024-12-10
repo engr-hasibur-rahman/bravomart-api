@@ -141,7 +141,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- vendor route start ------------------------- */
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
-        //Store Management
+        // Store manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('store/list', [StoreManageController::class, 'index']);
             Route::get('store/{id}', [StoreManageController::class, 'show']);
@@ -151,16 +151,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('store/remove/{id}', [StoreManageController::class, 'destroy']);
             Route::get('store/deleted/records', [StoreManageController::class, 'deleted_records']);
         });
-
-        // staff manage
+        // Staff manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-            Route::apiResource('/staff', StaffController::class);
+            //Route::apiResource('/staff', StaffController::class);
+            Route::post('staff/add', [StaffController::class,'store']);
             Route::get('staff/{id}', [StaffController::class, 'show']);
             Route::post('staff/update', [StaffController::class, 'update']);
             Route::post('staff/change-status/{id}/{is_active}', [StaffController::class, 'changestatus']);
         });
 
-        //Product manage
+        // Product manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('product/list', [ProductController::class, 'index']);
             Route::get('product/{id}', [ProductController::class, 'show']);
@@ -171,7 +171,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
         });
 
-        //Product variant manage
+        // Product variant manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('product/variant/list', [ProductVariantController::class, 'index']);
             Route::get('product/variant/{id}', [ProductVariantController::class, 'show']);
@@ -182,7 +182,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('product/variant/deleted/records', [ProductVariantController::class, 'deleted_records']);
         });
 
-        //Coupon manage
+        // Coupon manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('product/coupon/list', [CouponManageController::class, 'index']);
             Route::get('product/coupon/{id}', [CouponManageController::class, 'show']);
