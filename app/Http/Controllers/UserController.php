@@ -77,7 +77,7 @@ class UserController extends Controller
                 'email' => $google_email,
                 'slug' => username_slug_generator($name),
                 'google_id' => $google_id,
-                'password' => Hash::make('123456dummy'), // Use a hashed password
+                'password' => Hash::make('123456dummy'),
             ]);
 
             // Generate a Sanctum token for the new user
@@ -94,31 +94,65 @@ class UserController extends Controller
     /* Social login end */
     public function token(Request $request)
     {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
-        $user = User::where('email', $request->email)
-            // ->where('activity_scope', 'system_level')
-            ->where('status', 1)
-            ->first();
+        try {
+            // Validate the incoming request
+            $request->validate([
+                'email'    => 'required|email',
+                'password' => 'required',
+            ]);
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return ["token" => null, "permissions" => []];
-        }
-        $email_verified = $user->hasVerifiedEmail();
-        $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+            // Attempt to find the user
+            $user = User::where('email', $request->email)
+                // ->where('activity_scope', 'system_level') // Uncomment if needed
+                ->where('status', 1)
+                ->first();
 
-        return response()->json(
-            [
+            // Check if the user exists and if the password is correct
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    "status" => false,
+                    "message" => __('messages.login_failed', ['name' => 'User']),
+                    "token" => null,
+                    "permissions" => [],
+                ], 401);
+            }
+
+            // Check if the user's email is verified
+            $email_verified = $user->hasVerifiedEmail();
+
+            // Fetch permissions
+            $permissions = $user->rolePermissionsQuery()
+                ->whereNull('parent_id')
+                ->with('childrenRecursive')
+                ->get();
+
+            // Build and return the response
+            return response()->json([
                 "status" => true,
+                "status_code" => 200,
+                "message" => __('messages.login_success', ['name' => 'User']),
                 "token" => $user->createToken('auth_token')->plainTextToken,
                 "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
                 "email_verified" => $email_verified,
-                "role" => $user->getRoleNames()->first()
-            ],
-            200
-        );
+                "role" => $user->getRoleNames()->first(),
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return validation error response
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "message" => __('messages.validation_failed', ['name' => 'User']),
+                "errors" => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            // Handle other exceptions
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => __('messages.error'),
+                "error" => $e->getMessage(),
+            ], 500);
+        }
     }
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
