@@ -156,46 +156,73 @@ class UserController extends Controller
     }
     public function StoreOwnerRegistration(UserCreateRequest $request)
     {
-        // By default role ---->
-        $roles = Role::where('available_for', 'store_level')->pluck('name');
-        // When admin create a seller ---->
-        if (isset($request->roles)) {
-            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+        try {
+            // By default role ---->
+            $roles = Role::where('available_for', 'store_level')->pluck('name');
+
+            // When admin creates a seller ---->
+            if (isset($request->roles)) {
+                $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+            }
+
+            // Create the user
+            $user = $this->repository->create([
+                'first_name' => $request->first_name,
+                'last_name'  => $request->last_name,
+                'slug'       => username_slug_generator($request->first_name, $request->last_name),
+                'email'     => $request->email,
+                'phone'     => $request->phone,
+                'password'  => Hash::make($request->password),
+                'activity_scope' => 'SHOP_AREA',
+                'store_owner'    => 1,
+                'status'        => 1,
+            ]);
+
+            // Assign roles to the user
+            $user->assignRole($roles);
+
+            // Create Merchant ID for the user
+            $merchant = ComMerchant::create(['user_id' => $user->id]);
+
+            // Save Merchant ID in Users table
+            $user->merchant_id = $merchant->id;
+            $user->save();
+
+            return response()->json([
+                "status" => true,
+                "status_code" => 200,
+                "message" => __('messages.registration_success', ['name' => 'Seller']),
+                "token"     => $user->createToken('auth_token')->plainTextToken,
+                'first_name' => $request->first_name,
+                'last_name'  => $request->last_name,
+                'email'     => $request->email,
+                'phone'     => $request->phone,
+                "permissions"  => $user->getPermissionNames(),
+                "role"        => $user->getRoleNames(),
+                "store_owner"  => $user->store_owner,
+                "merchant_id"  => $user->merchant_id,
+                "stores"      => json_decode($user->stores),
+                "next_stage"   => "2"
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation errors
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "message" => __('messages.validation_failed', ['name' => 'Seller']),
+                "errors"  => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            // Handle unexpected errors
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => __('messages.error'),
+                "error"   => $e->getMessage(),
+            ], 500);
         }
-        $user = $this->repository->create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'slug' => username_slug_generator($request->first_name, $request->last_name),
-            'email'    => $request->email,
-            'phone'    => $request->phone,
-            'password' => Hash::make($request->password),
-            'activity_scope'    => 'SHOP_AREA',
-            'store_owner'    => 1,
-            'status' => 1,
-        ]);
-
-        $user->assignRole($roles);
-
-        // Create Merchant ID for the user registered as BusinessMan. In future this will be create on User Approval
-        $merchant = ComMerchant::create(['user_id' => $user->id]);
-        // Keeping Merchant id in Users table. Though it is Bad concept: circular reference
-        $user->merchant_id = $merchant->id;
-        $user->save();
-        return [
-            'success' => true,
-            "token" => $user->createToken('auth_token')->plainTextToken,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email'    => $request->email,
-            'phone'    => $request->phone,
-            "permissions" => $user->getPermissionNames(),
-            "role" => $user->getRoleNames(),
-            "store_owner" => $user->store_owner,
-            "merchant_id" => $user->merchant_id,
-            "stores" => json_decode($user->stores),
-            "next_stage" => "2" // Just completed stage 1, Now go to Store Information.
-        ];
     }
+
     public function me(Request $request)
     {
         return new UserResource(auth()->guard('api')->user());
@@ -211,30 +238,65 @@ class UserController extends Controller
     }
     public function register(UserCreateRequest $request)
     {
-        $notAllowedRoles = [UserRole::SUPER_ADMIN];
-        if ((isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) || (isset($request->roles) && in_array($request->roles, $notAllowedRoles))) {
-            throw new AuthorizationException(NOT_AUTHORIZED);
+        try {
+            // Prevent unauthorized role assignment
+            $notAllowedRoles = [UserRole::SUPER_ADMIN];
+
+            if ((isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) ||
+                (isset($request->roles) && in_array($request->roles, $notAllowedRoles))
+            ) {
+                throw new AuthorizationException(NOT_AUTHORIZED);
+            }
+
+            // Fetch roles available for customer-level
+            $roles = Role::where('available_for', 'customer_level')->pluck('name');
+
+            if (isset($request->roles)) {
+                $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
+            }
+
+            // Create the user
+            $user = $this->repository->create([
+                'first_name'     => $request->first_name,
+                'last_name'      => $request->last_name,
+                'slug'          => username_slug_generator($request->first_name, $request->last_name),
+                'email'         => $request->email,
+                'password'      => Hash::make($request->password),
+                'status'        => 1
+            ]);
+
+            // Assign roles to the user
+            $user->assignRole($roles);
+
+            // Return a successful response with the token and permissions
+            return response()->json([
+                "status" => true,
+                "status_code" => 200,
+                "message" => __('messages.registration_success', ['name' => 'Customer']),
+                "token"      => $user->createToken('auth_token')->plainTextToken,
+                "permissions" => $user->getPermissionNames(),
+                "role"       => $user->getRoleNames()->first()
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation errors
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "message" => __('messages.validation_failed', ['name' => 'Customer']),
+                "errors"  => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            // Handle unexpected errors
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => __('messages.error'),
+                "error"   => $e->getMessage(),
+                
+            ], 500);
         }
-        $roles = Role::where('available_for', 'customer_level')->pluck('name');
-        if (isset($request->roles)) {
-            $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
-        }
-        $user = $this->repository->create([
-            'first_name'     => $request->first_name,
-            'last_name' => $request->last_name,
-            'slug' => username_slug_generator($request->first_name, $request->last_name),
-            'email'    => $request->email,
-            //'activity_scope' => UserRole::CUSTOMER,
-            'password' => Hash::make($request->password),
-            'status' => 1
-        ]);
-        $user->assignRole($roles);
-        return [
-            "token" => $user->createToken('auth_token')->plainTextToken,
-            "permissions" => $user->getPermissionNames(),
-            "role" => $user->getRoleNames()->first()
-        ];
     }
+
     public function toggleUserStatus(Request $request)
     {
         $userToToggle = User::findOrFail($request->id);
