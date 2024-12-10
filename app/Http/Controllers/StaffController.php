@@ -11,6 +11,7 @@ use App\Http\Requests\UserCreateRequest;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class StaffController extends Controller
 {
@@ -41,19 +42,26 @@ class StaffController extends Controller
      */
     public function store(UserCreateRequest $request)
     {
+        //dd($request->all());
         $notAllowedRoles = [UserRole::SUPER_ADMIN];
         if ((isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) || (isset($request->roles) && in_array($request->roles, $notAllowedRoles))) {
             throw new AuthorizationException(NOT_AUTHORIZED);
         }
-        $roles = [UserRole::CUSTOMER];
+        // By default role ---->
+        $roles = Role::whereIn('available_for', ['store_level','fitter_level','delivery_level'])
+        ->where('name', '!=', 'Store Owner')
+        ->pluck('name');
+        // If the role is given in request ---->
         if (isset($request->roles)) {
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
         $user = $this->repository->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
+            'slug' => username_slug_generator($request->first_name, $request->last_name),
             'email'    => $request->email,
             'phone'    => $request->phone,
+            'status'    => 1,
             'password' => Hash::make($request->password),
         ]);
 
