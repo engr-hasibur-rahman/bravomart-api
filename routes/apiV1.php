@@ -21,8 +21,13 @@ use App\Http\Controllers\Api\V1\UnitManageController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'Api\V1'], function () {
-    Route::get('auth/google', [UserController::class, 'redirectToGoogle']);
-    Route::get('auth/google/callback', [UserController::class, 'handleGoogleCallback']);
+    Route::group(['prefix' => 'auth'], function () {
+        Route::get('google', [UserController::class, 'redirectToGoogle']);
+        Route::get('google/callback', [UserController::class, 'handleGoogleCallback']);
+        Route::post('forget-password', [UserController::class, 'forgetPassword']);
+        Route::post('verify-token', [UserController::class, 'verifyForgetPasswordToken']);
+        Route::post('reset-password', [UserController::class, 'resetPassword']);
+    });
 });
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
@@ -30,30 +35,30 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         // media manage
         Route::group(['prefix' => 'media-upload'], function () {
-            Route::post('/store',[MediaController::class, 'mediaUpload']);
-            Route::get('/load-more',[MediaController::class, 'load_more']);
-            Route::post('/alt',[MediaController::class, 'alt_change']);
-            Route::post('/delete',[MediaController::class, 'delete_media']);
+            Route::post('/store', [MediaController::class, 'mediaUpload']);
+            Route::get('/load-more', [MediaController::class, 'load_more']);
+            Route::post('/alt', [MediaController::class, 'alt_change']);
+            Route::post('/delete', [MediaController::class, 'delete_media']);
         });
     });
     /*--------------------- Com route end  ----------------------------*/
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
         // Product Brand Routing
-        Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_LIST->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_BRAND_LIST->value]], function () {
             Route::get('product-brands', [ProductBrandController::class, 'index']);
         });
-        Route::group(['middleware' => ['permission:' .Permission::PRODUCT_BRAND_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_BRAND_ADD->value]], function () {
             Route::post('product-brands', [ProductBrandController::class, 'store']);
             Route::get('product-brands/{id}', [ProductBrandController::class, 'show']);
             Route::post('product-brands/status', [ProductBrandController::class, 'productBrandStatus']);
         });
 
         // Product Category Routing
-        Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_LIST->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_CATEGORY_LIST->value]], function () {
             Route::get('product-categories', [ProductCategoryController::class, 'index']);
         });
-        Route::group(['middleware' => ['permission:' .Permission::PRODUCT_CATEGORY_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_CATEGORY_ADD->value]], function () {
             Route::post('product-categories', [ProductCategoryController::class, 'store']);
             Route::get('product-categories/{id}', [ProductCategoryController::class, 'show']);
             Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);
@@ -114,12 +119,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         /*--------------------- System management ----------------------------*/
         Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::group(['prefix' => 'system-management'], function () {
-                Route::match(['get', 'post'], '/general-settings',[SystemManagementController::class, 'generalSettings']);
-                Route::match(['get', 'post'], '/footer-customization',[SystemManagementController::class, 'footerCustomization']);
-                Route::match(['get', 'post'], '/maintenance-settings',[SystemManagementController::class, 'maintenanceSettings']);
-                Route::match(['get', 'post'], '/seo-settings',[SystemManagementController::class, 'seoSettings']);
-                Route::match(['get', 'post'], '/firebase-settings',[SystemManagementController::class, 'firebaseSettings']);
-                Route::match(['get', 'post'], '/social-login-settings',[SystemManagementController::class, 'socialLoginSettings']);
+                Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings']);
+                Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization']);
+                Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings']);
+                Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings']);
+                Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings']);
+                Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings']);
             });
         });
 
@@ -135,7 +140,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('roles', [RoleController::class, 'store']);
         Route::get('roles/{id}', [RoleController::class, 'show']);
         Route::post('roles-status-update', [RoleController::class, 'roleForStoreOwner']);
-
     });
     /* --------------------- vendor route end ------------------------- */
     /* --------------------- vendor route start ------------------------- */
@@ -154,7 +158,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Staff manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             //Route::apiResource('/staff', StaffController::class);
-            Route::post('staff/add', [StaffController::class,'store']);
+            Route::post('staff/add', [StaffController::class, 'store']);
             Route::get('staff/{id}', [StaffController::class, 'show']);
             Route::post('staff/update', [StaffController::class, 'update']);
             Route::post('staff/change-status/{id}/{is_active}', [StaffController::class, 'changestatus']);
@@ -203,22 +207,17 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('product/author/remove/{id}', [ProductAuthorController::class, 'destroy']);
             Route::post('product/author/status', [ProductAuthorController::class, 'changeStatus']);
         });
-
     });
     /* --------------------------> vendor route end <----------------------------- */
     /* --------------------------> customer route start <------------------------- */
     Route::group(['prefix' => 'customer/'], function () {
         Route::post('/registration', [UserController::class, 'register']);
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
-
-        });
+        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {});
     });
     /* --------------------------> customer route end <-------------------------- */
     /* --------------------------> delivery route start <------------------------- */
     Route::group(['prefix' => 'delivery/'], function () {
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
-
-        });
+        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {});
     });
     /* --------------------------> delivery route end <-------------------------- */
 });

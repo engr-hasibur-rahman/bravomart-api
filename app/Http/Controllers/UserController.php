@@ -266,28 +266,37 @@ class UserController extends Controller
                 ->where('email', $request->email)->first();
         }
         if ($this->repository->sendResetEmail($request->email, $tokenData->token)) {
-            return ['message' => CHECK_INBOX_FOR_PASSWORD_RESET_EMAIL, 'success' => true];
+            return ['message' => __('passwords.sent'), 'success' => true];
         } else {
-            return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
+            return ['message' => __('passwords.error'), 'success' => false];
         }
+        // if ($this->repository->sendResetEmail($request->email, $tokenData->token)) {
+        //     return ['message' => CHECK_INBOX_FOR_PASSWORD_RESET_EMAIL, 'success' => true];
+        // } else {
+        //     return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
+        // }
     }
     public function verifyForgetPasswordToken(Request $request)
     {
         $tokenData = DB::table('password_reset_tokens')->where('token', $request->token)->first();
         if (!$tokenData) {
-            return ['message' => INVALID_TOKEN, 'success' => false];
+            return ['message' => __('passwords.token.invalid'), 'success' => false];
+            // return ['message' => INVALID_TOKEN, 'success' => false];
         }
         $user = $this->repository->findByField('email', $request->email);
         if (count($user) < 1) {
-            return ['message' => NOT_FOUND, 'success' => false];
+            return ['message' => __('passwords.user'), 'success' => false];
+            // return ['message' => NOT_FOUND, 'success' => false];
         }
-        return ['message' => TOKEN_IS_VALID, 'success' => true];
+        return ['message' => __('passwords.token.valid'), 'success' => true];
+        // return ['message' => TOKEN_IS_VALID, 'success' => true];
     }
     public function resetPassword(Request $request)
     {
         try {
             $request->validate([
                 'password' => 'required|string',
+                'confirm_password' => 'required|string|same:password',
                 'email' => 'email|required',
                 'token' => 'required|string'
             ]);
@@ -295,9 +304,11 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
             $user->save();
             DB::table('password_reset_tokens')->where('email', $user->email)->delete();
-            return ['message' => PASSWORD_RESET_SUCCESSFUL, 'success' => true];
+            return ['message' => __('passwords.reset'), 'success' => true];
+            // return ['message' => PASSWORD_RESET_SUCCESSFUL, 'success' => true];
         } catch (Exception $th) {
-            return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
+            return ['message' => __('passwords.error'), 'success' => false];
+            // return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
         }
     }
     /* <---- Forget password proccess end ----> */
