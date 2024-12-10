@@ -31,9 +31,17 @@ class SystemManagementController extends Controller
                 'com_user_email_verification' => 'nullable|string',
                 'com_user_login_otp' => 'nullable|string',
                 'com_maintenance_mode' => 'nullable|string',
+                // new added
+                'com_site_full_address' => 'nullable|string',
+                'com_site_contact_number' => 'nullable|string',
+                'com_site_website_url' => 'nullable|string',
+                'com_site_email' => 'nullable|string',
+                'com_site_footer_copyright' => 'nullable|string',
             ]);
 
-            $fields = ['com_site_logo', 'com_site_favicon', 'com_site_title', 'com_site_subtitle', 'com_user_email_verification', 'com_user_login_otp', 'com_maintenance_mode'];
+            $fields = ['com_site_logo', 'com_site_favicon', 'com_site_title', 'com_site_subtitle', 'com_user_email_verification','com_user_login_otp', 'com_maintenance_mode',
+                'com_site_full_address','com_site_contact_number', 'com_site_website_url', 'com_site_email', 'com_site_footer_copyright'
+            ];
 
             foreach ($fields as $field) {
                   $value = $request->input($field) ?? null;
@@ -41,7 +49,7 @@ class SystemManagementController extends Controller
             }
 
             // Define the fields that need to be translated
-            $fields = ['com_site_title', 'com_site_subtitle'];
+            $fields = ['com_site_title', 'com_site_subtitle', 'com_site_full_address', 'com_site_contact_number', 'com_site_footer_copyright'];
             $com_options = ComOption::whereIn('option_name', $fields)->get(['id']);
 
             foreach ($com_options as $com_option) {
@@ -80,6 +88,16 @@ class SystemManagementController extends Controller
             $com_user_login_otp = com_option_get('com_user_login_otp') ?? '';
             $com_maintenance_mode = com_option_get('com_maintenance_mode') ?? '';
 
+            // New data
+            $com_site_country = com_option_get('com_site_country') ?? '';
+            $com_site_city = com_option_get('com_site_city') ?? '';
+            $com_site_state = com_option_get('com_site_state') ?? '';
+            $com_site_post_code = com_option_get('com_site_post_code') ?? '';
+            $com_site_street_address = com_option_get('com_site_street_address') ?? '';
+            $com_site_contact_number = com_option_get('com_site_contact_number') ?? '';
+            $com_site_website_url = com_option_get('com_site_website_url') ?? '';
+            $com_site_email = com_option_get('com_site_email') ?? '';
+
             return $this->success([
                 'com_site_logo' => $com_site_logo,
                 'com_site_favicon' => $com_site_favicon,
@@ -90,8 +108,19 @@ class SystemManagementController extends Controller
                 'com_user_email_verification' => $com_user_email_verification,
                 'com_user_login_otp' => $com_user_login_otp,
                 'com_maintenance_mode' => $com_maintenance_mode,
+                // New data
+                'com_site_country' => $com_site_country,
+                'com_site_city' => $com_site_city,
+                'com_site_state' => $com_site_state,
+                'com_site_post_code' => $com_site_post_code,
+                'com_site_street_address' => $com_site_street_address,
+                'com_site_contact_number' => $com_site_contact_number,
+                'com_site_website_url' => $com_site_website_url,
+                'com_site_email' => $com_site_email,
                 'translations' => $transformedData,
             ]);
+
+
         }
 
     }
@@ -173,13 +202,40 @@ class SystemManagementController extends Controller
     public function footerCustomization(Request $request){
         if ($request->isMethod('POST')) {
             $this->validate($request, [
-                'com_meta_title' => 'nullable|string',
-                'com_meta_description' => 'nullable|string',
-                'com_meta_tags' => 'nullable|string',
-                'com_canonical_url' => 'nullable|string',
-                'com_og_title' => 'nullable|string',
-                'com_og_description' => 'nullable|string',
-                'com_og_image' => 'nullable|string',
+
+                //Quick Access
+                'com_quick_access' => 'nullable|array', // An array of quick access items
+                'com_quick_access_enable_disable' => 'nullable|string', // Single value for the enable/disable status of the section
+                'com_quick_access.*.com_quick_access_title' => 'nullable|string',
+                'com_quick_access.*.com_quick_access_name' => 'nullable|string',
+                'com_quick_access.*.com_quick_access_url' => 'nullable|string',
+                'com_quick_access.*.com_quick_access_icon' => 'nullable|string', // Optional icon for the quick access item
+                'com_quick_access.*.com_quick_access_description' => 'nullable|string', // Optional description for the quick access item
+                'com_quick_access.*.com_quick_access_order' => 'nullable|integer', // Optional ordering of quick access items
+                'com_quick_access.*.com_quick_access_target' => 'nullable|string|in:_self,_blank', // Optional target attribute (_self or _blank)
+
+                //Categories
+                'com_our_info_enable_disable' => 'nullable|string',
+                'com_our_info_title' => 'nullable|string',
+                'com_our_info_name' => 'nullable|string',
+                'com_our_info_url' => 'nullable|string',
+
+                // Social Links Section
+                'com_social_links_facebook_url' => 'nullable|string',       // Facebook link
+                'com_social_links_twitter_url' => 'nullable|string',        // Twitter link
+                'com_social_links_instagram_url' => 'nullable|string',      // Instagram link
+                'com_social_links_linkedin_url' => 'nullable|string',       // LinkedIn link
+                'com_social_links_youtube_url' => 'nullable|string',        // YouTube link
+                'com_social_links_pinterest_url' => 'nullable|string',      // Pinterest link
+                'com_social_links_snapchat_url' => 'nullable|string',       // Snapchat link
+
+                // Download App Link Section
+                'com_download_app_link_one' => 'nullable|string',
+                'com_download_app_link_two' => 'nullable|string',
+
+                // Accepted Payment Methods Section (multiple methods)
+                'com_payment_methods.*.method' => 'nullable|string', // Payment method type (e.g., 'credit_card')
+                'com_payment_methods.*.image' => 'nullable|string', // Optional image related to the payment method
             ]);
 
             $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags', 'com_canonical_url', 'com_og_title', 'com_og_description', 'com_og_image'];
@@ -254,7 +310,7 @@ class SystemManagementController extends Controller
                 'com_maintenance_image' => 'nullable|string',
             ]);
 
-            $fields = ['com_maintenance_title', 'com_maintenance_description', 'com_maintenance_start_date', 'com_maintenance_start_date', 'com_maintenance_image'];
+            $fields = ['com_maintenance_title', 'com_maintenance_description', 'com_maintenance_start_date', 'com_maintenance_end_date', 'com_maintenance_image'];
             foreach ($fields as $field) {
                   $value = $request->input($field) ?? null;
                   com_option_update($field, $value);
