@@ -8,6 +8,9 @@ use App\Interfaces\TranslationInterface;
 use App\Models\ComOption;
 use App\Models\SystemManagement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
 use function PHPUnit\Framework\isJson;
 
 class SystemManagementController extends Controller
@@ -480,4 +483,35 @@ class SystemManagementController extends Controller
         }
 
     }
+
+    public function firebaseSettings(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $validator = Validator::make($request->all(), [
+                'firebase_json_file' => 'required|file|mimes:json|max:2048',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+            // Ensure the folder exists before storing the file
+            $folderPath = storage_path('app/firebase');
+            if (!file_exists($folderPath)) {
+                mkdir($folderPath, 0755, true); // Create folder with proper permissions
+            }
+
+            $request->file('firebase_json_file')->storeAs('firebase', 'firebase.json', 'local');
+
+            return $this->success(translate('messages.update_success', ['name' => 'Firebase Settings']));
+        } else {
+            $firebaseFileExists = Storage::disk('local')->exists('firebase/firebase.json');
+            return $this->success([
+                'firebase_file' => $firebaseFileExists,
+            ]);
+        }
+    }
+
 }

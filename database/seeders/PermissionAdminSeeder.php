@@ -1371,13 +1371,13 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::FIREBASE_NOTIFICATION->value,
-                                    'PermissionTitle' => 'Social Login',
+                                    'PermissionName' => Permission::SOCIAL_LOGIN_SETTINGS->value,
+                                    'PermissionTitle' => 'Social Login Settings',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'translations' => [
-                                        'en' => 'Social Login',
-                                        'ar' =>  'تسجيل الدخول الاجتماعي'
+                                        'en' => 'Social Login Settings',
+                                        'ar' =>  'إعدادات تسجيل الدخول الاجتماعية'
                                     ]
                                 ]
                             ]
