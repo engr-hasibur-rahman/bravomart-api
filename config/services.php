@@ -15,14 +15,14 @@ return [
     */
     /*--->Social login start<---*/
     'facebook' => [
-        'client_id' => env('FACEBOOK_CLIENT_ID'),
-        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
-        'redirect' => env('FACEBOOK_REDIRECT'),
+        'client_id' => com_option_get('com_facebook_app_id'),
+        'client_secret' => com_option_get('com_facebook_client_secret'),
+        'redirect' => com_option_get('com_facebook_client_callback_url'),
     ],
     'google' => [
-        'client_id' => env('GOOGLE_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT'),
+        'client_id' => com_option_get('com_google_app_id'),
+        'client_secret' => com_option_get('com_google_client_secret'),
+        'redirect' => com_option_get('com_google_client_callback_url'),
     ],
     /*--->Social login end<---*/
     'postmark' => [
