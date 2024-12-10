@@ -31,7 +31,7 @@ class UserCreateRequest extends FormRequest
             //'email' => ['required', 'email', \Illuminate\Validation\Rule::unique('users')->ignore($this->user()->id)],
             //'email'    => ['required', 'email', 'unique:users'],
             'email' => 'required|string|email|max:255|unique:users,email,' . $this->id,
-            'password' => 'required|string',
+            'password' => 'required|string|min:8|max:12',
         ];
     }
 
@@ -50,7 +50,9 @@ class UserCreateRequest extends FormRequest
             'email.email'        => 'email is not a valid email address',
             'email.unique:users' => 'email must be unique',
             'password.required'  => 'password is required',
-            'password.string'    => 'password is not a valid string'
+            'password.string'    => 'password is not a valid string',
+            'password.min'    => 'password should be more than 8 character',
+            'password.max'    => 'password should not be more than 12 character'
         ];
     }
 
