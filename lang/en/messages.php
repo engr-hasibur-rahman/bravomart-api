@@ -18,6 +18,9 @@ return [
     'login_success' => ':name logged in successfully!',
     'login_failed' => ':name log in failed!',
 
+    'registration_success' => ':name registered successfully!',
+    'registration_failed' => ':name registration failed!',
+
     'validation_success' => ':name validation successfull!',
     'validation_failed' => ':name validation failed!',
 
