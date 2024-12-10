@@ -14,16 +14,16 @@ return [
     |
     */
     /*--->Social login start<---*/
-    'facebook' => [
-        'client_id' => com_option_get('com_facebook_app_id'),
-        'client_secret' => com_option_get('com_facebook_client_secret'),
-        'redirect' => com_option_get('com_facebook_client_callback_url'),
-    ],
-    'google' => [
-        'client_id' => com_option_get('com_google_app_id'),
-        'client_secret' => com_option_get('com_google_client_secret'),
-        'redirect' => com_option_get('com_google_client_callback_url'),
-    ],
+//    'facebook' => [
+//        'client_id' => com_option_get('com_facebook_app_id'),
+//        'client_secret' => com_option_get('com_facebook_client_secret'),
+//        'redirect' => com_option_get('com_facebook_client_callback_url'),
+//    ],
+//    'google' => [
+//        'client_id' => com_option_get('com_google_app_id'),
+//        'client_secret' => com_option_get('com_google_client_secret'),
+//        'redirect' => com_option_get('com_google_client_callback_url'),
+//    ],
     /*--->Social login end<---*/
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
