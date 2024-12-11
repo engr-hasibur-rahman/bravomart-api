@@ -1339,6 +1339,39 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' =>  '',
+                            'PermissionTitle' => 'Email Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Email Settings',
+                                'ar' => 'إعدادات البريد الإلكتروني'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => Permission::SMTP_SETTINGS->value,
+                                    'PermissionTitle' => 'SMTP Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'SMTP Settings',
+                                        'ar' => 'تخصيص التذييل'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => Permission::EMAIL_TEMPLATES->value,
+                                    'PermissionTitle' => 'Email Templates',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Email Templates',
+                                        'ar' => 'قوالب البريد الإلكتروني'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
                             'PermissionName' =>  Permission::SEO_SETTINGS->value,
                             'PermissionTitle' => 'SEO Settings',
                             'activity_scope' => 'system_level',
@@ -1403,36 +1436,6 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::LOGIN_SETUP->value,
-                            'PermissionTitle' => 'Login setup',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Login setup',
-                                'ar' => 'إعداد تسجيل الدخول'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => Permission::REACT_SITE->value,
-                            'PermissionTitle' => 'React site',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'React site',
-                                'ar' => 'موقع ريآكت'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => Permission::EMAIL_TEMPLATE->value,
-                            'PermissionTitle' => 'Email template',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Email template',
-                                'ar' => 'قالب البريد الإلكتروني'
-                            ]
-                        ],
-                        [
                             'PermissionName' => Permission::APP_SETTINGS->value,
                             'PermissionTitle' => 'App settings',
                             'activity_scope' => 'system_level',
@@ -1440,16 +1443,6 @@ class PermissionAdminSeeder extends Seeder
                             'translations' => [
                                 'en' => 'App settings',
                                 'ar' => 'إعدادات التطبيق'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => Permission::NOTIFICATION_CHANNELS->value,
-                            'PermissionTitle' => 'Notification Channels',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Notification Channels',
-                                'ar' => 'قنوات الإشعارات'
                             ]
                         ]
                     ]
