@@ -137,8 +137,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings']);
                 Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings']);
                 Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings']);
+                // database and cache settings
+                Route::post('/cache-management', [SystemManagementController::class, 'cacheManagement']);
+                Route::post('/database-update-controls', [SystemManagementController::class, 'DatabaseUpdateControl']);
                 // email settings
                 Route::match(['get', 'post'], '/email-settings/smtp', [EmailSettingsController::class, 'smtpSettings']);
+                Route::post('/email-settings/test-mail-send', [EmailSettingsController::class, 'testMailSend']);
             });
         });
 

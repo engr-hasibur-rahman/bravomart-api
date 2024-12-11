@@ -1383,6 +1383,26 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' => Permission::CACHE_MANAGEMENT->value,
+                            'PermissionTitle' => 'Cache Management',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Cache Management',
+                                'ar' => 'إدارة ذاكرة التخزين المؤقت'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => Permission::DATABASE_UPDATE_CONTROLS->value,
+                            'PermissionTitle' => 'Database Update Controls',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Database Update Controls',
+                                'ar' => 'عناصر التحكم في تحديث قاعدة البيانات'
+                            ]
+                        ],
+                        [
                             'PermissionName' => Permission::LOGIN_SETUP->value,
                             'PermissionTitle' => 'Login setup',
                             'activity_scope' => 'system_level',

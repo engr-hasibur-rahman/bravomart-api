@@ -8,6 +8,8 @@ use App\Interfaces\TranslationInterface;
 use App\Models\ComOption;
 use App\Models\SystemManagement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
@@ -507,5 +509,38 @@ class SystemManagementController extends Controller
             ]);
         }
     }
+
+    public function cacheManagement(Request $request)
+    {
+        try {
+            // Clear the application cache
+            Artisan::call('cache:clear');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Cache cleared successfully!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to clear cache',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+
+    }
+
+    public function databaseUpdateControl(Request $request)
+    {
+//        $originalEnv = env('APP_ENV');
+//        updateEnvValues(['APP_ENV' => 'local']);
+        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('db:seed', ['--force' => true]);
+        Artisan::call('cache:clear');
+//        updateEnvValues(['APP_ENV' => $originalEnv]);
+        return $this->success([
+            'Database and cache operations completed successfully!',
+        ]);
+    }
+
 
 }

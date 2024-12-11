@@ -4,6 +4,7 @@ use App\Helpers;
 use App\Models\ComOption;
 use App\Models\Media;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -237,7 +238,14 @@ if (!function_exists('username_slug_generator')) {
         }
 
         // Write the updated content back to the .env file
-        return file_put_contents($envFile, $envContent) !== false;
+        if (file_put_contents($envFile, $envContent) === false) {
+            return false;
+        }
+
+        // Clear the config cache to reflect the updated environment
+        Artisan::call('config:cache');
+
+        return true;
     }
 
 

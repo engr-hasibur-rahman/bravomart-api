@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TestEmail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class EmailSettingsController extends Controller
 {
@@ -32,7 +34,7 @@ class EmailSettingsController extends Controller
                 'MAIL_HOST' => $request->com_site_smtp_mail_host,
                 'MAIL_PORT' => $request->com_site_smtp_mail_post,
                 'MAIL_USERNAME' => $request->com_site_smtp_mail_username,
-                'MAIL_PASSWORD' => '"'.$request->com_site_smtp_mail_password.'"',
+                'MAIL_PASSWORD' => $request->com_site_smtp_mail_password,
                 'MAIL_ENCRYPTION' => $request->com_site_smtp_mail_encryption,
             ]);
 
@@ -57,4 +59,31 @@ class EmailSettingsController extends Controller
         }
 
     }
+
+    public function testMailSend(Request $request){
+        $request->validate([
+            'test_email' => 'required|email',
+        ]);
+
+        $recipient = $request->input('test_email');
+
+        try {
+            Mail::to($recipient)->send(new TestEmail());
+            return response()->json([
+                'status' => 'success',
+                'message' => translate('messages.test_email_sent_success', ['name' => 'Test Mail']),
+                'data' => [
+                    'recipient' => $recipient
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => translate('messages.test_email_sent_failed', ['name' => 'Test Mail']),
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 }

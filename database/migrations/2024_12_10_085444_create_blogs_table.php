@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-
             $table->unsignedBigInteger('admin_id')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
             $table->string('title');
@@ -21,14 +20,8 @@ return new class extends Migration
             $table->longText('description');
             $table->string('image')->nullable();
             $table->integer('views')->default(0);
-            $table->enum('visibility', ['public', 'private'])
-                ->default('public')
-                ->comment('allowed only = private , public');
-
-            $table->boolean('status')
-                ->default(0)
-                ->comment('0 = draft, 1 = published'); // 0 = draft, 1 = published
-
+            $table->enum('visibility', ['public', 'private'])->default('public')->comment('allowed only = private , public');
+            $table->boolean('status')->default(0)->comment('0 = draft, 1 = published');
             $table->timestamp('schedule_date')->nullable();
             $table->text('tag_name')->nullable();
             $table->string('meta_title')->nullable();
@@ -36,11 +29,7 @@ return new class extends Migration
             $table->text('meta_keywords')->nullable();
             $table->text('meta_image')->nullable();
             $table->string('author');
-            
             $table->timestamps();
-
-            $table->foreign('category_id')->references('id')->on('blog_categories');
-            $table->foreign('admin_id')->references('id')->on('users');
         });
     }
 
