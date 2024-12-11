@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Blog\BlogDetailsResource;
+use App\Http\Resources\Blog\BlogListResource;
 use App\Interfaces\BlogManageInterface;
 use App\Models\Blog;
 use App\Models\BlogCategory;
@@ -13,11 +15,20 @@ use Illuminate\Http\Request;
 
 class BlogManageRepository implements BlogManageInterface
 {
-    public function __construct(protected Blog $blog, protected BlogCategory $blogCategory, protected Translation $translation) {}
-    public function translationKeys(): mixed
+    public function __construct(protected Blog $blog, protected BlogCategory $blogCategory, protected Translation $translation)
+    {
+    }
+
+    public function translationKeysForBlog(): mixed
+    {
+        return $this->blog->translationKeys;
+    }
+
+    public function translationKeysForCategory(): mixed
     {
         return $this->blogCategory->translationKeys;
     }
+
     /* <-------------------------------------------- BLOG CATEGORY MANAGEMENT START ---------------------------------------------------------> */
     public function getPaginatedCategory(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
@@ -43,6 +54,7 @@ class BlogManageRepository implements BlogManageInterface
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
+
     public function getCategoryById(int|string $id)
     {
         try {
@@ -76,6 +88,104 @@ class BlogManageRepository implements BlogManageInterface
         }
     }
     /* <-------------------------------------------- BLOG CATEGORY MANAGEMENT END ---------------------------------------------------------> */
+    /* <-------------------------------------------- BLOG MANAGEMENT START ---------------------------------------------------------> */
+    public function getPaginatedBlog(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    {
+        $blog = Blog::leftJoin('translations as title_translations', function ($join) use ($language) {
+            $join->on('blogs.id', '=', 'title_translations.translatable_id')
+                ->where('title_translations.translatable_type', '=', Blog::class)
+                ->where('title_translations.language', '=', $language)
+                ->where('title_translations.key', '=', 'title');
+            })
+            ->leftJoin('translations as description_translations', function ($join) use ($language) {
+            $join->on('blogs.id', '=', 'description_translations.translatable_id')
+                ->where('description_translations.translatable_type', '=', Blog::class)
+                ->where('description_translations.language', '=', $language)
+                ->where('description_translations.key', '=', 'description');
+            })
+            ->leftJoin('translations as meta_title_translations', function ($join) use ($language) {
+                $join->on('blogs.id', '=', 'meta_title_translations.translatable_id')
+                    ->where('meta_title_translations.translatable_type', '=', Blog::class)
+                    ->where('meta_title_translations.language', '=', $language)
+                    ->where('meta_title_translations.key', '=', 'meta_title');
+            })
+            ->leftJoin('translations as meta_description_translations', function ($join) use ($language) {
+                $join->on('blogs.id', '=', 'meta_description_translations.translatable_id')
+                    ->where('meta_description_translations.translatable_type', '=', Blog::class)
+                    ->where('meta_description_translations.language', '=', $language)
+                    ->where('meta_description_translations.key', '=', 'meta_description');
+            })
+            ->leftJoin('translations as meta_keywords_translations', function ($join) use ($language) {
+                $join->on('blogs.id', '=', 'meta_keywords_translations.translatable_id')
+                    ->where('meta_keywords_translations.translatable_type', '=', Blog::class)
+                    ->where('meta_keywords_translations.language', '=', $language)
+                    ->where('meta_keywords_translations.key', '=', 'meta_keywords');
+            })
+            ->select(
+                'blogs.*',
+                DB::raw('COALESCE(title_translations.value, blogs.title) as title'),
+                DB::raw('COALESCE(description_translations.value, blogs.description) as description'),
+                DB::raw('COALESCE(meta_title_translations.value, blogs.meta_title) as meta_title'),
+                DB::raw('COALESCE(meta_description_translations.value, blogs.meta_description) as meta_description'),
+                DB::raw('COALESCE(meta_keywords_translations.value, blogs.meta_keywords) as meta_keywords')
+            );
+        // Apply search filter if search parameter exists
+        if ($search) {
+            $blog->where(function ($query) use ($search) {
+                $query->where(DB::raw("CONCAT_WS(' ', blogs.title, blogs.description, blogs.meta_title, blogs.meta_description, blogs.meta_keywords)"), 'like', "%{$search}%")
+                    ->orWhere(DB::raw("CONCAT_WS(' ', title_translations.value, description_translations.value, meta_title_translations.value, meta_description_translations.value, meta_keywords_translations.value)"), 'like', "%{$search}%");
+            });
+        }
+        // Apply sorting and pagination
+        // Return the result
+        $paginatedBlog =  $blog
+            ->orderBy($sortField, $sort)
+            ->paginate($limit);
+        return BlogListResource::class::collection($paginatedBlog);
+    }
+    public function getBlogById(int|string $id)
+    {
+        try {
+            $blog = Blog::find($id);
+
+            if (!$blog) {
+                return response()->json([
+                    "message" => __('messages.data_not_found')
+                ], 404);
+            }
+
+            // Get all translations grouped by language
+            $translations = $blog->translations()->get()->groupBy('language');
+
+            // Prepare translations data
+            $transformedData = [];
+            foreach ($translations as $language => $items) {
+                $languageInfo = ['language' => $language];
+
+                // Iterate all column names to assign language values
+                foreach ($this->blog->translationKeys as $columnName) {
+                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
+                }
+                $transformedData[] = $languageInfo;
+            }
+
+            // Return response with BlogDetailsResource and translations
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => new BlogDetailsResource($blog),
+                'translations' => $transformedData
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    /* <-------------------------------------------- BLOG MANAGEMENT END ---------------------------------------------------------> */
     /* <-------------------------------------------- COMMON MANAGEMENT START ---------------------------------------------------------> */
     public function store(array $data, string $modelClass)
     {
@@ -90,6 +200,7 @@ class BlogManageRepository implements BlogManageInterface
             throw $th;
         }
     }
+
     public function update(array $data, string $modelClass)
     {
         if (!class_exists($modelClass)) {
@@ -108,17 +219,19 @@ class BlogManageRepository implements BlogManageInterface
             throw $th;
         }
     }
-    public function delete(int|string $id , string $modelClass)
+
+    public function delete(int|string $id, string $modelClass)
     {
         try {
             $final = $modelClass::findOrFail($id);
-            $this->deleteTranslation($final->id,$modelClass);
+            $this->deleteTranslation($final->id, $modelClass);
             $final->delete();
             return true;
         } catch (\Throwable $th) {
             throw $th;
         }
     }
+
     private function deleteTranslation(int|string $id, string $translatable_type)
     {
         try {
@@ -130,7 +243,8 @@ class BlogManageRepository implements BlogManageInterface
             throw $th;
         }
     }
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -160,7 +274,8 @@ class BlogManageRepository implements BlogManageInterface
         }
         return true;
     }
-    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {

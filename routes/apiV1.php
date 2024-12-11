@@ -23,6 +23,8 @@ use App\Http\Controllers\Api\V1\UnitManageController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'Api\V1'], function () {
+    // Blog comment manage
+    Route::post('blog/comment', [BlogManageController::class, 'comment']);
     Route::group(['prefix' => 'auth'], function () {
         Route::get('google', [UserController::class, 'redirectToGoogle']);
         Route::get('google/callback', [UserController::class, 'handleGoogleCallback']);
@@ -106,6 +108,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('unit/remove/{id}', [UnitManageController::class, 'destroy']);
         });
         // Blog manage
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
+            Route::get('blog/list', [BlogManageController::class, 'blogIndex']);
+        });
+        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+            Route::post('blog/add', [BlogManageController::class, 'blogStore']);
+            Route::get('blog/{id}', [BlogManageController::class, 'blogShow']);
+            Route::post('blog/update', [BlogManageController::class, 'blogUpdate']);
+            Route::delete('blog/remove/{id}', [BlogManageController::class, 'blogDestroy']);
+        });
+        // Blog category manage
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
             Route::get('blog/category/list', [BlogManageController::class, 'blogCategoryIndex']);
         });
