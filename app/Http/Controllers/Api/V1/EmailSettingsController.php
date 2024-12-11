@@ -9,57 +9,51 @@ class EmailSettingsController extends Controller
 {
     public function smtpSettings(Request $request){
         if ($request->isMethod('POST')) {
-            $this->validate($request, [
-                // google
-                'com_google_login_enabled' => 'nullable|string',
-                'com_google_app_id' => 'nullable|string',
-                'com_google_client_secret' => 'nullable|string',
-                'com_google_client_callback_url' => 'nullable|string',
-                // facebook
-                'com_facebook_login_enabled' => 'nullable|string',
-                'com_facebook_app_id' => 'nullable|string',
-                'com_facebook_client_secret' => 'nullable|string',
-                'com_facebook_client_callback_url' => 'nullable|string',
-            ]);
 
-            $fields = [
-                'com_google_login_enabled',
-                'com_google_app_id',
-                'com_google_client_secret',
-                'com_google_client_callback_url',
-                'com_facebook_login_enabled',
-                'com_facebook_app_id',
-                'com_facebook_client_secret',
-                'com_facebook_client_callback_url',
+            $rules = [
+                'com_site_global_email' => 'nullable|string',
+                'com_site_smtp_mail_mailer' => 'nullable|string',
+                'com_site_smtp_mail_host' => 'nullable|string',
+                'com_site_smtp_mail_post' => 'nullable|string',
+                'com_site_smtp_mail_username' => 'nullable|string',
+                'com_site_smtp_mail_password' => 'nullable|string',
+                'com_site_smtp_mail_encryption' => 'nullable|string',
             ];
 
-            foreach ($fields as $field) {
+            $this->validate($request, $rules);
+
+            foreach ($rules as $field) {
                 $value = $request->input($field) ?? null;
                 com_option_update($field, $value);
             }
+
+            setEnvValue([
+                'MAIL_DRIVER' => $request->com_site_smtp_mail_mailer,
+                'MAIL_HOST' => $request->com_site_smtp_mail_host,
+                'MAIL_PORT' => $request->com_site_smtp_mail_post,
+                'MAIL_USERNAME' => $request->com_site_smtp_mail_username,
+                'MAIL_PASSWORD' => '"'.$request->com_site_smtp_mail_password.'"',
+                'MAIL_ENCRYPTION' => $request->com_site_smtp_mail_encryption
+            ]);
+
             return $this->success(translate('messages.update_success', ['name' => 'Social Login Settings']));
         }else{
-            // Retrieve the values using the correct keys
-            $com_google_login_enabled = com_option_get('com_google_login_enabled');
-            $com_google_app_id = com_option_get('com_google_app_id');
-            $com_google_client_secret = com_option_get('com_google_client_secret');
-            $com_google_client_callback_url = com_option_get('com_google_client_callback_url');
+            $fields = [
+                'com_site_global_email',
+                'com_site_smtp_mail_mailer',
+                'com_site_smtp_mail_host',
+                'com_site_smtp_mail_post',
+                'com_site_smtp_mail_username',
+                'com_site_smtp_mail_password',
+                'com_site_smtp_mail_encryption',
+            ];
 
-            $com_facebook_login_enabled = com_option_get('com_facebook_login_enabled');
-            $com_facebook_app_id = com_option_get('com_facebook_app_id');
-            $com_facebook_client_secret = com_option_get('com_facebook_client_secret');
-            $com_facebook_client_callback_url = com_option_get('com_facebook_client_callback_url');
+            $data = [];
+            foreach ($fields as $field) {
+                $data[$field] = com_option_get($field);
+            }
 
-            return $this->success([
-                'com_google_login_enabled' => $com_google_login_enabled,
-                'com_google_app_id' => $com_google_app_id,
-                'com_google_client_secret' => $com_google_client_secret,
-                'com_google_client_callback_url' => $com_google_client_callback_url,
-                'com_facebook_login_enabled' => $com_facebook_login_enabled,
-                'com_facebook_app_id' => $com_facebook_app_id,
-                'com_facebook_client_secret' => $com_facebook_client_secret,
-                'com_facebook_client_callback_url' => $com_facebook_client_callback_url,
-            ]);
+            return $this->success($data);
         }
 
     }
