@@ -302,13 +302,13 @@ class UserController extends Controller
         $userToToggle = User::findOrFail($request->id);
         $user = $request->user();
         if ($user && $user->hasPermissionTo(UserRole::SUPER_ADMIN) && $user->id != $request->id) {
-            $userToToggle->is_active = !$userToToggle->is_active;
+            $userToToggle->status = !$userToToggle->status;
             $userToToggle->save();
 
             return response()->json([
                 'success' => true,
                 'message' => 'User status updated successfully',
-                'status' => $userToToggle->is_active
+                'status' => $userToToggle->status
             ]);
         }
         throw new AuthorizationException(NOT_AUTHORIZED);
@@ -319,7 +319,7 @@ class UserController extends Controller
             $user = $request->user();
             if ($user && $user->hasPermissionTo(UserRole::SUPER_ADMIN) && $user->id != $request->id) {
                 $banUser =  User::find($request->id);
-                $banUser->is_active = false;
+                $banUser->status = 0;
                 $banUser->save();
                 return $banUser;
             }
@@ -334,7 +334,7 @@ class UserController extends Controller
             $user = $request->user();
             if ($user && $user->hasPermissionTo(UserRole::SUPER_ADMIN) && $user->id != $request->id) {
                 $activeUser =  User::find($request->id);
-                $activeUser->is_active = true;
+                $activeUser->status = 1;
                 $activeUser->save();
                 return $activeUser;
             }

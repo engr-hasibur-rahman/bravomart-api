@@ -28,7 +28,7 @@ class PartnerLoginController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->where('activity_scope', 'store_level')->where('is_active', true)->first();
+        $user = User::where('email', $request->email)->where('activity_scope', 'store_level')->where('status', 1)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return ["success" => false,"token" => null, "permissions" => []];
