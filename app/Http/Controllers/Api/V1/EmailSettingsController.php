@@ -27,16 +27,16 @@ class EmailSettingsController extends Controller
                 com_option_update($field, $value);
             }
 
-            setEnvValue([
+            updateEnvValues([
                 'MAIL_DRIVER' => $request->com_site_smtp_mail_mailer,
                 'MAIL_HOST' => $request->com_site_smtp_mail_host,
                 'MAIL_PORT' => $request->com_site_smtp_mail_post,
                 'MAIL_USERNAME' => $request->com_site_smtp_mail_username,
                 'MAIL_PASSWORD' => '"'.$request->com_site_smtp_mail_password.'"',
-                'MAIL_ENCRYPTION' => $request->com_site_smtp_mail_encryption
+                'MAIL_ENCRYPTION' => $request->com_site_smtp_mail_encryption,
             ]);
 
-            return $this->success(translate('messages.update_success', ['name' => 'Social Login Settings']));
+            return $this->success(translate('messages.update_success', ['name' => 'SMTP Settings']));
         }else{
             $fields = [
                 'com_site_global_email',
