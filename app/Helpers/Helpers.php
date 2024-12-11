@@ -214,4 +214,31 @@ if (!function_exists('username_slug_generator')) {
     }
 
 
+    function updateEnvValues(array $values)
+    {
+        $envFile = app()->environmentFilePath();
+        $envContent = file_get_contents($envFile);
+
+        if ($envContent === false) {
+            return false; // Handle error when reading the .env file
+        }
+
+        foreach ($values as $key => $value) {
+            $escapedValue = is_string($value) ? '"' . addslashes($value) . '"' : $value;
+            $pattern = "/^{$key}=.*/m";
+
+            if (preg_match($pattern, $envContent)) {
+                // Replace existing key-value pair
+                $envContent = preg_replace($pattern, "{$key}={$escapedValue}", $envContent);
+            } else {
+                // Append new key-value pair at the end
+                $envContent .= "\n{$key}={$escapedValue}";
+            }
+        }
+
+        // Write the updated content back to the .env file
+        return file_put_contents($envFile, $envContent) !== false;
+    }
+
+
 }
