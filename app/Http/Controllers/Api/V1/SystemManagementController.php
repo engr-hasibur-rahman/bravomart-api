@@ -531,6 +531,7 @@ class SystemManagementController extends Controller
 
     public function databaseUpdateControl(Request $request)
     {
+
 //        $originalEnv = env('APP_ENV');
 //        updateEnvValues(['APP_ENV' => 'local']);
         Artisan::call('migrate', ['--force' => true]);
