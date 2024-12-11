@@ -311,6 +311,7 @@ class SystemManagementController extends Controller
         }else{
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
+            $all_images = $imageModifier->generateImageUrl(com_option_get('com_site_logo'));
 
             $ComOptionGet = ComOption::with('translations')
                 ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'])
@@ -512,19 +513,24 @@ class SystemManagementController extends Controller
 
     public function cacheManagement(Request $request)
     {
+        $validatedData = $request->validate([
+            'cache_clear_type' => 'required|string|in:cache,config,route,view', // Ensure valid cache types
+        ]);
+
         try {
-            // Clear the application cache
-            Artisan::call('cache:clear');
+            // Clear the application cache based on the provided type
+            Artisan::call($validatedData['cache_clear_type'] . ':clear');
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'Cache cleared successfully!',
+                'message' => ucfirst($validatedData['cache_clear_type']) . ' cache cleared successfully!',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to clear cache',
+                'message' => 'Failed to clear cache.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], 402);
         }
 
     }
