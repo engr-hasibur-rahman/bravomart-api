@@ -262,6 +262,8 @@ enum Permission: string
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';
     case MAINTENANCE_SETTINGS = '/admin/system-management/maintenance-settings';
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
+    case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
+    case DATABASE_UPDATE_CONTROLS  = '/admin/system-management/database-update-controls';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Third-Party Integrations                                                        //

@@ -8,6 +8,8 @@ use App\Interfaces\TranslationInterface;
 use App\Models\ComOption;
 use App\Models\SystemManagement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
@@ -282,14 +284,14 @@ class SystemManagementController extends Controller
             $processedFields = [];
             foreach ($fields_multiple as $field) {
                 // Handle JSON encoding for specific fields
-                if ($field === 'com_quick_access' && isset($request['data']['com_quick_access'])) {
-                    $value = json_encode($request['data']['com_quick_access']);
+                if ($field === 'com_quick_access' && isset($request['com_quick_access'])) {
+                    $value = json_encode($request['com_quick_access']);
                     if ($value !== false) {
                         com_option_update('com_quick_access', $value);
                         $processedFields[] = 'com_quick_access';
                     }
-                } elseif ($field === 'com_our_info' && isset($request['data']['com_our_info'])) {
-                    $value = json_encode($request['data']['com_our_info']);
+                } elseif ($field === 'com_our_info' && isset($request['com_our_info'])) {
+                    $value = json_encode($request['com_our_info']);
                     if ($value !== false) {
                         com_option_update($field, $value);
                         $processedFields[] = $field;
@@ -328,8 +330,7 @@ class SystemManagementController extends Controller
                 }
             }
 
-
-            $responseData = [
+            return $this->success([
                 'com_quick_access' => json_decode(com_option_get('com_quick_access'), true) ?? [],
                 'com_our_info' => json_decode(com_option_get('com_our_info'), true) ?? [],
                 'com_quick_access_enable_disable' => com_option_get('com_quick_access_enable_disable') ?? '',
@@ -349,11 +350,6 @@ class SystemManagementController extends Controller
                 'com_download_app_link_two' => com_option_get('com_download_app_link_two') ?? '',
                 'com_payment_methods_enable_disable' => com_option_get('com_payment_methods_enable_disable') ?? '',
                 'com_payment_methods_image' => com_option_get('com_payment_methods_image') ?? '',
-            ];
-
-
-            return $this->success([
-                'data' => $responseData,
                 'translations' => $transformedData, // Assuming this is defined elsewhere in your code
             ]);
         }
@@ -513,5 +509,39 @@ class SystemManagementController extends Controller
             ]);
         }
     }
+
+    public function cacheManagement(Request $request)
+    {
+        try {
+            // Clear the application cache
+            Artisan::call('cache:clear');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Cache cleared successfully!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to clear cache',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+
+    }
+
+    public function databaseUpdateControl(Request $request)
+    {
+
+//        $originalEnv = env('APP_ENV');
+//        updateEnvValues(['APP_ENV' => 'local']);
+        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('db:seed', ['--force' => true]);
+        Artisan::call('cache:clear');
+//        updateEnvValues(['APP_ENV' => $originalEnv]);
+        return $this->success([
+            'Database and cache operations completed successfully!',
+        ]);
+    }
+
 
 }

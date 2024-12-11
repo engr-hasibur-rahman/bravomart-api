@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('blog_categories', function (Blueprint $table) {
             $table->id();
-
             $table->string('name')->unique();
-            $table->boolean('status')->default(1)->comment('0 = Inactive, 1 = Active'); // 0 = Inactive, 1 = Active
-            
+            $table->boolean('status')->default(1)->comment('0 = Inactive, 1 = Active');
             $table->timestamps();
         });
     }
