@@ -52,15 +52,6 @@ if (! function_exists('translate')) {
     }
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
     if (! function_exists('slug_generator')) {
-        /**
-         * Generate a unique slug for a given model and field.
-         *
-         * @param string $value The value to slugify.
-         * @param string $model The model class name (e.g., App\Models\Post::class).
-         * @param string $field The field to check for uniqueness (default: 'slug').
-         * @param int|null $id Optional: ID of the record being updated to exclude from uniqueness check.
-         * @return string
-         */
         function slug_generator(string $value, string $model, string $field = 'slug', ?int $id = null): string
         {
             $slug = Str::slug($value); // Generate initial slug
@@ -78,13 +69,6 @@ if (! function_exists('translate')) {
     }
     
 if (!function_exists('username_slug_generator')) {
-    /**
-     * Generate a slug from first name and last name.
-     *
-     * @param string $first_name
-     * @param string|null $last_name
-     * @return string
-     */
     function username_slug_generator($first_name, $last_name = null)
     {
         $username = Str::slug(trim(strtolower($first_name)));
@@ -98,13 +82,6 @@ if (!function_exists('username_slug_generator')) {
     }
 }
     if (!function_exists('generateUniqueSku')) {
-        /**
-         * Generate a unique SKU for a product variant.
-         *
-         * @param string $prefix Prefix for the SKU (optional)
-         * @param int $length Length of the random part of the SKU
-         * @return string Unique SKU
-         */
         function generateUniqueSku($prefix = '', $length = 8)
         {
             do {
@@ -118,6 +95,15 @@ if (!function_exists('username_slug_generator')) {
             return $sku;
         }
     }
+    if (!function_exists('unauthorized_response')) {
+        function unauthorized_response():\Illuminate\Http\JsonResponse {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access. Please log in.',
+            ], 401);
+        }
+    }
+
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
     function formatBytes($size, $precision = 2)
     {
