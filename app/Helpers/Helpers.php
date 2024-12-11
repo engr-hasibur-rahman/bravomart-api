@@ -218,33 +218,26 @@ if (!function_exists('username_slug_generator')) {
     function updateEnvValues(array $values)
     {
         $envFile = app()->environmentFilePath();
-        $envContent = file_get_contents($envFile);
+        $str = file_get_contents($envFile);
+        if (count($values) > 0) {
+            foreach ($values as $envKey => $envValue) {
 
-        if ($envContent === false) {
-            return false; // Handle error when reading the .env file
-        }
+                $str .= "\n"; // In case the searched variable is in the last line without \n
+                $keyPosition = strpos($str, "{$envKey}=");
+                $endOfLinePosition = strpos($str, "\n", $keyPosition);
+                $oldLine = substr($str, $keyPosition, $endOfLinePosition - $keyPosition);
 
-        foreach ($values as $key => $value) {
-            $escapedValue = is_string($value) ? '"' . addslashes($value) . '"' : $value;
-            $pattern = "/^{$key}=.*/m";
-
-            if (preg_match($pattern, $envContent)) {
-                // Replace existing key-value pair
-                $envContent = preg_replace($pattern, "{$key}={$escapedValue}", $envContent);
-            } else {
-                // Append new key-value pair at the end
-                $envContent .= "\n{$key}={$escapedValue}";
+                // If key does not exist, add it
+                if (!$keyPosition || !$endOfLinePosition || !$oldLine) {
+                    $str .= "{$envKey}={$envValue}\n";
+                } else {
+                    $str = str_replace($oldLine, "{$envKey}={$envValue}", $str);
+                }
             }
         }
 
-        // Write the updated content back to the .env file
-        if (file_put_contents($envFile, $envContent) === false) {
-            return false;
-        }
-
-        // Clear the config cache to reflect the updated environment
-        Artisan::call('config:cache');
-
+        $str = substr($str, 0, -1);
+        if (!file_put_contents($envFile, $str)) return false;
         return true;
     }
 
