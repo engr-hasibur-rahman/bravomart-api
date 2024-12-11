@@ -21,8 +21,9 @@ use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
 use App\Http\Controllers\Api\V1\UnitManageController;
 use Illuminate\Support\Facades\Route;
-
+/*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1'], function () {
+    Route::post('customer/registration', [UserController::class, 'register']);
     // Blog comment manage
     Route::post('blog/comment', [BlogManageController::class, 'comment']);
     Route::group(['prefix' => 'auth'], function () {
@@ -33,6 +34,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
         Route::post('reset-password', [UserController::class, 'resetPassword']);
     });
 });
+/*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
@@ -241,7 +243,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------------> vendor route end <----------------------------- */
     /* --------------------------> customer route start <------------------------- */
     Route::group(['prefix' => 'customer/'], function () {
-        Route::post('/registration', [UserController::class, 'register']);
         Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {});
     });
     /* --------------------------> customer route end <-------------------------- */

@@ -35,6 +35,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // Routes for managing general user-related actions, such as profile information and other user account operations.
     Route::group(['prefix' => 'user/'], function () {
         Route::get('me', [UserController::class, 'me']);
+        Route::get('/profile', [UserController::class, 'userProfile']);
+        Route::post('/profile-edit', [UserController::class, 'userProfileEdit']);
         Route::post('/logout', [UserController::class, 'logout']);
     });
 });

@@ -6,6 +6,7 @@ use App\Enums\Permission;
 use App\Enums\Role as UserRole;
 use App\Helpers\ComHelper;
 use App\Http\Requests\UserCreateRequest;
+use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
 use App\Models\Translation;
 use App\Models\User;
@@ -33,19 +34,21 @@ class UserController extends Controller
     {
         $this->repository = $repository;
     }
+
     /* Social login start */
     public function redirectToGoogle()
     {
-        /** @var \Laravel\Socialite\Two\GoogleProvider  */
+        /** @var \Laravel\Socialite\Two\GoogleProvider */
         $driver = Socialite::driver('google');
 
         return $driver->stateless()->redirect();
     }
+
     public function handleGoogleCallback()
     {
 
         // Retrieve the user information from Google & need to use GoogleProvider for stateless function as laravel socialiate is not compatible with api.
-        /** @var \Laravel\Socialite\Two\GoogleProvider  */
+        /** @var \Laravel\Socialite\Two\GoogleProvider */
         $user = Socialite::driver('google');
         $user->stateless()->user();
         $google_id = $user->user()->id;
@@ -91,13 +94,14 @@ class UserController extends Controller
             ], 201);
         }
     }
+
     /* Social login end */
     public function token(Request $request)
     {
         try {
             // Validate the incoming request
             $request->validate([
-                'email'    => 'required|email',
+                'email' => 'required|email',
                 'password' => 'required',
             ]);
 
@@ -154,7 +158,8 @@ class UserController extends Controller
             ], 500);
         }
     }
-    public function StoreOwnerRegistration(  $request)
+
+    public function StoreOwnerRegistration($request)
     {
         try {
             // By default role ---->
@@ -168,14 +173,14 @@ class UserController extends Controller
             // Create the user
             $user = $this->repository->create([
                 'first_name' => $request->first_name,
-                'last_name'  => $request->last_name,
-                'slug'       => username_slug_generator($request->first_name, $request->last_name),
-                'email'     => $request->email,
-                'phone'     => $request->phone,
-                'password'  => Hash::make($request->password),
+                'last_name' => $request->last_name,
+                'slug' => username_slug_generator($request->first_name, $request->last_name),
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make($request->password),
                 'activity_scope' => 'SHOP_AREA',
-                'store_owner'    => 1,
-                'status'        => 1,
+                'store_owner' => 1,
+                'status' => 1,
             ]);
 
             // Assign roles to the user
@@ -192,17 +197,17 @@ class UserController extends Controller
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.registration_success', ['name' => 'Seller']),
-                "token"     => $user->createToken('auth_token')->plainTextToken,
+                "token" => $user->createToken('auth_token')->plainTextToken,
                 'first_name' => $request->first_name,
-                'last_name'  => $request->last_name,
-                'email'     => $request->email,
-                'phone'     => $request->phone,
-                "permissions"  => $user->getPermissionNames(),
-                "role"        => $user->getRoleNames(),
-                "store_owner"  => $user->store_owner,
-                "merchant_id"  => $user->merchant_id,
-                "stores"      => json_decode($user->stores),
-                "next_stage"   => "2"
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                "permissions" => $user->getPermissionNames(),
+                "role" => $user->getRoleNames(),
+                "store_owner" => $user->store_owner,
+                "merchant_id" => $user->merchant_id,
+                "stores" => json_decode($user->stores),
+                "next_stage" => "2"
             ], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Handle validation errors
@@ -210,7 +215,7 @@ class UserController extends Controller
                 "status" => false,
                 "status_code" => 422,
                 "message" => __('messages.validation_failed', ['name' => 'Seller']),
-                "errors"  => $e->errors(),
+                "errors" => $e->errors(),
             ], 422);
         } catch (Exception $e) {
             // Handle unexpected errors
@@ -218,7 +223,7 @@ class UserController extends Controller
                 "status" => false,
                 "status_code" => 500,
                 "message" => __('messages.error'),
-                "error"   => $e->getMessage(),
+                "error" => $e->getMessage(),
             ], 500);
         }
     }
@@ -227,6 +232,7 @@ class UserController extends Controller
     {
         return new UserResource(auth()->guard('api')->user());
     }
+
     public function logout(Request $request)
     {
         $user = $request->user();
@@ -236,6 +242,7 @@ class UserController extends Controller
         $request->user()->currentAccessToken()->delete();
         return $this->success(__('auth.logout'));
     }
+
     public function register(UserCreateRequest $request)
     {
         try {
@@ -257,12 +264,12 @@ class UserController extends Controller
 
             // Create the user
             $user = $this->repository->create([
-                'first_name'     => $request->first_name,
-                'last_name'      => $request->last_name,
-                'slug'          => username_slug_generator($request->first_name, $request->last_name),
-                'email'         => $request->email,
-                'password'      => Hash::make($request->password),
-                'status'        => 1
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'slug' => username_slug_generator($request->first_name, $request->last_name),
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'status' => 1
             ]);
 
             // Assign roles to the user
@@ -273,9 +280,9 @@ class UserController extends Controller
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.registration_success', ['name' => 'Customer']),
-                "token"      => $user->createToken('auth_token')->plainTextToken,
+                "token" => $user->createToken('auth_token')->plainTextToken,
                 "permissions" => $user->getPermissionNames(),
-                "role"       => $user->getRoleNames()->first()
+                "role" => $user->getRoleNames()->first()
             ], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Handle validation errors
@@ -283,7 +290,7 @@ class UserController extends Controller
                 "status" => false,
                 "status_code" => 422,
                 "message" => __('messages.validation_failed', ['name' => 'Customer']),
-                "errors"  => $e->errors(),
+                "errors" => $e->errors(),
             ], 422);
         } catch (Exception $e) {
             // Handle unexpected errors
@@ -291,8 +298,8 @@ class UserController extends Controller
                 "status" => false,
                 "status_code" => 500,
                 "message" => __('messages.error'),
-                "error"   => $e->getMessage(),
-                
+                "error" => $e->getMessage(),
+
             ], 500);
         }
     }
@@ -313,12 +320,13 @@ class UserController extends Controller
         }
         throw new AuthorizationException(NOT_AUTHORIZED);
     }
+
     public function banUser(Request $request)
     {
         try {
             $user = $request->user();
             if ($user && $user->hasPermissionTo(UserRole::SUPER_ADMIN) && $user->id != $request->id) {
-                $banUser =  User::find($request->id);
+                $banUser = User::find($request->id);
                 $banUser->status = 0;
                 $banUser->save();
                 return $banUser;
@@ -328,12 +336,13 @@ class UserController extends Controller
             throw new AuthorizationException(SOMETHING_WENT_WRONG);
         }
     }
+
     public function activeUser(Request $request)
     {
         try {
             $user = $request->user();
             if ($user && $user->hasPermissionTo(UserRole::SUPER_ADMIN) && $user->id != $request->id) {
-                $activeUser =  User::find($request->id);
+                $activeUser = User::find($request->id);
                 $activeUser->status = 1;
                 $activeUser->save();
                 return $activeUser;
@@ -343,6 +352,7 @@ class UserController extends Controller
             throw new AuthorizationException(SOMETHING_WENT_WRONG);
         }
     }
+
     /* <---- Forget password proccess start ----> */
     public function forgetPassword(Request $request)
     {
@@ -372,6 +382,7 @@ class UserController extends Controller
         //     return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
         // }
     }
+
     public function verifyForgetPasswordToken(Request $request)
     {
         $tokenData = DB::table('password_reset_tokens')->where('token', $request->token)->first();
@@ -387,6 +398,7 @@ class UserController extends Controller
         return ['message' => __('passwords.token.valid'), 'success' => true];
         // return ['message' => TOKEN_IS_VALID, 'success' => true];
     }
+
     public function resetPassword(Request $request)
     {
         try {
@@ -417,6 +429,7 @@ class UserController extends Controller
         }
         return redirect()->route('users')->with('success', 'Role assign successfully!');
     }
+
     public function assignPermissions(Request $request)
     {
         $user = User::findOrFail($request->user_id);
@@ -429,4 +442,32 @@ class UserController extends Controller
         ]);
     }
     /* <---- Assign roles & permissions proccess end ----> */
+    /* <---- User profile start ----> */
+    public function userProfile()
+    {
+        try {
+            if (!auth()->guard('api')->user()) {
+                return unauthorized_response();
+            }
+
+            $userId = auth('api')->id();
+            $user = User::findOrFail($userId);
+
+            return UserDetailsResource::collection([$user]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.data_not_found'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.something_went_wrong'),
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+    /* <---- User profile end ----> */
 }

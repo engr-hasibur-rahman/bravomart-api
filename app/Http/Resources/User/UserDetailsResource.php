@@ -15,7 +15,16 @@ class UserDetailsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-          'id' => $this->id,
+            'id' => $this->id,
+        ];
+    }
+
+    public function with($request): array
+    {
+        return [
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.data_found'),
         ];
     }
 }
