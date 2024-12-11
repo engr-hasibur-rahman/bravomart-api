@@ -210,4 +210,16 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+    public function changeStatus(array $data): mixed
+    {
+        try {
+            $product = Product::findOrFail($data['id']);
+            $product->status = $data['status'];
+            $product->save();
+            return $product;
+        } catch (\Exception $e) {
+            return false;
+        }
+
+    }
 }

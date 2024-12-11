@@ -50,6 +50,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /*--------------------- Com route end  ----------------------------*/
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
+        // Product manage
+        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+            Route::post('product/approve', [ProductController::class, 'changeStatus']);
+
+        });
         // Product Brand Routing
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_BRAND_LIST->value]], function () {
             Route::get('product-brands', [ProductBrandController::class, 'index']);
