@@ -261,6 +261,8 @@ enum Permission: string
     case APPEARANCE_SETTINGS = 'appearance_settings';
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';
     case MAINTENANCE_SETTINGS = '/admin/system-management/maintenance-settings';
+    case SMTP_SETTINGS = '/admin/system-management/email-settings/smtp';
+    case EMAIL_TEMPLATES = '/admin/system-management/email-settings/templates';
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
     case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
     case DATABASE_UPDATE_CONTROLS  = '/admin/system-management/database-update-controls';
