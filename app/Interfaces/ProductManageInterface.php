@@ -14,4 +14,5 @@ interface ProductManageInterface
     public function translationKeys();
     public function delete(int|string $id);
     public function records(bool $onlyDeleted);
+    public function changeStatus(array $data);
 }

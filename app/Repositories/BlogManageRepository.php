@@ -141,7 +141,7 @@ class BlogManageRepository implements BlogManageInterface
         $paginatedBlog =  $blog
             ->orderBy($sortField, $sort)
             ->paginate($limit);
-        return BlogListResource::class::collection($paginatedBlog);
+        return BlogListResource::collection($paginatedBlog);
     }
     public function getBlogById(int|string $id)
     {

@@ -6,6 +6,7 @@ use App\Enums\Permission;
 use App\Enums\Role as UserRole;
 use App\Helpers\ComHelper;
 use App\Http\Requests\UserCreateRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
 use App\Models\Translation;
@@ -453,7 +454,47 @@ class UserController extends Controller
             $userId = auth('api')->id();
             $user = User::findOrFail($userId);
 
-            return UserDetailsResource::collection([$user]);
+            return new UserDetailsResource($user);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.data_not_found'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.something_went_wrong'),
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function userProfileUpdate(UserUpdateRequest $request)
+    {
+        try {
+            if (!auth()->guard('api')->user()) {
+                return unauthorized_response();
+            }
+
+            $userId = auth('api')->id();
+            $user = User::findOrFail($userId);
+
+            if ($user) {
+                $user->update($request->only('first_name', 'last_name','phone', 'image'));
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.update_success', ['name' => 'User']),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 500,
+                    'message' => __('messages.update_failed'),
+                ]);
+            }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'status' => false,
