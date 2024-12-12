@@ -40,7 +40,6 @@ return new class extends Migration
             $table->string('delivery_time_text')->nullable(); //*Can be delay if natural disaster
             $table->integer('max_cart_qty')->nullable();
             $table->integer('order_count')->nullable();
-            $table->string('attributes')->nullable();
             $table->integer('views')->default(0);
             $table->enum('status', array_map(fn($enum) => $enum->value, StatusType::cases()))->nullable(); //pending, approved, inactive, suspended
             $table->timestamp('available_time_starts')->nullable(); //Only for Food Item

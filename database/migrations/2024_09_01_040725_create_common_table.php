@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Migrations\UniqueBaseMigration;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -43,7 +42,7 @@ return new class extends Migration
             $table->integer('display_order');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
-            $table->boolean('status')->default(1);
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
 
@@ -120,27 +119,27 @@ return new class extends Migration
         //https://github.com/MatanYadaev/laravel-eloquent-spatial
         Schema::create('com_areas', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->nullable(); 
-            $table->string('name'); 
+            $table->string('code')->nullable();
+            $table->string('name');
             $table->geometry('coordinates', subtype: 'polygon')->nullable();
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
-        });        
+        });
 
         Schema::create('com_merchant', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
-            $table->double('rating')->nullable(); 
-            $table->integer('num_of_reviews')->nullable(); 
-            $table->integer('num_of_sale')->nullable(); 
+            $table->double('rating')->nullable();
+            $table->integer('num_of_reviews')->nullable();
+            $table->integer('num_of_sale')->nullable();
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
-        });  
+        });
 
 //        Schema::create('com_stores', function (Blueprint $table) {
 //            $table->id();
