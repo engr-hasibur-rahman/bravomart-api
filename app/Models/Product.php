@@ -27,7 +27,7 @@ class Product extends Model
         "image",
         "gallery_images",
         "warranty",
-        "return_in_dsays",
+        "return_in_days",
         "return_text",
         "allow_change_in_mind",
         "cash_on_delivery",

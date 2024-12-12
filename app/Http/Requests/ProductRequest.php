@@ -47,7 +47,6 @@ class ProductRequest extends FormRequest
             "delivery_time_min" => "nullable",
             "delivery_time_max" => "nullable",
             "delivery_time_text" => "nullable",
-            "attributes" => "required",
             "status" => "required|in:" . implode(',', array_column(StatusType::cases(), 'value')),
         ];
 
@@ -82,7 +81,7 @@ class ProductRequest extends FormRequest
     }
     public function messages()
     {
-        
+
         return [
             "shop_id.required" => "The shop ID is required.",
             "category_id.required" => "The category ID is required.",
@@ -96,7 +95,6 @@ class ProductRequest extends FormRequest
             "description.required" => "The product description is required.",
             "behaviour.required" => "The behaviour is required.",
             "behaviour.in" => "The selected behaviour is invalid.",
-            "attributes.required" => "Attributes are required.",
             "status.required" => "The status is required.",
             "status.in" => "The selected status is invalid.",
             "variants.required" => "Variants are required when included.",

@@ -4,15 +4,21 @@ namespace App\Http\Controllers\Api\V1\Product;
 
 use App\Enums\StatusType;
 use App\Enums\StoreType;
+use App\Exports\ProductExport;
 use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ImportRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ProductVariantRequest;
+use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -96,4 +102,71 @@ class ProductController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Status']));
         }
     }
+
+    public function import(ImportRequest $request)
+    {
+//        $file = $request->file('file');
+//        if (!$file) {
+//            return $this->failed(translate('import.file.not.found', ['name' => 'Products']));
+//        }
+//
+//        Excel::import(new ProductImport, $file);
+//        return $this->success(translate('import.success', ['name' => 'Products']));
+
+        try {
+            $file = $request->file('file');
+
+            if (!$file) {
+                return response()->json([
+                    'status' => false,
+                    'message' => translate('import.file.not.found', ['name' => 'Products']),
+                ], 422);
+            }
+            Excel::import(new ProductImport, $file);
+            // Generate a filename with a timestamp
+            $timestamp = now()->timestamp;
+            $filename = 'seller/product/' . $timestamp . '_' . $file->getClientOriginalName();
+            // Save the uploaded file to private storage
+            Storage::disk('import')->put($filename, file_get_contents($file));
+            return response()->json([
+                'status' => true,
+                'message' => translate('import.success', ['name' => 'Products']),
+            ]);
+
+        } catch (ValidationException $exception) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation Error',
+                'errors' => $exception->errors(),  // This accesses the errors properly
+            ], 422);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'An unexpected error occurred.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+
+    }
+
+    public function export(Request $request)
+    {
+        try {
+            // Get selected shop IDs and product IDs from the request
+            $selectedShopIds = (array) $request->input('shop_ids', []);
+            $selectedProductIds = (array) $request->input('product_ids', []);
+
+            $fileName = 'products_' . time() . '.xlsx';
+
+            return Excel::download(new ProductExport($selectedShopIds, $selectedProductIds), $fileName);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Export failed',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

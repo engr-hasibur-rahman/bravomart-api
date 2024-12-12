@@ -83,6 +83,38 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+    public function storeBulk(array $bulkData)
+    {
+        try {
+            // store the IDs of inserted products for bulk entry
+            $productIds = [];
+
+            foreach ($bulkData as $data) {
+                // Remove translations if it exists
+                $data = Arr::except($data, ['translations']);
+
+                // Create the product
+                $product = Product::create($data);
+                $productIds[] = $product->id; // Collect the product ID
+
+                // product variants store if variants are not empty
+                if (!empty($data['variants']) && is_array($data['variants'])) {
+                    $variants = array_map(function ($variant) use ($product) {
+                        $variant_slug = MultilangSlug::makeSlug(ProductVariant::class, $variant['variant_slug'], 'variant_slug');
+                        $variant['variant_slug'] = $variant_slug;
+                        $variant['sku'] = generateUniqueSku();
+                        $variant['product_id'] = $product->id;
+                        return $variant;
+                    }, $data['variants']);
+                    ProductVariant::insert($variants);
+                }
+            }
+            return $productIds;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
     // Update data
     public function update(array $data)
     {

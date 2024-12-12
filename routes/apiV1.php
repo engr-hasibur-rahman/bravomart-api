@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
 use App\Http\Controllers\Api\V1\UnitManageController;
 use Illuminate\Support\Facades\Route;
+
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1'], function () {
     Route::post('customer/registration', [UserController::class, 'register']);
@@ -38,7 +39,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
-    Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         // media manage
         Route::group(['prefix' => 'media-upload'], function () {
             Route::post('/store', [MediaController::class, 'mediaUpload']);
@@ -53,7 +54,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Product manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::post('product/approve', [ProductController::class, 'changeStatus']);
-
+            Route::post('product/author/approve', [ProductAuthorController::class, 'changeStatus']);
         });
         // Product Brand Routing
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_BRAND_LIST->value]], function () {
@@ -62,7 +63,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_BRAND_ADD->value]], function () {
             Route::post('product-brands', [ProductBrandController::class, 'store']);
             Route::get('product-brands/{id}', [ProductBrandController::class, 'show']);
-            Route::post('product-brands/status', [ProductBrandController::class, 'productBrandStatus']);
+            Route::post('product-brands/approve', [ProductBrandController::class, 'productBrandStatus']);
         });
 
         // Product Category Routing
@@ -97,7 +98,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
             Route::get('tag/list', [TagManageController::class, 'index']);
         });
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::post('tag/add', [TagManageController::class, 'store']);
             Route::get('tag/{id}', [TagManageController::class, 'show']);
             Route::post('tag/update', [TagManageController::class, 'update']);
@@ -108,7 +109,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
             Route::get('unit/list', [UnitManageController::class, 'index']);
         });
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::post('unit/add', [UnitManageController::class, 'store']);
             Route::get('unit/{id}', [UnitManageController::class, 'show']);
             Route::post('unit/update', [UnitManageController::class, 'update']);
@@ -118,7 +119,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
             Route::get('blog/list', [BlogManageController::class, 'blogIndex']);
         });
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::post('blog/add', [BlogManageController::class, 'blogStore']);
             Route::get('blog/{id}', [BlogManageController::class, 'blogShow']);
             Route::post('blog/update', [BlogManageController::class, 'blogUpdate']);
@@ -128,7 +129,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
             Route::get('blog/category/list', [BlogManageController::class, 'blogCategoryIndex']);
         });
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::post('blog/category/add', [BlogManageController::class, 'blogCategoryStore']);
             Route::get('blog/category/{id}', [BlogManageController::class, 'blogCategoryShow']);
             Route::post('blog/category/update', [BlogManageController::class, 'blogCategoryUpdate']);
@@ -139,7 +140,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
             Route::get('com/area/list', [AreaController::class, 'index']);
         });
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::get('com/area/{id}', [AreaController::class, 'show']);
             Route::post('com/area/add', [AreaController::class, 'store']);
             Route::post('com/area/update', [AreaController::class, 'update']);
@@ -148,7 +149,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         /*--------------------- System management ----------------------------*/
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::group(['prefix' => 'system-management'], function () {
                 Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings']);
                 Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization']);
@@ -210,6 +211,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::put('product/status/{id}', [ProductController::class, 'status_update']);
             Route::delete('product/remove/{id}', [ProductController::class, 'destroy']);
             Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
+            Route::post('product/export', [ProductController::class, 'export']);
+            Route::post('product/import', [ProductController::class, 'import']);
+        });
+        // Product brand manage
+        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+            Route::post('product-brands/add', [ProductBrandController::class, 'store']);
         });
 
         // Product variant manage
@@ -237,7 +244,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
             Route::get('product/author/list', [ProductAuthorController::class, 'index']);
         });
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::post('product/author/add', [ProductAuthorController::class, 'store']);
             Route::get('product/author/{id}', [ProductAuthorController::class, 'show']);
             Route::post('product/author/update', [ProductAuthorController::class, 'update']);
@@ -248,12 +255,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------------> vendor route end <----------------------------- */
     /* --------------------------> customer route start <------------------------- */
     Route::group(['prefix' => 'customer/'], function () {
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {});
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        });
     });
     /* --------------------------> customer route end <-------------------------- */
     /* --------------------------> delivery route start <------------------------- */
     Route::group(['prefix' => 'delivery/'], function () {
-        Route::group(['middleware' =>  ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {});
+        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        });
     });
     /* --------------------------> delivery route end <-------------------------- */
 });

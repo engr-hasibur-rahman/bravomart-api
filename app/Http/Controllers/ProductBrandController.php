@@ -20,8 +20,10 @@ class ProductBrandController extends Controller
 
     public function __construct(
         public ProductBrandRepository $repository,
-        public FileUploadRepository $fileUploadRepository
-    ) {}
+        public FileUploadRepository   $fileUploadRepository
+    )
+    {
+    }
 
     public function index(Request $request)
     {
@@ -76,19 +78,15 @@ class ProductBrandController extends Controller
     {
         try {
             $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
-
-            return response()->json([
-                'success' => 'Success'
-            ]);
+            return $this->success(trans('messages.save_success', ['name' => 'Brand']));
         } catch (\Exception $e) {
-            throw new \RuntimeException('Could not create the product brand.'.$e);
+            throw new \RuntimeException('Could not create the product brand.' . $e);
         }
     }
-
     public function productBrandStatus(Request $request)
     {
         $productBrand = ProductBrand::findOrFail($request->id);
-        $productBrand->status = !$productBrand->status;
+        $productBrand->status = $request->status;
         $productBrand->save();
         return response()->json([
             'success' => true,
