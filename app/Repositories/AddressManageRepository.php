@@ -32,7 +32,7 @@ class AddressManageRepository implements AddressManageInterface
         }
     }
 
-    public function getAddress(?int $id, ?string $type, int $status)
+    public function getAddress(?string $id, ?string $type, ?string $status)
     {
         try {
             $customerId = auth('api')->id();
@@ -42,7 +42,7 @@ class AddressManageRepository implements AddressManageInterface
 
             // Apply filters only if they are provided and not empty
             if (isset($id)) {
-                $query->where('status', $id);
+                $query->where('id', $id);
             }
             if (!empty($type)) {
                 $query->where('type', $type);

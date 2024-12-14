@@ -2,83 +2,107 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\CouponManageInterface;
-use App\Models\Coupon;
+use App\Interfaces\SliderManageInterface;
+use App\Models\Slider;
 use App\Models\Translation;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
-class CouponManageRepository implements CouponManageInterface
+class SliderManageRepository implements SliderManageInterface
 {
-    public function __construct(protected Coupon $coupon, protected Translation $translation) {}
+    public function __construct(protected Slider $slider, protected Translation $translation)
+    {
+    }
+
     public function translationKeys(): mixed
     {
-        return $this->coupon->translationKeys;
+        return $this->slider->translationKeys;
     }
-    public function model(): string
+
+    public function getPaginatedSlider(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        return Coupon::class;
-    }
-    public function getPaginatedCoupon(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
-    {
-        $coupon = Coupon::leftJoin('translations as title_translations', function ($join) use ($language) {
-            $join->on('coupons.id', '=', 'title_translations.translatable_id')
-                ->where('title_translations.translatable_type', '=', Coupon::class)
+        $slider = Slider::leftJoin('translations as title_translations', function ($join) use ($language) {
+            $join->on('sliders.id', '=', 'title_translations.translatable_id')
+                ->where('title_translations.translatable_type', '=', Slider::class)
                 ->where('title_translations.language', '=', $language)
                 ->where('title_translations.key', '=', 'title');
         })
             ->leftJoin('translations as description_translations', function ($join) use ($language) {
-                $join->on('coupons.id', '=', 'description_translations.translatable_id')
-                    ->where('description_translations.translatable_type', '=', Coupon::class)
+                $join->on('sliders.id', '=', 'description_translations.translatable_id')
+                    ->where('description_translations.translatable_type', '=', Slider::class)
                     ->where('description_translations.language', '=', $language)
                     ->where('description_translations.key', '=', 'description');
             })
+            ->leftJoin('translations as sub_title_translations', function ($join) use ($language) {
+                $join->on('sliders.id', '=', 'sub_title_translations.translatable_id')
+                    ->where('sub_title_translations.translatable_type', '=', Slider::class)
+                    ->where('sub_title_translations.language', '=', $language)
+                    ->where('sub_title_translations.key', '=', 'sub_title');
+            })
+            ->leftJoin('translations as button_text_translations', function ($join) use ($language) {
+                $join->on('sliders.id', '=', 'button_text_translations.translatable_id')
+                    ->where('button_text_translations.translatable_type', '=', Slider::class)
+                    ->where('button_text_translations.language', '=', $language)
+                    ->where('button_text_translations.key', '=', 'button_text');
+            })
             ->select(
-                'coupons.*',
-                DB::raw('COALESCE(title_translations.value, coupons.title) as title'),
-                DB::raw('COALESCE(description_translations.value, coupons.description) as description')
+                'sliders.*',
+                DB::raw('COALESCE(title_translations.value, sliders.title) as title'),
+                DB::raw('COALESCE(description_translations.value, sliders.description) as description'),
+                DB::raw('COALESCE(sub_title_translations.value, sliders.sub_title) as sub_title'),
+                DB::raw('COALESCE(button_text_translations.value, sliders.button_text) as button_text')
             );
         // Apply search filter if search parameter exists
         if ($search) {
-            $coupon->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', coupons.title, name_translations.value, coupons.description, description_translations.value)"), 'like', "%{$search}%");
+            $slider->where(function ($query) use ($search) {
+                $query->where(DB::raw("CONCAT_WS(' ', 
+                sliders.title, title_translations.value, 
+                sliders.description, description_translations.value, 
+                sliders.sub_title, sub_title_translations.value, 
+                sliders.button_text, button_text_translations.value)"), 'like', "%{$search}%");
             });
         }
         // Apply sorting and pagination
         // Return the result
-        return $coupon
+        return $slider
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
+
     public function store(array $data)
     {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
         try {
+            $data['created_by'] = auth('api')->id();
             $data = Arr::except($data, ['translations']);
-            $coupon = Coupon::create($data);
-            return $coupon->id;
+            $slider = $this->slider->create($data);
+            return $slider->id;
         } catch (\Throwable $th) {
             throw $th;
         }
     }
-    public function getCouponById(int|string $id)
+
+    public function getSliderById(int|string $id)
     {
         try {
-            $coupon = Coupon::find($id);
-            $translations = $coupon->translations()->get()->groupBy('language');
+            $slider = $this->slider->find($id);
+            $translations = $slider->translations()->get()->groupBy('language');
             // Initialize an array to hold the transformed data
             $transformedData = [];
             foreach ($translations as $language => $items) {
                 $languageInfo = ['language' => $language];
                 /* iterate all Column to Assign Language Value */
-                foreach ($this->coupon->translationKeys as $columnName) {
+                foreach ($this->slider->translationKeys as $columnName) {
                     $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
                 }
                 $transformedData[] = $languageInfo;
             }
-            if ($coupon) {
+            if ($slider) {
                 return response()->json([
-                    "data" => $coupon->toArray(),
+                    "data" => $slider->toArray(),
                     'translations' => $transformedData,
                     "massage" => "Data was found"
                 ], 201);
@@ -91,14 +115,19 @@ class CouponManageRepository implements CouponManageInterface
             throw $th;
         }
     }
+
     public function update(array $data)
     {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
         try {
-            $coupon = Coupon::findOrFail($data['id']);
-            if ($coupon) {
+            $slider = $this->slider->findOrFail($data['id']);
+            if ($slider) {
+                $data['updated_by'] = auth('api')->id();
                 $data = Arr::except($data, ['translations']);
-                $coupon->update($data);
-                return $coupon->id;
+                $slider->update($data);
+                return $slider->id;
             } else {
                 return false;
             }
@@ -106,17 +135,19 @@ class CouponManageRepository implements CouponManageInterface
             throw $th;
         }
     }
+
     public function delete(int|string $id)
     {
         try {
-            $coupon = Coupon::findOrFail($id);
-            $this->deleteTranslation($coupon->id,Coupon::class);
-            $coupon->delete();
+            $slider = Slider::findOrFail($id);
+            $this->deleteTranslation($slider->id, Slider::class);
+            $slider->delete();
             return true;
         } catch (\Throwable $th) {
             throw $th;
         }
     }
+
     private function deleteTranslation(int|string $id, string $translatable_type)
     {
         try {
@@ -128,7 +159,8 @@ class CouponManageRepository implements CouponManageInterface
             throw $th;
         }
     }
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -158,7 +190,8 @@ class CouponManageRepository implements CouponManageInterface
         }
         return true;
     }
-    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {

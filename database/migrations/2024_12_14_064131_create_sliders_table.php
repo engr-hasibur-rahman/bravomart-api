@@ -20,8 +20,10 @@ return new class extends Migration
             $table->string('button_text')->nullable();
             $table->string('button_url')->nullable();
             $table->string('redirect_url')->nullable();
-            $table->string('order')->nullable();
+            $table->integer('order')->unique();
             $table->integer('status')->default(0)->comment('0 - Inactive, 1 - Active');
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
             $table->timestamps();
         });
     }

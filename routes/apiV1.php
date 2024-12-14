@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
@@ -56,6 +57,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::post('product/approve', [ProductController::class, 'changeStatus']);
             Route::post('product/author/approve', [ProductAuthorController::class, 'changeStatus']);
+        });
+        // Slider manage
+        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+            Route::get('slider/list', [SliderManageController::class, 'index']);
+            Route::post('slider/add', [SliderManageController::class, 'store']);
+            Route::get('slider/{id}', [SliderManageController::class, 'show']);
+            Route::post('slider/update', [SliderManageController::class, 'update']);
+            Route::delete('slider/remove/{id}', [SliderManageController::class, 'destroy']);
         });
         // Product Brand Routing
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_BRAND_LIST->value]], function () {
