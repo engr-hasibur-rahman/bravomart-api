@@ -50,6 +50,6 @@ class CouponManageController extends Controller
     public function destroy($id)
     {
         $this->couponRepo->delete($id);
-        return $this->success(translate('messages.delete_success'));
+        return $this->success(translate('messages.delete_success',['name'=>'Coupon']));
     }
 }

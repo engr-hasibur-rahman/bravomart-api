@@ -6,5 +6,5 @@ interface  AddressManageInterface
     public function setAddress(array $data);
 
     public function handleDefaultAddress(array $data);
-    public function getAddress(?int $id, ?string $type, int $status);
+    public function getAddress(?string $id, ?string $type, ?string $status);
 }
