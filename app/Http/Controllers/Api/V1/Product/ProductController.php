@@ -81,7 +81,7 @@ class ProductController extends Controller
             "massage" => "Records were restored successfully!"
         ], 201);
     }
-
+    /* Change product status (Admin only) */
     public function changeStatus(Request $request)
     {
         try {
@@ -102,17 +102,9 @@ class ProductController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Status']));
         }
     }
-
+    /* Bulk product import */
     public function import(ImportRequest $request)
     {
-//        $file = $request->file('file');
-//        if (!$file) {
-//            return $this->failed(translate('import.file.not.found', ['name' => 'Products']));
-//        }
-//
-//        Excel::import(new ProductImport, $file);
-//        return $this->success(translate('import.success', ['name' => 'Products']));
-
         try {
             $file = $request->file('file');
 
@@ -132,7 +124,6 @@ class ProductController extends Controller
                 'status' => true,
                 'message' => translate('import.success', ['name' => 'Products']),
             ]);
-
         } catch (ValidationException $exception) {
             return response()->json([
                 'status' => false,
@@ -147,9 +138,8 @@ class ProductController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-
     }
-
+    /* Product export (all and both shop wise and product wise) */
     public function export(Request $request)
     {
         try {
@@ -168,5 +158,4 @@ class ProductController extends Controller
             ], 500);
         }
     }
-
 }

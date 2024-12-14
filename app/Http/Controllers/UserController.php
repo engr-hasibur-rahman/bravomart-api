@@ -19,6 +19,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role as ModelsRole;
 use Laravel\Socialite\Facades\Socialite;
@@ -482,7 +483,7 @@ class UserController extends Controller
             $user = User::findOrFail($userId);
 
             if ($user) {
-                $user->update($request->only('first_name', 'last_name','phone', 'image'));
+                $user->update($request->only('first_name', 'last_name', 'phone', 'image'));
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
@@ -501,6 +502,46 @@ class UserController extends Controller
                 'status_code' => 404,
                 'message' => __('messages.data_not_found'),
             ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.something_went_wrong'),
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function userEmailUpdate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        try {
+            if (!auth()->guard('api')->user()) {
+                return unauthorized_response();
+            }
+            $userId = auth('api')->id();
+            $user = User::findOrFail($userId);
+            if ($user) {
+                $user->update($request->only('email'));
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.update_success', ['name' => 'User']),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 500,
+                    'message' => __('messages.update_failed'),
+                ]);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,

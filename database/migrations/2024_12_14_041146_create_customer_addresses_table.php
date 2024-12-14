@@ -13,6 +13,20 @@ return new class extends Migration
     {
         Schema::create('customer_addresses', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('customer_id');
+            $table->string('title')->nullable();
+            $table->string('type')->default('home')->comment('home, office, others'); // home, office, others.
+            $table->string('full_name')->nullable();
+            $table->string('phone_number');
+            $table->string('email')->nullable();
+            $table->string('address_line_1');
+            $table->string('address_line_2')->nullable();
+            $table->string('state')->nullable();
+            $table->string('city');
+            $table->string('postal_code');
+            $table->string('country');
+            $table->boolean('is_default')->default(false);
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('me', [UserController::class, 'me']);
         Route::get('profile', [UserController::class, 'userProfile']);
         Route::post('/profile-edit', [UserController::class, 'userProfileUpdate']);
+        Route::post('/email-change', [UserController::class, 'userEmailUpdate']);
         Route::post('logout', [UserController::class, 'logout']);
     });
 });

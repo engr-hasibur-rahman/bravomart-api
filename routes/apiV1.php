@@ -2,6 +2,7 @@
 
 use App\Enums\Permission;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
+use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
@@ -256,6 +257,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------------> customer route start <------------------------- */
     Route::group(['prefix' => 'customer/'], function () {
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        });
+        Route::group(['prefix' => 'address/'], function () {
+            Route::post('add', [AddressManageController::class, 'store']);
+            Route::post('customer-addresses', [AddressManageController::class, 'index']);
+            Route::post('make-default', [AddressManageController::class, 'defaultAddress']);
         });
     });
     /* --------------------------> customer route end <-------------------------- */
