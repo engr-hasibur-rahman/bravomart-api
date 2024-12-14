@@ -83,6 +83,7 @@ class ProductBrandController extends Controller
             throw new \RuntimeException('Could not create the product brand.' . $e);
         }
     }
+    /* Change or Approve product brand status (Admin only) */
     public function productBrandStatus(Request $request)
     {
         $productBrand = ProductBrand::findOrFail($request->id);
