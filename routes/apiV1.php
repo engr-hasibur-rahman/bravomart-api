@@ -42,7 +42,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
-    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+//    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         // media manage
         Route::group(['prefix' => 'media-upload'], function () {
             Route::post('/store', [MediaController::class, 'mediaUpload']);
@@ -50,7 +50,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('/alt', [MediaController::class, 'alt_change']);
             Route::post('/delete', [MediaController::class, 'delete_media']);
         });
-    });
+//    });
     /*--------------------- Com route end  ----------------------------*/
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
