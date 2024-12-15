@@ -14,6 +14,12 @@ class CityResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'state_id' => $this->state_id,
+            'timezone' => $this->timezone,
+            'state' => new CountryResource($this->whenLoaded('state')), // Nested state resource
+        ];
     }
 }

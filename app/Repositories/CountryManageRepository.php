@@ -35,27 +35,67 @@ class CountryManageRepository implements CountryManageInterface
         }
 
         // Sorting by requested parameter
-        $sortBy = $filters['sortBy'] ?? 'id'; // Default sort by ID
-        $sortOrder = $filters['sortOrder'] ?? 'asc'; // Default order ascending
+        $sortBy = $filters['sortBy'] ?? 'id';
+        $sortOrder = $filters['sortOrder'] ?? 'asc';
         $query->orderBy($sortBy, $sortOrder);
 
         // Return paginated results
-        $perPage = $filters['perPage'] ?? 10; // Default items per page
+        $perPage = $filters['perPage'] ?? 10;
         return $query->paginate($perPage);
     }
 
     public function setCountry(array $data)
     {
-        //dd($data);
         try {
             $this->country->create($data);
             return true;
         } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'An error occurred while creating the country.',
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
                 'error' => $e->getMessage()
-            ];
+            ], 500);
         }
+    }
+
+    public function getCountryById(int $id)
+    {
+        try {
+            $country = $this->country->with('states.cities.areas')->findOrFail($id);
+            return $country;
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => __('message.data_not_found'),
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateCountryById(array $data)
+    {
+        try {
+            $country = $this->country->findOrFail($data['id']);
+            $country->update($data);
+            return true;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deleteCountry(int $id)
+    {
+            $country = $this->country->findOrFail($id);
+            $country->delete();
+            return true;
     }
 }

@@ -16,4 +16,5 @@ class CountryResource extends JsonResource
     {
         return parent::toArray($request);
     }
+
 }
