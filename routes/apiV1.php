@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Permission;
+use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
@@ -58,6 +59,17 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('product/approve', [ProductController::class, 'changeStatus']);
             Route::post('product/author/approve', [ProductAuthorController::class, 'changeStatus']);
         });
+        // Location Manage
+        Route::group(['prefix' => 'location/'], function () {
+            Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+                Route::get('country/list', [LocationManageController::class, 'countriesList']);
+                Route::post('country/add', [LocationManageController::class, 'storeCountry']);
+                Route::get('slider/{id}', [SliderManageController::class, 'show']);
+                Route::post('slider/update', [SliderManageController::class, 'update']);
+                Route::delete('slider/remove/{id}', [SliderManageController::class, 'destroy']);
+            });
+        });
+
         // Slider manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('slider/list', [SliderManageController::class, 'index']);

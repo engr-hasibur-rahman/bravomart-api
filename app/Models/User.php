@@ -26,6 +26,7 @@ class User extends Authenticatable
         'slug',
         'phone',
         'email',
+        'image',
         'activity_scope',
         'password',
         'store_owner',
@@ -46,7 +47,6 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
 
 
     /**
@@ -113,6 +113,7 @@ class User extends Authenticatable
 
         return $directPermissions->merge($rolePermissions)->unique();
     }
+
     /* Get linked social accounts */
     public function linkedSocialAccounts()
     {
