@@ -40,6 +40,10 @@ Route::group(['namespace' => 'Api\V1'], function () {
     });
     // Sliders
     Route::get('/sliders', [FrontendController::class, 'allSliders']);
+    Route::get('/country-list', [FrontendController::class, 'countriesList']);
+    Route::get('/state-list', [FrontendController::class, 'statesList']);
+    Route::get('/city-list', [FrontendController::class, 'citiesList']);
+    Route::get('/area-list', [FrontendController::class, 'areasList']);
 });
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
