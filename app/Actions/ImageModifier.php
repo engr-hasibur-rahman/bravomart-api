@@ -10,8 +10,7 @@ class ImageModifier
      * @param mixed $image
      * @return string|null
      */
-    public function generateImageUrl($image): ?string
-    {
+    public static function generateImageUrl($image){
         if (!empty($image)) {
             return com_option_get_id_wise_url($image);
         }

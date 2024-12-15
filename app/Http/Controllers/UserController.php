@@ -443,7 +443,7 @@ class UserController extends Controller
             'message' => 'Permission assign successfully!',
         ]);
     }
-    /* <---- Assign roles & permissions proccess end ----> */
+    /* <---- Assign roles & permissions process end ----> */
     /* <---- User profile start ----> */
     public function userProfile()
     {
