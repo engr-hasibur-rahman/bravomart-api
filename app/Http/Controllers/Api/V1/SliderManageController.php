@@ -26,7 +26,6 @@ class SliderManageController extends Controller
             []
         );
     }
-
     public function store(SliderRequest $request): JsonResponse
     {
         $slider = $this->sliderRepo->store($request->all());

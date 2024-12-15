@@ -18,6 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionAdminSeeder::class);
         $this->call(PermissionStoreSeeder::class);
         $this->call(ProductSeeder::class);
-
+        $this->call(LocationSeeder::class);
     }
 }
