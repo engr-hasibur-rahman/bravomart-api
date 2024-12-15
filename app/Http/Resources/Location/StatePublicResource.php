@@ -5,7 +5,7 @@ namespace App\Http\Resources\Location;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AreaResource extends JsonResource
+class StatePublicResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +17,9 @@ class AreaResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'city_id' => $this->city_id,
+            'country_id' => $this->country_id,
             'timezone' => $this->timezone,
-            'city' => new CountryResource($this->whenLoaded('city')), // Nested state resource
+            'country' => new CountryResource($this->whenLoaded('country')), // Nested country resource
         ];
     }
 }

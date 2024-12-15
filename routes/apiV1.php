@@ -40,6 +40,10 @@ Route::group(['namespace' => 'Api\V1'], function () {
     });
     // Sliders
     Route::get('/sliders', [FrontendController::class, 'allSliders']);
+    Route::get('/country-list', [FrontendController::class, 'countriesList']);
+    Route::get('/state-list', [FrontendController::class, 'statesList']);
+    Route::get('/city-list', [FrontendController::class, 'citiesList']);
+    Route::get('/area-list', [FrontendController::class, 'areasList']);
 });
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
@@ -64,12 +68,45 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
         // Location Manage
         Route::group(['prefix' => 'location/'], function () {
-            Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-                Route::get('country/list', [LocationManageController::class, 'countriesList']);
-                Route::post('country/add', [LocationManageController::class, 'storeCountry']);
-                Route::get('slider/{id}', [SliderManageController::class, 'show']);
-                Route::post('slider/update', [SliderManageController::class, 'update']);
-                Route::delete('slider/remove/{id}', [SliderManageController::class, 'destroy']);
+            // Country
+            Route::group(['prefix' => 'country/'], function () {
+                Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+                    Route::get('list', [LocationManageController::class, 'countriesList']);
+                    Route::post('add', [LocationManageController::class, 'storeCountry']);
+                    Route::get('{id}', [LocationManageController::class, 'countryDetails']);
+                    Route::post('update', [LocationManageController::class, 'updateCountry']);
+                    Route::delete('remove/{id}', [LocationManageController::class, 'destroyCountry']);
+                });
+            });
+            // State
+            Route::group(['prefix' => 'state/'], function () {
+                Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+                    Route::get('list', [LocationManageController::class, 'statesList']);
+                    Route::post('add', [LocationManageController::class, 'storeState']);
+                    Route::get('{id}', [LocationManageController::class, 'stateDetails']);
+                    Route::post('update', [LocationManageController::class, 'updateState']);
+                    Route::delete('remove/{id}', [LocationManageController::class, 'destroyState']);
+                });
+            });
+            // City
+            Route::group(['prefix' => 'city/'], function () {
+                Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+                    Route::get('list', [LocationManageController::class, 'citiesList']);
+                    Route::post('add', [LocationManageController::class, 'storeCity']);
+                    Route::get('{id}', [LocationManageController::class, 'cityDetails']);
+                    Route::post('update', [LocationManageController::class, 'updateCity']);
+                    Route::delete('remove/{id}', [LocationManageController::class, 'destroyCity']);
+                });
+            });
+            // Area
+            Route::group(['prefix' => 'area/'], function () {
+                Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+                    Route::get('list', [LocationManageController::class, 'areasList']);
+                    Route::post('add', [LocationManageController::class, 'storeArea']);
+                    Route::get('{id}', [LocationManageController::class, 'areaDetails']);
+                    Route::post('update', [LocationManageController::class, 'updateArea']);
+                    Route::delete('remove/{id}', [LocationManageController::class, 'destroyArea']);
+                });
             });
         });
 
