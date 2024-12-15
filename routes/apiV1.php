@@ -17,6 +17,7 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\StoreManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
@@ -37,6 +38,8 @@ Route::group(['namespace' => 'Api\V1'], function () {
         Route::post('verify-token', [UserController::class, 'verifyForgetPasswordToken']);
         Route::post('reset-password', [UserController::class, 'resetPassword']);
     });
+    // Sliders
+    Route::get('/sliders', [FrontendController::class, 'allSliders']);
 });
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
