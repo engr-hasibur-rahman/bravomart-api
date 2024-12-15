@@ -48,11 +48,6 @@ class RoleController extends Controller
         }
 
         if ($request->permissions) {
-//            $permissionsToSync = [];
-//
-//            foreach ($request->permissions as $perms) {
-//                $permissionsToSync[$perms->id] = ['view' => true];
-//            }
             $syncData = [];
             foreach ($request->permissions as $item) {
                 $syncData[$item['id']] = [
@@ -63,7 +58,6 @@ class RoleController extends Controller
                     'others' => $item['others'] ?? null, // Handle the `others` column if applicable
                 ];
             }
-            //$role->syncPermissions($request->$syncData);
             $role->permissions()->sync($syncData);
         }
 
@@ -75,8 +69,6 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        //return QueryBuilder::for(Role::class)->with(['permissions'])->findOrFail($id);
-
         $role = CustomRole::with([
             'permissions' => function ($query) {
                 $query->whereNull('parent_id')->with('childrenRecursive');
@@ -94,7 +86,7 @@ class RoleController extends Controller
             return $permission;
         });
 
-        //return $allPermissions;
+
 
         return [
             "id" => $role->id,
