@@ -183,7 +183,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionTitle' => 'Manage Products',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
-                                    'options' => ['View', 'Add', 'Edit', 'Delete'],
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
                                         'en' => 'Manage Products',
                                         'ar' => 'إدارة المنتجات'
@@ -224,6 +224,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
                                         'en' => 'Bulk Import',
                                         'ar' => 'الاستيراد بالجملة'
@@ -570,10 +571,11 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::STORE_MY_SHOP->value,
+                            'PermissionName' => Permission::SELLER_STORE_MANAGE->value,
                             'PermissionTitle' => 'My Stores',
                             'activity_scope' => 'store_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'My Stores',
                                 'ar' => 'متاجري'

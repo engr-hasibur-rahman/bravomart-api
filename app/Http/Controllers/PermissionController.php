@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ComHelper;
 use App\Http\Resources\PermissionResource;
+use App\Models\ComStore;
 use App\Models\CustomPermission;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
@@ -51,7 +52,22 @@ class PermissionController extends Controller
     public function getpermissions(Request $request)
     {
         $user = auth()->user();
-        $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+        $shop_count=1; // Primarily Pass For All
+        $permissions=null;
+
+        if($user->activity_scope=='store_level') // Now Check if user is a Store User and he have assigned Stores
+        {
+            $shop_count=ComStore::where('merchant_id', $user->id)->count();
+        }
+        if($shop_count>0) {
+            $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+        }
+        else
+        {
+            $permissions = $user->rolePermissionsQuery()->wherein('name',['Store Settings','seller-store-manage'])->whereNull('parent_id')->with('childrenRecursive')->get();
+        }
+
+
         return [
             'id' => $user->id,
             'first_name' => $user->first_name,
