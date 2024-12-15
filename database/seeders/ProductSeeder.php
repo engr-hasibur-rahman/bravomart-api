@@ -37,7 +37,6 @@ class ProductSeeder extends Seeder
             "gallery_images" => "",
             "max_cart_qty" => "1000",
             "order_count" => 0,
-            "attributes" => "1",
             "views" => 0,
             "status" => "pending",
             "available_time_starts" => "2024-12-12",
