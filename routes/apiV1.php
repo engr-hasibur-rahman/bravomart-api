@@ -58,7 +58,22 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('/delete', [MediaController::class, 'delete_media']);
         });
 //    });
+
+
+    // Marketing area manage
+    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
+        Route::get('com/area/list', [AreaController::class, 'index']);
+    });
+    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+        Route::get('com/area/{id}', [AreaController::class, 'show']);
+        Route::post('com/area/add', [AreaController::class, 'store']);
+        Route::post('com/area/update', [AreaController::class, 'update']);
+        Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
+        Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
+    });
     /*--------------------- Com route end  ----------------------------*/
+
+
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
         // Product manage
@@ -198,18 +213,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('blog/category/remove/{id}', [BlogManageController::class, 'blogCategoryDestroy']);
         });
 
-        // Marketing area manage
-        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {
-            Route::get('com/area/list', [AreaController::class, 'index']);
-        });
-        Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
-            Route::get('com/area/{id}', [AreaController::class, 'show']);
-            Route::post('com/area/add', [AreaController::class, 'store']);
-            Route::post('com/area/update', [AreaController::class, 'update']);
-            Route::put('com/area/status/{id}', [AreaController::class, 'changeStatus']);
-            Route::delete('com/area/remove/{id}', [AreaController::class, 'destroy']);
-        });
-
         /*--------------------- System management ----------------------------*/
         Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
             Route::group(['prefix' => 'system-management'], function () {
@@ -235,7 +238,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('module-wise-permissions', [PermissionController::class, 'moduleWisePermissions']);
 
 
-        // Route::apiResource('/roles', RoleController::class);
         Route::get('roles', [RoleController::class, 'index']);
         Route::post('roles', [RoleController::class, 'store']);
         Route::get('roles/{id}', [RoleController::class, 'show']);
