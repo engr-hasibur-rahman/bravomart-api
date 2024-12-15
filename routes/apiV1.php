@@ -17,6 +17,7 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\StoreManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
@@ -37,12 +38,14 @@ Route::group(['namespace' => 'Api\V1'], function () {
         Route::post('verify-token', [UserController::class, 'verifyForgetPasswordToken']);
         Route::post('reset-password', [UserController::class, 'resetPassword']);
     });
+    // Sliders
+    Route::get('/sliders', [FrontendController::class, 'allSliders']);
 });
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
-    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
+//    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
         // media manage
         Route::group(['prefix' => 'media-upload'], function () {
             Route::post('/store', [MediaController::class, 'mediaUpload']);
@@ -50,7 +53,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('/alt', [MediaController::class, 'alt_change']);
             Route::post('/delete', [MediaController::class, 'delete_media']);
         });
-    });
+//    });
     /*--------------------- Com route end  ----------------------------*/
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
@@ -226,7 +229,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('permissions', [PermissionController::class, 'index']);
         Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
         Route::get('module-wise-permissions', [PermissionController::class, 'moduleWisePermissions']);
-        Route::get('getpermissions', [PermissionController::class, 'getpermissions']);
+
 
         // Route::apiResource('/roles', RoleController::class);
         Route::get('roles', [RoleController::class, 'index']);
@@ -239,7 +242,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
         // Store manage
-        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::SELLER_STORE_MANAGE->value]], function () {
             Route::get('store/list', [StoreManageController::class, 'index']);
             Route::get('store/{id}', [StoreManageController::class, 'show']);
             Route::post('store/add', [StoreManageController::class, 'store']);
@@ -249,7 +252,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('store/deleted/records', [StoreManageController::class, 'deleted_records']);
         });
         // Staff manage
-        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
             //Route::apiResource('/staff', StaffController::class);
             Route::post('staff/add', [StaffController::class, 'store']);
             Route::get('staff/{id}', [StaffController::class, 'show']);

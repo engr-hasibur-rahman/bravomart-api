@@ -35,7 +35,7 @@ enum Permission: string
     case STORE_STORE_ADD_UPDATE = 'store-add-update'; // Add if user have no store added. Update if existis
     case STORE_RECOMMENDED = 'store-recommended';
     case STORE_APPROVAL = 'store-approval';
-
+    case SELLER_STORE_MANAGE = 'seller-store-manage'; // Add if user have no store added. Update if existis
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Store Settings                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -70,6 +70,7 @@ enum Permission: string
     case PRODUCT_ATTRIBUTE_LIST = '/admin/attributes';
     case PRODUCT_ATTRIBUTE_ADD = '/admin/attributes/add-attribute';
     case PRODUCT_ATTRIBUTE_LIST_STORE = '/store/attributes';
+    case SELLER_STAFF_MANAGE = 'seller-staff-manage';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Warranty                                        //

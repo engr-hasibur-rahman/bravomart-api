@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Permission;
+use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
@@ -32,6 +33,8 @@ Route::post('/store/ownerreg', [UserController::class, 'StoreOwnerRegistration']
 Route::post('partner/login', [PartnerLoginController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('getpermissions', [PermissionController::class, 'getpermissions']);
+
     // Routes for managing general user-related actions, such as profile information and other user account operations.
     Route::group(['prefix' => 'user'], function () {
         Route::get('me', [UserController::class, 'me']);
