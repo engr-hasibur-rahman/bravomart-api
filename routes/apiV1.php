@@ -209,7 +209,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
         // Store manage
-        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::SELLER_STORE_MANAGE->value]], function () {
             Route::get('store/list', [StoreManageController::class, 'index']);
             Route::get('store/{id}', [StoreManageController::class, 'show']);
             Route::post('store/add', [StoreManageController::class, 'store']);
@@ -219,7 +219,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('store/deleted/records', [StoreManageController::class, 'deleted_records']);
         });
         // Staff manage
-        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
             //Route::apiResource('/staff', StaffController::class);
             Route::post('staff/add', [StaffController::class, 'store']);
             Route::get('staff/{id}', [StaffController::class, 'show']);
