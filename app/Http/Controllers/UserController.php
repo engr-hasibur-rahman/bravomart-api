@@ -161,8 +161,9 @@ class UserController extends Controller
         }
     }
 
-    public function StoreOwnerRegistration($request)
+    public function StoreOwnerRegistration(Request $request)
     {
+
         try {
             // By default role ---->
             $roles = Role::where('available_for', 'store_level')->pluck('name');
