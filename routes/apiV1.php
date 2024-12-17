@@ -262,16 +262,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- vendor route start ------------------------- */
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
+
         // Store manage
-//        Route::group(['middleware' => ['permission:' . Permission::SELLER_STORE_MANAGE->value]], function () {
-        Route::get('store/list', [StoreManageController::class, 'index']);
-        Route::get('store/{id}', [StoreManageController::class, 'show']);
-        Route::post('store/add', [StoreManageController::class, 'store']);
-        Route::post('store/update', [StoreManageController::class, 'update']);
-        Route::put('store/status/{id}', [StoreManageController::class, 'status_update']);
-        Route::delete('store/remove/{id}', [StoreManageController::class, 'destroy']);
-        Route::get('store/deleted/records', [StoreManageController::class, 'deleted_records']);
-//        });
+        Route::group(['middleware' => ['permission:' . Permission::STORE_MY_SHOP->value]], function () {
+            Route::get('store/list', [StoreManageController::class, 'index']);
+            Route::get('store/{id}', [StoreManageController::class, 'show']);
+            Route::post('store/add', [StoreManageController::class, 'store']);
+            Route::post('store/update', [StoreManageController::class, 'update']);
+            Route::put('store/status/{id}', [StoreManageController::class, 'status_update']);
+            Route::delete('store/remove/{id}', [StoreManageController::class, 'destroy']);
+            Route::get('store/deleted/records', [StoreManageController::class, 'deleted_records']);
+        });
+
         // Staff manage
         Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
             //Route::apiResource('/staff', StaffController::class);

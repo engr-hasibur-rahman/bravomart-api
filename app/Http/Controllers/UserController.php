@@ -181,7 +181,7 @@ class UserController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password),
-                'activity_scope' => 'SHOP_AREA',
+                'activity_scope' => 'store_level',
                 'store_owner' => 1,
                 'status' => 1,
             ]);
@@ -213,18 +213,12 @@ class UserController extends Controller
                 "next_stage" => "2"
             ], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Handle validation errors
             return response()->json([
-                "status" => false,
-                "status_code" => 422,
                 "message" => __('messages.validation_failed', ['name' => 'Seller']),
                 "errors" => $e->errors(),
             ], 422);
         } catch (Exception $e) {
-            // Handle unexpected errors
             return response()->json([
-                "status" => false,
-                "status_code" => 500,
                 "message" => __('messages.error'),
                 "error" => $e->getMessage(),
             ], 500);

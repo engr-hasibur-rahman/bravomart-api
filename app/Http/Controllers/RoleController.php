@@ -87,7 +87,6 @@ class RoleController extends Controller
         });
 
 
-
         return [
             "id" => $role->id,
             "available_for" => $role->available_for,

@@ -28,23 +28,26 @@ class PartnerLoginController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->where('activity_scope', 'store_level')->where('status', 1)->first();
+        $user = User::where('email', $request->email)
+            ->where('activity_scope', 'store_level')
+            ->where('status', 1)
+            ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return ["success" => false,"token" => null, "permissions" => []];
         }
+
         $email_verified = $user->hasVerifiedEmail();
-        //Get Permission
-        //$permissions=$user->rolePermissionsQuery()->where('available_for','store_level')->whereNull('parent_id')->with('childrenRecursive')->get();
-        $permissions=$user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
 
-        //$merchant = ComMerchant::where('user_id',$user->id)->first();
-
-
-        $stores = ComStore::whereIn('id', json_decode($user->stores))
-            ->select(['id', 'name','store_type'])
-            ->get()
-            ->toArray();
+        $storeIds = json_decode($user->stores);
+        if (!is_null($storeIds) && is_array($storeIds)) {
+            $stores = ComStore::whereIn('id', $storeIds)
+                ->select(['id', 'name', 'store_type'])
+                ->get()
+                ->toArray();
+        } else {
+            $stores = [];
+        }
 
         return [
             "success" => true,
@@ -57,7 +60,6 @@ class PartnerLoginController extends Controller
             "store_owner" => $user->store_owner,
             "merchant_id" => $user->merchant_id,
             "stores" => $stores,
-            "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(),$permissions),
             "role" => $user->getRoleNames()
         ];
     }
