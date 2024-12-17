@@ -3,6 +3,7 @@
 use App\Enums\Permission;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
+use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
@@ -39,7 +40,9 @@ Route::group(['namespace' => 'Api\V1'], function () {
         Route::post('reset-password', [UserController::class, 'resetPassword']);
     });
     // Sliders
-    Route::get('/sliders', [FrontendController::class, 'allSliders']);
+    Route::get('/slider-list', [FrontendController::class, 'allSliders']);
+    // Banenrs
+    Route::get('/banner-list', [FrontendController::class, 'index']);
     Route::get('/country-list', [FrontendController::class, 'countriesList']);
     Route::get('/state-list', [FrontendController::class, 'statesList']);
     Route::get('/city-list', [FrontendController::class, 'citiesList']);
@@ -265,6 +268,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('staff/update', [StaffController::class, 'update']);
             Route::post('staff/change-status', [StaffController::class, 'changestatus']);
         });
+        // Banner manage
+//        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
+//        });
+            Route::post('banner/add', [BannerManageController::class, 'store']);
+            Route::get('banner/{id}', [BannerManageController::class, 'show']);
+            Route::post('banner/update', [BannerManageController::class, 'update']);
+            Route::post('banner/change-status', [BannerManageController::class, 'changestatus']);
+            Route::delete('banner/remove/{id}', [BannerManageController::class, 'destroy']);
 
         // Product manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {

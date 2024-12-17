@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Interfaces\AreaManageInterface;
+use App\Interfaces\BannerManageInterface;
 use App\Interfaces\CityManageInterface;
 use App\Interfaces\CountryManageInterface;
+use App\Interfaces\SliderManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Slider;
 use Illuminate\Http\Request;
@@ -21,12 +24,13 @@ class FrontendController extends Controller
         protected CountryManageInterface $countryRepo,
         protected StateManageInterface   $stateRepo,
         protected CityManageInterface    $cityRepo,
-        protected AreaManageInterface    $areaRepo
+        protected AreaManageInterface    $areaRepo,
+        protected BannerManageInterface   $bannerRepo,
     )
     {
 
     }
-
+    /* -----------------------------------------------------------> Slider List <---------------------------------------------------------- */
     public function allSliders()
     {
         $sliders = Slider::where('status', 1)->latest()->paginate(10);
@@ -41,6 +45,20 @@ class FrontendController extends Controller
             'message' => 'Sliders fetched successfully.',
             'sliders' => SliderPublicResource::collection($sliders->items()),
         ]);
+    }
+    /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
+    public function index(Request $request)
+    {
+        $banner = $this->bannerRepo->getPaginatedBanner(
+            $request->limit ?? 10,
+            $request->page ?? 1,
+            $request->language ?? DEFAULT_LANGUAGE,
+            $request->search ?? "",
+            $request->sortField ?? 'id',
+            $request->sort ?? 'asc',
+            []
+        );
+        return BannerPublicResource::collection($banner);
     }
     /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
     // Country
