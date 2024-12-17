@@ -571,7 +571,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::SELLER_STORE_MANAGE->value,
+                            'PermissionName' => Permission::STORE_MY_SHOP->value,
                             'PermissionTitle' => 'My Stores',
                             'activity_scope' => 'store_level',
                             'icon' => '',

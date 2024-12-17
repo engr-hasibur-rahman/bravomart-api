@@ -7,6 +7,8 @@ use App\Http\Resources\PermissionResource;
 use App\Models\ComStore;
 use App\Models\CustomPermission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,22 +53,45 @@ class PermissionController extends Controller
 
     public function getpermissions(Request $request)
     {
-        $user = auth()->user();
+        $user = Auth::guard('sanctum')->user();
         $shop_count=1; // Primarily Pass For All
         $permissions=null;
-
         if($user->activity_scope=='store_level') // Now Check if user is a Store User and he have assigned Stores
         {
             $shop_count=ComStore::where('merchant_id', $user->id)->count();
         }
-        if($shop_count>0) {
+
+        if($shop_count > 0) {
             $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
-        }
-        else
-        {
-            $permissions = $user->rolePermissionsQuery()->wherein('name',['Store Settings','seller-store-manage'])->whereNull('parent_id')->with('childrenRecursive')->get();
+        } else{
+            // Get specific permissions for non-store level users
+            $permissions = $user->rolePermissionsQuery()
+                ->whereIn('name', ['dashboard', 'Store Settings','/seller/store/list'])
+                ->with(['children' => function ($query) {
+                    $query->whereIn('name', ['dashboard', 'Store Settings', '/seller/store/list']);
+                }])
+                ->whereNull('parent_id') // Top-level permissions
+                ->get();
         }
 
+        $permissions = $permissions->map(function ($permission) {
+            // Check if options is a string and decode it into an array
+            if (is_string($permission->options)) {
+                $permission->options = json_decode($permission->options, true);
+            }
+
+            // Recursively decode the options of children permissions (if any)
+            if (!empty($permission->children)) {
+                $permission->children = collect($permission->children)->map(function ($child) {
+                    if (is_string($child->options)) {
+                        $child->options = json_decode($child->options, true);
+                    }
+                    return $child;
+                });
+            }
+
+            return $permission;
+        });
 
         return [
             'id' => $user->id,
@@ -75,7 +100,7 @@ class PermissionController extends Controller
             'phone' => $user->phone,
             'email' => $user->email,
             'activity_scope' => $user->activity_scope,
-            "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(),$permissions)
+            "permissions" =>$permissions ?? []
         ];
     }
     public function permissionForStoreOwner(Request $request)
