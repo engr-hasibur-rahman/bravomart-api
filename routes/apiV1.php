@@ -4,6 +4,7 @@ use App\Enums\Permission;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
+use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
@@ -43,6 +44,9 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     // Banenrs
     Route::get('/banner-list', [FrontendController::class, 'index']);
+    // Subscribe / Newsletter
+    Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
+    Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);
     Route::get('/country-list', [FrontendController::class, 'countriesList']);
     Route::get('/state-list', [FrontendController::class, 'statesList']);
     Route::get('/city-list', [FrontendController::class, 'citiesList']);
@@ -53,13 +57,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
 //    Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_ADD->value]], function () {
-        // media manage
-        Route::group(['prefix' => 'media-upload'], function () {
-            Route::post('/store', [MediaController::class, 'mediaUpload']);
-            Route::get('/load-more', [MediaController::class, 'load_more']);
-            Route::post('/alt', [MediaController::class, 'alt_change']);
-            Route::post('/delete', [MediaController::class, 'delete_media']);
-        });
+    // media manage
+    Route::group(['prefix' => 'media-upload'], function () {
+        Route::post('/store', [MediaController::class, 'mediaUpload']);
+        Route::get('/load-more', [MediaController::class, 'load_more']);
+        Route::post('/alt', [MediaController::class, 'alt_change']);
+        Route::post('/delete', [MediaController::class, 'delete_media']);
+    });
 //    });
 
 
@@ -79,6 +83,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
+        // Newsletter manage
+        Route::group(['prefix' => 'newsletter/'], function () {
+            Route::post('subscriber-list', [SubscriberManageController::class, 'allSubscribers']);
+            Route::post('bulk-status-change', [SubscriberManageController::class, 'bulkStatusChange']);
+            Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
+            Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
+        });
+
         // Product manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::post('product/approve', [ProductController::class, 'changeStatus']);
@@ -252,13 +264,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
         // Store manage
 //        Route::group(['middleware' => ['permission:' . Permission::SELLER_STORE_MANAGE->value]], function () {
-            Route::get('store/list', [StoreManageController::class, 'index']);
-            Route::get('store/{id}', [StoreManageController::class, 'show']);
-            Route::post('store/add', [StoreManageController::class, 'store']);
-            Route::post('store/update', [StoreManageController::class, 'update']);
-            Route::put('store/status/{id}', [StoreManageController::class, 'status_update']);
-            Route::delete('store/remove/{id}', [StoreManageController::class, 'destroy']);
-            Route::get('store/deleted/records', [StoreManageController::class, 'deleted_records']);
+        Route::get('store/list', [StoreManageController::class, 'index']);
+        Route::get('store/{id}', [StoreManageController::class, 'show']);
+        Route::post('store/add', [StoreManageController::class, 'store']);
+        Route::post('store/update', [StoreManageController::class, 'update']);
+        Route::put('store/status/{id}', [StoreManageController::class, 'status_update']);
+        Route::delete('store/remove/{id}', [StoreManageController::class, 'destroy']);
+        Route::get('store/deleted/records', [StoreManageController::class, 'deleted_records']);
 //        });
         // Staff manage
         Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
@@ -271,11 +283,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Banner manage
 //        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
 //        });
-            Route::post('banner/add', [BannerManageController::class, 'store']);
-            Route::get('banner/{id}', [BannerManageController::class, 'show']);
-            Route::post('banner/update', [BannerManageController::class, 'update']);
-            Route::post('banner/change-status', [BannerManageController::class, 'changestatus']);
-            Route::delete('banner/remove/{id}', [BannerManageController::class, 'destroy']);
+        Route::post('banner/add', [BannerManageController::class, 'store']);
+        Route::get('banner/{id}', [BannerManageController::class, 'show']);
+        Route::post('banner/update', [BannerManageController::class, 'update']);
+        Route::delete('banner/remove/{id}', [BannerManageController::class, 'destroy']);
 
         // Product manage
         Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
