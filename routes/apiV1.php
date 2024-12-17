@@ -274,7 +274,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('banner/add', [BannerManageController::class, 'store']);
             Route::get('banner/{id}', [BannerManageController::class, 'show']);
             Route::post('banner/update', [BannerManageController::class, 'update']);
-            Route::post('banner/change-status', [BannerManageController::class, 'changestatus']);
             Route::delete('banner/remove/{id}', [BannerManageController::class, 'destroy']);
 
         // Product manage
