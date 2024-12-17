@@ -42,7 +42,7 @@ enum Permission: string
     case STORE_STORE_NOTICE = 'store-notice';
     case STORE_STORE_MESSAGE = 'store-message';
     case STORE_STORE_CONFIG = 'store-config';
-    case STORE_MY_SHOP = 'my-store-list';
+    case STORE_MY_SHOP = '/seller/store/list';
     case STORE_BUSINESS_PLAN = 'my-business-plan';
     case STORE_WALLET = 'my-wallet';
     case STORE_DISBURSE_METHOD = 'my-disburse-method';
