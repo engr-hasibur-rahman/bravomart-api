@@ -27,7 +27,7 @@ class StoreRequest extends FormRequest
         return [
             //'area_id' => 'nullable|exists:areas,id',
             //'merchant_id' => 'nullable|exists:merchants,id',
-            'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class), 
+            'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class),
             'name' => 'required|string|max:255',
             'slug' => 'required|string|unique:com_stores,slug,' . $this->id,
             'phone' => 'nullable|string|max:15',
@@ -61,6 +61,7 @@ class StoreRequest extends FormRequest
             'updated_by' => 'nullable|exists:users,id',
         ];
     }
+
     public function messages(): array
     {
         return [
@@ -84,11 +85,13 @@ class StoreRequest extends FormRequest
             'status.in' => 'The status must be 0 (Pending), 1 (Active), or 2 (Inactive).',
         ];
     }
+
     private function getEnumValues(string $enumClass): string
     {
         return implode(',', array_map(fn($case) => $case->value, $enumClass::cases()));
 
     }
+
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));

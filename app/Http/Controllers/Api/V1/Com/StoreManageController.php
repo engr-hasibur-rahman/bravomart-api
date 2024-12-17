@@ -10,7 +10,10 @@ use Illuminate\Http\Request;
 
 class StoreManageController extends Controller
 {
-    public function __construct(protected StoreManageInterface $storeRepo){}
+    public function __construct(protected StoreManageInterface $storeRepo)
+    {
+    }
+
     public function index(Request $request)
     {
         return $this->storeRepo->getPaginatedStore(
@@ -23,8 +26,9 @@ class StoreManageController extends Controller
             []
         );
     }
+
     public function store(StoreRequest $request): JsonResponse
-    {       
+    {
         $store = $this->storeRepo->store($request->all());
         $this->storeRepo->storeTranslation($request, $store, 'App\Models\ComStore', $this->storeRepo->translationKeys());
         if ($store) {
@@ -33,6 +37,7 @@ class StoreManageController extends Controller
             return $this->failed(translate('messages.save_failed', ['name' => 'Store']));
         }
     }
+
     public function update(StoreRequest $request)
     {
         $store = $this->storeRepo->update($request->all());
@@ -43,20 +48,24 @@ class StoreManageController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Store']));
         }
     }
+
     public function show(Request $request)
     {
         return $this->storeRepo->getStoreById($request->id);
     }
+
     public function destroy($id)
     {
         $this->storeRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
     }
-    public function deleted_records(){
+
+    public function deleted_records()
+    {
         $records = $this->storeRepo->records(true);
-        return response ()->json([
-            "data"=> $records,
+        return response()->json([
+            "data" => $records,
             "massage" => "Records were restored successfully!"
-        ],201);
+        ], 201);
     }
 }
