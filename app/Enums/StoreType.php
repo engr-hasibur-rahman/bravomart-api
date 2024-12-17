@@ -13,6 +13,6 @@ enum StoreType: string
     case FURNITURE = 'furniture';
     case BOOKS = 'books';
     case GADGET = 'gadgets';
-    case ANIMALS_PET = 'animals-pet';
+    case ANIMALS_PET = 'animals-pet' ;
     case FISH = 'fish';
 }
