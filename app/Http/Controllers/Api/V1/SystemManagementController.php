@@ -515,6 +515,32 @@ class SystemManagementController extends Controller
         }
     }
 
+    public function googleMapSettings(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $validator = Validator::make($request->all(), [
+                'com_google_map_api_key' => 'nullable|string',
+                'com_google_map_enable_disable' => 'nullable|string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+             com_option_update('com_google_map_enable_disable', $request->com_google_map_enable_disable);
+             com_option_update('com_google_map_api_key', $request->com_google_map_api_key);
+            return $this->success(translate('messages.update_success', ['name' => 'Google Map Settings']));
+        }
+
+        $com_google_map_enable_disable = com_option_get('com_google_map_enable_disable');
+        $com_google_map_api_key = com_option_get('com_google_map_api_key');
+
+        return $this->success([
+            'com_google_map_enable_disable' => $com_google_map_enable_disable,
+            'com_google_map_api_key' => $com_google_map_api_key,
+        ]);
+    }
+
     public function cacheManagement(Request $request)
     {
         $validatedData = $request->validate([

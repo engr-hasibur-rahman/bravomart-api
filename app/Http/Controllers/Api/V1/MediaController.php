@@ -29,7 +29,7 @@ class MediaController extends Controller
         $all_images = $this->mediaService->load_more_images($request);
         return response()->json([
             'images' => $all_images,
-        ], 200);
+        ]);
     }
 
     public function alt_change(Request $request){

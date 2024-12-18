@@ -94,7 +94,7 @@ class MediaService
         $all_images = $image_query
             ->orderBy('id', 'ASC')
             ->skip($offset)
-            ->take(2)
+            ->take(12)
             ->get();
 
         $all_image_files = [];

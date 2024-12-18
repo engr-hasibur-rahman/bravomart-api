@@ -27,7 +27,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
     public function collection(\Illuminate\Support\Collection $rows)
     {
         foreach ($rows as $index => $row) {
-            $shopId = $row['shop_id'];
+            $shopId = $row['store_id'];
             $productId = $row['id'];
             // Check if the shop belongs to the authenticated user
             $shopExists = ComStore::where('id', $shopId)
@@ -44,7 +44,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
             }
 
             // Check if the product already exists in the database
-            $productExists = Product::where('shop_id', $shopId)
+            $productExists = Product::where('store_id', $shopId)
                 ->where('id', $productId)
                 ->exists();
 
@@ -55,11 +55,10 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
             // Save or update product to the database
             Product::create(
                 [
-                    "shop_id" => $row['shop_id'],
+                    "store_id" => $row['store_id'],
                     "category_id" => $row['category_id'],
                     "brand_id" => $row['brand_id'],
                     "unit_id" => $row['unit_id'],
-                    "attribute_id" => $row['attribute_id'],
                     "tag_id" => $row['tag_id'],
                     "name" => $row['name'],
                     "slug" => $row['slug'] ?? 'no-slug',
@@ -87,11 +86,10 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
     public function rules(): array
     {
         return [
-            "shop_id" => 'required|exists:com_stores,id',
+            "store_id" => 'required|exists:com_stores,id',
             "category_id" => "required",
             "brand_id" => "required",
             "unit_id" => "required",
-            "attribute_id" => "required",
             "tag_id" => "required",
             "type" => "required|in:" . implode(',', array_column(StoreType::cases(), 'value')),
             "name" => "required",
@@ -106,11 +104,10 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
     public function customValidationMessages(): array
     {
         return [
-            "shop_id.required" => "The shop ID is required.",
+            "store_id.required" => "The shop ID is required.",
             "category_id.required" => "The category ID is required.",
             "brand_id.required" => "The brand ID is required.",
             "unit_id.required" => "The unit ID is required.",
-            "attribute_id.required" => "The attribute ID is required.",
             "tag_id.required" => "The tag ID is required.",
             "type.required" => "The type is required.",
             "behaviour.required" => "The behaviour is required.",

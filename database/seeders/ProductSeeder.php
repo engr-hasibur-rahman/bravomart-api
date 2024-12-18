@@ -15,12 +15,11 @@ class ProductSeeder extends Seeder
     {
         // Insert the product
         $productId = DB::table('products')->insertGetId([
-            "shop_id" => "1",
+            "store_id" => "1",
             "category_id" => "1",
             "brand_id" => "1",
             "unit_id" => "1",
             "tag_id" => "1",
-            "attribute_id" => "1",
             "type" => "books",
             "behaviour" => "product",
             "name" => "Test Product",
