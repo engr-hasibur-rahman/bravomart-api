@@ -51,8 +51,8 @@ class StoreListResource extends JsonResource
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,
             'deleted_at' => $this->deleted_at,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'created_at' => optional($this->created_at)->toDateTimeString(), // Handles null
+            'updated_at' => optional($this->updated_at)->toDateTimeString(), // Handles null
         ];
     }
 }
