@@ -38,7 +38,7 @@ class ProductAttributeRepository extends BaseRepository
 
         // Prepare data for Attribute
         $data = [
-            'attribute_name' => $request['attribute_name'],
+            'name' => $request['name'],
         ];
 
         if ($attributeId) {
@@ -51,7 +51,7 @@ class ProductAttributeRepository extends BaseRepository
         }
 
         $translations = [];
-        $defaultKeys = ['attribute_name'];
+        $defaultKeys = ['name'];
 
         // Handle translations
         if ($request['translations']) {

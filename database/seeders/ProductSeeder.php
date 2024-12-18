@@ -20,7 +20,6 @@ class ProductSeeder extends Seeder
             "brand_id" => "1",
             "unit_id" => "1",
             "tag_id" => "1",
-            "attribute_id" => "1",
             "type" => "books",
             "behaviour" => "product",
             "name" => "Test Product",
