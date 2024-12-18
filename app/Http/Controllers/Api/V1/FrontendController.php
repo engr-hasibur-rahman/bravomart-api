@@ -39,6 +39,34 @@ class FrontendController extends Controller
 
     }
 
+    /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
+    public function productList(Request $request)
+    {
+        try {
+            $product = $this->productRepo->getPaginatedProduct(
+                $request->limit ?? 10,
+                $request->page ?? 1,
+                app()->getLocale() ?? DEFAULT_LANGUAGE,
+                $request->search ?? "",
+                $request->sortField ?? 'id',
+                $request->sort ?? 'asc',
+                []
+            );
+            return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'messages' => __('messages.data_found'),
+                    'products' => ProductPublicResource::collection($product)]
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'messages' => $e->getMessage()
+            ]);
+        }
+    }
+
     /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
     public function productCategoryList(Request $request)
     {
