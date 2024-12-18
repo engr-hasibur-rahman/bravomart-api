@@ -138,7 +138,7 @@ class UserController extends Controller
                 "status_code" => 200,
                 "message" => __('messages.login_success', ['name' => 'User']),
                 "token" => $user->createToken('auth_token')->plainTextToken,
-                "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
+//                "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
                 "email_verified" => $email_verified,
                 "role" => $user->getRoleNames()->first(),
             ], 200);
