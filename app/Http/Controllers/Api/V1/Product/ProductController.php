@@ -144,7 +144,7 @@ class ProductController extends Controller
     {
         try {
             // Get selected shop IDs and product IDs from the request
-            $selectedShopIds = (array) $request->input('shop_ids', []);
+            $selectedShopIds = (array) $request->input('store_ids', []);
             $selectedProductIds = (array) $request->input('product_ids', []);
 
             $fileName = 'products_' . time() . '.xlsx';

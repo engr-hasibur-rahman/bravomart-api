@@ -15,4 +15,5 @@ interface StoreManageInterface
     public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames);
     public function translationKeys();
     public function records(bool $onlyDeleted);
+    public function getOwnerStores();
 }

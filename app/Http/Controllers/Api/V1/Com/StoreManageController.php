@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
+use App\Http\Resources\Com\Store\OwnerWiseStoreListResource;
 use App\Http\Resources\Com\Store\StoreListResource;
 use App\Interfaces\StoreManageInterface;
 use Illuminate\Http\JsonResponse;
@@ -71,5 +72,23 @@ class StoreManageController extends Controller
             "data" => $records,
             "massage" => "Records were restored successfully!"
         ], 201);
+    }
+
+    public function ownerWiseStore()
+    {
+        try {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'stores' => OwnerWiseStoreListResource::collection($this->storeRepo->getOwnerStores())
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 }

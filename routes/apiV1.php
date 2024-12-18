@@ -2,10 +2,12 @@
 
 use App\Enums\Permission;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
+use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
+use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
@@ -40,11 +42,13 @@ Route::group(['namespace' => 'Api\V1'], function () {
         Route::post('verify-token', [UserController::class, 'verifyForgetPasswordToken']);
         Route::post('reset-password', [UserController::class, 'resetPassword']);
     });
-    // Sliders
+    // Product Category
+    Route::group(['prefix' => 'product-category/'], function () {
+        Route::get('list', [FrontendController::class, 'productCategoryList']);
+        Route::get('product', [FrontendController::class, 'categoryWiseProducts']);
+    });
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
-    // Banenrs
     Route::get('/banner-list', [FrontendController::class, 'index']);
-    // Subscribe / Newsletter
     Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
     Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);
     Route::get('/country-list', [FrontendController::class, 'countriesList']);
@@ -83,6 +87,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
+        // Dashboard manage
+        Route::group(['prefix' => 'dashboard/'], function () {
+            Route::get('summary-data', [DashboardController::class, 'loadSummaryData']);
+            Route::post('bulk-status-change', [SubscriberManageController::class, 'bulkStatusChange']);
+            Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
+            Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
+        });
+
         // Newsletter manage
         Route::group(['prefix' => 'newsletter/'], function () {
             Route::post('subscriber-list', [SubscriberManageController::class, 'allSubscribers']);
@@ -234,6 +246,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings']);
                 Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization']);
                 Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings']);
+                Route::match(['get', 'post'], '/payment-settings', [PaymentSettingsController::class, 'paymentSettings']);
                 Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings']);
                 Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings']);
                 Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings']);
@@ -263,6 +276,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- vendor route start ------------------------- */
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
+        Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
 
         // Store manage
         Route::group(['middleware' => ['permission:' . Permission::STORE_MY_SHOP->value]], function () {

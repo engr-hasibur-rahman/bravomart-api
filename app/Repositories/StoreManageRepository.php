@@ -8,17 +8,23 @@ use App\Models\Translation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+
 class StoreManageRepository implements StoreManageInterface
 {
-    public function __construct(protected ComStore $store, protected Translation $translation) {}
+    public function __construct(protected ComStore $store, protected Translation $translation)
+    {
+    }
+
     public function translationKeys(): mixed
     {
         return $this->store->translationKeys;
     }
+
     public function model(): string
     {
         return ComStore::class;
     }
+
     public function getPaginatedStore(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $store = ComStore::leftJoin('translations as name_translations', function ($join) use ($language) {
@@ -43,6 +49,7 @@ class StoreManageRepository implements StoreManageInterface
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
+
     public function store(array $data)
     {
         try {
@@ -53,6 +60,7 @@ class StoreManageRepository implements StoreManageInterface
             throw $th;
         }
     }
+
     public function getStoreById(int|string $id)
     {
         try {
@@ -83,6 +91,7 @@ class StoreManageRepository implements StoreManageInterface
             throw $th;
         }
     }
+
     public function update(array $data)
     {
         try {
@@ -98,6 +107,7 @@ class StoreManageRepository implements StoreManageInterface
             throw $th;
         }
     }
+
     public function delete(int|string $id)
     {
         try {
@@ -109,6 +119,7 @@ class StoreManageRepository implements StoreManageInterface
             throw $th;
         }
     }
+
     private function deleteTranslation(int|string $id, string $translatable_type)
     {
         try {
@@ -120,7 +131,8 @@ class StoreManageRepository implements StoreManageInterface
             throw $th;
         }
     }
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -150,7 +162,8 @@ class StoreManageRepository implements StoreManageInterface
         }
         return true;
     }
-    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -187,6 +200,7 @@ class StoreManageRepository implements StoreManageInterface
         }
         return true;
     }
+
     // Fetch deleted records(true = only trashed records, false = all records with trashed)
     public function records(bool $onlyDeleted = false)
     {
@@ -204,5 +218,43 @@ class StoreManageRepository implements StoreManageInterface
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+//    public function getOwnerStores()
+//    {
+//        if (!auth('api')->check()) {
+//            unauthorized_response();
+//        }
+//        $seller_id = auth('api')->id();
+//        $stores = ComStore::leftJoin('translations as name_translations', function ($join) use ($language) {
+//            $join->on('com_stores.id', '=', 'name_translations.translatable_id')
+//                ->where('name_translations.translatable_type', '=', ComStore::class)
+//                ->where('name_translations.language', '=', $language)
+//                ->where('name_translations.key', '=', 'name');
+//        })
+//            ->select(
+//                'com_stores.*',
+//                DB::raw('COALESCE(name_translations.value, com_stores.name) as name'),
+//            );
+//        return $stores->where('merchant_id', $seller_id)
+//            ->where('enable_saling', 1)
+//            ->where('status', 1)
+//            ->get();
+//    }
+    public function getOwnerStores()
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+
+        $seller_id = auth('api')->id();
+
+        $stores = ComStore::with('related_translations') // Load all related translations
+        ->where('merchant_id', $seller_id)
+            ->where('enable_saling', 1)
+            ->where('status', 1)
+            ->get();
+
+        return $stores;
     }
 }

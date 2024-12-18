@@ -29,7 +29,7 @@ class ProductExport implements FromCollection, WithHeadings
             return Product::whereIn('id', $this->productIds)
                 ->select(
                     "id",
-                    "shop_id",
+                    "store_id",
                     "category_id",
                     "brand_id",
                     "unit_id",
@@ -55,10 +55,10 @@ class ProductExport implements FromCollection, WithHeadings
         }
 
         if (!empty($this->shopIds)) {
-            return Product::whereIn('shop_id', $this->shopIds)
+            return Product::whereIn('store_id', $this->shopIds)
                 ->select(
                     "id",
-                    "shop_id",
+                    "store_id",
                     "category_id",
                     "brand_id",
                     "unit_id",
@@ -86,7 +86,7 @@ class ProductExport implements FromCollection, WithHeadings
         // If no shop IDs or product IDs are provided, export all products
         return Product::select(
             "id",
-            "shop_id",
+            "store_id",
             "category_id",
             "brand_id",
             "unit_id",
@@ -117,7 +117,7 @@ class ProductExport implements FromCollection, WithHeadings
     {
         return [
             "id",
-            "shop_id",
+            "store_id",
             "category_id",
             "brand_id",
             "unit_id",

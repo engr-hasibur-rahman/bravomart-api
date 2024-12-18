@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 class Product extends Model
 {
@@ -13,7 +14,7 @@ class Product extends Model
     protected $dates = ['deleted_at'];
     protected $table = "products";
     protected $fillable = [
-        "shop_id",
+        "store_id",
         "category_id",
         "brand_id",
         "unit_id",
@@ -46,6 +47,14 @@ class Product extends Model
         'name',
         'description'
     ];
+    public function category(){
+        return $this->belongsTo(ProductCategory::class);
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(ProductBrand::class);
+    }
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
@@ -62,5 +71,13 @@ class Product extends Model
     public function unit()
     {
         return $this->belongsTo(Unit::class, "unit_id");
+    }
+    public function shop()
+    {
+        return $this->belongsTo(ComStore::class, "store_id");
+    }
+    public function attribute()
+    {
+        return $this->belongsTo(ProductAttribute::class, "attribute_id");
     }
 }

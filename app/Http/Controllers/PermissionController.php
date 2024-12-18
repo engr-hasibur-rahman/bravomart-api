@@ -102,7 +102,6 @@ class PermissionController extends Controller
             'phone' => $user->phone,
             'email' => $user->email,
             'activity_scope' => $user->activity_scope,
-//            "permissions" => $permissions ?? []
         ];
     }
     public function permissionForStoreOwner(Request $request)

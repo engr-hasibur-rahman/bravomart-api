@@ -1372,6 +1372,17 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' =>  Permission::PAYMENT_SETTINGS->value,
+                            'PermissionTitle' => 'Payment Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Payment Settings',
+                                'ar' => 'إعدادات الدفع'
+                            ]
+                        ],
+                        [
                             'PermissionName' =>  Permission::SEO_SETTINGS->value,
                             'PermissionTitle' => 'SEO Settings',
                             'activity_scope' => 'system_level',
