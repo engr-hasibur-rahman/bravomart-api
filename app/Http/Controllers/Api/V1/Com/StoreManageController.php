@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
+use App\Http\Resources\Com\Store\StoreListResource;
 use App\Interfaces\StoreManageInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class StoreManageController extends Controller
 
     public function index(Request $request)
     {
-        return $this->storeRepo->getPaginatedStore(
+        $stores = $this->storeRepo->getPaginatedStore(
             $request->limit ?? 10,
             $request->page ?? 1,
             $request->language ?? DEFAULT_LANGUAGE,
@@ -25,6 +26,9 @@ class StoreManageController extends Controller
             $request->sort ?? 'asc',
             []
         );
+
+        // Return the stores as a resource collection
+        return StoreListResource::collection($stores);
     }
 
     public function store(StoreRequest $request): JsonResponse
