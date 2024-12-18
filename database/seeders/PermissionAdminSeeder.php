@@ -1394,6 +1394,16 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
+                                    'PermissionName' => Permission::GOOGLE_MAP_SETTINGS->value,
+                                    'PermissionTitle' => 'Google Map Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Google Map Settings',
+                                        'ar' => 'إعدادات خرائط جوجل'
+                                    ]
+                                ],
+                                [
                                     'PermissionName' => Permission::FIREBASE_SETTINGS->value,
                                     'PermissionTitle' => 'Firebase Settings',
                                     'activity_scope' => 'system_level',

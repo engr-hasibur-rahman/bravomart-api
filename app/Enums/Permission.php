@@ -271,6 +271,7 @@ enum Permission: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Third-Party Integrations                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case GOOGLE_MAP_SETTINGS = '/admin/system-management/google-map-settings';
     case FIREBASE_SETTINGS = '/admin/system-management/firebase-settings';
     case SOCIAL_LOGIN_SETTINGS = '/admin/system-management/social-login-settings';
 
