@@ -38,6 +38,8 @@ class ProductCategory extends Model implements HasMedia
     //  {
     //      return $this->morphMany(Media::class, 'fileable');
     //  }
+
+
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
