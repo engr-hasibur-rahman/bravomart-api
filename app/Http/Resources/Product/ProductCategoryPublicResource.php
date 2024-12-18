@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Product;
 
 use App\Http\Resources\ProductChildCategoryResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,4 +29,5 @@ class ProductCategoryPublicResource extends JsonResource
             'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
         ];
     }
+
 }

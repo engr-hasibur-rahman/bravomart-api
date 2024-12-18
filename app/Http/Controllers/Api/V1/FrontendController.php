@@ -9,6 +9,7 @@ use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Product\ProductCategoryPublicResource;
+use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\ProductCategoryResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Interfaces\AreaManageInterface;
@@ -18,6 +19,7 @@ use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\SliderManageInterface;
 use App\Interfaces\StateManageInterface;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Slider;
 use Illuminate\Http\Request;
@@ -40,34 +42,98 @@ class FrontendController extends Controller
     /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
     public function productCategoryList(Request $request)
     {
-        $limit = $request->limit ?? 10;
-        $language = $request->language ?? DEFAULT_LANGUAGE;
-        $search = $request->search;
-        $sort = $request->sort ?? 'asc';
-        $sortField = $request->sortField ?? 'id';
-        $categories = ProductCategory::leftJoin('translations', function ($join) use ($language) {
-            $join->on('product_category.id', '=', 'translations.translatable_id')
-                ->where('translations.translatable_type', '=', ProductCategory::class)
-                ->where('translations.language', '=', $language)
-                ->where('translations.key', '=', 'category_name');
-        })->select('product_category.*', DB::raw('COALESCE(translations.value, product_category.category_name) as category_name'));
+        try {
+            $limit = $request->limit ?? 10;
+            $language = $request->language ?? DEFAULT_LANGUAGE;
+            $search = $request->search;
+            $sort = $request->sort ?? 'asc';
+            $sortField = $request->sortField ?? 'id';
+            $categories = ProductCategory::leftJoin('translations', function ($join) use ($language) {
+                $join->on('product_category.id', '=', 'translations.translatable_id')
+                    ->where('translations.translatable_type', '=', ProductCategory::class)
+                    ->where('translations.language', '=', $language)
+                    ->where('translations.key', '=', 'category_name');
+            })->select('product_category.*', DB::raw('COALESCE(translations.value, product_category.category_name) as category_name'));
 
-        // Apply search filter if search parameter exists
-        if ($search) {
-            $categories->where(function ($query) use ($search) {
-                $query->where('translations.value', 'like', "%{$search}%")
-                    ->orWhere('product_category.category_name', 'like', "%{$search}%");
-            });
+            // Apply search filter if search parameter exists
+            if ($search) {
+                $categories->where(function ($query) use ($search) {
+                    $query->where('translations.value', 'like', "%{$search}%")
+                        ->orWhere('product_category.category_name', 'like', "%{$search}%");
+                });
+            }
+
+            // Apply sorting and pagination
+            $categories = $categories->whereNull('parent_id')
+                ->orderBy($sortField, $sort)
+                ->paginate($limit);
+
+            // Return a collection of ProductBrandResource (including the image)
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => ProductCategoryPublicResource::collection($categories),
+                'pagination' => [
+                    'total' => $categories->total(),
+                    'per_page' => $categories->perPage(),
+                    'current_page' => $categories->currentPage(),
+                    'last_page' => $categories->lastPage(),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function categoryWiseProducts(Request $request, $id)
+    {
+        // Initialize the query to get products by category
+        $query = Product::where('category_id', $id);
+
+        // Apply filters dynamically
+        if ($request->has('min_price') && $request->has('max_price')) {
+            $query->whereBetween('price', [$request->min_price, $request->max_price]);
         }
 
-        // Apply sorting and pagination
-        $categories = $categories->whereNull('parent_id')
-            ->orderBy($sortField, $sort)
-            ->paginate($limit);
+        if ($request->has('brand')) {
+            $query->where('brand_id', $request->brand);
+        }
 
-        // Return a collection of ProductBrandResource (including the image)
-        return response()->json(ProductCategoryPublicResource::collection($categories));
-        //return $categories;
+        if ($request->has('availability')) {
+            $query->where('is_available', $request->availability);  // Boolean (1 or 0)
+        }
+
+        if ($request->has('sort')) {
+            $sortOption = $request->sort;
+            if ($sortOption === 'price_low_high') {
+                $query->orderBy('price', 'asc');
+            } elseif ($sortOption === 'price_high_low') {
+                $query->orderBy('price', 'desc');
+            } elseif ($sortOption === 'newest') {
+                $query->orderBy('created_at', 'desc');
+            }
+        }
+
+        // Pagination (default 10 products per page)
+        $perPage = $request->get('per_page', 10);
+        $products = $query->with(['category', 'brandDetails'])
+            ->paginate($perPage);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Products fetched successfully',
+            'data' => ProductPublicResource::collection($products->items()),
+            'pagination' => [
+                'current_page' => $products->currentPage(),
+                'total_pages' => $products->lastPage(),
+                'total_items' => $products->total(),
+            ],
+        ]);
     }
 
     /* -----------------------------------------------------------> Slider List <---------------------------------------------------------- */
