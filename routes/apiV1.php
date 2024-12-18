@@ -276,6 +276,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- vendor route start ------------------------- */
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
+        Route::get('/shop-list', [StoreManageController::class, 'ownerWiseStore']);
 
         // Store manage
         Route::group(['middleware' => ['permission:' . Permission::STORE_MY_SHOP->value]], function () {

@@ -104,7 +104,7 @@ class ComStoreRepository implements ComAreaInterface
     /**
      * @inheritDoc
      */
-    public function getPaginatedList(int|string $limit,int $page, string $language, string $search, string $sortField, string $sort,array $filters): mixed
+    public function getPaginatedList(int|string $limit,int $page, string $language, string $search, string $sortField, string $sort,array $filters)
     {
         // TODO: Implement getPaginationList() method.
     }

@@ -68,4 +68,9 @@ class ComStore extends Model
     {
         return $this->belongsTo(ComMerchant::class, 'merchant_id');
     }
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 }
