@@ -72,26 +72,27 @@ class PermissionController extends Controller
                 }])
                 ->whereNull('parent_id') // Top-level permissions
                 ->get();
+
+            $permissions = $permissions->map(function ($permission) {
+                // Check if options is a string and decode it into an array
+                if (is_string($permission->options)) {
+                    $permission->options = json_decode($permission->options, true);
+                }
+
+                // Recursively decode the options of children permissions (if any)
+                if (!empty($permission->children)) {
+                    $permission->children = collect($permission->children)->map(function ($child) {
+                        if (is_string($child->options)) {
+                            $child->options = json_decode($child->options, true);
+                        }
+                        return $child;
+                    });
+                }
+
+                return $permission;
+            });
         }
 
-        $permissions = $permissions->map(function ($permission) {
-            // Check if options is a string and decode it into an array
-            if (is_string($permission->options)) {
-                $permission->options = json_decode($permission->options, true);
-            }
-
-            // Recursively decode the options of children permissions (if any)
-            if (!empty($permission->children)) {
-                $permission->children = collect($permission->children)->map(function ($child) {
-                    if (is_string($child->options)) {
-                        $child->options = json_decode($child->options, true);
-                    }
-                    return $child;
-                });
-            }
-
-            return $permission;
-        });
 
         return [
             'id' => $user->id,
