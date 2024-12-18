@@ -1372,6 +1372,17 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' =>  Permission::PAYMENT_SETTINGS->value,
+                            'PermissionTitle' => 'Payment Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Payment Settings',
+                                'ar' => 'إعدادات الدفع'
+                            ]
+                        ],
+                        [
                             'PermissionName' =>  Permission::SEO_SETTINGS->value,
                             'PermissionTitle' => 'SEO Settings',
                             'activity_scope' => 'system_level',
@@ -1393,6 +1404,16 @@ class PermissionAdminSeeder extends Seeder
                                 'ar' => 'التكاملات مع جهات خارجية'
                             ],
                             'submenu' => [
+                                [
+                                    'PermissionName' => Permission::GOOGLE_MAP_SETTINGS->value,
+                                    'PermissionTitle' => 'Google Map Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Google Map Settings',
+                                        'ar' => 'إعدادات خرائط جوجل'
+                                    ]
+                                ],
                                 [
                                     'PermissionName' => Permission::FIREBASE_SETTINGS->value,
                                     'PermissionTitle' => 'Firebase Settings',

@@ -2,6 +2,7 @@
 
 use App\Enums\Permission;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
+use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
@@ -46,11 +47,8 @@ Route::group(['namespace' => 'Api\V1'], function () {
         Route::get('list', [FrontendController::class, 'productCategoryList']);
         Route::get('product', [FrontendController::class, 'categoryWiseProducts']);
     });
-    // Sliders
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
-    // Banenrs
     Route::get('/banner-list', [FrontendController::class, 'index']);
-    // Subscribe / Newsletter
     Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
     Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);
     Route::get('/country-list', [FrontendController::class, 'countriesList']);
@@ -248,9 +246,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings']);
                 Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization']);
                 Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings']);
+                Route::match(['get', 'post'], '/payment-settings', [PaymentSettingsController::class, 'paymentSettings']);
                 Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings']);
                 Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings']);
                 Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings']);
+                Route::match(['get', 'post'], '/google-map-settings', [SystemManagementController::class, 'googleMapSettings']);
                 // database and cache settings
                 Route::post('/cache-management', [SystemManagementController::class, 'cacheManagement']);
                 Route::post('/database-update-controls', [SystemManagementController::class, 'DatabaseUpdateControl']);
@@ -276,7 +276,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- vendor route start ------------------------- */
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
-        Route::get('/shop-list', [StoreManageController::class, 'ownerWiseStore']);
+        Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
 
         // Store manage
         Route::group(['middleware' => ['permission:' . Permission::STORE_MY_SHOP->value]], function () {

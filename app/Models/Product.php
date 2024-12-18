@@ -14,7 +14,7 @@ class Product extends Model
     protected $dates = ['deleted_at'];
     protected $table = "products";
     protected $fillable = [
-        "shop_id",
+        "store_id",
         "category_id",
         "brand_id",
         "unit_id",
@@ -74,7 +74,7 @@ class Product extends Model
     }
     public function shop()
     {
-        return $this->belongsTo(ComStore::class, "shop_id");
+        return $this->belongsTo(ComStore::class, "store_id");
     }
     public function attribute()
     {

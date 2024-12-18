@@ -29,7 +29,7 @@ class ProductRequest extends FormRequest
 
 
         $rules = [
-            "shop_id" => "required",
+            "store_id" => "required",
             "category_id" => "required",
             "brand_id" => "required",
             "unit_id" => "required",
@@ -83,7 +83,7 @@ class ProductRequest extends FormRequest
     {
 
         return [
-            "shop_id.required" => "The shop ID is required.",
+            "store_id.required" => "The shop ID is required.",
             "category_id.required" => "The category ID is required.",
             "brand_id.required" => "The brand ID is required.",
             "unit_id.required" => "The unit ID is required.",
