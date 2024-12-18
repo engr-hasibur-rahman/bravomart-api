@@ -8,15 +8,20 @@ use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
+use App\Http\Resources\Product\ProductCategoryPublicResource;
+use App\Http\Resources\ProductCategoryResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Interfaces\AreaManageInterface;
 use App\Interfaces\BannerManageInterface;
 use App\Interfaces\CityManageInterface;
 use App\Interfaces\CountryManageInterface;
+use App\Interfaces\ProductManageInterface;
 use App\Interfaces\SliderManageInterface;
 use App\Interfaces\StateManageInterface;
+use App\Models\ProductCategory;
 use App\Models\Slider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FrontendController extends Controller
 {
@@ -25,11 +30,46 @@ class FrontendController extends Controller
         protected StateManageInterface   $stateRepo,
         protected CityManageInterface    $cityRepo,
         protected AreaManageInterface    $areaRepo,
-        protected BannerManageInterface   $bannerRepo,
+        protected BannerManageInterface  $bannerRepo,
+        protected ProductManageInterface $productRepo
     )
     {
 
     }
+
+    /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
+    public function productCategoryList(Request $request)
+    {
+        $limit = $request->limit ?? 10;
+        $language = $request->language ?? DEFAULT_LANGUAGE;
+        $search = $request->search;
+        $sort = $request->sort ?? 'asc';
+        $sortField = $request->sortField ?? 'id';
+        $categories = ProductCategory::leftJoin('translations', function ($join) use ($language) {
+            $join->on('product_category.id', '=', 'translations.translatable_id')
+                ->where('translations.translatable_type', '=', ProductCategory::class)
+                ->where('translations.language', '=', $language)
+                ->where('translations.key', '=', 'category_name');
+        })->select('product_category.*', DB::raw('COALESCE(translations.value, product_category.category_name) as category_name'));
+
+        // Apply search filter if search parameter exists
+        if ($search) {
+            $categories->where(function ($query) use ($search) {
+                $query->where('translations.value', 'like', "%{$search}%")
+                    ->orWhere('product_category.category_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Apply sorting and pagination
+        $categories = $categories->whereNull('parent_id')
+            ->orderBy($sortField, $sort)
+            ->paginate($limit);
+
+        // Return a collection of ProductBrandResource (including the image)
+        return response()->json(ProductCategoryPublicResource::collection($categories));
+        //return $categories;
+    }
+
     /* -----------------------------------------------------------> Slider List <---------------------------------------------------------- */
     public function allSliders()
     {
@@ -46,6 +86,7 @@ class FrontendController extends Controller
             'sliders' => SliderPublicResource::collection($sliders->items()),
         ]);
     }
+
     /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
     public function index(Request $request)
     {

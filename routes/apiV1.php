@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
+use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
@@ -39,6 +40,10 @@ Route::group(['namespace' => 'Api\V1'], function () {
         Route::post('forget-password', [UserController::class, 'forgetPassword']);
         Route::post('verify-token', [UserController::class, 'verifyForgetPasswordToken']);
         Route::post('reset-password', [UserController::class, 'resetPassword']);
+    });
+    // Product Category
+    Route::group(['prefix' => 'product-category/'], function () {
+        Route::get('list', [FrontendController::class, 'productCategoryList']);
     });
     // Sliders
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
@@ -83,6 +88,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
+        // Dashboard manage
+        Route::group(['prefix' => 'dashboard/'], function () {
+            Route::get('summary-data', [DashboardController::class, 'loadSummaryData']);
+            Route::post('bulk-status-change', [SubscriberManageController::class, 'bulkStatusChange']);
+            Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
+            Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
+        });
+
         // Newsletter manage
         Route::group(['prefix' => 'newsletter/'], function () {
             Route::post('subscriber-list', [SubscriberManageController::class, 'allSubscribers']);
