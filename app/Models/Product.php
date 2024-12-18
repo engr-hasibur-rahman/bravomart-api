@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 class Product extends Model
 {
@@ -46,6 +47,14 @@ class Product extends Model
         'name',
         'description'
     ];
+    public function category(){
+        return $this->belongsTo(ProductCategory::class);
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(ProductBrand::class);
+    }
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');

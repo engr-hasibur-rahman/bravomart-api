@@ -44,6 +44,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     // Product Category
     Route::group(['prefix' => 'product-category/'], function () {
         Route::get('list', [FrontendController::class, 'productCategoryList']);
+        Route::get('product', [FrontendController::class, 'categoryWiseProducts']);
     });
     // Sliders
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
