@@ -39,6 +39,34 @@ class FrontendController extends Controller
 
     }
 
+    /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
+    public function productList(Request $request)
+    {
+        try {
+            $product = $this->productRepo->getPaginatedProduct(
+                $request->limit ?? 10,
+                $request->page ?? 1,
+                app()->getLocale() ?? DEFAULT_LANGUAGE,
+                $request->search ?? "",
+                $request->sortField ?? 'id',
+                $request->sort ?? 'asc',
+                []
+            );
+            return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'messages' => __('messages.data_found'),
+                    'products' => ProductPublicResource::collection($product)]
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'messages' => $e->getMessage()
+            ]);
+        }
+    }
+
     /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
     public function productCategoryList(Request $request)
     {
@@ -147,7 +175,7 @@ class FrontendController extends Controller
             }
             // Pagination
             $perPage = $request->per_page ?? 10;
-            $products = $query->with(['category', 'unit', 'tag', 'attribute', 'shop', 'brand', 'variants'])->paginate($perPage);
+            $products = $query->with(['category', 'unit', 'tag', 'attributes', 'shop', 'brand', 'variants'])->paginate($perPage);
 
             return response()->json([
                 'status' => true,

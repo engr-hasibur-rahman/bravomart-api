@@ -48,6 +48,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
         Route::get('product', [FrontendController::class, 'categoryWiseProducts']);
     });
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
+    Route::get('/product-list', [FrontendController::class, 'productList']);
     Route::get('/banner-list', [FrontendController::class, 'index']);
     Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
     Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);
