@@ -190,7 +190,6 @@ class ComHelper
             $translations= Translation::where('translatable_type','App\Models\Permissions')->where('translatable_id',$data_item->id)->get()->groupBy('language');
             //logger($translations);
             $transformedData = [];
-
             foreach ($translations as $language => $items) {
                 $itemData = [
                     'language' => $language,
@@ -200,25 +199,68 @@ class ComHelper
             }
 
             $options=[];
-            if($users) {
-                $options = array_map(function ($allowedValue) use ($users) {
-                    return [
-                        'label' => $allowedValue,
-                        'value' => (bool) ($users->$allowedValue ?? false), // Use null if the property doesn't exist
-                    ];
-                }, json_decode($data_item->options, true)); // Decode as associative array
-            }
-            else
-            {
-                $options = array_map(function ($allowedValue) use ($users) {
-                    return [
-                        'label' => $allowedValue,
-                        'value' => false
-                    ];
-                }, json_decode($data_item->options, true)); // Decode as associative array
+//            if($users) {
+//                $options = array_map(function ($allowedValue) use ($users) {
+//                    return [
+//                        'label' => $allowedValue,
+//                        'value' => (bool) ($users->$allowedValue ?? false), // Use null if the property doesn't exist
+//                    ];
+//                },
+//                    json_decode($data_item->options, true)
+//                ); // Decode as associative array
+//            }else{
+//                $options = array_map(function ($allowedValue) use ($users) {
+//                    return [
+//                        'label' => $allowedValue,
+//                        'value' => false
+//                    ];
+//                }, json_decode($data_item->options, true)); // Decode as associative array
+//            }
+
+            $options = [];
+            $decodedOptions = $data_item->options;
+
+// Check and decode options
+            if (is_string($decodedOptions)) {
+                $decodedOptions = json_decode($decodedOptions, true);
+
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    logger('JSON decode error for options:', [
+                        'error' => json_last_error_msg(),
+                        'options' => $data_item->options,
+                    ]);
+                    $decodedOptions = [];
+                }
             }
 
-                $tree[] = [
+// Ensure decoded options is an array
+            if (is_array($decodedOptions)) {
+                $options = array_map(function ($allowedValue) use ($users) {
+                    if (is_string($allowedValue)) { // Only process if it's a string
+                        return [
+                            'label' => $allowedValue,
+                            'value' => $users && property_exists($users, $allowedValue)
+                                ? (bool) $users->$allowedValue
+                                : false,
+                        ];
+                    }
+
+                    // If not a string, log it and skip this item
+                    logger('Invalid allowed value type:', ['allowedValue' => $allowedValue]);
+                    return null; // Skip invalid values
+                }, $decodedOptions);
+
+                // Remove null values caused by invalid items
+                $options = array_filter($options);
+            } else {
+                logger('Decoded options is not an array or is invalid:', ['decodedOptions' => $decodedOptions]);
+            }
+
+
+
+
+
+            $tree[] = [
                     'id' => $data_item->id,
                     //'is_assigned' =>(bool) ($data_item->is_assigned?? false),
                     'perm_title' => $data_item->perm_title,

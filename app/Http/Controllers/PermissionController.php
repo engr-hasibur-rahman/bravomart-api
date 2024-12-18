@@ -95,13 +95,14 @@ class PermissionController extends Controller
 
 
         return [
+            "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
             'id' => $user->id,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'phone' => $user->phone,
             'email' => $user->email,
             'activity_scope' => $user->activity_scope,
-            "permissions" =>$permissions ?? []
+//            "permissions" => $permissions ?? []
         ];
     }
     public function permissionForStoreOwner(Request $request)
