@@ -92,74 +92,84 @@ class FrontendController extends Controller
 
     public function categoryWiseProducts(Request $request)
     {
-        $query = Product::query();
+        try {
+            $query = Product::query();
 
-        // Apply category filter
-        if (isset($request->category_id)) {
-            $query->where('category_id', $request->category_id);
-        }
-
-
-        // Apply price range filter
-        if (isset($request->min_price) && isset($request->max_price)) {
-            $minPrice = $request->min_price;
-            $maxPrice = $request->max_price;
-
-            $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
-                $q->whereBetween('price', [$minPrice, $maxPrice]);
-            });
-        }
-
-        // Apply brand filter
-        if (isset($request->brand_id)) {
-            $query->where('brand_id', $request->brand_id);
-        }
-// Apply availability filter
-        if (isset($request->availability)) {
-            $availability = $request->availability;
-
-            if ($availability) {
-                $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0));
-            } else {
-                $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
+            // Apply category filter
+            if (isset($request->category_id)) {
+                $query->where('category_id', $request->category_id);
             }
-        }
 
-// Apply sorting
-        if (isset($request->sort)) {
-            switch ($request->sort) {
-                case 'price_low_high':
-                    $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'asc'));
-                    break;
+            // Apply price range filter
+            if (isset($request->min_price) && isset($request->max_price)) {
+                $minPrice = $request->min_price;
+                $maxPrice = $request->max_price;
 
-                case 'price_high_low':
-                    $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'desc'));
-                    break;
-
-                case 'newest':
-                    $query->orderBy('created_at', 'desc');
-                    break;
-
-                default:
-                    $query->latest();
+                $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
+                    $q->whereBetween('price', [$minPrice, $maxPrice]);
+                });
             }
+
+            // Apply brand filter
+            if (isset($request->brand_id)) {
+                $query->where('brand_id', $request->brand_id);
+            }
+
+            // Apply availability filter
+            if (isset($request->availability)) {
+                $availability = $request->availability;
+
+                if ($availability) {
+                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0));
+                } else {
+                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
+                }
+            }
+
+            // Apply sorting
+            if (isset($request->sort)) {
+                switch ($request->sort) {
+                    case 'price_low_high':
+                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'asc'));
+                        break;
+
+                    case 'price_high_low':
+                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'desc'));
+                        break;
+
+                    case 'newest':
+                        $query->orderBy('created_at', 'desc');
+                        break;
+
+                    default:
+                        $query->latest();
+                }
+            }
+            // Pagination
+            $perPage = $request->per_page ?? 10;
+            $products = $query->with(['category', 'unit', 'tag', 'attribute', 'shop', 'brand', 'variants'])->paginate($perPage);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Products fetched successfully',
+                'data' => ProductPublicResource::collection($products),
+                'pagination' => [
+                    'current_page' => $products->currentPage(),
+                    'total_pages' => $products->lastPage(),
+                    'total_items' => $products->total(),
+                ],
+            ]);
+
+        } catch (\Exception $e) {
+            // Return an error response
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.error'),
+                'error' => $e->getMessage(),
+            ]);
         }
-
-
-        // Pagination
-        $perPage = $request->per_page ?? 10;
-        $products = $query->with(['category', 'brand', 'variants'])->paginate($perPage);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Products fetched successfully',
-            'data' => ProductPublicResource::collection($products),
-            'pagination' => [
-                'current_page' => $products->currentPage(),
-                'total_pages' => $products->lastPage(),
-                'total_items' => $products->total(),
-            ],
-        ]);
     }
 
 

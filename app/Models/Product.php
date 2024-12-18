@@ -72,4 +72,12 @@ class Product extends Model
     {
         return $this->belongsTo(Unit::class, "unit_id");
     }
+    public function shop()
+    {
+        return $this->belongsTo(ComStore::class, "shop_id");
+    }
+    public function attribute()
+    {
+        return $this->belongsTo(ProductAttribute::class, "attribute_id");
+    }
 }
