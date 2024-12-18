@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Com\Store;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,7 +25,9 @@ class StoreListResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' => $this->logo,
+            'logo_url' => ImageModifier::generateImageUrl($this->logo),
             'banner' => $this->banner,
+            'banner_url' => ImageModifier::generateImageUrl($this->banner),
             'address' => $this->address,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
@@ -51,8 +54,8 @@ class StoreListResource extends JsonResource
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,
             'deleted_at' => $this->deleted_at,
-            'created_at' => optional($this->created_at)->toDateTimeString(), // Handles null
-            'updated_at' => optional($this->updated_at)->toDateTimeString(), // Handles null
+            'created_at' => $this->created_at, // Handles null
+            'updated_at' => $this->updated_at, // Handles null
         ];
     }
 }
