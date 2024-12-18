@@ -33,16 +33,16 @@ class ProductAttributeController extends Controller
             $join->on('product_attributes.id', '=', 'translations.translatable_id')
                 ->where('translations.translatable_type', '=', ProductAttribute::class)
                 ->where('translations.language', '=', $language)
-                ->where('translations.key', '=', 'attribute_name');
+                ->where('translations.key', '=', 'name');
         })
             ->select('product_attributes.*', 
-            DB::raw('COALESCE(translations.value, product_attributes.attribute_name) as attribute_name'));
+            DB::raw('COALESCE(translations.value, product_attributes.name) as name'));
 
         // Apply search filter if search parameter exists
         if ($search) {
             $attributes->where(function ($query) use ($search) {
                 $query->where('translations.value', 'like', "%{$search}%")
-                    ->orWhere('product_attributes.attribute_name', 'like', "%{$search}%");
+                    ->orWhere('product_attributes.name', 'like', "%{$search}%");
             });
         }
 
@@ -61,7 +61,7 @@ class ProductAttributeController extends Controller
         try {
             $attribute = $this->repository->storeProductAttribute($request);
 
-            return $this->success(translate('messages.save_success', ['name' => $attribute->attribute_name]));
+            return $this->success(translate('messages.save_success', ['name' => $attribute->name]));
 
         } catch (\Exception $e) {
             return $this->failed(translate('messages.save_failed', ['name' => 'Product Attribute']));
@@ -87,7 +87,7 @@ class ProductAttributeController extends Controller
 
             $attribute = $this->repository->storeProductAttribute($request);
 
-            return $this->success(translate('messages.update_success', ['name' => $attribute->attribute_name]));
+            return $this->success(translate('messages.update_success', ['name' => $attribute->name]));
 
         } catch (\Exception $e) {
             return $this->failed(translate('messages.update_failed', ['name' => 'Product Attribute']));
@@ -97,7 +97,7 @@ class ProductAttributeController extends Controller
     public function status_update(Request $request)
     {
         $attribute = ProductAttribute::findOrFail($request->id);
-        $data_name =$attribute->attribute_name;
+        $data_name =$attribute->name;
         $attribute->status = !$attribute->status;
         $attribute->save();
         return response()->json([
@@ -112,7 +112,7 @@ class ProductAttributeController extends Controller
     public function destroy(Request $request,string $id)
     {
         $attribute = ProductAttribute::findOrFail($request->id);
-        $data_name =$attribute->attribute_name;
+        $data_name =$attribute->name;
         $attribute->translations()->delete();
         $attribute->delete();
 
