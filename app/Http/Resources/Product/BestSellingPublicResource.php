@@ -5,7 +5,7 @@ namespace App\Http\Resources\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class NewArrivalPublicResource extends JsonResource
+class BestSellingPublicResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,6 +22,8 @@ class NewArrivalPublicResource extends JsonResource
             'image' => $this->image,
             'price' => $this->variants->isNotEmpty() ? $this->variants[0]->price : null,
             'special_price' => $this->variants->isNotEmpty() ? $this->variants[0]->special_price : null,
+
         ];
+
     }
 }

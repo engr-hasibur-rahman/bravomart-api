@@ -39,6 +39,7 @@ class ProductDetailsPublicResource extends JsonResource
             'max_cart_qty' => $this->max_cart_qty,
             'order_count' => $this->order_count,
             'attributes' => $this->attributes,
+            'variants' => $this->variants ?: null,
             'views' => $this->views,
             'status' => $this->status,
             'available_time_starts' => $this->available_time_starts,

@@ -8,6 +8,7 @@ use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
+use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\NewArrivalDetailsPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\ProductCategoryPublicResource;
@@ -43,6 +44,54 @@ class FrontendController extends Controller
     }
 
     /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
+    public function getBestSellingProduct(Request $request)
+    {
+        try {
+            $query = Product::query();
+            // If an ID is provided, fetch the specific product
+            if (isset($request->id)) {
+                $product = $query
+                    ->with(['variants', 'store'])
+                    ->findOrFail($request->id); // Throws 404 if product not found
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.data_found'),
+                    'data' => new ProductDetailsPublicResource($product)
+                ]);
+            }
+            // Include filters for customization if needed
+            if (isset($request->category_id)) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            if (isset($request->brand_id)) {
+                $query->where('brand_id', $request->brand_id);
+            }
+
+            // Sort by order count or rating (add rating logic later if needed)
+            $bestSellingProducts = $query
+                ->with(['variants', 'store'])
+                ->where('status', 'approved') // Only fetch approved products
+                ->orderByDesc('order_count') // Sort by sales volume
+                ->limit($request->limit ?? 10) // Limit the number of results
+                ->get();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => BestSellingPublicResource::collection($bestSellingProducts),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
     public function productList(Request $request)
     {
         try {
