@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Com\Store;
+namespace App\Http\Resources\Department;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class OwnerWiseStoreListResource extends JsonResource
+class DepartmentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,10 +14,6 @@ class OwnerWiseStoreListResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'label' => $this->name,
-            'value' => $this->id,
-            'translations' => $this->related_translations
-        ];
+        return parent::toArray($request);
     }
 }
