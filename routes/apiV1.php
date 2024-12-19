@@ -50,7 +50,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     });
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     Route::get('/product-list', [FrontendController::class, 'productList']);
-    Route::get('/product-details/{id}', [FrontendController::class, 'productDetails']);
+    Route::post('/product-details', [FrontendController::class, 'productDetails']);
     Route::get('/banner-list', [FrontendController::class, 'index']);
     Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
     Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);

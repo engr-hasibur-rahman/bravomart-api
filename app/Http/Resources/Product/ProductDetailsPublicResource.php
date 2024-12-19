@@ -16,11 +16,11 @@ class ProductDetailsPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'store_id' => $this->store,
-            'category_id' => $this->category,
-            'brand_id' => $this->brand,
-            'unit_id' => $this->unit,
-            'tag_id' => $this->tag,
+            'store' => $this->store,
+            'category' => $this->category,
+            'brand' => $this->brand,
+            'unit' => $this->unit,
+            'tag' => $this->tag,
             'type' => $this->type,
             'behaviour' => $this->behaviour,
             'name' => $this->name,
