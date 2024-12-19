@@ -14,6 +14,7 @@ use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
+use App\Http\Resources\Product\TopDealsPublicResource;
 use App\Http\Resources\ProductCategoryResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Interfaces\AreaManageInterface;
@@ -44,6 +45,115 @@ class FrontendController extends Controller
     }
 
     /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
+    public function getTopDeals(Request $request)
+    {
+        try {
+            $query = Product::query();
+            if (isset($request->id)) {
+                $product = $query
+                    ->with(['variants', 'store'])
+                    ->findOrFail($request->id); // Throws 404 if product not found
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.data_found'),
+                    'data' => new ProductDetailsPublicResource($product)
+                ]);
+            }
+            // Apply category filter
+            if (isset($request->category_id)) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            // Apply price range filter
+            if (isset($request->min_price) && isset($request->max_price)) {
+                $minPrice = $request->min_price;
+                $maxPrice = $request->max_price;
+
+                $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
+                    $q->whereBetween('price', [$minPrice, $maxPrice]);
+                });
+            }
+            // Apply brand filter
+            if (isset($request->brand_id)) {
+                $query->where('brand_id', $request->brand_id);
+            }
+
+            // Apply availability filter
+            if (isset($request->availability)) {
+                $availability = $request->availability;
+
+                if ($availability) {
+                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0));
+                } else {
+                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
+                }
+            }
+
+            // Apply sorting
+            if (isset($request->sort)) {
+                switch ($request->sort) {
+                    case 'price_low_high':
+                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'asc'));
+                        break;
+
+                    case 'price_high_low':
+                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'desc'));
+                        break;
+
+                    case 'newest':
+                        $query->orderBy('created_at', 'desc');
+                        break;
+
+                    default:
+                        $query->latest();
+                }
+            }
+            // Apply date filter
+            if (isset($request->date_filter)) {
+                switch ($request->date_filter) {
+                    case 'today':
+                        $query->whereDate('created_at', today());
+                        break;
+
+                    case 'last_week':
+                        $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                        break;
+
+                    case 'last_month':
+                        $query->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()]);
+                        break;
+
+                    default:
+                        $query->latest();
+                }
+            }
+            // Pagination
+            $perPage = $request->per_page ?? 10;
+            $products = $query->whereHas('variants', function ($q) {
+                $q->whereNotNull('special_price')
+                    ->whereColumn('special_price', '<', 'price')
+                    ->orderByRaw('((price - special_price) / price) DESC');
+            })
+                ->with(['store', 'brand', 'variants', 'related_translations'])
+                ->paginate($perPage);
+
+            return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'messages' => __('messages.data_found'),
+                    'data' => TopDealsPublicResource::collection($products)]
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'messages' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function getBestSellingProduct(Request $request)
     {
         try {
@@ -92,6 +202,7 @@ class FrontendController extends Controller
             ]);
         }
     }
+
     public function productList(Request $request)
     {
         try {
@@ -149,7 +260,9 @@ class FrontendController extends Controller
             }
             // Pagination
             $perPage = $request->per_page ?? 10;
-            $products = $query->with(['category', 'unit', 'tag', 'attributes', 'store', 'brand', 'variants', 'related_translations'])->paginate($perPage);
+            $products = $query->with(['category', 'unit', 'tag', 'attributes', 'store', 'brand', 'variants', 'related_translations'])
+                ->where('status', 'approved')
+                ->paginate($perPage);
             return response()->json([
                     'status' => true,
                     'status_code' => 200,
@@ -199,7 +312,7 @@ class FrontendController extends Controller
                     'status' => true,
                     'status_code' => 200,
                     'message' => __('messages.data_found'),
-                    'data' => new NewArrivalDetailsPublicResource($product)
+                    'data' => new ProductDetailsPublicResource($product)
                 ]);
             }
             // Add filters for sorting new arrivals based on categories, prices, or availability
@@ -225,6 +338,7 @@ class FrontendController extends Controller
             // Include product details and sort by created_at to get new arrivals
             $products = $query
                 ->with(['variants', 'store'])
+                ->where('status', 'approved') // Only fetch approved products
                 ->latest()
                 ->paginate($request->per_page ?? 10);
 
