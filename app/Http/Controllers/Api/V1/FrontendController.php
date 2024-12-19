@@ -45,20 +45,66 @@ class FrontendController extends Controller
     public function productList(Request $request)
     {
         try {
-            $product = $this->productRepo->getPaginatedProduct(
-                $request->limit ?? 10,
-                $request->page ?? 1,
-                app()->getLocale() ?? DEFAULT_LANGUAGE,
-                $request->search ?? "",
-                $request->sortField ?? 'id',
-                $request->sort ?? 'asc',
-                []
-            );
+            $query = Product::query();
+
+            // Apply category filter
+            if (isset($request->category_id)) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            // Apply price range filter
+            if (isset($request->min_price) && isset($request->max_price)) {
+                $minPrice = $request->min_price;
+                $maxPrice = $request->max_price;
+
+                $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
+                    $q->whereBetween('price', [$minPrice, $maxPrice]);
+                });
+            }
+
+            // Apply brand filter
+            if (isset($request->brand_id)) {
+                $query->where('brand_id', $request->brand_id);
+            }
+
+            // Apply availability filter
+            if (isset($request->availability)) {
+                $availability = $request->availability;
+
+                if ($availability) {
+                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0));
+                } else {
+                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
+                }
+            }
+
+            // Apply sorting
+            if (isset($request->sort)) {
+                switch ($request->sort) {
+                    case 'price_low_high':
+                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'asc'));
+                        break;
+
+                    case 'price_high_low':
+                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'desc'));
+                        break;
+
+                    case 'newest':
+                        $query->orderBy('created_at', 'desc');
+                        break;
+
+                    default:
+                        $query->latest();
+                }
+            }
+            // Pagination
+            $perPage = $request->per_page ?? 10;
+            $products = $query->with(['category', 'unit', 'tag', 'attributes', 'store', 'brand', 'variants', 'related_translations'])->paginate($perPage);
             return response()->json([
                     'status' => true,
                     'status_code' => 200,
                     'messages' => __('messages.data_found'),
-                    'data' => ProductPublicResource::collection($product)]
+                    'data' => ProductPublicResource::collection($products)]
             );
         } catch (\Exception $e) {
             return response()->json([
@@ -116,7 +162,7 @@ class FrontendController extends Controller
             }
             // Include product details and sort by created_at to get new arrivals
             $products = $query
-                ->with(['variants','store'])
+                ->with(['variants', 'store'])
                 ->latest()
                 ->paginate($request->per_page ?? 10);
 
@@ -244,7 +290,7 @@ class FrontendController extends Controller
             }
             // Pagination
             $perPage = $request->per_page ?? 10;
-            $products = $query->with(['category', 'unit', 'tag', 'attributes', 'shop', 'brand', 'variants'])->paginate($perPage);
+            $products = $query->with(['category', 'unit', 'tag', 'attributes', 'store', 'brand', 'variants', 'related_translations'])->paginate($perPage);
 
             return response()->json([
                 'status' => true,
