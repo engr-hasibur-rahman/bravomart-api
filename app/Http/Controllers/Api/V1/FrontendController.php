@@ -8,6 +8,7 @@ use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
+use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
@@ -84,6 +85,53 @@ class FrontendController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'messages' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function getNewArrivals(Request $request)
+    {
+        try {
+            $query = Product::query();
+
+            // Add filters for sorting new arrivals based on categories, prices, or availability
+            if (isset($request->category_id)) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            if (isset($request->min_price) && isset($request->max_price)) {
+                // Filter by price from the related variants
+                $query->whereHas('variants', function ($q) use ($request) {
+                    $q->whereBetween('price', [$request->min_price, $request->max_price]);
+                });
+            }
+            if (isset($request->availability)) {
+                $availability = $request->availability;
+
+                if ($availability) {
+                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0));
+                } else {
+                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
+                }
+            }
+            // Include product details and sort by created_at to get new arrivals
+            $products = $query
+                ->with(['variants','store'])
+                ->latest()
+                ->paginate($request->per_page ?? 10);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => NewArrivalPublicResource::collection($products)
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
             ]);
         }
     }
