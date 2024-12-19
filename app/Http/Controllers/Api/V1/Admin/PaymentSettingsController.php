@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 
 class PaymentSettingsController extends Controller
 {
-    public function paymentSettings(Request $request){
+    public function paymentSettings(Request $request)
+    {
         if ($request->isMethod('POST')) {
             $this->validate($request, [
                 'com_maintenance_title' => 'nullable|string',

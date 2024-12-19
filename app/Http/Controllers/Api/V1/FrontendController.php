@@ -8,6 +8,7 @@ use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
+use App\Http\Resources\Product\NewArrivalDetailsPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
@@ -139,7 +140,19 @@ class FrontendController extends Controller
     {
         try {
             $query = Product::query();
+            // If an ID is provided, fetch the specific product
+            if (isset($request->id)) {
+                $product = $query
+                    ->with(['variants', 'store'])
+                    ->findOrFail($request->id); // Throws 404 if product not found
 
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.data_found'),
+                    'data' => new NewArrivalDetailsPublicResource($product)
+                ]);
+            }
             // Add filters for sorting new arrivals based on categories, prices, or availability
             if (isset($request->category_id)) {
                 $query->where('category_id', $request->category_id);
