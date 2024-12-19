@@ -21,6 +21,7 @@ class NewArrivalPublicResource extends JsonResource
             'description' => $this->description,
             'image' => $this->image,
             'price' => $this->variants[0]->price,
+            'special_price' => $this->variants[0]->special_price,
         ];
     }
 }
