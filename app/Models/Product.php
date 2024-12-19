@@ -71,12 +71,17 @@ class Product extends Model
     {
         return $this->belongsTo(Unit::class, "unit_id");
     }
-    public function shop()
+    public function store()
     {
         return $this->belongsTo(ComStore::class, "store_id");
     }
     public function attributes()
     {
         return $this->hasMany(ProductAttribute::class);
+    }
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
     }
 }

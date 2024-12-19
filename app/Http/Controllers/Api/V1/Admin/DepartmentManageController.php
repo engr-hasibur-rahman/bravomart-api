@@ -31,7 +31,7 @@ class DepartmentManageController extends Controller
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'status' => 'required|integer|in:0,1',
+            'status' => 'required|integer',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -51,7 +51,7 @@ class DepartmentManageController extends Controller
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'status' => 'required|integer|in:0,1',
+            'status' => 'required|integer',
         ];
 
         $validator = Validator::make($request->all(), $rules);
