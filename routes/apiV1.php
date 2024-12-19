@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Permission;
+use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
@@ -49,6 +50,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     });
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     Route::get('/product-list', [FrontendController::class, 'productList']);
+    Route::get('/product-details/{id}', [FrontendController::class, 'productDetails']);
     Route::get('/banner-list', [FrontendController::class, 'index']);
     Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
     Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);
@@ -88,6 +90,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
+        // Department manage
+        Route::group(['prefix' => 'department/'], function () {
+            Route::get('list', [DepartmentManageController::class, 'index']);
+            Route::post('add', [DepartmentManageController::class, 'store']);
+            Route::get('{id}', [DepartmentManageController::class, 'show']);
+            Route::post('update', [DepartmentManageController::class, 'update']);
+            Route::delete('remove/{id}', [DepartmentManageController::class, 'destroy']);
+        });
         // Dashboard manage
         Route::group(['prefix' => 'dashboard/'], function () {
             Route::get('summary-data', [DashboardController::class, 'loadSummaryData']);

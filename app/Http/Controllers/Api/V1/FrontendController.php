@@ -9,6 +9,7 @@ use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Product\ProductCategoryPublicResource;
+use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\ProductCategoryResource;
 use App\Http\Resources\Slider\SliderPublicResource;
@@ -65,6 +66,27 @@ class FrontendController extends Controller
                 'messages' => $e->getMessage()
             ]);
         }
+    }
+
+    public function productDetails(Request $request)
+    {
+        try {
+            // Use with() before findOrFail() to eagerly load the relationship
+            $product = Product::with(['store', 'tag', 'unit', 'variants', 'attributes', 'brand', 'category', 'related_translations'])->findOrFail($request->id);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'messages' => __('messages.data_found'),
+                'data' => new ProductDetailsPublicResource($product)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'messages' => $e->getMessage()
+            ]);
+        }
+
     }
 
     /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
