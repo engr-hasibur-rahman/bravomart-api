@@ -318,7 +318,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::delete('banner/remove/{id}', [BannerManageController::class, 'destroy']);
 
         // Product manage
-        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::PRODUCT_PRODUCT_ADD->value]], function () {
             Route::get('product/list', [ProductController::class, 'index']);
             Route::get('product/{id}', [ProductController::class, 'show']);
             Route::post('product/add', [ProductController::class, 'store']);
