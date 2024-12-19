@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionStoreSeeder::class);
         $this->call(ProductSeeder::class);
         $this->call(LocationSeeder::class);
+        $this->call(SliderSeeder::class);
+        $this->call(BannerSeeder::class);
     }
 }
