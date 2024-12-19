@@ -39,7 +39,7 @@ class ProductController extends Controller
         );
     }
 
-    public function store(ProductRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $slug = MultilangSlug::makeSlug(Product::class, $request->name, 'slug');
         $request['slug'] = $slug;
@@ -57,7 +57,7 @@ class ProductController extends Controller
         return $this->productRepo->getProductById($request->id);
     }
 
-    public function update(ProductRequest $request)
+    public function update(Request $request)
     {
         $product = $this->productRepo->update($request->all());
         if ($product) {
@@ -81,6 +81,7 @@ class ProductController extends Controller
             "massage" => "Records were restored successfully!"
         ], 201);
     }
+
     /* Change product status (Admin only) */
     public function changeStatus(Request $request)
     {
@@ -102,6 +103,7 @@ class ProductController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Status']));
         }
     }
+
     /* Bulk product import */
     public function import(ImportRequest $request)
     {
@@ -139,13 +141,14 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
     /* Product export (all and both shop wise and product wise) */
     public function export(Request $request)
     {
         try {
             // Get selected shop IDs and product IDs from the request
-            $selectedShopIds = (array) $request->input('store_ids', []);
-            $selectedProductIds = (array) $request->input('product_ids', []);
+            $selectedShopIds = (array)$request->input('store_ids', []);
+            $selectedProductIds = (array)$request->input('product_ids', []);
 
             $fileName = 'products_' . time() . '.xlsx';
 
