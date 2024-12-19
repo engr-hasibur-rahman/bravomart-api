@@ -56,7 +56,7 @@ class FrontendController extends Controller
                     'status' => true,
                     'status_code' => 200,
                     'messages' => __('messages.data_found'),
-                    'products' => ProductPublicResource::collection($product)]
+                    'data' => ProductPublicResource::collection($product)]
             );
         } catch (\Exception $e) {
             return response()->json([
