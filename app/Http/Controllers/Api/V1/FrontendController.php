@@ -86,7 +86,6 @@ class FrontendController extends Controller
                 'messages' => $e->getMessage()
             ]);
         }
-
     }
 
     /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
