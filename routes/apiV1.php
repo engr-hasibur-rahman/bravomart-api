@@ -53,6 +53,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::post('/product-details', [FrontendController::class, 'productDetails']);
     Route::post('/new-arrivals', [FrontendController::class, 'getNewArrivals']);
     Route::post('/best-selling-products', [FrontendController::class, 'getBestSellingProduct']);
+    Route::post('/top-deal-products', [FrontendController::class, 'getTopDeals']);
     Route::get('/banner-list', [FrontendController::class, 'index']);
     Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
     Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);
