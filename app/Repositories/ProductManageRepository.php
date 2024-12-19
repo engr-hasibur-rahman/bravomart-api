@@ -76,7 +76,10 @@ class ProductManageRepository implements ProductManageInterface
                     return $variant;
                 }, $data['variants']);
                 // insert all variants at once
-                ProductVariant::insert($variants);
+                //ProductVariant::insert($variants);
+                foreach ($variants as $variant) {
+                    ProductVariant::create($variant);
+                }
             }
             return $product->id;
         } catch (\Throwable $th) {
