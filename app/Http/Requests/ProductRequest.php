@@ -33,7 +33,6 @@ class ProductRequest extends FormRequest
             "category_id" => "required",
             "brand_id" => "required",
             "unit_id" => "required",
-            "tag_id" => "required",
             "type" => "required|in:" . implode(',', array_column(StoreType::cases(), 'value')),
             "name" => "required",
             "description" => "required",
@@ -47,6 +46,7 @@ class ProductRequest extends FormRequest
             "delivery_time_max" => "nullable",
             "delivery_time_text" => "nullable",
             "status" => "required|in:" . implode(',', array_column(StatusType::cases(), 'value')),
+            "tag_ids" => "array|nullable",
         ];
 
         // Conditional validation for variants
@@ -86,7 +86,6 @@ class ProductRequest extends FormRequest
             "category_id.required" => "The category ID is required.",
             "brand_id.required" => "The brand ID is required.",
             "unit_id.required" => "The unit ID is required.",
-            "tag_id.required" => "The tag ID is required.",
             "type.required" => "The type is required.",
             "type.in" => "The selected type is invalid.",
             "name.required" => "The product name is required.",

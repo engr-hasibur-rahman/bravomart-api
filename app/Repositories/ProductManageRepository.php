@@ -6,6 +6,7 @@ use App\Helpers\MultilangSlug;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
 use App\Models\Product;
+use App\Models\ProductTag;
 use App\Models\ProductVariant;
 use App\Models\Translation;
 use Illuminate\Http\Request;
@@ -81,6 +82,13 @@ class ProductManageRepository implements ProductManageInterface
                     ProductVariant::create($variant);
                 }
             }
+
+            // Product Tag add
+            if(!empty($data['tag_ids']) && is_array($data['tag_ids'])) {
+                ProductTag::insert($data['tag_ids']);
+            }
+
+
             return $product->id;
         } catch (\Throwable $th) {
             throw $th;
