@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
+use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
@@ -76,7 +77,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('/delete', [MediaController::class, 'delete_media']);
     });
 //    });
-
+    Route::group(['prefix' => 'support-ticket'], function () {
+        Route::get('list', [SupportTicketManageController::class, 'index']);
+        Route::post('store', [SupportTicketManageController::class, 'store']);
+        Route::get('details', [SupportTicketManageController::class, 'show']);
+    });
 
     // Marketing area manage
     Route::group(['middleware' => ['permission:' . Permission::ADMIN_AREA_LIST->value]], function () {

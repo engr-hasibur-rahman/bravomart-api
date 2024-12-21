@@ -281,7 +281,7 @@ class FrontendController extends Controller
             }
             // Pagination
             $perPage = $request->per_page ?? 10;
-            $products = $query->with(['category', 'unit', 'tag', 'attributes', 'store', 'brand', 'variants', 'related_translations'])
+            $products = $query->with(['category', 'unit', 'tags', 'attributes', 'store', 'brand', 'variants', 'related_translations'])
                 ->where('status', 'approved')
                 ->where('deleted_at', null)
                 ->paginate($perPage);
@@ -304,7 +304,7 @@ class FrontendController extends Controller
     {
         try {
             // Use with() before findOrFail() to eagerly load the relationship
-            $product = Product::with(['store', 'tag', 'unit', 'variants', 'attributes', 'brand', 'category', 'related_translations'])->findOrFail($request->id);
+            $product = Product::with(['store', 'tags', 'unit', 'variants', 'attributes', 'brand', 'category', 'related_translations'])->findOrFail($request->id);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -489,7 +489,7 @@ class FrontendController extends Controller
             }
             // Pagination
             $perPage = $request->per_page ?? 10;
-            $products = $query->with(['category', 'unit', 'tag', 'attributes', 'store', 'brand', 'variants', 'related_translations'])->paginate($perPage);
+            $products = $query->with(['category', 'unit', 'tags', 'attributes', 'store', 'brand', 'variants', 'related_translations'])->paginate($perPage);
 
             return response()->json([
                 'status' => true,
