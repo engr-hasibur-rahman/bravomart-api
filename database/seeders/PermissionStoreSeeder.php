@@ -392,37 +392,28 @@ class PermissionStoreSeeder extends Seeder
                 ],
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'User control',
+                    'PermissionTitle' => 'Staff control',
                     'activity_scope' => 'store_level',
                     'icon' => '',
                     'options' => ['View'],
                     'translations' => [
-                        'en' => 'User control',
+                        'en' => 'Staff control',
                         'ar' => 'التحكم بالمستخدم'
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => Permission::USERS_BAN->value,
-                            'PermissionTitle' => 'Ban User',
+                            'PermissionName' => Permission::SELLER_STAFF_LIST->value,
+                            'PermissionTitle' => 'Staff List',
                             'activity_scope' => 'store_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
-                                'en' => 'Ban User',
-                                'ar' => 'حظر المستخدم'
+                                'en' => 'Staff List',
+                                'ar' => 'قائمة'
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::USERS_ACTIVE->value,
-                            'PermissionTitle' => 'Active User',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Active User',
-                                'ar' => 'المستخدم النشط'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => Permission::USERS_ROLES_STORE->value,
+                            'PermissionName' => Permission::SELLER_STAFF_ROLES_STORE->value,
                             'PermissionTitle' => 'Staff Roles',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -431,26 +422,7 @@ class PermissionStoreSeeder extends Seeder
                                 'ar' => 'أدوار الموظفين'
                             ]
                         ],
-                        [
-                            'PermissionName' => Permission::USERS_STAFF_ADD_STORE->value,
-                            'PermissionTitle' => 'Add New',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Add New',
-                                'ar' => 'إضافة جديد'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => Permission::USERS_STAFF_LIST_STORE->value,
-                            'PermissionTitle' => 'List',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'List',
-                                'ar' => 'قائمة'
-                            ]
-                        ]
+
                     ]
                 ],
                 [

@@ -305,7 +305,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         // Staff manage
-        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
+        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_LIST->value]], function () {
             //Route::apiResource('/staff', StaffController::class);
             Route::post('staff/add', [StaffController::class, 'store']);
             Route::get('staff/{id}', [StaffController::class, 'show']);

@@ -5,7 +5,7 @@ namespace App\Enums;
 use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Values;
 
-enum Permission: string
+enum OLd_Permission: string
 {
     use InvokableCases;
     use Values;
@@ -35,6 +35,18 @@ enum Permission: string
     case STORE_STORE_ADD_UPDATE = 'store-add-update'; // Add if user have no store added. Update if existis
     case STORE_RECOMMENDED = 'store-recommended';
     case STORE_APPROVAL = 'store-approval';
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Store Settings                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case STORE_STORE_NOTICE = 'store-notice';
+    case STORE_STORE_MESSAGE = 'store-message';
+    case STORE_STORE_CONFIG = 'store-config';
+    case STORE_MY_SHOP = '/seller/store/list';
+    case STORE_BUSINESS_PLAN = 'my-business-plan';
+    case STORE_WALLET = 'my-wallet';
+    case STORE_DISBURSE_METHOD = 'my-disburse-method';
+    case STORE_POS_CONFIG = 'pos-config';
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //               Product Brand/Manufacturers/Publications (For Book Only)                   //
@@ -57,6 +69,7 @@ enum Permission: string
     case PRODUCT_ATTRIBUTE_LIST = '/admin/attributes';
     case PRODUCT_ATTRIBUTE_ADD = '/admin/attributes/add-attribute';
     case PRODUCT_ATTRIBUTE_LIST_STORE = '/store/attributes';
+    case SELLER_STAFF_MANAGE = 'seller-staff-manage';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Warranty                                        //
@@ -259,24 +272,13 @@ enum Permission: string
 
 
 
-    // ############################## Seller Permission Start ################################
-       //-----------Store Settings----------
-        case STORE_MY_SHOP = '/seller/store/list';
-        case STORE_STORE_NOTICE = 'store-notice';
-        case STORE_STORE_MESSAGE = 'store-message';
-        case STORE_STORE_CONFIG = 'store-config';
-        case STORE_BUSINESS_PLAN = 'my-business-plan';
-        case STORE_WALLET = 'my-wallet';
-        case STORE_DISBURSE_METHOD = 'my-disburse-method';
-        case STORE_POS_CONFIG = 'pos-config';
+    // ================ Seller Permission Start ===================
 
-
-     //-----------Seller Staff Manage----------
-      case SELLER_STAFF_LIST = '/seller/staff/list';
-      case SELLER_STAFF_BAN= '/seller/staff/ban';
-      case SELLER_STAFF_ACTIVE= '/seller/staff/active';
-      case SELLER_STAFF_ROLES_STORE = '/seller/staff/role-stores';
-
-    // ######################## Seller Permission End ###########################
+    case USERS_BAN = 'user-ban';
+    case USERS_ACTIVE = 'active-ban';
+    case USERS_ROLES_STORE = 'store-staff-role';
+    case USERS_STAFF_ADD_STORE = 'store-staff-add';
+    case USERS_STAFF_LIST_STORE = 'store-staff-list';
+    // ================ Seller Permission End ===================
 
 }
