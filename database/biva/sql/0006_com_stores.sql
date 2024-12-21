@@ -1,4 +1,4 @@
-INSERT INTO `com_stores` (`id`, `area_id`, `merchant_id`, `store_type`, `name`,
+INSERT INTO `com_merchant_stores` (`id`, `area_id`, `merchant_id`, `store_type`, `name`,
                           `phone`, `email`, `logo`, `banner`, `address`, `latitude`, `longitude`, `slug`, `vat_tax_number`, `is_featured`,
                           `opening_time`, `closing_time`, `subscription_type`, `package_id`, `admin_commi_percent`, `admin_commi_amount`, `delivery_charge`, `delivery_time`, `delivery_self_system`, `delivery_take_away`,
                           `order_minimum`, `veg_status`, `off_day`, `enable_saling`, `meta_title`, `meta_description`, `meta_image`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
