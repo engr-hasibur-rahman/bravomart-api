@@ -28,8 +28,7 @@ class StoreManageRepository implements StoreManageInterface
 
     public function getPaginatedStore(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $store = ComStore::where('merchant_id', \auth('api')->user()->id)
-            ->leftJoin('translations as name_translations', function ($join) use ($language) {
+        $store = ComStore::leftJoin('translations as name_translations', function ($join) use ($language) {
             $join->on('com_stores.id', '=', 'name_translations.translatable_id')
                 ->where('name_translations.translatable_type', '=', ComStore::class)
                 ->where('name_translations.language', '=', $language)
@@ -48,6 +47,7 @@ class StoreManageRepository implements StoreManageInterface
         // Apply sorting and pagination
         // Return the result
         return $store
+            ->where('merchant_id', auth('api')->id())
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
@@ -56,6 +56,7 @@ class StoreManageRepository implements StoreManageInterface
     {
         try {
             $data = Arr::except($data, ['translations']);
+            $data['merchant_id'] = auth('api')->id();
             $store = ComStore::create($data);
             return $store->id;
         } catch (\Throwable $th) {
@@ -222,27 +223,6 @@ class StoreManageRepository implements StoreManageInterface
         }
     }
 
-//    public function getOwnerStores()
-//    {
-//        if (!auth('api')->check()) {
-//            unauthorized_response();
-//        }
-//        $seller_id = auth('api')->id();
-//        $stores = ComStore::leftJoin('translations as name_translations', function ($join) use ($language) {
-//            $join->on('com_stores.id', '=', 'name_translations.translatable_id')
-//                ->where('name_translations.translatable_type', '=', ComStore::class)
-//                ->where('name_translations.language', '=', $language)
-//                ->where('name_translations.key', '=', 'name');
-//        })
-//            ->select(
-//                'com_stores.*',
-//                DB::raw('COALESCE(name_translations.value, com_stores.name) as name'),
-//            );
-//        return $stores->where('merchant_id', $seller_id)
-//            ->where('enable_saling', 1)
-//            ->where('status', 1)
-//            ->get();
-//    }
     public function getOwnerStores()
     {
         if (!auth('api')->check()) {
