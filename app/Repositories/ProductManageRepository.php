@@ -142,33 +142,56 @@ class ProductManageRepository implements ProductManageInterface
     public function update(array $data)
     {
         try {
-            // Retrieve the product by ID
-            $product = Product::findOrFail($data['id']);
-
             // Exclude translations from the update data
             $data = Arr::except($data, ['translations']);
+
+            // Retrieve the product by ID
+            $product = Product::findOrFail($data['id']);
 
             // Update the product details
             $product->update($data);
 
-            // Check if variants exist in the request
+            // Update or create variants
             if (!empty($data['variants']) && is_array($data['variants'])) {
-                foreach ($data['variants'] as $variantData) {
-                    // Handle each variant
-                    $variant = ProductVariant::find($variantData['id']);
+                $variants = array_map(function ($variant) use ($product) {
+                    // Generate the variant slug
+                    $variant_slug = MultilangSlug::makeSlug(ProductVariant::class, $variant['variant_slug'], 'variant_slug');
+                    $variant['variant_slug'] = $variant_slug; // Assign the generated slug
 
-                    // If variant doesn't exist, create a new one
-                    if (!$variant) {
-                        $variant = new ProductVariant();
+                    // Generate a SKU for the variant
+                    $sku = generateUniqueSku(); // This function generates a unique SKU
+                    $variant['sku'] = $sku; // Assign the generated SKU
+                    $variant['product_id'] = $product->id;
+                    return $variant;
+                }, $data['variants']);
+
+                // Update existing variants or create new ones
+                foreach ($variants as $variant) {
+                    $existingVariant = ProductVariant::find($variant['id']);
+                    if ($existingVariant) {
+                        // Update the existing variant
+                        $existingVariant->update($variant);
+                    } else {
+                        // Create a new variant
+                        ProductVariant::create($variant);
                     }
-
-                    // Assign the product_id to the variant
-                    $variantData['product_id'] = $product->id;
-
-                    // Update or create the variant
-                    $variant->fill($variantData);
-                    $variant->save();
                 }
+            }
+
+            // Update product tags
+            if (!empty($data['tag_ids']) && is_array($data['tag_ids'])) {
+                // First, delete existing tags to avoid duplicates
+                $product->tags()->delete();
+
+                // Insert the new tags
+                $productTags = [];
+                foreach ($data['tag_ids'] as $tagId) {
+                    $productTags[] = [
+                        'product_id' => $product->id,
+                        'tag_id' => $tagId,
+                    ];
+                }
+                ProductTag::insert($productTags);
             }
 
             return $product->id;
