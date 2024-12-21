@@ -35,7 +35,7 @@ class StoreManageController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         $store = $this->storeRepo->store($request->all());
-        $this->storeRepo->storeTranslation($request, $store, 'App\Models\ComStore', $this->storeRepo->translationKeys());
+        $this->storeRepo->storeTranslation($request, $store, 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
         if ($store) {
             return $this->success(translate('messages.save_success', ['name' => 'Store']));
         } else {
@@ -46,7 +46,7 @@ class StoreManageController extends Controller
     public function update(StoreRequest $request)
     {
         $store = $this->storeRepo->update($request->all());
-        $this->storeRepo->updateTranslation($request, $store, 'App\Models\ComStore', $this->storeRepo->translationKeys());
+        $this->storeRepo->updateTranslation($request, $store, 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
         if ($store) {
             return $this->success(translate('messages.update_success', ['name' => 'Store']));
         } else {

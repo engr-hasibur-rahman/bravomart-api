@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Helpers\ComHelper;
-use App\Models\ComStore;
+use App\Models\ComMerchantStore;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,7 +20,7 @@ class UserResource extends JsonResource
         $permissions=$this->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
         $stores=[];
         if($this->stores!='') {
-            $stores = ComStore::whereIn('id', json_decode($this->stores))
+            $stores = ComMerchantStore::whereIn('id', json_decode($this->stores))
                 ->select(['id', 'name','store_type'])
                 ->get()
                 ->toArray();

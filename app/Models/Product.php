@@ -72,7 +72,7 @@ class Product extends Model
     }
     public function store()
     {
-        return $this->belongsTo(ComStore::class, "store_id");
+        return $this->belongsTo(ComMerchantStore::class, "store_id");
     }
     public function attributes()
     {
