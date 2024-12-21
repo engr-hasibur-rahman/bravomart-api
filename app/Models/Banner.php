@@ -27,6 +27,6 @@ class Banner extends Model
 
     public function store()
     {
-        return $this->belongsTo(ComStore::class);
+        return $this->belongsTo(ComMerchantStore::class);
     }
 }

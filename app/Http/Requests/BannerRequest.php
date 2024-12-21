@@ -24,7 +24,7 @@ class BannerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'store_id' => 'required|exists:com_stores,id',
+            'store_id' => 'required|exists:com_merchant_stores,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'background_image' => 'required|string',
