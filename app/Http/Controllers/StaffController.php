@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Staff\SellerStaffDetailsResource;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
@@ -77,12 +78,8 @@ class StaffController extends Controller
 
             // Return success response
             return response()->json([
-                "status" => true,
-                "status_code" => 201,
                 "message" => __('messages.registration_success', ['name' => 'Staff']),
-                "user" => $user,
-                "permissions" => $user->getPermissionNames(),
-                "roles" => $user->getRoleNames(),
+                "user" => new SellerStaffDetailsResource($user),
             ], 201);
         } catch (ValidationException $e) {
             // Handle validation errors
