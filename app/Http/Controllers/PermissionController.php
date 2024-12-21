@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ComHelper;
 use App\Http\Resources\PermissionResource;
+use App\Http\Resources\SellerRoleResource;
 use App\Models\ComMerchantStore;
 use App\Models\CustomPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission as SpatiePermission; // Alias the Spatie Permission model
+use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use App\Enums\Permission; // Ensure you are importing your custom Permission enum
@@ -78,6 +80,22 @@ class PermissionController extends Controller
             'phone' => $user->phone,
             'email' => $user->email,
             'activity_scope' => $user->activity_scope,
+        ];
+    }
+
+    public function getRoles(Request $request)
+    {
+        $user = Auth::guard('sanctum')->user();
+        $roles = collect();
+        if ($user->activity_scope === 'store_level') {
+            $roles = Role::where('available_for', 'store_level')
+                ->where('status', 1)
+                ->get();
+        }
+        return [
+            'id' => $user->id,
+            'activity_scope' => $user->activity_scope,
+            'roles' => SellerRoleResource::collection($roles),
         ];
     }
 
