@@ -61,6 +61,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/state-list', [FrontendController::class, 'statesList']);
     Route::get('/city-list', [FrontendController::class, 'citiesList']);
     Route::get('/area-list', [FrontendController::class, 'areasList']);
+    Route::get('/tag-list', [FrontendController::class, 'tagList']);
 });
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {

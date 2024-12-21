@@ -17,6 +17,7 @@ use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
 use App\Http\Resources\ProductCategoryResource;
 use App\Http\Resources\Slider\SliderPublicResource;
+use App\Http\Resources\Tag\TagPublicResource;
 use App\Interfaces\AreaManageInterface;
 use App\Interfaces\BannerManageInterface;
 use App\Interfaces\CityManageInterface;
@@ -27,6 +28,7 @@ use App\Interfaces\StateManageInterface;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Slider;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -589,6 +591,13 @@ class FrontendController extends Controller
         // Get the countries from the repository
         $areas = $this->areaRepo->getAreas($filters);
         return AreaPublicResource::collection($areas);
+    }
+
+    public function tagList()
+    {
+        // Get the countries from the repository
+        $tags = Tag::all();
+        return TagPublicResource::collection($tags);
     }
 
 }
