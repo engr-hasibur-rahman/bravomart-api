@@ -56,7 +56,8 @@ class PermissionController extends Controller
         $user = Auth::guard('sanctum')->user();
         $shop_count=1; // Primarily Pass For All
         $permissions=null;
-        if($user->activity_scope=='store_level') // Now Check if user is a Store User and he have assigned Stores
+        // Now Check if user is a Store User and he have assigned Stores
+        if($user->activity_scope=='store_level')
         {
             $shop_count=ComMerchantStore::where('merchant_id', $user->id)->count();
         }
@@ -78,7 +79,6 @@ class PermissionController extends Controller
                 if (is_string($permission->options)) {
                     $permission->options = json_decode($permission->options, true);
                 }
-
                 // Recursively decode the options of children permissions (if any)
                 if (!empty($permission->children)) {
                     $permission->children = collect($permission->children)->map(function ($child) {
@@ -88,11 +88,9 @@ class PermissionController extends Controller
                         return $child;
                     });
                 }
-
                 return $permission;
             });
         }
-
 
         return [
             "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
