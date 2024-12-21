@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\StoreManageInterface;
 use App\Models\ComStore;
 use App\Models\Translation;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -27,16 +28,17 @@ class StoreManageRepository implements StoreManageInterface
 
     public function getPaginatedStore(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $store = ComStore::leftJoin('translations as name_translations', function ($join) use ($language) {
+        $store = ComStore::where('merchant_id', \auth('api')->user()->id)
+            ->leftJoin('translations as name_translations', function ($join) use ($language) {
             $join->on('com_stores.id', '=', 'name_translations.translatable_id')
                 ->where('name_translations.translatable_type', '=', ComStore::class)
                 ->where('name_translations.language', '=', $language)
                 ->where('name_translations.key', '=', 'name');
-        })
-            ->select(
+        })->select(
                 'com_stores.*',
                 DB::raw('COALESCE(name_translations.value, com_stores.name) as name'),
             );
+
         // Apply search filter if search parameter exists
         if ($search) {
             $store->where(function ($query) use ($search) {
