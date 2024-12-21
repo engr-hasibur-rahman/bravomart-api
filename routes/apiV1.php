@@ -312,9 +312,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('staff/update', [StaffController::class, 'update']);
             Route::post('staff/change-status', [StaffController::class, 'changestatus']);
         });
+
         // Banner manage
-//        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
-//        });
         Route::post('banner/add', [BannerManageController::class, 'store']);
         Route::get('banner/{id}', [BannerManageController::class, 'show']);
         Route::post('banner/update', [BannerManageController::class, 'update']);

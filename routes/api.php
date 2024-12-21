@@ -34,6 +34,7 @@ Route::post('partner/login', [PartnerLoginController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/getpermissions', [PermissionController::class, 'getpermissions']);
+    Route::get('/get-roles', [PermissionController::class, 'getRoles']);
 
     // Routes for managing general user-related actions, such as profile information and other user account operations.
     Route::group(['prefix' => 'user'], function () {
