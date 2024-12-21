@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
-class ComStore extends Model
+class ComMerchantStore extends Model
 {
     use HasFactory, SoftDeletes;
     protected $dates = ['deleted_at'];

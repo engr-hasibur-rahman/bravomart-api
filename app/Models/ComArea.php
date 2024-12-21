@@ -30,7 +30,7 @@ class ComArea extends Model
     }
     public function stores()
     {
-        return $this->hasMany(ComStore::class,'area_id');
+        return $this->hasMany(ComMerchantStore::class,'area_id');
     }
     // Method to get translation by language and key
     public function getTranslation(string $key, string $language)
