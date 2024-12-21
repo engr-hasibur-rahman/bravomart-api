@@ -28,8 +28,7 @@ class StoreManageRepository implements StoreManageInterface
 
     public function getPaginatedStore(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $store = ComStore::where('merchant_id', \auth('api')->user()->id)
-            ->leftJoin('translations as name_translations', function ($join) use ($language) {
+        $store = ComStore::leftJoin('translations as name_translations', function ($join) use ($language) {
             $join->on('com_stores.id', '=', 'name_translations.translatable_id')
                 ->where('name_translations.translatable_type', '=', ComStore::class)
                 ->where('name_translations.language', '=', $language)
