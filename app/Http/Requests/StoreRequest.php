@@ -29,7 +29,7 @@ class StoreRequest extends FormRequest
             //'merchant_id' => 'nullable|exists:merchants,id',
             'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class),
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|unique:com_stores,slug,' . $this->id,
+            'slug' => 'required|string|unique:com_merchant_stores,slug,' . $this->id,
             'phone' => 'nullable|string|max:15',
             'email' => 'nullable|email|max:255',
             'logo' => 'nullable|string|max:255',

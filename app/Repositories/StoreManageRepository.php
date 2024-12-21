@@ -29,19 +29,19 @@ class StoreManageRepository implements StoreManageInterface
     public function getPaginatedStore(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $store = ComStore::leftJoin('translations as name_translations', function ($join) use ($language) {
-            $join->on('com_stores.id', '=', 'name_translations.translatable_id')
+            $join->on('com_merchant_stores.id', '=', 'name_translations.translatable_id')
                 ->where('name_translations.translatable_type', '=', ComStore::class)
                 ->where('name_translations.language', '=', $language)
                 ->where('name_translations.key', '=', 'name');
         })->select(
-                'com_stores.*',
-                DB::raw('COALESCE(name_translations.value, com_stores.name) as name'),
+                'com_merchant_stores.*',
+                DB::raw('COALESCE(name_translations.value, com_merchant_stores.name) as name'),
             );
 
         // Apply search filter if search parameter exists
         if ($search) {
             $store->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', com_stores.name, name_translations.value)"), 'like', "%{$search}%");
+                $query->where(DB::raw("CONCAT_WS(' ', com_merchant_stores.name, name_translations.value)"), 'like', "%{$search}%");
             });
         }
         // Apply sorting and pagination

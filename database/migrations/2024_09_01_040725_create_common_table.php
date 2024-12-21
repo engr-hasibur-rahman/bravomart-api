@@ -142,7 +142,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-//        Schema::create('com_stores', function (Blueprint $table) {
+//        Schema::create('com_merchant_stores', function (Blueprint $table) {
 //            $table->id();
 //            $table->unsignedBigInteger('area_id')->nullable();
 //            $table->foreign('area_id')->references('id')->on('com_areas')->nullOnDelete();
@@ -195,6 +195,6 @@ return new class extends Migration {
         Schema::dropIfExists('product_brand');
         Schema::dropIfExists('product_category');
         Schema::dropIfExists('product_attributes');
-        Schema::dropIfExists('com_stores');
+        Schema::dropIfExists('com_merchant_stores');
     }
 };

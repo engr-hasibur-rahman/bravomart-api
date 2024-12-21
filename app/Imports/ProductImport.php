@@ -86,7 +86,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
     public function rules(): array
     {
         return [
-            "store_id" => 'required|exists:com_stores,id',
+            "store_id" => 'required|exists:com_merchant_stores,id',
             "category_id" => "required",
             "brand_id" => "required",
             "unit_id" => "required",
