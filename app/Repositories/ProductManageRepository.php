@@ -15,15 +15,20 @@ use Illuminate\Support\Arr;
 
 class ProductManageRepository implements ProductManageInterface
 {
-    public function __construct(protected Product $product, protected Translation $translation, protected ProductVariantInterface $variantRepo) {}
+    public function __construct(protected Product $product, protected Translation $translation, protected ProductVariantInterface $variantRepo)
+    {
+    }
+
     public function translationKeys(): mixed
     {
         return $this->product->translationKeys;
     }
+
     public function model(): string
     {
         return Product::class;
     }
+
     // Fetch all products with parameters
     public function getPaginatedProduct(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
@@ -56,6 +61,7 @@ class ProductManageRepository implements ProductManageInterface
             ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
     }
+
     // Store data
     public function store(array $data)
     {
@@ -84,16 +90,22 @@ class ProductManageRepository implements ProductManageInterface
             }
 
             // Product Tag add
-            if(!empty($data['tag_ids']) && is_array($data['tag_ids'])) {
-                ProductTag::insert($data['tag_ids']);
+            if (!empty($data['tag_ids']) && is_array($data['tag_ids'])) {
+                $productTags = [];
+                foreach ($data['tag_ids'] as $tagId) {
+                    $productTags[] = [
+                        'product_id' => $product->id,
+                        'tag_id' => $tagId,
+                    ];
+                }
+                ProductTag::insert($productTags);
             }
-
-
             return $product->id;
         } catch (\Throwable $th) {
             throw $th;
         }
     }
+
     public function storeBulk(array $bulkData)
     {
         try {
@@ -164,6 +176,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     // Delete data
     public function delete(int|string $id)
     {
@@ -175,6 +188,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     // Fetch product data of specific id
     public function getProductById(int|string $id)
     {
@@ -206,8 +220,9 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     // Store translation
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -235,6 +250,7 @@ class ProductManageRepository implements ProductManageInterface
         }
         return true;
     }
+
     // Fetch deleted records(true = only trashed records, false = all records with trashed)
     public function records(bool $onlyDeleted = false)
     {
@@ -253,6 +269,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     public function changeStatus(array $data): mixed
     {
         try {
