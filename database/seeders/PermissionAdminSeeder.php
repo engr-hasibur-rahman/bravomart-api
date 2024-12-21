@@ -799,7 +799,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Employee Management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['view'],
+                    'options' => ['view', 'insert', 'update', 'delete'],
                     'translations' => [
                         'en' => 'Employee Management',
                         'ar' => 'إدارة الموظفين'
