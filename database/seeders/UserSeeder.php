@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
             'email' => 'customer@gmail.com',
             'activity_scope' => 'customer_level',
             'password' => Hash::make('customer123'),
+             'status' => 1,
         ]);
     }
 }

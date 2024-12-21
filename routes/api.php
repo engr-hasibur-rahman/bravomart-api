@@ -37,11 +37,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/get-roles', [PermissionController::class, 'getRoles']);
 
     // Routes for managing general user-related actions, such as profile information and other user account operations.
-    Route::group(['prefix' => 'user'], function () {
+    Route::group(['prefix' => 'user/'], function () {
         Route::get('me', [UserController::class, 'me']);
         Route::get('profile', [UserController::class, 'userProfile']);
         Route::post('/profile-edit', [UserController::class, 'userProfileUpdate']);
         Route::post('/email-change', [UserController::class, 'userEmailUpdate']);
-        Route::post('logout', [UserController::class, 'logout']);
+        Route::post('/logout', [UserController::class, 'logout']);
     });
 });
