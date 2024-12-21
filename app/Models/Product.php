@@ -18,7 +18,6 @@ class Product extends Model
         "category_id",
         "brand_id",
         "unit_id",
-        "tag_id",
         "type",
         "behaviour",
         "name",
@@ -62,9 +61,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class, "product_id");
     }
-    public function tag()
+    public function tags()
     {
-        return $this->belongsTo(Tag::class, "tag_id");
+        return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');
     }
 
     public function unit()
