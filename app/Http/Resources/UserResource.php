@@ -17,7 +17,6 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        $permissions=$this->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
         $stores=[];
         if($this->stores!='') {
             $stores = ComMerchantStore::whereIn('id', json_decode($this->stores))
@@ -38,7 +37,6 @@ class UserResource extends JsonResource
             "merchant_id" => $this->merchant_id,
             "stores" => $stores,
             'roles' => $this->roles->pluck('name'),
-            "permissions" => ComHelper::buildMenuTree($this->roles->pluck('id')->toArray(),$permissions),
         ];
     }
 }

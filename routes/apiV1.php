@@ -310,16 +310,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         // Staff manage
-        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
-            //Route::apiResource('/staff', StaffController::class);
+        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_LIST->value]], function () {
+            Route::get('staff/list', [StaffController::class, 'index']);
             Route::post('staff/add', [StaffController::class, 'store']);
             Route::get('staff/{id}', [StaffController::class, 'show']);
             Route::post('staff/update', [StaffController::class, 'update']);
             Route::post('staff/change-status', [StaffController::class, 'changestatus']);
         });
+
         // Banner manage
-//        Route::group(['middleware' => ['permission:' . Permission::SELLER_STAFF_MANAGE->value]], function () {
-//        });
         Route::post('banner/add', [BannerManageController::class, 'store']);
         Route::get('banner/{id}', [BannerManageController::class, 'show']);
         Route::post('banner/update', [BannerManageController::class, 'update']);
