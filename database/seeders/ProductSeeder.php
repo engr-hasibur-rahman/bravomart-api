@@ -19,10 +19,10 @@ class ProductSeeder extends Seeder
             "category_id" => "1",
             "brand_id" => "1",
             "unit_id" => "1",
-            "tag_id" => "1",
             "type" => "books",
             "behaviour" => "product",
             "name" => "Test Product",
+            "slug" => "test-product",
             "description" => "Test Description",
             "warranty" => "30 days",
             "return_in_days" => "15 days",
@@ -87,7 +87,15 @@ class ProductSeeder extends Seeder
         ];
 
         DB::table('product_variants')->insert($variants);
-
+        $productTags = [];
+        $tags = ["1", "2"];
+        foreach ($tags as $tagId) {
+            $productTags[] = [
+                'product_id' => $productId,
+                'tag_id' => $tagId,
+            ];
+        }
+        DB::table('product_tags')->insert($productTags);
         // Insert the translations
         $translations = [
             [

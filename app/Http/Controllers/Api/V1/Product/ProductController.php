@@ -39,7 +39,7 @@ class ProductController extends Controller
         );
     }
 
-    public function store(ProductRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $slug = MultilangSlug::makeSlug(Product::class, $request->name, 'slug');
         $request['slug'] = $slug;
