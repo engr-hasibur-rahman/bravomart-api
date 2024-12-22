@@ -22,7 +22,7 @@ class SummaryResource extends JsonResource
             ],
             'store_owner' => [
                 'icon' => 'user-icon',
-                'title' => 'Total Store Owner',
+                'title' => 'Total Store Admin',
                 'count' => $this->storeOwnerCount
             ],
             'product' => [

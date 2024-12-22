@@ -138,7 +138,7 @@ class PermissionController extends Controller
         $permission->save();
         return response()->json([
             'success' => true,
-            'message' => 'Permission for store owner toggled successfully',
+            'message' => 'Permission for Store Admin toggled successfully',
             'status' => $permission
         ]);
     }
