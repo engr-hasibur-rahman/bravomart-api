@@ -44,6 +44,10 @@ return [
             'driver' => 'sanctum',
             'provider' => 'users',
         ],
+        'api_customer' => [
+            'driver' => 'sanctum',
+            'provider' => 'customers',  // Customer guard
+        ],
         // 'api' => [
         //     'driver' => 'token',
         //     'provider' => 'users',
@@ -73,7 +77,10 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,  // Specify the Customer model
+        ]
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
