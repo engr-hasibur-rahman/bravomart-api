@@ -30,6 +30,7 @@ return [
     'data_not_found' => 'Data was not found!',
 
     'ticket.resolved' =>'Ticket has been resolved!',
+    'ticket.closed' =>'Ticket has been closed!',
 ];
 
 

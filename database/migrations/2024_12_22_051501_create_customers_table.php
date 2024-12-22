@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('customers', function (Blueprint $table) {
+            $table->id();
+            $table->string('first_name');
+            $table->string('last_name')->nullable();
+            $table->string('email')->unique();
+            $table->string('phone')->unique()->nullable();
+            $table->date('birth_day')->nullable();
+            $table->string('gender')->nullable(); // male, female, others
+            $table->integer('verified')->default(0)->comment('0: not verified, 1: verified');
+            $table->string('verify_method')->default('email'); // Verification method ----> email, phone
+            $table->boolean('marketing_email')->default(0);
+            $table->boolean('marketing_sms')->default(0);
+            $table->integer('status')->default(1)->comment('1: active, 2: inactive');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('customers');
+    }
+};

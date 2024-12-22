@@ -80,7 +80,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['prefix' => 'support-ticket'], function () {
         Route::get('list', [SupportTicketManageController::class, 'index']);
         Route::post('store', [SupportTicketManageController::class, 'store']);
+        Route::post('update', [SupportTicketManageController::class, 'update']);
         Route::get('details', [SupportTicketManageController::class, 'show']);
+        Route::get('resolve', [SupportTicketManageController::class, 'resolve']);
     });
 
     // Marketing area manage
