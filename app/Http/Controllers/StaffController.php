@@ -149,7 +149,7 @@ class StaffController extends Controller
             ], 500);
         }
     }
-    public function update(UserCreateRequest $request)
+    public function update(SellerStaffStoreRequest $request)
     {
         try {
             // Validate request
@@ -163,9 +163,16 @@ class StaffController extends Controller
 
             // Find the user and update details
             $user = User::findOrFail($request->id);
-            $user->last_name = $validatedData['last_name'];
+            // Update user details
             $user->first_name = $validatedData['first_name'];
+            $user->last_name = $validatedData['last_name'];
+            $user->slug = username_slug_generator($validatedData['first_name'], $validatedData['last_name']);
+            $user->email = $validatedData['email'];
             $user->phone = $validatedData['phone'];
+            $user->stores = json_encode($validatedData['stores']);  // Store as JSON
+            $user->merchant_id = auth()->guard('api')->user()->id;  // Set authenticated seller's ID
+            $user->activity_scope = 'store_level';  // Assuming it's constant for all users
+            $user->status = 1;  // Default status, assuming active
             $user->save();
 
             // Sync roles with the user
