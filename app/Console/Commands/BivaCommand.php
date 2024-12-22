@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\Permission as UserPermission;
+use App\Enums\PermissionKey as UserPermission;
 use App\Enums\Role as UserRole;
 use Illuminate\Console\Command;
 use Spatie\Permission\Models\Permission;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Permission;
+use App\Enums\PermissionKey;
 use App\Enums\Role as UserRole;
 use App\Helpers\ComHelper;
 use App\Http\Requests\UserCreateRequest;
@@ -435,7 +435,7 @@ class UserController extends Controller
         }
         return response()->json([
             'success' => true,
-            'message' => 'Permission assign successfully!',
+            'message' => 'PermissionKey assign successfully!',
         ]);
     }
     /* <---- Assign roles & permissions process end ----> */

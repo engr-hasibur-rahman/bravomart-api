@@ -5,7 +5,7 @@ namespace App\Enums;
 use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Values;
 
-enum Permission: string
+enum PermissionKey: string
 {
     use InvokableCases;
     use Values;
@@ -259,7 +259,7 @@ enum Permission: string
 
 
 
-    // ############################## Seller Permission Start ################################
+    // ############################## Seller PermissionKey Start ################################
        //-----------Store Settings----------
         case STORE_MY_SHOP = '/seller/store/list';
         case STORE_STORE_NOTICE = 'store-notice';
@@ -277,6 +277,6 @@ enum Permission: string
       case SELLER_STAFF_ACTIVE= '/seller/staff/active';
       case SELLER_STAFF_ROLES_STORE = '/seller/staff/role-stores';
 
-    // ######################## Seller Permission End ###########################
+    // ######################## Seller PermissionKey End ###########################
 
 }

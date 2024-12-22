@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Permission;
+use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;

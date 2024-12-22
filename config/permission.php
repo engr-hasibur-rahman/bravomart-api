@@ -7,10 +7,10 @@ return [
         /*
          * When using the "HasPermissions" trait from this package, we need to know which
          * Eloquent model should be used to retrieve your permissions. Of course, it
-         * is often just the "Permission" model but you may use whatever you like.
+         * is often just the "PermissionKey" model but you may use whatever you like.
          *
-         * The model you want to use as a Permission model needs to implement the
-         * `Spatie\Permission\Contracts\Permission` contract.
+         * The model you want to use as a PermissionKey model needs to implement the
+         * `Spatie\PermissionKey\Contracts\PermissionKey` contract.
          */
 
         'permission' => Spatie\Permission\Models\Permission::class,
@@ -21,7 +21,7 @@ return [
          * is often just the "Role" model but you may use whatever you like.
          *
          * The model you want to use as a Role model needs to implement the
-         * `Spatie\Permission\Contracts\Role` contract.
+         * `Spatie\PermissionKey\Contracts\Role` contract.
          */
 
         'role' => Spatie\Permission\Models\Role::class,
@@ -156,7 +156,7 @@ return [
      * The class to use for interpreting wildcard permissions.
      * If you need to modify delimiters, override the class and specify its name here.
      */
-    // 'permission.wildcard_permission' => Spatie\Permission\WildcardPermission::class,
+    // 'permission.wildcard_permission' => Spatie\PermissionKey\WildcardPermission::class,
 
     /* Cache-specific settings */
 
