@@ -56,12 +56,207 @@ class CustomerManageController extends Controller
                 "message" => __('messages.login_success', ['name' => 'Customer']),
                 "token" => $token->createToken('auth_token')->plainTextToken
             ]);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "status" => false,
                 "status_code" => 500,
                 "message" => $e->getMessage()
             ]);
         }
+    }
+    /* ---------------------------------------------------------- Reset and Verification -------------------------------------------------------- */
+    // Send verification email
+    public function sendVerificationEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $validator->errors()
+            ]);
+        }
+        try {
+            $result = $this->customerRepo->sendVerificationEmail($request->email);
+
+            if (!$result) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 500,
+                    'message' => __('messages.data_not_found')
+                ], 404);
+            }
+            return response()->json(['status' => true, 'message' => 'Verification email sent.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    // Verify email with token
+    public function verifyEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $validator->errors()
+            ]);
+        }
+
+        $result = $this->customerRepo->verifyEmail($request->token);
+
+        if (!$result) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.token.invalid')
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.email.verify.success')
+        ]);
+    }
+
+    // Resend verification email
+    public function resendVerificationEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $validator->errors()
+            ]);
+        }
+        try {
+            $result = $this->customerRepo->resendVerificationEmail($request->email);
+
+            if (!$result) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 500,
+                    'message' => __('messages.email.resend.failed')
+                ], 500);
+            }
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.email.resend.success')
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function forgetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $validator->errors()
+            ]);
+        }
+        try {
+            $result = $this->customerRepo->sendVerificationEmail($request->email);
+
+            if (!$result) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 500,
+                    'message' => __('messages.data_not_found')
+                ], 404);
+            }
+            return response()->json(['status' => true, 'message' => 'Verification email sent.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function verifyToken(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $validator->errors()
+            ]);
+        }
+
+        $result = $this->customerRepo->verifyToken($request->token);
+
+        if (!$result) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.token.invalid')
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.token.verified')
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8|max:15|confirmed',
+            'token' => 'required|string'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $validator->errors()
+            ]);
+        }
+        $result = $this->customerRepo->resetPassword($request->all());
+
+        if (!$result) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.token.invalid')
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.email.verify.success')
+        ]);
     }
 }

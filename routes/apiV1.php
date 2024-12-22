@@ -37,6 +37,12 @@ use Illuminate\Support\Facades\Route;
 Route::group(['namespace' => 'Api\V1'], function () {
     Route::post('customer/registration', [CustomerManageController::class, 'register']);
     Route::post('customer/login', [CustomerManageController::class, 'login']);
+    Route::post('customer/send-verification-email', [CustomerManageController::class, 'sendVerificationEmail']);
+    Route::post('customer/verify-email', [CustomerManageController::class, 'verifyEmail']);
+    Route::post('customer/resend-verification-email', [CustomerManageController::class, 'resendVerificationEmail']);
+    Route::post('customer/forget-password', [CustomerManageController::class, 'forgetPassword']);
+    Route::post('customer/verify-token', [CustomerManageController::class, 'verifyToken']);
+    Route::post('customer/reset-password', [CustomerManageController::class, 'resetPassword']);
     // Blog comment manage
     Route::post('blog/comment', [BlogManageController::class, 'comment']);
     Route::group(['prefix' => 'auth'], function () {

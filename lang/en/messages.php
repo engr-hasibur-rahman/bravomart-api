@@ -1,8 +1,15 @@
 <?php
- 
+
 // lang/en/messages.php
- 
+
 return [
+    'token.invalid' => 'Token is invalid',
+    'token.verified' => 'Token is verified',
+
+    'email.verify.success' => 'Email verified successfully',
+    'email.resend.failed' => 'Email resend failed',
+    'email.resend.success' => 'Email resend successfully',
+
     'save_success' => ':name Successfully added!',
     'save_failed' => 'Failed to save new :name',
 
@@ -29,10 +36,11 @@ return [
     'data_found' => 'Data was found successfully!',
     'data_not_found' => 'Data was not found!',
 
-    'ticket.resolved' =>'Ticket has been resolved!',
-    'ticket.closed' =>'Ticket has been closed!',
+    'ticket.resolved' => 'Ticket has been resolved!',
+    'ticket.closed' => 'Ticket has been closed!',
 
-    'customer.not.found' =>'Customer not found!',
+    'customer.not.found' => 'Customer not found!',
+
 ];
 
 
