@@ -55,7 +55,7 @@ php artisan biva:install
  * step- 2
  * Assign permission in "config/middleware.php"
  * step- 3
- * Create permission in "app/Enums/Permission.php"
+ * Create permission in "app/Enums/PermissionKey.php"
  * step- 4
  * seed this permission module wise in "database/seeders/PermissionSeeder.php"
  * *****************************************

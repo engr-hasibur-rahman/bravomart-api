@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Permission;
+use App\Enums\PermissionKey;
 use App\Models\Translation;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission as ModelsPermission;
@@ -53,7 +53,7 @@ class PermissionStoreSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => Permission::ORDERS_ALL->value,
+                                    'PermissionName' => PermissionKey::ORDERS_ALL->value,
                                     'PermissionTitle' => 'All Orders',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -63,7 +63,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::ORDERS_PENDING->value,
+                                    'PermissionName' => PermissionKey::ORDERS_PENDING->value,
                                     'PermissionTitle' => 'Pending',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -73,7 +73,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::ORDERS_CONFIRMED->value,
+                                    'PermissionName' => PermissionKey::ORDERS_CONFIRMED->value,
                                     'PermissionTitle' => 'Confirmed',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -83,7 +83,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::ORDERS_SCHEDULED->value,
+                                    'PermissionName' => PermissionKey::ORDERS_SCHEDULED->value,
                                     'PermissionTitle' => 'Scheduled',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -93,7 +93,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::ORDERS_COOKING->value,
+                                    'PermissionName' => PermissionKey::ORDERS_COOKING->value,
                                     'PermissionTitle' => 'Cooking (For Restaurant)',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -103,7 +103,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::ORDERS_READY_FOR_DELIVERY->value,
+                                    'PermissionName' => PermissionKey::ORDERS_READY_FOR_DELIVERY->value,
                                     'PermissionTitle' => 'Ready For Delivery',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -113,7 +113,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::ORDERS_PRODUCT_ON_THE_WAY->value,
+                                    'PermissionName' => PermissionKey::ORDERS_PRODUCT_ON_THE_WAY->value,
                                     'PermissionTitle' => 'Item On The Way',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -123,7 +123,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::ORDERS_DELIVERED->value,
+                                    'PermissionName' => PermissionKey::ORDERS_DELIVERED->value,
                                     'PermissionTitle' => 'Delivered',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -133,7 +133,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::ORDERS_FITTING_SCHEDULE->value,
+                                    'PermissionName' => PermissionKey::ORDERS_FITTING_SCHEDULE->value,
                                     'PermissionTitle' => 'Fitting Schedule Done(Furniture)',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -143,7 +143,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::ORDERS_RETURNED_OR_REFUND->value,
+                                    'PermissionName' => PermissionKey::ORDERS_RETURNED_OR_REFUND->value,
                                     'PermissionTitle' => 'Returned or Refunded',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -179,7 +179,7 @@ class PermissionStoreSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => Permission::PRODUCT_PRODUCT_LIST->value,
+                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_LIST->value,
                                     'PermissionTitle' => 'Manage Products',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -190,7 +190,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::PRODUCT_PRODUCT_ADD->value,
+                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_ADD->value,
                                     'PermissionTitle' => 'Add New Product',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -200,7 +200,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::PRODUCT_PRODUCT_LOW_STOCK->value,
+                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_LOW_STOCK->value,
                                     'PermissionTitle' => 'All Low-Stock/Out of Stock Product',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -210,7 +210,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::PRODUCT_PRODUCT_TEMPLATE->value,
+                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_TEMPLATE->value,
                                     'PermissionTitle' => 'Product Template',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -220,7 +220,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::PRODUCT_PRODUCT_BULK_IMPORT->value,
+                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_BULK_IMPORT->value,
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -231,7 +231,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::PRODUCT_PRODUCT_BULK_EXPORT->value,
+                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_BULK_EXPORT->value,
                                     'PermissionTitle' => 'Bulk Export',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -243,7 +243,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_CATEGORY_LIST_STORE->value,
+                            'PermissionName' => PermissionKey::PRODUCT_CATEGORY_LIST_STORE->value,
                             'PermissionTitle' => 'Category List',
                             'activity_scope' => 'store_level',
                             'icon' => 'Layers3',
@@ -253,7 +253,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_ATTRIBUTE_LIST_STORE->value,
+                            'PermissionName' => PermissionKey::PRODUCT_ATTRIBUTE_LIST_STORE->value,
                             'PermissionTitle' => 'Attribute List',
                             'activity_scope' => 'store_level',
                             'icon' => 'Ratio',
@@ -263,7 +263,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_BRAND_LIST_STORE->value,
+                            'PermissionName' => PermissionKey::PRODUCT_BRAND_LIST_STORE->value,
                             'PermissionTitle' => 'Brand/Manufacturers/Publications',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -273,7 +273,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_AUTHORS_LIST_STORE->value,
+                            'PermissionName' => PermissionKey::PRODUCT_AUTHORS_LIST_STORE->value,
                             'PermissionTitle' => 'Author\'s List',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -283,7 +283,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_FAB_COMB_ADD->value,
+                            'PermissionName' => PermissionKey::PRODUCT_FAB_COMB_ADD->value,
                             'PermissionTitle' => 'Manage Combinations',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -293,7 +293,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PRODUCT_ADDONS_ADD->value,
+                            'PermissionName' => PermissionKey::PRODUCT_ADDONS_ADD->value,
                             'PermissionTitle' => 'Addons',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -316,7 +316,7 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => Permission::FINANCIAL_TRANSACTIONS->value,
+                            'PermissionName' => PermissionKey::FINANCIAL_TRANSACTIONS->value,
                             'PermissionTitle' => 'Transactions',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -326,7 +326,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::FINANCIAL_WITHDRAWLS->value,
+                            'PermissionName' => PermissionKey::FINANCIAL_WITHDRAWLS->value,
                             'PermissionTitle' => 'Withdrawals',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -336,7 +336,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::FINANCIAL_MYINCOME->value,
+                            'PermissionName' => PermissionKey::FINANCIAL_MYINCOME->value,
                             'PermissionTitle' => 'My Income',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -359,7 +359,7 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => Permission::FEEDBACK_REVIEWS->value,
+                            'PermissionName' => PermissionKey::FEEDBACK_REVIEWS->value,
                             'PermissionTitle' => 'Reviews',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -369,7 +369,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::FEEDBACK_QUESTIONS->value,
+                            'PermissionName' => PermissionKey::FEEDBACK_QUESTIONS->value,
                             'PermissionTitle' => 'Questions/Chat',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -379,7 +379,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::FEEDBACK_QUERIES->value,
+                            'PermissionName' => PermissionKey::FEEDBACK_QUERIES->value,
                             'PermissionTitle' => 'Product Queries',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -402,7 +402,7 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => Permission::SELLER_STAFF_LIST->value,
+                            'PermissionName' => PermissionKey::SELLER_STAFF_LIST->value,
                             'PermissionTitle' => 'Staff List',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -413,7 +413,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::SELLER_STAFF_ROLES_STORE->value,
+                            'PermissionName' => PermissionKey::SELLER_STAFF_ROLES_STORE->value,
                             'PermissionTitle' => 'Staff Roles',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -448,7 +448,7 @@ class PermissionStoreSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => Permission::PROMOTION_DEALS_AVAILABLE->value,
+                                    'PermissionName' => PermissionKey::PROMOTION_DEALS_AVAILABLE->value,
                                     'PermissionTitle' => 'Available flash deals',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -458,7 +458,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::PROMOTION_MY_PRODUCT_IN_DEALS->value,
+                                    'PermissionName' => PermissionKey::PROMOTION_MY_PRODUCT_IN_DEALS->value,
                                     'PermissionTitle' => 'My products in deals',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -468,7 +468,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => Permission::PROMOTION_ASK_FOR_ENROLL->value,
+                                    'PermissionName' => PermissionKey::PROMOTION_ASK_FOR_ENROLL->value,
                                     'PermissionTitle' => 'Ask for enrollment',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -480,7 +480,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PROMOTION_COUPONS->value,
+                            'PermissionName' => PermissionKey::PROMOTION_COUPONS->value,
                             'PermissionTitle' => 'Coupons',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -490,7 +490,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::PROMOTION_BANNERS->value,
+                            'PermissionName' => PermissionKey::PROMOTION_BANNERS->value,
                             'PermissionTitle' => 'Banners',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -513,7 +513,7 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => Permission::STORE_STORE_NOTICE->value,
+                            'PermissionName' => PermissionKey::STORE_STORE_NOTICE->value,
                             'PermissionTitle' => 'Store Notice',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -523,7 +523,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::STORE_STORE_MESSAGE->value,
+                            'PermissionName' => PermissionKey::STORE_STORE_MESSAGE->value,
                             'PermissionTitle' => 'Message',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -533,7 +533,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::STORE_STORE_CONFIG->value,
+                            'PermissionName' => PermissionKey::STORE_STORE_CONFIG->value,
                             'PermissionTitle' => 'Store Config',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -543,7 +543,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::STORE_MY_SHOP->value,
+                            'PermissionName' => PermissionKey::STORE_MY_SHOP->value,
                             'PermissionTitle' => 'My Stores',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -554,7 +554,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::STORE_BUSINESS_PLAN->value,
+                            'PermissionName' => PermissionKey::STORE_BUSINESS_PLAN->value,
                             'PermissionTitle' => 'My Business Plan',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -564,7 +564,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::STORE_WALLET->value,
+                            'PermissionName' => PermissionKey::STORE_WALLET->value,
                             'PermissionTitle' => 'My Wallet',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -574,7 +574,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::STORE_DISBURSE_METHOD->value,
+                            'PermissionName' => PermissionKey::STORE_DISBURSE_METHOD->value,
                             'PermissionTitle' => 'Disbursement Method',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -584,7 +584,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => Permission::STORE_POS_CONFIG->value,
+                            'PermissionName' => PermissionKey::STORE_POS_CONFIG->value,
                             'PermissionTitle' => 'POS Configuration',
                             'activity_scope' => 'store_level',
                             'icon' => '',

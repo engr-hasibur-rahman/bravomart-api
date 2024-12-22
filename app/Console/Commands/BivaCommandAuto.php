@@ -11,6 +11,7 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\DB;
+use App\Enums\PermissionKey;
 
 use function Laravel\Prompts\{text, confirm, info, error, table};
 
@@ -107,18 +108,24 @@ class BivaCommandAuto extends Command
         $user->email_verified_at = now()->timestamp;
         $user->save();
 
-        //Assign Permission to Super Admin Role
+        //Assign PermissionKey to Super Admin Role
         $role = Role::where(['available_for'  => 'system_level'])->first();
-        //Permission::firstOrCreate(['name'  => 'all'], ['name'  => 'all', 'guard_name' => 'api']);
+        //PermissionKey::firstOrCreate(['name'  => 'all'], ['name'  => 'all', 'guard_name' => 'api']);
         $role->givePermissionTo(Permission::whereIn('available_for',['system_level','COMMON'])->get());
         $user->assignRole($role);
 
-        //Assign Permission to Store Admin Role
+        //Assign PermissionKey to Store Admin Role
         $role = Role::where('id',2)->first();
         $role->givePermissionTo(Permission::whereIn('available_for',['store_level','COMMON'])->get());
         $user = User::whereEmail('owner@store.com')->first();
         // Assign default Store User to a Specific Role
         $user->assignRole($role);
+
+        // Get Store Manage Role And assign some default permission
+        $role = Role::where('id',3)->first();
+        $role->givePermissionTo([PermissionKey::STORE_MY_SHOP,PermissionKey::STORE_STORE_NOTICE]);
+        $role = Role::where('id',4)->first();
+        $role->givePermissionTo([PermissionKey::SELLER_STAFF_LIST,PermissionKey::STORE_DISBURSE_METHOD]);
 
         // Update View Option For All permission
         DB::table('role_has_permissions')->update(['view' => true]);

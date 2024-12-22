@@ -10,11 +10,11 @@ use App\Models\CustomPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Permission as SpatiePermission; // Alias the Spatie Permission model
+use Spatie\Permission\Models\Permission as SpatiePermission; // Alias the Spatie PermissionKey model
 use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
-use App\Enums\Permission; // Ensure you are importing your custom Permission enum
+use App\Enums\PermissionKey; // Ensure you are importing your custom PermissionKey enum
 
 
 
@@ -40,9 +40,9 @@ class PermissionController extends Controller
             $permissionsArray = [
                 'dashboard',
                 'Store Settings',
-                Permission::STORE_MY_SHOP->value,
+                PermissionKey::STORE_MY_SHOP->value,
                 'Staff control',
-                Permission::SELLER_STAFF_LIST->value,
+                PermissionKey::SELLER_STAFF_LIST->value,
             ];
 
             // Get specific permissions for non-store level users
@@ -103,7 +103,7 @@ class PermissionController extends Controller
     {
 
         $limit = $request->limit ?? 10;
-        $permissions = QueryBuilder::for(Permission::class)
+        $permissions = QueryBuilder::for(PermissionKey::class)
             ->when($request->filled('available_for'), function ($query) use ($request) {
                 $query->where('available_for', $request->available_for);
             })
@@ -113,7 +113,7 @@ class PermissionController extends Controller
 
     public function moduleWisePermissions(Request $request)
     {
-        $permissions = QueryBuilder::for(Permission::class)
+        $permissions = QueryBuilder::for(PermissionKey::class)
             ->when($request->filled('available_for'), function ($query) use ($request) {
                 $query->where('available_for', $request->available_for);
             })
@@ -133,12 +133,12 @@ class PermissionController extends Controller
 
     public function permissionForStoreOwner(Request $request)
     {
-        $permission = Permission::findOrFail($request->id);
+        $permission = PermissionKey::findOrFail($request->id);
         $permission->available_for = $permission->available_for === 'system_level' ? 'store_level' : 'system_level';
         $permission->save();
         return response()->json([
             'success' => true,
-            'message' => 'Permission for Store Admin toggled successfully',
+            'message' => 'PermissionKey for Store Admin toggled successfully',
             'status' => $permission
         ]);
     }
