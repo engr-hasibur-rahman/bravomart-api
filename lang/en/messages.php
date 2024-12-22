@@ -21,13 +21,15 @@ return [
     'registration_success' => ':name registered successfully!',
     'registration_failed' => ':name registration failed!',
 
-    'validation_success' => ':name validation successfull!',
+    'validation_success' => ':name validation successfully!',
     'validation_failed' => ':name validation failed!',
 
     'error' => 'Something went wrong!',
     'authorization_invalid' => 'Not authorized!',
     'data_found' => 'Data was found successfully!',
     'data_not_found' => 'Data was not found!',
+
+    'ticket.resolved' =>'Ticket has been resolved!',
 ];
 
 
