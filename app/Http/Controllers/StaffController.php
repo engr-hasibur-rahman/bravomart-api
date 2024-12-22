@@ -36,6 +36,7 @@ class StaffController extends Controller
                 $query->where('available_for', $request->available_for);
             })
             ->paginate($limit);
+
         return UserResource::collection($roles);
     }
 
@@ -52,8 +53,9 @@ class StaffController extends Controller
             }
 
             // Fetch default roles
-            $roles = Role::whereIn('available_for', ['store_level', 'fitter_level', 'delivery_level'])
-                ->where('name', '!=', 'Store Owner')
+            $roles = Role::where('available_for', 'store_level')
+                ->where('name', '!=', 'Store Admin')
+                ->where('status', 1)
                 ->pluck('name')
                 ->toArray();
 
@@ -67,6 +69,8 @@ class StaffController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'slug' => username_slug_generator($request->first_name, $request->last_name),
+                'activity_scope' => 'store_level',
+                'stores' => $request->stores, // Assuming $request->stores contains [1,2,3,4]
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'status' => 1,

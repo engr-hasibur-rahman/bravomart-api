@@ -84,7 +84,7 @@ class CreateUserCommand extends Command
                 $role->givePermissionTo(Permission::whereIn('available_for',['system_level','COMMON'])->get());
                 $user->assignRole($role);
 
-                //Assign Permission to Store Owner Role
+                //Assign Permission to Store Admin Role
                 $role = Role::where('id',2)->first();
                 $role->givePermissionTo(Permission::whereIn('available_for',['store_level','COMMON'])->get());
                 $user = User::whereEmail('owner@store.com')->first();

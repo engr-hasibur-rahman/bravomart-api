@@ -18,7 +18,7 @@ INSERT INTO `users` (
     )
 VALUES (
         1,
-        'Store Owner',
+        'Store Admin',
         'store-owner',
         'owner@store.com',
         'store_level',

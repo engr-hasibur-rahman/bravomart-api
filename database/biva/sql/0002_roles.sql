@@ -17,7 +17,7 @@ VALUES (
     (
         2,
         'store_level',
-        'Store Owner',
+        'Store Admin',
         'api',
         '2023-08-11 11:57:33',
         '2023-08-11 11:57:33'
