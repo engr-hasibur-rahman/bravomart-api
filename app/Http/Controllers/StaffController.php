@@ -70,7 +70,7 @@ class StaffController extends Controller
                 'last_name' => $request->last_name,
                 'slug' => username_slug_generator($request->first_name, $request->last_name),
                 'activity_scope' => 'store_level',
-                'stores' => $request->stores, // Assuming $request->stores contains [1,2,3,4]
+                'stores' => $request->stores, // Example [1,2,3,4]
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'status' => 1,

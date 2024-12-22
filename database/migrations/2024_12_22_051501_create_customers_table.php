@@ -16,10 +16,16 @@ return new class extends Migration {
             $table->string('last_name')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->unique()->nullable();
-            $table->string('password');
+            $table->string('image')->nullable();
             $table->string('image')->nullable();
             $table->date('birth_day')->nullable();
             $table->string('gender')->nullable(); // male, female, others
+            $table->string('def_lang')->nullable();
+            $table->string('password');
+            $table->timestamp('password_changed_at')->nullable();
+            $table->text('email_verify_token')->nullable();
+            $table->integer('email_verified')->default(0)->comment('0=unverified, 1=verified');
+            $table->timestamp('email_verified_at')->nullable();
             $table->integer('verified')->default(0)->comment('0: not verified, 1: verified');
             $table->string('verify_method')->default('email'); // Verification method ----> email, phone
             $table->boolean('marketing_email')->default(0);
