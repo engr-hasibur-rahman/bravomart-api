@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SellerStaffStoreRequest;
 use App\Http\Resources\Staff\SellerStaffDetailsResource;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -40,7 +41,7 @@ class StaffController extends Controller
         return UserResource::collection($roles);
     }
 
-    public function store(UserCreateRequest $request)
+    public function store(SellerStaffStoreRequest $request)
     {
         try {
             // Check for not allowed roles
@@ -70,12 +71,14 @@ class StaffController extends Controller
                 'last_name' => $request->last_name,
                 'slug' => username_slug_generator($request->first_name, $request->last_name),
                 'activity_scope' => 'store_level',
-                'stores' => $request->stores, // Example [1,2,3,4]
+                'stores' => json_encode($request->stores), // Encode as JSON if needed
+                'merchant_id' => auth()->guard('api')->user()->id, // Authenticated store admin id is merchant ID
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'status' => 1,
                 'password' => Hash::make($request->password),
             ]);
+
 
             // Assign roles to the user
             $user->assignRole($roles);
