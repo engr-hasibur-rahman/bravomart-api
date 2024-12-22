@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->string('last_name')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->unique()->nullable();
+            $table->string('password');
+            $table->string('image')->nullable();
             $table->date('birth_day')->nullable();
             $table->string('gender')->nullable(); // male, female, others
             $table->integer('verified')->default(0)->comment('0: not verified, 1: verified');
