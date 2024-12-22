@@ -30,7 +30,13 @@ class SellerStaffStoreRequest extends FormRequest
         return [
             'first_name' => 'required|string|max:255',
             'last_name'  => 'required|string|max:255',
-            'email'      => 'required|string|email|max:255|unique:users,email', // Ensures email is unique
+            'email'      => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($this->id), // Use $this->id to ignore the current user's email
+            ],
             'password'   => 'required|string|min:8|max:12', // Enforces password length
             'phone'      => 'nullable|string|max:15', // Optional phone field
             'stores' => 'nullable|array',
