@@ -121,9 +121,10 @@ class BivaCommandAuto extends Command
         // Assign default Store User to a Specific Role
         $user->assignRole($role);
 
-        // Get Store Manage Role And assign some default permission
+        // 3 Get Store Manage Role And assign some default permission
         $role = Role::where('id',3)->first();
         $role->givePermissionTo([PermissionKey::STORE_MY_SHOP,PermissionKey::STORE_STORE_NOTICE]);
+        // 4 Get Store Officer Role And assign some default permission
         $role = Role::where('id',4)->first();
         $role->givePermissionTo([PermissionKey::SELLER_STAFF_LIST,PermissionKey::STORE_DISBURSE_METHOD]);
 
