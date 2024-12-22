@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
@@ -34,7 +35,8 @@ use Illuminate\Support\Facades\Route;
 
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1'], function () {
-    Route::post('customer/registration', [UserController::class, 'register']);
+    Route::post('customer/registration', [CustomerManageController::class, 'register']);
+    Route::post('customer/login', [CustomerManageController::class, 'login']);
     // Blog comment manage
     Route::post('blog/comment', [BlogManageController::class, 'comment']);
     Route::group(['prefix' => 'auth'], function () {
@@ -80,7 +82,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['prefix' => 'support-ticket'], function () {
         Route::get('list', [SupportTicketManageController::class, 'index']);
         Route::post('store', [SupportTicketManageController::class, 'store']);
+        Route::post('update', [SupportTicketManageController::class, 'update']);
         Route::get('details', [SupportTicketManageController::class, 'show']);
+        Route::get('resolve', [SupportTicketManageController::class, 'resolve']);
     });
 
     // Marketing area manage

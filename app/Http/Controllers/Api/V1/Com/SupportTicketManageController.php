@@ -7,7 +7,9 @@ use App\Http\Requests\SupportTicketRequest;
 use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsPublicResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketPublicResource;
 use App\Interfaces\SupportTicketManageInterface;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SupportTicketManageController extends Controller
 {
@@ -15,7 +17,7 @@ class SupportTicketManageController extends Controller
     {
 
     }
-
+    /* ----------------------------------------------------------- Support Ticket -------------------------------------------------- */
     public function index(Request $request)
     {
         try {
@@ -91,14 +93,96 @@ class SupportTicketManageController extends Controller
         }
     }
 
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'department_id' => 'nullable|exists:departments,id',
+            'title' => 'nullable|string|max:255',
+            'subject' => 'nullable|string|max:255',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => $validator->errors()
+            ]);
+        }
+        $isClosed = Ticket::findorfail($request->input('id'))->pluck('status')->contains(0);
+        if ($isClosed) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.ticket.closed')
+            ]);
+        }
+        try {
+            $this->ticketRepo->updateTicket($request->only([
+                'id',
+                'department_id',
+                'title',
+                'subject'
+            ]));
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Support Ticket']),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function resolve(Request $request)
     {
         $ticketId = $request->input('ticket_id');
-        $ticket = $this->ticketRepo->resolveTicket($ticketId);
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => __('messages.ticket.resolved'),
+        try {
+            $this->ticketRepo->resolveTicket($ticketId);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.ticket.resolved'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    /* ----------------------------------------------------------- Support Ticket Messages -------------------------------------------------- */
+    public function addMessage(Request $request, $ticketId)
+    {
+        $request->validate([
+            'message' => 'required|string',
+            'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048'
         ]);
+
+        $messageDetails = [
+            'ticket_id' => $ticketId,
+            'sender_id' => auth()->id(),
+            'sender_role' => auth()->user()->role,
+            'message' => $request->message
+        ];
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('ticket-attachments', $filename, 'public');
+            $messageDetails['file'] = $filename;
+        }
+
+        $message = $this->ticketRepo->addMessage($messageDetails);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Message added successfully',
+            'data' => $message
+        ], 201);
     }
 }
