@@ -635,6 +635,18 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+                // Pages Management
+                [
+                    'PermissionName' => PermissionKey::ADMIN_PAGES_MANAGE->value,
+                    'PermissionTitle' => 'Pages Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view', 'insert', 'update', 'delete'],
+                    'translations' => [
+                        'en' => 'Pages Management',
+                        'ar' => 'إدارة المدونة'
+                    ]
+                ],
                 // Blog Management
                 [
                     'PermissionName' => '',
