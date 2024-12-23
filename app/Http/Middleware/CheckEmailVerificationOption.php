@@ -33,7 +33,6 @@ class CheckEmailVerificationOption
                 'message' => 'Email verification is not completed.',
             ], 403);
         }
-
         // Proceed if enabled
         return $next($request);
     }

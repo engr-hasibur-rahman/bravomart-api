@@ -405,9 +405,10 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('customer-addresses', [AddressManageController::class, 'index']);
             Route::post('make-default', [AddressManageController::class, 'defaultAddress']);
         });
+        Route::post('send-verification-email', [CustomerManageController::class, 'sendVerificationEmail']);
     });
     // customer verify email
     Route::post('verify-email', [CustomerManageController::class, 'verifyEmail']);
     Route::post('resend-verification-email', [CustomerManageController::class, 'resendVerificationEmail']);
-    Route::post('send-verification-email', [CustomerManageController::class, 'sendVerificationEmail']);
+
 });

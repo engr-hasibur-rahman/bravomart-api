@@ -62,7 +62,8 @@ class CustomerManageController extends Controller
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.login_success', ['name' => 'Customer']),
-                "token" => $token->createToken('customer-token')->plainTextToken
+                "token" => $token->createToken('customer-token')->plainTextToken,
+                "email_verified" => (bool)$token->email_verified, // shorthand of -> $token->email_verified ? true : false
             ]);
         } catch (\Exception $e) {
             return response()->json([
