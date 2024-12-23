@@ -30,6 +30,8 @@ class User extends Authenticatable
         'activity_scope',
         'password',
         'store_owner',
+        'merchant_id',
+        'stores',
         'status',
         'google_id',
         'facebook_id',
