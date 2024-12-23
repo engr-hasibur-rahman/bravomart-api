@@ -31,7 +31,7 @@ class CustomerRequest extends FormRequest
             'email' => 'required|email|unique:customers,email',
             'phone' => 'nullable|string|unique:customers,phone',
             'password' => 'required|string|min:8|max:15',
-            'birth_day' => 'nullable|date|format:Y-m-d',
+            'birth_day' => 'nullable|date|date_format:Y-m-d',
             'gender' => 'nullable|in:' . $this->getEnumValues(Gender::class),
         ];
     }
@@ -53,7 +53,7 @@ class CustomerRequest extends FormRequest
             'password.min' => __('validation.min', ['attribute' => 'Password']),
             'password.max' => __('validation.max', ['attribute' => 'Password']),
             'birth_day.date' => __('validation.date', ['attribute' => 'Birth Day']),
-            'birth_day.format' => __('validation.format', ['attribute' => 'Birth Day']),
+            'birth_day.date_format' => __('validation.format', ['attribute' => 'Birth Day']),
             'gender.in' => __('validation.in', ['attribute' => 'Gender', 'enum' => $this->getEnumValues(Gender::class)]),
         ];
     }
