@@ -870,9 +870,44 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ]
                     ]
+                ],
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Blog Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view', 'insert', 'update', 'delete'],
+                    'translations' => [
+                        'en' => 'Blog Management',
+                        'ar' => 'إدارة المدونة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_BLOG_CATEGORY->value,
+                            'PermissionTitle' => 'Category',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Category',
+                                'ar' => ' الموظفين'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_BLOG_POSTS->value,
+                            'PermissionTitle' => 'Posts',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Posts',
+                                'ar' => 'دعامات'
+                            ]
+                        ]
+                    ]
                 ]
             ]
         ];
+
+
         $admin_transaction_related_menu = [
             [
                 [
