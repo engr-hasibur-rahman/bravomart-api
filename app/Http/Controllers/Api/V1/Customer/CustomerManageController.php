@@ -76,7 +76,6 @@ class CustomerManageController extends Controller
     // Send verification email
     public function sendVerificationEmail(Request $request)
     {
-        dd(3434);
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
         ]);

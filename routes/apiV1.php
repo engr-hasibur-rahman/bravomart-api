@@ -390,7 +390,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
     });
     /* --------------------------> vendor route end <----------------------------- */
-    /* --------------------------> customer route end <-------------------------- */
     /* --------------------------> delivery route start <------------------------- */
     Route::group(['prefix' => 'delivery/'], function () {
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
@@ -399,33 +398,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------------> delivery route end <-------------------------- */
 });
 
-Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
-
-
-    /* --------------------------> customer route start <------------------------- */
-    Route::group(['prefix' => 'customer/', 'middleware' => 'auth:api_customer'], function () {
+Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
+    Route::group(['middleware' => ['check.email.verification.option']], function () {
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [AddressManageController::class, 'store']);
             Route::post('customer-addresses', [AddressManageController::class, 'index']);
             Route::post('make-default', [AddressManageController::class, 'defaultAddress']);
         });
-        Route::post('verify-email', [CustomerManageController::class, 'verifyEmail']);
-        Route::post('resend-verification-email', [CustomerManageController::class, 'resendVerificationEmail']);
-
-        Route::get('/test123', [CustomerManageController::class, 'sendVerificationEmail']);
     });
-    Route::get('/test-auth', function (Request $request) {
-        try {
-            return response()->json([
-                'message' => 'Connection successful',
-                'token_exists' => $request->bearerToken() ? true : false,
-                'auth_user' => Auth::guard('sanctum')->check(),
-                'auth_customer' => Auth::guard('customer')->check(),
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    })->middleware('check.email.verification.option');
+    // customer verify email
+    Route::post('verify-email', [CustomerManageController::class, 'verifyEmail']);
+    Route::post('resend-verification-email', [CustomerManageController::class, 'resendVerificationEmail']);
+    Route::post('send-verification-email', [CustomerManageController::class, 'sendVerificationEmail']);
 });

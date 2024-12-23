@@ -48,11 +48,6 @@ return [
             'driver' => 'sanctum',
             'provider' => 'customers',  // Make sure the provider matches your customer model
         ],
-        // 'api' => [
-        //     'driver' => 'token',
-        //     'provider' => 'users',
-        //     'hash' => false,
-        // ],
     ],
 
     /*
