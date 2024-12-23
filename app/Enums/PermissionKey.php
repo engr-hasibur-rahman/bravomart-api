@@ -230,15 +230,15 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              System management                                                           //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case FIREBASE_NOTIFICATION = 'firebase-notification';
     case LOGIN_SETUP = 'login-setup';
     case REACT_SITE = 'react-site';
-    case EMAIL_TEMPLATE = 'email-template';
     case APP_SETTINGS = 'app-settings';
     case NOTIFICATION_CHANNELS = 'notification-channels';
-
     case UNSIGNED_ORDERS_GROCERY = 'unsigned-orders-grocery';
     case ONGOING_ORDERS_GROCERY = 'ongoing-orders-grocery';
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              System-management Settings                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case GENERAL_SETTINGS = '/admin/system-management/general-settings';
     case APPEARANCE_SETTINGS = 'appearance_settings';
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';
@@ -262,6 +262,12 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_BLOG_CATEGORY = '/admin/blog/category';
     case ADMIN_BLOG_POSTS = '/admin/blog/posts';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              Support Tickets Management                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_TICKETS_DEPARTMENT = '/admin/ticket/department';
+    case ADMIN_ALL_TICKETS = '/admin/ticket/all-tickets';
     // ############################## Admin PermissionKey End ################################
 
 

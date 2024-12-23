@@ -18,6 +18,7 @@ class PermissionAdminSeeder extends Seeder
     {
         $admin_main_menu = [
             [
+                // Dashboard
                 [
                     'PermissionName' => 'dashboard',
                     'PermissionTitle' => 'Dashboard',
@@ -29,6 +30,7 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'قائمة المناطق'
                     ]
                 ],
+                // Pos section
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Pos section',
@@ -63,6 +65,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+                // Orders & Reviews
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Orders & Reviews',
@@ -189,6 +192,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+                // Product Manage
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Product management',
@@ -567,6 +571,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+                //Store management
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Store management',
@@ -629,6 +634,100 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ]
                     ]
+                ],
+                // Blog Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Blog Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view', 'insert', 'update', 'delete'],
+                    'translations' => [
+                        'en' => 'Blog Management',
+                        'ar' => 'إدارة المدونة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Blogs',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Blogs',
+                                'ar' => ' الموظفين'
+                            ],
+
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_BLOG_CATEGORY->value,
+                                    'PermissionTitle' => 'Category',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Category',
+                                        'ar' => ' الموظفين'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_BLOG_POSTS->value,
+                                    'PermissionTitle' => 'Posts',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Posts',
+                                        'ar' => 'دعامات'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                // Support Ticket Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Support Ticket Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view', 'insert', 'update', 'delete'],
+                    'translations' => [
+                        'en' => 'Support Ticket Management',
+                        'ar' => 'إدارة المدونة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Tickets',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Tickets',
+                                'ar' => ' الموظفين'
+                            ],
+
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_TICKETS_DEPARTMENT->value,
+                                    'PermissionTitle' => 'Department',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Department',
+                                        'ar' => ' الموظفين'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_ALL_TICKETS->value,
+                                    'PermissionTitle' => 'All Tickets',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'All Tickets',
+                                        'ar' => 'دعامات'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             ]
         ];
@@ -646,6 +745,8 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'قائمة المناطق'
                     ]
                 ],
+
+                // Deliveryman management
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Deliveryman management',
@@ -699,6 +800,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+                // Customer management
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Customer management',
@@ -794,6 +896,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+                // Employee Management
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Employee Management',
@@ -871,52 +974,6 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Blog Management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view', 'insert', 'update', 'delete'],
-                    'translations' => [
-                        'en' => 'Blog Management',
-                        'ar' => 'إدارة المدونة'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Blogs',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Blogs',
-                                'ar' => ' الموظفين'
-                            ],
-
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_BLOG_CATEGORY->value,
-                                    'PermissionTitle' => 'Category',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Category',
-                                        'ar' => ' الموظفين'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_BLOG_POSTS->value,
-                                    'PermissionTitle' => 'Posts',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Posts',
-                                        'ar' => 'دعامات'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
             ]
         ];
 
@@ -934,6 +991,7 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'قائمة المناطق'
                     ]
                 ],
+                // Financial Activity
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Financial Activity',
@@ -1007,6 +1065,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+                // Report and analytics
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Report and analytics',
@@ -1096,6 +1155,7 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'قائمة المناطق'
                     ]
                 ],
+                // Business management
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Business management',
@@ -1332,6 +1392,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+                //System management
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'System management',
@@ -1521,6 +1582,7 @@ class PermissionAdminSeeder extends Seeder
 
         $admin_dispatch_related_menu = [
             [
+                // dispatch-management
                 [
                     'PermissionName' => 'dispatch-management',
                     'PermissionTitle' => 'Dispatch management',
