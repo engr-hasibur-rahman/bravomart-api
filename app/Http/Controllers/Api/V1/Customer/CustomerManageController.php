@@ -50,6 +50,14 @@ class CustomerManageController extends Controller
         }
         try {
             $token = $this->customerRepo->getToken($request->all());
+            if (!$token) {
+                return response()->json([
+                    "status" => false,
+                    "status_code" => 401,
+                    "message" => __('messages.login_failed', ['name' => 'Customer']),
+                    "token" => null,
+                ], 401);
+            }
             return response()->json([
                 "status" => true,
                 "status_code" => 200,

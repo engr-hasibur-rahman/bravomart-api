@@ -50,12 +50,7 @@ class CustomerManageRepository implements CustomerManageInterface
             $authCustomer = Hash::check($data['password'], $customer->password);
             // Check if the user exists and if the password is correct
             if (!$authCustomer) {
-                return response()->json([
-                    "status" => false,
-                    "status_code" => 401,
-                    "message" => __('messages.login_failed', ['name' => 'Customer']),
-                    "token" => null,
-                ], 401);
+                return false;
             }
             // Build and return the response
             return $customer;
