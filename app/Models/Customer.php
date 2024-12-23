@@ -31,10 +31,11 @@ class Customer extends Authenticatable
         'email_verified',
         'email_verified_at',
     ];
-    protected $guard_name = 'api';
+
     protected $hidden = [
         'password',
     ];
+
     protected function casts(): array
     {
         return [

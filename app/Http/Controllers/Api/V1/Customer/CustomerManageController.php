@@ -62,7 +62,7 @@ class CustomerManageController extends Controller
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.login_success', ['name' => 'Customer']),
-                "token" => $token->createToken('auth_token')->plainTextToken
+                "token" => $token->createToken('customer-token')->plainTextToken
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -76,6 +76,7 @@ class CustomerManageController extends Controller
     // Send verification email
     public function sendVerificationEmail(Request $request)
     {
+        dd(3434);
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
         ]);

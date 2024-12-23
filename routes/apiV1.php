@@ -31,18 +31,20 @@ use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
 use App\Http\Controllers\Api\V1\UnitManageController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1'], function () {
+
+    // For customer register and login
     Route::post('customer/registration', [CustomerManageController::class, 'register']);
     Route::post('customer/login', [CustomerManageController::class, 'login']);
-    Route::post('customer/send-verification-email', [CustomerManageController::class, 'sendVerificationEmail']);
-    Route::post('customer/verify-email', [CustomerManageController::class, 'verifyEmail']);
-    Route::post('customer/resend-verification-email', [CustomerManageController::class, 'resendVerificationEmail']);
     Route::post('customer/forget-password', [CustomerManageController::class, 'forgetPassword']);
     Route::post('customer/verify-token', [CustomerManageController::class, 'verifyToken']);
     Route::post('customer/reset-password', [CustomerManageController::class, 'resetPassword']);
+
     // Blog comment manage
     Route::post('blog/comment', [BlogManageController::class, 'comment']);
     Route::group(['prefix' => 'auth'], function () {
@@ -72,6 +74,8 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/area-list', [FrontendController::class, 'areasList']);
     Route::get('/tag-list', [FrontendController::class, 'tagList']);
 });
+
+
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
@@ -386,16 +390,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
     });
     /* --------------------------> vendor route end <----------------------------- */
-    /* --------------------------> customer route start <------------------------- */
-    Route::group(['prefix' => 'customer/'], function () {
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
-        });
-        Route::group(['prefix' => 'address/'], function () {
-            Route::post('add', [AddressManageController::class, 'store']);
-            Route::post('customer-addresses', [AddressManageController::class, 'index']);
-            Route::post('make-default', [AddressManageController::class, 'defaultAddress']);
-        });
-    });
     /* --------------------------> customer route end <-------------------------- */
     /* --------------------------> delivery route start <------------------------- */
     Route::group(['prefix' => 'delivery/'], function () {
@@ -403,4 +397,35 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
     });
     /* --------------------------> delivery route end <-------------------------- */
+});
+
+Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
+
+
+    /* --------------------------> customer route start <------------------------- */
+    Route::group(['prefix' => 'customer/', 'middleware' => 'auth:api_customer'], function () {
+        Route::group(['prefix' => 'address/'], function () {
+            Route::post('add', [AddressManageController::class, 'store']);
+            Route::post('customer-addresses', [AddressManageController::class, 'index']);
+            Route::post('make-default', [AddressManageController::class, 'defaultAddress']);
+        });
+        Route::post('verify-email', [CustomerManageController::class, 'verifyEmail']);
+        Route::post('resend-verification-email', [CustomerManageController::class, 'resendVerificationEmail']);
+
+        Route::get('/test123', [CustomerManageController::class, 'sendVerificationEmail']);
+    });
+    Route::get('/test-auth', function (Request $request) {
+        try {
+            return response()->json([
+                'message' => 'Connection successful',
+                'token_exists' => $request->bearerToken() ? true : false,
+                'auth_user' => Auth::guard('sanctum')->check(),
+                'auth_customer' => Auth::guard('customer')->check(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    })->middleware('check.email.verification.option');
 });
