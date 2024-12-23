@@ -883,23 +883,36 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::ADMIN_BLOG_CATEGORY->value,
-                            'PermissionTitle' => 'Category',
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Blogs',
                             'activity_scope' => 'system_level',
                             'icon' => '',
                             'translations' => [
-                                'en' => 'Category',
+                                'en' => 'Blogs',
                                 'ar' => ' الموظفين'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_BLOG_POSTS->value,
-                            'PermissionTitle' => 'Posts',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Posts',
-                                'ar' => 'دعامات'
+                            ],
+
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_BLOG_CATEGORY->value,
+                                    'PermissionTitle' => 'Category',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Category',
+                                        'ar' => ' الموظفين'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_BLOG_POSTS->value,
+                                    'PermissionTitle' => 'Posts',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Posts',
+                                        'ar' => 'دعامات'
+                                    ]
+                                ]
                             ]
                         ]
                     ]
