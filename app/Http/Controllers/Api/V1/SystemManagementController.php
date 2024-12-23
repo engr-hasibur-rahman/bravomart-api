@@ -30,7 +30,23 @@ class SystemManagementController extends Controller
 
     public function generalSettings(Request $request){
         if ($request->isMethod('POST')) {
-            $this->validate($request, [
+//            $this->validate($request, [
+//                'com_site_logo' => 'nullable|string',
+//                'com_site_favicon' => 'nullable|string',
+//                'com_site_title' => 'nullable|string',
+//                'com_site_subtitle' => 'nullable|string',
+//                'com_user_email_verification' => 'nullable|string',
+//                'com_user_login_otp' => 'nullable|string',
+//                'com_maintenance_mode' => 'nullable|string',
+//                // new added
+//                'com_site_full_address' => 'nullable|string',
+//                'com_site_contact_number' => 'nullable|string',
+//                'com_site_website_url' => 'nullable|string',
+//                'com_site_email' => 'nullable|string',
+//                'com_site_footer_copyright' => 'nullable|string',
+//            ]);
+
+            $validator = Validator::make($request->all(), [
                 'com_site_logo' => 'nullable|string',
                 'com_site_favicon' => 'nullable|string',
                 'com_site_title' => 'nullable|string',
@@ -44,7 +60,28 @@ class SystemManagementController extends Controller
                 'com_site_website_url' => 'nullable|string',
                 'com_site_email' => 'nullable|string',
                 'com_site_footer_copyright' => 'nullable|string',
+            ], [
+                'com_site_logo.string' => 'The site logo must be a valid string.',
+                'com_site_favicon.string' => 'The site favicon must be a valid string.',
+                'com_site_title.string' => 'The site title must be a valid string.',
+                'com_site_subtitle.string' => 'The site subtitle must be a valid string.',
+                'com_user_email_verification.string' => 'The email verification value must be a valid string.',
+                'com_user_login_otp.string' => 'The login OTP value must be a valid string.',
+                'com_maintenance_mode.string' => 'The maintenance mode must be a valid string.',
+                'com_site_full_address.string' => 'The full address must be a valid string.',
+                'com_site_contact_number.string' => 'The contact number must be a valid string.',
+                'com_site_website_url.string' => 'The website URL must be a valid string.',
+                'com_site_email.string' => 'The site email must be a valid string.',
+                'com_site_footer_copyright.string' => 'The footer copyright must be a valid string.',
             ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
 
             $fields = ['com_site_logo', 'com_site_favicon', 'com_site_title', 'com_site_subtitle', 'com_user_email_verification','com_user_login_otp', 'com_maintenance_mode',
                 'com_site_full_address','com_site_contact_number', 'com_site_website_url', 'com_site_email', 'com_site_footer_copyright'

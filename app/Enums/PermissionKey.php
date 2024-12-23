@@ -257,6 +257,12 @@ enum PermissionKey: string
     case FIREBASE_SETTINGS = '/admin/system-management/firebase-settings';
     case SOCIAL_LOGIN_SETTINGS = '/admin/system-management/social-login-settings';
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              Blog Management                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_BLOG_CATEGORY = '/admin/blog/category';
+    case ADMIN_BLOG_POSTS = '/admin/blog/posts';
+    // ############################## Admin PermissionKey End ################################
 
 
     // ############################## Seller PermissionKey Start ################################

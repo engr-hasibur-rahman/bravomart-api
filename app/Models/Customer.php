@@ -25,6 +25,11 @@ class Customer extends Authenticatable
         'marketing_email',
         'marketing_sms',
         'status',
+        'def_lang',
+        'password_changed_at',
+        'email_verify_token',
+        'email_verified',
+        'email_verified_at',
     ];
     protected $guard_name = 'api';
     protected $hidden = [
