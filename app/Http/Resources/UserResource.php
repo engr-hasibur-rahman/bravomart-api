@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Actions\ImageModifier;
 use App\Helpers\ComHelper;
 use App\Models\ComMerchantStore;
 use Illuminate\Http\Request;
@@ -31,6 +32,8 @@ class UserResource extends JsonResource
             'last_name' => $this->last_name,
             'phone' => $this->phone,
             'email' => $this->email,
+            'image' => $this->image,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
             'activity_scope' => $this->activity_scope,
             'email_verified_at' => $this->email_verified_at,
             "store_owner" => $this->store_owner,
