@@ -37,8 +37,9 @@ class SellerStaffStoreRequest extends FormRequest
                 'max:255',
                 Rule::unique('users', 'email')->ignore($this->id), // Use $this->id to ignore the current user's email
             ],
-            'password'   => 'required|string|min:8|max:12', // Enforces password length
+            'password'   => 'nullable|string|min:8|max:12', // Password is optional (nullable) and enforces length if provided
             'phone'      => 'nullable|string|max:15', // Optional phone field
+            'image'      => 'nullable|string', // Optional phone field
             'stores' => 'nullable|array',
             'stores.*'    => ['nullable', 'integer', new ValidSellerStore],  // Use the custom validation rule here
             'roles' => 'nullable|array',
