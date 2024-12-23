@@ -153,10 +153,8 @@ class StaffController extends Controller
     public function update(SellerStaffStoreRequest $request)
     {
         try {
-            // Validate request
             $validatedData = $request->validated();
 
-            // Handle roles if provided in the request
             $roles = [];
             if (isset($request->roles)) {
                 $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
@@ -173,7 +171,7 @@ class StaffController extends Controller
             $user->stores = json_encode($validatedData['stores']);  // Store as JSON
             $user->merchant_id = auth()->guard('api')->user()->id;  // Set authenticated seller's ID
             $user->activity_scope = 'store_level';  // Assuming it's constant for all users
-            $user->image = $validatedData['image']; // Default status, assuming active
+            $user->image = $validatedData['image'] ?? null; // Default status, assuming active
             $user->status = 1;  // Default status, assuming active
 
             // Update password only if provided
