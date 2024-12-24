@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
+use App\Http\Controllers\Api\V1\Dashboard\StoreDashboardManageController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
@@ -89,13 +90,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('/delete', [MediaController::class, 'delete_media']);
     });
 //    });
-    Route::group(['prefix' => 'support-ticket'], function () {
-        Route::get('list', [SupportTicketManageController::class, 'index']);
-        Route::post('store', [SupportTicketManageController::class, 'store']);
-        Route::post('update', [SupportTicketManageController::class, 'update']);
-        Route::get('details', [SupportTicketManageController::class, 'show']);
-        Route::get('resolve', [SupportTicketManageController::class, 'resolve']);
-    });
+
 
     // Marketing area manage
     Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
@@ -313,15 +308,19 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
 
         // Store manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::STORE_MY_SHOP->value]], function () {
-            Route::get('store/list', [StoreManageController::class, 'index']);
-            Route::get('store/{id}', [StoreManageController::class, 'show']);
-            Route::post('store/add', [StoreManageController::class, 'store']);
-            Route::post('store/update', [StoreManageController::class, 'update']);
-            Route::put('store/status/{id}', [StoreManageController::class, 'status_update']);
-            Route::delete('store/remove/{id}', [StoreManageController::class, 'destroy']);
-            Route::get('store/deleted/records', [StoreManageController::class, 'deleted_records']);
+        Route::group(['prefix' => 'store/'], function () {
+            Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);
+            Route::group(['middleware' => ['permission:' . PermissionKey::STORE_MY_SHOP->value]], function () {
+                Route::get('list', [StoreManageController::class, 'index']);
+                Route::get('{id}', [StoreManageController::class, 'show']);
+                Route::post('add', [StoreManageController::class, 'store']);
+                Route::post('update', [StoreManageController::class, 'update']);
+                Route::put('status/{id}', [StoreManageController::class, 'status_update']);
+                Route::delete('remove/{id}', [StoreManageController::class, 'destroy']);
+                Route::get('deleted/records', [StoreManageController::class, 'deleted_records']);
+            });
         });
+
 
         // Staff manage
         Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
@@ -405,10 +404,17 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('customer-addresses', [AddressManageController::class, 'index']);
             Route::post('make-default', [AddressManageController::class, 'defaultAddress']);
         });
-        Route::post('send-verification-email', [CustomerManageController::class, 'sendVerificationEmail']);
+        Route::group(['prefix' => 'support-ticket'], function () {
+            Route::get('list', [SupportTicketManageController::class, 'index']);
+            Route::post('store', [SupportTicketManageController::class, 'store']);
+            Route::post('update', [SupportTicketManageController::class, 'update']);
+            Route::get('details', [SupportTicketManageController::class, 'show']);
+            Route::get('resolve', [SupportTicketManageController::class, 'resolve']);
+            Route::post('add-message', [SupportTicketManageController::class, 'addMessage']);
+        });
     });
     // customer verify email
+    Route::post('send-verification-email', [CustomerManageController::class, 'sendVerificationEmail']);
     Route::post('verify-email', [CustomerManageController::class, 'verifyEmail']);
     Route::post('resend-verification-email', [CustomerManageController::class, 'resendVerificationEmail']);
-
 });

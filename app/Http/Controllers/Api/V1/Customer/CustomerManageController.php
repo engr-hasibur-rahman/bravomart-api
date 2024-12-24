@@ -18,7 +18,7 @@ class CustomerManageController extends Controller
     {
         try {
             $customer = $this->customerRepo->register($request->all());
-            $token = $customer->createToken('auth_token')->plainTextToken;
+            $token = $customer->createToken('customer_auth_token')->plainTextToken;
             // Return a successful response with the token and permissions
             return response()->json([
                 "status" => true,
@@ -62,7 +62,7 @@ class CustomerManageController extends Controller
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.login_success', ['name' => 'Customer']),
-                "token" => $token->createToken('customer-token')->plainTextToken,
+                "token" => $token->createToken('customer_auth_token')->plainTextToken,
                 "email_verified" => (bool)$token->email_verified, // shorthand of -> $token->email_verified ? true : false
             ]);
         } catch (\Exception $e) {

@@ -34,9 +34,9 @@ class StoreManageRepository implements StoreManageInterface
                 ->where('name_translations.language', '=', $language)
                 ->where('name_translations.key', '=', 'name');
         })->select(
-                'com_merchant_stores.*',
-                DB::raw('COALESCE(name_translations.value, com_merchant_stores.name) as name'),
-            );
+            'com_merchant_stores.*',
+            DB::raw('COALESCE(name_translations.value, com_merchant_stores.name) as name'),
+        );
 
         // Apply search filter if search parameter exists
         if ($search) {
@@ -67,7 +67,7 @@ class StoreManageRepository implements StoreManageInterface
     public function getStoreById(int|string $id)
     {
         try {
-            $store = ComMerchantStore::find($id);
+            $store = ComMerchantStore::findorfail($id);
             $translations = $store->translations()->get()->groupBy('language');
             // Initialize an array to hold the transformed data
             $transformedData = [];
@@ -238,5 +238,32 @@ class StoreManageRepository implements StoreManageInterface
             ->get();
 
         return $stores;
+    }
+
+    public function checkStoreBelongsToSeller(string $slug)
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+        $seller_id = auth('api')->id();
+        $storeBelongsToSeller = ComMerchantStore::with(['merchant.user'])
+            ->where('merchant_id', $seller_id)
+            ->where('slug', $slug)
+            ->first();
+        if ($storeBelongsToSeller) {
+            return $storeBelongsToSeller;
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 401,
+                'message' => __('messages.store.doesnt.belongs.to.seller')
+            ]);
+        }
+    }
+
+    public function storeDashboard(string $slug)
+    {
+        $store = $this->checkStoreBelongsToSeller($slug);
+        return $store;
     }
 }
