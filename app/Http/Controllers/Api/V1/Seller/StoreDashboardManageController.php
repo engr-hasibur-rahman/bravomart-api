@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Dashboard;
+namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Dashboard\StoreDashboardResource;
+use App\Http\Resources\Seller\StoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -28,6 +28,6 @@ class StoreDashboardManageController extends Controller
             ], 400);
         }
         $storeDashboard = $this->storeRepo->storeDashboard($request->slug);
-        return response()->json(new StoreDashboardResource($storeDashboard));
+        return response()->json(new StoreDetailsResource($storeDashboard));
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Dashboard;
+namespace App\Http\Resources\Seller;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class StoreDashboardResource extends JsonResource
+class StoreDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -56,6 +56,10 @@ class StoreDashboardResource extends JsonResource
                 'meta_image' => $this->meta_image,
                 'status' => $this->status,
             ],
+            'store_summary' => [
+                'products_count' => $this->products,
+                'banners_count' => $this->banners
+            ]
         ];
     }
 }
