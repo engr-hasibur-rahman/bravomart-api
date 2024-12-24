@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Interfaces\StoreManageInterface;
+use App\Models\Banner;
 use App\Models\ComMerchantStore;
+use App\Models\Product;
 use App\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -264,6 +266,29 @@ class StoreManageRepository implements StoreManageInterface
     public function storeDashboard(string $slug)
     {
         $store = $this->checkStoreBelongsToSeller($slug);
+        $store['products'] = $this->getStoreWiseProducts($store->id);
+        $store['banners'] = $this->getStoreWiseBanners($store->id);
         return $store;
+    }
+
+    private function getStoreWiseProducts(int $storeId)
+    {
+        $approvedProductsCount = Product::where('store_id', $storeId)->where('status', 'approved')->count();
+        $pendingProductsCount = Product::where('store_id', $storeId)->where('status', 'pending')->count();
+        $inactiveProductsCount = Product::where('store_id', $storeId)->where('status', 'inactive')->count();
+        $suspendedProductsCount = Product::where('store_id', $storeId)->where('status', 'suspended')->count();
+        return [
+            'approved' => $approvedProductsCount,
+            'pending' => $pendingProductsCount,
+            'inactive' => $inactiveProductsCount,
+            'suspended' => $suspendedProductsCount,
+        ];
+    }
+
+    private function getStoreWiseBanners(int $storeId)
+    {
+        return [
+            'active' => Banner::where('store_id', $storeId)->where('status', 1)->count()
+        ];
     }
 }
