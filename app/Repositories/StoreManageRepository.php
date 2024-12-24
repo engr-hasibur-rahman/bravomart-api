@@ -273,11 +273,13 @@ class StoreManageRepository implements StoreManageInterface
 
     private function getStoreWiseProducts(int $storeId)
     {
+        $totalProductsCount = Product::where('store_id', $storeId)->count();
         $approvedProductsCount = Product::where('store_id', $storeId)->where('status', 'approved')->count();
         $pendingProductsCount = Product::where('store_id', $storeId)->where('status', 'pending')->count();
         $inactiveProductsCount = Product::where('store_id', $storeId)->where('status', 'inactive')->count();
         $suspendedProductsCount = Product::where('store_id', $storeId)->where('status', 'suspended')->count();
         return [
+            'total' => $totalProductsCount,
             'approved' => $approvedProductsCount,
             'pending' => $pendingProductsCount,
             'inactive' => $inactiveProductsCount,
