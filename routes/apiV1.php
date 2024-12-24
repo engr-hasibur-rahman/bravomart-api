@@ -306,6 +306,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
         Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
+        Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
 
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
@@ -411,6 +412,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::get('details', [SupportTicketManageController::class, 'show']);
             Route::get('resolve', [SupportTicketManageController::class, 'resolve']);
             Route::post('add-message', [SupportTicketManageController::class, 'addMessage']);
+            Route::get('messages', [SupportTicketManageController::class, 'getTicketMessages']);
         });
     });
     // customer verify email

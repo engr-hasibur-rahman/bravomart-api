@@ -5,7 +5,7 @@ namespace App\Http\Resources\Com\SupportTicket;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SupportTicketPublicResource extends JsonResource
+class SupportTicketDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,12 +15,12 @@ class SupportTicketPublicResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'priority' => $this->priority,
+            'ticket_id' => $this->id,
             'status' => $this->status,
-            'department' => $this->department->name,
-            'created_by' => $this->user->first_name,
+            'priority' => $this->priority,
+            'title' => $this->title,
+            'subject' => $this->subject,
+            'last_updated' => $this->updated_at->diffForHumans(),
         ];
     }
 }

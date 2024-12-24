@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SupportTicketRequest;
-use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsPublicResource;
-use App\Http\Resources\Com\SupportTicket\SupportTicketPublicResource;
+use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsResource;
+use App\Http\Resources\Com\SupportTicket\SupportTicketMessageResource;
+use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
 use App\Interfaces\SupportTicketManageInterface;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class SupportTicketManageController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => SupportTicketPublicResource::collection($tickets),
+                'data' => SupportTicketResource::collection($tickets),
                 'pagination' => [
                     'total' => $tickets->total(),
                     'per_page' => $tickets->perPage(),
@@ -62,7 +63,7 @@ class SupportTicketManageController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => new SupportTicketDetailsPublicResource($ticket)
+                'data' => new SupportTicketDetailsResource($ticket)
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -161,6 +162,9 @@ class SupportTicketManageController extends Controller
     /* ----------------------------------------------------------- Support Ticket Messages -------------------------------------------------- */
     public function addMessage(Request $request)
     {
+        if (auth('api_customer')->check()) {
+            unauthorized_response();
+        }
         $validator = Validator::make($request->all(), [
             'ticket_id' => 'required|exists:tickets,id',
             'message' => 'required|string',
@@ -174,7 +178,6 @@ class SupportTicketManageController extends Controller
             ]);
         }
         $file = $request->file('file');
-
         if ($file) {
             // Generate a filename with a timestamp
             $timestamp = now()->timestamp;
@@ -191,11 +194,76 @@ class SupportTicketManageController extends Controller
             'file' => $filename,
         ];
         $message = $this->ticketRepo->addMessage($messageDetails);
+        // Update the `updated_at` column of the ticket
+        $ticket = Ticket::findorfail($request->ticket_id); // Ensure your repository has this method
+        $ticket->touch(); // Update the `updated_at` timestamp
 
         return response()->json([
             'status' => 'success',
             'message' => __('messages.support_ticket.message.sent'),
             'data' => $message
         ], 201);
+    }
+
+    public function replyMessage(Request $request)
+    {
+        if (auth('api')->check()) {
+            unauthorized_response();
+        }
+        $authUser = auth('api')->user();
+        $validator = Validator::make($request->all(), [
+            'ticket_id' => 'required|exists:tickets,id',
+            'message' => 'required|string',
+            'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => $validator->errors()
+            ]);
+        }
+        $file = $request->file('file');
+        if ($file) {
+            // Generate a filename with a timestamp
+            $timestamp = now()->timestamp;
+            $email = str_replace(['@', '.'], '_', $authUser->email); // Replace '@' and '.' with underscores
+            $filename = 'customer/support-ticket/' . $timestamp . '_' . $email . '_' . $file->getClientOriginalName();
+        }
+        // Save the uploaded file to private storage
+        Storage::disk('import')->put($filename, file_get_contents($file));
+        $messageDetails = [
+            'ticket_id' => $request->ticket_id,
+            'receiver_id' => $authUser->id,
+            'sender_role' => $authUser->activity_scope,
+            'message' => $request->message,
+            'file' => $filename,
+        ];
+        $message = $this->ticketRepo->addMessage($messageDetails);
+        // Update the `updated_at` column of the ticket
+        $ticket = Ticket::findorfail($request->ticket_id); // Ensure your repository has this method
+        $ticket->touch(); // Update the `updated_at` timestamp
+
+        return response()->json([
+            'status' => 'success',
+            'message' => __('messages.support_ticket.message.sent'),
+            'data' => $message
+        ], 201);
+    }
+
+    public function getTicketMessages(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ticket_id' => 'required|exists:tickets,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => $validator->errors()
+            ]);
+        }
+        $ticketMessages = $this->ticketRepo->getTicketMessages($request->ticket_id);
+        return response()->json(SupportTicketMessageResource::collection($ticketMessages));
     }
 }

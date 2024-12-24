@@ -28,12 +28,12 @@ class TicketMessage extends Model
 
     public function ticket()
     {
-        return $this->belongsTo(Ticket::class);
+        return $this->belongsTo(Ticket::class, 'ticket_id');
     }
 
     public function sender()
     {
-        return $this->belongsTo(User::class, 'sender_id');
+        return $this->belongsTo(Customer::class, 'sender_id');
     }
 
     public function receiver()

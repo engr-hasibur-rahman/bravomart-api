@@ -59,6 +59,11 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         return $this->ticketMessage->create($messageDetails);
     }
 
+    public function replyMessage(array $messageDetails)
+    {
+        return $this->ticketMessage->create($messageDetails);
+    }
+
     public function updateTicket(array $data)
     {
         $ticket = $this->ticket->findOrFail($data['id']);
@@ -76,38 +81,14 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         return $ticket;
     }
 
-    public function getTicketMessages(array $filters = [])
+    public function getTicketMessages(int $ticketId)
     {
-        $query = $this->ticketMessage->with(['sender', 'receiver']);
+        $query = $this->ticketMessage->with(['sender', 'receiver', 'ticket']);
 
-        // Apply filters using isset
-        if (isset($filters['ticket_id'])) {
-            $query->where('ticket_id', $filters['ticket_id']);
-        }
-
-        if (isset($filters['sender_id'])) {
-            $query->where('sender_id', $filters['sender_id']);
-        }
-
-        if (isset($filters['receiver_id'])) {
-            $query->where('receiver_id', $filters['receiver_id']);
-        }
-
-        if (isset($filters['start_date'])) {
-            $query->whereDate('created_at', '>=', $filters['start_date']);
-        }
-
-        if (isset($filters['end_date'])) {
-            $query->whereDate('created_at', '<=', $filters['end_date']);
-        }
-
-        // Apply sorting
-        $sortBy = $filters['sort_by'] ?? 'created_at';
-        $sortOrder = $filters['sort_order'] ?? 'asc';
-        $messages = $query->orderBy($sortBy, $sortOrder)->get();
-
-        // Fetch results
-        return $messages;
+        return $this->ticketMessage->where('ticket_id', $ticketId)
+            ->with(['sender', 'receiver'])
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 
     public function markMessageAsRead($messageId)
