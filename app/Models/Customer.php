@@ -4,10 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
-class Customer extends Authenticatable
+class Customer extends Model
 {
     use HasFactory, HasApiTokens;
 
@@ -31,10 +30,11 @@ class Customer extends Authenticatable
         'email_verified',
         'email_verified_at',
     ];
-    protected $guard_name = 'api';
+
     protected $hidden = [
         'password',
     ];
+
     protected function casts(): array
     {
         return [

@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Interfaces\StoreManageInterface;
+use App\Models\Banner;
 use App\Models\ComMerchantStore;
+use App\Models\Product;
 use App\Models\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,9 +36,9 @@ class StoreManageRepository implements StoreManageInterface
                 ->where('name_translations.language', '=', $language)
                 ->where('name_translations.key', '=', 'name');
         })->select(
-                'com_merchant_stores.*',
-                DB::raw('COALESCE(name_translations.value, com_merchant_stores.name) as name'),
-            );
+            'com_merchant_stores.*',
+            DB::raw('COALESCE(name_translations.value, com_merchant_stores.name) as name'),
+        );
 
         // Apply search filter if search parameter exists
         if ($search) {
@@ -67,7 +69,7 @@ class StoreManageRepository implements StoreManageInterface
     public function getStoreById(int|string $id)
     {
         try {
-            $store = ComMerchantStore::find($id);
+            $store = ComMerchantStore::findorfail($id);
             $translations = $store->translations()->get()->groupBy('language');
             // Initialize an array to hold the transformed data
             $transformedData = [];
@@ -238,5 +240,57 @@ class StoreManageRepository implements StoreManageInterface
             ->get();
 
         return $stores;
+    }
+
+    public function checkStoreBelongsToSeller(string $slug)
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+        $seller_id = auth('api')->id();
+        $storeBelongsToSeller = ComMerchantStore::with(['merchant.user'])
+            ->where('merchant_id', $seller_id)
+            ->where('slug', $slug)
+            ->first();
+        if ($storeBelongsToSeller) {
+            return $storeBelongsToSeller;
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 401,
+                'message' => __('messages.store.doesnt.belongs.to.seller')
+            ]);
+        }
+    }
+
+    public function storeDashboard(string $slug)
+    {
+        $store = $this->checkStoreBelongsToSeller($slug);
+        $store['products'] = $this->getStoreWiseProducts($store->id);
+        $store['banners'] = $this->getStoreWiseBanners($store->id);
+        return $store;
+    }
+
+    private function getStoreWiseProducts(int $storeId)
+    {
+        $totalProductsCount = Product::where('store_id', $storeId)->count();
+        $approvedProductsCount = Product::where('store_id', $storeId)->where('status', 'approved')->count();
+        $pendingProductsCount = Product::where('store_id', $storeId)->where('status', 'pending')->count();
+        $inactiveProductsCount = Product::where('store_id', $storeId)->where('status', 'inactive')->count();
+        $suspendedProductsCount = Product::where('store_id', $storeId)->where('status', 'suspended')->count();
+        return [
+            'total' => $totalProductsCount,
+            'approved' => $approvedProductsCount,
+            'pending' => $pendingProductsCount,
+            'inactive' => $inactiveProductsCount,
+            'suspended' => $suspendedProductsCount,
+        ];
+    }
+
+    private function getStoreWiseBanners(int $storeId)
+    {
+        return [
+            'active' => Banner::where('store_id', $storeId)->where('status', 1)->count()
+        ];
     }
 }
