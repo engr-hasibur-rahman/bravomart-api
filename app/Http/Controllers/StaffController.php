@@ -75,6 +75,7 @@ class StaffController extends Controller
                 'merchant_id' => auth()->guard('api')->user()->id, // Authenticated store admin id is merchant ID
                 'email' => $request->email,
                 'phone' => $request->phone,
+                'image' => $request->image,
                 'status' => 1,
                 'password' => Hash::make($request->password),
             ]);
@@ -152,10 +153,8 @@ class StaffController extends Controller
     public function update(SellerStaffStoreRequest $request)
     {
         try {
-            // Validate request
             $validatedData = $request->validated();
 
-            // Handle roles if provided in the request
             $roles = [];
             if (isset($request->roles)) {
                 $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
@@ -172,7 +171,14 @@ class StaffController extends Controller
             $user->stores = json_encode($validatedData['stores']);  // Store as JSON
             $user->merchant_id = auth()->guard('api')->user()->id;  // Set authenticated seller's ID
             $user->activity_scope = 'store_level';  // Assuming it's constant for all users
+            $user->image = $validatedData['image'] ?? null; // Default status, assuming active
             $user->status = 1;  // Default status, assuming active
+
+            // Update password only if provided
+            if (!empty($validatedData['password'])) {
+                $user->password = Hash::make($validatedData['password']);
+            }
+
             $user->save();
 
             // Sync roles with the user
@@ -185,8 +191,7 @@ class StaffController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.update_success', ['name' => 'Staff']),
-                'user' => $user,
-            ], 200);
+            ]);
         } catch (ValidationException $e) {
             // Handle validation errors
             return response()->json([
