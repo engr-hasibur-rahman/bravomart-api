@@ -41,6 +41,10 @@ return [
 
     'customer.not.found' => 'Customer not found!',
 
+    'support_ticket.message.sent' => 'Support ticket has been sent!',
+
+    'store.doesnt.belongs.to.seller' => 'Store doesn\'t belongs to this seller!',
+
 ];
 
 
