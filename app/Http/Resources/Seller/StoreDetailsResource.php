@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Seller;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -34,7 +35,9 @@ class StoreDetailsResource extends JsonResource
                 'phone' => $this->phone,
                 'email' => $this->email,
                 'logo' => $this->logo,
+                'logo_url' => ImageModifier::generateImageUrl($this->logo),
                 'banner' => $this->banner,
+                'banner_url' => ImageModifier::generateImageUrl($this->banner),
                 'address' => $this->address,
                 'vat_tax_number' => $this->vat_tax_number,
                 'is_featured' => $this->is_featured,
