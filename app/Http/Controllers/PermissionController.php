@@ -32,8 +32,15 @@ class PermissionController extends Controller
             $shop_count=ComMerchantStore::where('merchant_id', $user->id)->count();
         }
 
+
         if($shop_count > 0) {
-            $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+            // Handle permissions for any route under "seller/store/"
+            if ($user->activity_scope=='store_level' && $request->is('seller/store/*') && !$request->is('seller/store/list')) {
+                $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+            }else{
+                $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+            }
+
         } else{
 
             // Define the permissions array for non-store level seller
