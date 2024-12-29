@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
@@ -401,9 +402,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
     Route::group(['middleware' => ['check.email.verification.option']], function () {
         Route::group(['prefix' => 'address/'], function () {
-            Route::post('add', [AddressManageController::class, 'store']);
-            Route::post('customer-addresses', [AddressManageController::class, 'index']);
-            Route::post('make-default', [AddressManageController::class, 'defaultAddress']);
+            Route::post('add', [CustomerAddressManageController::class, 'store']);
+            Route::post('customer-addresses', [CustomerAddressManageController::class, 'index']);
+            Route::post('make-default', [CustomerAddressManageController::class, 'defaultAddress']);
         });
         Route::group(['prefix' => 'support-ticket'], function () {
             Route::get('list', [SupportTicketManageController::class, 'index']);

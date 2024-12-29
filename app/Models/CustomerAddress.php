@@ -7,22 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 class CustomerAddress extends Model
 {
     protected $fillable = [
-        'title',
         'customer_id',
+        'title',
         'type',
-        'full_name',
-        'phone_number',
-        'email',
-        'address_line_1',
-        'address_line_2',
-        'state',
-        'city',
+        'contact_number',
+        'address',
+        'latitude',
+        'longitude',
+        'area_id',
+        'road',
+        'house',
+        'floor',
         'postal_code',
-        'country',
         'is_default',
         'status',
     ];
-    public function customer():void{
-        $this->belongsTo('App\Models\Customer');
+
+    public function customer(): void
+    {
+        $this->belongsTo(Customer::class, 'customer_id');
     }
 }

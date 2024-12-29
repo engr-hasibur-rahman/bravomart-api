@@ -70,7 +70,6 @@ class BlogManageController extends Controller
 
     public function blogCategoryUpdate(Request $request)
     {
-
         try {
             $validatedCategory = $request->validate([
                 'id' => 'required',

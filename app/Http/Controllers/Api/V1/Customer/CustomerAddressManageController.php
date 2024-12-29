@@ -26,8 +26,7 @@ class CustomerAddressManageController extends Controller
         }
         try {
             // Set the customer ID if authenticated
-            $request['customer_id'] = auth('api')->id();
-
+            $request['customer_id'] = auth('api_customer')->user()->id;
             // Store the address using the repository
             $this->addressRepo->setAddress($request->all());
 
