@@ -38,14 +38,30 @@ class BlogManageRepository implements BlogManageInterface
                 ->where('name_translations.language', '=', $language)
                 ->where('name_translations.key', '=', 'name');
         })
+            ->leftJoin('translations as meta_title_translations', function ($join) use ($language) {
+                $join->on('blog_categories.id', '=', 'meta_title_translations.translatable_id')
+                    ->where('meta_title_translations.translatable_type', '=', BlogCategory::class)
+                    ->where('meta_title_translations.language', '=', $language)
+                    ->where('meta_title_translations.key', '=', 'meta_title');
+            })
+            ->leftJoin('translations as meta_description_translations', function ($join) use ($language) {
+                $join->on('blog_categories.id', '=', 'meta_description_translations.translatable_id')
+                    ->where('meta_description_translations.translatable_type', '=', BlogCategory::class)
+                    ->where('meta_description_translations.language', '=', $language)
+                    ->where('meta_description_translations.key', '=', 'meta_description');
+            })
             ->select(
                 'blog_categories.*',
                 DB::raw('COALESCE(name_translations.value, blog_categories.name) as name'),
+                DB::raw('COALESCE(meta_title_translations.value, blog_categories.meta_title) as meta_title'),
+                DB::raw('COALESCE(meta_description_translations.value, blog_categories.meta_description) as meta_description')
             );
         // Apply search filter if search parameter exists
         if ($search) {
             $blogCategory->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', blog_categories.name, name_translations.value)"), 'like', "%{$search}%");
+                $query->where(DB::raw("CONCAT_WS(' ', blog_categories.name, name_translations.value)"), 'like', "%{$search}%")
+                    ->orWhere(DB::raw("CONCAT_WS(' ', blog_categories.meta_title, meta_title_translations.value)"), 'like', "%{$search}%")
+                    ->orWhere(DB::raw("CONCAT_WS(' ', blog_categories.meta_description, meta_description_translations.value)"), 'like', "%{$search}%");
             });
         }
         // Apply sorting and pagination
@@ -96,12 +112,12 @@ class BlogManageRepository implements BlogManageInterface
                 ->where('title_translations.translatable_type', '=', Blog::class)
                 ->where('title_translations.language', '=', $language)
                 ->where('title_translations.key', '=', 'title');
-            })
+        })
             ->leftJoin('translations as description_translations', function ($join) use ($language) {
-            $join->on('blogs.id', '=', 'description_translations.translatable_id')
-                ->where('description_translations.translatable_type', '=', Blog::class)
-                ->where('description_translations.language', '=', $language)
-                ->where('description_translations.key', '=', 'description');
+                $join->on('blogs.id', '=', 'description_translations.translatable_id')
+                    ->where('description_translations.translatable_type', '=', Blog::class)
+                    ->where('description_translations.language', '=', $language)
+                    ->where('description_translations.key', '=', 'description');
             })
             ->leftJoin('translations as meta_title_translations', function ($join) use ($language) {
                 $join->on('blogs.id', '=', 'meta_title_translations.translatable_id')
@@ -138,11 +154,12 @@ class BlogManageRepository implements BlogManageInterface
         }
         // Apply sorting and pagination
         // Return the result
-        $paginatedBlog =  $blog
+        $paginatedBlog = $blog
             ->orderBy($sortField, $sort)
             ->paginate($limit);
         return BlogListResource::collection($paginatedBlog);
     }
+
     public function getBlogById(int|string $id)
     {
         try {

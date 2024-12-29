@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Blog;
 
+use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlogRequest;
 use App\Http\Requests\CommentRequest;
@@ -12,6 +13,7 @@ use App\Models\BlogComment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class BlogManageController extends Controller
 {
@@ -35,12 +37,21 @@ class BlogManageController extends Controller
 
     public function blogCategoryStore(Request $request): JsonResponse
     {
+        $request['slug'] = MultilangSlug::makeSlug(BlogCategory::class, $request->name, 'slug');
         try {
             // Validate input data
-            $validatedCategory = $request->validate([
+            $validator = Validator::make($request->all(), [
                 'name' => 'required|unique:blog_categories,name',
+                'slug' => 'nullable|unique:blog_categories,slug',
             ]);
-            $category = $this->blogRepo->store($validatedCategory, BlogCategory::class);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => $validator->errors()
+                ]);
+            }
+            $category = $this->blogRepo->store($request->all(), BlogCategory::class);
             $this->blogRepo->storeTranslation($request, $category, 'App\Models\BlogCategory', $this->blogRepo->translationKeysForCategory());
 
             if ($category) {
@@ -113,6 +124,7 @@ class BlogManageController extends Controller
 
     public function blogStore(BlogRequest $request): JsonResponse
     {
+        $request['slug'] = MultilangSlug::makeSlug(Blog::class, $request->title, 'slug');
         try {
             $blog = $this->blogRepo->store($request->all(), Blog::class);
             $this->blogRepo->storeTranslation($request, $blog, 'App\Models\Blog', $this->blogRepo->translationKeysForBlog());
