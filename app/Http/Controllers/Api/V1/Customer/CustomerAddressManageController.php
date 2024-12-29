@@ -26,8 +26,7 @@ class CustomerAddressManageController extends Controller
         }
         try {
             // Set the customer ID if authenticated
-            $request['customer_id'] = auth('api')->id();
-
+            $request['customer_id'] = auth('api_customer')->user()->id;
             // Store the address using the repository
             $this->addressRepo->setAddress($request->all());
 
@@ -82,7 +81,7 @@ class CustomerAddressManageController extends Controller
         try {
             CustomerAddress::findOrFail($request->id);
             // Set the customer ID if authenticated
-            $request['customer_id'] = auth('api')->id();
+            $request['customer_id'] = auth('api_customer')->user()->id;
             $this->addressRepo->handleDefaultAddress($request->all());
             return response()->json([
                 'status' => true,
@@ -96,6 +95,28 @@ class CustomerAddressManageController extends Controller
                 'status_code' => 500,
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        try {
+            $address = CustomerAddress::where('id', $request->id)
+                ->where('customer_id', auth('api_customer')->user()->id)
+                ->first();
+            $address->delete();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.delete_success', ['name' => 'Address']),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }

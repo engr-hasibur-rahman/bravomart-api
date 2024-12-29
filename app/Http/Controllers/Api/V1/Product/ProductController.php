@@ -13,6 +13,7 @@ use App\Http\Requests\ProductVariantRequest;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
+use App\Models\ComMerchantStore;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,9 +27,11 @@ class ProductController extends Controller
     {
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $storeSlug)
     {
+        $request['store_id'] = ComMerchantStore::where('slug', $storeSlug)->first()->id;
         return $this->productRepo->getPaginatedProduct(
+            $request->store_id,
             $request->limit ?? 10,
             $request->page ?? 1,
             app()->getLocale() ?? DEFAULT_LANGUAGE,
@@ -39,10 +42,11 @@ class ProductController extends Controller
         );
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, $storeSlug): JsonResponse
     {
         $slug = MultilangSlug::makeSlug(Product::class, $request->name, 'slug');
         $request['slug'] = $slug;
+        $request['store_id'] = ComMerchantStore::where('slug', $storeSlug)->first()->id;
         $product = $this->productRepo->store($request->all());
         $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
@@ -52,13 +56,17 @@ class ProductController extends Controller
         }
     }
 
-    public function show(Request $request)
+    public function show(Request $request, $storeSlug, $slug)
     {
-        return $this->productRepo->getProductById($request->id);
+        $request['slug'] = $slug;
+        $request['store_id'] = ComMerchantStore::where('slug', $storeSlug)->first()->id;
+        return $this->productRepo->getProductById($request->all());
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $storeSlug, $slug)
     {
+        $request['slug'] = $slug;
+        $request['store_id'] = ComMerchantStore::where('slug', $storeSlug)->first()->id;
         $product = $this->productRepo->update($request->all());
         if ($product) {
             return $this->success(translate('messages.update_success', ['name' => 'Product']));
@@ -67,21 +75,27 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($storeSlug, $slug)
     {
-        $this->productRepo->delete($id);
-        return $this->success(translate('messages.delete_success'));
+        $store_id = ComMerchantStore::where('slug', $storeSlug)->first()->id;
+        $product = Product::where('store_id', $store_id)->where('slug', $slug)->first();
+        if ($product) {
+            $product->delete();
+            return $this->success(translate('messages.delete_success'));
+        } else {
+            return $this->failed(translate('messages.delete_failed'));
+        }
     }
 
-    public function deleted_records()
+    public function deleted_records($storeSlug)
     {
-        $records = $this->productRepo->records(true);
+
+        $records = $this->productRepo->records(true,$storeSlug);
         return response()->json([
             "data" => $records,
             "massage" => "Records were restored successfully!"
         ], 201);
     }
-
     /* Change product status (Admin only) */
     public function changeStatus(Request $request)
     {

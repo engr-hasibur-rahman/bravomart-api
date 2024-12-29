@@ -60,6 +60,25 @@ class AddressManageRepository implements AddressManageInterface
             ], 500);
         }
     }
+
+    public function getAddressById(int $id)
+    {
+        if (!auth('api_customer')->check()) {
+            unauthorized_response();
+        }
+        try {
+            $customerId = auth('api_customer')->user()->id;
+            $address = $this->address->where('customer_id', $customerId)->where('id', $id)->first();
+            return $address;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function handleDefaultAddress(array $data)
     {
         try {
@@ -69,7 +88,9 @@ class AddressManageRepository implements AddressManageInterface
                     ->where('is_default', 1)
                     ->update(['is_default' => 0]);
             }
-            $this->address->where('id', $data['id'])->update(['is_default' => $data['is_default']]);
+            $this->address->where('id', $data['id'])
+                ->where('customer_id', $data['customer_id'])
+                ->update(['is_default' => $data['is_default']]);
             return true;
         } catch (\Exception $e) {
             // Return the error message

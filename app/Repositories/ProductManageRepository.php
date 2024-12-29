@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Helpers\MultilangSlug;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
+use App\Models\ComMerchantStore;
 use App\Models\Product;
 use App\Models\ProductTag;
 use App\Models\ProductVariant;
@@ -30,9 +31,9 @@ class ProductManageRepository implements ProductManageInterface
     }
 
     // Fetch all products with parameters
-    public function getPaginatedProduct(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedProduct(int|string $store_id, int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $product = Product::leftJoin('translations as name_translations', function ($join) use ($language) {
+        $product = Product::where('store_id', $store_id)->leftJoin('translations as name_translations', function ($join) use ($language) {
             $join->on('products.id', '=', 'name_translations.translatable_id')
                 ->where('name_translations.translatable_type', '=', Product::class)
                 ->where('name_translations.language', '=', $language)
@@ -146,7 +147,9 @@ class ProductManageRepository implements ProductManageInterface
             $data = Arr::except($data, ['translations']);
 
             // Retrieve the product by ID
-            $product = Product::findOrFail($data['id']);
+            $product = Product::where('store_id', $data['store_id'])
+                ->where('slug', $data['slug'])
+                ->first();
 
             // Update the product details
             $product->update($data);
@@ -213,10 +216,12 @@ class ProductManageRepository implements ProductManageInterface
     }
 
     // Fetch product data of specific id
-    public function getProductById(int|string $id)
+    public function getProductById(array $data)
     {
         try {
-            $product = Product::find($id);
+            $product = Product::where('slug', $data['slug'])
+                ->where('store_id', $data['store_id'])
+                ->first();
             $translations = $product->translations()->get()->groupBy('language');
             // Initialize an array to hold the transformed data
             $transformedData = [];
@@ -275,16 +280,17 @@ class ProductManageRepository implements ProductManageInterface
     }
 
     // Fetch deleted records(true = only trashed records, false = all records with trashed)
-    public function records(bool $onlyDeleted = false)
+    public function records(bool $onlyDeleted = false, string $storeSlug)
     {
+        $store_id = ComMerchantStore::where('slug', $storeSlug)->first()->id;
         try {
             switch ($onlyDeleted) {
                 case true:
-                    $records = Product::onlyTrashed()->get();
+                    $records = Product::where('store_id', $store_id)->onlyTrashed()->get();
                     break;
 
                 default:
-                    $records = Product::withTrashed()->get();
+                    $records = Product::where('store_id', $store_id)->withTrashed()->get();
                     break;
             }
             return $records;
