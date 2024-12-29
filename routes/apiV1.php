@@ -264,10 +264,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('blog/category/list', [BlogManageController::class, 'blogCategoryIndex']);
         });
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
+            Route::get('blog/category/fetch/list', [BlogManageController::class, 'blogCategoryList']);
             Route::post('blog/category/add', [BlogManageController::class, 'blogCategoryStore']);
             Route::get('blog/category/{id}', [BlogManageController::class, 'blogCategoryShow']);
-            Route::get('blog/category/list', [BlogManageController::class, 'blogCategoryList']);
             Route::post('blog/category/update', [BlogManageController::class, 'blogCategoryUpdate']);
+            Route::post('blog/category/status-change', [BlogManageController::class, 'categoryStatusChange']);
             Route::delete('blog/category/remove/{id}', [BlogManageController::class, 'blogCategoryDestroy']);
         });
 

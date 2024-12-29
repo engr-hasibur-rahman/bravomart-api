@@ -165,7 +165,40 @@ class BlogManageController extends Controller
         return $this->success(translate('messages.delete_success'));
     }
 
-    public function blogCategoryList(Request $request)
+    public function categoryStatusChange(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:blog_categories,id',
+            'status' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => $validator->errors(),
+            ]);
+        }
+        try {
+            $category = BlogCategory::findOrFail($request->id);
+            $category->status = $request->status;
+            $category->save();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Blog Category']),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function blogCategoryList()
     {
         $category = BlogCategory::all();
         return response()->json(BlogCategoryListResource::collection($category));
