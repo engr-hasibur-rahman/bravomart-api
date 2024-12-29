@@ -33,6 +33,7 @@ class PermissionController extends Controller
         }
 
         if($shop_count > 0) {
+
             // Handle permissions for any route under "seller/store/"
             if ($user->activity_scope=='store_level' && $request->is('seller/store/*') && !$request->is('seller/store/list')) {
 //            if ($user->activity_scope=='store_level' && $request->is('seller/store/list')) {
