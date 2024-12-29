@@ -97,4 +97,26 @@ class CustomerAddressManageController extends Controller
             ], 500);
         }
     }
+
+    public function destroy(Request $request)
+    {
+        try {
+            $address = CustomerAddress::where('id', $request->id)
+                ->where('customer_id', auth('api_customer')->user()->id)
+                ->first();
+            $address->delete();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.delete_success', ['name' => 'Address']),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 }
