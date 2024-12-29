@@ -6,6 +6,7 @@ use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlogRequest;
 use App\Http\Requests\CommentRequest;
+use App\Http\Resources\Blog\BlogCategoryListResource;
 use App\Interfaces\BlogManageInterface;
 use App\Models\Blog;
 use App\Models\BlogCategory;
@@ -70,13 +71,18 @@ class BlogManageController extends Controller
 
     public function blogCategoryUpdate(Request $request)
     {
-
         try {
-            $validatedCategory = $request->validate([
-                'id' => 'required',
-                'name' => 'required',
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|unique:blog_categories,name,' . $request->id,
             ]);
-            $category = $this->blogRepo->update($validatedCategory, BlogCategory::class);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => $validator->errors()
+                ]);
+            }
+            $category = $this->blogRepo->update($request->all(), BlogCategory::class);
             $this->blogRepo->updateTranslation($request, $category, 'App\Models\BlogCategory', $this->blogRepo->translationKeysForCategory());
             if ($category) {
                 return $this->success(translate('messages.update_success', ['name' => 'Blog Category']));
@@ -157,6 +163,12 @@ class BlogManageController extends Controller
     {
         $this->blogRepo->delete($id, Blog::class);
         return $this->success(translate('messages.delete_success'));
+    }
+
+    public function blogCategoryList(Request $request)
+    {
+        $category = BlogCategory::all();
+        return response()->json(BlogCategoryListResource::collection($category));
     }
     /* <---------------------------------------------------Blog end-----------------------------------------------------> */
     /* <---------------------------------------------------Comment start-----------------------------------------------------> */

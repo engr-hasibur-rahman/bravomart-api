@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
@@ -265,6 +266,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
             Route::post('blog/category/add', [BlogManageController::class, 'blogCategoryStore']);
             Route::get('blog/category/{id}', [BlogManageController::class, 'blogCategoryShow']);
+            Route::get('blog/category/list', [BlogManageController::class, 'blogCategoryList']);
             Route::post('blog/category/update', [BlogManageController::class, 'blogCategoryUpdate']);
             Route::delete('blog/category/remove/{id}', [BlogManageController::class, 'blogCategoryDestroy']);
         });
@@ -401,9 +403,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
     Route::group(['middleware' => ['check.email.verification.option']], function () {
         Route::group(['prefix' => 'address/'], function () {
-            Route::post('add', [AddressManageController::class, 'store']);
-            Route::post('customer-addresses', [AddressManageController::class, 'index']);
-            Route::post('make-default', [AddressManageController::class, 'defaultAddress']);
+            Route::post('add', [CustomerAddressManageController::class, 'store']);
+            Route::post('customer-addresses', [CustomerAddressManageController::class, 'index']);
+            Route::get('customer-address', [CustomerAddressManageController::class, 'show']);
+            Route::post('make-default', [CustomerAddressManageController::class, 'defaultAddress']);
         });
         Route::group(['prefix' => 'support-ticket'], function () {
             Route::get('list', [SupportTicketManageController::class, 'index']);
