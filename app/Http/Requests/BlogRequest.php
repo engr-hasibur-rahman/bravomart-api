@@ -31,7 +31,7 @@ class BlogRequest extends FormRequest
             'description' => 'required|string',
             'image' => 'nullable',
             'views' => 'nullable|integer|min:0',
-            'visibility' => 'required|in:public,private',
+            'visibility' => 'nullable',
             'status' => 'required|boolean',
             'schedule_date' => 'nullable|date|after_or_equal:today|date_format:Y-m-d',
             'tag_name' => 'nullable',
@@ -39,7 +39,7 @@ class BlogRequest extends FormRequest
             'meta_description' => 'nullable',
             'meta_keywords' => 'nullable',
             'meta_image' => 'nullable',
-            'author' => 'required|string|max:255',
+            'author' => 'nullable|string|max:255',
         ];
     }
     public function messages()
@@ -58,14 +58,12 @@ class BlogRequest extends FormRequest
             'description.string' => __('validation.string'),
             'views.integar' => __('validation.integar'),
             'views.min' => __('validation.min_digits'),
-            'visibility.required' => __('validation.required'),
             'visibility.in' => __('validation.in', ['enum' => 'public, private']),
             'status.required' => __('validation.required'),
             'status.boolean' => __('validation.boolean'),
             'schedule_date.date' => __('validation.date'),
             'schedule_date.after_or_equal' => __('validation.after_or_equal'),
             'schedule_date.date_format' => __('validation.date_format'),
-            'author.required' => __('validation.required'),
             'author.string' => __('validation.string'),
             'author.max' => __('validation.max.string'),
         ];
