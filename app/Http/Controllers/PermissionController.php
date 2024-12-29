@@ -33,9 +33,9 @@ class PermissionController extends Controller
         }
 
         if($shop_count > 0) {
-
             // Handle permissions for any route under "seller/store/"
             if ($user->activity_scope=='store_level' && $request->is('seller/store/*') && !$request->is('seller/store/list')) {
+//            if ($user->activity_scope=='store_level' && $request->is('seller/store/list')) {
                 $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
             }elseif($user->activity_scope == 'system_level'){
                 $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
