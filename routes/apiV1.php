@@ -408,6 +408,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('customer-addresses', [CustomerAddressManageController::class, 'index']);
             Route::get('customer-address', [CustomerAddressManageController::class, 'show']);
             Route::post('make-default', [CustomerAddressManageController::class, 'defaultAddress']);
+            Route::delete('remove/{id}', [CustomerAddressManageController::class, 'destroy']);
         });
         Route::group(['prefix' => 'support-ticket'], function () {
             Route::get('list', [SupportTicketManageController::class, 'index']);
