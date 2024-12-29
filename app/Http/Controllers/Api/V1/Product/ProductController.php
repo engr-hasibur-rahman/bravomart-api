@@ -89,7 +89,7 @@ class ProductController extends Controller
 
     public function deleted_records($storeSlug)
     {
-        dd($storeSlug);
+
         $records = $this->productRepo->records(true,$storeSlug);
         return response()->json([
             "data" => $records,

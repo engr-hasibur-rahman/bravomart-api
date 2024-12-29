@@ -27,7 +27,7 @@ class BlogRequest extends FormRequest
             'admin_id' => 'nullable|exists:users,id',
             'category_id' => 'nullable|exists:blog_categories,id',
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:blogs,slug,' . $this->id,
+            'slug' => 'nullable|string|max:255|unique:blogs,slug,' . $this->id,
             'description' => 'required|string',
             'image' => 'nullable',
             'views' => 'nullable|integer|min:0',
