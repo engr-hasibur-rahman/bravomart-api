@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('payment_gateways', function (Blueprint $table) {
             $table->id();
-            
+            $table->string('name');
+            $table->string('slug');
+            $table->string('image')->nullable();
+            $table->longText('description')->nullable();
+            $table->longText('auth_credentials')->nullable();
+            $table->boolean('is_test_mode')->default(0);
+            $table->boolean('status')->default(0)->comment('0 Inactive, 1 Active');
             $table->timestamps();
         });
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\PaymentGateways\Database\Seeders;
+namespace Modules\PaymentGateways\database\seeders;
 
 use Illuminate\Database\Seeder;
 
