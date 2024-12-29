@@ -81,7 +81,7 @@ class CustomerAddressManageController extends Controller
         try {
             CustomerAddress::findOrFail($request->id);
             // Set the customer ID if authenticated
-            $request['customer_id'] = auth('api')->id();
+            $request['customer_id'] = auth('api_customer')->user()->id;
             $this->addressRepo->handleDefaultAddress($request->all());
             return response()->json([
                 'status' => true,

@@ -88,7 +88,9 @@ class AddressManageRepository implements AddressManageInterface
                     ->where('is_default', 1)
                     ->update(['is_default' => 0]);
             }
-            $this->address->where('id', $data['id'])->update(['is_default' => $data['is_default']]);
+            $this->address->where('id', $data['id'])
+                ->where('customer_id', $data['customer_id'])
+                ->update(['is_default' => $data['is_default']]);
             return true;
         } catch (\Exception $e) {
             // Return the error message
