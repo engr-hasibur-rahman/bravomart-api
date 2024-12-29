@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\PaymentGateways\Http\Controllers\PaymentGatewaysController;
+use Modules\PaymentGateways\app\Http\Controllers\PaymentGatewaysController;
 
 /*
 |--------------------------------------------------------------------------

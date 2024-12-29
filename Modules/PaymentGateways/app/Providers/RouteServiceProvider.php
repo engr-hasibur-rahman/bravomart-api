@@ -7,7 +7,10 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 
 class RouteServiceProvider extends ServiceProvider
 {
-    protected string $name = 'PaymentGateways';
+    /**
+     * The module namespace to assume when generating URLs to actions.
+     */
+    protected string $moduleNamespace = 'Modules\PaymentGateways\app\Http\Controllers';
 
     /**
      * Called before routes are registered.
@@ -25,6 +28,7 @@ class RouteServiceProvider extends ServiceProvider
     public function map(): void
     {
         $this->mapApiRoutes();
+
         $this->mapWebRoutes();
     }
 
@@ -35,7 +39,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes(): void
     {
-        Route::middleware('web')->group(module_path($this->name, '/routes/web.php'));
+        Route::middleware('web')
+            ->namespace($this->moduleNamespace)
+            ->group(module_path('PaymentGateways', '/routes/web.php'));
     }
 
     /**
@@ -45,9 +51,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes(): void
     {
-        Route::middleware('api')
-            ->prefix('api')
-            ->name('api.')
-            ->group(module_path($this->name, '/routes/api.php'));
+        Route::prefix('api')
+            ->middleware('api')
+            ->namespace($this->moduleNamespace)
+            ->group(module_path('PaymentGateways', '/routes/api.php'));
     }
 }

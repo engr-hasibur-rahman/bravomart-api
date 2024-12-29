@@ -1,10 +1,9 @@
 <?php
 
-namespace Modules\PaymentGateways\Models;
+namespace Modules\PaymentGateways\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\PaymentGateways\Database\Factories\PaymentGatewayFactory;
 
 class PaymentGateway extends Model
 {
@@ -13,10 +12,14 @@ class PaymentGateway extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
 
-    // protected static function newFactory(): PaymentGatewayFactory
-    // {
-    //     // return PaymentGatewayFactory::new();
-    // }
+    protected $fillable = [
+        'name',
+        'slug',
+        'image',
+        'description',
+        'auth_credentials',
+        'is_test_mode',
+        'status',
+    ];
 }
