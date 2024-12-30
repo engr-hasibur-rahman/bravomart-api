@@ -32,6 +32,39 @@ class AddressManageRepository implements AddressManageInterface
         }
     }
 
+    public function updateAddress(int $id, array $data)
+    {
+        try {
+            // Handle the default address logic
+            if (isset($data['is_default']) && $data['is_default']) {
+                $this->address
+                    ->where('customer_id', auth('api_customer')->user()->id)
+                    ->where('is_default', 1)
+                    ->update(['is_default' => 0]);
+            }
+
+            // Retrieve the specific address by ID
+            $address = $this->address
+                ->where('id', $id)
+                ->where('customer_id', auth('api_customer')->user()->id)
+                ->first();
+
+            if (!$address) {
+                throw new \Exception(__('messages.invalid.address'), 404);
+            }
+
+            // Update the address
+            $address->update($data);
+
+            return true;
+
+        } catch (\Exception $e) {
+            // Return the error message
+            return $e->getMessage(); // Adjust this to throw an exception if necessary.
+        }
+    }
+
+
     public function getAddress(?string $id, ?string $type, ?string $status)
     {
         try {

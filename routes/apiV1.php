@@ -425,6 +425,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
     Route::group(['middleware' => ['check.email.verification.option']], function () {
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
+            Route::post('update', [CustomerAddressManageController::class, 'update']);
             Route::get('customer-addresses', [CustomerAddressManageController::class, 'index']);
             Route::get('customer-address', [CustomerAddressManageController::class, 'show']);
             Route::post('make-default', [CustomerAddressManageController::class, 'defaultAddress']);
