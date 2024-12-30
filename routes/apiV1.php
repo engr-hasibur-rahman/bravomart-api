@@ -318,7 +318,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- admin route end ------------------------- */
 
 
-
     /* --------------------- vendor route start ------------------------- */
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
@@ -337,29 +336,31 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::put('status/{id}', [StoreManageController::class, 'status_update']);
                 Route::delete('remove/{id}', [StoreManageController::class, 'destroy']);
                 Route::get('deleted/records', [StoreManageController::class, 'deleted_records']);
-                // seller product manage
+
                 Route::group(['prefix' => '{storeSlug}'], function () {
-                    Route::get('product/list', [ProductController::class, 'index']);
-                    Route::get('product/{slug}', [ProductController::class, 'show']);
-                    Route::post('product/add', [ProductController::class, 'store']);
-                    Route::post('product/update/{slug}', [ProductController::class, 'update']);
-                    Route::delete('product/remove/{slug}', [ProductController::class, 'destroy']);
-                    Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
-                    Route::post('product/export', [ProductController::class, 'export']);
-                    Route::post('product/import', [ProductController::class, 'import']);
+                    // seller product manage
+                    Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_PRODUCT_ADD->value]], function () {
+                        Route::get('product/list', [ProductController::class, 'index']);
+                        Route::get('product/{slug}', [ProductController::class, 'show']);
+                        Route::post('product/add', [ProductController::class, 'store']);
+                        Route::post('product/update/{slug}', [ProductController::class, 'update']);
+                        Route::delete('product/remove/{slug}', [ProductController::class, 'destroy']);
+                        Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
+                        Route::post('product/export', [ProductController::class, 'export']);
+                        Route::post('product/import', [ProductController::class, 'import']);
+                    });
+                    // Staff manage
+                    Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
+                        Route::get('staff/list', [StaffController::class, 'index']);
+                        Route::post('staff/add', [StaffController::class, 'store']);
+                        Route::get('staff/{id}', [StaffController::class, 'show']);
+                        Route::post('staff/update', [StaffController::class, 'update']);
+                        Route::post('staff/change-status', [StaffController::class, 'changestatus']);
+                    });
                 });
             });
         });
 
-
-        // Staff manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
-            Route::get('staff/list', [StaffController::class, 'index']);
-            Route::post('staff/add', [StaffController::class, 'store']);
-            Route::get('staff/{id}', [StaffController::class, 'show']);
-            Route::post('staff/update', [StaffController::class, 'update']);
-            Route::post('staff/change-status', [StaffController::class, 'changestatus']);
-        });
 
         // Banner manage
         Route::post('banner/add', [BannerManageController::class, 'store']);
@@ -423,7 +424,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
     Route::group(['middleware' => ['check.email.verification.option']], function () {
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
-            Route::post('customer-addresses', [CustomerAddressManageController::class, 'index']);
+            Route::get('customer-addresses', [CustomerAddressManageController::class, 'index']);
             Route::get('customer-address', [CustomerAddressManageController::class, 'show']);
             Route::post('make-default', [CustomerAddressManageController::class, 'defaultAddress']);
             Route::delete('remove/{id}', [CustomerAddressManageController::class, 'destroy']);
