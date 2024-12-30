@@ -18,9 +18,22 @@ return new class extends Migration
             $table->unsignedBigInteger('area_id')->nullable();
             $table->unsignedBigInteger('package_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
-            $table->unsignedBigInteger('product_sku')->nullable();
-            $table->unsignedBigInteger('product_details')->nullable();
-            $table->unsignedBigInteger('variation_details')->nullable();
+            $table->string('product_sku')->nullable();
+            $table->string('product_details')->nullable();
+            $table->string('variant_details')->nullable();
+            $table->string('add_ons')->nullable();
+
+            $table->decimal('rate_bef_discount')->nullable();
+            $table->unsignedBigInteger('product_campaign_id')->nullable();
+            $table->string('discount_type')->nullable();
+            $table->decimal('discount_store_percent')->nullable();
+            $table->decimal('discount_admin_percent')->nullable();
+            $table->decimal('discount_store_amount')->nullable();
+            $table->decimal('discount_admin_amount')->nullable();
+            $table->decimal('rate')->nullable();
+            $table->decimal('quantity')->nullable();
+            $table->decimal('total_add_on_value')->nullable();
+            $table->decimal('line_total')->nullable();
 
             $table->timestamps();
         });
