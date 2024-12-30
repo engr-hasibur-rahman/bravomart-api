@@ -37,7 +37,7 @@ class PaymentGatewaysController extends Controller
             'description' => 'nullable|string',
             'auth_credentials' => 'required|array',
             'status' => 'required|boolean',
-            'test_mode' => 'required|boolean',
+            'is_test_mode' => 'required|boolean',
         ]);
 
         // Check if validation fails
@@ -67,7 +67,7 @@ class PaymentGatewaysController extends Controller
             'image' => $request->get('image', $gateway->image),
             'description' => $request->get('description', $gateway->description),
             'status' => $request->get('status', $gateway->status),
-            'test_mode' => $request->get('test_mode', $gateway->test_mode),
+            'is_test_mode' => $request->get('is_test_mode', $gateway->is_test_mode),
             'auth_credentials' => json_encode($auth_credentials),
         ]);
 
