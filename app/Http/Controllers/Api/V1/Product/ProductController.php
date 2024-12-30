@@ -47,6 +47,7 @@ class ProductController extends Controller
         $slug = MultilangSlug::makeSlug(Product::class, $request->name, 'slug');
         $request['slug'] = $slug;
         $request['store_id'] = ComMerchantStore::where('slug', $storeSlug)->first()->id;
+        $request['type'] = ComMerchantStore::where('slug', $storeSlug)->first()->store_type;
         $product = $this->productRepo->store($request->all());
         $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
@@ -90,12 +91,13 @@ class ProductController extends Controller
     public function deleted_records($storeSlug)
     {
 
-        $records = $this->productRepo->records(true,$storeSlug);
+        $records = $this->productRepo->records(true, $storeSlug);
         return response()->json([
             "data" => $records,
             "massage" => "Records were restored successfully!"
         ], 201);
     }
+
     /* Change product status (Admin only) */
     public function changeStatus(Request $request)
     {
