@@ -76,6 +76,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/city-list', [FrontendController::class, 'citiesList']);
     Route::get('/area-list', [FrontendController::class, 'areasList']);
     Route::get('/tag-list', [FrontendController::class, 'tagList']);
+    Route::get('/brand-list', [FrontendController::class, 'brandList']);
 });
 
 
@@ -192,14 +193,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('slider/remove/{id}', [SliderManageController::class, 'destroy']);
         });
         // Product Brand Routing
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_BRAND_LIST->value]], function () {
-            Route::get('product-brands', [ProductBrandController::class, 'index']);
+        Route::group(['prefix' => 'product-brands/'], function () {
+
+            Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_BRAND_ADD->value]], function () {
+                Route::get('list', [ProductBrandController::class, 'index']);
+                Route::post('add', [ProductBrandController::class, 'store']);
+                Route::get('{id}', [ProductBrandController::class, 'show']);
+                Route::post('approve', [ProductBrandController::class, 'productBrandStatus']);
+            });
         });
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_BRAND_ADD->value]], function () {
-            Route::post('product-brands', [ProductBrandController::class, 'store']);
-            Route::get('product-brands/{id}', [ProductBrandController::class, 'show']);
-            Route::post('product-brands/approve', [ProductBrandController::class, 'productBrandStatus']);
-        });
+
 
         // Product Category Routing
         Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_CATEGORY_LIST->value]], function () {
@@ -337,28 +340,25 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [StoreManageController::class, 'destroy']);
                 Route::get('deleted/records', [StoreManageController::class, 'deleted_records']);
 
-                Route::group(['prefix' => '{storeSlug}'], function () {
-                    // seller product manage
-                    Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_PRODUCT_ADD->value]], function () {
 
-                    });
-                    Route::get('product/list', [ProductController::class, 'index']);
-                    Route::get('product/{slug}', [ProductController::class, 'show']);
-                    Route::post('product/add', [ProductController::class, 'store']);
-                    Route::post('product/update/{slug}', [ProductController::class, 'update']);
-                    Route::delete('product/remove/{slug}', [ProductController::class, 'destroy']);
-                    Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
-                    Route::post('product/export', [ProductController::class, 'export']);
-                    Route::post('product/import', [ProductController::class, 'import']);
-                    // Staff manage
-                    Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
-                        Route::get('staff/list', [StaffController::class, 'index']);
-                        Route::post('staff/add', [StaffController::class, 'store']);
-                        Route::get('staff/{id}', [StaffController::class, 'show']);
-                        Route::post('staff/update', [StaffController::class, 'update']);
-                        Route::post('staff/change-status', [StaffController::class, 'changestatus']);
-                    });
+                // seller product manage
+                Route::get('product/list', [ProductController::class, 'index']);
+                Route::get('product', [ProductController::class, 'show']);
+                Route::post('product/add', [ProductController::class, 'store']);
+                Route::post('product/update', [ProductController::class, 'update']);
+                Route::delete('product/remove/{id}', [ProductController::class, 'destroy']);
+                Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
+                Route::post('product/export', [ProductController::class, 'export']);
+                Route::post('product/import', [ProductController::class, 'import']);
+                // Staff manage
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
+                    Route::get('staff/list', [StaffController::class, 'index']);
+                    Route::post('staff/add', [StaffController::class, 'store']);
+                    Route::get('staff/{id}', [StaffController::class, 'show']);
+                    Route::post('staff/update', [StaffController::class, 'update']);
+                    Route::post('staff/change-status', [StaffController::class, 'changestatus']);
                 });
+
             });
         });
 
