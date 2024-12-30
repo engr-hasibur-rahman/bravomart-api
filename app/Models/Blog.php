@@ -32,6 +32,9 @@ class Blog extends Model
         'meta_description',
         'meta_keywords',
     ];
+    protected $casts = [
+        'schedule_date' => 'datetime',
+    ];
 
     public function translations()
     {
