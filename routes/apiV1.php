@@ -277,7 +277,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         // Pages manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PAGES_LIST->value]], function () {
             Route::get('pages/list', [PagesManageController::class, 'pagesIndex']);
             Route::post('pages/store', [PagesManageController::class, 'pagesStore']);
             Route::get('pages/{id}', [PagesManageController::class, 'pagesShow']);
@@ -287,12 +287,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         /*--------------------- System management ----------------------------*/
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
+        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_SYSTEM_MANAGEMENT_SETTINGS->value]], function () {
             Route::group(['prefix' => 'system-management'], function () {
                 Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings']);
                 Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization']);
                 Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings']);
-                Route::match(['get', 'post'], '/payment-settings', [PaymentSettingsController::class, 'paymentSettings']);
+//                Route::match(['get', 'post'], '/payment-settings', [PaymentSettingsController::class, 'paymentSettings']);
                 Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings']);
                 Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings']);
                 Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings']);

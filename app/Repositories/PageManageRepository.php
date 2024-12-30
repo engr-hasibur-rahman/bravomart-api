@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\PageDetailsResource;
 use App\Interfaces\PageManageInterface;
 use App\Models\Page;
 use App\Models\Translation;
@@ -22,54 +23,24 @@ class PageManageRepository implements PageManageInterface
  
     public function getPaginatedPage(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $blog = Page::leftJoin('translations as title_translations', function ($join) use ($language) {
-            $join->on('blogs.id', '=', 'title_translations.translatable_id')
-                ->where('title_translations.translatable_type', '=', Page::class)
-                ->where('title_translations.language', '=', $language)
-                ->where('title_translations.key', '=', 'title');
-        })
-            ->leftJoin('translations as content_translations', function ($join) use ($language) {
-                $join->on('blogs.id', '=', 'content_translations.translatable_id')
-                    ->where('content_translations.translatable_type', '=', Page::class)
-                    ->where('content_translations.language', '=', $language)
-                    ->where('content_translations.key', '=', 'content');
-            })           
-            ->select(
-                'blogs.*',
-                DB::raw('COALESCE(title_translations.value, pages.title) as title'),
-                DB::raw('COALESCE(content_translations.value, pages.content) as content'),
-                DB::raw('COALESCE(meta_title_translations.value, pages.meta_title) as meta_title'),
-                DB::raw('COALESCE(meta_content_translations.value, pages.meta_description) as meta_description'),
-                DB::raw('COALESCE(meta_keywords_translations.value, pages.meta_keywords) as meta_keywords')
-            );
-        // Apply search filter if search parameter exists
-        if ($search) {
-            $blog->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', blogs.title, blogs.description, blogs.meta_title, blogs.meta_description, blogs.meta_keywords)"), 'like', "%{$search}%")
-                    ->orWhere(DB::raw("CONCAT_WS(' ', title_translations.value, content_translations.value, meta_title_translations.value, meta_content_translations.value, meta_keywords_translations.value)"), 'like', "%{$search}%");
-            });
-        }
-        // Apply sorting and pagination
-        // Return the result
-        $paginatedBlog = $blog
-            ->orderBy($sortField, $sort)
-            ->paginate($limit);
-        return BlogListResource::collection($paginatedBlog);
+        $query = Page::query()->with('related_translations');
+        $paginatedPage = $query->orderBy($sortField, $sort)->paginate($limit);
+        return PageDetailsResource::collection($paginatedPage);
     }
 
     public function getPageById(int|string $id)
     {
         try {
-            $blog = Blog::find($id);
+            $page = Page::find($id);
 
-            if (!$blog) {
+            if (!$page) {
                 return response()->json([
                     "message" => __('messages.data_not_found')
                 ], 404);
             }
 
             // Get all translations grouped by language
-            $translations = $blog->translations()->get()->groupBy('language');
+            $translations = $page->translations()->get()->groupBy('language');
 
             // Prepare translations data
             $transformedData = [];
@@ -77,20 +48,20 @@ class PageManageRepository implements PageManageInterface
                 $languageInfo = ['language' => $language];
 
                 // Iterate all column names to assign language values
-                foreach ($this->blog->translationKeys as $columnName) {
+                foreach ($this->page->translationKeys as $columnName) {
                     $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
                 }
                 $transformedData[] = $languageInfo;
             }
 
-            // Return response with BlogDetailsResource and translations
+            // Return response with Page and translations
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => new BlogDetailsResource($blog),
+                'data' => new PageDetailsResource($page),
                 'translations' => $transformedData
-            ], 200);
+            ]);
 
         } catch (\Throwable $th) {
             return response()->json([
