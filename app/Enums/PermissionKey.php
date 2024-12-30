@@ -228,11 +228,6 @@ enum PermissionKey: string
     case IMAGE_GALLERY = 'image-gallery';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //              Pages management                                                           //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ADMIN_PAGES_MANAGE = '/admin/pages-manage';
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              System management                                                           //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case LOGIN_SETUP = 'login-setup';
@@ -244,6 +239,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              System-management Settings                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_SYSTEM_MANAGEMENT_SETTINGS = '/admin/system-management/settings';
     case GENERAL_SETTINGS = '/admin/system-management/general-settings';
     case APPEARANCE_SETTINGS = 'appearance_settings';
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';
@@ -251,6 +247,7 @@ enum PermissionKey: string
     case SMTP_SETTINGS = '/admin/system-management/email-settings/smtp';
     case EMAIL_TEMPLATES = '/admin/system-management/email-settings/templates';
     case PAYMENT_SETTINGS = '/admin/system-management/payment-settings';
+
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
     case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
     case DATABASE_UPDATE_CONTROLS  = '/admin/system-management/database-update-controls';
@@ -273,6 +270,10 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_TICKETS_DEPARTMENT = '/admin/ticket/department';
     case ADMIN_ALL_TICKETS = '/admin/ticket/all-tickets';
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              Dynamic Pages Management                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_PAGES_LIST = '/admin/pages/list';
     // ############################## Admin PermissionKey End ################################
 
 
