@@ -149,10 +149,7 @@ class ProductManageRepository implements ProductManageInterface
             $data = Arr::except($data, ['translations']);
 
             // Retrieve the product by ID
-            $product = Product::where('store_id', $data['store_id'])
-                ->where('slug', $data['slug'])
-                ->first();
-
+            $product = Product::findorfail($data['id']);
             // Update the product details
             $product->update($data);
 
@@ -160,12 +157,11 @@ class ProductManageRepository implements ProductManageInterface
             if (!empty($data['variants']) && is_array($data['variants'])) {
                 $variants = array_map(function ($variant) use ($product) {
                     // Generate the variant slug
-                    $variant_slug = MultilangSlug::makeSlug(ProductVariant::class, $variant['variant_slug'], 'variant_slug');
+                    $variant_slug = generateVariantSlug([
+                        'color' => $variant['color'],
+                        'size' => $variant['size'],
+                    ]);
                     $variant['variant_slug'] = $variant_slug; // Assign the generated slug
-
-                    // Generate a SKU for the variant
-                    $sku = generateUniqueSku(); // This function generates a unique SKU
-                    $variant['sku'] = $sku; // Assign the generated SKU
                     $variant['product_id'] = $product->id;
                     return $variant;
                 }, $data['variants']);
@@ -220,9 +216,10 @@ class ProductManageRepository implements ProductManageInterface
     // Fetch product data of specific id
     public function getProductById(array $data)
     {
+
         try {
-            $product = Product::where('slug', $data['slug'])
-                ->where('store_id', $data['store_id'])
+            $product = Product::with('related_translations')
+                ->where('id', $data['id'])
                 ->first();
             $translations = $product->translations()->get()->groupBy('language');
             // Initialize an array to hold the transformed data
@@ -281,18 +278,55 @@ class ProductManageRepository implements ProductManageInterface
         return true;
     }
 
-    // Fetch deleted records(true = only trashed records, false = all records with trashed)
-    public function records(bool $onlyDeleted = false, string $storeSlug)
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
-        $store_id = ComMerchantStore::where('slug', $storeSlug)->first()->id;
+        $translations = [];
+        if ($request['translations']) {
+            foreach ($request['translations'] as $translation) {
+                foreach ($colNames as $key) {
+
+                    // Fallback value if translation key does not exist
+                    $translatedValue = $translation[$key] ?? null;
+
+                    // Skip translation if the value is NULL
+                    if ($translatedValue === null) {
+                        continue; // Skip this field if it's NULL
+                    }
+
+                    $trans = $this->translation->where('translatable_type', $refPath)->where('translatable_id', $refid)
+                        ->where('language', $translation['language_code'])->where('key', $key)->first();
+                    if ($trans != null) {
+                        $trans->value = $translatedValue;
+                        $trans->save();
+                    } else {
+                        $translations[] = [
+                            'translatable_type' => $refPath,
+                            'translatable_id' => $refid,
+                            'language' => $translation['language_code'],
+                            'key' => $key,
+                            'value' => $translatedValue,
+                        ];
+                    }
+                }
+            }
+        }
+        if (count($translations)) {
+            $this->translation->insert($translations);
+        }
+        return true;
+    }
+
+    // Fetch deleted records(true = only trashed records, false = all records with trashed)
+    public function records(bool $onlyDeleted = false)
+    {
         try {
             switch ($onlyDeleted) {
                 case true:
-                    $records = Product::where('store_id', $store_id)->onlyTrashed()->get();
+                    $records = Product::onlyTrashed()->get();
                     break;
 
                 default:
-                    $records = Product::where('store_id', $store_id)->withTrashed()->get();
+                    $records = Product::withTrashed()->get();
                     break;
             }
             return $records;

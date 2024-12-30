@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\ProductBrand;
 use App\Models\Translation;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
@@ -48,9 +49,20 @@ class ProductBrandRepository extends BaseRepository
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => $request['display_order'],
-            'brand_logo' => $request->has('brand_logo') ? ComHelper::uploadSingle(UploadDirectory::BRAND->value, $request->file('brand_logo'),$brandId!=null? $brand->brand_logo:""):"",
+            'brand_logo' => $request->has('brand_logo') ? ComHelper::uploadSingle(UploadDirectory::BRAND->value, $request->file('brand_logo'), $brandId != null ? $brand->brand_logo : "") : "",
+            'seller_relation_with_brand' => $request['seller_relation_with_brand'] ?? null,
+            'authorization_valid_from' => $request->has('authorization_valid_from')
+                ? Carbon::parse($request['authorization_valid_from'])->format('Y-m-d')
+                : null,
+            'authorization_valid_to' => $request->has('authorization_valid_to')
+                ? Carbon::parse($request['authorization_valid_to'])->format('Y-m-d')
+                : null,
+            'created_by' => auth()->user()->id ?? null, // Assuming authentication is used
+            'updated_by' => auth()->user()->id ?? null,
+            'status' => $request['status'] ?? 'active', // Default to 'active' if not provided
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
-
         if ($brandId) {
             // Update existing brand
             $brand->update($data);
@@ -108,10 +120,6 @@ class ProductBrandRepository extends BaseRepository
     }
 
 
-
-
-
-
     public function updateProductBrand($request, $brand, $fileUploadRepository)
     {
         // Prepare data for default brand
@@ -123,7 +131,7 @@ class ProductBrandRepository extends BaseRepository
             'display_order' => 2,
         ];
 
-            
+
         $brand = $this->findOrFail($request->id)->update($data);
 
         // $brand = $this->create($data);
