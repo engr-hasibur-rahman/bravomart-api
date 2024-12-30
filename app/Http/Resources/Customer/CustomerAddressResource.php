@@ -26,7 +26,7 @@ class CustomerAddressResource extends JsonResource
             "floor" => $this->floor,
             "postal_code" => $this->postal_code,
             "is_default" => (bool)$this->is_default,
-            "status" => $this->status ? "Active" : "Inactive",
+            "status" => $this->status,
         ];
     }
 
