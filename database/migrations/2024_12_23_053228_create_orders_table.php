@@ -13,10 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('customer_id')->nullable();
-            $table->unsignedBigInteger('area_id')->nullable();
-            $table->string('shipping_type')->nullable();
             $table->string('shipping_address_id')->nullable();
             $table->string('shipping_time_preferred')->nullable();
             $table->string('delivery_status')->nullable();
@@ -50,7 +47,7 @@ return new class extends Migration
         });
 
         Schema::table('orders', function($table) {
-            $table->foreign('store_id')->references('id')->on('com_merchant_stores')->onDelete('cascade');;
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
         });
     }
 

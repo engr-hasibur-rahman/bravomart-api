@@ -46,6 +46,7 @@ return [
     'store.doesnt.belongs.to.seller' => 'Store doesn\'t belongs to this seller!',
 
     'default.address' => 'Default address can\'t be deleted!',
+    'invalid.address' => 'Invalid address!',
 
 ];
 

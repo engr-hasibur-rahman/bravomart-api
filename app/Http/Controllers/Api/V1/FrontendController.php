@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\ProductBrand\ProductBrandPublicResource;
 use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
@@ -15,6 +16,7 @@ use App\Http\Resources\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
+use App\Http\Resources\ProductBrandResource;
 use App\Http\Resources\ProductCategoryResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
@@ -26,6 +28,7 @@ use App\Interfaces\ProductManageInterface;
 use App\Interfaces\SliderManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Product;
+use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\Slider;
 use App\Models\Tag;
@@ -598,6 +601,42 @@ class FrontendController extends Controller
         // Get the countries from the repository
         $tags = Tag::all();
         return TagPublicResource::collection($tags);
+    }
+
+    public function brandList(Request $request)
+    {
+        // If request has limit
+        $limit = $request->limit ?? 10;
+        // If request has language
+        $language = $request->language ?? DEFAULT_LANGUAGE;
+        //Search parameters
+        $search = $request->search;
+        // Extract brands table with translations table with condition
+        $brands = ProductBrand::leftJoin('translations', function ($join) use ($language) {
+            $join->on('product_brand.id', '=', 'translations.translatable_id')
+                ->where('translations.translatable_type', '=', ProductBrand::class)
+                ->where('translations.language', '=', $language)
+                ->where('translations.key', '=', 'brand_name');
+        })
+            ->select(
+                'product_brand.*',
+                DB::raw('COALESCE(translations.value, product_brand.brand_name) as brand_name')
+            );
+
+        // Apply search filter if search parameter exists
+        if ($search) {
+            $brands->where(function ($query) use ($search) {
+                $query->where('translations.value', 'like', "%{$search}%")
+                    ->orWhere('product_brand.brand_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Apply sorting and pagination
+        $brands = $brands->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->paginate($limit);
+
+        // Return a collection of ProductBrandResource (including the image)
+        return response()->json(ProductBrandPublicResource::collection($brands));
     }
 
 }

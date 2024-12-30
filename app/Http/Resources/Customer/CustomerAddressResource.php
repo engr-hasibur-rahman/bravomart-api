@@ -14,8 +14,22 @@ class CustomerAddressResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this->id,
+            "title" => $this->title,
+            "type" => $this->type,
+            "contact_number" => $this->contact_number,
+            "address" => $this->address,
+            "area" => $this->area->name,
+            "road" => $this->road,
+            "house" => $this->house,
+            "floor" => $this->floor,
+            "postal_code" => $this->postal_code,
+            "is_default" => (bool)$this->is_default,
+            "status" => $this->status,
+        ];
     }
+
     public function with($request): array
     {
         return [

@@ -24,14 +24,22 @@ class ComArea extends Model
     public $translationKeys = [
         'name'
     ];
+
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
     }
+
     public function stores()
     {
-        return $this->hasMany(ComMerchantStore::class,'area_id');
+        return $this->hasMany(ComMerchantStore::class, 'area_id');
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(CustomerAddress::class, 'area_id');
+    }
+
     // Method to get translation by language and key
     public function getTranslation(string $key, string $language)
     {
