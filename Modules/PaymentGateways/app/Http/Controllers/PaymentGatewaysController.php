@@ -13,7 +13,7 @@ class PaymentGatewaysController extends Controller
 {
     public function getSettings($gateway)
     {
-        $paymentGateway = PaymentGateway::where('name', $gateway)->first();
+        $paymentGateway = PaymentGateway::where('gateway_name', $gateway)->first();
 
         if (!$paymentGateway) {
             return response()->json([
@@ -33,11 +33,11 @@ class PaymentGatewaysController extends Controller
     {
         // Perform validation directly on the request
         $validator = Validator::make($request->all(), [
-            'gateway_name' => 'required|string|exists:payment_gateways,name',
+            'gateway_name' => 'required|string|exists:payment_gateways,gateway_name',
             'description' => 'nullable|string',
             'auth_credentials' => 'required|array',
             'status' => 'required|boolean',
-            'test_mode' => 'required|boolean',
+            'is_test_mode' => 'required|boolean',
         ]);
 
         // Check if validation fails
@@ -51,7 +51,7 @@ class PaymentGatewaysController extends Controller
         $validatedData = $validator->validated();
 
         // Proceed with business logic using $validatedData
-        $gateway = PaymentGateway::where('name', $validatedData['gateway_name'])->first();
+        $gateway = PaymentGateway::where('gateway_name', $validatedData['gateway_name'])->first();
 
 
 
@@ -67,7 +67,7 @@ class PaymentGatewaysController extends Controller
             'image' => $request->get('image', $gateway->image),
             'description' => $request->get('description', $gateway->description),
             'status' => $request->get('status', $gateway->status),
-            'test_mode' => $request->get('test_mode', $gateway->test_mode),
+            'is_test_mode' => $request->get('is_test_mode', $gateway->is_test_mode),
             'auth_credentials' => json_encode($auth_credentials),
         ]);
 

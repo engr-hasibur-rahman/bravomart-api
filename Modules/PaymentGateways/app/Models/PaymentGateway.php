@@ -13,8 +13,9 @@ class PaymentGateway extends Model
      * The attributes that are mass assignable.
      */
 
+
     protected $fillable = [
-        'name',
+        'gateway_name',
         'slug',
         'image',
         'description',
@@ -22,4 +23,9 @@ class PaymentGateway extends Model
         'is_test_mode',
         'status',
     ];
+
+
+
+
+
 }
