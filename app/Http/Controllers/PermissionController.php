@@ -33,9 +33,50 @@ class PermissionController extends Controller
         }
 
         if($shop_count > 0) {
-            $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
-        } else{
+            // Handle permissions for any route under "seller/store/"
+//            if ($user->activity_scope=='store_level' && !empty($request->store_slug) && $request->is('seller/store/*') && !$request->is('seller/store/list')) {
+            if ($user->activity_scope=='store_level' && !empty($request->store_slug)) {
+                $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+            }elseif($user->activity_scope == 'system_level'){
+                $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+            }else{
+                // Define the permissions array for non-store level seller
+                $permissionsArray = [
+                    'dashboard',
+                    'Store Settings',
+                    PermissionKey::STORE_MY_SHOP->value,
+                    'Staff control',
+                    PermissionKey::SELLER_STAFF_LIST->value,
+                ];
 
+                // Get specific permissions for non-store level users
+                $permissions = $user->rolePermissionsQuery()
+                    ->whereIn('name', $permissionsArray)
+                    ->whereNull('parent_id') // Top-level permissions
+                    ->with(['children' => function ($query) use ($permissionsArray) {
+                        $query->whereIn('name', $permissionsArray);
+                    }])
+                    ->get();
+
+                $permissions = $permissions->map(function ($permission) {
+                    // Check if options is a string and decode it into an array
+                    if (is_string($permission->options)) {
+                        $permission->options = json_decode($permission->options, true);
+                    }
+                    // Recursively decode the options of children permissions (if any)
+                    if (!empty($permission->children)) {
+                        $permission->children = collect($permission->children)->map(function ($child) {
+                            if (is_string($child->options)) {
+                                $child->options = json_decode($child->options, true);
+                            }
+                            return $child;
+                        });
+                    }
+                    return $permission;
+                });
+            }
+
+        } else{
             // Define the permissions array for non-store level seller
             $permissionsArray = [
                 'dashboard',
