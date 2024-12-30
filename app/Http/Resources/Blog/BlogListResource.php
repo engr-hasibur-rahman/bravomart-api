@@ -17,14 +17,13 @@ class BlogListResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
-            'description' => $this->description,
+            'blog_title' => $this->title,
             'category' => $this->category->name,
             'slug' => $this->slug,
             'image' => ImageModifier::generateImageUrl($this->image),
             'views' => $this->views,
             'visibility' => $this->visibility,
-            'status' => $this->status,
+            'status' => $this->status ? "published" : "draft",
             'schedule_date' => $this->schedule_date,
             'tags' => $this->tag_name,
             'author' => $this->author
