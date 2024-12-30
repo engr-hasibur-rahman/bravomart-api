@@ -35,7 +35,7 @@ class AddressManageRepository implements AddressManageInterface
     public function getAddress(?string $id, ?string $type, ?string $status)
     {
         try {
-            $customerId = auth('api')->id();
+            $customerId = auth('api_customer')->user()->id;
 
             // Build query to get addresses
             $query = $this->address->where('customer_id', $customerId);
