@@ -52,6 +52,20 @@ if (! function_exists('translate')) {
         //return $result;
     }
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
+    if (!function_exists('generateVariantSlug')) {
+        function generateVariantSlug(array $attributes): string
+        {
+            // Filter attributes to remove empty values
+            $filteredAttributes = array_filter($attributes, fn($value) => !empty($value));
+
+            // Sort attributes to ensure consistency in slug generation
+            ksort($filteredAttributes);
+
+            // Concatenate attribute values with a hyphen and convert to a slug
+            return Str::slug(implode('-', $filteredAttributes));
+        }
+    }
+
     if (!function_exists('capitalize_first_letter')) {
         function capitalize_first_letter(string $value): string
         {

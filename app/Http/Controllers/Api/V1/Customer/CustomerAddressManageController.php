@@ -46,6 +46,42 @@ class CustomerAddressManageController extends Controller
         }
     }
 
+    public function update(CustomerAddressRequest $request)
+    {
+        // Check if the user is authenticated
+        if (!auth('api_customer')->check()) {
+            return unauthorized_response();
+        }
+
+        try {
+            // Attempt to update the address using the repository
+            $result = $this->addressRepo->updateAddress($request->id, $request->all());
+
+            if ($result !== true) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => $result,
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Customer address']),
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Log the error or handle it as needed
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
     public function index(Request $request)
     {
         $id = $request->input('id');
