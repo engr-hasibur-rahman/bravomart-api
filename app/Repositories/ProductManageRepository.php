@@ -74,9 +74,11 @@ class ProductManageRepository implements ProductManageInterface
             if (!empty($data['variants']) && is_array($data['variants'])) {
                 $variants = array_map(function ($variant) use ($product) {
                     // Generate the variant slug
-                    $variant_slug = MultilangSlug::makeSlug(ProductVariant::class, $variant['variant_slug'], 'variant_slug');
+                    $variant_slug = generateVariantSlug([
+                        'color' => $variant['color'],
+                        'size' => $variant['size'],
+                    ]);
                     $variant['variant_slug'] = $variant_slug; // Assign the generated slug
-
                     // Generate a SKU for the variant
                     $sku = generateUniqueSku(); // This function generates a unique SKU
                     $variant['sku'] = $sku; // Assign the generated SKU
