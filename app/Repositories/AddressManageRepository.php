@@ -38,13 +38,13 @@ class AddressManageRepository implements AddressManageInterface
             $customerId = auth('api_customer')->user()->id;
 
             // Build query to get addresses
-            $query = $this->address->where('customer_id', $customerId);
+            $query = $this->address->where('customer_id', $customerId)->with(['area']);
 
             // Apply filters only if they are provided and not empty
             if (isset($id)) {
                 $query->where('id', $id);
             }
-            if (!empty($type)) {
+            if (isset($type)) {
                 $query->where('type', $type);
             }
             if (isset($status)) {

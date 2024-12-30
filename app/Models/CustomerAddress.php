@@ -23,8 +23,13 @@ class CustomerAddress extends Model
         'status',
     ];
 
-    public function customer(): void
+    public function customer()
     {
-        $this->belongsTo(Customer::class, 'customer_id');
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(ComArea::class, 'area_id');
     }
 }
