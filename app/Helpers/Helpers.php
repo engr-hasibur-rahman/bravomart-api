@@ -52,6 +52,12 @@ if (! function_exists('translate')) {
         //return $result;
     }
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
+    if (!function_exists('capitalize_first_letter')) {
+        function capitalize_first_letter(string $value): string
+        {
+            return ucfirst(strtolower($value));
+        }
+    }
     if (! function_exists('slug_generator')) {
         function slug_generator(string $value, string $model, string $field = 'slug', ?int $id = null): string
         {
