@@ -22,9 +22,9 @@ class BlogListResource extends JsonResource
             'slug' => $this->slug,
             'image' => ImageModifier::generateImageUrl($this->image),
             'views' => $this->views,
-            'visibility' => $this->visibility,
-            'status' => $this->status ? "published" : "draft",
-            'schedule_date' => $this->schedule_date,
+            'visibility' => capitalize_first_letter($this->visibility),
+            'status' => $this->status ? "Published" : "Draft",
+            'schedule_date' => $this->schedule_date->format('Y-m-d'),
             'tags' => $this->tag_name,
             'author' => $this->author
         ];
