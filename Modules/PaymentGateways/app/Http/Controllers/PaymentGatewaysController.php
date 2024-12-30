@@ -33,7 +33,7 @@ class PaymentGatewaysController extends Controller
     {
         // Perform validation directly on the request
         $validator = Validator::make($request->all(), [
-            'gateway_name' => 'required|string|exists:payment_gateways,name',
+            'gateway_name' => 'required|string|exists:payment_gateways,gateway_name',
             'description' => 'nullable|string',
             'auth_credentials' => 'required|array',
             'status' => 'required|boolean',
