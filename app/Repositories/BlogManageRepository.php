@@ -155,6 +155,7 @@ class BlogManageRepository implements BlogManageInterface
         // Apply sorting and pagination
         // Return the result
         $paginatedBlog = $blog
+            ->with('category', 'admin')
             ->orderBy($sortField, $sort)
             ->paginate($limit);
         return BlogListResource::collection($paginatedBlog);

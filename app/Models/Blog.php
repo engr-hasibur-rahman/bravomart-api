@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Blog extends Model
 {
     protected $fillable = [
@@ -31,8 +32,19 @@ class Blog extends Model
         'meta_description',
         'meta_keywords',
     ];
+
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(BlogCategory::class, 'category_id');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id');
     }
 }
