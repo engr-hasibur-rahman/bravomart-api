@@ -52,7 +52,7 @@ class CustomerAddressManageController extends Controller
         $type = $request->input('type');
         $status = $request->input('status');
         $addresses = $this->addressRepo->getAddress($id, $type, $status);
-        return CustomerAddressResource::collection($addresses);
+        return response()->json(CustomerAddressResource::collection($addresses));
     }
 
     public function show(Request $request)
