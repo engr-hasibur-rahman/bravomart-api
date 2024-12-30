@@ -33,6 +33,8 @@ return new class extends Migration
             $table->decimal('rate')->nullable();
             $table->decimal('quantity')->nullable();
             $table->decimal('total_add_on_value')->nullable();
+            $table->decimal('tax_percent')->nullable();
+            $table->decimal('tax_amount')->nullable();
             $table->decimal('line_total')->nullable();
 
             $table->timestamps();

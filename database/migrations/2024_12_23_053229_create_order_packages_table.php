@@ -29,6 +29,7 @@ return new class extends Migration
             $table->decimal('flash_disc_amt_store')->nullable();
             $table->decimal('shipping_charge')->nullable();
             $table->decimal('additional_charge')->nullable();
+            $table->boolean('is_reviewed')->nullable();
 
 
             $table->timestamps();
