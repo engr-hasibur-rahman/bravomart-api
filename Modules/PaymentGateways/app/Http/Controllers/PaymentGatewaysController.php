@@ -13,7 +13,7 @@ class PaymentGatewaysController extends Controller
 {
     public function getSettings($gateway)
     {
-        $paymentGateway = PaymentGateway::where('name', $gateway)->first();
+        $paymentGateway = PaymentGateway::where('gateway_name', $gateway)->first();
 
         if (!$paymentGateway) {
             return response()->json([
@@ -51,7 +51,7 @@ class PaymentGatewaysController extends Controller
         $validatedData = $validator->validated();
 
         // Proceed with business logic using $validatedData
-        $gateway = PaymentGateway::where('name', $validatedData['gateway_name'])->first();
+        $gateway = PaymentGateway::where('gateway_name', $validatedData['gateway_name'])->first();
 
 
 
