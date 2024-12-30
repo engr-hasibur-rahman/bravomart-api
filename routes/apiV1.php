@@ -3,6 +3,7 @@
 use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
+use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
@@ -272,6 +273,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('blog/category/remove/{id}', [BlogManageController::class, 'blogCategoryDestroy']);
         });
 
+        // Pages manage
+        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
+            Route::get('pages/list', [PagesManageController::class, 'pagesIndex']);
+            Route::post('pages/store', [PagesManageController::class, 'pagesStore']);
+            Route::get('pages/{id}', [PagesManageController::class, 'pagesShow']);
+            Route::post('pages/update', [PagesManageController::class, 'pagesUpdate']);
+            Route::post('pages/status-change', [PagesManageController::class, 'pagesStatusChange']);
+            Route::delete('pages/remove/{id}', [PagesManageController::class, 'pagesDestroy']);
+        });
+
         /*--------------------- System management ----------------------------*/
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
             Route::group(['prefix' => 'system-management'], function () {
@@ -304,7 +315,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('roles/{id}', [RoleController::class, 'show']);
         Route::post('roles-status-update', [RoleController::class, 'roleForStoreOwner']);
     });
-    /* --------------------- vendor route end ------------------------- */
+    /* --------------------- admin route end ------------------------- */
+
+
+
     /* --------------------- vendor route start ------------------------- */
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
@@ -312,9 +326,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
 
         // Store manage
-        Route::group(['prefix' => 'store/{storeSlug}'], function () {
+        Route::group(['prefix' => 'store/'], function () {
             Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);
             Route::group(['middleware' => ['permission:' . PermissionKey::STORE_MY_SHOP->value]], function () {
+                // seller store manage
                 Route::get('list', [StoreManageController::class, 'index']);
                 Route::get('{id}', [StoreManageController::class, 'show']);
                 Route::post('add', [StoreManageController::class, 'store']);
@@ -322,15 +337,17 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::put('status/{id}', [StoreManageController::class, 'status_update']);
                 Route::delete('remove/{id}', [StoreManageController::class, 'destroy']);
                 Route::get('deleted/records', [StoreManageController::class, 'deleted_records']);
-
-                Route::get('product/list', [ProductController::class, 'index']);
-                Route::get('product/{slug}', [ProductController::class, 'show']);
-                Route::post('product/add', [ProductController::class, 'store']);
-                Route::post('product/update/{slug}', [ProductController::class, 'update']);
-                Route::delete('product/remove/{slug}', [ProductController::class, 'destroy']);
-                Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
-                Route::post('product/export', [ProductController::class, 'export']);
-                Route::post('product/import', [ProductController::class, 'import']);
+                // seller product manage
+                Route::group(['prefix' => '{storeSlug}'], function () {
+                    Route::get('product/list', [ProductController::class, 'index']);
+                    Route::get('product/{slug}', [ProductController::class, 'show']);
+                    Route::post('product/add', [ProductController::class, 'store']);
+                    Route::post('product/update/{slug}', [ProductController::class, 'update']);
+                    Route::delete('product/remove/{slug}', [ProductController::class, 'destroy']);
+                    Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
+                    Route::post('product/export', [ProductController::class, 'export']);
+                    Route::post('product/import', [ProductController::class, 'import']);
+                });
             });
         });
 

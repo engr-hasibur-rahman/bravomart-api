@@ -17,6 +17,7 @@ class OwnerWiseStoreListResource extends JsonResource
         return [
             'label' => $this->name,
             'value' => $this->id,
+            'slug' => $this->slug,
             'translations' => $this->related_translations
         ];
     }

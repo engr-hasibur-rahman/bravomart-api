@@ -49,19 +49,6 @@ class MediaService
             $image_db = $image_name . time() . '.' . $image_extenstion;
 
             // Resize and save images
-            $resize_grid_image = Image::make($image)->resize(350, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $resize_large_image = Image::make($image)->resize(740, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $resize_semi_large_image = Image::make($image)->resize(540, 350, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $resize_thumb_image = Image::make($image)->resize(150, 150);
             $resize_full_image = Image::make($image)->resize($image_width, $image_height, function ($constraint) {
                 $constraint->aspectRatio();
             });
@@ -69,10 +56,6 @@ class MediaService
 
             // Save images to storage
             $resize_full_image->save(storage_path("app/public/{$folder_path}/{$image_db}"));
-            $resize_thumb_image->save(storage_path("app/public/{$folder_path}/thumb-{$image_db}"));
-            $resize_grid_image->save(storage_path("app/public/{$folder_path}/grid-{$image_db}"));
-            $resize_large_image->save(storage_path("app/public/{$folder_path}/large-{$image_db}"));
-            $resize_semi_large_image->save(storage_path("app/public/{$folder_path}/semi-large-{$image_db}"));
 
             // Save to the database and return the Media instance
             return Media::create([
@@ -103,7 +86,7 @@ class MediaService
             // Generate the public URL directly
             $image_url = asset("storage/{$image->path}");
             // Check if the grid version exists (without file_exists, use URL generation)
-            $grid_image_url = asset("storage/uploads/media-uploader/default/grid-" . basename($image->path));
+            $grid_image_url = asset("storage/uploads/media-uploader/default" . basename($image->path));
 
             // If the grid version URL is valid, use that
             if ($grid_image_url) {
