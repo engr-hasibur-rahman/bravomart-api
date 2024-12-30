@@ -340,15 +340,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::group(['prefix' => '{storeSlug}'], function () {
                     // seller product manage
                     Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_PRODUCT_ADD->value]], function () {
-                        Route::get('product/list', [ProductController::class, 'index']);
-                        Route::get('product/{slug}', [ProductController::class, 'show']);
-                        Route::post('product/add', [ProductController::class, 'store']);
-                        Route::post('product/update/{slug}', [ProductController::class, 'update']);
-                        Route::delete('product/remove/{slug}', [ProductController::class, 'destroy']);
-                        Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
-                        Route::post('product/export', [ProductController::class, 'export']);
-                        Route::post('product/import', [ProductController::class, 'import']);
+
                     });
+                    Route::get('product/list', [ProductController::class, 'index']);
+                    Route::get('product/{slug}', [ProductController::class, 'show']);
+                    Route::post('product/add', [ProductController::class, 'store']);
+                    Route::post('product/update/{slug}', [ProductController::class, 'update']);
+                    Route::delete('product/remove/{slug}', [ProductController::class, 'destroy']);
+                    Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
+                    Route::post('product/export', [ProductController::class, 'export']);
+                    Route::post('product/import', [ProductController::class, 'import']);
                     // Staff manage
                     Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
                         Route::get('staff/list', [StaffController::class, 'index']);
@@ -380,14 +381,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
         // Product variant manage
         Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+            Route::get('product/variant/list', [ProductVariantController::class, 'index']);
+            Route::get('product/variant/{id}', [ProductVariantController::class, 'show']);
+            Route::post('product/variant/add', [ProductVariantController::class, 'store']);
+            Route::post('product/variant/update', [ProductVariantController::class, 'update']);
+            Route::put('product/variant/status/{id}', [ProductVariantController::class, 'status_update']);
+            Route::delete('product/variant/remove/{id}', [ProductVariantController::class, 'destroy']);
+            Route::get('product/variant/deleted/records', [ProductVariantController::class, 'deleted_records']);
         });
-        Route::get('product/variant/list', [ProductVariantController::class, 'index']);
-        Route::get('product/variant/{id}', [ProductVariantController::class, 'show']);
-        Route::post('product/variant/add', [ProductVariantController::class, 'store']);
-        Route::post('product/variant/update', [ProductVariantController::class, 'update']);
-        Route::put('product/variant/status/{id}', [ProductVariantController::class, 'status_update']);
-        Route::delete('product/variant/remove/{id}', [ProductVariantController::class, 'destroy']);
-        Route::get('product/variant/deleted/records', [ProductVariantController::class, 'deleted_records']);
 
         // Coupon manage
         Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
