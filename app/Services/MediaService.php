@@ -86,7 +86,7 @@ class MediaService
             // Generate the public URL directly
             $image_url = asset("storage/{$image->path}");
             // Check if the grid version exists (without file_exists, use URL generation)
-            $grid_image_url = asset("storage/uploads/media-uploader/default" . basename($image->path));
+            $grid_image_url = asset("storage/uploads/media-uploader/default/" . basename($image->path));
 
             // If the grid version URL is valid, use that
             if ($grid_image_url) {

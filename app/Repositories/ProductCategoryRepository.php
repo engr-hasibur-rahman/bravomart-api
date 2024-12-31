@@ -32,7 +32,7 @@ class ProductCategoryRepository extends BaseRepository
         }
     }
 
-    public function storeProductCategory($request, $fileUploadRepository)
+    public function storeProductCategory($request)
     {
         // Check if an id is present in the request
         $categoryId = $request->input('id');
@@ -46,9 +46,11 @@ class ProductCategoryRepository extends BaseRepository
             'parent_id' => $request['parent_id'],
             'is_featured' => filter_var($request['is_featured'], FILTER_VALIDATE_BOOLEAN),
             'admin_commission_rate' => false,
-            'meta_title' => $request['meta_title'],
-            'meta_description' => $request['meta_description'],
-            'display_order' => $request['display_order'],
+            'meta_title' => $request['meta_title'] ?? null,
+            'meta_description' => $request['meta_description'] ?? null,
+            'display_order' => $request['display_order'] ?? null,
+            'category_banner' => $request['category_banner'] ?? null,
+            'category_thumb' => $request['category_thumb'] ?? null,
         ];
 
         if ($categoryId) {
@@ -60,17 +62,6 @@ class ProductCategoryRepository extends BaseRepository
             $category = $this->create($data);
         }
 
-
-        // Handle file upload if available
-        if ($request->hasFile('category_banner')) {
-            $file = $request->file('category_banner');
-            $fileUploadRepository->attachment($file, 'category_banner', $categoryId, $category, ['dir_name'=>'category']);
-        }
-        // Handle file upload if available
-        if ($request->hasFile('category_thumb')) {
-            $file = $request->file('category_thumb');
-            $fileUploadRepository->attachment($file, 'category_thumb', $categoryId, $category, ['dir_name'=>'category']);
-        }
 
         $translations = [];
         $defaultKeys = ['category_name', 'category_slug', 'meta_title', 'meta_description'];
@@ -120,7 +111,7 @@ class ProductCategoryRepository extends BaseRepository
     }
 
 
-    public function updateProductBrand($request, $brand, $fileUploadRepository)
+    public function updateProductBrand($request)
     {
         // Prepare data for default category
         $data = [
@@ -129,16 +120,10 @@ class ProductCategoryRepository extends BaseRepository
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => 2,
+            'brand_logo' => $request['brand_logo'] ?? null,
         ];
 
         $brand = $this->findOrFail($request->id)->update($data);
-
-        if ($request->hasFile('brand_logo')) {
-            $file = $request->file('brand_logo'); // Only call this once
-
-            $fileData = $fileUploadRepository->uploadFile($file);
-            $brand->media()->create($fileData);
-        }
 
         $translations = [];
         $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
