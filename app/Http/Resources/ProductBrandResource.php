@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 use App\Enums\UploadDirectory;
@@ -24,7 +25,8 @@ class ProductBrandResource extends JsonResource
              'id' => $this->id,
              'brand_name' => $locales['brand_name']['value'] ?? $this->brand_name,
              'brand_slug' => $locales['brand_slug']['value'] ?? $this->brand_slug,
-             'brand_logo' => ComHelper::get_image_base_url().'/'.UploadDirectory::BRAND->value.'/'.$this->brand_logo, // Fetch the URL of the brand logo
+             'brand_logo' => $this->brand_logo, // Fetch the URL of the brand logo
+             'brand_logo_url' => ImageModifier::generateImageUrl($this->brand_logo), // Fetch the URL of the brand logo
              'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
              'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
              'parent_id' => $this->parent_id,

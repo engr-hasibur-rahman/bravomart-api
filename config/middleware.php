@@ -5,10 +5,10 @@ use App\Enums\PermissionKey;
 return [
 
 //    'brand-list' => [
-//        PermissionKey::PRODUCT_BRAND_LIST->value,
+//        PermissionKey::ADMIN_PRODUCT_BRAND_LIST->value,
 //    ],
 //    'add-product-brand' => [
-//        PermissionKey::PRODUCT_BRAND_ADD->value,
+//        PermissionKey::ADMIN_PRODUCT_BRAND_ADD->value,
 //    ],
 //    'edit-product-brand' => [
 //        PermissionKey::PRODUCT_BRAND_EDIT->value,

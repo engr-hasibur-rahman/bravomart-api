@@ -36,6 +36,7 @@ class ProductBrandRepository extends BaseRepository
 
     public function storeProductBrand($request)
     {
+
         // Check if an id is present in the request
         $brandId = $request->input('id');
         if ($brandId) {
@@ -49,7 +50,7 @@ class ProductBrandRepository extends BaseRepository
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => $request['display_order'],
-            'brand_logo' => $request->has('brand_logo') ? ComHelper::uploadSingle(UploadDirectory::BRAND->value, $request->file('brand_logo'), $brandId != null ? $brand->brand_logo : "") : "",
+            'brand_logo' => $request->brand_logo,
             'seller_relation_with_brand' => $request['seller_relation_with_brand'] ?? null,
             'authorization_valid_from' => $request->has('authorization_valid_from')
                 ? Carbon::parse($request['authorization_valid_from'])->format('Y-m-d')
@@ -59,9 +60,7 @@ class ProductBrandRepository extends BaseRepository
                 : null,
             'created_by' => auth()->user()->id ?? null, // Assuming authentication is used
             'updated_by' => auth()->user()->id ?? null,
-            'status' => $request['status'] ?? 'active', // Default to 'active' if not provided
-            'created_at' => now(),
-            'updated_at' => now(),
+            'status' => $request['status'] ?? 0, // Default to 'active' if not provided
         ];
         if ($brandId) {
             // Update existing brand
@@ -120,7 +119,7 @@ class ProductBrandRepository extends BaseRepository
     }
 
 
-    public function updateProductBrand($request, $brand, $fileUploadRepository)
+    public function updateProductBrand($request)
     {
         // Prepare data for default brand
         $data = [
@@ -133,48 +132,34 @@ class ProductBrandRepository extends BaseRepository
 
 
         $brand = $this->findOrFail($request->id)->update($data);
-
-        // $brand = $this->create($data);
-        if ($request->hasFile('brand_logo')) {
-            $file = $request->file('brand_logo'); // Only call this once
-            $fileData = $fileUploadRepository->uploadFile($file);
-            $brand->media()->create($fileData);
-        }
-        $translations = [];
-        $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
-
-        // Handle translations
-        if ($request['translations']) {
-            foreach ($request['translations'] as $translation) {
-                foreach ($defaultKeys as $key) {
-
-                    // Fallback value if translation key does not exist
-                    $translatedValue = $translation[$key] ?? null;
-
-                    // If key is brand_slug, generate slug from translated brand_name
-                    if ($key === 'brand_slug') {
-                        // Generate the slug from the translated brand name instead of using the default
-                        $translatedValue = MultilangSlug::makeSlug(
-                            Translation::class,
-                            $translation['brand_name'] ?? $data['brand_name'], // Use translated brand name
-                            'value'
-                        );
-                    }
-
-                    // Collect translation data
-                    $translations[] = [
-                        'language' => $translation['language_code'],
-                        'key' => $key,
-                        'value' => $translatedValue,
-                    ];
-                }
-            }
-        }
-
-        // Save translations if available
-        if (!empty($translations)) {
-            $brand->translations()->createMany($translations);
-        }
+//
+//        $translations = [];
+//        $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
+//        // Handle translations
+//        if ($request['translations']) {
+//            foreach ($request['translations'] as $translation) {
+//                foreach ($defaultKeys as $key) {
+//                    $translatedValue = $translation[$key] ?? null;
+//                    if ($key === 'brand_slug') {
+//                        $translatedValue = MultilangSlug::makeSlug(
+//                            Translation::class,
+//                            $translation['brand_name'] ?? $data['brand_name'],
+//                            'value'
+//                        );
+//                    }
+//                    $translations[] = [
+//                        'language' => $translation['language_code'],
+//                        'key' => $key,
+//                        'value' => $translatedValue,
+//                    ];
+//                }
+//            }
+//        }
+//
+//        // Save translations if available
+//        if (!empty($translations)) {
+//            $brand->translations()->createMany($translations);
+//        }
 
         return $brand;
     }

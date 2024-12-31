@@ -64,20 +64,28 @@ class ProductBrandController extends Controller
 
     public function show($id)
     {
-        // Extract selected id data 
         $brand = $this->repository->with(['translations'])->findOrFail($id);
-        // If found the data return resource
         if ($brand) {
             return new ProductBrandByIdResource($brand);
         }
-        // If not found throw error
         return response()->json(['error' => 'Product Brand not found'], 404);
     }
 
-    public function store(StoreProductBrandRequest $request, FileUploadRepository $fileUploadRepository)
+    public function store(StoreProductBrandRequest $request)
+    {
+
+        try {
+            $brand = $this->repository->storeProductBrand($request);
+            return $this->success(trans('messages.save_success', ['name' => 'Brand']));
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Could not create the product brand.' . $e);
+        }
+    }
+
+    public function update(StoreProductBrandRequest $request)
     {
         try {
-            $brand = $this->repository->storeProductBrand($request, $fileUploadRepository);
+            $brand = $this->repository->updateProductBrand($request);
             return $this->success(trans('messages.save_success', ['name' => 'Brand']));
         } catch (\Exception $e) {
             throw new \RuntimeException('Could not create the product brand.' . $e);
