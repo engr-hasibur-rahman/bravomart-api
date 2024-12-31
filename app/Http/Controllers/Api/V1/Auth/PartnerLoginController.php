@@ -36,9 +36,7 @@ class PartnerLoginController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return ["success" => false,"token" => null, "permissions" => []];
         }
-
         $email_verified = $user->hasVerifiedEmail();
-
         $storeIds = json_decode($user->stores);
         if (!is_null($storeIds) && is_array($storeIds)) {
             $stores = ComMerchantStore::whereIn('id', $storeIds)
