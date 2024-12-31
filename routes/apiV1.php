@@ -192,12 +192,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('slider/update', [SliderManageController::class, 'update']);
             Route::delete('slider/remove/{id}', [SliderManageController::class, 'destroy']);
         });
+
+
         // Product Brand Routing
         Route::group(['prefix' => 'product-brands/'], function () {
-
-            Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_BRAND_ADD->value]], function () {
+            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_BRAND_LIST->value]], function () {
                 Route::get('list', [ProductBrandController::class, 'index']);
                 Route::post('add', [ProductBrandController::class, 'store']);
+                Route::post('update', [ProductBrandController::class, 'update']);
                 Route::get('{id}', [ProductBrandController::class, 'show']);
                 Route::post('approve', [ProductBrandController::class, 'productBrandStatus']);
             });
@@ -370,11 +372,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Product manage
         Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_PRODUCT_ADD->value]], function () {
 
-        });
-
-        // Product brand manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-            Route::post('product-brands/add', [ProductBrandController::class, 'store']);
         });
 
         // Product variant manage

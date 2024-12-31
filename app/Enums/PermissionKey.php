@@ -39,11 +39,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //               Product Brand/Manufacturers/Publications (For Book Only)                   //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_BRAND_LIST = '/admin/brand';
-    case PRODUCT_BRAND_ADD = '/admin/brand/add-brand';
-    case PRODUCT_BRAND_LIST_STORE = '/store/brand';
-    case PRODUCT_BRAND_REQUESTED_FROM_STORE = 'brand-req-from-store';
-
+    case ADMIN_PRODUCT_BRAND_LIST = '/admin/product-brands/list';
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product category Permissions                            //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -299,6 +295,9 @@ enum PermissionKey: string
       case SELLER_STAFF_BAN= '/seller/staff/ban';
       case SELLER_STAFF_ACTIVE= '/seller/staff/active';
       case SELLER_STAFF_ROLES_STORE = '/seller/staff/role-stores';
+      
+      //-------------- Brand add -----------------
+    case ADMIN_PRODUCT_BRAND_LIST_STORE = '/store/brand';
 
     // ######################## Seller PermissionKey End ###########################
 

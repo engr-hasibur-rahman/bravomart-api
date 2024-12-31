@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 
@@ -38,7 +39,8 @@ class ProductBrandByIdResource extends JsonResource
             'display_order' => $this->display_order,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
-            'brand_logo' => $this->getFirstMediaUrl('brand_logo'), // Fetch the URL of the brand logo
+            'brand_logo' => $this->brand_logo, // Fetch the URL of the brand logo
+            'brand_logo_url' => ImageModifier::generateImageUrl($this->brand_logo), // Fetch the URL of the brand logo
             'translations' => $transformedData,
         ];
     }

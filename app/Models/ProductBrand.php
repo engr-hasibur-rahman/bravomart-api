@@ -17,33 +17,22 @@ class ProductBrand extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $table = 'product_brand';
+    protected $fillable = [
+        'brand_name',
+        'brand_slug',
+        'meta_title',
+        'meta_description',
+        'display_order',
+        'seller_relation_with_brand',
+        'authorization_valid_from',
+        'authorization_valid_to',
+        'status'
+    ];
 
-    protected $guarded = [];
-
-    // Single media file (e.g., brand logo)
-    public function image(): MorphOne
-    {
-        return $this->morphOne(Media::class, 'fileable');
-    }
-
-    public function registerMediaConversions(?Media $media = null): void
-    {
-        $this
-            ->addMediaConversion('preview')
-            ->fit(Fit::Contain, 300, 300)
-            ->nonQueued();
-    }
-    // Multiple media files (e.g., product photos)
-    //  public function media()
-    //  {
-    //      return $this->morphMany(Media::class, 'fileable');
-    //  }
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
     }
-
-    // Method to get translation by language and key
     public function getTranslation(string $key, string $language)
     {
         return $this->translations()->where('language', $language)->where('key', $key)->first()->value ?? null;

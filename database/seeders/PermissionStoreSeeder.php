@@ -263,7 +263,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::PRODUCT_BRAND_LIST_STORE->value,
+                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_BRAND_LIST_STORE->value,
                             'PermissionTitle' => 'Brand/Manufacturers/Publications',
                             'activity_scope' => 'store_level',
                             'icon' => '',
