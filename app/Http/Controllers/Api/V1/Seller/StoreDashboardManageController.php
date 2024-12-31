@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Seller\StoreDetailsResource;
+use App\Http\Resources\Seller\Store\StoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
