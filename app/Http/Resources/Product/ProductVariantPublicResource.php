@@ -33,7 +33,8 @@ class ProductVariantPublicResource extends JsonResource
             'length' => $this->length,
             'width' => $this->width,
             'height' => $this->height,
-            'images' => ImageModifier::generateImageUrl($this->image),
+            'image' => ImageModifier::generateImageUrl($this->image),
+            'image_url' => ImageModifier::generateImageUrl($this->image),
             'order_count' => $this->order_count,
             'status' => $this->status,
         ];
