@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Product;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductAttributeRequest;
-use App\Http\Resources\Com\ProductAtrribute\ProductAttributeResource;
+use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Models\ProductAttribute;
 use App\Repositories\ProductAttributeRepository;
 use Illuminate\Http\Request;
