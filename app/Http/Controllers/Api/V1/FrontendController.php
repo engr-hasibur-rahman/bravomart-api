@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\Behaviour;
+use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
-use App\Http\Resources\Com\ProductAtrribute\ProductAttributeResource;
-use App\Http\Resources\Com\ProductBrand\ProductBrandPublicResource;
+use App\Http\Resources\Com\Product\ProductAttributeResource;
+use App\Http\Resources\Com\Product\ProductBrandPublicResource;
+use App\Http\Resources\Com\Product\ProductUnitPublicResource;
+use App\Http\Resources\Com\Store\BehaviourPublicResource;
+use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
@@ -30,6 +35,7 @@ use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\Slider;
 use App\Models\Tag;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -602,7 +608,7 @@ class FrontendController extends Controller
 
     public function productAttributeList()
     {
-        $attributes = ProductAttribute::all();
+        $attributes = ProductAttribute::where('status', 1)->get();
         return response()->json(ProductAttributeResource::collection($attributes));
     }
 
@@ -642,4 +648,31 @@ class FrontendController extends Controller
         return response()->json(ProductBrandPublicResource::collection($brands));
     }
 
+    public function storeTypeList()
+    {
+        $storeTypes = collect(StoreType::cases())->map(function ($storeType) {
+            return [
+                'value' => $storeType->value,
+                'label' => ucfirst(str_replace('-', ' ', $storeType->value)),
+            ];
+        });
+        return response()->json(StoreTypePublicResource::collection($storeTypes));
+    }
+
+    public function behaviourList()
+    {
+        $behaviours = collect(Behaviour::cases())->map(function ($behaviour) {
+            return [
+                'value' => $behaviour->value,
+                'label' => ucfirst(str_replace('-', ' ', $behaviour->value)),
+            ];
+        });
+        return response()->json(BehaviourPublicResource::collection($behaviours));
+    }
+
+    public function unitList()
+    {
+        $units = Unit::all();
+        return response()->json(ProductUnitPublicResource::collection($units));
+    }
 }
