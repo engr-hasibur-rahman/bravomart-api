@@ -12,7 +12,7 @@ interface ProductManageInterface
 
     public function update(array $data);
 
-    public function getProductById(array $data);
+    public function getProductBySlug(string $slug);
 
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 

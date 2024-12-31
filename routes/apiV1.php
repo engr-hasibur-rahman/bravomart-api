@@ -339,17 +339,17 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::put('status/{id}', [StoreManageController::class, 'status_update']);
                 Route::delete('remove/{id}', [StoreManageController::class, 'destroy']);
                 Route::get('deleted/records', [StoreManageController::class, 'deleted_records']);
-
-
                 // seller product manage
-                Route::get('product/list', [ProductController::class, 'index']);
-                Route::get('product', [ProductController::class, 'show']);
-                Route::post('product/add', [ProductController::class, 'store']);
-                Route::post('product/update', [ProductController::class, 'update']);
-                Route::delete('product/remove/{id}', [ProductController::class, 'destroy']);
-                Route::get('product/deleted/records', [ProductController::class, 'deleted_records']);
-                Route::post('product/export', [ProductController::class, 'export']);
-                Route::post('product/import', [ProductController::class, 'import']);
+                Route::group(['prefix' => 'product'], function () {
+                    Route::get('list', [ProductController::class, 'index']);
+                    Route::get('{slug}', [ProductController::class, 'show']);
+                    Route::post('add', [ProductController::class, 'store']);
+                    Route::post('update', [ProductController::class, 'update']);
+                    Route::delete('remove/{id}', [ProductController::class, 'destroy']);
+                    Route::get('deleted/records', [ProductController::class, 'deleted_records']);
+                    Route::post('export', [ProductController::class, 'export']);
+                    Route::post('import', [ProductController::class, 'import']);
+                });
                 // Staff manage
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
                     Route::get('staff/list', [StaffController::class, 'index']);
@@ -358,7 +358,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::post('staff/update', [StaffController::class, 'update']);
                     Route::post('staff/change-status', [StaffController::class, 'changestatus']);
                 });
-
             });
         });
 

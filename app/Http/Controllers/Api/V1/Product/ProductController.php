@@ -55,9 +55,9 @@ class ProductController extends Controller
         }
     }
 
-    public function show(Request $request)
+    public function show($slug)
     {
-        return $this->productRepo->getProductById($request->all());
+        return $this->productRepo->getProductBySlug( $slug);
     }
 
     public function update(Request $request)

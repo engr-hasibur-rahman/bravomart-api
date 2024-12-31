@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Helpers\MultilangSlug;
+use App\Http\Resources\Seller\Store\Product\ProductDetailsResource;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
 use App\Models\ComMerchantStore;
@@ -214,12 +215,19 @@ class ProductManageRepository implements ProductManageInterface
     }
 
     // Fetch product data of specific id
-    public function getProductById(array $data)
+    public function getProductBySlug(string $slug)
     {
-
         try {
-            $product = Product::with('related_translations')
-                ->where('id', $data['id'])
+            $product = Product::with([
+                'related_translations',
+                'variants',
+                'store',
+                'category',
+                'brand',
+                'unit',
+                'attributes'
+            ])
+                ->where('slug', $slug)
                 ->first();
             $translations = $product->translations()->get()->groupBy('language');
             // Initialize an array to hold the transformed data
@@ -233,11 +241,7 @@ class ProductManageRepository implements ProductManageInterface
                 $transformedData[] = $languageInfo;
             }
             if ($product) {
-                return response()->json([
-                    "data" => $product->toArray(),
-                    'translations' => $transformedData,
-                    "massage" => "Data was found"
-                ], 201);
+                return response()->json(new ProductDetailsResource($product));
             } else {
                 return response()->json([
                     "massage" => "Data was not found"
