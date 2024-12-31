@@ -20,7 +20,7 @@ class UserResource extends JsonResource
 
         $stores=[];
         if($this->stores!='') {
-            $stores = ComMerchantStore::whereIn('id', json_decode($this->stores))
+            $stores = ComMerchantStore::whereIn('id', $this->stores)
                 ->select(['id', 'name','store_type'])
                 ->get()
                 ->toArray();
