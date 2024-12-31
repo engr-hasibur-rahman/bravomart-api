@@ -292,7 +292,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings']);
                 Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization']);
                 Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings']);
-//                Route::match(['get', 'post'], '/payment-settings', [PaymentSettingsController::class, 'paymentSettings']);
                 Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings']);
                 Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings']);
                 Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings']);

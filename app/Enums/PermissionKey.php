@@ -246,7 +246,6 @@ enum PermissionKey: string
     case MAINTENANCE_SETTINGS = '/admin/system-management/maintenance-settings';
     case SMTP_SETTINGS = '/admin/system-management/email-settings/smtp';
     case EMAIL_TEMPLATES = '/admin/system-management/email-settings/templates';
-    case PAYMENT_SETTINGS = '/admin/system-management/payment-settings';
 
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
     case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
@@ -274,6 +273,12 @@ enum PermissionKey: string
     //              Dynamic Pages Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_PAGES_LIST = '/admin/pages/list';
+    // ############################## Admin PermissionKey End ################################
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              Payment Settings Management                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+     case ADMIN_PAYMENT_SETTINGS = '/admin/payment-gateways/settings';
     // ############################## Admin PermissionKey End ################################
 
 
