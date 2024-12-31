@@ -25,11 +25,11 @@ class MediaService
             $image = $request->$file_field_name;
 
             // Determine the folder type based on the media type (e.g., 'product', 'user', 'blog', 'payment')
-//            $folder_type = $request->input('folder_type', 'default'); // 'folder_type' passed as a parameter to the request or use 'default'
+            $folder_type = $request->input('folder_type', 'default'); // 'folder_type' passed as a parameter to the request or use 'default'
 
             // Define the base path and subfolder path
             $base_path = 'uploads/media-uploader';
-            $folder_path = "{$base_path}";
+            $folder_path = "{$base_path}/{$folder_type}";
 
             // Create the directory if it doesn't exist
             if (!File::exists(storage_path("app/public/{$folder_path}"))) {
@@ -86,7 +86,7 @@ class MediaService
             // Generate the public URL directly
             $image_url = asset("storage/{$image->path}");
             // Check if the grid version exists (without file_exists, use URL generation)
-            $grid_image_url = asset("storage/uploads/media-uploader" . basename($image->path));
+            $grid_image_url = asset("storage/uploads/media-uploader/default" . basename($image->path));
 
             // If the grid version URL is valid, use that
             if ($grid_image_url) {
@@ -137,7 +137,7 @@ class MediaService
         $base_path = storage_path('app/public/uploads/media-uploader/');
 
         $image_path = $base_path . $get_image_details->path;
-        $image_variants = ['default'];
+        $image_variants = ['grid-', 'large-', 'semi-large-', 'thumb-'];
 
         // Delete image variants if they exist
         foreach ($image_variants as $variant) {
@@ -159,7 +159,7 @@ class MediaService
 
         if ($image_find) {
             return [
-                'msg' => 'Image deleted successfully',
+                'msg' => 'Image and its variants deleted successfully',
                 'success' => true,
             ];
         } else {

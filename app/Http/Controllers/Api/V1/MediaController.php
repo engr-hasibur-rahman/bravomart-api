@@ -20,7 +20,7 @@ class MediaController extends Controller
     {
         $media = $this->mediaService->insert_media_image($request);
         return response()->json([
-            'message' => 'Media uploaded successfully.',
+            'message' => 'Media Uploaded successfully.',
             'image_id' => $media->id,
         ], 201);
     }
