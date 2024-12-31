@@ -6,7 +6,6 @@ use App\Http\Requests\StoreProductCategoryRequest;
 use App\Http\Resources\ProductCategoryByIdResource;
 use App\Http\Resources\ProductCategoryResource;
 use App\Models\ProductCategory;
-use App\Repositories\FileUploadRepository;
 use App\Repositories\ProductCategoryRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +15,6 @@ class ProductCategoryController extends Controller
 
     public function __construct(
         public ProductCategoryRepository $repository,
-        public FileUploadRepository $fileUploadRepository
     ) {}
 
     public function index(Request $request)
@@ -69,11 +67,10 @@ class ProductCategoryController extends Controller
         return response()->json(['error' => 'Product Brand not found'], 404);
     }
 
-    public function store(StoreProductCategoryRequest $request, FileUploadRepository $fileUploadRepository)
+    public function store(StoreProductCategoryRequest $request)
     {
         try {
-            $this->repository->storeProductCategory($request, $fileUploadRepository);
-
+            $this->repository->storeProductCategory($request);
             return response()->json([
                 'success' => 'Success'
             ]);

@@ -2,25 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\ExportProductBrand;
 use App\Http\Requests\StoreProductBrandRequest;
-use App\Http\Requests\UpdateProductBrandRequest;
 use App\Http\Resources\ProductBrandByIdResource;
 use App\Http\Resources\ProductBrandResource;
 use App\Models\ProductBrand;
-use App\Repositories\FileUploadRepository;
 use App\Repositories\ProductBrandRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductBrandController extends Controller
 {
 
     public function __construct(
-        public ProductBrandRepository $repository,
-        public FileUploadRepository   $fileUploadRepository
+        public ProductBrandRepository $repository
     )
     {
     }

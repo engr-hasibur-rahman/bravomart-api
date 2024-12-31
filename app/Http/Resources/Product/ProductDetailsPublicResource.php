@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,6 +28,7 @@ class ProductDetailsPublicResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'image' => $this->image,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
             'gallery_images' => $this->gallery_images,
             'warranty' => $this->warranty,
             'return_in_days' => $this->return_in_days,
