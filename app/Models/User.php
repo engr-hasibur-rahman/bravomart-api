@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Contracts\Role as RoleContract;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -56,13 +57,13 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    // In your User model, use the $casts property directly
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'stores' => 'array',  // Ensures stores is cast to an array
+    ];
+
 
     public function getFullNameAttribute(): string
     {
@@ -116,9 +117,70 @@ class User extends Authenticatable
         return $directPermissions->merge($rolePermissions)->unique();
     }
 
+//    public function allPermissions()
+//    {
+//        // Get the direct permissions and wrap them in a collection
+//        $directPermissions = collect($this->directPermissions()->pluck('name')->toArray());
+//
+//        // Get the role permissions and wrap them in a collection
+//        $rolePermissions = collect($this->rolePermissions()->pluck('name')->toArray());
+//
+//        // Merge both collections and ensure unique permission names
+//        return $directPermissions->merge($rolePermissions)->unique();
+//    }
+
+
     /* Get linked social accounts */
     public function linkedSocialAccounts()
     {
         return $this->hasOne(LinkedSocialAccount::class);
     }
+
+    // Relationship method to get stores the user has access to
+//    public function stores()
+//    {
+//        return $this->belongsToMany(ComMerchantStore::class);
+//    }
+//
+//// Method to check if the user has access to a specific store
+//    public function hasStoreAccess($storeSlug)
+//    {
+//        // Check if the store exists in the user's store relationships
+//        return $this->stores->contains(function ($store) use ($storeSlug) {
+//            return $store->slug === $storeSlug; // Assuming 'slug' is a field in the ComMerchantStore model
+//        });
+//    }
+//
+//// Method to check if the user has a specific permission for a store
+////    public function hasPermissionForStore($permissionKey, $storeSlug)
+////    {
+////        // Get all the user's permissions as collections of Permission models
+////        $permissions = $this->allPermissions();
+////
+////        // Check if the user has the permission and if they have access to the store
+////        return $permissions->contains(function ($permission) use ($permissionKey, $storeSlug) {
+////            // Check the permission name and store access
+////            return $permission->name === $permissionKey && $this->hasStoreAccess($storeSlug);
+////        });
+////    }
+//
+//    public function hasPermissionForStore($permissionKey, $storeSlug)
+//    {
+//        // Get all permissions (names) for the user, which is a collection
+//        $permissions = $this->allPermissions();
+//
+//        // Check if the user has the permission and if they have access to the store
+//        return $permissions->contains(function ($permission) use ($permissionKey, $storeSlug) {
+//            return $permission === $permissionKey && $this->hasStoreAccess($storeSlug);
+//        });
+//    }
+
+
+
+
+
+
+
+
+
 }

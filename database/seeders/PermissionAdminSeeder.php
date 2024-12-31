@@ -635,18 +635,6 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
-                // Pages Management
-                [
-                    'PermissionName' => PermissionKey::ADMIN_PAGES_MANAGE->value,
-                    'PermissionTitle' => 'Pages Management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view', 'insert', 'update', 'delete'],
-                    'translations' => [
-                        'en' => 'Pages Management',
-                        'ar' => 'إدارة المدونة'
-                    ]
-                ],
                 // Blog Management
                 [
                     'PermissionName' => '',
@@ -740,7 +728,33 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ]
                     ]
+                ],
+                // dynamic pages manage
+                 [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Pages Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Pages Management',
+                        'ar' => 'إدارة الصفحات'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_PAGES_LIST->value,
+                            'PermissionTitle' => 'Page Lists',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Page Lists',
+                                'ar' => ' قوائم الصفحات'
+                            ]
+                        ]
+                    ]
                 ]
+
             ]
         ];
 
@@ -1497,7 +1511,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Payment Settings',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['view'],
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Payment Settings',
                                 'ar' => 'إعدادات الدفع'

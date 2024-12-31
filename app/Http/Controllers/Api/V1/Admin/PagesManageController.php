@@ -18,7 +18,7 @@ class PagesManageController extends Controller
 
     public function pagesIndex(Request $request)
     {
-        return $this->pageRepo->getPaginatedCategory(
+        return $this->pageRepo->getPaginatedPage(
             $request->limit ?? 10,
             $request->page ?? 1,
             $request->language ?? 'en',
@@ -35,7 +35,7 @@ class PagesManageController extends Controller
         try {
             // Validate input data
             $validator = Validator::make($request->all(), [
-                'name' => 'required|unique:pages,name',
+                'title' => 'required|unique:pages,title',
                 'slug' => 'nullable|unique:pages,slug',
             ]);
             if ($validator->fails()) {
@@ -45,18 +45,18 @@ class PagesManageController extends Controller
                     'message' => $validator->errors()
                 ]);
             }
-            $category = $this->pageRepo->store($request->all(), Page::class);
-            $this->pageRepo->storeTranslation($request, $category, 'App\Models\Page', $this->pageRepo->translationKeysForCategory());
+            $page = $this->pageRepo->store($request->all(), Page::class);
+            $this->pageRepo->storeTranslation($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
 
-            if ($category) {
-                return $this->success(translate('messages.save_success', ['name' => 'Page']));
+            if ($page) {
+                return $this->success(translate('messages.save_success', ['title' => 'Page']));
             } else {
-                return $this->failed(translate('messages.save_failed', ['name' => 'Page']));
+                return $this->failed(translate('messages.save_failed', ['title' => 'Page']));
             }
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json([
                 'success' => false,
-                'message' => translate('messages.validation_failed', ['name' => 'Page']),
+                'message' => translate('messages.validation_failed', ['title' => 'Page']),
                 'errors' => $validationException->errors(),
             ], 422);
         }
@@ -66,7 +66,7 @@ class PagesManageController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|unique:blog_categories,name,' . $request->id,
+                'title' => 'required|unique:pages,title,' . $request->id,
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -76,7 +76,7 @@ class PagesManageController extends Controller
                 ]);
             }
             $category = $this->pageRepo->update($request->all(), Page::class);
-            $this->pageRepo->updateTranslation($request, $category, 'App\Models\Page', $this->pageRepo->translationKeysForCategory());
+            $this->pageRepo->updateTranslation($request, $category, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
             if ($category) {
                 return $this->success(translate('messages.update_success', ['name' => 'Page']));
             } else {
@@ -93,7 +93,7 @@ class PagesManageController extends Controller
 
     public function pagesShow(Request $request)
     {
-        return $this->pageRepo->getCategoryById($request->id);
+        return $this->pageRepo->getPageById($request->id);
     }
 
     public function pagesDestroy($id)
