@@ -4,20 +4,18 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\ProductAtrribute\ProductAttributeResource;
 use App\Http\Resources\Com\ProductBrand\ProductBrandPublicResource;
 use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Product\BestSellingPublicResource;
-use App\Http\Resources\Product\NewArrivalDetailsPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
-use App\Http\Resources\ProductBrandResource;
-use App\Http\Resources\ProductCategoryResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use App\Interfaces\AreaManageInterface;
@@ -25,9 +23,9 @@ use App\Interfaces\BannerManageInterface;
 use App\Interfaces\CityManageInterface;
 use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
-use App\Interfaces\SliderManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Product;
+use App\Models\ProductAttribute;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\Slider;
@@ -598,9 +596,14 @@ class FrontendController extends Controller
 
     public function tagList()
     {
-        // Get the countries from the repository
         $tags = Tag::all();
         return TagPublicResource::collection($tags);
+    }
+
+    public function productAttributeList()
+    {
+        $attributes = ProductAttribute::all();
+        return response()->json(ProductAttributeResource::collection($attributes));
     }
 
     public function brandList(Request $request)

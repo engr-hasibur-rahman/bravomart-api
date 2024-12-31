@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Api\V1\Product;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductAttributeRequest;
-use App\Http\Resources\ProductAttributeResource;
-use App\Repositories\ProductAttributeRepository;
+use App\Http\Resources\Com\ProductAtrribute\ProductAttributeResource;
 use App\Models\ProductAttribute;
+use App\Repositories\ProductAttributeRepository;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductAttributeController extends Controller
 {
@@ -60,7 +60,6 @@ class ProductAttributeController extends Controller
     {
         try {
             $attribute = $this->repository->storeProductAttribute($request);
-
             return $this->success(translate('messages.save_success', ['name' => $attribute->name]));
 
         } catch (\Exception $e) {
