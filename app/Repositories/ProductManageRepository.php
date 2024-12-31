@@ -34,35 +34,59 @@ class ProductManageRepository implements ProductManageInterface
     // Fetch all products with parameters
     public function getPaginatedProduct(int|string $store_id, int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $product = Product::where('store_id', $store_id)->leftJoin('translations as name_translations', function ($join) use ($language) {
-            $join->on('products.id', '=', 'name_translations.translatable_id')
-                ->where('name_translations.translatable_type', '=', Product::class)
-                ->where('name_translations.language', '=', $language)
-                ->where('name_translations.key', '=', 'name');
-        })
+        $product = Product::where('store_id', $store_id)
+            ->leftJoin('translations as name_translations', function ($join) use ($language) {
+                $join->on('products.id', '=', 'name_translations.translatable_id')
+                    ->where('name_translations.translatable_type', '=', Product::class)
+                    ->where('name_translations.language', '=', $language)
+                    ->where('name_translations.key', '=', 'name');
+            })
             ->leftJoin('translations as description_translations', function ($join) use ($language) {
                 $join->on('products.id', '=', 'description_translations.translatable_id')
                     ->where('description_translations.translatable_type', '=', Product::class)
                     ->where('description_translations.language', '=', $language)
                     ->where('description_translations.key', '=', 'description');
             })
+            ->leftJoin('translations as meta_title_translations', function ($join) use ($language) {
+                $join->on('products.id', '=', 'meta_title_translations.translatable_id')
+                    ->where('meta_title_translations.translatable_type', '=', Product::class)
+                    ->where('meta_title_translations.language', '=', $language)
+                    ->where('meta_title_translations.key', '=', 'meta_title');
+            })
+            ->leftJoin('translations as meta_description_translations', function ($join) use ($language) {
+                $join->on('products.id', '=', 'meta_description_translations.translatable_id')
+                    ->where('meta_description_translations.translatable_type', '=', Product::class)
+                    ->where('meta_description_translations.language', '=', $language)
+                    ->where('meta_description_translations.key', '=', 'meta_description');
+            })
+            ->leftJoin('translations as meta_keywords_translations', function ($join) use ($language) {
+                $join->on('products.id', '=', 'meta_keywords_translations.translatable_id')
+                    ->where('meta_keywords_translations.translatable_type', '=', Product::class)
+                    ->where('meta_keywords_translations.language', '=', $language)
+                    ->where('meta_keywords_translations.key', '=', 'meta_keywords');
+            })
             ->select(
                 'products.*',
                 DB::raw('COALESCE(name_translations.value, products.name) as name'),
-                DB::raw('COALESCE(description_translations.value, products.description) as description')
+                DB::raw('COALESCE(description_translations.value, products.description) as description'),
+                DB::raw('COALESCE(meta_title_translations.value, products.meta_title) as meta_title'),
+                DB::raw('COALESCE(meta_description_translations.value, products.meta_description) as meta_description'),
+                DB::raw('COALESCE(meta_keywords_translations.value, products.meta_keywords) as meta_keywords')
             );
+
         // Apply search filter if search parameter exists
         if ($search) {
             $product->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', products.name, name_translations.value, products.description, description_translations.value)"), 'like', "%{$search}%");
+                $query->where(DB::raw("CONCAT_WS(' ', products.name, name_translations.value, products.description, description_translations.value, meta_title_translations.value, meta_description_translations.value, meta_keywords_translations.value)"), 'like', "%{$search}%");
             });
         }
+
         // Apply sorting and pagination
-        // Return the result
         return $product
-            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->orderBy($sortField ?? 'id', $sort ?? 'asc')
             ->paginate($limit);
     }
+
 
     // Store data
     public function store(array $data)
@@ -109,7 +133,6 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
-
     public function storeBulk(array $bulkData)
     {
         try {
@@ -225,7 +248,6 @@ class ProductManageRepository implements ProductManageInterface
                 'category',
                 'brand',
                 'unit',
-                'attributes'
             ])
                 ->where('slug', $slug)
                 ->first();
@@ -319,6 +341,7 @@ class ProductManageRepository implements ProductManageInterface
         }
         return true;
     }
+
     // Fetch deleted records(true = only trashed records, false = all records with trashed)
     public function records(bool $onlyDeleted = false)
     {

@@ -37,13 +37,20 @@ class Product extends Model
         "order_count",
         "attributes",
         "views",
+        "meta_title",
+        "meta_description",
+        "meta_keywords",
+        "meta_image",
         "status",
         "available_time_starts",
         "available_time_ends",
     ];
     public $translationKeys = [
         'name',
-        'description'
+        'description',
+        "meta_title",
+        "meta_description",
+        "meta_keywords",
     ];
 
     public function category()
@@ -81,10 +88,6 @@ class Product extends Model
         return $this->belongsTo(ComMerchantStore::class, "store_id");
     }
 
-    public function attributes()
-    {
-        return $this->hasMany(ProductAttribute::class);
-    }
 
     public function related_translations()
     {

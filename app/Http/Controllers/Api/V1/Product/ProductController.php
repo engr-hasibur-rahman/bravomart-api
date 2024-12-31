@@ -57,13 +57,13 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        return $this->productRepo->getProductBySlug( $slug);
+        return $this->productRepo->getProductBySlug($slug);
     }
 
     public function update(Request $request)
     {
         $product = $this->productRepo->update($request->all());
-        $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
+        $this->productRepo->updateTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
             return $this->success(translate('messages.update_success', ['name' => 'Product']));
         } else {
