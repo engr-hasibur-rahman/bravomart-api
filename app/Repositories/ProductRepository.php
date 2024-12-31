@@ -112,7 +112,7 @@ class ProductRepository extends BaseRepository
 
 
 
-    public function updateProductBrand($request, $brand, $fileUploadRepository)
+    public function updateProductBrand($request)
     {
         // Prepare data for default brand
         $data = [
@@ -121,17 +121,13 @@ class ProductRepository extends BaseRepository
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => 2,
+            'brand_logo' => $request['brand_logo'],
         ];
 
             
         $brand = $this->findOrFail($request->id)->update($data);
 
-        // $brand = $this->create($data);
-        if ($request->hasFile('brand_logo')) {
-            $file = $request->file('brand_logo'); // Only call this once
-            $fileData = $fileUploadRepository->uploadFile($file);
-            $brand->media()->create($fileData);
-        }
+
         $translations = [];
         $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
 

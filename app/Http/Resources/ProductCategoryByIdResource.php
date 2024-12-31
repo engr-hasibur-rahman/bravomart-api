@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 
@@ -36,8 +37,10 @@ class ProductCategoryByIdResource extends JsonResource
             'display_order' => $this->display_order,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
-            'category_banner' => $this->getFirstMediaUrl('category_banner'), // Fetch the URL of the brand logo
-            'category_thumb' => $this->getFirstMediaUrl('category_thumb'), // Fetch the URL of the brand logo
+            'category_banner' => $this->category_banner,
+            'category_banner_url' => ImageModifier::generateImageUrl($this->category_banner),
+            'category_thumb' => $this->category_thumb,
+            'category_thumb_url' => ImageModifier::generateImageUrl($this->category_thumb),
             'parent_id' => $this->parent_id,
             'category_name_paths' => $this->category_name_paths,
             'parent_path' => $this->parent_path,
