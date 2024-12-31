@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Seller;
+namespace App\Http\Resources\Seller\Store;
 
 use App\Actions\ImageModifier;
 use Illuminate\Http\Request;

@@ -45,22 +45,27 @@ class Product extends Model
         'name',
         'description'
     ];
-    public function category(){
-        return $this->belongsTo(ProductCategory::class);
+
+    public function category()
+    {
+        return $this->belongsTo(ProductCategory::class, 'category_id');
     }
 
     public function brand()
     {
-        return $this->belongsTo(ProductBrand::class);
+        return $this->belongsTo(ProductBrand::class, 'brand_id');
     }
+
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
     }
+
     public function variants()
     {
         return $this->hasMany(ProductVariant::class, "product_id");
     }
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');
@@ -70,14 +75,17 @@ class Product extends Model
     {
         return $this->belongsTo(Unit::class, "unit_id");
     }
+
     public function store()
     {
         return $this->belongsTo(ComMerchantStore::class, "store_id");
     }
+
     public function attributes()
     {
         return $this->hasMany(ProductAttribute::class);
     }
+
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')

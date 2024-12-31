@@ -24,7 +24,7 @@ class PartnerLoginController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -34,12 +34,16 @@ class PartnerLoginController extends Controller
             ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return ["success" => false,"token" => null, "permissions" => []];
+            return ["success" => false, "token" => null, "permissions" => []];
         }
-
         $email_verified = $user->hasVerifiedEmail();
-
-        $storeIds = json_decode($user->stores);
+        if (is_string($user->stores)) {
+            $storeIds = json_decode($user->stores, true); // Decodes JSON string to an array
+        } elseif (is_array($user->stores)) {
+            $storeIds = $user->stores; // It's already an array, no decoding needed
+        } else {
+            $storeIds = []; // Default to an empty array if the type is neither string nor array
+        }
         if (!is_null($storeIds) && is_array($storeIds)) {
             $stores = ComMerchantStore::whereIn('id', $storeIds)
                 ->select(['id', 'name', 'store_type'])
@@ -54,8 +58,8 @@ class PartnerLoginController extends Controller
             "token" => $user->createToken('auth_token')->plainTextToken,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
-            'email'    => $user->email,
-            'phone'    => $user->phone,
+            'email' => $user->email,
+            'phone' => $user->phone,
             "email_verified" => $email_verified,
             "store_owner" => $user->store_owner,
             "merchant_id" => $user->merchant_id,
@@ -69,7 +73,7 @@ class PartnerLoginController extends Controller
         $tree = [];
         foreach ($data_list as $data_item) {
 
-            if(isset($data_item->children)) {
+            if (isset($data_item->children)) {
                 $children = $data_item->children->count() ? ComHelper::buildMenuTree($data_item->children) : [];
                 $tree[] = [
                     'id' => $data_item->id,
