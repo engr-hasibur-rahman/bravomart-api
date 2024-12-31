@@ -69,7 +69,6 @@ return new class extends Migration {
 
         Schema::create('product_attributes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
             $table->string('name');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
