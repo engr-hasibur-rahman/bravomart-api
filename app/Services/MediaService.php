@@ -25,11 +25,11 @@ class MediaService
             $image = $request->$file_field_name;
 
             // Determine the folder type based on the media type (e.g., 'product', 'user', 'blog', 'payment')
-            $folder_type = $request->input('folder_type', 'default'); // 'folder_type' passed as a parameter to the request or use 'default'
+//            $folder_type = $request->input('folder_type', 'default'); // 'folder_type' passed as a parameter to the request or use 'default'
 
             // Define the base path and subfolder path
             $base_path = 'uploads/media-uploader';
-            $folder_path = "{$base_path}/{$folder_type}";
+            $folder_path = "{$base_path}";
 
             // Create the directory if it doesn't exist
             if (!File::exists(storage_path("app/public/{$folder_path}"))) {
