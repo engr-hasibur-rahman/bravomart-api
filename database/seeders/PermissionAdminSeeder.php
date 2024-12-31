@@ -365,40 +365,31 @@ class PermissionAdminSeeder extends Seeder
                                 ]
                             ]
                         ],
+                        // Product Brand
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => 'Brand/Manufacturers/Publications',
+                            'PermissionTitle' => 'Brand Management',
                             'activity_scope' => 'system_level',
                             'icon' => 'VectorIcon',
                             'translations' => [
-                                'en' => 'Brand/Manufacturers/Publications',
-                                'ar' => 'العلامة التجارية/الشركات المصنعة/المنشورات'
+                                'en' => 'Brand Management',
+                                'ar' => 'المنشورات'
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_BRAND_LIST->value,
-                                    'PermissionTitle' => 'Brand List',
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_BRAND_LIST->value,
+                                    'PermissionTitle' => 'Brand Lists',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
-                                        'en' => 'Brand List',
-                                        'ar' => 'قائمة العلامات التجارية للمنتج'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_BRAND_ADD->value,
-                                    'PermissionTitle' => 'Add Product Brand',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert'],
-                                    'translations' => [
-                                        'en' => 'Add Product Brand',
-                                        'ar' => 'إضافة العلامة التجارية للمنتج'
+                                        'en' => 'Brand Lists',
+                                        'ar' => ' للمنتج'
                                     ]
                                 ]
                             ]
                         ],
+
                         [
                             'PermissionName' => '',
                             'PermissionTitle' => 'Warranty',
