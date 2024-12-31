@@ -173,13 +173,13 @@ if (!function_exists('username_slug_generator')) {
 
         if ($image_details) {
             // Construct the base path for the images
-            $base_path = 'storage' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'media-uploader' . DIRECTORY_SEPARATOR . 'default';
+            $base_path = 'storage' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'media-uploader';
             $image_path = $base_path . DIRECTORY_SEPARATOR . $image_details->path;
             $image_path = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $image_path); // Normalize path separators
 
             $image_url = asset("storage/{$image_details->path}");
             // Check if the grid version exists (without file_exists, use URL generation)
-            $grid_image_url = asset("storage/uploads/media-uploader/default/grid-" . basename($image_details->path));
+            $grid_image_url = asset("storage/uploads/media-uploader" . basename($image_details->path));
 
             // If the grid version URL is valid, use that
             if ($grid_image_url) {
