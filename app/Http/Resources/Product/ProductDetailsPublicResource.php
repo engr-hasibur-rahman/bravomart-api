@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,6 +28,7 @@ class ProductDetailsPublicResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'image' => $this->image,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
             'gallery_images' => $this->gallery_images,
             'warranty' => $this->warranty,
             'return_in_days' => $this->return_in_days,
@@ -39,7 +41,7 @@ class ProductDetailsPublicResource extends JsonResource
             'max_cart_qty' => $this->max_cart_qty,
             'order_count' => $this->order_count,
             'attributes' => $this->attributes,
-            'variants' => $this->variants ?: null,
+            'variants' => ProductVariantPublicResource::collection($this->variants),
             'views' => $this->views,
             'status' => $this->status,
             'available_time_starts' => $this->available_time_starts,

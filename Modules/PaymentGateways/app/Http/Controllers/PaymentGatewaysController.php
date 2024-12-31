@@ -51,7 +51,7 @@ class PaymentGatewaysController extends Controller
 
                 // Update specific payment gateway settings
                 $paymentSettings = [
-                    'common_form_adjustment_amount' => 'nullable|string|max:191',
+                    'comma_form_adjustment_amount' => 'nullable|string|max:191',
                     'enable_disable_decimal_point' => 'nullable|boolean',
                     'space_between_amount_and_symbol' => 'nullable|boolean',
                 ];
