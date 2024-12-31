@@ -211,10 +211,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
 
         // Product Category Routing
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_CATEGORY_LIST->value]], function () {
+        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value]], function () {
             Route::get('product-categories', [ProductCategoryController::class, 'index']);
-        });
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_CATEGORY_ADD->value]], function () {
             Route::post('product-categories', [ProductCategoryController::class, 'store']);
             Route::get('product-categories/{id}', [ProductCategoryController::class, 'show']);
             Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);

@@ -18,10 +18,10 @@ return [
 //    ],
 //
 //    'category-list' => [
-//        PermissionKey::PRODUCT_CATEGORY_LIST->value,
+//        PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value,
 //    ],
 //    'category-store' => [
-//        PermissionKey::PRODUCT_CATEGORY_ADD->value,
+//        PermissionKey::ADMIN_PRODUCT_CATEGORY_ADD->value,
 //    ],
 //    'category-show' => [
 //        PermissionKey::PRODUCT_CATEGORY_EDIT->value,

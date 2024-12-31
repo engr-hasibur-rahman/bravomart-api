@@ -243,7 +243,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::PRODUCT_CATEGORY_LIST_STORE->value,
+                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST_STORE->value,
                             'PermissionTitle' => 'Category List',
                             'activity_scope' => 'store_level',
                             'icon' => 'Layers3',

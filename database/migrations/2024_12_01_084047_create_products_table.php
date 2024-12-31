@@ -40,6 +40,10 @@ return new class extends Migration
             $table->integer('order_count')->nullable();
             $table->integer('views')->default(0);
             $table->enum('status', array_map(fn($enum) => $enum->value, StatusType::cases()))->nullable(); //pending, approved, inactive, suspended
+            $table->string('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->text('meta_keywords')->nullable();
+            $table->text('meta_image')->nullable();
             $table->timestamp('available_time_starts')->nullable(); //Only for Food Item
             $table->timestamp('available_time_ends')->nullable(); //Only for Food Item
             $table->softDeletes();
