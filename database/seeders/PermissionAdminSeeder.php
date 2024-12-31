@@ -310,7 +310,7 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_ADMIN_PRODUCT_CATEGORY_LIST->value,
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value,
                                     'PermissionTitle' => 'Product Category List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
