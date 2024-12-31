@@ -1418,6 +1418,34 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
+                //Payment settings management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Payment Gateways management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Payment Gateways management',
+                        'ar' => 'إدارة بوابات الدفع'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_PAYMENT_SETTINGS->value,
+                            'PermissionTitle' => 'Payment Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view','update'],
+                            'translations' => [
+                                'en' => 'Payment Settings',
+                                'ar' => 'إعدادات الدفع'
+                            ]
+                        ]
+
+                    ]
+                ],
+
                 //System management
                 [
                     'PermissionName' => '',
@@ -1504,17 +1532,6 @@ class PermissionAdminSeeder extends Seeder
                                         'ar' => 'قوالب البريد الإلكتروني'
                                     ]
                                 ]
-                            ]
-                        ],
-                        [
-                            'PermissionName' =>  PermissionKey::PAYMENT_SETTINGS->value,
-                            'PermissionTitle' => 'Payment Settings',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'insert', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Payment Settings',
-                                'ar' => 'إعدادات الدفع'
                             ]
                         ],
                         [
