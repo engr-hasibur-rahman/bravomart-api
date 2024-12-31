@@ -13,6 +13,7 @@ class PaymentGatewaysController extends Controller
 {
     public function settingsGetAndUpdate(Request $request, $gateway)
     {
+
         if ($request->isMethod('POST')) {
 
             if (!empty($request->currency_settings) && $request->currency_settings === 'update') {

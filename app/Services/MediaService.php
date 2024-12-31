@@ -86,7 +86,7 @@ class MediaService
             // Generate the public URL directly
             $image_url = asset("storage/{$image->path}");
             // Check if the grid version exists (without file_exists, use URL generation)
-            $grid_image_url = asset("storage/uploads/media-uploader/default" . basename($image->path));
+            $grid_image_url = asset("storage/uploads/media-uploader" . basename($image->path));
 
             // If the grid version URL is valid, use that
             if ($grid_image_url) {
@@ -137,7 +137,7 @@ class MediaService
         $base_path = storage_path('app/public/uploads/media-uploader/');
 
         $image_path = $base_path . $get_image_details->path;
-        $image_variants = ['grid-', 'large-', 'semi-large-', 'thumb-'];
+        $image_variants = ['default'];
 
         // Delete image variants if they exist
         foreach ($image_variants as $variant) {
@@ -159,7 +159,7 @@ class MediaService
 
         if ($image_find) {
             return [
-                'msg' => 'Image and its variants deleted successfully',
+                'msg' => 'Image deleted successfully',
                 'success' => true,
             ];
         } else {
