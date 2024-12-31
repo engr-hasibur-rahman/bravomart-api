@@ -17,6 +17,7 @@ class PaymentGatewaySeeder extends Seeder
     {
         PaymentGateway::create([
             'name' => 'paypal',
+            'slug' => 'paypal', // Add a slug value
             'description' => 'fdf',
             'auth_credentials' => json_encode([
                 'paypal_sandbox_client_id' => 'your-paypal-client-id',
