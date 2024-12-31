@@ -310,7 +310,7 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_CATEGORY_LIST->value,
+                                    'PermissionName' => PermissionKey::ADMIN_ADMIN_PRODUCT_CATEGORY_LIST->value,
                                     'PermissionTitle' => 'Product Category List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
@@ -318,17 +318,6 @@ class PermissionAdminSeeder extends Seeder
                                     'translations' => [
                                         'en' => 'Product Category List',
                                         'ar' => 'قائمة فئات المنتجات'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_CATEGORY_ADD->value,
-                                    'PermissionTitle' => 'Add Product Category',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert'],
-                                    'translations' => [
-                                        'en' => 'Add Product Category',
-                                        'ar' => 'إضافة فئة المنتج'
                                     ]
                                 ]
                             ]

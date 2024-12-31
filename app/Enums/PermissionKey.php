@@ -43,9 +43,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product category Permissions                            //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_CATEGORY_LIST = '/admin/categories';
-    case PRODUCT_CATEGORY_ADD = '/admin/categories/add-category';
-    case PRODUCT_CATEGORY_LIST_STORE = '/store/categories';
+    case ADMIN_ADMIN_PRODUCT_CATEGORY_LIST = '/admin/categories';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Attribute                                     //
