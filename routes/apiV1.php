@@ -77,6 +77,10 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/area-list', [FrontendController::class, 'areasList']);
     Route::get('/tag-list', [FrontendController::class, 'tagList']);
     Route::get('/brand-list', [FrontendController::class, 'brandList']);
+    Route::get('/product/attribute-list', [FrontendController::class, 'productAttributeList']);
+    Route::get('/store-types', [FrontendController::class, 'storeTypeList']);
+    Route::get('/behaviour-list', [FrontendController::class, 'behaviourList']);
+    Route::get('/unit-list', [FrontendController::class, 'unitList']);
 });
 
 

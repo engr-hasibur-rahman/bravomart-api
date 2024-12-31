@@ -39,6 +39,7 @@ class ProductAttributeRepository extends BaseRepository
         // Prepare data for Attribute
         $data = [
             'name' => $request['name'],
+            'created_by' => auth('api')->id(),
         ];
 
         if ($attributeId) {

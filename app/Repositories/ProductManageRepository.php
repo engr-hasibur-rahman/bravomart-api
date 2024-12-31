@@ -319,7 +319,6 @@ class ProductManageRepository implements ProductManageInterface
         }
         return true;
     }
-
     // Fetch deleted records(true = only trashed records, false = all records with trashed)
     public function records(bool $onlyDeleted = false)
     {

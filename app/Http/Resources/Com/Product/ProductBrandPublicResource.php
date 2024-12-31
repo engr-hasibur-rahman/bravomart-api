@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Http\Resources\Com\ProductBrand;
+namespace App\Http\Resources\Com\Product;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
-use App\Enums\UploadDirectory;
-use App\Helpers\ComHelper;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductBrandPublicResource extends JsonResource
 {
