@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,13 +16,17 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->string('discount_type')->comment('percentage or amount');
             $table->double('discount');
-            $table->unsignedBigInteger('product_id')->nullable();
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->integer('usage_limit')->nullable(); // The maximum number of times this coupon can be used
-            $table->integer('usage_count')->default(0); // Number of times the coupon has been used
+            $table->double('min_order_value')->nullable();
+            $table->double('max_discount')->nullable();
+            $table->unsignedBigInteger('store_id')->nullable();
+            $table->unsignedInteger('usage_limit')->nullable()->comment('Global usage limit for the coupon');
+            $table->unsignedInteger('per_user_limit')->nullable()->comment('Maximum times a user can use the coupon');
+            $table->unsignedInteger('usage_count')->default(0)->comment('Number of times the coupon has been used globally');
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
             $table->text('description')->nullable();
             $table->integer('status')->default(1)->comment('0=inactive, 1=active');
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
         });
     }

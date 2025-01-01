@@ -361,6 +361,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::post('staff/update', [StaffController::class, 'update']);
                     Route::post('staff/change-status', [StaffController::class, 'changestatus']);
                 });
+                // Coupon manage
+                Route::group(['prefix' => 'coupon', 'middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
+                    Route::get('list', [CouponManageController::class, 'index']);
+                    Route::get('{id}', [CouponManageController::class, 'show']);
+                    Route::post('product/coupon/add', [CouponManageController::class, 'store']);
+                    Route::post('product/coupon/update', [CouponManageController::class, 'update']);
+                    Route::put('product/coupon/status/{id}', [CouponManageController::class, 'status_update']);
+                    Route::delete('product/coupon/remove/{id}', [CouponManageController::class, 'destroy']);
+                });
             });
         });
 
@@ -387,15 +396,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('product/variant/deleted/records', [ProductVariantController::class, 'deleted_records']);
         });
 
-        // Coupon manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-            Route::get('product/coupon/list', [CouponManageController::class, 'index']);
-            Route::get('product/coupon/{id}', [CouponManageController::class, 'show']);
-            Route::post('product/coupon/add', [CouponManageController::class, 'store']);
-            Route::post('product/coupon/update', [CouponManageController::class, 'update']);
-            Route::put('product/coupon/status/{id}', [CouponManageController::class, 'status_update']);
-            Route::delete('product/coupon/remove/{id}', [CouponManageController::class, 'destroy']);
-        });
 
         // Product Author manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {

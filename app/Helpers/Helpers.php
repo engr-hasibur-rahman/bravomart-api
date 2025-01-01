@@ -10,14 +10,14 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 
-if (! function_exists('remove_invalid_charcaters')) {
+if (!function_exists('remove_invalid_charcaters')) {
     function remove_invalid_charcaters($str)
     {
         return str_ireplace(['\'', '<', '>'], '"', ';', ' ', $str);
     }
 }
 
-if (! function_exists('translate')) {
+if (!function_exists('translate')) {
     function translate($key, $replace = [])
     {
         $local = app()->getLocale();
@@ -51,7 +51,22 @@ if (! function_exists('translate')) {
 
         //return $result;
     }
+
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
+    if (!function_exists('generateRandomCouponCode')) {
+        function generateRandomCouponCode()
+        {
+            // Generate a random 8-character string containing letters and numbers
+            $couponCode = Str::random(8);
+
+            // Ensure the generated coupon code is unique
+            while (\App\Models\Coupon::where('code', $couponCode)->exists()) {
+                // If the code already exists, generate a new one
+                $couponCode = Str::random(8);
+            }
+            return $couponCode;
+        }
+    }
     if (!function_exists('generateVariantSlug')) {
         function generateVariantSlug(array $attributes): string
         {
@@ -72,7 +87,7 @@ if (! function_exists('translate')) {
             return ucfirst(strtolower($value));
         }
     }
-    if (! function_exists('slug_generator')) {
+    if (!function_exists('slug_generator')) {
         function slug_generator(string $value, string $model, string $field = 'slug', ?int $id = null): string
         {
             $slug = Str::slug($value); // Generate initial slug
@@ -88,36 +103,37 @@ if (! function_exists('translate')) {
             return $slug;
         }
     }
-    
-if (!function_exists('username_slug_generator')) {
-    function username_slug_generator($first_name, $last_name = null)
-    {
-        $username = Str::slug(trim(strtolower($first_name)));
 
-        if ($last_name) {
-            $slugLastName = Str::slug(trim(strtolower($last_name)));
-            return "{$username}-{$slugLastName}";
+    if (!function_exists('username_slug_generator')) {
+        function username_slug_generator($first_name, $last_name = null)
+        {
+            $username = Str::slug(trim(strtolower($first_name)));
+
+            if ($last_name) {
+                $slugLastName = Str::slug(trim(strtolower($last_name)));
+                return "{$username}-{$slugLastName}";
+            }
+
+            return $username;
         }
-
-        return $username;
     }
-}
     if (!function_exists('generateUniqueSku')) {
         function generateUniqueSku($prefix = '', $length = 8)
         {
             do {
                 // Generate a random SKU using a prefix and a random string
                 $sku = strtoupper($prefix) . Str::random($length);
-    
+
                 // Check if the SKU already exists in the `product_variants` table
                 $exists = DB::table('product_variants')->where('sku', $sku)->exists();
             } while ($exists); // Repeat until a unique SKU is found
-    
+
             return $sku;
         }
     }
     if (!function_exists('unauthorized_response')) {
-        function unauthorized_response():\Illuminate\Http\JsonResponse {
+        function unauthorized_response(): \Illuminate\Http\JsonResponse
+        {
             return response()->json([
                 'status' => false,
                 'message' => 'Unauthorized access. Please log in.',
@@ -131,7 +147,7 @@ if (!function_exists('username_slug_generator')) {
         $base = log($size, 1024);
         $suffixes = array('', 'KB', 'MB', 'GB', 'TB');
 
-        return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
+        return round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
     }
 
     function com_option_update($key, $value)
@@ -146,13 +162,13 @@ if (!function_exists('username_slug_generator')) {
 
     }
 
-    function com_option_get($key,$default = null)
+    function com_option_get($key, $default = null)
     {
         $option_name = $key;
-        $value = \Illuminate\Support\Facades\Cache::remember($option_name, 600, function () use($option_name) {
+        $value = \Illuminate\Support\Facades\Cache::remember($option_name, 600, function () use ($option_name) {
             try {
                 return ComOption::where('option_name', $option_name)->first();
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 return null;
             }
         });
@@ -160,8 +176,9 @@ if (!function_exists('username_slug_generator')) {
     }
 
 
-    function com_option_get_id_wise_url($id,$size=null){
-        $return_val =  com_get_attachment_by_id($id,$size);
+    function com_option_get_id_wise_url($id, $size = null)
+    {
+        $return_val = com_get_attachment_by_id($id, $size);
         return $return_val['img_url'] ?? '';
     }
 
