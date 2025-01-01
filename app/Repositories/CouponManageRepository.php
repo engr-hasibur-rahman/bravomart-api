@@ -11,15 +11,20 @@ use Illuminate\Http\Request;
 
 class CouponManageRepository implements CouponManageInterface
 {
-    public function __construct(protected Coupon $coupon, protected Translation $translation) {}
+    public function __construct(protected Coupon $coupon, protected Translation $translation)
+    {
+    }
+
     public function translationKeys(): mixed
     {
         return $this->coupon->translationKeys;
     }
+
     public function model(): string
     {
         return Coupon::class;
     }
+
     public function getPaginatedCoupon(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $coupon = Coupon::leftJoin('translations as title_translations', function ($join) use ($language) {
@@ -51,8 +56,11 @@ class CouponManageRepository implements CouponManageInterface
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
+
     public function store(array $data)
     {
+        $data['created_by'] = auth('api')->id();
+        $data['code'] = generateRandomCouponCode();
         try {
             $data = Arr::except($data, ['translations']);
             $coupon = Coupon::create($data);
@@ -61,6 +69,7 @@ class CouponManageRepository implements CouponManageInterface
             throw $th;
         }
     }
+
     public function getCouponById(int|string $id)
     {
         try {
@@ -91,6 +100,7 @@ class CouponManageRepository implements CouponManageInterface
             throw $th;
         }
     }
+
     public function update(array $data)
     {
         try {
@@ -106,17 +116,19 @@ class CouponManageRepository implements CouponManageInterface
             throw $th;
         }
     }
+
     public function delete(int|string $id)
     {
         try {
             $coupon = Coupon::findOrFail($id);
-            $this->deleteTranslation($coupon->id,Coupon::class);
+            $this->deleteTranslation($coupon->id, Coupon::class);
             $coupon->delete();
             return true;
         } catch (\Throwable $th) {
             throw $th;
         }
     }
+
     private function deleteTranslation(int|string $id, string $translatable_type)
     {
         try {
@@ -128,7 +140,8 @@ class CouponManageRepository implements CouponManageInterface
             throw $th;
         }
     }
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -158,7 +171,8 @@ class CouponManageRepository implements CouponManageInterface
         }
         return true;
     }
-    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
