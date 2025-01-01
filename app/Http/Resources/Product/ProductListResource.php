@@ -9,7 +9,7 @@ use App\Http\Resources\Tag\TagPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductPublicResource extends JsonResource
+class ProductListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

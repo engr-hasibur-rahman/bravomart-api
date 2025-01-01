@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Product;
 
 use App\Actions\ImageModifier;
+use App\Actions\MultipleImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -33,7 +34,7 @@ class ProductVariantPublicResource extends JsonResource
             'length' => $this->length,
             'width' => $this->width,
             'height' => $this->height,
-            'image' => ImageModifier::generateImageUrl($this->image),
+            'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'order_count' => $this->order_count,
             'status' => $this->status,
