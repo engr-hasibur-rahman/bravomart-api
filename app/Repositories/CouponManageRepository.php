@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Coupon\CouponResource;
 use App\Interfaces\CouponManageInterface;
 use App\Models\Coupon;
 use App\Models\Translation;
@@ -52,15 +53,21 @@ class CouponManageRepository implements CouponManageInterface
         }
         // Apply sorting and pagination
         // Return the result
-        return $coupon
+        $coupons = $coupon
+            ->with('creator')
             ->orderBy($sortField, $sort)
             ->paginate($limit);
+        return response()->json([
+            'coupons' => CouponResource::collection($coupons),
+            'last_page' => $coupons->lastPage(),
+            'current_page' => $coupons->currentPage(),
+            'per_page' => $coupons->perPage(),
+        ]);
     }
 
     public function store(array $data)
     {
         $data['created_by'] = auth('api')->id();
-        $data['code'] = generateRandomCouponCode();
         try {
             $data = Arr::except($data, ['translations']);
             $coupon = Coupon::create($data);
@@ -73,24 +80,9 @@ class CouponManageRepository implements CouponManageInterface
     public function getCouponById(int|string $id)
     {
         try {
-            $coupon = Coupon::find($id);
-            $translations = $coupon->translations()->get()->groupBy('language');
-            // Initialize an array to hold the transformed data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->coupon->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
+            $coupon = Coupon::with(['creator', 'related_translations'])->findorfail($id);
             if ($coupon) {
-                return response()->json([
-                    "data" => $coupon->toArray(),
-                    'translations' => $transformedData,
-                    "massage" => "Data was found"
-                ], 201);
+                return response()->json(new CouponResource($coupon));
             } else {
                 return response()->json([
                     "massage" => "Data was not found"
@@ -103,6 +95,7 @@ class CouponManageRepository implements CouponManageInterface
 
     public function update(array $data)
     {
+        $data['created_by'] = auth('api')->id();
         try {
             $coupon = Coupon::findOrFail($data['id']);
             if ($coupon) {
@@ -208,5 +201,16 @@ class CouponManageRepository implements CouponManageInterface
             $this->translation->insert($translations);
         }
         return true;
+    }
+
+    public function changeStatus(int $couponId, int $status): bool
+    {
+        $coupon = Coupon::findorfail($couponId);
+
+        if (!$coupon) {
+            return false;
+        }
+        $coupon->status = $status;
+        return $coupon->save();
     }
 }

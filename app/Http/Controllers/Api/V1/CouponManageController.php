@@ -7,10 +7,14 @@ use App\Http\Requests\CouponRequest;
 use App\Interfaces\CouponManageInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CouponManageController extends Controller
 {
-    public function __construct(protected CouponManageInterface $couponRepo) {}
+    public function __construct(protected CouponManageInterface $couponRepo)
+    {
+    }
+
     public function index(Request $request)
     {
         return $this->couponRepo->getPaginatedCoupon(
@@ -23,6 +27,7 @@ class CouponManageController extends Controller
             []
         );
     }
+
     public function store(CouponRequest $request): JsonResponse
     {
         $coupon = $this->couponRepo->store($request->all());
@@ -33,6 +38,7 @@ class CouponManageController extends Controller
             return $this->failed(translate('messages.save_failed', ['name' => 'Coupon']));
         }
     }
+
     public function update(CouponRequest $request)
     {
         $coupon = $this->couponRepo->update($request->all());
@@ -43,13 +49,30 @@ class CouponManageController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Coupon']));
         }
     }
+
     public function show(Request $request)
     {
         return $this->couponRepo->getCouponById($request->id);
     }
+
     public function destroy($id)
     {
         $this->couponRepo->delete($id);
-        return $this->success(translate('messages.delete_success',['name'=>'Coupon']));
+        return $this->success(translate('messages.delete_success', ['name' => 'Coupon']));
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|integer'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        }
+        $result = $this->couponRepo->changeStatus($request->id, $request->status);
+        if (!$result) {
+            return response()->json(['message' => __('messages.data_not_found')], 404);
+        }
+        return $this->success(translate('messages.update_success', ['name' => 'Coupon']));
     }
 }
