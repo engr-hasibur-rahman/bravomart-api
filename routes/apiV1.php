@@ -235,6 +235,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::put('product/attribute/status/{id}', [ProductAttributeController::class, 'status_update']);
             Route::delete('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
         });
+        // Coupon manage
+        Route::group(['prefix' => 'coupon', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value]], function () {
+            Route::get('list', [CouponManageController::class, 'index']);
+            Route::get('{id}', [CouponManageController::class, 'show']);
+            Route::post('add', [CouponManageController::class, 'store']);
+            Route::post('update', [CouponManageController::class, 'update']);
+            Route::post('status-change', [CouponManageController::class, 'changeStatus']);
+            Route::delete('remove/{id}', [CouponManageController::class, 'destroy']);
+        });
 
         // Tag manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
@@ -360,15 +369,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::get('staff/{id}', [StaffController::class, 'show']);
                     Route::post('staff/update', [StaffController::class, 'update']);
                     Route::post('staff/change-status', [StaffController::class, 'changestatus']);
-                });
-                // Coupon manage
-                Route::group(['prefix' => 'coupon', 'middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
-                    Route::get('list', [CouponManageController::class, 'index']);
-                    Route::get('{id}', [CouponManageController::class, 'show']);
-                    Route::post('product/coupon/add', [CouponManageController::class, 'store']);
-                    Route::post('product/coupon/update', [CouponManageController::class, 'update']);
-                    Route::put('product/coupon/status/{id}', [CouponManageController::class, 'status_update']);
-                    Route::delete('product/coupon/remove/{id}', [CouponManageController::class, 'destroy']);
                 });
             });
         });

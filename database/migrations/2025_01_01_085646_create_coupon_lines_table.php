@@ -25,7 +25,6 @@ return new class extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->integer('status')->default(1)->comment('0=inactive, 1=active');
-            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
         });
     }
