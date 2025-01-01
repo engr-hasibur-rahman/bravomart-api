@@ -82,10 +82,9 @@ enum PermissionKey: string
     case PRODUCT_ADDONS_ADD = 'addons-add';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                          Product addons (For Food Only)                                   //
+    //                          Product Tags                              //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_TAG_LIST = 'tag-list';
-    case PRODUCT_TAG_ADD = 'tag-add';
+    case ADMIN_PRODUCT_TAG_LIST = '/admin/tag/list';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Permissions                                     //

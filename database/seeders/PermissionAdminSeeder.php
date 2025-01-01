@@ -413,32 +413,24 @@ class PermissionAdminSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => 'Tags',
+                            'PermissionTitle' => 'Tags Management',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view'],
                             'translations' => [
-                                'en' => 'Tags',
+                                'en' => 'Tag List',
                                 'ar' => 'العلامات'
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_TAG_LIST->value,
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_TAG_LIST->value,
                                     'PermissionTitle' => 'Tag List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
                                         'en' => 'Tag List',
                                         'ar' => 'قائمة العلامات'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_TAG_ADD->value,
-                                    'PermissionTitle' => 'Add Tag',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Add Tag',
-                                        'ar' => 'إضافة علامة'
                                     ]
                                 ]
                             ]
