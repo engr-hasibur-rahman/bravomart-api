@@ -82,7 +82,7 @@ class ProductManageRepository implements ProductManageInterface
         }
 
         // Apply sorting and pagination
-        return $product
+        return $product->with('variants')
             ->orderBy($sortField ?? 'id', $sort ?? 'asc')
             ->paginate($limit);
     }

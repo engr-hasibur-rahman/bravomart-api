@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ProductVariantRequest;
+use App\Http\Resources\Product\ProductListResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
@@ -29,16 +30,27 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        return $this->productRepo->getPaginatedProduct(
-            $request->store_id,
-            $request->limit ?? 10,
-            $request->page ?? 1,
-            app()->getLocale() ?? DEFAULT_LANGUAGE,
-            $request->search ?? "",
-            $request->sortField ?? 'id',
-            $request->sort ?? 'asc',
-            []
+        $storeId = $request->store_id;
+        $limit = $request->limit ?? 10;
+        $page = $request->page ?? 1;
+        $locale = app()->getLocale() ?? DEFAULT_LANGUAGE;
+        $search = $request->search ?? '';
+        $sortField = $request->sortField ?? 'id';
+        $sortOrder = $request->sort ?? 'asc';
+        $filters = [];
+
+        $products = $this->productRepo->getPaginatedProduct(
+            $storeId,
+            $limit,
+            $page,
+            $locale,
+            $search,
+            $sortField,
+            $sortOrder,
+            $filters
         );
+
+        return ProductListResource::collection($products);
     }
 
     public function store(Request $request): JsonResponse
