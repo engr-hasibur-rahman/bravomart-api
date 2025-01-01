@@ -244,7 +244,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('status-change', [CouponManageController::class, 'changeStatus']);
             Route::delete('remove/{id}', [CouponManageController::class, 'destroy']);
         });
-
+        Route::group(['prefix' => 'coupon-line', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value]], function () {
+            Route::get('list', [CouponManageController::class, 'couponLineIndex']);
+            Route::get('{id}', [CouponManageController::class, 'couponLineShow']);
+            Route::post('add', [CouponManageController::class, 'couponLineStore']);
+            Route::post('update', [CouponManageController::class, 'couponLineUpdate']);
+            Route::delete('remove/{id}', [CouponManageController::class, 'couponLineDestroy']);
+        });
         // Tag manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
             Route::get('tag/list', [TagManageController::class, 'index']);

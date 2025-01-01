@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CouponLineRequest;
 use App\Http\Requests\CouponRequest;
 use App\Interfaces\CouponManageInterface;
+use App\Repositories\CouponLineManageRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CouponManageController extends Controller
 {
-    public function __construct(protected CouponManageInterface $couponRepo)
+    public function __construct(protected CouponManageInterface $couponRepo, protected CouponLineManageRepository $couponLineRepo)
     {
     }
 
@@ -74,5 +76,49 @@ class CouponManageController extends Controller
             return response()->json(['message' => __('messages.data_not_found')], 404);
         }
         return $this->success(translate('messages.update_success', ['name' => 'Coupon']));
+    }
+
+    public function couponLineIndex(Request $request)
+    {
+        return $this->couponLineRepo->getPaginatedCouponLines(
+            $request->limit ?? 10,
+            $request->page ?? 1,
+            $request->search ?? "",
+            $request->sortField ?? 'id',
+            $request->sort ?? 'asc',
+            $request->filters ?? []
+        );
+    }
+
+    public function couponLineStore(CouponLineRequest $request): JsonResponse
+    {
+        $couponLine = $this->couponLineRepo->couponLineStore($request->all());
+
+        if ($couponLine) {
+            return $this->success(translate('messages.save_success', ['name' => 'Coupon Line']));
+        } else {
+            return $this->failed(translate('messages.save_failed', ['name' => 'Coupon Line']));
+        }
+    }
+
+    public function couponLineUpdate(CouponLineRequest $request)
+    {
+        $couponLine = $this->couponLineRepo->couponLineUpdate($request->all());
+
+        if ($couponLine) {
+            return $this->success(translate('messages.update_success', ['name' => 'Coupon Line']));
+        } else {
+            return $this->failed(translate('messages.update_failed', ['name' => 'Coupon']));
+        }
+    }
+    public function couponLineShow(Request $request)
+    {
+        return $this->couponLineRepo->getCouponLineById($request->id);
+    }
+
+    public function couponLineDestroy($id)
+    {
+        $this->couponLineRepo->couponLineDelete($id);
+        return $this->success(translate('messages.delete_success', ['name' => 'Coupon Line']));
     }
 }
