@@ -5,6 +5,7 @@ namespace App\Http\Resources\Product;
 use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
+use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,11 +21,11 @@ class ProductPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'store' => $this->store,
-            'category' => new ProductCategoryPublicResource($this->category),
-            'brand' => new ProductBrandPublicResource($this->brand),
-            'unit' => new ProductBrandPublicResource($this->unit),
-            'tag' => new TagPublicResource($this->tag),
+            'store' => $this->store->name,        
+           'category' => new ProductCategoryPublicResource($this->category),
+           'brand' => new ProductBrandPublicResource($this->brand),
+           'unit' => new ProductBrandPublicResource($this->unit),
+           'tag' => new TagPublicResource($this->tag),
             'type' => $this->type,
             'behaviour' => $this->behaviour,
             'name' => $this->name,
@@ -39,18 +40,12 @@ class ProductPublicResource extends JsonResource
             'return_text' => $this->return_text,
             'allow_change_in_mind' => $this->allow_change_in_mind,
             'cash_on_delivery' => $this->cash_on_delivery,
-            'delivery_time_min' => $this->delivery_time_min,
-            'delivery_time_max' => $this->delivery_time_max,
-            'delivery_time_text' => $this->delivery_time_text,
-            'max_cart_qty' => $this->max_cart_qty,
-            'order_count' => $this->order_count,
-            'attributes' => $this->attributes,
             'variants' => ProductVariantPublicResource::collection($this->variants),
             'views' => $this->views,
             'status' => $this->status,
             'available_time_starts' => $this->available_time_starts,
             'available_time_ends' => $this->available_time_ends,
-            'translations' => $this->related_translations,
+            "translations" => ProductTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
 }
