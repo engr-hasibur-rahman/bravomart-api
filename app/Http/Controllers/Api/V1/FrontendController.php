@@ -496,7 +496,7 @@ class FrontendController extends Controller
             }
             // Pagination
             $perPage = $request->per_page ?? 10;
-            $products = $query->with(['category', 'unit', 'tags', 'attributes', 'store', 'brand', 'variants', 'related_translations'])->paginate($perPage);
+            $products = $query->with(['category', 'unit', 'tags', 'store', 'brand', 'variants', 'related_translations'])->paginate($perPage);
 
             return response()->json([
                 'status' => true,
