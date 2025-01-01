@@ -311,7 +311,7 @@ class FrontendController extends Controller
     {
         try {
             // Use with() before findOrFail() to eagerly load the relationship
-            $product = Product::with(['store', 'tags', 'unit', 'variants', 'attributes', 'brand', 'category', 'related_translations'])->findOrFail($request->id);
+            $product = Product::with(['store', 'tags', 'unit', 'variants', 'brand', 'category', 'related_translations'])->findOrFail($request->id);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Seller\Store\Product;
 
 use App\Actions\ImageModifier;
-use App\Http\Resources\Com\Translation\RelatedTranslationResource;
+use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -71,7 +71,7 @@ class ProductDetailsResource extends JsonResource
             "brand" => $this->brand,
             "unit" => $this->unit,
             "attributes" => $this->attributes,
-            "related_translations" => RelatedTranslationResource::collection($this->related_translations->groupBy('language')),
+            "translations" => ProductTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
 }
