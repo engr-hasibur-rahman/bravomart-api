@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
+use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
@@ -441,6 +442,11 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::get('resolve', [SupportTicketManageController::class, 'resolve']);
             Route::post('add-message', [SupportTicketManageController::class, 'addMessage']);
             Route::get('messages', [SupportTicketManageController::class, 'getTicketMessages']);
+        });
+        Route::group(['prefix' => 'wish-list'], function () {
+            Route::get('list', [WishListManageController::class, 'getWishlist']);
+            Route::post('store', [WishListManageController::class, 'addToWishlist']);
+            Route::post('remove', [WishListManageController::class, 'removeFromWishlist']);
         });
     });
     // customer verify email
