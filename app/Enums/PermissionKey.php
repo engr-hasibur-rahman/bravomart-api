@@ -278,6 +278,11 @@ enum PermissionKey: string
      case ADMIN_COUPON_MANAGE = '/admin/coupon/list';
      case ADMIN_COUPON_LINE_MANAGE = '/admin/coupon-line/list';
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              Wallet Management                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_WALLET_MANAGE = '/admin/wallet/list';
+
     // ############################## Admin PermissionKey End ################################
 
 

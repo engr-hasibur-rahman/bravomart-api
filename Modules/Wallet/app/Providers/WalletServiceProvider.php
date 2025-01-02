@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Wallet\Providers;
+namespace Modules\Wallet\app\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -34,7 +34,6 @@ class WalletServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
     }
 
@@ -43,7 +42,7 @@ class WalletServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
+
     }
 
     /**
@@ -51,10 +50,7 @@ class WalletServiceProvider extends ServiceProvider
      */
     protected function registerCommandSchedules(): void
     {
-        // $this->app->booted(function () {
-        //     $schedule = $this->app->make(Schedule::class);
-        //     $schedule->command('inspire')->hourly();
-        // });
+
     }
 
     /**

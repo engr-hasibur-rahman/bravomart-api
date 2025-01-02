@@ -766,6 +766,32 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ]
                     ]
+                ],
+
+                // wallet manage
+                 [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Wallet Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Wallet Management',
+                        'ar' => 'إدارة الصفحات'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_WALLET_MANAGE->value,
+                            'PermissionTitle' => 'Wallet Lists',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Wallet Lists',
+                                'ar' => ' قوائم الصفحات'
+                            ]
+                        ]
+                    ]
                 ]
 
             ]
