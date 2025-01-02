@@ -28,15 +28,17 @@ class TagRequest extends FormRequest
             "order" => "required|integer|unique:tags,order," . $this->id,
         ];
     }
+
     public function messages()
     {
         return [
-            "name.required" => "Name field is required!",
-            "order.required" => "Order field is required!",
-            "order.integer" => "Input type must be integer!",
-            "order.unique" => "This order has been already taken!",
+            "name.required" => __('validation.required', ['attribute' => 'name']),
+            "order.required" => __('validation.required', ["attribute" => "Order"]),
+            "order.integer" => __('validation.integer', ['attribute' => 'order']),
+            "order.unique" => __('validation.unique', ['attribute' => 'Display order']),
         ];
     }
+
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));
