@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\ProductAttribute;
+use App\Models\ProductAttributeValue;
 use App\Models\Translation;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -39,6 +40,7 @@ class ProductAttributeRepository extends BaseRepository
         // Prepare data for Attribute
         $data = [
             'name' => $request['name'],
+            'product_type' => $request['product_type'],
             'created_by' => auth('api')->id(),
         ];
 
@@ -89,4 +91,25 @@ class ProductAttributeRepository extends BaseRepository
         return $attribute;
     }
 
+
+    public function storeAttributeValues(array $data)
+    {
+        try {
+            $attributeId = $data['attribute_id'];
+            $values = $data['value']; // Assuming 'value' is an array of values
+
+            $insertData = collect($values)->map(function ($value) use ($attributeId) {
+                return [
+                    'attribute_id' => $attributeId,
+                    'value' => $value,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->toArray();
+            ProductAttributeValue::insert($insertData);
+            return true;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }

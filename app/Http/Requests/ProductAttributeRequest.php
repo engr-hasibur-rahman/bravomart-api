@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\StoreType;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -25,8 +26,20 @@ class ProductAttributeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'product_type' => 'nullable|in:' . implode(',', array_column(StoreType::cases(), 'value')),
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'name.required' => __('validation.required', ['name' => 'Name']),
+            'name.string' => __('validation.string', ['name' => 'Name']),
+            'name.max' => __('validation.max.string', ['name' => 'Name']),
+            'product_type.in' => __('validation.in', ['name' => 'Product Type', 'enum' => implode(',', array_column(StoreType::cases(), 'value'))]),
+        ];
+    }
+
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));

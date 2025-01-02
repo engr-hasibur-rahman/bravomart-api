@@ -17,6 +17,11 @@ class ProductAttribute extends Model
         'name'
     ];
 
+    public function attributeValues()
+    {
+        return $this->hasMany(ProductAttributeValue::class, 'attribute_id');
+    }
+
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
