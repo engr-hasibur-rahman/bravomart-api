@@ -19,10 +19,17 @@ class Coupon extends Model
         'title',
         'description'
     ];
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function couponLines()
+    {
+        return $this->hasMany(CouponLine::class);
+    }
+
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')

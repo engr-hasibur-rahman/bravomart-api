@@ -25,6 +25,7 @@ class CouponLineRequest extends FormRequest
     {
         return [
             'coupon_id' => 'required|exists:coupons,id',
+            'customer_id' => 'nullable|exists:customers,id',
             'discount_type' => 'required|string|in:percentage,amount',
             'discount' => 'required|numeric|min:0',
             'min_order_value' => 'nullable|numeric|min:0',
@@ -38,8 +39,9 @@ class CouponLineRequest extends FormRequest
     public function messages()
     {
         return [
-            'coupon_id' => __('validation.coupon_id', ['attribute' => 'Coupon']),
-            'coupon_id.exists' => __('validation.coupon_id', ['attribute' => 'Coupon']),
+            'coupon_id' => __('validation.required', ['attribute' => 'Coupon']),
+            'coupon_id.exists' => __('validation.exists', ['attribute' => 'Coupon']),
+            'customer_id.exists' => __('validation.exists', ['attribute' => 'Customer']),
             'discount_type.required' => __('validation.required', ['attribute' => 'Discount Type']),
             'discount_type.in' => __('validation.in', ['attribute' => 'Discount Type', 'enum' => 'percentage or amount']),
             'discount.required' => __('validation.required', ['attribute' => 'Discount']),
