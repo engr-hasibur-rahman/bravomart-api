@@ -228,13 +228,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         //Product Attribute Management
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-            Route::get('product/attribute/list', [ProductAttributeController::class, 'index']);
-            Route::get('product/attribute/{id}', [ProductAttributeController::class, 'show']);
-            Route::post('product/attribute/add', [ProductAttributeController::class, 'store']);
-            Route::post('product/attribute/update', [ProductAttributeController::class, 'update']);
-            Route::put('product/attribute/status/{id}', [ProductAttributeController::class, 'status_update']);
-            Route::delete('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
+        Route::group(['prefix'=>'attribute','middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+            Route::get('list', [ProductAttributeController::class, 'index']);
+            Route::get('/', [ProductAttributeController::class, 'show']);
+            Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
+            Route::post('add', [ProductAttributeController::class, 'store']);
+            Route::post('value/add', [ProductAttributeController::class, 'storeAttributeValue']);
+            Route::post('update', [ProductAttributeController::class, 'update']);
+            Route::put('status/{id}', [ProductAttributeController::class, 'status_update']);
+            Route::delete('remove/{id}', [ProductAttributeController::class, 'destroy']);
         });
         // Coupon manage
         Route::group(['prefix' => 'coupon/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_MANAGE->value]], function () {
