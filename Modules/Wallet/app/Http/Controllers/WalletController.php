@@ -43,7 +43,12 @@ class WalletController extends Controller
     public function status($id = null)
     {
         $wallet = Wallet::findOrFail($id);
-        return response()->json($wallet->status);
+        $wallet->status = $wallet->status == 1 ? 0 : 1;
+        $wallet->save();
+
+        return response()->json([
+                'message' => 'Deposit status changed successfully']
+        );
     }
 
     public function depositCreateByAdmin(Request $request)
