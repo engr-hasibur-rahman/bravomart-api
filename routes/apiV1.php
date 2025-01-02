@@ -64,7 +64,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     });
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     Route::get('/product-list', [FrontendController::class, 'productList']);
-    Route::post('/product-details', [FrontendController::class, 'productDetails']);
+    Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);
     Route::post('/new-arrivals', [FrontendController::class, 'getNewArrivals']);
     Route::post('/best-selling-products', [FrontendController::class, 'getBestSellingProduct']);
     Route::post('/top-deal-products', [FrontendController::class, 'getTopDeals']);

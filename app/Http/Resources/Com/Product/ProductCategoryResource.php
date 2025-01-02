@@ -1,20 +1,24 @@
 <?php
 
-namespace App\Http\Resources\Product;
+namespace App\Http\Resources\Com\Product;
 
+use App\Actions\ImageModifier;
 use App\Http\Resources\ProductChildCategoryResource;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductCategoryPublicResource extends JsonResource
+class ProductCategoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @param  Request  $request
+     * @return array
      */
-    public function toArray(Request $request): array
+
+    
+
+    public function toArray($request)
     {
         $language = $request->language;
         $locales = $this->translations->where('language', $language)->keyBy('key')->toArray();
@@ -24,14 +28,22 @@ class ProductCategoryPublicResource extends JsonResource
             'label' => $locales['category_name']['value'] ?? $this->category_name,
             'category_name' => $locales['category_name']['value'] ?? $this->category_name,
             'parent_id' => $this->parent_id,
-            'category_slug' => $locales['category_slug']['value'] ?? $this->category_slug,
             'childrenRecursive' => ProductChildCategoryResource::collection($this->childrenRecursive),
-            'category_thumb' => '',
+            'category_slug' => $locales['category_slug']['value'] ?? $this->category_slug,
+            'category_banner' => '', $this->category_banner,
+            'category_banner_url' => ImageModifier::generateImageUrl($this->category_banner),
+            'category_thumb' => '', $this->category_thumb,
+            'category_thumb_url' => ImageModifier::generateImageUrl($this->category_thumb_url),
             'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
             'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
             'category_name_paths' => $this->category_name_paths,
             'parent_path' => $this->parent_path,
+            'display_order' => $this->display_order,
+            'created_by' => $this->created_by,
+            'updated_by' => $this->updated_by,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
-
 }

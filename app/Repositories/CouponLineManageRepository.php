@@ -47,6 +47,7 @@ class CouponLineManageRepository
 
     public function couponLineStore(array $data)
     {
+        $data['coupon_code'] = generateRandomCouponCode();
         try {
             $couponLine = CouponLine::create($data);
             return $couponLine->id;
