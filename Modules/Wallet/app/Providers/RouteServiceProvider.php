@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Wallet\Providers;
+namespace Modules\Wallet\app\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
