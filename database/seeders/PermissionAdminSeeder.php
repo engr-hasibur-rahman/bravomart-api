@@ -192,6 +192,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
                 // Product Manage
                 [
                     'PermissionName' => '',
@@ -539,10 +540,50 @@ class PermissionAdminSeeder extends Seeder
                                         'ar' => 'إضافة مجموعات'
                                     ]
                                 ]
-                            ]
+                            ],
+
+
+                        ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Coupon Management',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Coupon Management',
+                                'ar' => 'إدارة التركيبات'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_COUPON_MANAGE->value,
+                                    'PermissionTitle' => 'Coupon list',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'Coupon list',
+                                        'ar' => 'إدارة التركيبات'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_COUPON_LINE_MANAGE->value,
+                                    'PermissionTitle' => 'Coupon line list',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'Coupon line list',
+                                        'ar' => 'إضافة مجموعات'
+                                    ]
+                                ]
+                            ],
+
+
                         ]
                     ]
                 ],
+
                 //Store management
                 [
                     'PermissionName' => '',

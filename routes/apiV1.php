@@ -236,7 +236,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
         });
         // Coupon manage
-        Route::group(['prefix' => 'coupon', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value]], function () {
+        Route::group(['prefix' => 'coupon/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_MANAGE->value]], function () {
             Route::get('list', [CouponManageController::class, 'index']);
             Route::get('{id}', [CouponManageController::class, 'show']);
             Route::post('add', [CouponManageController::class, 'store']);
@@ -244,7 +244,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('status-change', [CouponManageController::class, 'changeStatus']);
             Route::delete('remove/{id}', [CouponManageController::class, 'destroy']);
         });
-        Route::group(['prefix' => 'coupon-line', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value]], function () {
+        Route::group(['prefix' => 'coupon-line/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_LINE_MANAGE->value]], function () {
             Route::get('list', [CouponManageController::class, 'couponLineIndex']);
             Route::get('{id}', [CouponManageController::class, 'couponLineShow']);
             Route::post('add', [CouponManageController::class, 'couponLineStore']);
