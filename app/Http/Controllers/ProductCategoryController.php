@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductCategoryRequest;
+use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\ProductCategoryByIdResource;
-use App\Http\Resources\ProductCategoryResource;
 use App\Models\ProductCategory;
 use App\Repositories\ProductCategoryRepository;
 use Illuminate\Http\Request;

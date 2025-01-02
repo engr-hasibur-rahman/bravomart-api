@@ -5,6 +5,7 @@ namespace App\Http\Resources\Product;
 use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
+use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use Illuminate\Http\Request;

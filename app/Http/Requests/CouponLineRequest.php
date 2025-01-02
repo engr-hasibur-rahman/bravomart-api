@@ -24,40 +24,36 @@ class CouponLineRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'code' => 'required|string|max:255|unique:coupons,code,' . $this->id,
+            'coupon_id' => 'required|exists:coupons,id',
             'discount_type' => 'required|string|in:percentage,amount',
             'discount' => 'required|numeric|min:0',
-            'product_id' => 'nullable|exists:products,id',
-            'start_date' => 'required|date|date_format:Y-m-d',
-            'end_date' => 'required|date|after_or_equal:start_date|date_format:Y-m-d',
+            'min_order_value' => 'nullable|numeric|min:0',
             'usage_limit' => 'nullable|integer|min:0',
             'usage_count' => 'nullable|integer|min:0',
-            'description' => 'nullable|string',
+            'start_date' => 'required|date|date_format:Y-m-d H:i:s',
+            'end_date' => 'required|date|after_or_equal:start_date|date_format:Y-m-d H:i:s',
             'status' => 'required|integer|in:0,1',
         ];
     }
     public function messages()
     {
         return [
-            'title.required' => 'The title field is required.',
-            'code.required' => 'The code field is required.',
-            'code.unique' => 'The code must be unique.',
-            'discount_type.required' => 'The discount type field is required.',
-            'discount_type.in' => 'The discount type must be either percentage or amount.',
-            'discount.required' => 'The discount field is required.',
-            'discount.numeric' => 'The discount must be a number.',
-            'product_id.exists' => 'The selected product does not exist.',
-            'start_date.required' => 'The start date field is required.',
-            "start_date.date_format" => "Incorrect date format!",
-            'end_date.required' => 'The end date field is required.',
-            "end_date.date_format" => "Incorrect date format!",
-            'end_date.after_or_equal' => 'The end date must be a date after or equal to the start date.',
-            'usage_limit.integer' => 'The usage limit must be an integer.',
-            'usage_count.integer' => 'The usage count must be an integer.',
-            'description.string' => 'The description must be a string.',
-            'status.required' => 'The status field is required.',
-            'status.in' => 'The status must be either active (1) or inactive (0).',
+            'coupon_id' => __('validation.coupon_id', ['attribute' => 'Coupon']),
+            'coupon_id.exists' => __('validation.coupon_id', ['attribute' => 'Coupon']),
+            'discount_type.required' => __('validation.required', ['attribute' => 'Discount Type']),
+            'discount_type.in' => __('validation.in', ['attribute' => 'Discount Type', 'enum' => 'percentage or amount']),
+            'discount.required' => __('validation.required', ['attribute' => 'Discount']),
+            'discount.numeric' => __('validation.numeric', ['attribute' => 'Discount']),
+            'min_order_value.numeric' => __('validation.numeric', ['attribute' => 'Minimum Order Value']),
+            'usage_limit.integer' => __('validation.integer', ['attribute' => 'Usage Limit']),
+            'usage_count.integer' => __('validation.integer', ['attribute' => 'Usage Count']),
+            'start_date.required' => __('validation.required', ['attribute' => 'Start Date']),
+            'start_date.date_format' => __('validation.date_format', ['attribute' => 'Start Date']),
+            'end_date.required' => __('validation.required', ['attribute' => 'End Date']),
+            'end_date.date_format' => __('validation.date_format', ['attribute' => 'End Date']),
+            'end_date.after_or_equal' => __('validation.after_or_equal', ['attribute' => 'End Date']),
+            'status.required' => __('validation.required', ['attribute' => 'Status']),
+            'status.in' => __('validation.in', ['attribute' => 'Status']),
         ];
     }
     public function failedValidation(Validator $validator)
