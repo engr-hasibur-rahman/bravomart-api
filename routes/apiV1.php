@@ -261,7 +261,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('tag/update', [TagManageController::class, 'update']);
             Route::delete('tag/remove/{id}', [TagManageController::class, 'destroy']);
         });
-
         // Unit manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
             Route::get('unit/list', [UnitManageController::class, 'index']);

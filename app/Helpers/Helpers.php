@@ -60,7 +60,7 @@ if (!function_exists('translate')) {
             $couponCode = Str::random(8);
 
             // Ensure the generated coupon code is unique
-            while (\App\Models\Coupon::where('code', $couponCode)->exists()) {
+            while (\App\Models\CouponLine::where('coupon_code', $couponCode)->exists()) {
                 // If the code already exists, generate a new one
                 $couponCode = Str::random(8);
             }

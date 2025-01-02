@@ -20,8 +20,10 @@ class CouponResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'status' => $this->status,
-            'created_by' => $this->creator->first_name,
-            "translations" => CouponTranslationResource::collection($this->related_translations->groupBy('language')),
+            'created_by' => $this->creator?->first_name, // Safely handle null creator
+            "translations" => $this->related_translations
+                ? CouponTranslationResource::collection($this->related_translations->groupBy('language'))
+                : [], // Return an empty array if related_translations is null
         ];
     }
 }

@@ -28,21 +28,13 @@ class CouponLineManageRepository
                     ->orWhere('discount_type', 'like', "%{$search}%");
             });
         }
-
         // Apply additional filters
         foreach ($filters as $key => $value) {
             $couponLines->where($key, $value);
         }
-
         // Apply sorting and pagination
         $couponLines = $couponLines->orderBy($sortField, $sort)->paginate($limit);
-
-        return response()->json([
-            'coupon_lines' => $couponLines->items(),
-            'last_page' => $couponLines->lastPage(),
-            'current_page' => $couponLines->currentPage(),
-            'per_page' => $couponLines->perPage(),
-        ]);
+        return $couponLines;
     }
 
     public function couponLineStore(array $data)
@@ -60,7 +52,7 @@ class CouponLineManageRepository
     {
         try {
             $couponLine = CouponLine::findOrFail($id);
-            return response()->json($couponLine);
+            return $couponLine;
         } catch (\Throwable $th) {
             throw $th;
         }
