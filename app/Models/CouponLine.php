@@ -33,7 +33,7 @@ class CouponLine extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function Coupon()
+    public function coupon()
     {
         return $this->belongsTo(Coupon::class, 'coupon_id');
     }

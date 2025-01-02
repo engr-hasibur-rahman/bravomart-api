@@ -2,12 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\StoreType;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ProductAttributeRequest extends FormRequest
+class WishListRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,18 +24,16 @@ class ProductAttributeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'product_type' => 'nullable|in:' . implode(',', array_column(StoreType::cases(), 'value')),
+            'product_id' => 'required|exists:products,id',
+            'customer_id' => 'required|exists:customers,id',
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required' => __('validation.required', ['name' => 'Name']),
-            'name.string' => __('validation.string', ['name' => 'Name']),
-            'name.max' => __('validation.max.string', ['name' => 'Name']),
-            'product_type.in' => __('validation.in', ['name' => 'Product Type', 'enum' => implode(',', array_column(StoreType::cases(), 'value'))]),
+            'product_id.exists' => __('validation.exists', ['attribute' => 'Product']),
+            'customer_id.exists' => __('validation.exists', ['attribute' => 'Customer']),
         ];
     }
 

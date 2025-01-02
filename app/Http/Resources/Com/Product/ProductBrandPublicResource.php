@@ -21,7 +21,6 @@ class ProductBrandPublicResource extends JsonResource
          return [
              'value' => $this->id,
              'label' => $locales['brand_name']['value'] ?? $this->brand_name,
-
          ];
      }
 }

@@ -3,6 +3,11 @@
 namespace App\Http\Resources\Product;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Com\Product\ProductBrandPublicResource;
+use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
+use App\Http\Resources\Com\Product\ProductStorePublicResource;
+use App\Http\Resources\Com\Product\ProductUnitPublicResource;
+use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,10 +22,10 @@ class ProductDetailsPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'store' => $this->store,
-            'category' => $this->category,
-            'brand' => $this->brand,
-            'unit' => $this->unit,
+            'store' => new ProductStorePublicResource($this->store),
+            'category' => new ProductCategoryPublicResource($this->category),
+            'brand' => new ProductBrandPublicResource($this->brand),
+            'unit' => new ProductUnitPublicResource($this->unit),
             'tag' => $this->tag,
             'type' => $this->type,
             'behaviour' => $this->behaviour,
@@ -40,13 +45,12 @@ class ProductDetailsPublicResource extends JsonResource
             'delivery_time_text' => $this->delivery_time_text,
             'max_cart_qty' => $this->max_cart_qty,
             'order_count' => $this->order_count,
-            'attributes' => $this->attributes,
             'variants' => ProductVariantPublicResource::collection($this->variants),
             'views' => $this->views,
             'status' => $this->status,
             'available_time_starts' => $this->available_time_starts,
             'available_time_ends' => $this->available_time_ends,
-            'translations' => $this->related_translations,
+            'translations' => ProductTranslationResource::collection($this->related_translations),
         ];
     }
 }

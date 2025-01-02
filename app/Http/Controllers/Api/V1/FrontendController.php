@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
+use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
@@ -17,7 +18,6 @@ use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
-use App\Http\Resources\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
@@ -307,11 +307,20 @@ class FrontendController extends Controller
         }
     }
 
-    public function productDetails(Request $request)
+    public function productDetails($product_slug)
     {
         try {
-            // Use with() before findOrFail() to eagerly load the relationship
-            $product = Product::with(['store', 'tags', 'unit', 'variants', 'brand', 'category', 'related_translations'])->findOrFail($request->id);
+            $product = Product::with([
+                'store',
+                'tags',
+                'unit',
+                'variants',
+                'brand',
+                'category',
+                'related_translations'
+            ])
+                ->where('slug', $product_slug)
+                ->first();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

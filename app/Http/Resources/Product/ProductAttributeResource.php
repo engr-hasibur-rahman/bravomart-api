@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Com\Product;
+namespace App\Http\Resources\Product;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -15,14 +15,11 @@ class ProductAttributeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->id,
-            "value" => $this->id,
-            "label" => $this->name,
-            'product_type' => $this->product_type,
-            "created_by" => $this->created_by,
-            "updated_by" => $this->updated_by,
-            "status" => $this->status,
-
+            'id' => $this->id,
+            'value' => $this->id,
+            'label' => $this->name,
+            "product_type" => $this->product_type,
+            'attribute_values' => ProductAttributeValueResource::collection($this->attributeValues)
         ];
     }
 }

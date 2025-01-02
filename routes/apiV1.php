@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
+use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
@@ -64,7 +65,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     });
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     Route::get('/product-list', [FrontendController::class, 'productList']);
-    Route::post('/product-details', [FrontendController::class, 'productDetails']);
+    Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);
     Route::post('/new-arrivals', [FrontendController::class, 'getNewArrivals']);
     Route::post('/best-selling-products', [FrontendController::class, 'getBestSellingProduct']);
     Route::post('/top-deal-products', [FrontendController::class, 'getTopDeals']);
@@ -227,13 +228,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         //Product Attribute Management
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-            Route::get('product/attribute/list', [ProductAttributeController::class, 'index']);
-            Route::get('product/attribute/{id}', [ProductAttributeController::class, 'show']);
-            Route::post('product/attribute/add', [ProductAttributeController::class, 'store']);
-            Route::post('product/attribute/update', [ProductAttributeController::class, 'update']);
-            Route::put('product/attribute/status/{id}', [ProductAttributeController::class, 'status_update']);
-            Route::delete('product/attribute/remove/{id}', [ProductAttributeController::class, 'destroy']);
+        Route::group(['prefix'=>'attribute','middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+            Route::get('list', [ProductAttributeController::class, 'index']);
+            Route::get('/', [ProductAttributeController::class, 'show']);
+            Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
+            Route::post('add', [ProductAttributeController::class, 'store']);
+            Route::post('value/add', [ProductAttributeController::class, 'storeAttributeValue']);
+            Route::post('update', [ProductAttributeController::class, 'update']);
+            Route::put('status/{id}', [ProductAttributeController::class, 'status_update']);
+            Route::delete('remove/{id}', [ProductAttributeController::class, 'destroy']);
         });
         // Coupon manage
         Route::group(['prefix' => 'coupon/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_MANAGE->value]], function () {
@@ -261,7 +264,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('tag/update', [TagManageController::class, 'update']);
             Route::delete('tag/remove/{id}', [TagManageController::class, 'destroy']);
         });
-
         // Unit manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
             Route::get('unit/list', [UnitManageController::class, 'index']);
@@ -442,6 +444,11 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::get('resolve', [SupportTicketManageController::class, 'resolve']);
             Route::post('add-message', [SupportTicketManageController::class, 'addMessage']);
             Route::get('messages', [SupportTicketManageController::class, 'getTicketMessages']);
+        });
+        Route::group(['prefix' => 'wish-list'], function () {
+            Route::get('list', [WishListManageController::class, 'getWishlist']);
+            Route::post('store', [WishListManageController::class, 'addToWishlist']);
+            Route::post('remove', [WishListManageController::class, 'removeFromWishlist']);
         });
     });
     // customer verify email

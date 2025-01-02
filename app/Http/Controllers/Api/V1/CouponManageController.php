@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CouponLineRequest;
 use App\Http\Requests\CouponRequest;
+use App\Http\Resources\Coupon\CouponLineResource;
+use App\Http\Resources\Coupon\CouponResource;
 use App\Interfaces\CouponManageInterface;
 use App\Repositories\CouponLineManageRepository;
 use Illuminate\Http\JsonResponse;
@@ -80,7 +82,7 @@ class CouponManageController extends Controller
 
     public function couponLineIndex(Request $request)
     {
-        return $this->couponLineRepo->getPaginatedCouponLines(
+        $couponLines = $this->couponLineRepo->getPaginatedCouponLines(
             $request->limit ?? 10,
             $request->page ?? 1,
             $request->search ?? "",
@@ -88,6 +90,13 @@ class CouponManageController extends Controller
             $request->sort ?? 'asc',
             $request->filters ?? []
         );
+        return response()->json([
+            'coupon_lines' => CouponLineResource::collection($couponLines),
+            'current_page' => $couponLines->currentPage(),
+            'per_page' => $couponLines->perPage(),
+            'total' => $couponLines->total(),
+            'last_page' => $couponLines->lastPage(),
+        ]);
     }
 
     public function couponLineStore(CouponLineRequest $request): JsonResponse
@@ -111,9 +120,11 @@ class CouponManageController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Coupon']));
         }
     }
+
     public function couponLineShow(Request $request)
     {
-        return $this->couponLineRepo->getCouponLineById($request->id);
+        $couponLine = $this->couponLineRepo->getCouponLineById($request->id);
+        return response()->json(new CouponLineResource($couponLine));
     }
 
     public function couponLineDestroy($id)
