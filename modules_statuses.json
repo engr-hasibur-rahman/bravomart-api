@@ -1,3 +1,4 @@
 {
-    "PaymentGateways": true
+    "PaymentGateways": true,
+    "Wallet": true
 }

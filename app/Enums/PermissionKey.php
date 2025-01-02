@@ -272,6 +272,12 @@ enum PermissionKey: string
     //              Payment Settings Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
      case ADMIN_PAYMENT_SETTINGS = '/admin/payment-gateways/settings';
+     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              Coupon Management                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+     case ADMIN_COUPON_MANAGE = '/admin/coupon/list';
+     case ADMIN_COUPON_LINE_MANAGE = '/admin/coupon-line/list';
+
     // ############################## Admin PermissionKey End ################################
 
 
