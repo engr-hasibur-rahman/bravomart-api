@@ -47,6 +47,8 @@ return [
 
     'default.address' => 'Default address can\'t be deleted!',
     'invalid.address' => 'Invalid address!',
+    'approve.success' => ':name approved successfully!',
+    'reject.success' => ':name rejected successfully!',
 
 ];
 
