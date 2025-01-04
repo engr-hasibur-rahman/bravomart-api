@@ -11,7 +11,8 @@ use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
-use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
+use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
@@ -116,6 +117,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
+        // Customer Manage
+        Route::group(['prefix'=>'customer-management/'], function () {
+            Route::get('customer-list',[AdminCustomerManageController::class, 'getCustomerList']);
+        });
+        // Seller Manage
+        Route::group(['prefix'=>'seller-management/'], function () {
+
+        });
         // Department manage
         Route::group(['prefix' => 'department/'], function () {
             Route::get('list', [DepartmentManageController::class, 'index']);
@@ -347,7 +356,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
         Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
-
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
             Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);
