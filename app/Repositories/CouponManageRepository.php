@@ -201,15 +201,4 @@ class CouponManageRepository implements CouponManageInterface
         }
         return true;
     }
-
-    public function changeStatus(int $couponId, int $status): bool
-    {
-        $coupon = Coupon::findorfail($couponId);
-
-        if (!$coupon) {
-            return false;
-        }
-        $coupon->status = $status;
-        return $coupon->save();
-    }
 }

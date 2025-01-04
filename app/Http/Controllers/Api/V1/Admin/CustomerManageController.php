@@ -26,7 +26,7 @@ class CustomerManageController extends Controller
         if (isset($request->status)) {
             $query->where("status", $request->status);
         }
-        $customers = $query->paginate(10);
+        $customers = $query->paginate($request->perPage ?? 10);
         return response()->json([
             'customers' => CustomerResource::collection($customers),
             'pagination' => new PaginationResource($customers)
@@ -47,6 +47,6 @@ class CustomerManageController extends Controller
         $customer->status = !$customer->status;
         $customer->save();
 
-        return $customer;
+        return $this->success(translate('messages.update_success', ['name' => 'Customer']));
     }
 }

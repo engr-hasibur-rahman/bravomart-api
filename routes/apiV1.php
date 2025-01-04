@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
+use App\Http\Controllers\Api\V1\Admin\SellerManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
@@ -125,7 +126,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
         // Seller Manage
         Route::group(['prefix'=>'seller-management/'], function () {
-
+            Route::get('seller-list',[SellerManageController::class, 'getSellerList']);
         });
         // Department manage
         Route::group(['prefix' => 'department/'], function () {
