@@ -9,6 +9,7 @@ use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
+use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
@@ -431,7 +432,7 @@ class FrontendController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => ProductCategoryPublicResource::collection($categories),
+                'data' => ProductCategoryResource::collection($categories),
                 'pagination' => [
                     'total' => $categories->total(),
                     'per_page' => $categories->perPage(),
