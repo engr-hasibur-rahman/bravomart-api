@@ -119,14 +119,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
         // Customer Manage
-        Route::group(['prefix'=>'customer-management/'], function () {
-            Route::get('customer-list',[AdminCustomerManageController::class, 'getCustomerList']);
-            Route::get('customer-details',[AdminCustomerManageController::class, 'getCustomerDetails']);
-            Route::post('change-status',[AdminCustomerManageController::class, 'changeStatus']);
+        Route::group(['prefix' => 'customer-management/'], function () {
+            Route::get('customer-list', [AdminCustomerManageController::class, 'getCustomerList']);
+            Route::get('customer-details', [AdminCustomerManageController::class, 'getCustomerDetails']);
+            Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
         });
         // Seller Manage
-        Route::group(['prefix'=>'seller-management/'], function () {
-            Route::get('seller-list',[SellerManageController::class, 'getSellerList']);
+        Route::group(['prefix' => 'seller-management/'], function () {
+            Route::get('seller-list', [SellerManageController::class, 'getSellerList']);
+            Route::get('seller-details/{slug}', [SellerManageController::class, 'getSellerDetails']);
+            Route::get('seller-list/pending', [SellerManageController::class, 'pendingSellers']);
+            Route::post('seller-approve', [SellerManageController::class, 'approveSeller']);
+            Route::post('seller-suspend', [SellerManageController::class, 'rejectSeller']);
         });
         // Department manage
         Route::group(['prefix' => 'department/'], function () {
@@ -240,7 +244,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         //Product Attribute Management
-        Route::group(['prefix'=>'attribute','middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['prefix' => 'attribute', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [ProductAttributeController::class, 'index']);
             Route::get('/', [ProductAttributeController::class, 'show']);
             Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
