@@ -40,4 +40,13 @@ class CustomerManageController extends Controller
             'customers' => new CustomerDetailsResource($customer),
         ]);
     }
+
+    public function changeStatus(Request $request)
+    {
+        $customer = Customer::findOrFail($request->id);
+        $customer->status = !$customer->status;
+        $customer->save();
+
+        return $customer;
+    }
 }

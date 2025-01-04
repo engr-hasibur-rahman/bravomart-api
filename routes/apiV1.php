@@ -120,6 +120,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Customer Manage
         Route::group(['prefix'=>'customer-management/'], function () {
             Route::get('customer-list',[AdminCustomerManageController::class, 'getCustomerList']);
+            Route::get('customer-details',[AdminCustomerManageController::class, 'getCustomerDetails']);
+            Route::post('change-status',[AdminCustomerManageController::class, 'changeStatus']);
         });
         // Seller Manage
         Route::group(['prefix'=>'seller-management/'], function () {
