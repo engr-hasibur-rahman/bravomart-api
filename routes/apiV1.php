@@ -346,7 +346,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
         Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
         Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
-        Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
+        Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
 
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
