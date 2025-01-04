@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\StoreType;
+use App\Helpers\MultilangSlug;
 use App\Models\ProductAttribute;
 use App\Models\ProductAttributeValue;
 use Carbon\Carbon;
@@ -27,7 +28,10 @@ class ProductAttributeSeeder extends Seeder
             foreach ($attributeNames as $attributeName) {
                 // Create an attribute for the current store type
                 $productAttribute = ProductAttribute::firstOrCreate(
-                    ['name' => $attributeName, 'product_type' => $storeType->value],
+                    [
+                        'name' => $attributeName,
+                        'product_type' => $storeType->value,
+                    ],
                     [
                         'status' => 1,
                         'created_by' => rand(1, 10),

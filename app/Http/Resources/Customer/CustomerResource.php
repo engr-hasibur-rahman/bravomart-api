@@ -23,20 +23,10 @@ class CustomerResource extends JsonResource
             "email" => $this->email,
             "phone" => $this->phone,
             "image" => ImageModifier::generateImageUrl($this->image),
-            "birth_day" => $this->birth_day,
-            "gender" => $this->gender,
             "def_lang" => $this->def_lang,
-            "password_changed_at" => $this->password_changed_at,
-            "email_verify_token" => $this->email_verify_token,
-            "email_verified" => $this->email_verified,
-            "email_verified_at" => $this->email_verified_at,
-            "verified" => $this->verified,
-            "verify_method" => $this->verify_method,
-            "marketing_email" => $this->marketing_email,
-            "marketing_sms" => $this->marketing_sms,
+            "email_verified" => (bool)$this->email_verified,
+            "verified" => (bool)$this->verified,
             "status" => $this->status,
-            "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at,
         ];
     }
 }
