@@ -22,5 +22,4 @@ interface CouponManageInterface
 
     public function translationKeys();
 
-    public function changeStatus(int $couponId, int $status): bool;
 }

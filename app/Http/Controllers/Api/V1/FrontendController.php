@@ -6,6 +6,7 @@ use App\Enums\Behaviour;
 use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
@@ -433,12 +434,7 @@ class FrontendController extends Controller
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => ProductCategoryResource::collection($categories),
-                'pagination' => [
-                    'total' => $categories->total(),
-                    'per_page' => $categories->perPage(),
-                    'current_page' => $categories->currentPage(),
-                    'last_page' => $categories->lastPage(),
-                ],
+                'meta' => new PaginationResource($categories)
             ]);
         } catch (\Exception $e) {
             return response()->json([
