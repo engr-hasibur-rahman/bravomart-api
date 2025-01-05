@@ -10,6 +10,7 @@ use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class ProductPublicResource extends JsonResource
 {
@@ -22,11 +23,11 @@ class ProductPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'store' => $this->store->name,        
-           'category' => new ProductCategoryPublicResource($this->category),
-           'brand' => new ProductBrandPublicResource($this->brand),
-           'unit' => new ProductBrandPublicResource($this->unit),
-           'tag' => new TagPublicResource($this->tag),
+            'store' => $this->store->name,
+            'category' => new ProductCategoryPublicResource($this->category),
+            'brand' => new ProductBrandPublicResource($this->brand),
+            'unit' => new ProductBrandPublicResource($this->unit),
+            'tag' => new TagPublicResource($this->tag),
             'type' => $this->type,
             'behaviour' => $this->behaviour,
             'name' => $this->name,
@@ -46,6 +47,7 @@ class ProductPublicResource extends JsonResource
             'status' => $this->status,
             'available_time_starts' => $this->available_time_starts,
             'available_time_ends' => $this->available_time_ends,
+            'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
             "translations" => ProductTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
