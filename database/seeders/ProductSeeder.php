@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\Behaviour;
 use App\Enums\StatusType;
 use App\Enums\StoreType;
+use App\Models\ComMerchantStore;
 use App\Models\Product;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
@@ -19,6 +20,8 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
+        // Fetch store IDs from the com_merchant_stores table
+        $stores = ComMerchantStore::pluck('id')->toArray(); // Get store IDs as an array
         // You can customize this to use actual categories, brands, etc.
         $categories = ProductCategory::pluck('id')->toArray();
         $brands = ProductBrand::pluck('id')->toArray();
