@@ -23,7 +23,6 @@ class WishListResource extends JsonResource
             'image' => $this->image,
             'price' => $this->product->variants->isNotEmpty() ? $this->product->variants[0]->price : null,
             'special_price' => $this->product->variants->isNotEmpty() ? $this->product->variants[0]->special_price : null,
-            'wishlist' => $this->wishlist
         ];
     }
 }
