@@ -288,7 +288,7 @@ enum PermissionKey: string
 
     // ############################## Seller PermissionKey Start ################################
        //-----------Store Settings----------
-        case STORE_MY_SHOP = '/seller/store/list';
+        case SELLER_STORE_MY_SHOP = '/seller/store/list';
         case STORE_STORE_NOTICE = 'store-notice';
         case STORE_STORE_MESSAGE = 'store-message';
         case STORE_STORE_CONFIG = 'store-config';
@@ -296,6 +296,10 @@ enum PermissionKey: string
         case STORE_WALLET = 'my-wallet';
         case STORE_DISBURSE_METHOD = 'my-disburse-method';
         case STORE_POS_CONFIG = 'pos-config';
+
+        // ----------- Seller Product Manage
+    case SELLER_STORE_PRODUCT_LIST = '/seller/store/product/list';
+    case SELLER_STORE_PRODUCT_ADD = '/seller/store/product/add';
 
 
      //-----------Seller Staff Manage----------

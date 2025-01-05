@@ -2,9 +2,15 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enums\Behaviour;
+use App\Enums\StatusType;
+use App\Enums\StoreType;
+use App\Models\Product;
+use App\Models\ProductBrand;
+use App\Models\ProductCategory;
+use App\Models\ProductVariant;
+use App\Models\Unit;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class ProductSeeder extends Seeder
 {
@@ -13,107 +19,98 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        // Insert the product
-        $productId = DB::table('products')->insertGetId([
-            "store_id" => "1",
-            "category_id" => "1",
-            "brand_id" => "1",
-            "unit_id" => "1",
-            "type" => "books",
-            "behaviour" => "product",
-            "name" => "Test Product",
-            "slug" => "test-product",
-            "description" => "Test Description",
-            "warranty" => "30 days",
-            "return_in_days" => "15 days",
-            "return_text" => "Test Return Text",
-            "allow_change_in_mind" => "Test Allow Change In Mind",
-            "cash_on_delivery" => "200",
-            "delivery_time_min" => "2 days",
-            "delivery_time_max" => "7 days",
-            "delivery_time_text" => "Test Delivery Time Text",
-            "image" => "",
-            "gallery_images" => "",
-            "max_cart_qty" => "1000",
-            "order_count" => 0,
-            "views" => 0,
-            "status" => "approved",
-            "available_time_starts" => "2024-12-12",
-            "available_time_ends" => "2025-01-12",
-        ]);
+        // You can customize this to use actual categories, brands, etc.
+        $categories = ProductCategory::pluck('id')->toArray();
+        $brands = ProductBrand::pluck('id')->toArray();
+        $units = Unit::pluck('id')->toArray();
+        $behaviours = Behaviour::cases();
+        $types = StoreType::cases();  // Get all the cases of StoreType
+        $randomType = $types[array_rand($types)]->value;  // Get a random enum value
 
-        // Insert the variants
-        $variants = [
-            [
-                "product_id" => $productId, // Associate with the product
-                "variant_slug" => "Seeder-1",
-                "pack_quantity" => "200",
-                "weight_major" => "100.80",
-                "weight_gross" => "72.50",
-                "weight_net" => "72",
-                "color" => "Red",
-                "size" => "XL",
-                "price" => "550",
-                "special_price" => "500",
-                "stock_quantity" => "200",
-                "unit_id" => "1",
-                "length" => "500",
-                "width" => "120",
-                "height" => "120",
-                "image" => "",
-                "order_count" => "1",
-                "status" => "1",
-            ],
-            [
-                "product_id" => $productId, // Associate with the product
-                "variant_slug" => "Seeder-2",
-                "pack_quantity" => "200",
-                "weight_major" => "100.80",
-                "weight_gross" => "72.50",
-                "weight_net" => "72",
-                "color" => "Red",
-                "size" => "XL",
-                "price" => "550",
-                "special_price" => "500",
-                "stock_quantity" => "5000",
-                "unit_id" => "1",
-                "length" => "500",
-                "width" => "120",
-                "height" => "120",
-                "image" => "",
-                "order_count" => "1",
-                "status" => "1",
-            ],
-        ];
+        // Loop to create 100 products
+        for ($i = 1; $i <= 100; $i++) {
+            $product = Product::create([
+                'store_id' => rand(1, 10), // Assuming you have multiple stores
+                'category_id' => $categories[array_rand($categories)],
+                'brand_id' => $brands[array_rand($brands)],
+                'unit_id' => $units[array_rand($units)],
+                'type' => $randomType,  // Use the valid enum value
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => "Product $i",
+                'slug' => "product-$i",
+                'description' => "Description for product $i",
+                'image' => "product$i.jpg",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 5), 'warranty_text' => 'Years Warranty']
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100, // Random COD availability
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
+                'delivery_time_text' => 'Can be delayed during holidays.',
+                'max_cart_qty' => rand(1, 10),
+                'order_count' => rand(0, 100),
+                'views' => rand(0, 1000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value, // Random status
+                'meta_title' => "Meta Title for Product $i",
+                'meta_description' => "Meta Description for Product $i",
+                'meta_keywords' => "product, example, $i",
+                'meta_image' => "product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(30),
+            ]);
 
-        DB::table('product_variants')->insert($variants);
-        $productTags = [];
-        $tags = ["1", "2"];
-        foreach ($tags as $tagId) {
-            $productTags[] = [
-                'product_id' => $productId,
-                'tag_id' => $tagId,
-            ];
+            // Create 3 product variants for each product
+            for ($j = 1; $j <= 3; $j++) {
+                ProductVariant::create([
+                    'product_id' => $product->id,
+                    'variant_slug' => "product-$i-variant-$j",
+                    'sku' => "SKU-{$i}-{$j}",
+                    'pack_quantity' => rand(1, 10),
+                    'weight_major' => rand(100, 500),
+                    'weight_gross' => rand(500, 1000),
+                    'weight_net' => rand(400, 900),
+                    'color' => $this->getRandomColor(),
+                    'size' => $this->getRandomSize(),
+                    'price' => rand(100, 1000),
+                    'special_price' => rand(50, 500),
+                    'stock_quantity' => rand(10, 100),
+                    'unit_id' => $product->unit_id,
+                    'length' => rand(10, 50),
+                    'width' => rand(10, 50),
+                    'height' => rand(10, 50),
+                    'image' => json_encode([
+                        ['sliding_image' => "product{$i}-variant{$j}.jpg", 'position' => 1]
+                    ]),
+                    'order_count' => rand(0, 100),
+                    'status' => rand(0, 1), // Random active/inactive
+                ]);
+            }
         }
-        DB::table('product_tags')->insert($productTags);
-        // Insert the translations
-        $translations = [
-            [
-                "translatable_id" => $productId,
-                "translatable_type" => "App\Models\Product",
-                "language" => "en",
-                "key" => json_encode(["name", "description"]),
-                "value" => json_encode(["Test Name E5", "Test Description E5"]),
-            ],
-            [
-                "translatable_id" => $productId,
-                "translatable_type" => "App\Models\Product",
-                "language" => "ar",
-                "key" => json_encode(["name", "description"]),
-                "value" => json_encode(["Test Name AR5", "Test Description AR5"]),
-            ],
-        ];
 
-        DB::table('translations')->insert($translations);
+
     }
+
+
+    /**
+     * Helper function to get random color.
+     */
+    private function getRandomColor()
+    {
+        $colors = ['red', 'blue', 'green', 'yellow', 'black', 'white'];
+        return $colors[array_rand($colors)];
+    }
+
+    /**
+     * Helper function to get random size.
+     */
+    private function getRandomSize()
+    {
+        $sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+        return $sizes[array_rand($sizes)];
+    }
+
 }
