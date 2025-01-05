@@ -18,6 +18,16 @@ class WishListManageController extends Controller
         }
         $request['customer_id'] = auth('api_customer')->user()->id;
         try {
+            $exists = Wishlist::where('customer_id', $request['customer_id'])
+                ->where('product_id', $request->product_id)
+                ->exists();
+            if ($exists) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 401,
+                    'message' => __('messages.exists', ['name' => 'Product'])
+                ]);
+            }
             Wishlist::create(request()->all());
             return $this->success(translate('messages.save_success', ['name' => 'Wish List']));
         } catch (\Exception $e) {
@@ -49,7 +59,7 @@ class WishListManageController extends Controller
     public function getWishlist()
     {
         try {
-            $wishlist = Wishlist::with(['product.variants','product.store'])->where('customer_id', auth('api_customer')->user()->id)->get();
+            $wishlist = Wishlist::with(['product.variants', 'product.store'])->where('customer_id', auth('api_customer')->user()->id)->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

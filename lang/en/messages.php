@@ -49,6 +49,7 @@ return [
     'invalid.address' => 'Invalid address!',
     'approve.success' => ':name approved successfully!',
     'reject.success' => ':name rejected successfully!',
+    'exists'=>':name already exists!',
 
 ];
 

@@ -2,6 +2,7 @@
 
 use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
+use App\Http\Controllers\Api\V1\Admin\FlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
@@ -152,6 +153,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Newsletter manage
         Route::group(['prefix' => 'newsletter/'], function () {
             Route::post('subscriber-list', [SubscriberManageController::class, 'allSubscribers']);
+            Route::post('bulk-status-change', [SubscriberManageController::class, 'bulkStatusChange']);
+            Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
+            Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
+        });
+        // Flash Sale manage
+        Route::group(['prefix' => 'flash-sale/'], function () {
+            Route::post('add', [FlashSaleManageController::class, 'createFlashSale']);
+            Route::post('update', [FlashSaleManageController::class, 'updateFlashSale']);
+            Route::get('list', [FlashSaleManageController::class, 'getFlashSale']);
+            Route::post('change-status', [FlashSaleManageController::class, 'changeStatus']);
             Route::post('bulk-status-change', [SubscriberManageController::class, 'bulkStatusChange']);
             Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
             Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
