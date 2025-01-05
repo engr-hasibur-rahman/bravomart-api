@@ -30,8 +30,6 @@ Route::middleware(['auth:sanctum', 'permission:' . PermissionKey::ADMIN_WALLET_M
         Route::post('deposit', [WalletSellerController::class, 'depositCreate']);
         // Wallet transaction records
         Route::get('transactions', [WalletSellerController::class, 'transactionRecords']);
-        // Transaction status
-        Route::post('transactions-status/{id}', [WalletSellerController::class, 'transactionStatus']);
     });
 
     Route::group(['prefix' => 'customer/wallet'], function () {
@@ -41,7 +39,5 @@ Route::middleware(['auth:sanctum', 'permission:' . PermissionKey::ADMIN_WALLET_M
         Route::post('deposit', [WalletCustomerController::class, 'depositCreate']);
         // Wallet transaction records
         Route::get('transactions', [WalletCustomerController::class, 'transactionRecords']);
-        // Transaction status
-        Route::post('transactions-status/{id}', [WalletCustomerController::class, 'transactionStatus']);
     });
  });

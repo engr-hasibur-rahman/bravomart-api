@@ -50,10 +50,14 @@ class WalletSellerController extends Controller
         }
 
         $validated = $validator->validated();
+        $user = auth()->guard('api')->user();
 
         try {
             // Find the wallet where the deposit will be made
-            $wallet = Wallet::findOrFail($validated['wallet_id']);
+            $wallet = Wallet::where('user_id', $user->id)
+                ->where('id', $validated['wallet_id'])
+                ->firstOrFail();
+
             // Update the wallet balance
             $wallet->balance += $validated['amount'];
             $wallet->save();
@@ -81,10 +85,14 @@ class WalletSellerController extends Controller
     }
 
 
-    public function records()
+    public function transactionRecords()
     {
 
-        $transactions = WalletTransaction::paginate(10);
+        $user = auth()->guard('api')->user();
+        $wallet = Wallet::where('user_id', $user->id)->firstOrFail();
+        $transactions = WalletTransaction::where('wallet_id', $wallet->id)
+            ->paginate(10);
+
         return response()->json([
             'wallets' => WalletTransactionListResource::collection($transactions),
             'pagination' => [
