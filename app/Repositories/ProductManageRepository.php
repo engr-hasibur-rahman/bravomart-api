@@ -102,7 +102,7 @@ class ProductManageRepository implements ProductManageInterface
 
 //                    $variant_slug = generateVariantSlug($variant['variant']);
                     $variant_slug = $variant['variant'];
-
+                    $variant['attributes'] = json_encode($variant['attributes']);
                     $variant['variant_slug'] = $variant_slug; // Assign the generated slug
                     // Generate a SKU for the variant
                     $sku = generateUniqueSku(); // This function generates a unique SKU
