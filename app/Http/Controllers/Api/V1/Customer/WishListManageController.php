@@ -49,7 +49,7 @@ class WishListManageController extends Controller
     public function getWishlist()
     {
         try {
-            $wishlist = Wishlist::with('product')->where('customer_id', auth('api_customer')->user()->id)->get();
+            $wishlist = Wishlist::with(['product.variants','product.store'])->where('customer_id', auth('api_customer')->user()->id)->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
