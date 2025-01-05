@@ -21,4 +21,17 @@ Route::middleware(['auth:sanctum', 'permission:' . PermissionKey::ADMIN_WALLET_M
         // Transaction status
         Route::post('transactions/status/{id}', [WalletTransactionController::class, 'transactionStatus']);
     });
+
+    Route::group(['prefix' => 'admin/wallet'], function () {
+        // Wallet list
+        Route::get('lists', [WalletController::class, 'index']);
+        // Wallet status
+        Route::post('status/{id?}', [WalletController::class, 'status']);
+        // Create deposit by admin
+        Route::post('deposit-create', [WalletController::class, 'depositCreateByAdmin']);
+        // Wallet transaction records
+        Route::get('transactions/records', [WalletTransactionController::class, 'records']);
+        // Transaction status
+        Route::post('transactions/status/{id}', [WalletTransactionController::class, 'transactionStatus']);
+    });
  });
