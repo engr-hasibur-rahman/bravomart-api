@@ -19,7 +19,7 @@ class CustomerPublicResource extends JsonResource
         return [
             "id" => $this->id,
             "value" => $this->id,
-            "label" => "{$this->first_name} {$this->last_name}",
+            "label" => "{$this->first_name} {$this->last_name} | " . ($this->email ?? $this->phone),
         ];
     }
 }

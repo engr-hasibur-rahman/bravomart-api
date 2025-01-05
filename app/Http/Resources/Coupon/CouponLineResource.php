@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Coupon;
 
 use App\Http\Resources\Com\Translation\ProductTranslationResource;
+use App\Http\Resources\Customer\CustomerPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,11 +19,7 @@ class CouponLineResource extends JsonResource
         return [
             'id' => $this->id,
             'coupon' => new CouponResource($this->coupon),
-            'customer' => [
-                'id' => $this->customer->id,
-                'value' => $this->customer->id,
-                'label' => "{$this->customer->first_name} {$this->customer->last_name} | " . ($this->customer->email ?? $this->customer->phone)
-            ],
+            'customer' => new CustomerPublicResource($this->customer),
             'coupon_code' => $this->coupon_code,
             'discount_type' => $this->discount_type,
             'discount' => $this->discount,
