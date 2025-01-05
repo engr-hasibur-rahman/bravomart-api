@@ -1,23 +1,23 @@
 <?php
 
-namespace Modules\Wallet\app\Http\Controllers;
+namespace Modules\Wallet\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletTransaction;
 use Modules\Wallet\app\Transformers\WalletListResource;
+use Modules\Wallet\app\Transformers\WalletTransactionListResource;
 
-class WalletController extends Controller
+class WalletManageAdminController extends Controller
 {
     public function depositSettings(Request $request)
     {
-         if ($request->isMethod('post')) {
-             com_option_update('max_deposit_per_transaction', $request->max_deposit_per_transaction);
-             return response()->json(['message' => 'Wallet settings successfully']);
-         }
+        if ($request->isMethod('post')) {
+            com_option_update('max_deposit_per_transaction', $request->max_deposit_per_transaction);
+            return response()->json(['message' => 'Wallet settings successfully']);
+        }
         $wallet_settings = com_option_get('max_deposit_per_transaction');
         return response()->json([
             'wallet_settings' => $wallet_settings
@@ -90,7 +90,7 @@ class WalletController extends Controller
                 'status' => 1,
             ]);
             return response()->json([
-                'message' => 'Deposit created successfully']
+                    'message' => 'Deposit created successfully']
             );
 
         } catch (\Exception $e) {
@@ -102,4 +102,29 @@ class WalletController extends Controller
     }
 
 
+    public function records()
+    {
+
+        $transactions = WalletTransaction::paginate(10);
+        return response()->json([
+            'wallets' => WalletTransactionListResource::collection($transactions),
+            'pagination' => [
+                'total' => $transactions->total(),
+                'per_page' => $transactions->perPage(),
+                'current_page' => $transactions->currentPage(),
+                'last_page' => $transactions->lastPage(),
+                'from' => $transactions->firstItem(),
+                'to' => $transactions->lastItem(),
+            ],
+        ]);
+    }
+
+    public function transactionStatus($id)
+    {
+        // Get the status of a specific transaction
+        $transaction = WalletTransaction::findOrFail($id);
+        $transaction->status = $transaction->status == 1 ? 0 : 1;
+        $transaction->save();
+        return response()->json(['message' => 'Transaction status changed successfully']);
+    }
 }
