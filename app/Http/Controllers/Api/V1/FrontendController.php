@@ -14,6 +14,7 @@ use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
+use App\Http\Resources\Customer\CustomerPublicResource;
 use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
@@ -31,6 +32,7 @@ use App\Interfaces\CityManageInterface;
 use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductBrand;
@@ -692,4 +694,11 @@ class FrontendController extends Controller
         $units = Unit::all();
         return response()->json(ProductUnitPublicResource::collection($units));
     }
+
+    public function customerList()
+    {
+        $customers = Customer::where('status', 1)->get();
+        return response()->json(CustomerPublicResource::collection($customers));
+    }
+
 }

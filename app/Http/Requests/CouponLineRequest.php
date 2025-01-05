@@ -33,7 +33,7 @@ class CouponLineRequest extends FormRequest
             'usage_count' => 'nullable|integer|min:0',
             'start_date' => 'required|date|date_format:Y-m-d H:i:s',
             'end_date' => 'required|date|after_or_equal:start_date|date_format:Y-m-d H:i:s',
-            'status' => 'required|integer|in:0,1',
+
         ];
     }
     public function messages()
@@ -55,7 +55,7 @@ class CouponLineRequest extends FormRequest
             'end_date.date_format' => __('validation.date_format', ['attribute' => 'End Date']),
             'end_date.after_or_equal' => __('validation.after_or_equal', ['attribute' => 'End Date']),
             'status.required' => __('validation.required', ['attribute' => 'Status']),
-            'status.in' => __('validation.in', ['attribute' => 'Status']),
+
         ];
     }
     public function failedValidation(Validator $validator)
