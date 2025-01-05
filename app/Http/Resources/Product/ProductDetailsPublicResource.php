@@ -50,6 +50,7 @@ class ProductDetailsPublicResource extends JsonResource
             'status' => $this->status,
             'available_time_starts' => $this->available_time_starts,
             'available_time_ends' => $this->available_time_ends,
+            'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
             'translations' => ProductTranslationResource::collection($this->related_translations),
         ];
     }

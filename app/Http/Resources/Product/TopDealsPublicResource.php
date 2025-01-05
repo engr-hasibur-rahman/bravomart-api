@@ -23,6 +23,7 @@ class TopDealsPublicResource extends JsonResource
             'image' => $this->image,
             'price' => $this->variants->isNotEmpty() ? $this->variants[0]->price : null,
             'special_price' => $this->variants->isNotEmpty() ? $this->variants[0]->special_price : null,
+            'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
             'translations' => $this->translations
         ];
     }

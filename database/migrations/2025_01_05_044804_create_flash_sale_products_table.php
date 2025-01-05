@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('flash_sale_products', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('flash_sale_id');
+            $table->unsignedBigInteger('product_id');
             $table->timestamps();
         });
     }

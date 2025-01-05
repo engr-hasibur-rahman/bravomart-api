@@ -16,9 +16,14 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->string('thumbnail_image')->nullable();
             $table->string('cover_image')->nullable();
+            $table->string('discount_type')->nullable()->comment('percentage or amount');
+            $table->decimal('discount_price', 10, 2)->nullable()->comment('discounted price');
+            $table->decimal('special_price', 10, 2)->nullable()->comment('special price for product');
+            $table->unsignedInteger('purchase_limit')->nullable();
             $table->timestamp('start_time');
             $table->timestamp('end_time');
-            $table->boolean('is_active')->default(1);
+            $table->boolean('is_active')->default(1)->comment('1: active, 0: inactive');
+            $table->unsignedInteger('created_by')->nullable();
             $table->timestamps();
         });
     }
