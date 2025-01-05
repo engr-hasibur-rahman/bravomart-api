@@ -89,7 +89,6 @@ class ProductSeeder extends Seeder
         // Loop to create 100 products
         for ($i = 1; $i <= 100; $i++) {
             Product::create([
-                'store_id' => rand(1, 10), // Assuming you have multiple stores
                 'category_id' => $categories[array_rand($categories)],
                 'brand_id' => $brands[array_rand($brands)],
                 'unit_id' => 1,  // Now works with an array

@@ -183,6 +183,7 @@ class FrontendController extends Controller
             ]);
         }
     }
+
     public function getBestSellingProduct(Request $request)
     {
         try {
@@ -234,100 +235,94 @@ class FrontendController extends Controller
     {
 
 
-            $query = Product::query();
-            // Apply category filter
-            if (isset($request->category_id)) {
-                $query->where('category_id', $request->category_id);
+        $query = Product::query();
+        // Apply category filter
+        if (isset($request->category_id)) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // Apply price range filter
+        if (isset($request->min_price) && isset($request->max_price)) {
+            $minPrice = $request->min_price;
+            $maxPrice = $request->max_price;
+
+            $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
+                $q->whereBetween('price', [$minPrice, $maxPrice]);
+            });
+        }
+
+        // Apply brand filter
+        if (isset($request->brand_id)) {
+            $query->where('brand_id', $request->brand_id);
+        }
+
+        // Apply availability filter
+        if (isset($request->availability)) {
+            $availability = $request->availability;
+
+            if ($availability) {
+                $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0));
+            } else {
+                $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
             }
+        }
 
-            // Apply price range filter
-            if (isset($request->min_price) && isset($request->max_price)) {
-                $minPrice = $request->min_price;
-                $maxPrice = $request->max_price;
+        // Apply sorting
+        if (isset($request->sort)) {
+            switch ($request->sort) {
+                case 'price_low_high':
+                    $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'asc'));
+                    break;
 
-                $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
-                    $q->whereBetween('price', [$minPrice, $maxPrice]);
-                });
+                case 'price_high_low':
+                    $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'desc'));
+                    break;
+
+                case 'newest':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+
+                default:
+                    $query->latest();
             }
+        }
+        // Pagination
+        $perPage = $request->per_page ?? 10;
+        $products = $query->with(['category', 'unit', 'tags', 'store', 'brand', 'variants', 'related_translations'])
+            ->where('status', 'approved')
+            ->where('deleted_at', null)
+            ->paginate($perPage);
 
-            // Apply brand filter
-            if (isset($request->brand_id)) {
-                $query->where('brand_id', $request->brand_id);
-            }
-
-            // Apply availability filter
-            if (isset($request->availability)) {
-                $availability = $request->availability;
-
-                if ($availability) {
-                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0));
-                } else {
-                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
-                }
-            }
-
-            // Apply sorting
-            if (isset($request->sort)) {
-                switch ($request->sort) {
-                    case 'price_low_high':
-                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'asc'));
-                        break;
-
-                    case 'price_high_low':
-                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'desc'));
-                        break;
-
-                    case 'newest':
-                        $query->orderBy('created_at', 'desc');
-                        break;
-
-                    default:
-                        $query->latest();
-                }
-            }
-            // Pagination
-            $perPage = $request->per_page ?? 10;
-            $products = $query->with(['category', 'unit', 'tags', 'store', 'brand', 'variants', 'related_translations'])
-                ->where('status', 'approved')
-                ->where('deleted_at', null)
-                ->paginate($perPage);
-
-            return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'messages' => __('messages.data_found'),
-                    'data' => ProductPublicResource::collection($products)]
-            );
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'messages' => __('messages.data_found'),
+            'data' => ProductPublicResource::collection($products),
+            'meta' => new PaginationResource($products)
+        ]);
 
     }
 
     public function productDetails($product_slug)
     {
-        try {
-            $product = Product::with([
-                'store',
-                'tags',
-                'unit',
-                'variants',
-                'brand',
-                'category',
-                'related_translations'
-            ])
-                ->where('slug', $product_slug)
-                ->first();
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'messages' => __('messages.data_found'),
-                'data' => new ProductDetailsPublicResource($product)
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'messages' => $e->getMessage()
-            ]);
-        }
+        $product = Product::with([
+            'store',
+            'tags',
+            'unit',
+            'variants',
+            'brand',
+            'category',
+            'related_translations'
+        ])
+            ->where('slug', $product_slug)
+            ->first();
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'messages' => __('messages.data_found'),
+            'data' => new ProductDetailsPublicResource($product)
+        ]);
+
     }
 
     public function getNewArrivals(Request $request)
