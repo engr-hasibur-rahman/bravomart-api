@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CouponLineRequest;
 use App\Http\Requests\CouponRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Coupon\CouponLineResource;
 use App\Http\Resources\Coupon\CouponResource;
 use App\Interfaces\CouponManageInterface;
@@ -86,10 +87,7 @@ class CouponManageController extends Controller
         );
         return response()->json([
             'coupon_lines' => CouponLineResource::collection($couponLines),
-            'current_page' => $couponLines->currentPage(),
-            'per_page' => $couponLines->perPage(),
-            'total' => $couponLines->total(),
-            'last_page' => $couponLines->lastPage(),
+            'meta' => new PaginationResource($couponLines),
         ]);
     }
 

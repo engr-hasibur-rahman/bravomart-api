@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -20,8 +19,7 @@ return new class extends Migration
             $table->decimal('weight_major')->nullable();
             $table->decimal('weight_gross')->nullable();
             $table->decimal('weight_net')->nullable();
-            $table->string('color')->nullable();
-            $table->string('size')->nullable();
+            $table->json('attributes')->nullable();
             $table->decimal('price')->nullable(); // Base price for the variant
             $table->decimal('special_price')->nullable(); // Special discounted price
             $table->integer('stock_quantity')->default(0);
@@ -37,8 +35,6 @@ return new class extends Migration
             // indexes search performance
             $table->index('product_id');
             $table->index('sku');
-            $table->index('color');
-            $table->index('size');
         });
     }
 

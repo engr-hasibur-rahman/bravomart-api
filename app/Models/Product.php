@@ -11,6 +11,7 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $appends = ['wishlist'];
     protected $dates = ['deleted_at'];
     protected $table = "products";
     protected $fillable = [
@@ -35,7 +36,6 @@ class Product extends Model
         "delivery_time_text",
         "max_cart_qty",
         "order_count",
-        "attributes",
         "views",
         "meta_title",
         "meta_description",
@@ -88,6 +88,25 @@ class Product extends Model
         return $this->belongsTo(ComMerchantStore::class, "store_id");
     }
 
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class, "product_id");
+    }
+
+    public function isInWishlist(): bool
+    {
+        if (!auth('api_customer')->check()) {
+            return false;
+        }
+
+        $customerId = auth('api_customer')->user()->id;
+        return $this->wishlists()->where('customer_id', $customerId)->exists();
+    }
+
+    public function getWishlistAttribute(): bool
+    {
+        return $this->isInWishlist();
+    }
 
     public function related_translations()
     {

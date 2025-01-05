@@ -25,7 +25,6 @@ class WishListRequest extends FormRequest
     {
         return [
             'product_id' => 'required|exists:products,id',
-            'customer_id' => 'required|exists:customers,id',
         ];
     }
 
@@ -33,7 +32,6 @@ class WishListRequest extends FormRequest
     {
         return [
             'product_id.exists' => __('validation.exists', ['attribute' => 'Product']),
-            'customer_id.exists' => __('validation.exists', ['attribute' => 'Customer']),
         ];
     }
 

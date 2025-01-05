@@ -18,7 +18,11 @@ class CouponLineResource extends JsonResource
         return [
             'id' => $this->id,
             'coupon' => new CouponResource($this->coupon),
-            'customer_email' => $this->customer->email,
+            'customer' => [
+                'id' => $this->customer->id,
+                'value' => $this->customer->id,
+                'label' => "{$this->customer->first_name} {$this->customer->last_name} | " . ($this->customer->email ?? $this->customer->phone)
+            ],
             'coupon_code' => $this->coupon_code,
             'discount_type' => $this->discount_type,
             'discount' => $this->discount,
