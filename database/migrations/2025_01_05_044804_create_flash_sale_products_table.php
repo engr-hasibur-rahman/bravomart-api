@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('flash_sale_id');
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('store_id')->nullable();
+            $table->unsignedInteger('created_by')->nullable();
+            $table->unsignedInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }

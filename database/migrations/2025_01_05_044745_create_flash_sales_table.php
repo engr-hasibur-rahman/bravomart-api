@@ -23,7 +23,6 @@ return new class extends Migration {
             $table->timestamp('start_time')->nullable();
             $table->timestamp('end_time')->nullable();
             $table->boolean('is_active')->default(1)->comment('1: active, 0: inactive');
-            $table->unsignedInteger('created_by')->nullable();
             $table->timestamps();
         });
     }
