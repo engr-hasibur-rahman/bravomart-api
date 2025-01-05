@@ -99,10 +99,10 @@ class ProductManageRepository implements ProductManageInterface
             if (!empty($data['variants']) && is_array($data['variants'])) {
                 $variants = array_map(function ($variant) use ($product) {
                     // Generate the variant slug
-                    $variant_slug = generateVariantSlug([
-                        'color' => $variant['color'],
-                        'size' => $variant['size'],
-                    ]);
+
+//                    $variant_slug = generateVariantSlug($variant['variant']);
+                    $variant_slug = $variant['variant'];
+
                     $variant['variant_slug'] = $variant_slug; // Assign the generated slug
                     // Generate a SKU for the variant
                     $sku = generateUniqueSku(); // This function generates a unique SKU
