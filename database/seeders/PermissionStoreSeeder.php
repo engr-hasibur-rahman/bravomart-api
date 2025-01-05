@@ -19,6 +19,7 @@ class PermissionStoreSeeder extends Seeder
         $admin_main_menu = [];
         $shop_menu = [
             [
+                // Dashboard
                 [
                     'PermissionName' => 'dashboard',
                     'PermissionTitle' => 'Dashboard',
@@ -30,6 +31,8 @@ class PermissionStoreSeeder extends Seeder
                         'ar' => 'قائمة المناطق'
                     ]
                 ],
+
+                // order manage
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Orders & Reviews',
@@ -156,6 +159,8 @@ class PermissionStoreSeeder extends Seeder
                         ]
                     ]
                 ],
+
+                // product manage
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Product management',
@@ -179,7 +184,7 @@ class PermissionStoreSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_LIST->value,
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_LIST->value,
                                     'PermissionTitle' => 'Manage Products',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -190,10 +195,11 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_ADD->value,
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_ADD->value,
                                     'PermissionTitle' => 'Add New Product',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
                                         'en' => 'Add New Product',
                                         'ar' => 'إضافة منتج جديد'
@@ -294,6 +300,8 @@ class PermissionStoreSeeder extends Seeder
                         ]
                     ]
                 ],
+
+                // Financial Management
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Financial Management',
@@ -337,6 +345,8 @@ class PermissionStoreSeeder extends Seeder
                         ]
                     ]
                 ],
+
+                //Feedback control
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Feedback control',
@@ -380,6 +390,8 @@ class PermissionStoreSeeder extends Seeder
                         ]
                     ]
                 ],
+
+                // Staff control
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Staff control',
@@ -415,6 +427,8 @@ class PermissionStoreSeeder extends Seeder
 
                     ]
                 ],
+
+                // Promotional control
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Promotional control',
@@ -491,6 +505,8 @@ class PermissionStoreSeeder extends Seeder
                         ]
                     ]
                 ],
+
+                // Store Settings
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Store Settings',
@@ -533,7 +549,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::STORE_MY_SHOP->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_MY_SHOP->value,
                             'PermissionTitle' => 'My Stores',
                             'activity_scope' => 'store_level',
                             'icon' => '',

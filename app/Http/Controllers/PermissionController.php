@@ -44,7 +44,7 @@ class PermissionController extends Controller
                 $permissionsArray = [
                     'dashboard',
                     'Store Settings',
-                    PermissionKey::STORE_MY_SHOP->value,
+                    PermissionKey::SELLER_STORE_MY_SHOP->value,
                     'Staff control',
                     PermissionKey::SELLER_STAFF_LIST->value,
                 ];
@@ -81,7 +81,7 @@ class PermissionController extends Controller
             $permissionsArray = [
                 'dashboard',
                 'Store Settings',
-                PermissionKey::STORE_MY_SHOP->value,
+                PermissionKey::SELLER_STORE_MY_SHOP->value,
                 'Staff control',
                 PermissionKey::SELLER_STAFF_LIST->value,
             ];
