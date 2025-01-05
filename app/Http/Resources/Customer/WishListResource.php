@@ -19,6 +19,7 @@ class WishListResource extends JsonResource
             'product_id' => $this->product->id,
             'store' => $this->product->store->name,
             'name' => $this->product->name,
+            'slug' => $this->product->slug,
             'description' => $this->product->description,
             'image' => $this->image,
             'price' => $this->product->variants->isNotEmpty() ? $this->product->variants[0]->price : null,

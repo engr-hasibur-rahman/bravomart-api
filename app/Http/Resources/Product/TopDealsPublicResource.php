@@ -19,6 +19,7 @@ class TopDealsPublicResource extends JsonResource
             'store' => $this->store->name,
             'category' => $this->category->category_name,
             'name' => $this->name,
+            'slug' => $this->slug,
             'description' => $this->description,
             'image' => $this->image,
             'price' => $this->variants->isNotEmpty() ? $this->variants[0]->price : null,
