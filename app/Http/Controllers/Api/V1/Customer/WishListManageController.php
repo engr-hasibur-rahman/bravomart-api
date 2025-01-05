@@ -45,13 +45,23 @@ class WishListManageController extends Controller
             throw $e;
         }
     }
+
     public function getWishlist()
     {
         try {
             $wishlist = Wishlist::with('product')->where('customer_id', auth('api_customer')->user()->id)->get();
-            return response()->json(['wishlist' => WishlistResource::collection($wishlist)]);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'wishlist' => WishlistResource::collection($wishlist)
+            ]);
         } catch (\Exception $e) {
-            throw $e;
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 }
