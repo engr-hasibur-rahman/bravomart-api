@@ -300,7 +300,6 @@ class FrontendController extends Controller
             'data' => ProductPublicResource::collection($products),
             'meta' => new PaginationResource($products)
         ]);
-
     }
 
     public function productDetails($product_slug)
