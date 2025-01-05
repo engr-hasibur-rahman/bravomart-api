@@ -8,6 +8,7 @@ use App\Http\Requests\CouponRequest;
 use App\Http\Resources\Coupon\CouponLineResource;
 use App\Http\Resources\Coupon\CouponResource;
 use App\Interfaces\CouponManageInterface;
+use App\Models\Coupon;
 use App\Repositories\CouponLineManageRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -67,16 +68,9 @@ class CouponManageController extends Controller
 
     public function changeStatus(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|integer'
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()]);
-        }
-        $result = $this->couponRepo->changeStatus($request->id, $request->status);
-        if (!$result) {
-            return response()->json(['message' => __('messages.data_not_found')], 404);
-        }
+        $coupon = Coupon::findOrFail($request->id);
+        $coupon->status = !$coupon->status;
+        $coupon->save();
         return $this->success(translate('messages.update_success', ['name' => 'Coupon']));
     }
 

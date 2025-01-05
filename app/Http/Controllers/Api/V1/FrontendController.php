@@ -6,9 +6,11 @@ use App\Enums\Behaviour;
 use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
+use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
@@ -427,18 +429,23 @@ class FrontendController extends Controller
                 ->paginate($limit);
 
             // Return a collection of ProductBrandResource (including the image)
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => ProductCategoryPublicResource::collection($categories),
-                'pagination' => [
-                    'total' => $categories->total(),
-                    'per_page' => $categories->perPage(),
-                    'current_page' => $categories->currentPage(),
-                    'last_page' => $categories->lastPage(),
-                ],
-            ]);
+            if (!auth('api')->check() || auth('api_customer')->check()) {
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.data_found'),
+                    'data' => ProductCategoryPublicResource::collection($categories),
+                    'meta' => new PaginationResource($categories)
+                ]);
+            } else {
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.data_found'),
+                    'data' => ProductCategoryResource::collection($categories),
+                    'meta' => new PaginationResource($categories)
+                ]);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -447,6 +454,7 @@ class FrontendController extends Controller
             ]);
         }
     }
+
 
     public function categoryWiseProducts(Request $request)
     {

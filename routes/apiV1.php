@@ -5,13 +5,15 @@ use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
+use App\Http\Controllers\Api\V1\Admin\SellerManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\AddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
-use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
+use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
@@ -116,6 +118,20 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
+        // Customer Manage
+        Route::group(['prefix' => 'customer-management/'], function () {
+            Route::get('customer-list', [AdminCustomerManageController::class, 'getCustomerList']);
+            Route::get('customer-details', [AdminCustomerManageController::class, 'getCustomerDetails']);
+            Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
+        });
+        // Seller Manage
+        Route::group(['prefix' => 'seller-management/'], function () {
+            Route::get('seller-list', [SellerManageController::class, 'getSellerList']);
+            Route::get('seller-details/{slug}', [SellerManageController::class, 'getSellerDetails']);
+            Route::get('seller-list/pending', [SellerManageController::class, 'pendingSellers']);
+            Route::post('seller-approve', [SellerManageController::class, 'approveSeller']);
+            Route::post('seller-suspend', [SellerManageController::class, 'rejectSeller']);
+        });
         // Department manage
         Route::group(['prefix' => 'department/'], function () {
             Route::get('list', [DepartmentManageController::class, 'index']);
@@ -228,7 +244,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         //Product Attribute Management
-        Route::group(['prefix'=>'attribute','middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['prefix' => 'attribute', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [ProductAttributeController::class, 'index']);
             Route::get('/', [ProductAttributeController::class, 'show']);
             Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
@@ -346,7 +362,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
         Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
         Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
-
+        Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
             Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);

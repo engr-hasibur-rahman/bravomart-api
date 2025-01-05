@@ -64,6 +64,10 @@ class User extends Authenticatable
         'stores' => 'array',  // Ensures stores is cast to an array
     ];
 
+    public function scopeIsSeller($query)
+    {
+        return $query->where('store_owner', true);
+    }
 
     public function getFullNameAttribute(): string
     {
@@ -174,13 +178,6 @@ class User extends Authenticatable
 //            return $permission === $permissionKey && $this->hasStoreAccess($storeSlug);
 //        });
 //    }
-
-
-
-
-
-
-
 
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Coupon\CouponResource;
 use App\Interfaces\CouponManageInterface;
 use App\Models\Coupon;
@@ -59,9 +60,7 @@ class CouponManageRepository implements CouponManageInterface
             ->paginate($limit);
         return response()->json([
             'coupons' => CouponResource::collection($coupons),
-            'last_page' => $coupons->lastPage(),
-            'current_page' => $coupons->currentPage(),
-            'per_page' => $coupons->perPage(),
+            'meta' => new PaginationResource($coupons),
         ]);
     }
 
@@ -201,16 +200,5 @@ class CouponManageRepository implements CouponManageInterface
             $this->translation->insert($translations);
         }
         return true;
-    }
-
-    public function changeStatus(int $couponId, int $status): bool
-    {
-        $coupon = Coupon::findorfail($couponId);
-
-        if (!$coupon) {
-            return false;
-        }
-        $coupon->status = $status;
-        return $coupon->save();
     }
 }
