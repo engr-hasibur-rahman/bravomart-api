@@ -13,8 +13,9 @@ class FlashSaleService
         return FlashSale::create($data);
     }
 
-    public function updateFlashSale(FlashSale $flashSale, array $data): FlashSale
+    public function updateFlashSale(array $data): FlashSale
     {
+        $flashSale = FlashSale::findorfail($data['id']);
         $flashSale->update($data);
         return $flashSale;
     }
@@ -36,11 +37,19 @@ class FlashSaleService
 
     public function getSellerFlashSales()
     {
-        return FlashSale::where('is_active', true)
+        return FlashSale::where('status', true)
             ->with('products')
             ->whereHas('products', function ($query) {
-                $query->where('store_id', Auth::user()->store_id);
+                $query->where('store_id', auth('api')->store_id);
             })
             ->get();
+    }
+    public function toggleStatus(int $id): FlashSale
+    {
+        $flashSale = FlashSale::findOrFail($id);
+        $flashSale->status = !$flashSale->status;
+        $flashSale->save();
+
+        return $flashSale;
     }
 }
