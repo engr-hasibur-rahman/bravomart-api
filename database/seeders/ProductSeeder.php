@@ -22,18 +22,77 @@ class ProductSeeder extends Seeder
         // You can customize this to use actual categories, brands, etc.
         $categories = ProductCategory::pluck('id')->toArray();
         $brands = ProductBrand::pluck('id')->toArray();
-        $units = Unit::pluck('id')->toArray();
+        $units = Unit::pluck('id')->toArray();  // Converts the collection to an array
         $behaviours = Behaviour::cases();
         $types = StoreType::cases();  // Get all the cases of StoreType
         $randomType = $types[array_rand($types)]->value;  // Get a random enum value
 
+        // Example attribute sets for different types
+        $attributes_sets = [
+            'grocery' => [
+                'brand' => ['Brand A', 'Brand B', 'Brand C'],
+                'expiry_date' => ['2025-12-31', '2026-06-30', '2027-01-01'],
+                'packaging_size' => ['Small', 'Medium', 'Large']
+            ],
+            'bakery' => [
+                'flavor' => ['Vanilla', 'Chocolate', 'Strawberry'],
+                'weight' => ['500g', '1kg', '2kg'],
+                'packaging_type' => ['Box', 'Bag', 'Plastic']
+            ],
+            'medicine' => [
+                'dosage' => ['50mg', '100mg', '200mg'],
+                'manufacturer' => ['Company A', 'Company B'],
+                'expiry_date' => ['2025-12-31', '2026-06-30']
+            ],
+            'makeup' => [
+                'shade' => ['Light', 'Medium', 'Dark'],
+                'volume' => ['30ml', '50ml', '100ml'],
+                'skin_type' => ['Oily', 'Dry', 'Combination']
+            ],
+            'clothing' => [
+                'color' => ['Red', 'Blue', 'Green', 'Black', 'White'],
+                'size' => ['S', 'M', 'L', 'XL', 'XXL'],
+                'material' => ['Cotton', 'Leather', 'Polyester']
+            ],
+            'bags' => [
+                'material' => ['Leather', 'Canvas', 'Nylon'],
+                'size' => ['Small', 'Medium', 'Large'],
+                'color' => ['Red', 'Blue', 'Black', 'Brown']
+            ],
+            'furniture' => [
+                'material' => ['Wood', 'Metal', 'Plastic'],
+                'dimensions' => ['100x50x30', '150x75x50', '200x100x75'],
+                'weight_capacity' => ['50kg', '100kg', '200kg']
+            ],
+            'books' => [
+                'author' => ['Author A', 'Author B', 'Author C'],
+                'genre' => ['Fiction', 'Non-fiction', 'Sci-fi'],
+                'language' => ['English', 'Spanish', 'French']
+            ],
+            'gadgets' => [
+                'brand' => ['Brand A', 'Brand B', 'Brand C'],
+                'model' => ['Model X', 'Model Y', 'Model Z'],
+                'specifications' => ['Spec 1', 'Spec 2', 'Spec 3']
+            ],
+            'animals-pet' => [
+                'breed' => ['Breed A', 'Breed B', 'Breed C'],
+                'age' => ['Puppy', 'Kitten', 'Adult'],
+                'size' => ['Small', 'Medium', 'Large']
+            ],
+            'fish' => [
+                'fish_name' => ['Salmon', 'Trout', 'Bass'],
+                'fish_size' => ['Small', 'Medium', 'Large'],
+                'fish_location' => ['Atlantic', 'Pacific', 'Indian Ocean']
+            ],
+        ];
+
         // Loop to create 100 products
         for ($i = 1; $i <= 100; $i++) {
-            $product = Product::create([
+            Product::create([
                 'store_id' => rand(1, 10), // Assuming you have multiple stores
                 'category_id' => $categories[array_rand($categories)],
                 'brand_id' => $brands[array_rand($brands)],
-                'unit_id' => $units[array_rand($units)],
+                'unit_id' => 1,  // Now works with an array
                 'type' => $randomType,  // Use the valid enum value
                 'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
                 'name' => "Product $i",
@@ -63,8 +122,28 @@ class ProductSeeder extends Seeder
                 'available_time_ends' => now()->addDays(30),
             ]);
 
+            // Fetch all products and units
+            $products = Product::all();
+            $units = Unit::all();
+
             // Create 3 product variants for each product
             for ($j = 1; $j <= 3; $j++) {
+
+                $product = $products->random();
+                $unit = $units->random();
+
+                // Get the product type
+                $product_type = $product->type;
+
+                // Get the appropriate attributes set based on product type
+                $attributes = $attributes_sets[$product_type] ?? [];
+
+                // Randomly select attributes
+                $random_attributes = [];
+                foreach ($attributes as $attribute => $options) {
+                    $random_attributes[$attribute] = $options[array_rand($options)];
+                }
+
                 ProductVariant::create([
                     'product_id' => $product->id,
                     'variant_slug' => "product-$i-variant-$j",
@@ -73,18 +152,15 @@ class ProductSeeder extends Seeder
                     'weight_major' => rand(100, 500),
                     'weight_gross' => rand(500, 1000),
                     'weight_net' => rand(400, 900),
-                    'color' => $this->getRandomColor(),
-                    'size' => $this->getRandomSize(),
+                    'attributes' => json_encode($random_attributes), // Store as JSON
                     'price' => rand(100, 1000),
                     'special_price' => rand(50, 500),
                     'stock_quantity' => rand(10, 100),
-                    'unit_id' => $product->unit_id,
+                    'unit_id' => $unit->id,
                     'length' => rand(10, 50),
                     'width' => rand(10, 50),
                     'height' => rand(10, 50),
-                    'image' => json_encode([
-                        ['sliding_image' => "product{$i}-variant{$j}.jpg", 'position' => 1]
-                    ]),
+                    'image' => '2',
                     'order_count' => rand(0, 100),
                     'status' => rand(0, 1), // Random active/inactive
                 ]);
