@@ -84,6 +84,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/store-types', [FrontendController::class, 'storeTypeList']);
     Route::get('/behaviour-list', [FrontendController::class, 'behaviourList']);
     Route::get('/unit-list', [FrontendController::class, 'unitList']);
+    Route::get('/customer-list', [FrontendController::class, 'customerList']);
 });
 
 
