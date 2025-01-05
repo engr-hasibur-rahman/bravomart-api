@@ -23,7 +23,7 @@ class ProductPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'store' => $this->store->name,
+            'store' => $this->store ? $this->store->name : '',
             'category' => new ProductCategoryPublicResource($this->category),
             'brand' => new ProductBrandPublicResource($this->brand),
             'unit' => new ProductBrandPublicResource($this->unit),

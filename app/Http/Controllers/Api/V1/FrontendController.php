@@ -232,9 +232,9 @@ class FrontendController extends Controller
 
     public function productList(Request $request)
     {
-        try {
-            $query = Product::query();
 
+
+            $query = Product::query();
             // Apply category filter
             if (isset($request->category_id)) {
                 $query->where('category_id', $request->category_id);
@@ -291,19 +291,14 @@ class FrontendController extends Controller
                 ->where('status', 'approved')
                 ->where('deleted_at', null)
                 ->paginate($perPage);
+
             return response()->json([
                     'status' => true,
                     'status_code' => 200,
                     'messages' => __('messages.data_found'),
                     'data' => ProductPublicResource::collection($products)]
             );
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'messages' => $e->getMessage()
-            ]);
-        }
+
     }
 
     public function productDetails($product_slug)
