@@ -301,7 +301,6 @@ class FrontendController extends Controller
             'meta' => new PaginationResource($products)
         ]);
     }
-
     public function productDetails($product_slug)
     {
         $product = Product::with([
