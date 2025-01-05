@@ -25,7 +25,7 @@ class ProductVariantPublicResource extends JsonResource
             'weight_major' => $this->weight_major,
             'weight_gross' => $this->weight_gross,
             'weight_net' => $this->weight_net,
-            'color' => $this->color,
+            'attributes' => $this->attributes ? json_decode($this->attributes, true) : [], // Decode the JSON column
             'size' => $this->size,
             'price' => $this->price,
             'special_price' => $this->special_price,
