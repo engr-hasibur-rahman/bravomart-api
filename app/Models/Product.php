@@ -36,7 +36,6 @@ class Product extends Model
         "delivery_time_text",
         "max_cart_qty",
         "order_count",
-        "attributes",
         "views",
         "meta_title",
         "meta_description",

@@ -20,8 +20,8 @@ return new class extends Migration {
             $table->decimal('discount_price', 10, 2)->nullable()->comment('discounted price');
             $table->decimal('special_price', 10, 2)->nullable()->comment('special price for product');
             $table->unsignedInteger('purchase_limit')->nullable();
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->timestamp('start_time')->nullable();
+            $table->timestamp('end_time')->nullable();
             $table->boolean('is_active')->default(1)->comment('1: active, 0: inactive');
             $table->unsignedInteger('created_by')->nullable();
             $table->timestamps();
