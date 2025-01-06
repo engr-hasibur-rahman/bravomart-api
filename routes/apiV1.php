@@ -171,6 +171,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('approve', [ProductController::class, 'changeStatus']);
             Route::post('author/approve', [ProductAuthorController::class, 'changeStatus']);
             Route::get('low-stock', [ProductController::class, 'lowStockProducts']);
+            Route::get('out-of-stock', [ProductController::class, 'outOfStockProducts']);
         });
         // Location Manage
         Route::group(['prefix' => 'location/'], function () {

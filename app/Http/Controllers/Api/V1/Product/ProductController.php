@@ -10,7 +10,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ProductVariantRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\LowStockProductResource;
+use App\Http\Resources\Product\OutOfStockProductResource;
 use App\Http\Resources\Product\ProductListResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
@@ -190,7 +192,21 @@ class ProductController extends Controller
 
     public function lowStockProducts()
     {
-        $lowStockProducts = Product::lowStock()->paginate(15);
-        return response()->json(LowStockProductResource::collection($lowStockProducts));
+        $lowStockProducts = Product::lowStock()->with('store')->paginate(10);
+        return response()->json([
+            'data' => LowStockProductResource::collection($lowStockProducts),
+            'meta' => new PaginationResource($lowStockProducts),
+        ]);
     }
+
+    public function outOfStockProducts()
+    {
+        $outOfStockProducts = Product::outOfStock()->with('store')->paginate(10);
+        return response()->json([
+            'data' => OutOfStockProductResource::collection($outOfStockProducts),
+            'meta' => new PaginationResource($outOfStockProducts),
+        ]);
+    }
+
+
 }
