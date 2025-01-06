@@ -102,7 +102,7 @@ class WalletManageAdminController extends Controller
     }
 
 
-    public function records()
+    public function transactionRecords()
     {
 
         $transactions = WalletTransaction::paginate(10);
