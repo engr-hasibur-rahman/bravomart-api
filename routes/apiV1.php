@@ -163,15 +163,21 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
             Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
         });
-        // Flash Sale manage
-        Route::group(['prefix' => 'flash-sale/'], function () {
-            Route::post('add', [FlashSaleManageController::class, 'createFlashSale']);
-            Route::post('update', [FlashSaleManageController::class, 'updateFlashSale']);
-            Route::get('list', [FlashSaleManageController::class, 'getFlashSale']);
-            Route::post('change-status', [FlashSaleManageController::class, 'changeStatus']);
-            Route::delete('remove/{id}', [FlashSaleManageController::class, 'deleteFlashSale']);
-            Route::post('deactivate', [FlashSaleManageController::class, 'deactivateFlashSale']);
+
+        // promotional manage
+        Route::group(['prefix' => 'promotional/'], function () {
+            //flash-deals
+            Route::group(['prefix' => 'flash-deals/'], function () {
+                Route::get('list', [FlashSaleManageController::class, 'getFlashSale']);
+                Route::post('add', [FlashSaleManageController::class, 'createFlashSale']);
+                Route::post('update', [FlashSaleManageController::class, 'updateFlashSale']);
+                Route::post('change-status', [FlashSaleManageController::class, 'changeStatus']);
+                Route::delete('remove/{id}', [FlashSaleManageController::class, 'deleteFlashSale']);
+                Route::post('deactivate', [FlashSaleManageController::class, 'deactivateFlashSale']);
+                Route::get('join-request', [FlashSaleManageController::class, 'deactivateFlashSale']);
+            });
         });
+
         // Product manage
         Route::group(['prefix' => 'product/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::post('approve', [ProductController::class, 'changeStatus']);
@@ -400,15 +406,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
         Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
-        // Flash Sale manage
-        Route::group(['prefix' => 'flash-sale-product/'], function () {
-            Route::post('add', [FlashSaleProductManageController::class, 'addProductToFlashSale']);
-            Route::post('update', [FlashSaleProductManageController::class, 'updateFlashSale']);
-            Route::get('list', [FlashSaleProductManageController::class, 'getFlashSaleProducts']);
-            Route::get('active', [FlashSaleProductManageController::class, 'getValidFlashSales']);
-            Route::post('change-status', [FlashSaleProductManageController::class, 'changeStatus']);
-            Route::delete('remove/{id}', [FlashSaleProductManageController::class, 'deleteFlashSale']);
-        });
+
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
             Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);
@@ -475,16 +473,25 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
 
-            // Banner manage
-            Route::group(['prefix' => 'banner'], function () {
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
-                    Route::post('/add', [BannerManageController::class, 'store']);
-                    Route::get('/{id}', [BannerManageController::class, 'show']);
-                    Route::post('/update', [BannerManageController::class, 'update']);
-                    Route::delete('/remove/{id}', [BannerManageController::class, 'destroy']);
-               });
-            });
+            // Flash Sale manage
+            Route::group(['prefix' => 'promotional/'], function () {
+                // flash-deals
+                Route::group(['prefix' => 'flash-deals/'], function () {
+                    Route::post('join-request', [FlashSaleProductManageController::class, 'addProductToFlashSale']);
+                    Route::get('list', [FlashSaleProductManageController::class, 'getFlashSaleProducts']);
+                    Route::get('active', [FlashSaleProductManageController::class, 'getValidFlashSales']);
+                });
 
+                // Banner manage
+                Route::group(['prefix' => 'banner'], function () {
+                    Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
+                        Route::post('/add', [BannerManageController::class, 'store']);
+                        Route::get('/{id}', [BannerManageController::class, 'show']);
+                        Route::post('/update', [BannerManageController::class, 'update']);
+                        Route::delete('/remove/{id}', [BannerManageController::class, 'destroy']);
+                    });
+                });
+            });
         });  // END STORE ROUTE
 
 

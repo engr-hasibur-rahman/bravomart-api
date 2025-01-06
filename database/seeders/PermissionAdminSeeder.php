@@ -493,6 +493,65 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
+                // Promotional control
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Promotional control',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Promotional control',
+                        'ar' => 'الرقابة الترويجية'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Flash Sale',
+                            'activity_scope' => 'store_level',
+                            'icon' => '',
+                            'options' => ['View'],
+                            'translations' => [
+                                'en' => 'Flash Sale',
+                                'ar' => 'بيع سريع'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_ACTIVE_DEALS->value,
+                                    'PermissionTitle' => 'Active Deals',
+                                    'activity_scope' => 'store_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Active Deals',
+                                        'ar' => 'عروض فلاش متاحة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_MY_DEALS->value,
+                                    'PermissionTitle' => 'All Deals',
+                                    'activity_scope' => 'store_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'My Deals',
+                                        'ar' => 'منتجاتي في العروض'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_JOIN_DEALS->value,
+                                    'PermissionTitle' => 'Join Deals Requests',
+                                    'activity_scope' => 'store_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Join Deals',
+                                        'ar' => 'اطلب التسجيل'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+
                 // Blog Management
                 [
                     'PermissionName' => '',
