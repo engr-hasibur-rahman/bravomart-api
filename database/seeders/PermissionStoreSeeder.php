@@ -486,17 +486,6 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value,
-                            'PermissionTitle' => 'Disbursement Method',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'options' => ['view', 'insert', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Disbursement Method',
-                                'ar' => 'طريقة الصرف'
-                            ]
-                        ],
-                        [
                             'PermissionName' => PermissionKey::SELLER_STORE_POS_CONFIG->value,
                             'PermissionTitle' => 'POS Configuration',
                             'activity_scope' => 'store_level',
