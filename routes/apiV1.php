@@ -170,8 +170,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['prefix' => 'product/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::post('approve', [ProductController::class, 'changeStatus']);
             Route::post('author/approve', [ProductAuthorController::class, 'changeStatus']);
-            Route::get('low-stock', [ProductController::class, 'lowStockProducts']);
-            Route::get('out-of-stock', [ProductController::class, 'outOfStockProducts']);
+            Route::get('stock', [ProductController::class, 'lowOrOutOfStockProducts']);
+
         });
         // Location Manage
         Route::group(['prefix' => 'location/'], function () {

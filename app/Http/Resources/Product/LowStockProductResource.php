@@ -29,6 +29,7 @@ class LowStockProductResource extends JsonResource
                     'price' => $variant->price,
                 ];
             }),
+            'total'=> $this->lowStockVariants()->count(),
         ];
     }
 }

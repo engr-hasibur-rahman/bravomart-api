@@ -190,22 +190,26 @@ class ProductController extends Controller
         }
     }
 
-    public function lowStockProducts()
+    public function lowOrOutOfStockProducts(Request $request)
     {
-        $lowStockProducts = Product::lowStock()->with('store')->paginate(10);
-        return response()->json([
-            'data' => LowStockProductResource::collection($lowStockProducts),
-            'meta' => new PaginationResource($lowStockProducts),
-        ]);
-    }
+        if ($request->stock_type == 'low_stock') {
+            $lowStockProducts = Product::lowStock()->with('store')->paginate(10);
+            return response()->json([
+                'data' => LowStockProductResource::collection($lowStockProducts),
+                'meta' => new PaginationResource($lowStockProducts),
+            ]);
+        } elseif ($request->stock_type == 'out_of_stock') {
+            $outOfStockProducts = Product::outOfStock()->with('store')->paginate(10);
+            return response()->json([
+                'data' => OutOfStockProductResource::collection($outOfStockProducts),
+                'meta' => new PaginationResource($outOfStockProducts),
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+            ]);
+        }
 
-    public function outOfStockProducts()
-    {
-        $outOfStockProducts = Product::outOfStock()->with('store')->paginate(10);
-        return response()->json([
-            'data' => OutOfStockProductResource::collection($outOfStockProducts),
-            'meta' => new PaginationResource($outOfStockProducts),
-        ]);
     }
 
 
