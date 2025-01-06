@@ -1,11 +1,13 @@
 <?php
 
 use App\Enums\PermissionKey;
+use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\FlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
+use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
 use App\Http\Controllers\Api\V1\Admin\SellerManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
@@ -20,8 +22,12 @@ use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\Seller\SellerBusinessSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
 use App\Http\Controllers\Api\V1\Seller\FlashSaleProductManageController;
 use App\Http\Controllers\Api\V1\Seller\StoreDashboardManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
@@ -157,15 +163,21 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
             Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
         });
-        // Flash Sale manage
-        Route::group(['prefix' => 'flash-sale/'], function () {
-            Route::post('add', [FlashSaleManageController::class, 'createFlashSale']);
-            Route::post('update', [FlashSaleManageController::class, 'updateFlashSale']);
-            Route::get('list', [FlashSaleManageController::class, 'getFlashSale']);
-            Route::post('change-status', [FlashSaleManageController::class, 'changeStatus']);
-            Route::delete('remove/{id}', [FlashSaleManageController::class, 'deleteFlashSale']);
-            Route::post('deactivate', [FlashSaleManageController::class, 'deactivateFlashSale']);
+
+        // promotional manage
+        Route::group(['prefix' => 'promotional/'], function () {
+            //flash-deals
+            Route::group(['prefix' => 'flash-deals/'], function () {
+                Route::get('list', [FlashSaleManageController::class, 'getFlashSale']);
+                Route::post('add', [FlashSaleManageController::class, 'createFlashSale']);
+                Route::post('update', [FlashSaleManageController::class, 'updateFlashSale']);
+                Route::post('change-status', [FlashSaleManageController::class, 'changeStatus']);
+                Route::delete('remove/{id}', [FlashSaleManageController::class, 'deleteFlashSale']);
+                Route::post('deactivate', [FlashSaleManageController::class, 'deactivateFlashSale']);
+                Route::get('join-request', [FlashSaleManageController::class, 'deactivateFlashSale']);
+            });
         });
+
         // Product manage
         Route::group(['prefix' => 'product/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::post('approve', [ProductController::class, 'changeStatus']);
@@ -335,6 +347,26 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('pages/remove/{id}', [PagesManageController::class, 'pagesDestroy']);
         });
 
+        // Store Notice manage    
+        Route::prefix('store-notices')->middleware(['permission:' . PermissionKey::ADMIN_NOTICE_MANAGEMENT->value])->group(function () {
+            Route::get('/', [AdminStoreNoticeController::class, 'index']); // Get all notices
+            Route::post('/', [AdminStoreNoticeController::class, 'store']); // Create a new notice
+            Route::get('/{id}', [AdminStoreNoticeController::class, 'show']); // View a specific notice
+            Route::put('/{id}', [AdminStoreNoticeController::class, 'update']); // Update a specific notice
+            Route::patch('/{id}/status', [AdminStoreNoticeController::class, 'statusChange']); // Change notice status
+            Route::delete('/{id}', [AdminStoreNoticeController::class, 'destroy']); // Delete a specific notice
+        });
+
+        // withdraw method
+        Route::prefix('withdraw-method')->middleware(['permission:' . PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value])->group(function () {
+            Route::get('/list', [AdminWithdrawSettingsController::class, 'index']);
+            Route::post('/add', [AdminWithdrawSettingsController::class, 'store']);
+            Route::get('/{id}', [AdminWithdrawSettingsController::class, 'show']);
+            Route::put('/{id}', [AdminWithdrawSettingsController::class, 'update']);
+            Route::patch('/{id}/status', [AdminWithdrawSettingsController::class, 'statusChange']);
+            Route::delete('/{id}', [AdminWithdrawSettingsController::class, 'destroy']);
+        });
+
         /*--------------------- System management ----------------------------*/
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_SYSTEM_MANAGEMENT_SETTINGS->value]], function () {
             Route::group(['prefix' => 'system-management'], function () {
@@ -375,15 +407,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
         Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
-        // Flash Sale manage
-        Route::group(['prefix' => 'flash-sale-product/'], function () {
-            Route::post('add', [FlashSaleProductManageController::class, 'addProductToFlashSale']);
-            Route::post('update', [FlashSaleProductManageController::class, 'updateFlashSale']);
-            Route::get('list', [FlashSaleProductManageController::class, 'getFlashSaleProducts']);
-            Route::get('active', [FlashSaleProductManageController::class, 'getValidFlashSales']);
-            Route::post('change-status', [FlashSaleProductManageController::class, 'changeStatus']);
-            Route::delete('remove/{id}', [FlashSaleProductManageController::class, 'deleteFlashSale']);
-        });
+
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
             Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);
@@ -417,19 +441,61 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('staff/update', [StaffController::class, 'update']);
                 Route::post('staff/change-status', [StaffController::class, 'changestatus']);
             });
-        });
+
+            // FINANCIAL WITHDRAWALS management
+            Route::group(['prefix' => 'financial/'], function () {
+                // wallet
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value], function () {
+                    Route::get('wallet', [SellerWithdrawController::class, 'myWallet']);
+                });
+                // withdraw history
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
+                    Route::get('withdraw', [SellerWithdrawController::class, 'withdrawHistory']);
+                });
+            });
+
+            // store settings
+            Route::group(['prefix' => 'settings/'], function () {
+                // store notice
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_NOTICE->value], function () {
+                    Route::get('notices', [SellerStoreSettingsController::class, 'storeNotice']);
+                });
+                // store config
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_CONFIG->value], function () {
+                    Route::match(['get', 'put'], 'config', [SellerStoreSettingsController::class, 'storeConfig']);
+                });
+                // business settings
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_BUSINESS_PLAN->value], function () {
+                    Route::match(['get', 'put'], 'business-plan', [SellerBusinessSettingsController::class, 'businessPlan']);
+                });
+                // pos settings
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
+                    Route::match(['get', 'put'], 'pos-config', [SellerPosSettingsController::class, 'pos-config']);
+                });
+            });
+
+            // Flash Sale manage
+            Route::group(['prefix' => 'promotional/'], function () {
+                // flash-deals
+                Route::group(['prefix' => 'flash-deals/'], function () {
+                    Route::post('join-request', [FlashSaleProductManageController::class, 'addProductToFlashSale']);
+                    Route::get('list', [FlashSaleProductManageController::class, 'getFlashSaleProducts']);
+                    Route::get('active', [FlashSaleProductManageController::class, 'getValidFlashSales']);
+                });
+
+                // Banner manage
+                Route::group(['prefix' => 'banner'], function () {
+                    Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
+                        Route::post('/add', [BannerManageController::class, 'store']);
+                        Route::get('/{id}', [BannerManageController::class, 'show']);
+                        Route::post('/update', [BannerManageController::class, 'update']);
+                        Route::delete('/remove/{id}', [BannerManageController::class, 'destroy']);
+                    });
+                });
+            });
+        });  // END STORE ROUTE
 
 
-        // Banner manage
-        Route::post('banner/add', [BannerManageController::class, 'store']);
-        Route::get('banner/{id}', [BannerManageController::class, 'show']);
-        Route::post('banner/update', [BannerManageController::class, 'update']);
-        Route::delete('banner/remove/{id}', [BannerManageController::class, 'destroy']);
-
-        // Product manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_PRODUCT_ADD->value]], function () {
-
-        });
 
         // Product variant manage
         Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
@@ -456,12 +522,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
     });
     /* --------------------------> vendor route end <----------------------------- */
+
+
     /* --------------------------> delivery route start <------------------------- */
     Route::group(['prefix' => 'delivery/'], function () {
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
         });
     });
     /* --------------------------> delivery route end <-------------------------- */
+
 });
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {

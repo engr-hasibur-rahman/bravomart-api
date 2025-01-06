@@ -32,6 +32,32 @@ class PermissionStoreSeeder extends Seeder
                     ]
                 ],
 
+                // Pos management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'POS Management',
+                    'activity_scope' => 'store_level',
+                    'icon' => '',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'POS Management',
+                        'ar' => 'قائمة المناطق'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'POS Manager',
+                            'activity_scope' => 'store_level',
+                            'icon' => 'BringToFront',
+                            'options' => ['View'],
+                            'translations' => [
+                                'en' => 'Orders',
+                                'ar' => 'قائمة المناطق'
+                            ]
+                        ]
+                    ]
+                ],
+
                 // order manage
                 [
                     'PermissionName' => '',
@@ -66,86 +92,6 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::ORDERS_PENDING->value,
-                                    'PermissionTitle' => 'Pending',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Pending',
-                                        'ar' => 'قيد الانتظار'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_CONFIRMED->value,
-                                    'PermissionTitle' => 'Confirmed',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Confirmed',
-                                        'ar' => 'مؤكد'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_SCHEDULED->value,
-                                    'PermissionTitle' => 'Scheduled',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Scheduled',
-                                        'ar' => 'مجدولة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_COOKING->value,
-                                    'PermissionTitle' => 'Cooking (For Restaurant)',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Cooking',
-                                        'ar' => 'طبخ'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_READY_FOR_DELIVERY->value,
-                                    'PermissionTitle' => 'Ready For Delivery',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Ready For Delivery',
-                                        'ar' => 'جاهز للتسليم'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_PRODUCT_ON_THE_WAY->value,
-                                    'PermissionTitle' => 'Item On The Way',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Item On The Way',
-                                        'ar' => 'البند في الطريق'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_DELIVERED->value,
-                                    'PermissionTitle' => 'Delivered',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Delivered',
-                                        'ar' => 'تم التوصيل'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_FITTING_SCHEDULE->value,
-                                    'PermissionTitle' => 'Fitting Schedule Done(Furniture)',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Fitting Schedule Done',
-                                        'ar' => 'تم الانتهاء من جدول التجهيز'
-                                    ]
-                                ],
-                                [
                                     'PermissionName' => PermissionKey::ORDERS_RETURNED_OR_REFUND->value,
                                     'PermissionTitle' => 'Returned or Refunded',
                                     'activity_scope' => 'store_level',
@@ -154,7 +100,17 @@ class PermissionStoreSeeder extends Seeder
                                         'en' => 'Returned or Refunded',
                                         'ar' => 'تم إرجاعه أو استرداده'
                                     ]
-                                ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::FEEDBACK_REVIEWS->value,
+                                    'PermissionTitle' => 'Reviews',
+                                    'activity_scope' => 'store_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Reviews',
+                                        'ar' => 'المراجعات'
+                                    ]
+                                ],
                             ]
                         ]
                     ]
@@ -168,7 +124,7 @@ class PermissionStoreSeeder extends Seeder
                     'icon' => '',
                     'options' => ['View'],
                     'translations' => [
-                        'en' => 'Orders & Reviews',
+                        'en' => 'Product management',
                         'ar' => 'قائمة المناطق'
                     ],
                     'submenu' => [
@@ -213,16 +169,6 @@ class PermissionStoreSeeder extends Seeder
                                     'translations' => [
                                         'en' => 'All Low-Stock/Out of Stock Product',
                                         'ar' => 'جميع المنتجات منخفضة المخزون/غير متوفرة بالمخزون'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_TEMPLATE->value,
-                                    'PermissionTitle' => 'Product Template',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Product Template',
-                                        'ar' => 'قالب المنتج'
                                     ]
                                 ],
                                 [
@@ -278,16 +224,8 @@ class PermissionStoreSeeder extends Seeder
                                 'ar' => 'قائمة المؤلفين'
                             ]
                         ],
-                        [
-                            'PermissionName' => PermissionKey::PRODUCT_FAB_COMB_ADD->value,
-                            'PermissionTitle' => 'Manage Combinations',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Manage Combinations',
-                                'ar' => 'إدارة التركيبات'
-                            ]
-                        ],
+
+                        // for food product
                         [
                             'PermissionName' => PermissionKey::PRODUCT_ADDONS_ADD->value,
                             'PermissionTitle' => 'Addons',
@@ -314,33 +252,24 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::FINANCIAL_TRANSACTIONS->value,
-                            'PermissionTitle' => 'Transactions',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Transactions',
-                                'ar' => 'المعاملات'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::FINANCIAL_WITHDRAWLS->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value,
                             'PermissionTitle' => 'Withdrawals',
                             'activity_scope' => 'store_level',
                             'icon' => '',
+                            'options' => ['view', 'insert'],
                             'translations' => [
                                 'en' => 'Withdrawals',
                                 'ar' => 'السحوبات'
                             ]
                         ],
-                        [
-                            'PermissionName' => PermissionKey::FINANCIAL_MYINCOME->value,
-                            'PermissionTitle' => 'My Income',
+                            [
+                            'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value,
+                            'PermissionTitle' => 'My Wallet',
                             'activity_scope' => 'store_level',
                             'icon' => '',
                             'translations' => [
-                                'en' => 'My Income',
-                                'ar' => 'دخلي'
+                                'en' => 'My Wallet',
+                                'ar' => 'محفظتي'
                             ]
                         ]
                     ]
@@ -358,16 +287,6 @@ class PermissionStoreSeeder extends Seeder
                         'ar' => 'التحكم في ردود الفعل'
                     ],
                     'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::FEEDBACK_REVIEWS->value,
-                            'PermissionTitle' => 'Reviews',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Reviews',
-                                'ar' => 'المراجعات'
-                            ]
-                        ],
                         [
                             'PermissionName' => PermissionKey::FEEDBACK_QUESTIONS->value,
                             'PermissionTitle' => 'Questions/Chat',
@@ -429,7 +348,7 @@ class PermissionStoreSeeder extends Seeder
                 ],
 
                 // Promotional control
-                [
+               [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Promotional control',
                     'activity_scope' => 'store_level',
@@ -452,45 +371,35 @@ class PermissionStoreSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::PROMOTION_DEALS_AVAILABLE->value,
-                                    'PermissionTitle' => 'Available flash deals',
+                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_ACTIVE_DEALS->value,
+                                    'PermissionTitle' => 'Active Deals',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
                                     'translations' => [
-                                        'en' => 'Available flash deals',
+                                        'en' => 'Active Deals',
                                         'ar' => 'عروض فلاش متاحة'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PROMOTION_MY_PRODUCT_IN_DEALS->value,
-                                    'PermissionTitle' => 'My products in deals',
+                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_MY_DEALS->value,
+                                    'PermissionTitle' => 'My Deals',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
                                     'translations' => [
-                                        'en' => 'My products in deals',
+                                        'en' => 'My Deals',
                                         'ar' => 'منتجاتي في العروض'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PROMOTION_ASK_FOR_ENROLL->value,
-                                    'PermissionTitle' => 'Ask for enrollment',
+                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_JOIN_DEALS->value,
+                                    'PermissionTitle' => 'Join Deals',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
                                     'translations' => [
-                                        'en' => 'Ask for enrollment',
+                                        'en' => 'Join Deals',
                                         'ar' => 'اطلب التسجيل'
                                     ]
                                 ]
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::PROMOTION_COUPONS->value,
-                            'PermissionTitle' => 'Coupons',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Coupons',
-                                'ar' => 'كوبونات'
                             ]
                         ],
                         [
@@ -501,6 +410,31 @@ class PermissionStoreSeeder extends Seeder
                             'translations' => [
                                 'en' => 'Banners',
                                 'ar' => 'لافتات'
+                            ]
+                        ]
+                    ]
+                ],
+
+                // Message Settings
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Message',
+                    'activity_scope' => 'store_level',
+                    'icon' => '',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Message',
+                        'ar' => 'إعدادات المتجر'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::STORE_STORE_MESSAGE->value,
+                            'PermissionTitle' => 'Message',
+                            'activity_scope' => 'store_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Message',
+                                'ar' => 'رسالة'
                             ]
                         ]
                     ]
@@ -519,30 +453,22 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::STORE_STORE_NOTICE->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_STORE_NOTICE->value,
                             'PermissionTitle' => 'Store Notice',
                             'activity_scope' => 'store_level',
                             'icon' => '',
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Store Notice',
                                 'ar' => 'إشعار المتجر'
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::STORE_STORE_MESSAGE->value,
-                            'PermissionTitle' => 'Message',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Message',
-                                'ar' => 'رسالة'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::STORE_STORE_CONFIG->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_STORE_CONFIG->value,
                             'PermissionTitle' => 'Store Config',
                             'activity_scope' => 'store_level',
                             'icon' => '',
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Store Config',
                                 'ar' => 'تكوين المتجر'
@@ -560,40 +486,22 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::STORE_BUSINESS_PLAN->value,
-                            'PermissionTitle' => 'My Business Plan',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'My Business Plan',
-                                'ar' => 'خطة عملي'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::STORE_WALLET->value,
-                            'PermissionTitle' => 'My Wallet',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'My Wallet',
-                                'ar' => 'محفظتي'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::STORE_DISBURSE_METHOD->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value,
                             'PermissionTitle' => 'Disbursement Method',
                             'activity_scope' => 'store_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Disbursement Method',
                                 'ar' => 'طريقة الصرف'
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::STORE_POS_CONFIG->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_POS_CONFIG->value,
                             'PermissionTitle' => 'POS Configuration',
                             'activity_scope' => 'store_level',
                             'icon' => '',
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'POS Configuration',
                                 'ar' => 'تكوين نقاط البيع'
