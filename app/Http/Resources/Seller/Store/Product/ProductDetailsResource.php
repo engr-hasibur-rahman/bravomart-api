@@ -43,7 +43,7 @@ class ProductDetailsResource extends JsonResource
             "available_time_ends" => $this->available_time_ends,
             "meta_title" => $this->meta_title,
             "meta_description" => $this->meta_description,
-            "meta_keywords" => $this->meta_keywords,
+            "meta_keywords" => implode(',', json_decode($this->meta_keywords)),
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
             "variants" => $this->variants,
             "store" => $this->store,
