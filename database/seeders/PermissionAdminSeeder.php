@@ -509,7 +509,7 @@ class PermissionAdminSeeder extends Seeder
                         [
                             'PermissionName' => '',
                             'PermissionTitle' => 'Flash Sale',
-                            'activity_scope' => 'store_level',
+                            'activity_scope' => 'system_level',
                             'icon' => '',
                             'options' => ['View'],
                             'translations' => [
@@ -520,7 +520,7 @@ class PermissionAdminSeeder extends Seeder
                                 [
                                     'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_ACTIVE_DEALS->value,
                                     'PermissionTitle' => 'Active Deals',
-                                    'activity_scope' => 'store_level',
+                                    'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'translations' => [
                                         'en' => 'Active Deals',
@@ -530,7 +530,7 @@ class PermissionAdminSeeder extends Seeder
                                 [
                                     'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_MY_DEALS->value,
                                     'PermissionTitle' => 'All Deals',
-                                    'activity_scope' => 'store_level',
+                                    'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'translations' => [
                                         'en' => 'My Deals',
@@ -540,7 +540,7 @@ class PermissionAdminSeeder extends Seeder
                                 [
                                     'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_JOIN_DEALS->value,
                                     'PermissionTitle' => 'Join Deals Requests',
-                                    'activity_scope' => 'store_level',
+                                    'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'translations' => [
                                         'en' => 'Join Deals',

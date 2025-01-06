@@ -126,7 +126,7 @@ class BivaCommandAuto extends Command
         $role->givePermissionTo([PermissionKey::SELLER_STORE_MY_SHOP,PermissionKey::SELLER_STORE_STORE_NOTICE]);
         // 4 Get Store Officer Role And assign some default permission
         $role = Role::where('id',4)->first();
-        $role->givePermissionTo([PermissionKey::SELLER_STAFF_LIST,PermissionKey::STORE_DISBURSE_METHOD]);
+        $role->givePermissionTo([PermissionKey::SELLER_STAFF_LIST,PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS]);
 
         // Update View Option For All permission
         DB::table('role_has_permissions')->update(['view' => true]);
