@@ -424,6 +424,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('staff/change-status', [StaffController::class, 'changestatus']);
             });
 
+            // FINANCIAL WITHDRAWALS management
+            Route::group(['prefix' => 'financial/'], function () {
+                // wallet
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value], function () {
+                    Route::get('wallet', [SellerWithdrawController::class, 'myWallet']);
+                });
+                // withdraw history
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
+                    Route::get('withdraw', [SellerWithdrawController::class, 'withdrawHistory']);
+                });
+            });
+
             // store settings
             Route::group(['prefix' => 'settings/'], function () {
                 // store notice
@@ -438,23 +450,24 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_BUSINESS_PLAN->value], function () {
                     Route::match(['get', 'put'], 'business-plan', [SellerBusinessSettingsController::class, 'businessPlan']);
                 });
-                // withdraw method
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_WITHDRAW_HISTORY->value], function () {
-                    Route::get('withdraw-history', [SellerWithdrawController::class, 'withdrawHistory']);
-                });
                 // pos settings
                 Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
                     Route::match(['get', 'put'], 'pos-config', [SellerPosSettingsController::class, 'pos-config']);
                 });
             });
-        });
 
+            // Banner manage
+            Route::group(['prefix' => 'banner'], function () {
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
+                    Route::post('/add', [BannerManageController::class, 'store']);
+                    Route::get('/{id}', [BannerManageController::class, 'show']);
+                    Route::post('/update', [BannerManageController::class, 'update']);
+                    Route::delete('/remove/{id}', [BannerManageController::class, 'destroy']);
+               });
+            });
 
-        // Banner manage
-        Route::post('banner/add', [BannerManageController::class, 'store']);
-        Route::get('banner/{id}', [BannerManageController::class, 'show']);
-        Route::post('banner/update', [BannerManageController::class, 'update']);
-        Route::delete('banner/remove/{id}', [BannerManageController::class, 'destroy']);
+        });  // END STORE ROUTE
+
 
 
         // Product variant manage

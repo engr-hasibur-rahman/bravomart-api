@@ -301,16 +301,12 @@ enum PermissionKey: string
         case SELLER_STORE_STORE_CONFIG = '/seller/store/settings/config';
         case SELLER_STORE_BUSINESS_PLAN = '/seller/store/settings/business-plan';
         case SELLER_STORE_POS_CONFIG = '/seller/store/pos-config';
-        case SELLER_STORE_WITHDRAW_HISTORY = 'seller/store/withdraw-history';
-        case STORE_WALLET = 'my-wallet';
-    case STORE_STORE_MESSAGE = 'store-message';
-      
-        
+       //------------ SELLER Live Chat
+        case STORE_STORE_MESSAGE = 'store-message';
 
         // ----------- Seller Product Manage
-    case SELLER_STORE_PRODUCT_LIST = '/seller/store/product/list';
-    case SELLER_STORE_PRODUCT_ADD = '/seller/store/product/add';
-
+        case SELLER_STORE_PRODUCT_LIST = '/seller/store/product/list';
+        case SELLER_STORE_PRODUCT_ADD = '/seller/store/product/add';
 
      //-----------Seller Staff Manage----------
       case SELLER_STAFF_LIST = '/seller/staff/list';
@@ -318,12 +314,18 @@ enum PermissionKey: string
       case SELLER_STAFF_ACTIVE= '/seller/staff/active';
       case SELLER_STAFF_ROLES_STORE = '/seller/staff/role-stores';
 
-    //-----------Financial Management----------
-    case SELLER_FINANCIAL_WITHDRAWALS = '/seller/withdrawals';
+        //-----------Financial Management----------
+        case SELLER_STORE_FINANCIAL_WALLET = '/seller/store/financial/wallet';
+        case SELLER_STORE_FINANCIAL_WITHDRAWALS= '/seller/store/financial/withdraw';
 
-      
-      //-------------- Brand add -----------------
-    case ADMIN_PRODUCT_BRAND_LIST_STORE = '/store/brand';
+        //----------- Promotional control ----------
+        case SELLER_STORE_FLASH_SALE_ACTIVE_DEALS = '/seller/store/flash/active-deals';
+        case SELLER_STORE_FLASH_SALE_MY_DEALS = '/seller/store/flash/my-deals';
+        case SELLER_STORE_FLASH_SALE_JOIN_DEALS = '/seller/store/flash/join-deals';
+        case SELLER_STORE_FLASH_BANNER_MANAGE = '/seller/store/banner-manage';
+
+        //-------------- Brand add -----------------
+        case ADMIN_PRODUCT_BRAND_LIST_STORE = '/store/brand';
 
     // ######################## Seller PermissionKey End ###########################
 

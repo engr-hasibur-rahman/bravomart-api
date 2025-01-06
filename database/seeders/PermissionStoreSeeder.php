@@ -252,7 +252,7 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::SELLER_FINANCIAL_WITHDRAWALS->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value,
                             'PermissionTitle' => 'Withdrawals',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -263,7 +263,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                             [
-                            'PermissionName' => PermissionKey::STORE_WALLET->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value,
                             'PermissionTitle' => 'My Wallet',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -348,7 +348,7 @@ class PermissionStoreSeeder extends Seeder
                 ],
 
                 // Promotional control
-                [
+               [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Promotional control',
                     'activity_scope' => 'store_level',
@@ -371,32 +371,32 @@ class PermissionStoreSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::PROMOTION_DEALS_AVAILABLE->value,
-                                    'PermissionTitle' => 'Available flash deals',
+                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_ACTIVE_DEALS->value,
+                                    'PermissionTitle' => 'Active Deals',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
                                     'translations' => [
-                                        'en' => 'Available flash deals',
+                                        'en' => 'Active Deals',
                                         'ar' => 'عروض فلاش متاحة'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PROMOTION_MY_PRODUCT_IN_DEALS->value,
-                                    'PermissionTitle' => 'My products in deals',
+                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_MY_DEALS->value,
+                                    'PermissionTitle' => 'My Deals',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
                                     'translations' => [
-                                        'en' => 'My products in deals',
+                                        'en' => 'My Deals',
                                         'ar' => 'منتجاتي في العروض'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PROMOTION_ASK_FOR_ENROLL->value,
-                                    'PermissionTitle' => 'Ask for enrollment',
+                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_JOIN_DEALS->value,
+                                    'PermissionTitle' => 'Join Deals',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
                                     'translations' => [
-                                        'en' => 'Ask for enrollment',
+                                        'en' => 'Join Deals',
                                         'ar' => 'اطلب التسجيل'
                                     ]
                                 ]
@@ -475,7 +475,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::SELLER_SELLER_STORE_MY_SHOP->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_MY_SHOP->value,
                             'PermissionTitle' => 'My Stores',
                             'activity_scope' => 'store_level',
                             'icon' => '',
@@ -486,17 +486,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::SELLER_STORE_BUSINESS_PLAN->value,
-                            'PermissionTitle' => 'My Business Plan',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'My Business Plan',
-                                'ar' => 'خطة عملي'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::STORE_DISBURSE_METHOD->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value,
                             'PermissionTitle' => 'Disbursement Method',
                             'activity_scope' => 'store_level',
                             'icon' => '',
