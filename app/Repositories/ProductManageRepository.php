@@ -99,11 +99,9 @@ class ProductManageRepository implements ProductManageInterface
             if (!empty($data['variants']) && is_array($data['variants'])) {
                 $variants = array_map(function ($variant) use ($product) {
                     // Generate the variant slug
-
 //                    $variant_slug = generateVariantSlug($variant['variant']);
-                    $variant_slug = $variant['variant'];
                     $variant['attributes'] = json_encode($variant['attributes']);
-                    $variant['variant_slug'] = $variant_slug; // Assign the generated slug
+                    $variant['variant_slug'] = $variant['variant']; // Assign the generated slug
                     // Generate a SKU for the variant
                     $sku = generateUniqueSku(); // This function generates a unique SKU
                     $variant['sku'] = $sku; // Assign the generated SKU
@@ -181,11 +179,8 @@ class ProductManageRepository implements ProductManageInterface
             if (!empty($data['variants']) && is_array($data['variants'])) {
                 $variants = array_map(function ($variant) use ($product) {
                     // Generate the variant slug
-                    $variant_slug = generateVariantSlug([
-                        'color' => $variant['color'],
-                        'size' => $variant['size'],
-                    ]);
-                    $variant['variant_slug'] = $variant_slug; // Assign the generated slug
+                    $variant['attributes'] = json_encode($variant['attributes']);
+                    $variant['variant_slug'] = $variant['variant']; // Assign the generated slug
                     $variant['product_id'] = $product->id;
                     return $variant;
                 }, $data['variants']);
