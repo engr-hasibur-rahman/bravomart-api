@@ -10,7 +10,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ProductVariantRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\LowStockProductResource;
+use App\Http\Resources\Product\OutOfStockProductResource;
 use App\Http\Resources\Product\ProductListResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
@@ -188,9 +190,27 @@ class ProductController extends Controller
         }
     }
 
-    public function lowStockProducts()
+    public function lowOrOutOfStockProducts(Request $request)
     {
-        $lowStockProducts = Product::lowStock()->paginate(15);
-        return response()->json(LowStockProductResource::collection($lowStockProducts));
+        if ($request->stock_type == 'low_stock') {
+            $lowStockProducts = Product::lowStock()->with('store')->paginate(10);
+            return response()->json([
+                'data' => LowStockProductResource::collection($lowStockProducts),
+                'meta' => new PaginationResource($lowStockProducts),
+            ]);
+        } elseif ($request->stock_type == 'out_of_stock') {
+            $outOfStockProducts = Product::outOfStock()->with('store')->paginate(10);
+            return response()->json([
+                'data' => OutOfStockProductResource::collection($outOfStockProducts),
+                'meta' => new PaginationResource($outOfStockProducts),
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+            ]);
+        }
+
     }
+
+
 }
