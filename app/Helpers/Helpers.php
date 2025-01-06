@@ -56,17 +56,19 @@ if (!function_exists('translate')) {
     if (!function_exists('generateRandomCouponCode')) {
         function generateRandomCouponCode()
         {
-            // Generate a random 8-character string containing letters and numbers
-            $couponCode = Str::random(8);
+            // Generate a random 8-character string containing letters and numbers in uppercase
+            $couponCode = strtoupper(Str::random(8));
 
             // Ensure the generated coupon code is unique
             while (\App\Models\CouponLine::where('coupon_code', $couponCode)->exists()) {
                 // If the code already exists, generate a new one
-                $couponCode = Str::random(8);
+                $couponCode = strtoupper(Str::random(8));
             }
+
             return $couponCode;
         }
     }
+
     if (!function_exists('generateVariantSlug')) {
         function generateVariantSlug(array $attributes): string
         {
