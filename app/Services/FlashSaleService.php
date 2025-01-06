@@ -50,16 +50,12 @@ class FlashSaleService
         return FlashSale::with('products.product')->get();
     }
 
-    public function getSellerFlashSales()
+    public function getSellerFlashSaleProducts()
     {
-        return FlashSale::where('status', true)
-            ->with('products')
-            ->whereHas('products', function ($query) {
-                $query->where('store_id', auth('api')->store_id);
-            })
+        return FlashSaleProduct::with(['product','flashSale'])
+            ->where('created_by', auth('api')->id())
             ->get();
     }
-
     public function toggleStatus(int $id): FlashSale
     {
         $flashSale = FlashSale::findOrFail($id);

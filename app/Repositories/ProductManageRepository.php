@@ -197,7 +197,6 @@ class ProductManageRepository implements ProductManageInterface
                     }
                 }
             }
-
             // Update product tags
             if (!empty($data['tag_ids']) && is_array($data['tag_ids'])) {
                 // First, delete existing tags to avoid duplicates
@@ -213,13 +212,11 @@ class ProductManageRepository implements ProductManageInterface
                 }
                 ProductTag::insert($productTags);
             }
-
             return $product->id;
         } catch (\Throwable $th) {
             throw $th;
         }
     }
-
     // Delete data
     public function delete(int|string $id)
     {
@@ -231,7 +228,6 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
-
     // Fetch product data of specific id
     public function getProductBySlug(string $slug)
     {
