@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
 
@@ -30,6 +31,13 @@ class FlashSaleProductManageController extends Controller
                 'status_code' => 400,
             ]);
         }
+    }
+
+    public function getFlashSaleProducts()
+    {
+        $flashSaleProducts = $this->flashSaleService->getSellerFlashSaleProducts();
+
+        return response()->json(FlashSaleProductResource::collection($flashSaleProducts));
     }
 
 }

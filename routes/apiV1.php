@@ -377,10 +377,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Flash Sale manage
         Route::group(['prefix' => 'flash-sale-product/'], function () {
             Route::post('add', [FlashSaleProductManageController::class, 'addProductToFlashSale']);
-            Route::post('update', [FlashSaleManageController::class, 'updateFlashSale']);
-            Route::get('list', [FlashSaleManageController::class, 'getFlashSale']);
-            Route::post('change-status', [FlashSaleManageController::class, 'changeStatus']);
-            Route::delete('remove/{id}', [FlashSaleManageController::class, 'deleteFlashSale']);
+            Route::post('update', [FlashSaleProductManageController::class, 'updateFlashSale']);
+            Route::get('list', [FlashSaleProductManageController::class, 'getFlashSaleProducts']);
+            Route::post('change-status', [FlashSaleProductManageController::class, 'changeStatus']);
+            Route::delete('remove/{id}', [FlashSaleProductManageController::class, 'deleteFlashSale']);
         });
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
