@@ -73,6 +73,52 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class, "product_id");
     }
 
+    // In your Product model
+    public function scopeLowOrOutOfStock($query, $lowStockThreshold = 10)
+    {
+        return $query->whereHas('variants', function ($variantQuery) use ($lowStockThreshold) {
+            $variantQuery->where(function ($condition) use ($lowStockThreshold) {
+                $condition->where('stock_quantity', '>', 0) // Low stock condition
+                ->where('stock_quantity', '<', $lowStockThreshold)
+                    ->orWhere('stock_quantity', '=', 0); // Out-of-stock condition
+            });
+        });
+    }
+
+    // Get low stock variants
+    public function lowStockVariants($threshold = 10)
+    {
+        return $this->variants()->where('stock_quantity', '>', 0)
+            ->where('stock_quantity', '<', $threshold)
+            ->get();
+    }
+
+// Get out of stock variants
+    public function outOfStockVariants()
+    {
+        return $this->variants()->where('stock_quantity', '=', 0)->get();
+    }
+
+// Get combined stock status
+    public function getStockBadgeAttribute()
+    {
+        $lowStock = $this->lowStockVariants()->isNotEmpty();
+        $outOfStock = $this->outOfStockVariants()->isNotEmpty();
+
+        if ($lowStock && $outOfStock) {
+            return [
+                'low_stock',
+                'out_of_stock',
+            ];
+        } elseif ($lowStock) {
+            return 'low_stock';
+        } elseif ($outOfStock) {
+            return 'out_of_stock';
+        }
+
+        return 'in_stock';
+    }
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');

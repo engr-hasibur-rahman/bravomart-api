@@ -21,12 +21,14 @@ class FlashSaleService
         $flashSale->update($data);
         return true;
     }
+
     public function deleteFlashSale($id)
     {
         $flashSale = FlashSale::findorfail($id);
         $flashSale->delete();
         return true;
     }
+
     public function associateProductsToFlashSale(int $flashSaleId, array $products)
     {
         $bulkData = array_map(function ($product) use ($flashSaleId) {
@@ -52,12 +54,19 @@ class FlashSaleService
 
     public function getSellerFlashSaleProducts()
     {
-        return FlashSaleProduct::with(['product','flashSale'])
+        return FlashSaleProduct::with(['product', 'flashSale'])
             ->where('created_by', auth('api')->id())
             ->get();
     }
-    public function getValidFlashSales(){
 
+    public function getValidFlashSales()
+    {
+        return FlashSale::query()
+            ->where('status', true) // Ensure the flash sale is active
+            ->where('start_time', '<=', now()) // Valid only after the start time
+            ->where('end_time', '>=', now()) // Valid only before the end time
+            ->orderBy('start_time', 'asc') // Order by the start time
+            ->get();
     }
     public function toggleStatus(int $id): FlashSale
     {
@@ -65,5 +74,14 @@ class FlashSaleService
         $flashSale->status = !$flashSale->status;
         $flashSale->save();
         return $flashSale;
+    }
+
+    public function deactivateExpiredFlashSales()
+    {
+        $expiredFlashSales = FlashSale::where('end_time', '<', now())
+            ->where('status', true) // Ensure only active flash sales are updated
+            ->update(['status' => false]); // Use the existing field name for status
+
+        return $expiredFlashSales > 0; // Return true if any records were updated
     }
 }
