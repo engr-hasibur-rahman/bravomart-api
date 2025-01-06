@@ -84,4 +84,21 @@ class FlashSaleManageController extends Controller
             'message' => __('messages.delete_success', ['name' => 'Flash sale']),
         ]);
     }
+    public function deactivateFlashSale()
+    {
+       $success = $this->flashSaleService->deactivateExpiredFlashSales();
+       if ($success) {
+           return response()->json([
+               'status' => true,
+               'status_code' => 200,
+               'message' => __('messages.update_success', ['name' => 'Flash sale status']),
+           ]);
+       } else {
+           return response()->json([
+               'status' => false,
+               'status_code' => 400,
+               'message' => __('messages.update_failed', ['name' => 'Flash sale status'])
+           ]);
+       }
+    }
 }

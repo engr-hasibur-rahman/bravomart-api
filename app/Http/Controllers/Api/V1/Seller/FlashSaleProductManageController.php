@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\FlashSaleResource;
 use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
@@ -38,6 +39,12 @@ class FlashSaleProductManageController extends Controller
         $flashSaleProducts = $this->flashSaleService->getSellerFlashSaleProducts();
 
         return response()->json(FlashSaleProductResource::collection($flashSaleProducts));
+    }
+
+    public function getValidFlashSales()
+    {
+        $flashSales = $this->flashSaleService->getValidFlashSales();
+        return response()->json(FlashSaleResource::collection($flashSales));
     }
 
 }
