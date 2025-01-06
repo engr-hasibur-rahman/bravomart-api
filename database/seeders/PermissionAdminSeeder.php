@@ -52,16 +52,6 @@ class PermissionAdminSeeder extends Seeder
                                 'en' => 'Instant Sales',
                                 'ar' => 'المبيعات الفورية'
                             ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::POS_SETTINGS_ADMIN->value,
-                            'PermissionTitle' => 'Pos Settings',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'RouteOff',
-                            'translations' => [
-                                'en' => 'Pos Settings',
-                                'ar' => 'إعدادات الموضع'
-                            ]
                         ]
                     ]
                 ],
@@ -96,86 +86,6 @@ class PermissionAdminSeeder extends Seeder
                                     'translations' => [
                                         'en' => 'All Orders',
                                         'ar' => 'جميع الطلبات'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_PENDING->value,
-                                    'PermissionTitle' => 'Pending',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Pending',
-                                        'ar' => 'قيد الانتظار'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_CONFIRMED->value,
-                                    'PermissionTitle' => 'Confirmed',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Confirmed',
-                                        'ar' => 'مؤكد'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_SCHEDULED->value,
-                                    'PermissionTitle' => 'Scheduled',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Scheduled',
-                                        'ar' => 'مجدولة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_COOKING->value,
-                                    'PermissionTitle' => 'Cooking (For Restaurant)',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Cooking',
-                                        'ar' => 'طبخ'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_READY_FOR_DELIVERY->value,
-                                    'PermissionTitle' => 'Ready For Delivery',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Ready For Delivery',
-                                        'ar' => 'جاهز للتسليم'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_PRODUCT_ON_THE_WAY->value,
-                                    'PermissionTitle' => 'Item On The Way',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Item On The Way',
-                                        'ar' => 'البند في الطريق'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_DELIVERED->value,
-                                    'PermissionTitle' => 'Delivered',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Delivered',
-                                        'ar' => 'تم التوصيل'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ORDERS_FITTING_SCHEDULE->value,
-                                    'PermissionTitle' => 'Fitting Schedule Done(Furniture)',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Fitting Schedule Done',
-                                        'ar' => 'تم الانتهاء من جدول التجهيز'
                                     ]
                                 ],
                                 [
@@ -306,18 +216,18 @@ class PermissionAdminSeeder extends Seeder
                             'activity_scope' => 'system_level',
                             'icon' => 'Layers3',
                             'translations' => [
-                                'en' => 'Category List',
+                                'en' => 'Category',
                                 'ar' => 'قائمة الفئات'
                             ],
                             'submenu' => [
                                 [
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value,
-                                    'PermissionTitle' => 'Product Category List',
+                                    'PermissionTitle' => 'Category List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
-                                        'en' => 'Product Category List',
+                                        'en' => 'Category List',
                                         'ar' => 'قائمة فئات المنتجات'
                                     ]
                                 ]
@@ -379,7 +289,6 @@ class PermissionAdminSeeder extends Seeder
                                 ]
                             ]
                         ],
-
                         [
                             'PermissionName' => '',
                             'PermissionTitle' => 'Warranty',
@@ -398,16 +307,6 @@ class PermissionAdminSeeder extends Seeder
                                     'translations' => [
                                         'en' => 'Warranty List',
                                         'ar' => 'قائمة الضمان'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_WARRANTY_ADD->value,
-                                    'PermissionTitle' => 'Add Warranty',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Add Warranty',
-                                        'ar' => 'إضافة الضمان'
                                     ]
                                 ]
                             ]
@@ -457,16 +356,6 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_AUTHORS_ADD->value,
-                                    'PermissionTitle' => 'Add Book Author',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Add Book Author',
-                                        'ar' => 'أضف مؤلف الكتاب'
-                                    ]
-                                ],
-                                [
                                     'PermissionName' => PermissionKey::PRODUCT_AUTHORS_REQUESTED_FROM_STORE->value,
                                     'PermissionTitle' => 'Author Add Requested From Store',
                                     'activity_scope' => 'system_level',
@@ -509,40 +398,6 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ]
                             ]
-                        ],
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Manage Combinations(Furniture Only)',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Manage Combinations',
-                                'ar' => 'إدارة التركيبات'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_FAB_COMB_LIST->value,
-                                    'PermissionTitle' => 'List',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'List',
-                                        'ar' => 'إدارة التركيبات'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_FAB_COMB_ADD->value,
-                                    'PermissionTitle' => 'Add Combinations',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Add Combinations',
-                                        'ar' => 'إضافة مجموعات'
-                                    ]
-                                ]
-                            ],
-
-
                         ],
                         [
                             'PermissionName' => '',
@@ -597,16 +452,6 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::STORE_APPROVAL->value,
-                            'PermissionTitle' => 'Pending Approval/ Rejected',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Pending Approval/ Rejected',
-                                'ar' => 'في انتظار الموافقة/الرفض'
-                            ]
-                        ],
-                        [
                             'PermissionName' => PermissionKey::ADMIN_STORE_LIST->value,
                             'PermissionTitle' => 'Store List',
                             'activity_scope' => 'system_level',
@@ -627,6 +472,16 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' => PermissionKey::STORE_APPROVAL->value,
+                            'PermissionTitle' => 'Store Pending Approval',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Pending Approval/ Rejected',
+                                'ar' => 'في انتظار الموافقة/الرفض'
+                            ]
+                        ],
+                        [
                             'PermissionName' => PermissionKey::STORE_RECOMMENDED->value,
                             'PermissionTitle' => 'Recommended Store',
                             'activity_scope' => 'system_level',
@@ -634,16 +489,6 @@ class PermissionAdminSeeder extends Seeder
                             'translations' => [
                                 'en' => 'Recommended Store',
                                 'ar' => 'المتجر الموصى به'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::STORE_STORE_ADD_UPDATE->value,
-                            'PermissionTitle' => 'Store Add/Update',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Store Add/Update',
-                                'ar' => 'إضافة/تحديث المتجر'
                             ]
                         ]
                     ]
@@ -865,6 +710,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
                 // Customer management
                 [
                     'PermissionName' => '',
@@ -961,6 +807,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
                 // Employee Management
                 [
                     'PermissionName' => '',
@@ -1130,6 +977,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
                 // Report and analytics
                 [
                     'PermissionName' => '',
@@ -1220,6 +1068,34 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'قائمة المناطق'
                     ]
                 ],
+
+                // Notice Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Notice Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Notice Management',
+                        'ar' => 'إدارة الأعمال'
+                    ],
+                    'submenu' => [                       
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_NOTICE_MANAGEMENT->value,
+                            'PermissionTitle' => 'Notices',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Notices',
+                                'ar' => 'إعدادات الأعمال'
+                            ]
+                        ]                                                                
+                    ]
+                ],
+              
+
                 // Business management
                 [
                     'PermissionName' => '',
@@ -1276,6 +1152,7 @@ class PermissionAdminSeeder extends Seeder
                                 'ar' => 'إعدادات الأعمال'
                             ]
                         ],
+                        // Subscription management
                         [
                             'PermissionName' => '',
                             'PermissionTitle' => 'Subscription management',
@@ -1318,143 +1195,7 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ]
                             ]
-                        ],
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Pages & social media',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view'],
-                            'translations' => [
-                                'en' => 'Pages & social media',
-                                'ar' => 'الصفحات ووسائل التواصل الاجتماعي'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::MEDIA_SOCIAL_MEDIA->value,
-                                    'PermissionTitle' => 'Social Media',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Social Media',
-                                        'ar' => 'وسائل التواصل الاجتماعي'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::MEDIA_ADMIN_LANDING_PAGE->value,
-                                    'PermissionTitle' => 'Admin landing page',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Admin landing page',
-                                        'ar' => 'صفحة هبوط المشرف'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::MEDIA_REACT_LANDING_PAGE->value,
-                                    'PermissionTitle' => 'React landing page',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'React landing page',
-                                        'ar' => 'صفحة الهبوط التفاعلية'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::MEDIA_FLUTTER_LANDING_PAGE->value,
-                                    'PermissionTitle' => 'Flutter landing page',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Flutter landing page',
-                                        'ar' => 'صفحة الهبوط Flutter'
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Business pages',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view'],
-                            'translations' => [
-                                'en' => 'Business pages',
-                                'ar' => 'صفحات الأعمال'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::PAGE_TERMS_AND_CONDITION->value,
-                                    'PermissionTitle' => 'Terms and condition',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Terms and condition',
-                                        'ar' => 'الشروط والأحكام'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PAGE_PRIVACY_POLICY->value,
-                                    'PermissionTitle' => 'Privacy policy',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Privacy policy',
-                                        'ar' => 'سياسة الخصوصية'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PAGE_ABOUT_US->value,
-                                    'PermissionTitle' => 'About us',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'About us',
-                                        'ar' => 'معلومات عنا'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PAGE_REFUND_POLICY->value,
-                                    'PermissionTitle' => 'Refund Policy',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Refund Policy',
-                                        'ar' => 'سياسة الاسترداد'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PAGE_CANCELLATION_POLICY->value,
-                                    'PermissionTitle' => 'Cancellation Policy',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Cancellation Policy',
-                                        'ar' => 'سياسة الإلغاء'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PAGE_SHIPPING_POLICY->value,
-                                    'PermissionTitle' => 'Shipping Policy',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Shipping Policy',
-                                        'ar' => 'سياسة الشحن'
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::IMAGE_GALLERY->value,
-                            'PermissionTitle' => 'Gallery',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Gallery',
-                                'ar' => 'معرض الصور'
-                            ]
-                        ]
+                        ]                                             
                     ]
                 ],
 

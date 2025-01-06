@@ -1,10 +1,12 @@
 <?php
 
 use App\Enums\PermissionKey;
+use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
+use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
 use App\Http\Controllers\Api\V1\Admin\SellerManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
@@ -19,7 +21,11 @@ use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\Seller\SellerBusinessSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
 use App\Http\Controllers\Api\V1\Seller\StoreDashboardManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
@@ -324,6 +330,26 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('pages/remove/{id}', [PagesManageController::class, 'pagesDestroy']);
         });
 
+        // Store Notice manage    
+        Route::prefix('store-notices')->middleware(['permission:' . PermissionKey::ADMIN_NOTICE_MANAGEMENT->value])->group(function () {
+            Route::get('/', [AdminStoreNoticeController::class, 'index']); // Get all notices
+            Route::post('/', [AdminStoreNoticeController::class, 'store']); // Create a new notice
+            Route::get('/{id}', [AdminStoreNoticeController::class, 'show']); // View a specific notice
+            Route::put('/{id}', [AdminStoreNoticeController::class, 'update']); // Update a specific notice
+            Route::patch('/{id}/status', [AdminStoreNoticeController::class, 'statusChange']); // Change notice status
+            Route::delete('/{id}', [AdminStoreNoticeController::class, 'destroy']); // Delete a specific notice
+        });
+
+        // withdraw method
+        Route::prefix('withdraw-method')->middleware(['permission:' . PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value])->group(function () {
+            Route::get('/list', [AdminWithdrawSettingsController::class, 'index']);
+            Route::post('/add', [AdminWithdrawSettingsController::class, 'store']);
+            Route::get('/{id}', [AdminWithdrawSettingsController::class, 'show']);
+            Route::put('/{id}', [AdminWithdrawSettingsController::class, 'update']);
+            Route::patch('/{id}/status', [AdminWithdrawSettingsController::class, 'statusChange']);
+            Route::delete('/{id}', [AdminWithdrawSettingsController::class, 'destroy']);
+        });
+
         /*--------------------- System management ----------------------------*/
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_SYSTEM_MANAGEMENT_SETTINGS->value]], function () {
             Route::group(['prefix' => 'system-management'], function () {
@@ -377,26 +403,50 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [StoreManageController::class, 'destroy']);
                 Route::get('deleted/records', [StoreManageController::class, 'deleted_records']);
             });
-                // seller product manage
-                Route::group(['prefix' => 'product/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_LIST->value]], function () {
-                    Route::get('list', [ProductController::class, 'index']);
-                    Route::get('{slug}', [ProductController::class, 'show']);
-                    Route::post('add', [ProductController::class, 'store'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_ADD->value);
-                    Route::post('update', [ProductController::class, 'update']);
-                    Route::delete('remove/{id}', [ProductController::class, 'destroy']);
-                    Route::get('deleted/records', [ProductController::class, 'deleted_records']);
-                    Route::post('export', [ProductController::class, 'export']);
-                    Route::post('import', [ProductController::class, 'import']);
-                });
+            // seller product manage
+            Route::group(['prefix' => 'product/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_LIST->value]], function () {
+                Route::get('list', [ProductController::class, 'index']);
+                Route::get('{slug}', [ProductController::class, 'show']);
+                Route::post('add', [ProductController::class, 'store'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_ADD->value);
+                Route::post('update', [ProductController::class, 'update']);
+                Route::delete('remove/{id}', [ProductController::class, 'destroy']);
+                Route::get('deleted/records', [ProductController::class, 'deleted_records']);
+                Route::post('export', [ProductController::class, 'export']);
+                Route::post('import', [ProductController::class, 'import']);
+            });
 
-                // Staff manage
-                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
-                    Route::get('staff/list', [StaffController::class, 'index']);
-                    Route::post('staff/add', [StaffController::class, 'store']);
-                    Route::get('staff/{id}', [StaffController::class, 'show']);
-                    Route::post('staff/update', [StaffController::class, 'update']);
-                    Route::post('staff/change-status', [StaffController::class, 'changestatus']);
+            // Staff manage
+            Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
+                Route::get('staff/list', [StaffController::class, 'index']);
+                Route::post('staff/add', [StaffController::class, 'store']);
+                Route::get('staff/{id}', [StaffController::class, 'show']);
+                Route::post('staff/update', [StaffController::class, 'update']);
+                Route::post('staff/change-status', [StaffController::class, 'changestatus']);
+            });
+
+            // store settings
+            Route::group(['prefix' => 'settings/'], function () {
+                // store notice
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_NOTICE->value], function () {
+                    Route::get('notices', [SellerStoreSettingsController::class, 'storeNotice']);
                 });
+                // store config
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_CONFIG->value], function () {
+                    Route::match(['get', 'put'], 'config', [SellerStoreSettingsController::class, 'storeConfig']);
+                });
+                // business settings
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_BUSINESS_PLAN->value], function () {
+                    Route::match(['get', 'put'], 'business-plan', [SellerBusinessSettingsController::class, 'businessPlan']);
+                });
+                // withdraw method
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_WITHDRAW_HISTORY->value], function () {
+                    Route::get('withdraw-history', [SellerWithdrawController::class, 'withdrawHistory']);
+                });
+                // pos settings
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
+                    Route::match(['get', 'put'], 'pos-config', [SellerPosSettingsController::class, 'pos-config']);
+                });
+            });
         });
 
 
@@ -406,10 +456,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('banner/update', [BannerManageController::class, 'update']);
         Route::delete('banner/remove/{id}', [BannerManageController::class, 'destroy']);
 
-        // Product manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_PRODUCT_ADD->value]], function () {
-
-        });
 
         // Product variant manage
         Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
@@ -436,12 +482,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
     });
     /* --------------------------> vendor route end <----------------------------- */
+
+
     /* --------------------------> delivery route start <------------------------- */
     Route::group(['prefix' => 'delivery/'], function () {
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
         });
     });
     /* --------------------------> delivery route end <-------------------------- */
+
 });
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {

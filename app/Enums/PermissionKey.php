@@ -282,6 +282,14 @@ enum PermissionKey: string
     //              Wallet Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_WALLET_MANAGE = '/admin/wallet/list';
+     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              Notice Management                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_NOTICE_MANAGEMENT = '/admin/store-notices';
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              withdraw method Management                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_WITHDRAW_METHOD_MANAGEMENT = '/admin/withdraw-method';
 
     // ############################## Admin PermissionKey End ################################
 
@@ -289,13 +297,15 @@ enum PermissionKey: string
     // ############################## Seller PermissionKey Start ################################
        //-----------Store Settings----------
         case SELLER_STORE_MY_SHOP = '/seller/store/list';
-        case STORE_STORE_NOTICE = 'store-notice';
-        case STORE_STORE_MESSAGE = 'store-message';
-        case STORE_STORE_CONFIG = 'store-config';
-        case STORE_BUSINESS_PLAN = 'my-business-plan';
+        case SELLER_STORE_STORE_NOTICE = '/seller/store/settings/notices';
+        case SELLER_STORE_STORE_CONFIG = '/seller/store/settings/config';
+        case SELLER_STORE_BUSINESS_PLAN = '/seller/store/settings/business-plan';
+        case SELLER_STORE_POS_CONFIG = '/seller/store/pos-config';
+        case SELLER_STORE_WITHDRAW_HISTORY = 'seller/store/withdraw-history';
         case STORE_WALLET = 'my-wallet';
-        case STORE_DISBURSE_METHOD = 'my-disburse-method';
-        case STORE_POS_CONFIG = 'pos-config';
+    case STORE_STORE_MESSAGE = 'store-message';
+      
+        
 
         // ----------- Seller Product Manage
     case SELLER_STORE_PRODUCT_LIST = '/seller/store/product/list';
@@ -307,6 +317,10 @@ enum PermissionKey: string
       case SELLER_STAFF_BAN= '/seller/staff/ban';
       case SELLER_STAFF_ACTIVE= '/seller/staff/active';
       case SELLER_STAFF_ROLES_STORE = '/seller/staff/role-stores';
+
+    //-----------Financial Management----------
+    case SELLER_FINANCIAL_WITHDRAWALS = '/seller/withdrawals';
+
       
       //-------------- Brand add -----------------
     case ADMIN_PRODUCT_BRAND_LIST_STORE = '/store/brand';
