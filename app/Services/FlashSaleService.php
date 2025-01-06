@@ -56,12 +56,14 @@ class FlashSaleService
             ->where('created_by', auth('api')->id())
             ->get();
     }
+    public function getValidFlashSales(){
+
+    }
     public function toggleStatus(int $id): FlashSale
     {
         $flashSale = FlashSale::findOrFail($id);
         $flashSale->status = !$flashSale->status;
         $flashSale->save();
-
         return $flashSale;
     }
 }
