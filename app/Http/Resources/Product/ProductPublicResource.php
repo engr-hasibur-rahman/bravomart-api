@@ -6,6 +6,7 @@ use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
+use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class ProductPublicResource extends JsonResource
             'store' => $this->store ? $this->store->name : '',
             'category' => new ProductCategoryPublicResource($this->category),
             'brand' => new ProductBrandPublicResource($this->brand),
-            'unit' => new ProductBrandPublicResource($this->unit),
+            'unit' => new ProductUnitPublicResource($this->unit),
             'tag' => new TagPublicResource($this->tag),
             'type' => $this->type,
             'behaviour' => $this->behaviour,

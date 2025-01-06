@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\FlashSale;
@@ -8,26 +9,40 @@ use Illuminate\Support\Facades\DB;
 
 class FlashSaleService
 {
-    public function createFlashSale(array $data): FlashSale
+    public function createFlashSale(array $data)
     {
-        return FlashSale::create($data);
+        FlashSale::create($data);
+        return true;
     }
 
-    public function updateFlashSale(array $data): FlashSale
+    public function updateFlashSale(array $data)
     {
         $flashSale = FlashSale::findorfail($data['id']);
         $flashSale->update($data);
-        return $flashSale;
+        return true;
     }
-
-    public function associateProductToFlashSale(array $data): FlashSaleProduct
+    public function deleteFlashSale($id)
     {
-        return FlashSaleProduct::create([
-            'flash_sale_id' => $data['flash_sale_id'],
-            'product_id' => $data['product_id'],
-            'store_id' => $data['store_id'] ?? null,
-            'created_by' => Auth::id(),
-        ]);
+        $flashSale = FlashSale::findorfail($id);
+        $flashSale->delete();
+        return true;
+    }
+    public function associateProductsToFlashSale(int $flashSaleId, array $products)
+    {
+        $bulkData = array_map(function ($product) use ($flashSaleId) {
+            return [
+                'flash_sale_id' => $flashSaleId,
+                'product_id' => $product['product_id'],
+                'store_id' => $product['store_id'] ?? null,
+                'created_by' => auth('api')->id(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $products);
+
+        FlashSaleProduct::insert($bulkData); // Bulk insert for performance
+
+        return true;
     }
 
     public function getAdminFlashSales()
@@ -44,6 +59,7 @@ class FlashSaleService
             })
             ->get();
     }
+
     public function toggleStatus(int $id): FlashSale
     {
         $flashSale = FlashSale::findOrFail($id);

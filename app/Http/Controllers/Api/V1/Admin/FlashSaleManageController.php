@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FlashSaleRequest;
 use App\Http\Resources\Admin\FlashSaleResource;
-use App\Models\FlashSale;
 use App\Services\FlashSaleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -74,5 +73,15 @@ class FlashSaleManageController extends Controller
                 'status_code' => 400,
             ]);
         }
+    }
+
+    public function deleteFlashSale($id)
+    {
+        $this->flashSaleService->deleteFlashSale($id);
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.delete_success', ['name' => 'Flash sale']),
+        ]);
     }
 }
