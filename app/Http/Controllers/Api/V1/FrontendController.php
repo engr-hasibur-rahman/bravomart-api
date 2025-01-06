@@ -233,8 +233,6 @@ class FrontendController extends Controller
 
     public function productList(Request $request)
     {
-
-
         $query = Product::query();
         // Apply category filter
         if (isset($request->category_id)) {
@@ -271,11 +269,11 @@ class FrontendController extends Controller
         if (isset($request->sort)) {
             switch ($request->sort) {
                 case 'price_low_high':
-                    $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'asc'));
+                    $query->whereHas('variants', fn($q) => $q->orderBy('price', 'asc'));
                     break;
 
                 case 'price_high_low':
-                    $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'desc'));
+                    $query->whereHas('variants', fn($q) => $q->orderBy('price', 'desc'));
                     break;
 
                 case 'newest':
@@ -301,7 +299,6 @@ class FrontendController extends Controller
             'meta' => new PaginationResource($products)
         ]);
     }
-
     public function productDetails($product_slug)
     {
         $product = Product::with([

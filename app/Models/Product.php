@@ -73,6 +73,27 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class, "product_id");
     }
 
+    // In your Product model
+    public function scopeLowStock($query, $threshold = 10)
+    {
+        return $query->whereHas('variants', function ($variantQuery) use ($threshold) {
+            $variantQuery->where('stock_quantity', '>', 0) // Ensure it's not out of stock
+            ->where('stock_quantity', '<', $threshold); // Check low stock condition
+        });
+    }
+    public function lowStockVariants($threshold = 10)
+    {
+        return $this->variants()->where('stock_quantity', '>', 0)
+            ->where('stock_quantity', '<', $threshold)
+            ->get();
+    }
+    // Get out of stock variants
+    public function outOfStockVariants()
+    {
+        return $this->variants()->where('stock_quantity', '=', 0)->get();
+    }
+
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');

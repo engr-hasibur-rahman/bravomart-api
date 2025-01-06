@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ProductVariantRequest;
+use App\Http\Resources\Product\LowStockProductResource;
 use App\Http\Resources\Product\ProductListResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
@@ -58,6 +59,7 @@ class ProductController extends Controller
         $slug = MultilangSlug::makeSlug(Product::class, $request->name, 'slug');
         $request['slug'] = $slug;
         $request['type'] = ComMerchantStore::where('id', $request['store_id'])->first()->store_type;
+        $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $product = $this->productRepo->store($request->all());
         $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
@@ -74,6 +76,7 @@ class ProductController extends Controller
 
     public function update(Request $request)
     {
+        $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $product = $this->productRepo->update($request->all());
         $this->productRepo->updateTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
@@ -183,5 +186,11 @@ class ProductController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function lowStockProducts()
+    {
+        $lowStockProducts = Product::lowStock()->paginate(15);
+        return response()->json(LowStockProductResource::collection($lowStockProducts));
     }
 }

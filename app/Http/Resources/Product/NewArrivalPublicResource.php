@@ -18,6 +18,7 @@ class NewArrivalPublicResource extends JsonResource
             'id' => $this->id,
             'store' => $this->store->name,
             'name' => $this->name,
+            'slug' => $this->slug,
             'description' => $this->description,
             'image' => $this->image,
             'price' => $this->variants->isNotEmpty() ? $this->variants[0]->price : null,

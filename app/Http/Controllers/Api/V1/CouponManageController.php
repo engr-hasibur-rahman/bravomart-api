@@ -93,6 +93,9 @@ class CouponManageController extends Controller
 
     public function couponLineStore(CouponLineRequest $request): JsonResponse
     {
+        if (!isset($request->coupon_code)) {
+            $request['coupon_code'] = generateRandomCouponCode();
+        }
         $couponLine = $this->couponLineRepo->couponLineStore($request->all());
 
         if ($couponLine) {
