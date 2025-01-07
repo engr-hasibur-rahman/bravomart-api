@@ -81,6 +81,12 @@ class Product extends Model
             ->where('stock_quantity', '<', $threshold); // Check low stock condition
         });
     }
+    public function scopeOutOfStock($query)
+    {
+        return $query->whereHas('variants', function ($variantQuery) {
+            $variantQuery->where('stock_quantity', '=', 0); // Check out of stock condition
+        });
+    }
     public function lowStockVariants($threshold = 10)
     {
         return $this->variants()->where('stock_quantity', '>', 0)
@@ -92,8 +98,6 @@ class Product extends Model
     {
         return $this->variants()->where('stock_quantity', '=', 0)->get();
     }
-
-
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');

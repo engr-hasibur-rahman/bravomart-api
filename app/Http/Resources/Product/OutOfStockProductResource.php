@@ -5,7 +5,7 @@ namespace App\Http\Resources\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LowStockProductResource extends JsonResource
+class OutOfStockProductResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,7 +20,7 @@ class LowStockProductResource extends JsonResource
             'store' => $this->store->name,
             'slug' => $this->slug,
             'type' => $this->type,
-            'low_stock_variants' => $this->lowStockVariants()->map(function ($variant) {
+            'out_of_stock_variants' => $this->outOfStockVariants()->map(function ($variant) {
                 return [
                     'product_id' => $variant->product_id,
                     'id' => $variant->id,
@@ -29,7 +29,6 @@ class LowStockProductResource extends JsonResource
                     'price' => $variant->price,
                 ];
             }),
-            'total'=> $this->lowStockVariants()->count(),
         ];
     }
 }
