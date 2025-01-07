@@ -163,8 +163,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('remove/{id?}', [ProductController::class, 'deleteProduct']);
                 Route::get('approve-request', [ProductController::class, 'productApproveRequest']);
                 Route::post('approve', [ProductController::class, 'changeStatus']);
-                Route::post('author/approve', [ProductAuthorController::class, 'changeStatus']);
                 Route::get('stock-report', [ProductController::class, 'lowStockProducts'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_STOCK_REPORT->value);
+                Route::post('author/approve', [ProductAuthorController::class, 'changeStatus']);
             });
             // Product Inventory
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_INVENTORY->value]], function () {
@@ -452,9 +452,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::get('order-history', [SellerPosSalesController::class, 'orderHistory'])->name('seller.store.pos.orderHistory'); // POS order history for the store
             });
 
+            // seller product manage
+            Route::group(['prefix' => 'orders/'], function () {
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_ORDER_MANAGE->value]], function () {
+                    Route::get('/', [ProductController::class, 'allOrders']);
+                });
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
+                    Route::get('/returned', [ProductController::class, 'returnedOrders']);
+                });
+            });
 
+            // seller store manage
             Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_MY_SHOP->value]], function () {
-                // seller store manage
                 Route::get('list', [StoreManageController::class, 'index']);
                 Route::get('{id}', [StoreManageController::class, 'show']);
                 Route::post('add', [StoreManageController::class, 'store']);
@@ -463,16 +472,24 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [StoreManageController::class, 'destroy']);
                 Route::get('deleted/records', [StoreManageController::class, 'deleted_records']);
             });
+
             // seller product manage
-            Route::group(['prefix' => 'product/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_LIST->value]], function () {
-                Route::get('list', [ProductController::class, 'index']);
-                Route::get('{slug}', [ProductController::class, 'show']);
-                Route::post('add', [ProductController::class, 'store'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_ADD->value);
-                Route::post('update', [ProductController::class, 'update']);
-                Route::delete('remove/{id}', [ProductController::class, 'destroy']);
-                Route::get('deleted/records', [ProductController::class, 'deleted_records']);
-                Route::post('export', [ProductController::class, 'export']);
-                Route::post('import', [ProductController::class, 'import']);
+            Route::group(['prefix' => 'product/'], function () {
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_LIST->value]], function () {
+                    Route::get('list', [ProductController::class, 'index']);
+                    Route::get('{slug}', [ProductController::class, 'show']);
+                    Route::post('add', [ProductController::class, 'store'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_ADD->value);
+                    Route::post('update', [ProductController::class, 'update']);
+                    Route::delete('remove/{id}', [ProductController::class, 'destroy']);
+                    Route::get('deleted/records', [ProductController::class, 'deleted_records']);
+                    Route::post('export', [ProductController::class, 'export'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_EXPORT->value);
+                    Route::post('import', [ProductController::class, 'import'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value);
+                    Route::get('stock-report', [ProductController::class, 'lowStockProducts'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_STOCK_REPORT->value);
+                });
+                // Product Inventory
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value]], function () {
+                    Route::get('inventory', [ProductController::class, 'productInventory']);
+                });
             });
 
             // Staff manage

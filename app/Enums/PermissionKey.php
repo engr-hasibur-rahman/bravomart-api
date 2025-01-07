@@ -306,6 +306,11 @@ enum PermissionKey: string
         // ----------- Seller Product Manage
         case SELLER_STORE_PRODUCT_LIST = '/seller/store/product/list';
         case SELLER_STORE_PRODUCT_ADD = '/seller/store/product/add';
+        case SELLER_STORE_PRODUCT_STOCK_REPORT = '/seller/store/product/stock-report';
+        case SELLER_STORE_PRODUCT_BULK_EXPORT = '/seller/store/product/export';
+        case SELLER_STORE_PRODUCT_BULK_IMPORT = '/seller/store/product/import';
+        // ----------- Seller Product Inventory
+        case SELLER_STORE_PRODUCT_INVENTORY = '/seller/store/product/inventory';
 
      //-----------Seller Staff Manage----------
       case SELLER_STAFF_LIST = '/seller/staff/list';
@@ -322,6 +327,11 @@ enum PermissionKey: string
         case SELLER_STORE_FLASH_SALE_MY_DEALS = '/seller/store/flash/my-deals';
         case SELLER_STORE_FLASH_SALE_JOIN_DEALS = '/seller/store/flash/join-deals';
         case SELLER_STORE_FLASH_BANNER_MANAGE = '/seller/store/banner-manage';
+
+        //=============== Seller Order Manger ====================
+     case SELLER_STORE_ORDER_MANAGE = '/seller/store/orders';
+     case SELLER_ORDERS_RETURNED_OR_REFUND = '/orders/returned';
+     case SELLER_ORDERS_REVIEWS_MANAGE = '/orders/reviews';
 
         //-------------- Brand add -----------------
         case ADMIN_PRODUCT_BRAND_LIST_STORE = '/store/brand';
