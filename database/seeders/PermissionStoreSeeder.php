@@ -162,7 +162,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value,
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_STOCK_REPORT->value,
                                     'PermissionTitle' => 'Product Low & Out Stock',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',

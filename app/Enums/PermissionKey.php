@@ -47,11 +47,10 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                 admin  store manage Permissions                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ADMIN_STORE_LIST = '/admin/store';
-    case ADMIN_STORE_ADD = '/admin/store/add-store';
-    case STORE_STORE_ADD_UPDATE = 'store-add-update';
-    case STORE_RECOMMENDED = 'store-recommended';
-    case STORE_APPROVAL = 'store-approval';
+    case ADMIN_STORE_LIST = '/admin/store/list';
+    case ADMIN_STORE_ADD = '/admin/store/add';
+    case ADMIN_STORE_RECOMMENDED = '/admin/store/recommended';
+    case ADMIN_STORE_APPROVAL = '/admin/store/approval';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Area Management                                         //

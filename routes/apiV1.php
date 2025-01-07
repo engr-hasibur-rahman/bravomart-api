@@ -2,6 +2,7 @@
 
 use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
+use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\FlashSaleManageController;
@@ -171,6 +172,34 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('inventory', [ProductController::class, 'productInventory']);
             });
         });
+
+       // Store Management
+        Route::group(['prefix' => 'store/'], function () {
+            // Store List Routes
+            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_LIST->value]], function () {
+                Route::get('list', [AdminStoreManageController::class, 'storeList']);
+                Route::get('details/{id}', [AdminStoreManageController::class, 'storeDetails']);
+            });
+
+            // Store Add Routes
+            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_ADD->value]], function () {
+                Route::post('add', [AdminStoreManageController::class, 'addStore']);
+                Route::post('update', [AdminStoreManageController::class, 'updateStore']);
+            });
+
+            // Store Approval Request Routes
+            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_APPROVAL->value]], function () {
+                Route::get('approval-request', [AdminStoreManageController::class, 'storeApproveRequest']);
+                Route::post('approve', [AdminStoreManageController::class, 'changeStatus']);
+            });
+
+            // Recommended Store Routes
+            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_RECOMMENDED->value]], function () {
+                Route::get('recommended', [AdminStoreManageController::class, 'recommendedStores']);
+                Route::post('set-recommended/{id}', [AdminStoreManageController::class, 'setRecommended']);
+            });
+        });
+
 
         // Customer Manage
         Route::group(['prefix' => 'customer-management/'], function () {
