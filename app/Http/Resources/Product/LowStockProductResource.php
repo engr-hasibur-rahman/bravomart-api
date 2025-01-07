@@ -20,7 +20,7 @@ class LowStockProductResource extends JsonResource
             'store' => $this->store->name,
             'slug' => $this->slug,
             'type' => $this->type,
-            'low_stock_variants' => $this->lowStockVariants()->map(function ($variant) {
+            'variants' => $this->lowStockVariants()->map(function ($variant) {
                 return [
                     'product_id' => $variant->product_id,
                     'id' => $variant->id,

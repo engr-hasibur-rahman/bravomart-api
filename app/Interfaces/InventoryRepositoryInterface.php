@@ -3,5 +3,5 @@
 namespace App\Interfaces;
 interface InventoryRepositoryInterface
 {
- public function getInventories();
+ public function getInventories(array $filters);
 }
