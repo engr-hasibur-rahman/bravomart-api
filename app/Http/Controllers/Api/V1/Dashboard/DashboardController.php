@@ -14,7 +14,7 @@ class DashboardController extends Controller
 
     }
 
-    public function loadSummaryData()
+    public function dashboardData()
     {
         $data = $this->adminRepo->getSummaryData();
         return response()->json(new SummaryResource((object)$data));
