@@ -45,11 +45,11 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => '',
+                            'PermissionName' => PermissionKey::SELLER_STORE_POS_SALES->value,
                             'PermissionTitle' => 'POS Manager',
                             'activity_scope' => 'store_level',
                             'icon' => 'BringToFront',
-                            'options' => ['View'],
+                            'options' => ['View', 'insert', 'update', 'Delete', 'others'],
                             'translations' => [
                                 'en' => 'Orders',
                                 'ar' => 'قائمة المناطق'

@@ -30,31 +30,44 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'قائمة المناطق'
                     ]
                 ],
+
                 // Pos section
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Pos section',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['view'],
+                    'options' => ['view',],
                     'translations' => [
                         'en' => 'Pos section',
                         'ar' => 'قسم المواضع'
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::POS_SALES->value,
+                            'PermissionName' => PermissionKey::ADMIN_POS_SALES->value,
                             'PermissionTitle' => 'Instant Sales',
                             'activity_scope' => 'system_level',
                             'icon' => 'BadgeCent',
-                            'options' => ['view'],
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
                             'translations' => [
                                 'en' => 'Instant Sales',
+                                'ar' => 'المبيعات الفورية'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_POS_SETTINGS->value,
+                            'PermissionTitle' => 'Pos Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'BadgeCent',
+                            'options' => ['view','update'],
+                            'translations' => [
+                                'en' => 'Pos Settings',
                                 'ar' => 'المبيعات الفورية'
                             ]
                         ]
                     ]
                 ],
+
                 // Orders & Reviews
                 [
                     'PermissionName' => '',
@@ -79,20 +92,22 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::ORDERS_ALL->value,
+                                    'PermissionName' => PermissionKey::ADMIN_ORDERS_ALL->value,
                                     'PermissionTitle' => 'All Orders',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'All Orders',
                                         'ar' => 'جميع الطلبات'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::ORDERS_RETURNED_OR_REFUND->value,
+                                    'PermissionName' => PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value,
                                     'PermissionTitle' => 'Returned or Refunded',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update', 'others'],
                                     'translations' => [
                                         'en' => 'Returned or Refunded',
                                         'ar' => 'تم إرجاعه أو استرداده'
@@ -111,7 +126,7 @@ class PermissionAdminSeeder extends Seeder
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Orders & Reviews',
+                        'en' => 'Product management',
                         'ar' => 'قائمة المناطق'
                     ],
                     'submenu' => [
@@ -127,35 +142,14 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_LIST->value,
-                                    'PermissionTitle' => 'Manage Products',
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCTS_MANAGE->value,
+                                    'PermissionTitle' => 'All Products',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Manage Products',
                                         'ar' => 'إدارة المنتجات'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_ADD->value,
-                                    'PermissionTitle' => 'Add New Product',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert'],
-                                    'translations' => [
-                                        'en' => 'Add New Product',
-                                        'ar' => 'إضافة منتج جديد'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_LOW_STOCK->value,
-                                    'PermissionTitle' => 'All Low-Stock/Out of Stock Product',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'All Low-Stock/Out of Stock Product',
-                                        'ar' => 'جميع المنتجات منخفضة المخزون/غير متوفرة بالمخزون'
                                     ]
                                 ],
                                 [
@@ -169,7 +163,18 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_TEMPLATE->value,
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_STOCK_REPORT->value,
+                                    'PermissionTitle' => 'Product Low & Out Stock',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view'],
+                                    'translations' => [
+                                        'en' => 'Product Low & Out Stock',
+                                        'ar' => 'المنتجات منخفضة المخزون وغير المتوفرة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_TEMPLATE->value,
                                     'PermissionTitle' => 'Product Template',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
@@ -200,16 +205,21 @@ class PermissionAdminSeeder extends Seeder
                                 ]
                             ]
                         ],
+
+                        // Product Inventory report
                         [
-                            'PermissionName' => PermissionKey::PRODUCT_INVENTORY->value,
+                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_INVENTORY->value,
                             'PermissionTitle' => 'Product Inventory',
                             'activity_scope' => 'system_level',
                             'icon' => 'Cog',
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Product Inventory',
                                 'ar' => 'مخزون المنتج'
                             ]
                         ],
+
+                        // category manage
                         [
                             'PermissionName' => '',
                             'PermissionTitle' => 'Category',

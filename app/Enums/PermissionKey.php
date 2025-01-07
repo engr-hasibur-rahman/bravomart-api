@@ -14,11 +14,44 @@ enum PermissionKey: string
     case ALL = 'all';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Admin Dashboard Management                                          //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_DASHBOARD = '/admin/dashboard';
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  POS Management                                          //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case POS_SALES = 'pos-sales';
-    case POS_SETTINGS_ADMIN = 'pos-settings-admin';
-    case POS_SETTINGS_STORE = 'pos-settings-store';
+    case ADMIN_POS_SALES = '/admin/pos';
+    case ADMIN_POS_SETTINGS = '/admin/pos/settings';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                 Admin Order Permissions                                       //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_ORDERS_ALL = '/admin/orders';
+    case ADMIN_ORDERS_RETURNED_OR_REFUND = '/admin/orders/refund';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Admin Product Permissions                                     //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_PRODUCTS_MANAGE = '/admin/products';
+    case ADMIN_PRODUCT_TEMPLATE = 'product-template';
+    case PRODUCT_PRODUCT_BULK_IMPORT = 'product-import';
+    case PRODUCT_PRODUCT_BULK_EXPORT = 'product-export';
+    case PRODUCT_PRODUCT_APPROVAL_REQ = 'product-approval-request';
+    case ADMIN_PRODUCT_STOCK_REPORT = '/admin/products/stock-report';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Admin Product Inventory Permissions                                     //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_PRODUCT_INVENTORY = '/admin/product/inventory';
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                 admin  store manage Permissions                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_STORE_LIST = '/admin/store';
+    case ADMIN_STORE_ADD = '/admin/store/add-store';
+    case STORE_STORE_ADD_UPDATE = 'store-add-update';
+    case STORE_RECOMMENDED = 'store-recommended';
+    case STORE_APPROVAL = 'store-approval';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Area Management                                         //
@@ -26,15 +59,6 @@ enum PermissionKey: string
     case ADMIN_AREA_LIST = '/admin/area';
     case ADMIN_AREA_ADD = '/admin/area/add-area';
 
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Store Management                                        //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ADMIN_STORE_LIST = '/admin/store';
-    case ADMIN_STORE_ADD = '/admin/store/add-store';
-    case STORE_STORE_ADD_UPDATE = 'store-add-update'; // Add if user have no store added. Update if existis
-    case STORE_RECOMMENDED = 'store-recommended';
-    case STORE_APPROVAL = 'store-approval';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //               Product Brand/Manufacturers/Publications (For Book Only)                   //
@@ -85,32 +109,6 @@ enum PermissionKey: string
     //                          Product Tags                              //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_PRODUCT_TAG_LIST = '/admin/tag/list';
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Product Permissions                                     //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_PRODUCT_LIST = '/admin/products';
-    case PRODUCT_PRODUCT_ADD = '/admin/products/add-product';
-    case PRODUCT_PRODUCT_LOW_STOCK = 'product-low-stock';
-    case PRODUCT_PRODUCT_TEMPLATE = 'product-template';
-    case PRODUCT_PRODUCT_BULK_IMPORT = 'product-import';
-    case PRODUCT_PRODUCT_BULK_EXPORT = 'product-export';
-    case PRODUCT_PRODUCT_APPROVAL_REQ = 'product-approval-request';
-    case PRODUCT_INVENTORY = 'product-inventory';
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Order Permissions                                       //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ORDERS_ALL = 'all-orders';
-    case ORDERS_PENDING = 'order-pending';
-    case ORDERS_CONFIRMED = 'order-confirmed';
-    case ORDERS_SCHEDULED = 'order-scheduled';
-    case ORDERS_COOKING = 'order-cooking';
-    case ORDERS_READY_FOR_DELIVERY = 'order-ready';
-    case ORDERS_PRODUCT_ON_THE_WAY = 'order-onthe-way';
-    case ORDERS_DELIVERED = 'order-delivered';
-    case ORDERS_FITTING_SCHEDULE = 'order-fitting-schedule';
-    case ORDERS_RETURNED_OR_REFUND = 'order-refund';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Flash Sales                                             //
@@ -301,6 +299,7 @@ enum PermissionKey: string
         case SELLER_STORE_STORE_CONFIG = '/seller/store/settings/config';
         case SELLER_STORE_BUSINESS_PLAN = '/seller/store/settings/business-plan';
         case SELLER_STORE_POS_CONFIG = '/seller/store/pos-config';
+        case SELLER_STORE_POS_SALES = '/seller/store/pos';
        //------------ SELLER Live Chat
         case STORE_STORE_MESSAGE = 'store-message';
 
