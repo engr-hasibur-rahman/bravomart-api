@@ -82,7 +82,7 @@ class PermissionStoreSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::ORDERS_ALL->value,
+                                    'PermissionName' => PermissionKey::SELLER_STORE_ORDER_MANAGE->value,
                                     'PermissionTitle' => 'All Orders',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -92,7 +92,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::ORDERS_RETURNED_OR_REFUND->value,
+                                    'PermissionName' => PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value,
                                     'PermissionTitle' => 'Returned or Refunded',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -102,7 +102,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::FEEDBACK_REVIEWS->value,
+                                    'PermissionName' => PermissionKey::SELLER_ORDERS_REVIEWS_MANAGE->value,
                                     'PermissionTitle' => 'Reviews',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -144,7 +144,7 @@ class PermissionStoreSeeder extends Seeder
                                     'PermissionTitle' => 'Manage Products',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Manage Products',
                                         'ar' => 'إدارة المنتجات'
@@ -162,31 +162,33 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_LOW_STOCK->value,
-                                    'PermissionTitle' => 'All Low-Stock/Out of Stock Product',
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value,
+                                    'PermissionTitle' => 'Product Low & Out Stock',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
+                                    'options' => ['view'],
                                     'translations' => [
-                                        'en' => 'All Low-Stock/Out of Stock Product',
-                                        'ar' => 'جميع المنتجات منخفضة المخزون/غير متوفرة بالمخزون'
+                                        'en' => 'Product Low & Out Stock',
+                                        'ar' => ' المنتجات منخفضة المخزون'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_BULK_IMPORT->value,
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_BULK_EXPORT->value,
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'options' => ['view', 'insert', 'update'],
                                     'translations' => [
                                         'en' => 'Bulk Import',
                                         'ar' => 'الاستيراد بالجملة'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_BULK_EXPORT->value,
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value,
                                     'PermissionTitle' => 'Bulk Export',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update'],
                                     'translations' => [
                                         'en' => 'Bulk Export',
                                         'ar' => 'التصدير بالجملة'
@@ -234,6 +236,32 @@ class PermissionStoreSeeder extends Seeder
                             'translations' => [
                                 'en' => 'Addons',
                                 'ar' => 'إدارة التركيبات'
+                            ]
+                        ]
+                    ]
+                ],
+
+                // Inventory Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Inventory Management',
+                    'activity_scope' => 'store_level',
+                    'icon' => '',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Inventory Management',
+                        'ar' => 'الإدارة المالية'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value,
+                            'PermissionTitle' => 'Inventory',
+                            'activity_scope' => 'store_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Inventory',
+                                'ar' => 'السحوبات'
                             ]
                         ]
                     ]
