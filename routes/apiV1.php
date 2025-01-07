@@ -173,19 +173,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
         });
 
-        // store manage
-        Route::group(['prefix' => 'store/'], function () {
-            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_LIST->value]], function () {
-                Route::post('list', [AdminStoreManageController::class, 'storeList']);
-                Route::post('add', [AdminStoreManageController::class, 'addStore']);
-                Route::post('update', [AdminStoreManageController::class, 'updateStore']);
-                Route::post('remove/{id?}', [AdminStoreManageController::class, 'deleteStore']);
-                Route::get('approval-request', [AdminStoreManageController::class, 'storeApproveRequest']);
-                Route::post('approve', [AdminStoreManageController::class, 'changeStatus']);
-            });
-        });
-
-        // Store Management
+       // Store Management
         Route::group(['prefix' => 'store/'], function () {
             // Store List Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_LIST->value]], function () {
