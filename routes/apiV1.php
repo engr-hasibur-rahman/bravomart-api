@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Product\ProductController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\Seller\SellerBusinessSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerInventoryManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
@@ -171,12 +172,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('author/approve', [ProductAuthorController::class, 'changeStatus']);
             });
             // Product Inventory
-            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_INVENTORY->value]], function () {
-                Route::get('inventory', [ProductController::class, 'productInventory']);
+            Route::group(['prefix' => 'inventory', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_INVENTORY->value]], function () {
+                Route::get('/', [AdminInventoryManageController::class, 'allInventories']);
+                Route::post('update', [AdminInventoryManageController::class, 'updateInventory']);
+                Route::delete('remove', [AdminInventoryManageController::class, 'deleteInventory']);
             });
         });
 
-       // Store Management
+        // Store Management
         Route::group(['prefix' => 'store/'], function () {
             // Store List Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_LIST->value]], function () {
@@ -554,6 +557,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
             // seller product manage
             Route::group(['prefix' => 'product/'], function () {
+                // Product Inventory
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value]], function () {
+                    Route::get('inventory', [SellerInventoryManageController::class, 'allInventories']);
+                });
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_LIST->value]], function () {
                     Route::get('list', [ProductController::class, 'index']);
                     Route::get('{slug}', [ProductController::class, 'show']);
@@ -565,12 +572,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::post('import', [ProductController::class, 'import'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value);
                     Route::get('stock-report', [ProductController::class, 'lowStockProducts'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_STOCK_REPORT->value);
                 });
-                // Product Inventory
-                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value]], function () {
-                    Route::get('inventory', [ProductController::class, 'productInventory']);
-                });
             });
-
             // Staff manage
             Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
                 Route::get('staff/list', [StaffController::class, 'index']);
