@@ -466,6 +466,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Store List',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Store List',
                                 'ar' => 'قائمة المتاجر'
@@ -476,26 +477,29 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Store Add',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Store Add',
                                 'ar' => 'إضافة متجر'
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::STORE_APPROVAL->value,
-                            'PermissionTitle' => 'Store Pending Approval',
+                            'PermissionName' => PermissionKey::ADMIN_STORE_APPROVAL->value,
+                            'PermissionTitle' => 'Store Approval Request',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
                             'translations' => [
-                                'en' => 'Pending Approval/ Rejected',
+                                'en' => 'Store Approval Request',
                                 'ar' => 'في انتظار الموافقة/الرفض'
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::STORE_RECOMMENDED->value,
+                            'PermissionName' => PermissionKey::ADMIN_STORE_RECOMMENDED->value,
                             'PermissionTitle' => 'Recommended Store',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view','update'],
                             'translations' => [
                                 'en' => 'Recommended Store',
                                 'ar' => 'المتجر الموصى به'
