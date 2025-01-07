@@ -53,6 +53,13 @@ enum PermissionKey: string
     case ADMIN_STORE_APPROVAL = '/admin/store/approval';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                  Promotional Banner Management
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_PROMOTIONAL_FLASH_SALE_MANAGE = '/admin/promotional/flash-deals/list';
+    case ADMIN_PROMOTIONAL_FLASH_SALE_JOIN_DEALS = '/admin/promotional/flash-deals/join-request';
+    case ADMIN_PROMOTIONAL_BANNER_MANAGE = '/admin/promotional/banner/list';
+
+     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Area Management                                         //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_AREA_LIST = '/admin/area';
@@ -74,14 +81,6 @@ enum PermissionKey: string
     case PRODUCT_ATTRIBUTE_LIST = '/admin/attributes';
     case PRODUCT_ATTRIBUTE_ADD = '/admin/attributes/add-attribute';
     case PRODUCT_ATTRIBUTE_LIST_STORE = '/store/attributes';
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Product Warranty                                        //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_WARRANTY_LIST = 'product-warranty';
-    case PRODUCT_WARRANTY_ADD = 'product-warranty-add';
-    case PRODUCT_WARRANTY_LIST_STORE = 'product-warranty-list';
-
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Product Authors (For Book Only)                                 //
@@ -158,22 +157,22 @@ enum PermissionKey: string
     case MANAGE_CONFIGURATIONS = 'manage-configurations';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //           User Related Functionality/Deliveryman management                              //
+    //           Deliveryman management
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case DELIVERY_VEHICLE_CATEGORY = 'vehicle-category';
-    case DELIVERY_PERSON_ADD = 'delivery-person-add';
-    case DELIVERY_PERSON_LIST = 'delivery-person-list';
-    case DELIVERY_PERSONS_REVIEW = 'delivery-person-review';
+    case ADMIN_DELIVERYMAN_VEHICLE_TYPE = '/admin/deliveryman/vehicle-type';
+    case ADMIN_DELIVERYMAN_MANAGE_LIST = '/admin/deliveryman/list';
+    case ADMIN_DELIVERYMAN_MANAGE_REVIEW = '/admin/deliveryman/review';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Customer management                                             //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case CUSTOMER_LIST = 'customer-list';
+    case ADMIN_CUSTOMER_MANAGEMENT_LIST = '/admin/customer/list';
+    case ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST = 'customer-subscribe-email-list';
     case CUSTOMER_WALLET_ADD_FUND = 'customer-wallet-add-fund';
     case CUSTOMER_WALLET_REPORT = 'customer-wallet-report';
     case CUSTOMER_WALLET_BONUS = 'customer-wallet-bonus';
     case CUSTOMER_LOYALTY_POINT = 'customer-loyalty-point';
-    case CUSTOMER_SUBSCRIBED_MAIL_LIST = 'customer-subscribe-email-list';
+
     case CUSTOMER_CONTACT_MESSAGES = 'customer-contact-messages';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -322,10 +321,10 @@ enum PermissionKey: string
         case SELLER_STORE_FINANCIAL_WITHDRAWALS= '/seller/store/financial/withdraw';
 
         //----------- Promotional control ----------
-        case SELLER_STORE_FLASH_SALE_ACTIVE_DEALS = '/seller/store/flash/active-deals';
-        case SELLER_STORE_FLASH_SALE_MY_DEALS = '/seller/store/flash/my-deals';
-        case SELLER_STORE_FLASH_SALE_JOIN_DEALS = '/seller/store/flash/join-deals';
-        case SELLER_STORE_FLASH_BANNER_MANAGE = '/seller/store/banner-manage';
+        case SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS = '/seller/store/promotional/flash/active-deals';
+        case SELLER_STORE_PROMOTIONAL_FLASH_SALE_MY_DEALS = '/seller/store/promotional/flash/my-deals';
+        case SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS = '/seller/store/promotional/flash/join-deals';
+        case SELLER_STORE_PROMOTIONAL_BANNER_MANAGE = '/seller/store/promotional/banner';
 
         //=============== Seller Order Manger ====================
      case SELLER_STORE_ORDER_MANAGE = '/seller/store/orders';
