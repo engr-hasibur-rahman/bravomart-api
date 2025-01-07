@@ -153,10 +153,11 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_APPROVAL_REQ->value,
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_PRODUCT_APPROVAL_REQ->value,
                                     'PermissionTitle' => 'Product Approval Request',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Product Approval Request',
                                         'ar' => 'طلب الموافقة على المنتج'
@@ -178,26 +179,29 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Product Template',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Product Template',
                                         'ar' => 'قالب المنتج'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_BULK_IMPORT->value,
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_PRODUCT_BULK_IMPORT->value,
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view','update'],
                                     'translations' => [
                                         'en' => 'Bulk Import',
                                         'ar' => 'الاستيراد بالجملة'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_PRODUCT_BULK_EXPORT->value,
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_PRODUCT_BULK_EXPORT->value,
                                     'PermissionTitle' => 'Bulk Export',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Bulk Export',
                                         'ar' => 'التصدير بالجملة'

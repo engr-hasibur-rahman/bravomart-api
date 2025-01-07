@@ -32,12 +32,12 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Admin Product Permissions                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ADMIN_PRODUCTS_MANAGE = '/admin/products';
-    case ADMIN_PRODUCT_TEMPLATE = 'product-template';
-    case PRODUCT_PRODUCT_BULK_IMPORT = 'product-import';
-    case PRODUCT_PRODUCT_BULK_EXPORT = 'product-export';
-    case PRODUCT_PRODUCT_APPROVAL_REQ = 'product-approval-request';
-    case ADMIN_PRODUCT_STOCK_REPORT = '/admin/products/stock-report';
+    case ADMIN_PRODUCTS_MANAGE = '/admin/product/list';
+    case ADMIN_PRODUCT_PRODUCT_APPROVAL_REQ = '/admin/product/approval-request';
+    case ADMIN_PRODUCT_STOCK_REPORT = '/admin/product/stock-report';
+    case ADMIN_PRODUCT_PRODUCT_BULK_IMPORT = '/admin/product/import';
+    case ADMIN_PRODUCT_PRODUCT_BULK_EXPORT = '/admin/product/export';
+    case ADMIN_PRODUCT_TEMPLATE = '/admin/product/template';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Admin Product Inventory Permissions                                     //
