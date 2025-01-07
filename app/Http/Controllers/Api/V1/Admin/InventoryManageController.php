@@ -13,7 +13,7 @@ class InventoryManageController extends Controller
 
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $inventories = $this->inventoryRepo->getInventories();
         return response()->json($inventories);
