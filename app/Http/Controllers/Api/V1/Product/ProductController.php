@@ -205,8 +205,10 @@ class ProductController extends Controller
                 'meta' => new PaginationResource($outOfStockProducts),
             ]);
         } else {
+            $lowStockProducts = Product::lowStock()->with('store')->paginate(10);
             return response()->json([
-                'status' => false,
+                'data' => LowStockProductResource::collection($lowStockProducts),
+                'meta' => new PaginationResource($lowStockProducts),
             ]);
         }
 
