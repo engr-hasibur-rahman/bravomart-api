@@ -267,6 +267,77 @@ class PermissionStoreSeeder extends Seeder
                     ]
                 ],
 
+                // Promotional control
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Promotional control',
+                    'activity_scope' => 'store_level',
+                    'icon' => '',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Promotional control',
+                        'ar' => 'الرقابة الترويجية'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Flash Sale',
+                            'activity_scope' => 'store_level',
+                            'icon' => '',
+                            'options' => ['View'],
+                            'translations' => [
+                                'en' => 'Flash Sale',
+                                'ar' => 'بيع سريع'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS->value,
+                                    'PermissionTitle' => 'Active Deals',
+                                    'activity_scope' => 'store_level',
+                                    'icon' => '',
+                                    'options' => ['view'],
+                                    'translations' => [
+                                        'en' => 'Active Deals',
+                                        'ar' => 'عروض فلاش متاحة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_MY_DEALS->value,
+                                    'PermissionTitle' => 'My Deals',
+                                    'activity_scope' => 'store_level',
+                                    'icon' => '',
+                                    'options' => ['view'],
+                                    'translations' => [
+                                        'en' => 'My Deals',
+                                        'ar' => 'منتجاتي في العروض'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value,
+                                    'PermissionTitle' => 'Join Deals',
+                                    'activity_scope' => 'store_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'delete'],
+                                    'translations' => [
+                                        'en' => 'Join Deals',
+                                        'ar' => 'اطلب التسجيل'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value,
+                            'PermissionTitle' => 'Banners',
+                            'activity_scope' => 'store_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Banners',
+                                'ar' => 'لافتات'
+                            ]
+                        ]
+                    ]
+                ],
                 // Financial Management
                 [
                     'PermissionName' => '',
@@ -372,74 +443,6 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
 
-                    ]
-                ],
-
-                // Promotional control
-               [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Promotional control',
-                    'activity_scope' => 'store_level',
-                    'icon' => '',
-                    'options' => ['View'],
-                    'translations' => [
-                        'en' => 'Promotional control',
-                        'ar' => 'الرقابة الترويجية'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Flash Sale',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'options' => ['View'],
-                            'translations' => [
-                                'en' => 'Flash Sale',
-                                'ar' => 'بيع سريع'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_ACTIVE_DEALS->value,
-                                    'PermissionTitle' => 'Active Deals',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Active Deals',
-                                        'ar' => 'عروض فلاش متاحة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_MY_DEALS->value,
-                                    'PermissionTitle' => 'My Deals',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'My Deals',
-                                        'ar' => 'منتجاتي في العروض'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_JOIN_DEALS->value,
-                                    'PermissionTitle' => 'Join Deals',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Join Deals',
-                                        'ar' => 'اطلب التسجيل'
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::PROMOTION_BANNERS->value,
-                            'PermissionTitle' => 'Banners',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Banners',
-                                'ar' => 'لافتات'
-                            ]
-                        ]
                     ]
                 ],
 

@@ -9,7 +9,7 @@ use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
 
-class FlashSaleProductManageController extends Controller
+class SellerFlashSaleProductManageController extends Controller
 {
     protected $flashSaleService;
 
