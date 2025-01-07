@@ -51,6 +51,9 @@ return [
     'reject.success' => ':name rejected successfully!',
     'exists'=>':name already exists!',
 
+    'request_success' => ':name requested successfully!',
+    'request_failed' => ':name request failed!',
+
 ];
 
 

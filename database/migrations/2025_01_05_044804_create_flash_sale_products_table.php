@@ -18,6 +18,9 @@ return new class extends Migration
             $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->text('rejection_reason')->nullable();
+            $table->timestamp('reviewed_at')->nullable();
             $table->timestamps();
         });
     }

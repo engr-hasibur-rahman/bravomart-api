@@ -15,11 +15,16 @@ class FlashSaleProduct extends Model
 
     public function flashSale()
     {
-        return $this->belongsTo(FlashSale::class,'flash_sale_id');
+        return $this->belongsTo(FlashSale::class, 'flash_sale_id');
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class,'product_id'); // Assumes a Product model exists
+        return $this->belongsTo(Product::class, 'product_id'); // Assumes a Product model exists
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
     }
 }
