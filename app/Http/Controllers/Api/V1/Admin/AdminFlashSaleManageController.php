@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class FlashSaleManageController extends Controller
+class AdminFlashSaleManageController extends Controller
 {
     protected $flashSaleService;
 

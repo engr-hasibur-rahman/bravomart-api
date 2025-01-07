@@ -305,28 +305,6 @@ class PermissionAdminSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => 'Warranty',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Warranty',
-                                'ar' => 'ضمان'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_WARRANTY_LIST->value,
-                                    'PermissionTitle' => 'Warranty List',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Warranty List',
-                                        'ar' => 'قائمة الضمان'
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            'PermissionName' => '',
                             'PermissionTitle' => 'Tags Management',
                             'activity_scope' => 'system_level',
                             'icon' => '',
@@ -536,30 +514,22 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_ACTIVE_DEALS->value,
-                                    'PermissionTitle' => 'Active Deals',
+                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_FLASH_SALE_MANAGE->value,
+                                    'PermissionTitle' => 'List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update', 'delete', 'others'],
                                     'translations' => [
-                                        'en' => 'Active Deals',
-                                        'ar' => 'عروض فلاش متاحة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_MY_DEALS->value,
-                                    'PermissionTitle' => 'All Deals',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'My Deals',
+                                        'en' => 'List',
                                         'ar' => 'منتجاتي في العروض'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_FLASH_SALE_JOIN_DEALS->value,
+                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value,
                                     'PermissionTitle' => 'Join Deals Requests',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'delete', 'update', 'others'],
                                     'translations' => [
                                         'en' => 'Join Deals',
                                         'ar' => 'اطلب التسجيل'
@@ -617,6 +587,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
                 // Support Ticket Management
                 [
                     'PermissionName' => '',
@@ -664,6 +635,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
                 // dynamic pages manage
                  [
                     'PermissionName' => '',
@@ -719,20 +691,9 @@ class PermissionAdminSeeder extends Seeder
             ]
         ];
 
+        // for
         $admin_user_related_menu = [
             [
-                [
-                    'PermissionName' => 'User-Dashboard',
-                    'PermissionTitle' => 'User Dashboard',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'User Dashboard',
-                        'ar' => 'قائمة المناطق'
-                    ]
-                ],
-
                 // Deliveryman management
                 [
                     'PermissionName' => '',
@@ -746,40 +707,33 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::DELIVERY_VEHICLE_CATEGORY->value,
-                            'PermissionTitle' => 'Vehicles category',
+                            'PermissionName' => PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value,
+                            'PermissionTitle' => 'Vehicle Types',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
-                                'en' => 'Vehicles category',
+                                'en' => 'Vehicle Types',
                                 'ar' => 'فئة المركبات'
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::DELIVERY_PERSON_ADD->value,
-                            'PermissionTitle' => 'Add Delivery Man',
+                            'PermissionName' => PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value,
+                            'PermissionTitle' => 'Deliveryman List',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
-                                'en' => 'Add Delivery Man',
-                                'ar' => 'إضافة رجل التوصيل'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::DELIVERY_PERSON_LIST->value,
-                            'PermissionTitle' => 'Delivery Man List',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Delivery Man List',
+                                'en' => 'Deliveryman List',
                                 'ar' => 'قائمة رجال التوصيل'
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::DELIVERY_PERSONS_REVIEW->value,
+                            'PermissionName' => PermissionKey::ADMIN_DELIVERYMAN_MANAGE_REVIEW->value,
                             'PermissionTitle' => 'Reviews',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Reviews',
                                 'ar' => 'المراجعات'
@@ -801,85 +755,24 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::CUSTOMER_LIST->value,
+                            'PermissionName' => PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value,
                             'PermissionTitle' => 'Customers',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Customers',
                                 'ar' => 'عملاء'
                             ]
                         ],
                         [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Customer Wallet',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Customer Wallet',
-                                'ar' => 'محفظة العميل'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::CUSTOMER_WALLET_ADD_FUND->value,
-                                    'PermissionTitle' => 'Add Fund',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Add Fund',
-                                        'ar' => 'إضافة صندوق'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::CUSTOMER_WALLET_REPORT->value,
-                                    'PermissionTitle' => 'Report',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Report',
-                                        'ar' => 'تقرير'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::CUSTOMER_WALLET_BONUS->value,
-                                    'PermissionTitle' => 'Bonus',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Bonus',
-                                        'ar' => 'علاوة'
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::CUSTOMER_LOYALTY_POINT->value,
-                            'PermissionTitle' => 'Customer Loyalty Point',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Customer Loyalty Point',
-                                'ar' => 'نقطة ولاء العملاء'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::CUSTOMER_SUBSCRIBED_MAIL_LIST->value,
+                            'PermissionName' => PermissionKey::ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST->value,
                             'PermissionTitle' => 'Subscribe Mail List',
                             'activity_scope' => 'system_level',
                             'icon' => '',
                             'translations' => [
                                 'en' => 'Subscribe Mail List',
                                 'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::CUSTOMER_CONTACT_MESSAGES->value,
-                            'PermissionTitle' => 'Contact Messages',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Contact Messages',
-                                'ar' => 'رسائل الاتصال'
                             ]
                         ]
                     ]
@@ -969,17 +862,6 @@ class PermissionAdminSeeder extends Seeder
 
         $admin_transaction_related_menu = [
             [
-                [
-                    'PermissionName' => 'Financial-Dashboard',
-                    'PermissionTitle' => 'Financial Dashboard',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Financial Dashboard',
-                        'ar' => 'قائمة المناطق'
-                    ]
-                ],
                 // Financial Activity
                 [
                     'PermissionName' => '',
@@ -1134,17 +1016,6 @@ class PermissionAdminSeeder extends Seeder
 
         $admin_settings_related_menu = [
             [
-                [
-                    'PermissionName' => 'Business-Dashboard',
-                    'PermissionTitle' => 'Business Dashboard',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Business Dashboard',
-                        'ar' => 'قائمة المناطق'
-                    ]
-                ],
 
                 // Notice Management
                 [
@@ -1218,17 +1089,7 @@ class PermissionAdminSeeder extends Seeder
                                 ]
                             ]
                         ],
-                        [
-                            'PermissionName' => PermissionKey::BUSINESS_SETTINGS->value,
-                            'PermissionTitle' => 'Business Settings',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view'],
-                            'translations' => [
-                                'en' => 'Business Settings',
-                                'ar' => 'إعدادات الأعمال'
-                            ]
-                        ],
+
                         // Subscription management
                         [
                             'PermissionName' => '',
