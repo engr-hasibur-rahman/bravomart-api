@@ -174,7 +174,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('change-status', [FlashSaleManageController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [FlashSaleManageController::class, 'deleteFlashSale']);
                 Route::post('deactivate', [FlashSaleManageController::class, 'deactivateFlashSale']);
-                Route::get('join-request', [FlashSaleManageController::class, 'deactivateFlashSale']);
+                Route::get('join-request', [FlashSaleManageController::class, 'flashSaleProductRequest']);
+                Route::post('join-request/approve', [FlashSaleManageController::class, 'approveFlashSaleProducts']);
+                Route::post('join-request/reject', [FlashSaleManageController::class, 'rejectFlashSaleProducts']);
             });
         });
 

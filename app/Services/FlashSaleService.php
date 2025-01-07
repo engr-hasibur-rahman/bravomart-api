@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Models\FlashSale;
 use App\Models\FlashSaleProduct;
 use Illuminate\Support\Facades\Auth;
@@ -68,6 +70,7 @@ class FlashSaleService
             ->orderBy('start_time', 'asc') // Order by the start time
             ->get();
     }
+
     public function toggleStatus(int $id): FlashSale
     {
         $flashSale = FlashSale::findOrFail($id);
@@ -83,5 +86,48 @@ class FlashSaleService
             ->update(['status' => false]); // Use the existing field name for status
 
         return $expiredFlashSales > 0; // Return true if any records were updated
+    }
+
+    public function getFlashSaleProductRequest()
+    {
+        $requests = FlashSaleProduct::pending()->paginate(10);
+        return $requests;
+    }
+
+    public function approveFlashSaleProductRequest(array $productIds): bool
+    {
+        // Validate input
+        if (!empty($productIds) && isset($productIds)) {
+            // Bulk update the status to "approved"
+            $updated = FlashSaleProduct::whereIn('id', $productIds)
+                ->where('status', 'pending')
+                ->update([
+                    'status' => 'approved',
+                    'reviewed_at' => now(),
+                    'updated_at' => now()
+                ]);
+            // Return true if at least one record was updated
+            return $updated > 0;
+        } else{
+            return false;
+        }
+    }
+    public function rejectFlashSaleProductRequest(array $productIds, string $rejectionReason): bool
+    {
+        // Validate input
+        if (!empty($productIds) && isset($productIds) && !empty($rejectionReason)) {
+            // Bulk update the status to "rejected" and set the rejection reason
+            $updated = FlashSaleProduct::whereIn('id', $productIds)
+                ->update([
+                    'status' => 'rejected',
+                    'rejection_reason' => $rejectionReason,
+                    'reviewed_at' => now(),
+                    'updated_at' => now()
+                ]);
+            // Return true if at least one record was updated
+            return $updated > 0;
+        } else {
+            return false;
+        }
     }
 }
