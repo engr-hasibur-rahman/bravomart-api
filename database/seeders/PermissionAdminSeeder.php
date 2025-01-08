@@ -1165,6 +1165,43 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ]
                             ]
+                        ],
+
+                        // Admin Commission System
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Commission System',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Money',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Commission System',
+                                'ar' => 'نظام عمولة المسؤول'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_COMMISSION_SETTINGS->value,
+                                    'PermissionTitle' => 'Commission Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update', 'others'],
+                                    'translations' => [
+                                        'en' => 'Commission Settings',
+                                        'ar' => 'إعدادات العمولة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_COMMISSION_HISTORY->value,
+                                    'PermissionTitle' => 'Commission History',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'others'],
+                                    'translations' => [
+                                        'en' => 'Commission History',
+                                        'ar' => 'تاريخ العمولة'
+                                    ]
+                                ]
+                            ]
                         ]
 
 

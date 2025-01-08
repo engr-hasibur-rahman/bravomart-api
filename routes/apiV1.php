@@ -1,7 +1,9 @@
 <?php
 
 use App\Enums\PermissionKey;
+use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
+use App\Http\Controllers\Api\v1\Admin\AdminCommissionManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliveryManPaymentController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
@@ -513,14 +515,24 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
         // business-operations
         Route::group(['prefix' => 'business-operations/'], function () {
-            Route::group(['prefix' => 'subscription/'], function () {
-                Route::prefix('type')->middleware(['permission:' . PermissionKey::ADMIN_SUBSCRIPTION_PACKAGE_TYPE_MANAGE->value])->group(function () {
-                    Route::get('list', [WithdrawMethodManageController::class, 'index']);
-                    Route::post('add', [WithdrawMethodManageController::class, 'store']);
-                    Route::get('edit/{id}', [WithdrawMethodManageController::class, 'show']);
-                    Route::patch('statusChange', [WithdrawMethodManageController::class, 'statusChange']);
-                    Route::delete('delete/{id}', [WithdrawMethodManageController::class, 'destroy']);
+            // withdraw method
+            Route::prefix('area/')->middleware(['permission:' . PermissionKey::ADMIN_GEO_AREA_MANAGE->value])->group(function () {
+                Route::get('list', [AdminAreaSetupManageController::class, 'areaList']);
+                Route::get('update', [AdminAreaSetupManageController::class, 'areaUpdate']);
+                Route::get('delete/{id?}', [AdminAreaSetupManageController::class, 'areaDelete']);
+            });
+
+             // Conditionally load Subscription Module routes
+            if (function_exists('isModuleActive') && isModuleActive('Subscription')) {
+                Route::group(['prefix' => 'business-operations/subscription'], function () {
+                    include base_path('Modules/Subscription/routes/api.php');
                 });
+            }
+
+            // withdraw method
+            Route::prefix('commission')->middleware(['permission:' . PermissionKey::ADMIN_COMMISSION_SETTINGS->value])->group(function () {
+                Route::get('/settings', [AdminCommissionManageController::class, 'commissionSettings']);
+                Route::get('/history', [AdminCommissionManageController::class, 'commissionHistory']);
             });
         });
 
