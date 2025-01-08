@@ -194,13 +194,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_LIST->value]], function () {
                 Route::get('list', [AdminStoreManageController::class, 'index']);
                 Route::get('seller-stores', [AdminStoreManageController::class, 'sellerStores']);
-                Route::get('details/{id}', [AdminStoreManageController::class, 'storeDetails']);
+                Route::get('details', [AdminStoreManageController::class, 'show']);
             });
 
             // Store Add Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_ADD->value]], function () {
-                Route::post('add', [AdminStoreManageController::class, 'addStore']);
-                Route::post('update', [AdminStoreManageController::class, 'updateStore']);
+                Route::post('add', [AdminStoreManageController::class, 'store']);
+                Route::post('update', [AdminStoreManageController::class, 'update']);
+                Route::delete('remove/{id}', [AdminStoreManageController::class, 'destroy']);
+                Route::get('deleted-records', [AdminStoreManageController::class, 'deletedRecords']);
             });
 
             // Store Approval Request Routes
@@ -208,7 +210,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('approval-request', [AdminStoreManageController::class, 'storeApproveRequest']);
                 Route::post('approve', [AdminStoreManageController::class, 'changeStatus']);
             });
-
             // Recommended Store Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_RECOMMENDED->value]], function () {
                 Route::get('recommended', [AdminStoreManageController::class, 'recommendedStores']);
@@ -250,7 +251,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list', [AdminCustomerManageController::class, 'getCustomerList']);
                 Route::get('details', [AdminCustomerManageController::class, 'getCustomerDetails']);
                 Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
-                 });
+            });
             // Newsletter
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
                 Route::group(['prefix' => 'newsletter/'], function () {
@@ -262,7 +263,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
             // contact message
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_CONTACT_MESSAGES->value], function () {
-              Route::get('contact-messages', [CustomerContactMessageController::class, 'contactMessages']);
+                Route::get('contact-messages', [CustomerContactMessageController::class, 'contactMessages']);
             });
         });
 
@@ -512,10 +513,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 // Delivery Man Disbursement (for delivery personnel payouts)
                 Route::get('delivery-man', [AdminDisbursementManageController::class, 'deliveryManDisbursement'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_DISBURSEMENT->value);
             });
-                // Collect Cash (for cash collection)
-                Route::get('cash-collect', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
-                // Delivery Man Payments (View and process delivery man payments)
-              Route::get('delivery-man-payments', [AdminDeliveryManPaymentController::class, 'deliveryManPayments'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_PAYMENTS->value);
+            // Collect Cash (for cash collection)
+            Route::get('cash-collect', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
+            // Delivery Man Payments (View and process delivery man payments)
+            Route::get('delivery-man-payments', [AdminDeliveryManPaymentController::class, 'deliveryManPayments'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_PAYMENTS->value);
         });
 
         // business-operations
@@ -527,7 +528,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('delete/{id?}', [AdminAreaSetupManageController::class, 'areaDelete']);
             });
 
-             // Conditionally load Subscription Module routes
+            // Conditionally load Subscription Module routes
             if (function_exists('isModuleActive') && isModuleActive('Subscription')) {
                 Route::group(['prefix' => 'business-operations/subscription'], function () {
                     include base_path('Modules/Subscription/routes/api.php');

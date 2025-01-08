@@ -72,7 +72,7 @@ class InventoryManageRepository implements InventoryManageInterface
     public function deleteProductWithVariants(Product $product)
     {
         $product->delete(); // Soft delete the product
-        $this->deleteVariants($product->id); // Delete related variants
+//        $this->deleteVariants($product->id); // Delete related variants
     }
 
     public function deleteVariants($productId)
