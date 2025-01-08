@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Com;
+namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequest;
@@ -10,7 +10,7 @@ use App\Interfaces\StoreManageInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class StoreManageController extends Controller
+class SellerStoreManageController extends Controller
 {
     public function __construct(protected StoreManageInterface $storeRepo)
     {
@@ -18,7 +18,7 @@ class StoreManageController extends Controller
 
     public function index(Request $request)
     {
-        $stores = $this->storeRepo->getPaginatedStore(
+        $stores = $this->storeRepo->getAuthSellerStores(
             $request->limit ?? 10,
             $request->page ?? 1,
             $request->language ?? DEFAULT_LANGUAGE,

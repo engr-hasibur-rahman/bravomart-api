@@ -28,7 +28,7 @@ class StoreManageRepository implements StoreManageInterface
         return ComMerchantStore::class;
     }
 
-    public function getPaginatedStore(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getAllStores(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $store = ComMerchantStore::leftJoin('translations as name_translations', function ($join) use ($language) {
             $join->on('com_merchant_stores.id', '=', 'name_translations.translatable_id')
@@ -49,7 +49,34 @@ class StoreManageRepository implements StoreManageInterface
         // Apply sorting and pagination
         // Return the result
         return $store
+            ->orderBy($sortField, $sort)
+            ->paginate($limit);
+    }
+
+    public function getAuthSellerStores(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    {
+        $store = ComMerchantStore::leftJoin('translations as name_translations', function ($join) use ($language) {
+            $join->on('com_merchant_stores.id', '=', 'name_translations.translatable_id')
+                ->where('name_translations.translatable_type', '=', ComMerchantStore::class)
+                ->where('name_translations.language', '=', $language)
+                ->where('name_translations.key', '=', 'name');
+        })->select(
+            'com_merchant_stores.*',
+            DB::raw('COALESCE(name_translations.value, com_merchant_stores.name) as name'),
+        );
+
+        // Apply search filter if search parameter exists
+        if ($search) {
+            $store->where(function ($query) use ($search) {
+                $query->where(DB::raw("CONCAT_WS(' ', com_merchant_stores.name, name_translations.value)"), 'like', "%{$search}%");
+            });
+        }
+        // Apply sorting and pagination
+        // Return the result
+        return $store
+            ->where('deleted_at', null)
             ->where('merchant_id', auth('api')->id())
+            ->where('status', 1)
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
@@ -286,12 +313,14 @@ class StoreManageRepository implements StoreManageInterface
             'suspended' => $suspendedProductsCount,
         ];
     }
+
     private function getStoreWiseBanners(int $storeId)
     {
         return [
             'active' => Banner::where('store_id', $storeId)->where('status', 1)->count()
         ];
     }
+
     public function getSellerWiseStores(int $SellerId)
     {
         $stores = ComMerchantStore::where('merchant_id', $SellerId)->get();
