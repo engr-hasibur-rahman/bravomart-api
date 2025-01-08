@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanTypeManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDisbursementManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
+use App\Http\Controllers\Api\v1\Admin\AdminReportAnalyticsManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreDisbursementController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
@@ -538,6 +539,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('/history', [AdminCommissionManageController::class, 'commissionHistory']);
             });
         });
+
+        // report-analytics
+        Route::get('report-analytics', [AdminReportAnalyticsManageController::class, 'reportList'])->middleware(['permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS->value]);
 
         /*--------------------- System management ----------------------------*/
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_SYSTEM_MANAGEMENT_SETTINGS->value]], function () {
