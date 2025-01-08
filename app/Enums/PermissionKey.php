@@ -90,13 +90,6 @@ enum PermissionKey: string
     case PRODUCT_AUTHORS_LIST_STORE = 'author-list-store';
     case PRODUCT_AUTHORS_REQUESTED_FROM_STORE = 'author-req-from-store';
 
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //               Product Fabric Combination(For Furniture Only)                             //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_FAB_COMB_LIST = 'fabcomb-list';
-    case PRODUCT_FAB_COMB_ADD = 'fabcomb-add';
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Product addons (For Food Only)                                   //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -109,38 +102,11 @@ enum PermissionKey: string
     case ADMIN_PRODUCT_TAG_LIST = '/admin/tag/list';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Flash Sales                                             //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case FLASH_SALES_ALL_CAMPAIGNS = 'flash-sales-list';
-    case FLASH_SALES_JOIN = 'flash-sales-join'; // A list of Flash sales to show in Store where and option for store to join that program
-    case FLASH_SALES_ADD_CAMPAIGN_ADMIN = 'flash-sales-add-admin';
-    case FLASH_SALES_ADD_CAMPAIGN_STORE = 'flash-sales-add-store';
-    case FLASH_SALES_APPROVE_CAMPAIGN = 'flash-sales-approve';
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Financial Management                                    //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case FINANCIAL_TRANSACTIONS = 'my-transactions';
-    case FINANCIAL_WITHDRAWLS = 'my-withdrawals';
-    case FINANCIAL_MYINCOME = 'my-income';
-
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Feedback Management                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case FEEDBACK_REVIEWS = 'reviews';
     case FEEDBACK_QUESTIONS = 'questions-Chat';
     case FEEDBACK_QUERIES = 'product-queries';
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Promotion Management                                   //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PROMOTION_DEALS_AVAILABLE = 'deals-available';
-    case PROMOTION_MY_PRODUCT_IN_DEALS = 'myproduct-in-deals';
-    case PROMOTION_ASK_FOR_ENROLL = 'product-deal-enrollment';
-    case PROMOTION_COUPONS = 'coupon-list';
-    case PROMOTION_BANNERS = 'banner-list';
-
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  User Permissions                                        //
@@ -149,12 +115,6 @@ enum PermissionKey: string
     case USERS_ROLE_LIST = '/admin/roles';
     case USERS_LIST_ADMIN = '/admin/users';
     case USERS_ADD_ADMIN = '/admin/users/add-user';
-
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //                                  Others Permissions                                      //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case MANAGE_CONFIGURATIONS = 'manage-configurations';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //           Deliveryman management
@@ -167,24 +127,20 @@ enum PermissionKey: string
     //                          Customer management                                             //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_CUSTOMER_MANAGEMENT_LIST = '/admin/customer/list';
-    case ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST = 'customer-subscribe-email-list';
-    case CUSTOMER_WALLET_ADD_FUND = 'customer-wallet-add-fund';
-    case CUSTOMER_WALLET_REPORT = 'customer-wallet-report';
-    case CUSTOMER_WALLET_BONUS = 'customer-wallet-bonus';
-    case CUSTOMER_LOYALTY_POINT = 'customer-loyalty-point';
-
-    case CUSTOMER_CONTACT_MESSAGES = 'customer-contact-messages';
+    case ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST = '/admin/customer/subscriber-list';
+    case ADMIN_CUSTOMER_CONTACT_MESSAGES = '/admin/customer/contact-messages';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //       Transaction & Reports Related Functionality                                         //
     //              Financial Activity                                                          //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case FINANCIAL_WITHDRAW_REQUESTS = 'withdraw-requests';
-    case FINANCIAL_STORE_DISBURSEMENT = 'store-disbursement';
-    case FINANCIAL_DELIVERY_MAN_DISBURSEMENT = 'delivery-man-disbursement';
-    case FINANCIAL_COLLECT_CASH = 'collect-cash';
-    case FINANCIAL_DELIVERY_MAN_PAYMENTS = 'delivery-man-payments';
-    case FINANCIAL_WITHDRAW_METHOD = 'withdraw-method';
+    case ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY = '/admin/financial/withdraw/history';
+    case ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST = '/admin/financial/withdraw/request';
+    case ADMIN_WITHDRAW_METHOD_MANAGEMENT = '/admin/financial/withdraw/method/list';
+    case ADMIN_FINANCIAL_STORE_DISBURSEMENT = '/admin/financial/store/disbursement';
+    case ADMIN_FINANCIAL_DELIVERY_MAN_DISBURSEMENT = '/admin/financial/disbursement/delivery-man';
+    case ADMIN_FINANCIAL_COLLECT_CASH = '/admin/financial/cash-collect';
+    case ADMIN_FINANCIAL_DELIVERY_MAN_PAYMENTS = '/admin/financial/delivery-man-payments';
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Report and analytics                                            //
@@ -197,24 +153,15 @@ enum PermissionKey: string
     case ORDER_REPORT = 'order-report';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //       Ssettings Related Functionality                                        //
-    //              Business management                                                          //
+    //             Business Operations  Functionality                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case BUSINESS_SETTINGS = 'business-settings';
-    case SUBSCRIPTION_PACKAGE = 'subscription-package';
-    case SUBSCRIBER_LIST = 'subscriber-list';
-    case SUBSCRIPTION_SETTINGS = 'subscription-settings';
-    case MEDIA_SOCIAL_MEDIA = 'media-social-media';
-    case MEDIA_ADMIN_LANDING_PAGE = 'media-admin-landing-page';
-    case MEDIA_REACT_LANDING_PAGE = 'media-react-landing-page';
-    case MEDIA_FLUTTER_LANDING_PAGE = 'media-flutter-landing-page';
-    case PAGE_TERMS_AND_CONDITION = 'page-terms-and-condition';
-    case PAGE_PRIVACY_POLICY = 'page-privacy-policy';
-    case PAGE_ABOUT_US = 'page-about-us';
-    case PAGE_REFUND_POLICY = 'page-refund-policy';
-    case PAGE_CANCELLATION_POLICY = 'page-cancel-policy';
-    case PAGE_SHIPPING_POLICY = 'page-shipping-policy';
-    case IMAGE_GALLERY = 'image-gallery';
+    case ADMIN_GEO_AREA_MANAGE = '/admin/business-operations/area/list';
+    case ADMIN_SUBSCRIPTION_PACKAGE_TYPE_MANAGE = '/admin/business-operations/subscription/type/list';
+    case ADMIN_SUBSCRIPTION_PACKAGE_MANAGE = '/admin/business-operations/subscription/package/list';
+    case ADMIN_SUBSCRIPTION_SELLER_PACKAGE_MANAGE = '/admin/business-operations/subscription/seller/list';
+    case ADMIN_SUBSCRIPTION_SETTINGS = '/admin/business-operations/subscription/settings';
+    case ADMIN_COMMISSION_SETTINGS = '/admin/business-operations/commission/settings';
+    case ADMIN_COMMISSION_HISTORY = '/admin/business-operations/commission/history';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              System management                                                           //
@@ -282,10 +229,6 @@ enum PermissionKey: string
     //              Notice Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_NOTICE_MANAGEMENT = '/admin/store-notices';
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //              withdraw method Management                                                        //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ADMIN_WITHDRAW_METHOD_MANAGEMENT = '/admin/withdraw-method';
 
     // ############################## Admin PermissionKey End ################################
 
@@ -328,8 +271,8 @@ enum PermissionKey: string
 
         //=============== Seller Order Manger ====================
      case SELLER_STORE_ORDER_MANAGE = '/seller/store/orders';
-     case SELLER_ORDERS_RETURNED_OR_REFUND = '/orders/returned';
-     case SELLER_ORDERS_REVIEWS_MANAGE = '/orders/reviews';
+     case SELLER_ORDERS_RETURNED_OR_REFUND = '/seller/orders/returned';
+     case SELLER_ORDERS_REVIEWS_MANAGE = '/seller/orders/reviews';
 
         //-------------- Brand add -----------------
         case ADMIN_PRODUCT_BRAND_LIST_STORE = '/store/brand';

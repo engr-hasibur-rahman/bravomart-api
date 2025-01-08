@@ -266,5 +266,16 @@ if (!function_exists('translate')) {
         return true;
     }
 
+    if (!function_exists('isModuleActive')) {
+        function isModuleActive(string $moduleName): bool
+        {
+            // Replace this with your logic to check if the module is purchased and active.
+            $modulesConfig = config('modules');
+            return isset($modulesConfig[$moduleName]) && $modulesConfig[$moduleName]['active'] === true;
+        }
+    }
+
+
+
 
 }

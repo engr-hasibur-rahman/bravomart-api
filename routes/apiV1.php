@@ -1,21 +1,29 @@
 <?php
 
 use App\Enums\PermissionKey;
+use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
+use App\Http\Controllers\Api\v1\Admin\AdminCommissionManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminDeliveryManPaymentController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanTypeManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminDisbursementManageController;
+use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
+use App\Http\Controllers\Api\V1\Admin\AdminStoreDisbursementController;
+use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
+use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
-use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
-use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
-use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
+use App\Http\Controllers\Api\V1\Admin\WithdrawMethodManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
@@ -26,6 +34,7 @@ use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
+use App\Http\Controllers\Api\V1\CustomerContactMessageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\FrontendController;
@@ -234,10 +243,26 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         // Customer Manage
-        Route::group(['prefix' => 'customer/', 'permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
-            Route::get('list', [AdminCustomerManageController::class, 'getCustomerList']);
-            Route::get('details', [AdminCustomerManageController::class, 'getCustomerDetails']);
-            Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
+        Route::group(['prefix' => 'customer/'], function () {
+            // CUSTOMER
+            Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
+                Route::get('list', [AdminCustomerManageController::class, 'getCustomerList']);
+                Route::get('details', [AdminCustomerManageController::class, 'getCustomerDetails']);
+                Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
+                 });
+            // Newsletter
+            Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
+                Route::group(['prefix' => 'newsletter/'], function () {
+                    Route::post('list', [SubscriberManageController::class, 'allSubscribers']);
+                    Route::post('bulk-status-change', [SubscriberManageController::class, 'bulkStatusChange']);
+                    Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
+                    Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
+                });
+            });
+            // contact message
+            Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_CONTACT_MESSAGES->value], function () {
+              Route::get('contact-messages', [CustomerContactMessageController::class, 'contactMessages']);
+            });
         });
 
         // Seller Manage
@@ -258,13 +283,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('update', [DepartmentManageController::class, 'update']);
             Route::delete('remove/{id}', [DepartmentManageController::class, 'destroy']);
         });
-        // Newsletter manage
-        Route::group(['prefix' => 'newsletter/'], function () {
-            Route::post('subscriber-list', [SubscriberManageController::class, 'allSubscribers']);
-            Route::post('bulk-status-change', [SubscriberManageController::class, 'bulkStatusChange']);
-            Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
-            Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
-        });
+
 
         // Location Manage
         Route::group(['prefix' => 'location/'], function () {
@@ -431,47 +450,94 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('/{id}', [AdminStoreNoticeController::class, 'destroy']); // Delete a specific notice
         });
 
-        // withdraw method
-        Route::prefix('withdraw-method')->middleware(['permission:' . PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value])->group(function () {
-            Route::get('/list', [AdminWithdrawSettingsController::class, 'index']);
-            Route::post('/add', [AdminWithdrawSettingsController::class, 'store']);
-            Route::get('/{id}', [AdminWithdrawSettingsController::class, 'show']);
-            Route::put('/{id}', [AdminWithdrawSettingsController::class, 'update']);
-            Route::patch('/{id}/status', [AdminWithdrawSettingsController::class, 'statusChange']);
-            Route::delete('/{id}', [AdminWithdrawSettingsController::class, 'destroy']);
-        });
-
         // Admin Deliveryman management
         Route::prefix('deliveryman/')->group(function () {
             //vehicle-types
             Route::prefix('vehicle-types/')->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value])->group(function () {
                 Route::get('list', [AdminDeliverymanTypeManageController::class, 'index']);
                 Route::post('add', [AdminDeliverymanTypeManageController::class, 'store']);
-                Route::get('{id}', [AdminDeliverymanTypeManageController::class, 'show']);
-                Route::put('{id}', [AdminDeliverymanTypeManageController::class, 'update']);
-                Route::patch('{id}/status', [AdminDeliverymanTypeManageController::class, 'statusChange']);
-                Route::delete('{id}', [AdminDeliverymanTypeManageController::class, 'destroy']);
+                Route::get('edit/{id}', [AdminDeliverymanTypeManageController::class, 'show']);
+                Route::put('update', [AdminDeliverymanTypeManageController::class, 'update']);
+                Route::patch('status-change', [AdminDeliverymanTypeManageController::class, 'statusChange']);
+                Route::delete('delete/{id}', [AdminDeliverymanTypeManageController::class, 'destroy']);
             });
 
             // delivery man manage
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
                 Route::get('list', [AdminDeliverymanManageController::class, 'index']);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
-                Route::get('{id}', [AdminDeliverymanManageController::class, 'show']);
-                Route::put('{id}', [AdminDeliverymanManageController::class, 'update']);
-                Route::patch('{id}/status', [AdminDeliverymanManageController::class, 'statusChange']);
-                Route::delete('{id}', [AdminDeliverymanManageController::class, 'destroy']);
+                Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
+                Route::put('update', [AdminDeliverymanManageController::class, 'update']);
+                Route::delete('delete/{id}', [AdminDeliverymanManageController::class, 'destroy']);
             });
 
             // deliveryman review manage
-            Route::prefix('review/')->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_REVIEW->value])->group(function () {
-                Route::get('list', [AdminDeliverymanReviewManageController::class, 'index']);
-                Route::post('add', [AdminDeliverymanReviewManageController::class, 'store']);
-                Route::get('{id}', [AdminDeliverymanReviewManageController::class, 'show']);
-                Route::put('{id}', [AdminDeliverymanReviewManageController::class, 'update']);
-                Route::delete('{id}', [AdminDeliverymanReviewManageController::class, 'destroy']);
+            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_REVIEW->value]], function () {
+                Route::get('reviews', [AdminDeliverymanReviewManageController::class, 'index']);
+            });
+        });
+
+        // FINANCIAL WITHDRAWALS management
+        Route::group(['prefix' => 'financial/'], function () {
+            Route::group(['prefix' => 'withdraw/'], function () {
+                // withdraw history
+                Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY->value], function () {
+                    Route::get('history', [AdminWithdrawManageController::class, 'withdrawHistory']);
+                    Route::get('details/{id}', [AdminWithdrawManageController::class, 'withdrawDetails']);
+                });
+                // withdraw REQUEST
+                Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value], function () {
+                    Route::get('request', [AdminWithdrawManageController::class, 'withdrawRequest']);
+                });
+                // withdraw settings
+                Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value], function () {
+                    Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
+                });
+                // withdraw method
+                Route::prefix('method')->middleware(['permission:' . PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value])->group(function () {
+                    Route::get('/list', [WithdrawMethodManageController::class, 'index']);
+                    Route::post('/add', [WithdrawMethodManageController::class, 'store']);
+                    Route::get('/{id}', [WithdrawMethodManageController::class, 'show']);
+                    Route::put('/{id}', [WithdrawMethodManageController::class, 'update']);
+                    Route::patch('/{id}/status', [WithdrawMethodManageController::class, 'statusChange']);
+                    Route::delete('/{id}', [WithdrawMethodManageController::class, 'destroy']);
+                });
             });
 
+            // FINANCIAL DISBURSEMENTS (Payments & Payouts)
+            Route::group(['prefix' => 'disbursement/'], function () {
+                // Store Disbursement (for store payments)
+                Route::get('store', [AdminStoreDisbursementController::class, 'storeDisbursement'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_STORE_DISBURSEMENT->value);
+                // Delivery Man Disbursement (for delivery personnel payouts)
+                Route::get('delivery-man', [AdminDisbursementManageController::class, 'deliveryManDisbursement'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_DISBURSEMENT->value);
+            });
+                // Collect Cash (for cash collection)
+                Route::get('cash-collect', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
+                // Delivery Man Payments (View and process delivery man payments)
+              Route::get('delivery-man-payments', [AdminDeliveryManPaymentController::class, 'deliveryManPayments'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_PAYMENTS->value);
+        });
+
+        // business-operations
+        Route::group(['prefix' => 'business-operations/'], function () {
+            // withdraw method
+            Route::prefix('area/')->middleware(['permission:' . PermissionKey::ADMIN_GEO_AREA_MANAGE->value])->group(function () {
+                Route::get('list', [AdminAreaSetupManageController::class, 'areaList']);
+                Route::get('update', [AdminAreaSetupManageController::class, 'areaUpdate']);
+                Route::get('delete/{id?}', [AdminAreaSetupManageController::class, 'areaDelete']);
+            });
+
+             // Conditionally load Subscription Module routes
+            if (function_exists('isModuleActive') && isModuleActive('Subscription')) {
+                Route::group(['prefix' => 'business-operations/subscription'], function () {
+                    include base_path('Modules/Subscription/routes/api.php');
+                });
+            }
+
+            // withdraw method
+            Route::prefix('commission')->middleware(['permission:' . PermissionKey::ADMIN_COMMISSION_SETTINGS->value])->group(function () {
+                Route::get('/settings', [AdminCommissionManageController::class, 'commissionSettings']);
+                Route::get('/history', [AdminCommissionManageController::class, 'commissionHistory']);
+            });
         });
 
         /*--------------------- System management ----------------------------*/
