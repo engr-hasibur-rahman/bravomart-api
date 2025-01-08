@@ -145,12 +145,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Report and analytics                                            //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case TRANSACTION_REPORT = 'transaction-report';
-    case ITEM_REPORT = 'item-report';
-    case STORE_WISE_REPORT = 'store-wise-report';
-    case EXPENSE_REPORT = 'expense-report';
-    case DISBURSEMENT_REPORT = 'disbursement-report';
-    case ORDER_REPORT = 'order-report';
+    case ADMIN_REPORT_ANALYTICS = '/admin/report-analytics/';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //             Business Operations  Functionality                                                        //
@@ -166,8 +161,6 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              System management                                                           //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case LOGIN_SETUP = 'login-setup';
-    case REACT_SITE = 'react-site';
     case APP_SETTINGS = 'app-settings';
     case NOTIFICATION_CHANNELS = 'notification-channels';
     case UNSIGNED_ORDERS_GROCERY = 'unsigned-orders-grocery';
