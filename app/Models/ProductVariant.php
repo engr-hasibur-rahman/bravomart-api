@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ProductVariant extends Model
 {
     use SoftDeletes;
+
     protected $dates = ['deleted_at'];
     protected $fillable = [
         'product_id',
@@ -43,8 +44,20 @@ class ProductVariant extends Model
     {
         return $this->belongsTo(Product::class, "product_id");
     }
+
     public function unit()
     {
         return $this->belongsTo(Unit::class, "unit_id");
+    }
+
+    public function stockStatus($threshold = 10)
+    {
+        if ($this->stock_quantity > 0 && $this->stock_quantity < $threshold) {
+            return 'low_stock';
+        } elseif ($this->stock_quantity === 0) {
+            return 'out_of_stock';
+        } else {
+            return 'in_stock';
+        }
     }
 }

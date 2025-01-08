@@ -37,9 +37,7 @@ class SellerManageController extends Controller
     public function getSellerDetails($slug)
     {
         $seller = User::isSeller()->where('slug', $slug)->first();
-        return response()->json([
-            'seller' => new SellerDetailsResource($seller)
-        ]);
+        return response()->json(new SellerDetailsResource($seller));
     }
 
     // Approve Seller
@@ -50,7 +48,7 @@ class SellerManageController extends Controller
         return response()->json([
             'status' => true,
             'status_code' => 200,
-            'message' => __('messages.approve.success',['name'=>'Seller'])
+            'message' => __('messages.approve.success', ['name' => 'Seller'])
         ]);
     }
 
@@ -62,7 +60,7 @@ class SellerManageController extends Controller
         return response()->json([
             'status' => true,
             'status_code' => 200,
-            'message' => __('messages.reject.success',['name'=>'Seller'])
+            'message' => __('messages.reject.success', ['name' => 'Seller'])
         ]);
     }
 

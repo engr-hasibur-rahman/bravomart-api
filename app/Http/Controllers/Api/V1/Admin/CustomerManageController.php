@@ -36,9 +36,7 @@ class CustomerManageController extends Controller
     public function getCustomerDetails(Request $request)
     {
         $customer = Customer::findOrFail($request->id);
-        return response()->json([
-            'customers' => new CustomerDetailsResource($customer),
-        ]);
+        return response()->json(new CustomerDetailsResource($customer));
     }
 
     public function changeStatus(Request $request)

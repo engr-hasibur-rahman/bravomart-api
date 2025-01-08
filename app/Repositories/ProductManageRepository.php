@@ -34,13 +34,16 @@ class ProductManageRepository implements ProductManageInterface
     // Fetch all products with parameters
     public function getPaginatedProduct(int|string $store_id, int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $product = Product::where('store_id', $store_id)
-            ->leftJoin('translations as name_translations', function ($join) use ($language) {
-                $join->on('products.id', '=', 'name_translations.translatable_id')
-                    ->where('name_translations.translatable_type', '=', Product::class)
-                    ->where('name_translations.language', '=', $language)
-                    ->where('name_translations.key', '=', 'name');
-            })
+        $product = Product::query();
+        if ($store_id) {
+            $product->where('store_id', $store_id);
+        }
+        $product->leftJoin('translations as name_translations', function ($join) use ($language) {
+            $join->on('products.id', '=', 'name_translations.translatable_id')
+                ->where('name_translations.translatable_type', '=', Product::class)
+                ->where('name_translations.language', '=', $language)
+                ->where('name_translations.key', '=', 'name');
+        })
             ->leftJoin('translations as description_translations', function ($join) use ($language) {
                 $join->on('products.id', '=', 'description_translations.translatable_id')
                     ->where('description_translations.translatable_type', '=', Product::class)
@@ -131,6 +134,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     public function storeBulk(array $bulkData)
     {
         try {
@@ -217,6 +221,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     // Delete data
     public function delete(int|string $id)
     {
@@ -228,6 +233,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     // Fetch product data of specific id
     public function getProductBySlug(string $slug)
     {
@@ -242,17 +248,6 @@ class ProductManageRepository implements ProductManageInterface
             ])
                 ->where('slug', $slug)
                 ->first();
-//            $translations = $product->translations()->get()->groupBy('language');
-//            // Initialize an array to hold the transformed data
-//            $transformedData = [];
-//            foreach ($translations as $language => $items) {
-//                $languageInfo = ['language' => $language];
-//                /* iterate all Column to Assign Language Value */
-//                foreach ($this->product->translationKeys as $columnName) {
-//                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-//                }
-//                $transformedData[] = $languageInfo;
-//            }
             if ($product) {
                 return response()->json(new ProductDetailsResource($product));
             } else {
@@ -362,6 +357,36 @@ class ProductManageRepository implements ProductManageInterface
         } catch (\Exception $e) {
             return false;
         }
+    }
 
+    public function approvePendingProducts(array $productIds)
+    {
+        try {
+            $products = Product::whereIn('id', $productIds)
+                ->where('deleted_at', null)
+                ->update([
+                    'status' => 'approved'
+                ]);
+            return true;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404
+            ]);
+        }
+    }
+
+    public function getPendingProducts()
+    {
+        try {
+            $products = Product::where('deleted_at', '=', null)
+                ->where('status', 'pending')
+                ->with('store')
+                ->latest()
+                ->paginate(10);
+            return $products;
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

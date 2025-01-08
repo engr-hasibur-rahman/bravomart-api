@@ -286,11 +286,15 @@ class StoreManageRepository implements StoreManageInterface
             'suspended' => $suspendedProductsCount,
         ];
     }
-
     private function getStoreWiseBanners(int $storeId)
     {
         return [
             'active' => Banner::where('store_id', $storeId)->where('status', 1)->count()
         ];
+    }
+    public function getSellerWiseStores(int $SellerId)
+    {
+        $stores = ComMerchantStore::where('merchant_id', $SellerId)->get();
+        return $stores;
     }
 }
