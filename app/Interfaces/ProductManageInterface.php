@@ -25,4 +25,6 @@ interface ProductManageInterface
     public function records(bool $onlyDeleted);
 
     public function changeStatus(array $data);
+
+    public function getPendingProducts();
 }

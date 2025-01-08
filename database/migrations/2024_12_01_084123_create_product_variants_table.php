@@ -29,7 +29,7 @@ return new class extends Migration {
             $table->decimal('height')->nullable();
             $table->string('image')->nullable(); //[{"sliding_image":"xyx.jpg","position":1},{"sliding_image":"abc.jpg","position":2}]
             $table->integer('order_count')->default(0);
-            $table->integer('status')->default('0')->comment('1 = active, 0 = inactive');
+            $table->integer('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->softDeletes();
             $table->timestamps();
             // indexes search performance

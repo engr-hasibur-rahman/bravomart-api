@@ -176,7 +176,7 @@ enum PermissionKey: string
     case CUSTOMER_CONTACT_MESSAGES = 'customer-contact-messages';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //       Transacton & Reports Related Functionality                                         //
+    //       Transaction & Reports Related Functionality                                         //
     //              Financial Activity                                                          //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case FINANCIAL_WITHDRAW_REQUESTS = 'withdraw-requests';

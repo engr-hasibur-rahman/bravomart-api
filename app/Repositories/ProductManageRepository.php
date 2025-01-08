@@ -34,13 +34,16 @@ class ProductManageRepository implements ProductManageInterface
     // Fetch all products with parameters
     public function getPaginatedProduct(int|string $store_id, int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $product = Product::where('store_id', $store_id)
-            ->leftJoin('translations as name_translations', function ($join) use ($language) {
-                $join->on('products.id', '=', 'name_translations.translatable_id')
-                    ->where('name_translations.translatable_type', '=', Product::class)
-                    ->where('name_translations.language', '=', $language)
-                    ->where('name_translations.key', '=', 'name');
-            })
+        $product = Product::query();
+        if ($store_id) {
+            $product->where('store_id', $store_id);
+        }
+        $product->leftJoin('translations as name_translations', function ($join) use ($language) {
+            $join->on('products.id', '=', 'name_translations.translatable_id')
+                ->where('name_translations.translatable_type', '=', Product::class)
+                ->where('name_translations.language', '=', $language)
+                ->where('name_translations.key', '=', 'name');
+        })
             ->leftJoin('translations as description_translations', function ($join) use ($language) {
                 $join->on('products.id', '=', 'description_translations.translatable_id')
                     ->where('description_translations.translatable_type', '=', Product::class)
@@ -131,6 +134,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     public function storeBulk(array $bulkData)
     {
         try {
@@ -217,6 +221,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     // Delete data
     public function delete(int|string $id)
     {
@@ -228,6 +233,7 @@ class ProductManageRepository implements ProductManageInterface
             throw $th;
         }
     }
+
     // Fetch product data of specific id
     public function getProductBySlug(string $slug)
     {
@@ -362,6 +368,20 @@ class ProductManageRepository implements ProductManageInterface
         } catch (\Exception $e) {
             return false;
         }
-
     }
+
+    public function getPendingProducts()
+    {
+        try {
+            $products = Product::where('deleted_at', '=', null)
+                ->where('status', 'pending')
+                ->with('store')
+                ->orderBy('created_at', 'asc')
+                ->paginate(10);
+            return $products;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
 }
