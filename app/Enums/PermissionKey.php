@@ -167,24 +167,20 @@ enum PermissionKey: string
     //                          Customer management                                             //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_CUSTOMER_MANAGEMENT_LIST = '/admin/customer/list';
-    case ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST = 'customer-subscribe-email-list';
-    case CUSTOMER_WALLET_ADD_FUND = 'customer-wallet-add-fund';
-    case CUSTOMER_WALLET_REPORT = 'customer-wallet-report';
-    case CUSTOMER_WALLET_BONUS = 'customer-wallet-bonus';
-    case CUSTOMER_LOYALTY_POINT = 'customer-loyalty-point';
-
-    case CUSTOMER_CONTACT_MESSAGES = 'customer-contact-messages';
+    case ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST = '/admin/customer/subscriber-list';
+    case ADMIN_CUSTOMER_CONTACT_MESSAGES = '/admin/customer/contact-messages';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //       Transacton & Reports Related Functionality                                         //
     //              Financial Activity                                                          //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case FINANCIAL_WITHDRAW_REQUESTS = 'withdraw-requests';
-    case FINANCIAL_STORE_DISBURSEMENT = 'store-disbursement';
-    case FINANCIAL_DELIVERY_MAN_DISBURSEMENT = 'delivery-man-disbursement';
-    case FINANCIAL_COLLECT_CASH = 'collect-cash';
-    case FINANCIAL_DELIVERY_MAN_PAYMENTS = 'delivery-man-payments';
-    case FINANCIAL_WITHDRAW_METHOD = 'withdraw-method';
+    case ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY = '/admin/financial/withdraw/history';
+    case ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST = '/admin/financial/withdraw/request';
+    case ADMIN_WITHDRAW_METHOD_MANAGEMENT = '/admin/financial/withdraw/method/list';
+    case ADMIN_FINANCIAL_STORE_DISBURSEMENT = '/admin/financial/store/disbursement';
+    case ADMIN_FINANCIAL_DELIVERY_MAN_DISBURSEMENT = '/admin/financial/disbursement/delivery-man';
+    case ADMIN_FINANCIAL_COLLECT_CASH = '/admin/financial/cash-collect';
+    case ADMIN_FINANCIAL_DELIVERY_MAN_PAYMENTS = '/admin/financial/delivery-man-payments';
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Report and analytics                                            //
@@ -197,24 +193,13 @@ enum PermissionKey: string
     case ORDER_REPORT = 'order-report';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //       Ssettings Related Functionality                                        //
-    //              Business management                                                          //
+    //             Business Operations  Functionality                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case BUSINESS_SETTINGS = 'business-settings';
-    case SUBSCRIPTION_PACKAGE = 'subscription-package';
-    case SUBSCRIBER_LIST = 'subscriber-list';
-    case SUBSCRIPTION_SETTINGS = 'subscription-settings';
-    case MEDIA_SOCIAL_MEDIA = 'media-social-media';
-    case MEDIA_ADMIN_LANDING_PAGE = 'media-admin-landing-page';
-    case MEDIA_REACT_LANDING_PAGE = 'media-react-landing-page';
-    case MEDIA_FLUTTER_LANDING_PAGE = 'media-flutter-landing-page';
-    case PAGE_TERMS_AND_CONDITION = 'page-terms-and-condition';
-    case PAGE_PRIVACY_POLICY = 'page-privacy-policy';
-    case PAGE_ABOUT_US = 'page-about-us';
-    case PAGE_REFUND_POLICY = 'page-refund-policy';
-    case PAGE_CANCELLATION_POLICY = 'page-cancel-policy';
-    case PAGE_SHIPPING_POLICY = 'page-shipping-policy';
-    case IMAGE_GALLERY = 'image-gallery';
+    case ADMIN_GEO_AREA_MANAGE = '/admin/business-operations/area/list';
+    case ADMIN_SUBSCRIPTION_PACKAGE_TYPE_MANAGE = '/admin/business-operations/area/lisdt';
+    case ADMIN_SUBSCRIPTION_PACKAGE_MANAGE = '/admin/business-operations/area/lisd3t';
+    case ADMIN_SUBSCRIPTION_SELLER_PACKAGE_MANAGE = '/admin/business-operations/area/ldistd';
+    case ADMIN_SUBSCRIPTION_SETTINGS = '/admin/business-operations/area/listd';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              System management                                                           //
@@ -282,10 +267,6 @@ enum PermissionKey: string
     //              Notice Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_NOTICE_MANAGEMENT = '/admin/store-notices';
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //              withdraw method Management                                                        //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ADMIN_WITHDRAW_METHOD_MANAGEMENT = '/admin/withdraw-method';
 
     // ############################## Admin PermissionKey End ################################
 

@@ -691,7 +691,7 @@ class PermissionAdminSeeder extends Seeder
             ]
         ];
 
-        // for
+        // Deliveryman, Customer,Employee
         $admin_user_related_menu = [
             [
                 // Deliveryman management
@@ -767,11 +767,23 @@ class PermissionAdminSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => PermissionKey::ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST->value,
-                            'PermissionTitle' => 'Subscribe Mail List',
+                            'PermissionTitle' => 'Subscriber List',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'delete', 'others'],
                             'translations' => [
-                                'en' => 'Subscribe Mail List',
+                                'en' => 'Subscriber List',
+                                'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_CUSTOMER_CONTACT_MESSAGES->value,
+                            'PermissionTitle' => 'Contact Messages',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Contact Messages',
                                 'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
                             ]
                         ]
@@ -875,63 +887,78 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::FINANCIAL_WITHDRAW_REQUESTS->value,
-                            'PermissionTitle' => 'Withdraw Requests',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Withdraw Requests',
-                                'ar' => 'طلبات السحب'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::FINANCIAL_STORE_DISBURSEMENT->value,
-                            'PermissionTitle' => 'Store Disbursement',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Store Disbursement',
-                                'ar' => 'صرف المتجر'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::FINANCIAL_DELIVERY_MAN_DISBURSEMENT->value,
-                            'PermissionTitle' => 'Delivery Man Disbursement',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Delivery Man Disbursement',
-                                'ar' => 'صرف رواتب موظف التوصيل'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::FINANCIAL_COLLECT_CASH->value,
-                            'PermissionTitle' => 'Collect Cash',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Collect Cash',
-                                'ar' => 'جمع النقود'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::FINANCIAL_DELIVERY_MAN_PAYMENTS->value,
-                            'PermissionTitle' => 'Delivery Man Payments',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Delivery Man Payments',
-                                'ar' => 'مدفوعات توصيل الطلبات'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::FINANCIAL_WITHDRAW_METHOD->value,
+                            'PermissionName' => PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value,
                             'PermissionTitle' => 'Withdrawal Method',
                             'activity_scope' => 'system_level',
                             'icon' => '',
                             'translations' => [
                                 'en' => 'Withdrawal Method',
                                 'ar' => 'طريقة السحب'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY->value,
+                            'PermissionTitle' => 'Withdraw History',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Withdraw History',
+                                'ar' => 'طلبات السحب'
+                            ]
+                        ], [
+                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value,
+                            'PermissionTitle' => 'Withdraw Requests',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Withdraw Requests',
+                                'ar' => 'طلبات السحب'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_STORE_DISBURSEMENT->value,
+                            'PermissionTitle' => 'Store Disbursement',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Store Disbursement',
+                                'ar' => 'صرف المتجر'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_DISBURSEMENT->value,
+                            'PermissionTitle' => 'Delivery Man Disbursement',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Delivery Man Disbursement',
+                                'ar' => 'صرف رواتب موظف التوصيل'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value,
+                            'PermissionTitle' => 'Cash Collect',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Cash Collect',
+                                'ar' => 'جمع النقود'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_PAYMENTS->value,
+                            'PermissionTitle' => 'Delivery Man Payments',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Delivery Man Payments',
+                                'ar' => 'مدفوعات توصيل الطلبات'
                             ]
                         ]
                     ]
@@ -1042,20 +1069,21 @@ class PermissionAdminSeeder extends Seeder
                         ]                                                                
                     ]
                 ],
-              
 
-                // Business management
+
+                // Business Operations
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Business management',
+                    'PermissionTitle' => 'Business Operations',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Business management',
-                        'ar' => 'إدارة الأعمال'
+                        'en' => 'Business Operations',
+                        'ar' => 'عمليات الأعمال'
                     ],
                     'submenu' => [
+                        // Area Setup
                         [
                             'PermissionName' => '',
                             'PermissionTitle' => 'Area Setup',
@@ -1068,7 +1096,7 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_AREA_LIST->value,
+                                    'PermissionName' => PermissionKey::ADMIN_GEO_AREA_MANAGE->value,
                                     'PermissionTitle' => 'Area List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
@@ -1076,64 +1104,70 @@ class PermissionAdminSeeder extends Seeder
                                         'en' => 'Area List',
                                         'ar' => 'قائمة المناطق'
                                     ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_AREA_ADD->value,
-                                    'PermissionTitle' => 'Area Add',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Area Add',
-                                        'ar' => 'إضافة المنطقة'
-                                    ]
                                 ]
                             ]
                         ],
 
-                        // Subscription management
+                        // Subscription Management
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => 'Subscription management',
+                            'PermissionTitle' => 'Subscription Management',
                             'activity_scope' => 'system_level',
                             'icon' => '',
                             'options' => ['view'],
                             'translations' => [
-                                'en' => 'Subscription management',
-                                'ar' => 'إدارة الاشتراكات'
+                                'en' => 'Subscription Management',
+                                'ar' => 'عمليات الأعمال'
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::SUBSCRIPTION_PACKAGE->value,
-                                    'PermissionTitle' => 'Subscription Package',
+                                    'PermissionName' => PermissionKey::ADMIN_SUBSCRIPTION_PACKAGE_TYPE_MANAGE->value,
+                                    'PermissionTitle' => 'Subscription Type',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
-                                        'en' => 'Subscription Package',
+                                        'en' => 'Subscription Type',
                                         'ar' => 'باقة الاشتراك'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::SUBSCRIBER_LIST->value,
-                                    'PermissionTitle' => 'Subscriber List',
+                                    'PermissionName' => PermissionKey::ADMIN_SUBSCRIPTION_PACKAGE_MANAGE->value,
+                                    'PermissionTitle' => 'Subscription Package',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
-                                        'en' => 'Subscriber List',
+                                        'en' => 'Subscription Package',
                                         'ar' => 'قائمة المشتركين'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::SUBSCRIPTION_SETTINGS->value,
-                                    'PermissionTitle' => 'Settings',
+                                    'PermissionName' => PermissionKey::ADMIN_SUBSCRIPTION_SELLER_PACKAGE_MANAGE->value,
+                                    'PermissionTitle' => 'Seller Subscription',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
-                                        'en' => 'Settings',
+                                        'en' => 'Seller Subscription',
+                                        'ar' => 'قائمة المشتركين'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_SUBSCRIPTION_SETTINGS->value,
+                                    'PermissionTitle' => 'Subscription Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Subscription Settings',
                                         'ar' => 'إعدادات'
                                     ]
                                 ]
                             ]
-                        ]                                             
+                        ]
+
+
                     ]
                 ],
 
