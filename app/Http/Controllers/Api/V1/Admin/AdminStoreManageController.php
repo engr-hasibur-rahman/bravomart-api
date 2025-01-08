@@ -25,9 +25,7 @@ class AdminStoreManageController extends Controller
         }
         $stores = $this->storeRepo->getSellerWiseStores($request->seller_id);
         if ($stores) {
-            return response()->json([
-                'data' => SellerWiseStoreForDropdownResource::collection($stores),
-            ]);
+            return response()->json(SellerWiseStoreForDropdownResource::collection($stores));
         } else {
             return response()->json([
                 'status' => false,

@@ -15,9 +15,10 @@ class SellerWiseStoreForDropdownResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id"=> $this->id,
+            "id" => $this->id,
             "value" => $this->id,
             "label" => $this->name,
+            "store_type" => $this->store_type
         ];
     }
 }
