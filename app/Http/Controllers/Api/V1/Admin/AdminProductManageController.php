@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Product;
+namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\StatusType;
-use App\Enums\StoreType;
 use App\Exports\ProductExport;
 use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportRequest;
-use App\Http\Requests\ProductRequest;
-use App\Http\Requests\ProductVariantRequest;
+use App\Http\Resources\Admin\ProductRequestResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\LowStockProductResource;
 use App\Http\Resources\Product\OutOfStockProductResource;
@@ -25,7 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ProductController extends Controller
+class AdminProductManageController extends Controller
 {
     public function __construct(protected ProductManageInterface $productRepo, protected ProductVariantInterface $variantRepo)
     {
@@ -33,7 +31,7 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $storeId = $request->store_id;
+        $storeId = $request->store_id ?? '';
         $limit = $request->limit ?? 10;
         $page = $request->page ?? 1;
         $locale = app()->getLocale() ?? DEFAULT_LANGUAGE;
@@ -62,6 +60,7 @@ class ProductController extends Controller
         $request['slug'] = $slug;
         $request['type'] = ComMerchantStore::where('id', $request['store_id'])->first()->store_type;
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
+        $request['warranty'] = json_encode($request['warranty']);
         $product = $this->productRepo->store($request->all());
         $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
@@ -79,6 +78,7 @@ class ProductController extends Controller
     public function update(Request $request)
     {
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
+        $request['warranty'] = json_encode($request['warranty']);
         $product = $this->productRepo->update($request->all());
         $this->productRepo->updateTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
@@ -211,8 +211,21 @@ class ProductController extends Controller
                 'meta' => new PaginationResource($lowStockProducts),
             ]);
         }
-
     }
 
-
+    public function productRequest()
+    {
+        $products = $this->productRepo->getPendingProducts();
+        if ($products) {
+            return response()->json([
+                'data' => ProductRequestResource::collection($products),
+                'meta' => new PaginationResource($products),
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+            ]);
+        }
+    }
 }

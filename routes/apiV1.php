@@ -4,56 +4,54 @@ use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanTypeManageController;
-use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
-use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
-use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
+use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
+use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
+use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
+use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
+use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
-use App\Http\Controllers\Api\V1\Admin\PaymentSettingsController;
-use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
 use App\Http\Controllers\Api\V1\Admin\SellerManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
+use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
+use App\Http\Controllers\Api\V1\Com\StoreManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
-use App\Http\Controllers\Api\V1\Customer\AddressManageController;
+use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
-use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
-use App\Http\Controllers\Api\V1\Product\ProductController;
+use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
+use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
+use App\Http\Controllers\Api\V1\Product\ProductVariantController;
 use App\Http\Controllers\Api\V1\Seller\SellerBusinessSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerFlashSaleProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerInventoryManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
-use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
-use App\Http\Controllers\Api\V1\Seller\SellerFlashSaleProductManageController;
-use App\Http\Controllers\Api\V1\Seller\StoreDashboardManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
+use App\Http\Controllers\Api\V1\Seller\StoreDashboardManageController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
-use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
+use App\Http\Controllers\Api\V1\UnitManageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\Api\V1\FrontendController;
-use App\Http\Controllers\Api\V1\Com\AreaController;
-use App\Http\Controllers\Api\V1\Com\StoreManageController;
-use App\Http\Controllers\Api\V1\CouponManageController;
-use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
-use App\Http\Controllers\Api\V1\Product\ProductVariantController;
-use App\Http\Controllers\Api\V1\UnitManageController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 /*--------------------- Route without auth  ----------------------------*/
@@ -162,13 +160,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Product manage
         Route::group(['prefix' => 'product/'], function () {
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCTS_MANAGE->value]], function () {
-                Route::post('list', [ProductController::class, 'productList']);
-                Route::post('add', [ProductController::class, 'addProduct']);
-                Route::post('update', [ProductController::class, 'updateProduct']);
-                Route::post('remove/{id?}', [ProductController::class, 'deleteProduct']);
-                Route::get('approve-request', [ProductController::class, 'productApproveRequest']);
-                Route::post('approve', [ProductController::class, 'changeStatus']);
-                Route::get('stock-report', [ProductController::class, 'lowOrOutOfStockProducts'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_STOCK_REPORT->value);
+                Route::get('list', [AdminProductManageController::class, 'index']);
+                Route::post('add', [AdminProductManageController::class, 'store']);
+                Route::post('update', [AdminProductManageController::class, 'update']);
+                Route::delete('remove/{id?}', [SellerProductManageController::class, 'destroy']);
+                Route::get('approve', [AdminProductManageController::class, 'approveProduct']);
+                Route::get('request', [AdminProductManageController::class, 'productRequest']);
+                Route::post('change-status', [AdminProductManageController::class, 'changeStatus']);
+                Route::get('stock-report', [SellerProductManageController::class, 'lowOrOutOfStockProducts'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_STOCK_REPORT->value);
                 Route::post('author/approve', [ProductAuthorController::class, 'changeStatus']);
             });
             // Product Inventory
@@ -537,10 +536,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // seller product manage
             Route::group(['prefix' => 'orders/'], function () {
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_ORDER_MANAGE->value]], function () {
-                    Route::get('/', [ProductController::class, 'allOrders']);
+                    Route::get('/', [SellerProductManageController::class, 'allOrders']);
                 });
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
-                    Route::get('/returned', [ProductController::class, 'returnedOrders']);
+                    Route::get('/returned', [SellerProductManageController::class, 'returnedOrders']);
                 });
             });
 
@@ -562,15 +561,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::get('inventory', [SellerInventoryManageController::class, 'allInventories']);
                 });
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_LIST->value]], function () {
-                    Route::get('list', [ProductController::class, 'index']);
-                    Route::get('{slug}', [ProductController::class, 'show']);
-                    Route::post('add', [ProductController::class, 'store'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_ADD->value);
-                    Route::post('update', [ProductController::class, 'update']);
-                    Route::delete('remove/{id}', [ProductController::class, 'destroy']);
-                    Route::get('deleted/records', [ProductController::class, 'deleted_records']);
-                    Route::post('export', [ProductController::class, 'export'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_EXPORT->value);
-                    Route::post('import', [ProductController::class, 'import'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value);
-                    Route::get('stock-report', [ProductController::class, 'lowStockProducts'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_STOCK_REPORT->value);
+                    Route::get('list', [SellerProductManageController::class, 'index']);
+                    Route::get('{slug}', [SellerProductManageController::class, 'show']);
+                    Route::post('add', [SellerProductManageController::class, 'store'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_ADD->value);
+                    Route::post('update', [SellerProductManageController::class, 'update']);
+                    Route::delete('remove/{id}', [SellerProductManageController::class, 'destroy']);
+                    Route::get('deleted/records', [SellerProductManageController::class, 'deleted_records']);
+                    Route::post('export', [SellerProductManageController::class, 'export'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_EXPORT->value);
+                    Route::post('import', [SellerProductManageController::class, 'import'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value);
+                    Route::get('stock-report', [SellerProductManageController::class, 'lowStockProducts'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_STOCK_REPORT->value);
                 });
             });
             // Staff manage
