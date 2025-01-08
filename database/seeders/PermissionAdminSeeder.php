@@ -977,63 +977,13 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::TRANSACTION_REPORT->value,
-                            'PermissionTitle' => 'Transaction Report',
+                            'PermissionName' => PermissionKey::ADMIN_REPORT_ANALYTICS->value,
+                            'PermissionTitle' => 'Report',
                             'activity_scope' => 'system_level',
                             'icon' => '',
                             'translations' => [
-                                'en' => 'Transaction Report',
+                                'en' => 'Report',
                                 'ar' => 'تقرير المعاملات'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ITEM_REPORT->value,
-                            'PermissionTitle' => 'Item Report',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Item Report',
-                                'ar' => 'تقرير العنصر'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::STORE_WISE_REPORT->value,
-                            'PermissionTitle' => 'Store-wise Report',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Store-wise Report',
-                                'ar' => 'تقرير حسب المتجر'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::EXPENSE_REPORT->value,
-                            'PermissionTitle' => 'Expense Report',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Expense Report',
-                                'ar' => 'تقرير المصروفات'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::DISBURSEMENT_REPORT->value,
-                            'PermissionTitle' => 'Disbursement Report',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Disbursement Report',
-                                'ar' => 'تقرير الصرف'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ORDER_REPORT->value,
-                            'PermissionTitle' => 'Order Report',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Order Report',
-                                'ar' => 'تقرير الطلب'
                             ]
                         ]
                     ]
