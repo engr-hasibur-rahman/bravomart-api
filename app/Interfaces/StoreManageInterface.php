@@ -27,4 +27,6 @@ interface StoreManageInterface
     public function getOwnerStores();
 
     public function storeDashboard(string $slug);
+
+    public function getSellerWiseStores(int $SellerId);
 }

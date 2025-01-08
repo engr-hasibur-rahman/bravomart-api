@@ -27,4 +27,6 @@ interface ProductManageInterface
     public function changeStatus(array $data);
 
     public function getPendingProducts();
+
+    public function approvePendingProducts(array $productIds);
 }

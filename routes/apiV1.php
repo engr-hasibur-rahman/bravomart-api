@@ -159,30 +159,31 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
         // Product manage
         Route::group(['prefix' => 'product/'], function () {
-            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCTS_MANAGE->value]], function () {
-                Route::get('list', [AdminProductManageController::class, 'index']);
-                Route::post('add', [AdminProductManageController::class, 'store']);
-                Route::post('update', [AdminProductManageController::class, 'update']);
-                Route::delete('remove/{id?}', [SellerProductManageController::class, 'destroy']);
-                Route::get('approve', [AdminProductManageController::class, 'approveProduct']);
-                Route::get('request', [AdminProductManageController::class, 'productRequest']);
-                Route::post('change-status', [AdminProductManageController::class, 'changeStatus']);
-                Route::get('stock-report', [SellerProductManageController::class, 'lowOrOutOfStockProducts'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_STOCK_REPORT->value);
-                Route::post('author/approve', [ProductAuthorController::class, 'changeStatus']);
-            });
             // Product Inventory
             Route::group(['prefix' => 'inventory', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_INVENTORY->value]], function () {
                 Route::get('/', [AdminInventoryManageController::class, 'allInventories']);
                 Route::post('update', [AdminInventoryManageController::class, 'updateInventory']);
                 Route::delete('remove', [AdminInventoryManageController::class, 'deleteInventory']);
             });
+            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCTS_MANAGE->value]], function () {
+                Route::get('list', [AdminProductManageController::class, 'index']);
+                Route::post('add', [AdminProductManageController::class, 'store']);
+                Route::get('{slug}', [AdminProductManageController::class, 'show']);
+                Route::post('update', [AdminProductManageController::class, 'update']);
+                Route::delete('remove/{id?}', [SellerProductManageController::class, 'destroy']);
+                Route::post('approve', [AdminProductManageController::class, 'approveProductRequests']);
+                Route::get('request', [AdminProductManageController::class, 'productRequests']);
+                Route::post('change-status', [AdminProductManageController::class, 'changeStatus']);
+                Route::get('stock-report', [SellerProductManageController::class, 'lowOrOutOfStockProducts'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_STOCK_REPORT->value);
+                Route::post('author/approve', [ProductAuthorController::class, 'changeStatus']);
+            });
         });
-
         // Store Management
         Route::group(['prefix' => 'store/'], function () {
             // Store List Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_LIST->value]], function () {
                 Route::get('list', [AdminStoreManageController::class, 'storeList']);
+                Route::get('seller-stores', [AdminStoreManageController::class, 'sellerStores']);
                 Route::get('details/{id}', [AdminStoreManageController::class, 'storeDetails']);
             });
 
@@ -264,7 +265,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
         });
 
-       // Location Manage
+        // Location Manage
         Route::group(['prefix' => 'location/'], function () {
             // Country
             Route::group(['prefix' => 'country/'], function () {
