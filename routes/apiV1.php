@@ -19,16 +19,15 @@ use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
-use App\Http\Controllers\Api\V1\Admin\SellerManageController;
 use App\Http\Controllers\Api\V1\Admin\WithdrawMethodManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
-use App\Http\Controllers\Api\V1\Com\StoreManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
@@ -49,6 +48,7 @@ use App\Http\Controllers\Api\V1\Seller\SellerInventoryManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
 use App\Http\Controllers\Api\V1\Seller\StoreDashboardManageController;
@@ -192,7 +192,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['prefix' => 'store/'], function () {
             // Store List Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_LIST->value]], function () {
-                Route::get('list', [AdminStoreManageController::class, 'storeList']);
+                Route::get('list', [AdminStoreManageController::class, 'index']);
                 Route::get('seller-stores', [AdminStoreManageController::class, 'sellerStores']);
                 Route::get('details/{id}', [AdminStoreManageController::class, 'storeDetails']);
             });
@@ -268,11 +268,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
         // Seller Manage
         Route::group(['prefix' => 'seller/'], function () {
-            Route::get('list', [SellerManageController::class, 'getSellerList']);
-            Route::get('details/{slug}', [SellerManageController::class, 'getSellerDetails']);
-            Route::get('list/pending', [SellerManageController::class, 'pendingSellers']);
-            Route::post('approve', [SellerManageController::class, 'approveSeller']);
-            Route::post('suspend', [SellerManageController::class, 'rejectSeller']);
+            Route::get('list', [AdminSellerManageController::class, 'getSellerList']);
+            Route::get('active', [AdminSellerManageController::class, 'getActiveSellerList']);
+            Route::get('details/{slug}', [AdminSellerManageController::class, 'getSellerDetails']);
+            Route::get('list/pending', [AdminSellerManageController::class, 'pendingSellers']);
+            Route::post('approve', [AdminSellerManageController::class, 'approveSeller']);
+            Route::post('suspend', [AdminSellerManageController::class, 'rejectSeller']);
         });
 
         // Department manage
@@ -580,7 +581,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- vendor route start ------------------------- */
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
-        Route::get('/store-fetch-list', [StoreManageController::class, 'ownerWiseStore']);
+        Route::get('/store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
         Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
 
@@ -616,13 +617,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
             // seller store manage
             Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_MY_SHOP->value]], function () {
-                Route::get('list', [StoreManageController::class, 'index']);
-                Route::get('{id}', [StoreManageController::class, 'show']);
-                Route::post('add', [StoreManageController::class, 'store']);
-                Route::post('update', [StoreManageController::class, 'update']);
-                Route::put('status/{id}', [StoreManageController::class, 'status_update']);
-                Route::delete('remove/{id}', [StoreManageController::class, 'destroy']);
-                Route::get('deleted/records', [StoreManageController::class, 'deleted_records']);
+                Route::get('list', [SellerStoreManageController::class, 'index']);
+                Route::get('{id}', [SellerStoreManageController::class, 'show']);
+                Route::post('add', [SellerStoreManageController::class, 'store']);
+                Route::post('update', [SellerStoreManageController::class, 'update']);
+                Route::put('status/{id}', [SellerStoreManageController::class, 'status_update']);
+                Route::delete('remove/{id}', [SellerStoreManageController::class, 'destroy']);
+                Route::get('deleted/records', [SellerStoreManageController::class, 'deleted_records']);
             });
 
             // seller product manage

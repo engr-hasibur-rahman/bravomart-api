@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Seller\Store\Product;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Admin\SellerListForDropdownResource;
 use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -49,6 +50,7 @@ class ProductDetailsResource extends JsonResource
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
             "variants" => $this->variants,
             "store" => $this->store,
+            "seller" => new SellerListForDropdownResource($this->store->merchant),
             "category" => $this->category && $this->category->id
                 ? [
                     "id" => $this->category->id,

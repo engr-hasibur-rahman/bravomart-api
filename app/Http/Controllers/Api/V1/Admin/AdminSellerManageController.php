@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\SellerListForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Seller\SellerDetailsResource;
 use App\Http\Resources\Seller\SellerResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class SellerManageController extends Controller
+class AdminSellerManageController extends Controller
 {
     public function getSellerList(Request $request)
     {
@@ -32,6 +33,15 @@ class SellerManageController extends Controller
             'sellers' => SellerResource::collection($sellers),
             'meta' => new PaginationResource($sellers),
         ]);
+    }
+
+    public function getActiveSellerList()
+    {
+        $query = User::isSeller();
+        $sellers = $query->where('deleted_at', null)
+            ->where('status', 1)
+            ->get();
+        return response()->json(SellerListForDropdownResource::collection($sellers));
     }
 
     public function getSellerDetails($slug)

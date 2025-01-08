@@ -10,6 +10,7 @@ use MatanYadaev\EloquentSpatial\Objects\Polygon;
 class ComMerchantStore extends Model
 {
     use HasFactory, SoftDeletes;
+
     protected $dates = ['deleted_at'];
     protected $table = 'com_merchant_stores';
     protected $guarded = [];
@@ -56,18 +57,22 @@ class ComMerchantStore extends Model
         'meta_title',
         'meta_description',
     ];
+
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
     }
+
     public function area()
     {
         return $this->belongsTo(ComArea::class, 'area_id');
     }
+
     public function merchant()
     {
-        return $this->belongsTo(ComMerchant::class, 'merchant_id');
+        return $this->belongsTo(User::class, 'merchant_id');
     }
+
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')

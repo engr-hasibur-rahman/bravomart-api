@@ -5,7 +5,7 @@ namespace App\Http\Resources\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SellerWiseStoreResource extends JsonResource
+class SellerWiseStoreForDropdownResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,9 +15,10 @@ class SellerWiseStoreResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id"=> $this->id,
+            "id" => $this->id,
             "value" => $this->id,
             "label" => $this->name,
+            "store_type" => $this->store_type
         ];
     }
 }

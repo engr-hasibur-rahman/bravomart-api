@@ -241,7 +241,7 @@ class ProductManageRepository implements ProductManageInterface
             $product = Product::with([
                 'related_translations',
                 'variants',
-                'store',
+                'store.merchant',
                 'category',
                 'brand',
                 'unit',
