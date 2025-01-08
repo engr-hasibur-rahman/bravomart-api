@@ -248,17 +248,6 @@ class ProductManageRepository implements ProductManageInterface
             ])
                 ->where('slug', $slug)
                 ->first();
-//            $translations = $product->translations()->get()->groupBy('language');
-//            // Initialize an array to hold the transformed data
-//            $transformedData = [];
-//            foreach ($translations as $language => $items) {
-//                $languageInfo = ['language' => $language];
-//                /* iterate all Column to Assign Language Value */
-//                foreach ($this->product->translationKeys as $columnName) {
-//                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-//                }
-//                $transformedData[] = $languageInfo;
-//            }
             if ($product) {
                 return response()->json(new ProductDetailsResource($product));
             } else {
@@ -370,18 +359,34 @@ class ProductManageRepository implements ProductManageInterface
         }
     }
 
+    public function approvePendingProducts(array $productIds)
+    {
+        try {
+            $products = Product::whereIn('id', $productIds)
+                ->where('deleted_at', null)
+                ->update([
+                    'status' => 'approved'
+                ]);
+            return true;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404
+            ]);
+        }
+    }
+
     public function getPendingProducts()
     {
         try {
             $products = Product::where('deleted_at', '=', null)
                 ->where('status', 'pending')
                 ->with('store')
-                ->orderBy('created_at', 'asc')
+                ->latest()
                 ->paginate(10);
             return $products;
         } catch (\Exception $e) {
             throw $e;
         }
     }
-
 }

@@ -20,6 +20,7 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -213,7 +214,7 @@ class AdminProductManageController extends Controller
         }
     }
 
-    public function productRequest()
+    public function productRequests()
     {
         $products = $this->productRepo->getPendingProducts();
         if ($products) {
@@ -225,6 +226,34 @@ class AdminProductManageController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 404,
+            ]);
+        }
+    }
+
+    public function approveProductRequests(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_ids*' => 'required|array',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 422,
+                'errors' => $validator->errors(),
+            ]);
+        }
+        $success = $this->productRepo->approvePendingProducts($request->product_ids);
+        if ($success) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Products status']),
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.update_failed', ['name' => 'Products status']),
             ]);
         }
     }
