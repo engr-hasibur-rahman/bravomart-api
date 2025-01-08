@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerM
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
-use App\Http\Controllers\Api\V1\Admin\SellerManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
@@ -242,11 +242,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
         // Seller Manage
         Route::group(['prefix' => 'seller/'], function () {
-            Route::get('list', [SellerManageController::class, 'getSellerList']);
-            Route::get('details/{slug}', [SellerManageController::class, 'getSellerDetails']);
-            Route::get('list/pending', [SellerManageController::class, 'pendingSellers']);
-            Route::post('approve', [SellerManageController::class, 'approveSeller']);
-            Route::post('suspend', [SellerManageController::class, 'rejectSeller']);
+            Route::get('list', [AdminSellerManageController::class, 'getSellerList']);
+            Route::get('active', [AdminSellerManageController::class, 'getActiveSellerList']);
+            Route::get('details/{slug}', [AdminSellerManageController::class, 'getSellerDetails']);
+            Route::get('list/pending', [AdminSellerManageController::class, 'pendingSellers']);
+            Route::post('approve', [AdminSellerManageController::class, 'approveSeller']);
+            Route::post('suspend', [AdminSellerManageController::class, 'rejectSeller']);
         });
 
         // Department manage
