@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\SellerWiseStoreResource;
+use App\Http\Resources\Admin\SellerWiseStoreForDropdownResource;
 use App\Interfaces\StoreManageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -26,7 +26,7 @@ class AdminStoreManageController extends Controller
         $stores = $this->storeRepo->getSellerWiseStores($request->seller_id);
         if ($stores) {
             return response()->json([
-                'data' => SellerWiseStoreResource::collection($stores),
+                'data' => SellerWiseStoreForDropdownResource::collection($stores),
             ]);
         } else {
             return response()->json([
