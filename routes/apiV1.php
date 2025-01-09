@@ -115,7 +115,6 @@ Route::group(['namespace' => 'Api\V1'], function () {
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
-//    Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
     // media manage
     Route::group(['prefix' => 'media-upload'], function () {
         Route::post('/store', [MediaController::class, 'mediaUpload']);
@@ -123,7 +122,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('/alt', [MediaController::class, 'alt_change']);
         Route::post('/delete', [MediaController::class, 'delete_media']);
     });
-//    });
 
 
     // Marketing area manage
@@ -338,7 +336,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('slider/remove/{id}', [SliderManageController::class, 'destroy']);
         });
         // Product Brand Routing
-        Route::group(['prefix' => 'product-brands/'], function () {
+        Route::group(['prefix' => 'brand/'], function () {
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_BRAND_LIST->value]], function () {
                 Route::get('list', [ProductBrandController::class, 'index']);
                 Route::post('add', [ProductBrandController::class, 'store']);
