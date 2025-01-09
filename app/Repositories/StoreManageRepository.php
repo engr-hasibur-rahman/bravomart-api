@@ -347,9 +347,13 @@ class StoreManageRepository implements StoreManageInterface
         ];
     }
 
-    public function getSellerWiseStores(int $SellerId)
+    public function getSellerWiseStores(?int $SellerId)
     {
-        $stores = ComMerchantStore::where('merchant_id', $SellerId)->get();
+        if($SellerId){
+            $stores = ComMerchantStore::where('merchant_id', $SellerId)->get();
+        } else{
+            $stores = ComMerchantStore::where('status', 1)->get();
+        }
         return $stores;
     }
 }
