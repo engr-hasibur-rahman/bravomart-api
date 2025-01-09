@@ -5,19 +5,30 @@ namespace App\Http\Controllers\Api\V1\Product;
 use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductAuthorRequest;
+use App\Http\Resources\Admin\AdminAuthorDetailsResource;
+use App\Http\Resources\Admin\AdminAuthorRequestResource;
+use App\Http\Resources\Admin\AdminAuthorResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Seller\SellerAuthorDetailsResource;
+use App\Http\Resources\Seller\SellerAuthorResource;
 use App\Interfaces\ProductAuthorInterface;
 use App\Models\ProductAuthor;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductAuthorController extends Controller
 {
     public function __construct(
         protected ProductAuthorInterface $authorRepo,
-    ) {}
+    )
+    {
+    }
+
     public function index(Request $request)
     {
-        return $this->authorRepo->getPaginatedAuthor(
+        $authors = $this->authorRepo->getAllAuthor(
             $request->limit ?? 10,
             $request->page ?? 1,
             $request->language ?? DEFAULT_LANGUAGE,
@@ -26,12 +37,34 @@ class ProductAuthorController extends Controller
             $request->sort ?? 'asc',
             []
         );
+        return response()->json([
+            'data' => AdminAuthorResource::collection($authors),
+            'meta' => new PaginationResource($authors)
+        ]);
     }
+
+    public function sellerAuthors(Request $request)
+    {
+        $authors = $this->authorRepo->getSellerAuthors(
+            $request->limit ?? 10,
+            $request->page ?? 1,
+            $request->language ?? DEFAULT_LANGUAGE,
+            $request->search ?? "",
+            $request->sortField ?? 'id',
+            $request->sort ?? 'asc',
+            []
+        );
+        return response()->json([
+            'data' => SellerAuthorResource::collection($authors),
+            'meta' => new PaginationResource($authors),
+        ]);
+    }
+
     public function store(ProductAuthorRequest $request): JsonResponse
     {
-        //$slug = slug_generator($request->name,ProductAuthor::class);
         $slug = MultilangSlug::makeSlug(ProductAuthor::class, $request->name, 'slug');
         $request['slug'] = $slug;
+        $request['created_by'] = auth('api')->id();
         $author = $this->authorRepo->store($request->all());
         $this->authorRepo->storeTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
         if ($author) {
@@ -40,10 +73,31 @@ class ProductAuthorController extends Controller
             return $this->failed(translate('messages.save_failed', ['name' => 'Author']));
         }
     }
+
+    public function authorAddRequest(ProductAuthorRequest $request): JsonResponse
+    {
+        $slug = MultilangSlug::makeSlug(ProductAuthor::class, $request->name, 'slug');
+        $request['slug'] = $slug;
+        $request['created_by'] = auth('api')->id();
+        $author = $this->authorRepo->store($request->all());
+        $this->authorRepo->storeTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
+        if ($author) {
+            return $this->success(translate('messages.request_success', ['name' => 'Author']));
+        } else {
+            return $this->failed(translate('messages.request_success', ['name' => 'Author']));
+        }
+    }
+
     public function show(Request $request)
     {
-        return $this->authorRepo->getAuthorById($request->id);
+        $author = $this->authorRepo->getAuthorById($request->id);
+        if (User::query()->where('id', $author->created_by)->where('store_owner', 1)->exists()) {
+            return response()->json(new SellerAuthorDetailsResource($author));
+        } else {
+            return response()->json(new AdminAuthorDetailsResource($author));
+        }
     }
+
     public function update(ProductAuthorRequest $request)
     {
         $author = $this->authorRepo->update($request->all());
@@ -54,6 +108,7 @@ class ProductAuthorController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Author']));
         }
     }
+
     public function changeStatus(Request $request): JsonResponse
     {
         try {
@@ -63,6 +118,32 @@ class ProductAuthorController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Author']));
         }
     }
+
+    public function approveAuthors(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ids*' => 'required|array',
+        ]);
+        if ($validator->fails()) {
+            return $this->failed($validator->errors());
+        }
+        $success = $this->authorRepo->approveAuthorRequest($request->ids);
+        if ($success) {
+            return $this->success(__('messages.approve.success', ['name' => 'Authors']));
+        } else {
+            return $this->failed(__('messages.approve.failed', ['name' => 'Authors']));
+        }
+    }
+
+    public function authorRequests()
+    {
+        $authors = $this->authorRepo->authorRequests();
+        return response()->json([
+            'data' => AdminAuthorRequestResource::collection($authors),
+            'meta' => new PaginationResource($authors)
+        ]);
+    }
+
     public function destroy($id)
     {
         $this->authorRepo->delete($id);

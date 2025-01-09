@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Helpers\ComHelper;
+use App\Http\Resources\Translation\AreaTranslationResource;
+use App\Http\Resources\Translation\TranslationResource;
 use App\Models\ComArea;
 use App\Interfaces\ComAreaInterface;
 use Illuminate\Support\Facades\DB;
@@ -63,29 +65,30 @@ class ComAreaRepository implements ComAreaInterface
     public function getById($id): mixed
     {
         // Find the area by id
-        $area = $this->area->findOrFail($id);
-        // Fetch translation which is initialized in ComArea Model grouped by language
-        $translations = $area->translations()->get()->groupBy('language');
-
-        // Initialize an array to hold the transformed data
-        $transformedData = [];
-
-        foreach ($translations as $language => $items) {
-            $languageInfo = ['language' => $language];
-            /* iterate all Column to Assign Language Value */
-            foreach ($this->area->translationKeys as $columnName) {
-                $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-            }
-            $transformedData[] = $languageInfo;
-        }
+        $area = $this->area->with('related_translations')->findOrFail($id);
+//        // Fetch translation which is initialized in ComArea Model grouped by language
+//        $translations = $area->translations()->get()->groupBy('language');
+//
+//        // Initialize an array to hold the transformed data
+//        $transformedData = [];
+//
+//        foreach ($translations as $language => $items) {
+//            $languageInfo = ['language' => $language];
+//            /* iterate all Column to Assign Language Value */
+//            foreach ($this->area->translationKeys as $columnName) {
+//                $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
+//            }
+//            $transformedData[] = $languageInfo;
+//        }
         $formated_coordinates = json_decode($area->coordinates[0]->toJson(), true);
+
 
         return [
             'id' => $area->id,
             'code' => $area->code,
             'name' => $area->name,
             'coordinates' => ComHelper::format_coordiantes($formated_coordinates['coordinates']),
-            'translations' => $transformedData,
+            'translations' => AreaTranslationResource::collection($area->related_translations->groupBy('language')),
         ];
     }
     public function store(array $data): string|object

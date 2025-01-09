@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Admin;
+namespace App\Http\Resources\Translation;
 
-use App\Helpers\ComHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AreaDetailsResource extends JsonResource
+class AuthorTranslationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,6 +14,9 @@ class AreaDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "language_code" => $this->first()->language,
+            "name" => $this->where('key', 'name')->first()?->value,
+        ];
     }
 }
