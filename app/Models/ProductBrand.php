@@ -20,6 +20,7 @@ class ProductBrand extends Model implements HasMedia
     protected $fillable = [
         'brand_name',
         'brand_slug',
+        'brand_logo',
         'meta_title',
         'meta_description',
         'display_order',
