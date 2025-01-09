@@ -59,7 +59,6 @@ class AreaController extends Controller
     public function show(string $id)
     {
         return $this->areaRepo->getById($id);
-        //return QueryBuilder::for(ComArea::class)->findOrFail($id);
     }
 
     /**
