@@ -319,7 +319,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Tag List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Tag List',
                                         'ar' => 'قائمة العلامات'
@@ -329,32 +329,23 @@ class PermissionAdminSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => 'Authors (For Book Only)',
+                            'PermissionTitle' => 'Authors',
                             'activity_scope' => 'system_level',
                             'icon' => '',
                             'translations' => [
-                                'en' => 'Authors (For Book Only)',
+                                'en' => 'Authors',
                                 'ar' => 'قائمة المؤلفين'
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::PRODUCT_AUTHORS_LIST->value,
-                                    'PermissionTitle' => 'Author\'s List',
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_AUTHORS_MANAGE->value,
+                                    'PermissionTitle' => 'Author List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
-                                        'en' => 'Author\'s List',
+                                        'en' => 'Author List',
                                         'ar' => 'قائمة المؤلفين'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_AUTHORS_REQUESTED_FROM_STORE->value,
-                                    'PermissionTitle' => 'Author Add Requested From Store',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Author Add Requested From Store',
-                                        'ar' => 'تم طلب إضافة المؤلف من المتجر'
                                     ]
                                 ]
                             ]
@@ -364,6 +355,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Addons',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Addons',
                                 'ar' => 'إدارة التركيبات'

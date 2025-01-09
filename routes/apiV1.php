@@ -185,7 +185,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('request', [AdminProductManageController::class, 'productRequests']);
                 Route::post('change-status', [AdminProductManageController::class, 'changeStatus']);
                 Route::get('stock-report', [SellerProductManageController::class, 'lowOrOutOfStockProducts'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_STOCK_REPORT->value);
-                Route::post('author/approve', [ProductAuthorController::class, 'changeStatus']);
             });
         });
         // Store Management
@@ -347,6 +346,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('approve', [ProductBrandController::class, 'productBrandStatus']);
             });
         });
+
+        // Product Author manage
+        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_AUTHORS_MANAGE->value]], function () {
+            Route::get('product/author/list', [ProductAuthorController::class, 'index']);
+            Route::post('product/author/add', [ProductAuthorController::class, 'store']);
+            Route::get('product/author/{id}', [ProductAuthorController::class, 'show']);
+            Route::post('product/author/update', [ProductAuthorController::class, 'update']);
+            Route::delete('product/author/remove/{id}', [ProductAuthorController::class, 'destroy']);
+            Route::post('product/author/status', [ProductAuthorController::class, 'changeStatus']);
+            Route::post('product/author/approve', [ProductAuthorController::class, 'changeStatus']);
+        });
+
         // Product Category Routing
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value]], function () {
             Route::get('product-categories', [ProductCategoryController::class, 'index']);
@@ -722,12 +733,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('product/variant/deleted/records', [ProductVariantController::class, 'deleted_records']);
         });
 
-
-        // Product Author manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
+        // Seller  Product Author manage
+        Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
             Route::get('product/author/list', [ProductAuthorController::class, 'index']);
-        });
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
             Route::post('product/author/add', [ProductAuthorController::class, 'store']);
             Route::get('product/author/{id}', [ProductAuthorController::class, 'show']);
             Route::post('product/author/update', [ProductAuthorController::class, 'update']);
