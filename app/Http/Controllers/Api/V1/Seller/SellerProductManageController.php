@@ -175,6 +175,7 @@ class SellerProductManageController extends Controller
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'min_id' => 'nullable|integer|min:1',
             'max_id' => 'nullable|integer|min:1|gte:min_id',
+            'format' => 'nullable|string|in:csv,xlsx', // Allow file format selection
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -191,9 +192,14 @@ class SellerProductManageController extends Controller
             $endDate = $request->input('end_date');     // e.g., '2025-01-09'
             $minId = $request->input('min_id');         // Minimum product ID
             $maxId = $request->input('max_id');         // Maximum product ID
-
-            $fileName = 'products_' . time() . '.xlsx';
-
+            $format = $request->input('format');
+            if ($format == 'csv') {
+                $fileName = 'products_' . time() . '.csv';
+            } elseif ($format == 'xlsx') {
+                $fileName = 'products_' . time() . '.xlsx';
+            } else{
+                $fileName = 'products_' . time() . '.xlsx';
+            }
             return Excel::download(new ProductExport(
                 $selectedShopIds,
                 $selectedProductIds,
@@ -201,7 +207,7 @@ class SellerProductManageController extends Controller
                 $endDate,
                 $minId,
                 $maxId
-            ), $fileName);
+            ), $fileName, $format == 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
 
         } catch (\Exception $e) {
             return response()->json([
