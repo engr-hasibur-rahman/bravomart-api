@@ -6,6 +6,8 @@ use Illuminate\Http\UploadedFile;
 use App\Models\Media;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
@@ -24,8 +26,7 @@ class MediaService
         if ($request->hasFile($file_field_name)) {
             $image = $request->$file_field_name;
 
-            // Determine the folder type based on the media type (e.g., 'product', 'user', 'blog', 'payment')
-            $folder_type = $request->input('folder_type', 'default'); // 'folder_type' passed as a parameter to the request or use 'default'
+            $folder_type = 'default'; // 'folder_type' passed as a parameter to the request or use 'default'
 
             // Define the base path and subfolder path
             $base_path = 'uploads/media-uploader';
@@ -67,30 +68,31 @@ class MediaService
                 'user_id' => auth('sanctum')->id(),
             ]);
         }
-
         return null;
     }
+
     public function load_more_images($request){
         $image_query = Media::query();
         $image_query->where('user_id', auth('sanctum')->id());
-        $offset = $request->get('offset', 0);
+        $offset = $request->get('offset') ?? 0;
         $all_images = $image_query
             ->orderBy('id', 'ASC')
             ->skip($offset)
-            ->take(12)
+            ->take(20)
             ->get();
+
 
         $all_image_files = [];
 
         foreach ($all_images as $image){
             // Generate the public URL directly
-            $image_url = asset("storage/{$image->path}");
-            // Check if the grid version exists (without file_exists, use URL generation)
-            $grid_image_url = asset("storage/uploads/media-uploader/default/" . basename($image->path));
-
-            // If the grid version URL is valid, use that
-            if ($grid_image_url) {
-                $image_url = $grid_image_url;
+            $image_url = null;
+            // Check if the grid version file exists
+            $grid_image_path = "uploads/media-uploader/default/" . basename($image->path);
+            if (Storage::disk('public')->exists($grid_image_path)) {
+                $image_url = asset("storage/{$grid_image_path}");
+            } else {
+                $image_url = asset("storage/uploads/media-uploader/no-image.png");
             }
 
             $all_image_files[] = [
@@ -104,7 +106,6 @@ class MediaService
                 'upload_at' => date_format($image->created_at, 'd M y')
             ];
          }
-
 
         return $all_image_files;
     }
