@@ -5,90 +5,94 @@ namespace App\Exports;
 use App\Models\Product;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Illuminate\Support\Carbon;
 
 class ProductExport implements FromCollection, WithHeadings
 {
     protected $shopIds;
     protected $productIds;
+    protected $startDate;
+    protected $endDate;
+    protected $minId;
+    protected $maxId;
+    protected $defaultColumns = [
+        "id",
+        "store_id",
+        "category_id",
+        "brand_id",
+        "unit_id",
+        "name",
+        "slug",
+        "warranty",
+        "return_in_days",
+        "type",
+        "cash_on_delivery",
+        "behaviour",
+        "delivery_time_min",
+        "delivery_time_max",
+        "max_cart_qty",
+        "order_count",
+        "views",
+        "status",
+        "available_time_starts",
+        "available_time_ends",
+    ];
 
     /**
-     * Constructor to accept selected shop IDs and product IDs (optional)
+     * Constructor to accept selected shop IDs, product IDs, date range, and ID range
      */
-    public function __construct(array $shopIds = [], array $productIds = [])
+    public function __construct(
+        array $shopIds = [],
+        array $productIds = [],
+              $startDate = null,
+              $endDate = null,
+              $minId = null,
+              $maxId = null
+    )
     {
         $this->shopIds = $shopIds;
         $this->productIds = $productIds;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+        $this->minId = $minId;
+        $this->maxId = $maxId;
     }
 
     /**
-     * Get the collection of products based on selected IDs
+     * Get the collection of products based on provided filters
      */
     public function collection()
     {
-        if (!empty($this->productIds)) {
-            return Product::whereIn('id', $this->productIds)
-                ->select(
-                    "id",
-                    "store_id",
-                    "category_id",
-                    "brand_id",
-                    "unit_id",
-                    "tag_id",
-                    "name",
-                    "slug",
-                    "warranty",
-                    "return_in_days",
-                    "type",
-                    "cash_on_delivery",
-                    "behaviour",
-                    "delivery_time_min",
-                    "delivery_time_max",
-                    "max_cart_qty",
-                    "order_count",
-                    "views",
-                    "status",
-                    "available_time_starts",
-                    "available_time_ends"
-                )
-                ->get();
-        }
+        // Start building the query
+        $query = Product::query();
 
+        // Apply shop filter if provided
         if (!empty($this->shopIds)) {
-            return Product::whereIn('store_id', $this->shopIds)
-                ->select(
-                    "id",
-                    "store_id",
-                    "category_id",
-                    "brand_id",
-                    "unit_id",
-                    "tag_id",
-                    "name",
-                    "slug",
-                    "warranty",
-                    "return_in_days",
-                    "type",
-                    "cash_on_delivery",
-                    "behaviour",
-                    "delivery_time_min",
-                    "delivery_time_max",
-                    "max_cart_qty",
-                    "order_count",
-                    "views",
-                    "status",
-                    "available_time_starts",
-                    "available_time_ends"
-                )
-                ->get();
+            $query->whereIn('store_id', $this->shopIds);
         }
 
-        // If no shop IDs or product IDs are provided, export all products
-        return Product::select(
+        // Apply product filter if provided
+        if (!empty($this->productIds)) {
+            $query->whereIn('id', $this->productIds);
+        }
+
+        // Apply date range filter if provided
+        if ($this->startDate && $this->endDate) {
+            $query->whereBetween('created_at', [Carbon::parse($this->startDate), Carbon::parse($this->endDate)]);
+        }
+
+        // Apply ID range filter if provided
+        if ($this->minId && $this->maxId) {
+            $query->whereBetween('id', [$this->minId, $this->maxId]);
+        }
+
+        // Select required columns
+        $query->select(
             "id",
             "store_id",
             "category_id",
             "brand_id",
             "unit_id",
-            "tag_id",
             "name",
             "slug",
             "warranty",
@@ -104,7 +108,10 @@ class ProductExport implements FromCollection, WithHeadings
             "status",
             "available_time_starts",
             "available_time_ends"
-        )->get();
+        );
+
+        // Execute the query and return the collection
+        return $query->get();
     }
 
     /**
@@ -112,28 +119,6 @@ class ProductExport implements FromCollection, WithHeadings
      */
     public function headings(): array
     {
-        return [
-            "id",
-            "store_id",
-            "category_id",
-            "brand_id",
-            "unit_id",
-            "tag_id",
-            "name",
-            "slug",
-            "warranty",
-            "return_in_days",
-            "type",
-            "cash_on_delivery",
-            "behaviour",
-            "delivery_time_min",
-            "delivery_time_max",
-            "max_cart_qty",
-            "order_count",
-            "views",
-            "status",
-            "available_time_starts",
-            "available_time_ends",
-        ];
+        return $this->defaultColumns;
     }
 }

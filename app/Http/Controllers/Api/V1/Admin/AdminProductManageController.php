@@ -138,7 +138,6 @@ class AdminProductManageController extends Controller
     {
         try {
             $file = $request->file('file');
-
             if (!$file) {
                 return response()->json([
                     'status' => false,
@@ -174,14 +173,39 @@ class AdminProductManageController extends Controller
     /* Product export (all and both shop wise and product wise) */
     public function export(Request $request)
     {
+        // Validate inputs
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'min_id' => 'nullable|integer|min:1',
+            'max_id' => 'nullable|integer|min:1|gte:min_id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 422,
+                'message' => $validator->errors(),
+            ]);
+        }
         try {
-            // Get selected shop IDs and product IDs from the request
+            // Get filters from the request
             $selectedShopIds = (array)$request->input('store_ids', []);
             $selectedProductIds = (array)$request->input('product_ids', []);
+            $startDate = $request->input('start_date'); // e.g., '2025-01-01'
+            $endDate = $request->input('end_date');     // e.g., '2025-01-09'
+            $minId = $request->input('min_id');         // Minimum product ID
+            $maxId = $request->input('max_id');         // Maximum product ID
 
             $fileName = 'products_' . time() . '.xlsx';
 
-            return Excel::download(new ProductExport($selectedShopIds, $selectedProductIds), $fileName);
+            return Excel::download(new ProductExport(
+                $selectedShopIds,
+                $selectedProductIds,
+                $startDate,
+                $endDate,
+                $minId,
+                $maxId
+            ), $fileName);
 
         } catch (\Exception $e) {
             return response()->json([
