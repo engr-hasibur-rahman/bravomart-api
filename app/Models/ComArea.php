@@ -45,4 +45,9 @@ class ComArea extends Model
     {
         return $this->translations()->where('language', $language)->where('key', $key)->first()->value ?? null;
     }
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 }
