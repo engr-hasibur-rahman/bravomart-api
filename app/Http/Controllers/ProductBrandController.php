@@ -33,8 +33,7 @@ class ProductBrandController extends Controller
                 ->where('translations.translatable_type', '=', ProductBrand::class)
                 ->where('translations.language', '=', $language)
                 ->where('translations.key', '=', 'brand_name');
-        })
-            ->select(
+        })->select(
                 'product_brand.*',
                 DB::raw('COALESCE(translations.value, product_brand.brand_name) as brand_name')
             );

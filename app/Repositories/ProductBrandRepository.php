@@ -43,6 +43,8 @@ class ProductBrandRepository extends BaseRepository
             // Update existing brand
             $brand = ProductBrand::findOrFail($brandId);
         }
+
+
         // Prepare data for brand
         $data = [
             'brand_name' => $request['brand_name'],
@@ -50,7 +52,7 @@ class ProductBrandRepository extends BaseRepository
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'display_order' => $request['display_order'],
-            'brand_logo' => $request->brand_logo,
+            'brand_logo' => $request['brand_logo'],
             'seller_relation_with_brand' => $request['seller_relation_with_brand'] ?? null,
             'authorization_valid_from' => $request->has('authorization_valid_from')
                 ? Carbon::parse($request['authorization_valid_from'])->format('Y-m-d')
@@ -62,11 +64,10 @@ class ProductBrandRepository extends BaseRepository
             'updated_by' => auth()->user()->id ?? null,
             'status' => $request['status'] ?? 0, // Default to 'active' if not provided
         ];
+
         if ($brandId) {
-            // Update existing brand
             $brand->update($data);
         } else {
-            // Create new brand
             $brand = $this->create($data);
         }
 

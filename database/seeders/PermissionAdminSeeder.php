@@ -279,6 +279,28 @@ class PermissionAdminSeeder extends Seeder
                                 ]
                             ]
                         ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Units',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'AttributeIcon',
+                            'translations' => [
+                                'en' => 'Units',
+                                'ar' => 'قائمة السمات'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value,
+                                    'PermissionTitle' => 'Unit List',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Attribute List',
+                                        'ar' => 'قائمة السمات'
+                                    ]
+                                ]
+                            ]
+                        ],
                         // Product Brand
                         [
                             'PermissionName' => '',
