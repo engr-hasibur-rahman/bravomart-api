@@ -90,9 +90,9 @@ class MediaService
             // Check if the grid version file exists
             $grid_image_path = "uploads/media-uploader/default/" . basename($image->path);
             if (Storage::disk('public')->exists($grid_image_path)) {
-                $image_url = asset("storage/{$grid_image_path}");
+                $image_url = asset("{$grid_image_path}");
             } else {
-                $image_url = asset("storage/uploads/media-uploader/no-image.png");
+                $image_url = asset("uploads/media-uploader/no-image.png");
             }
 
             $all_image_files[] = [
