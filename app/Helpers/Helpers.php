@@ -198,7 +198,7 @@ if (!function_exists('translate')) {
 
             $image_url = asset("storage/{$image_details->path}");
             // Check if the grid version exists (without file_exists, use URL generation)
-            $grid_image_url = asset("storage/uploads/media-uploader/default/grid-" . basename($image_details->path));
+            $grid_image_url = asset("storage/uploads/media-uploader/default/" . basename($image_details->path));
 
             // If the grid version URL is valid, use that
             if ($grid_image_url) {
