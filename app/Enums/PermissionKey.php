@@ -85,10 +85,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Product Authors (For Book Only)                                 //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_AUTHORS_LIST = 'author-list';
-    case PRODUCT_AUTHORS_ADD = 'author-add';
-    case PRODUCT_AUTHORS_LIST_STORE = 'author-list-store';
-    case PRODUCT_AUTHORS_REQUESTED_FROM_STORE = 'author-req-from-store';
+    case ADMIN_PRODUCT_AUTHORS_MANAGE = '/admin/product/author/list';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Product addons (For Food Only)                                   //
@@ -266,9 +263,8 @@ enum PermissionKey: string
      case SELLER_STORE_ORDER_MANAGE = '/seller/store/orders';
      case SELLER_ORDERS_RETURNED_OR_REFUND = '/seller/orders/returned';
      case SELLER_ORDERS_REVIEWS_MANAGE = '/seller/orders/reviews';
-
-        //-------------- Brand add -----------------
-        case ADMIN_PRODUCT_BRAND_LIST_STORE = '/store/brand';
+    //====================== Product Authors (For Book Only)
+    case SELLER_PRODUCT_AUTHORS_MANAGE = '/seller/product/author/list';
 
     // ######################## Seller PermissionKey End ###########################
 

@@ -207,22 +207,13 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_BRAND_LIST_STORE->value,
-                            'PermissionTitle' => 'Brand/Manufacturers/Publications',
+                            'PermissionName' => PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value,
+                            'PermissionTitle' => 'Author List',
                             'activity_scope' => 'store_level',
                             'icon' => '',
+                            'options' => ['View', 'insert', 'update', 'delete'],
                             'translations' => [
-                                'en' => 'Brand/Manufacturers/Publications',
-                                'ar' => 'العلامة التجارية/الشركات المصنعة/المنشورات'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::PRODUCT_AUTHORS_LIST_STORE->value,
-                            'PermissionTitle' => 'Author\'s List',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Author\'s List',
+                                'en' => 'Author List',
                                 'ar' => 'قائمة المؤلفين'
                             ]
                         ],
