@@ -17,20 +17,51 @@ use Illuminate\Support\Arr;
  */
 class ProductAuthorRepository implements ProductAuthorInterface
 {
-    public function __construct(protected ProductAuthor $author, protected Translation $translation) {}
+    public function __construct(protected ProductAuthor $author, protected Translation $translation)
+    {
+    }
+
     public function translationKeys(): mixed
     {
         return $this->author->translationKeys;
     }
+
     public function model(): string
     {
         return ProductAuthor::class;
     }
+
     public function index(): mixed
     {
         return null;
     }
-    public function getPaginatedAuthor(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+
+    public function getAllAuthor(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    {
+        $author = ProductAuthor::leftJoin('translations', function ($join) use ($language) {
+            $join->on('product_authors.id', '=', 'translations.translatable_id')
+                ->where('translations.translatable_type', '=', ProductAuthor::class)
+                ->where('translations.language', '=', $language)
+                ->where('translations.key', '=', 'name');
+        })
+            ->select(
+                'product_authors.*',
+                DB::raw('COALESCE(translations.value, product_authors.name) as name')
+            );
+        // Apply search filter if search parameter exists
+        if ($search) {
+            $author->where(function ($query) use ($search) {
+                $query->where(DB::raw("CONCAT_WS(' ', product_authors.name, translations.value)"), 'like', "%{$search}%");
+            });
+        }
+        // Apply sorting and pagination
+        // Return the result
+        return $author
+            ->orderBy($sortField, $sort)
+            ->paginate($limit);
+    }
+
+    public function getSellerAuthors(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $author = ProductAuthor::leftJoin('translations', function ($join) use ($language) {
             $join->on('product_authors.id', '=', 'translations.translatable_id')
@@ -53,9 +84,12 @@ class ProductAuthorRepository implements ProductAuthorInterface
         // Apply sorting and pagination
         // Return the result
         return $author
+            ->where('created_by', auth('api')->id())
+            ->where('status', 1)
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
+
     public function store(array $data)
     {
         try {
@@ -66,6 +100,7 @@ class ProductAuthorRepository implements ProductAuthorInterface
             throw $th;
         }
     }
+
     public function update(array $data)
     {
         try {
@@ -81,36 +116,17 @@ class ProductAuthorRepository implements ProductAuthorInterface
             throw $th;
         }
     }
+
     public function getAuthorById(int|string $id)
     {
         try {
-            $author = ProductAuthor::find($id);
-            $translations = $author->translations()->get()->groupBy('language');
-            // Initialize an array to hold the transformed data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->author->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
-            if ($author) {
-                return response()->json([
-                    "data" => $author->toArray(),
-                    'translations' => $transformedData,
-                    "massage" => "Data was found"
-                ], 201);
-            } else {
-                return response()->json([
-                    "massage" => "Data was not found"
-                ], 404);
-            }
+            $author = ProductAuthor::with(['related_translations', 'creator'])->findOrFail($id);
+            return $author;
         } catch (\Throwable $th) {
             throw $th;
         }
     }
+
     public function changeStatus(array $data): mixed
     {
         $author = ProductAuthor::findOrFail($data["id"]);
@@ -118,6 +134,7 @@ class ProductAuthorRepository implements ProductAuthorInterface
         $author->save();
         return $author;
     }
+
     public function delete(int|string $id)
     {
         try {
@@ -129,6 +146,7 @@ class ProductAuthorRepository implements ProductAuthorInterface
             throw $th;
         }
     }
+
     private function deleteTranslation(int|string $id, string $translatable_type)
     {
         try {
@@ -140,7 +158,8 @@ class ProductAuthorRepository implements ProductAuthorInterface
             throw $th;
         }
     }
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -170,7 +189,8 @@ class ProductAuthorRepository implements ProductAuthorInterface
         }
         return true;
     }
-    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -206,5 +226,23 @@ class ProductAuthorRepository implements ProductAuthorInterface
             $this->translation->insert($translations);
         }
         return true;
+    }
+
+    public function approveAuthorRequest(array $ids)
+    {
+        if (!empty($ids)) {
+            $authors = ProductAuthor::whereIn('id', $ids)
+                ->where('status', 0)
+                ->update(['status' => 1]);
+            return $authors > 0; // if none of them is inactive
+        } else {
+            return false;
+        }
+    }
+
+    public function authorRequests()
+    {
+        $authors = ProductAuthor::where('status', 0)->paginate(10);
+        return $authors;
     }
 }

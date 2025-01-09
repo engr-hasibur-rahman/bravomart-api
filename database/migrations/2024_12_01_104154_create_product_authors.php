@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('born_date')->nullable();
             $table->date('death_date')->nullable();
             $table->integer('status')->default('0')->comment('1 = active, 0 = inactive'); //1. Active or empty, 2. Inactive
+            $table->unsignedInteger('created_by')->nullable();
             $table->timestamps();
         });
     }
