@@ -27,6 +27,7 @@ class UpdateProductBrandRequest extends FormRequest
             'brand_name' => 'required|string|max:255',
             'brand_slug' => 'required|string|max:255|unique:product_brand,brand_slug,' . $this->route('product_brand'),
             'brand_logo' => 'nullable|string|max:255',
+            'brand_logo_url' => 'nullable|string|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'seller_relation_with_brand' => 'nullable|string|max:255',

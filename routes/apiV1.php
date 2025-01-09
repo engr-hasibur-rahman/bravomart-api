@@ -115,7 +115,6 @@ Route::group(['namespace' => 'Api\V1'], function () {
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
-//    Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
     // media manage
     Route::group(['prefix' => 'media-upload'], function () {
         Route::post('/store', [MediaController::class, 'mediaUpload']);
@@ -123,7 +122,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::post('/alt', [MediaController::class, 'alt_change']);
         Route::post('/delete', [MediaController::class, 'delete_media']);
     });
-//    });
 
 
     // Marketing area manage
@@ -329,7 +327,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::delete('remove/{id}', [SliderManageController::class, 'destroy']);
         });
         // Product Brand Routing
-        Route::group(['prefix' => 'product-brands/'], function () {
+        Route::group(['prefix' => 'brand/'], function () {
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_BRAND_LIST->value]], function () {
                 Route::get('list', [ProductBrandController::class, 'index']);
                 Route::post('add', [ProductBrandController::class, 'store']);
@@ -390,26 +388,26 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('update', [CouponManageController::class, 'couponLineUpdate']);
             Route::delete('remove/{id}', [CouponManageController::class, 'couponLineDestroy']);
         });
+
+
         // Tag manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
-            Route::get('tag/list', [TagManageController::class, 'index']);
+        Route::group(['prefix' => 'tag/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_TAG_LIST->value]], function () {
+            Route::get('list', [TagManageController::class, 'index']);
+            Route::post('add', [TagManageController::class, 'store']);
+            Route::get('details', [TagManageController::class, 'show']);
+            Route::post('update', [TagManageController::class, 'update']);
+            Route::delete('remove/{id}', [TagManageController::class, 'destroy']);
         });
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
-            Route::post('tag/add', [TagManageController::class, 'store']);
-            Route::get('tag/details', [TagManageController::class, 'show']);
-            Route::post('tag/update', [TagManageController::class, 'update']);
-            Route::delete('tag/remove/{id}', [TagManageController::class, 'destroy']);
-        });
+
         // Unit manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
-            Route::get('unit/list', [UnitManageController::class, 'index']);
+        Route::group(['prefix' => 'unit/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value]], function () {
+            Route::get('list', [UnitManageController::class, 'index']);
+            Route::post('add', [UnitManageController::class, 'store']);
+            Route::get('details', [UnitManageController::class, 'show']);
+            Route::post('update', [UnitManageController::class, 'update']);
+            Route::delete('remove/{id}', [UnitManageController::class, 'destroy']);
         });
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
-            Route::post('unit/add', [UnitManageController::class, 'store']);
-            Route::get('unit/details', [UnitManageController::class, 'show']);
-            Route::post('unit/update', [UnitManageController::class, 'update']);
-            Route::delete('unit/remove/{id}', [UnitManageController::class, 'destroy']);
-        });
+
         // Blog manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
             Route::get('blog/list', [BlogManageController::class, 'blogIndex']);
