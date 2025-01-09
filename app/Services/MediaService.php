@@ -68,9 +68,9 @@ class MediaService
                 'user_id' => auth('sanctum')->id(),
             ]);
         }
-
         return null;
     }
+
     public function load_more_images($request){
         $image_query = Media::query();
         $image_query->where('user_id', auth('sanctum')->id());
