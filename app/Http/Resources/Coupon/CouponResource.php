@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Coupon;
 
-use App\Http\Resources\Com\Translation\ProductTranslationResource;
+use App\Http\Resources\Translation\CouponTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
