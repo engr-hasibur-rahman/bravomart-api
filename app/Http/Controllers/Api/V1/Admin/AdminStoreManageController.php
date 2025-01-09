@@ -68,7 +68,7 @@ class AdminStoreManageController extends Controller
     public function sellerStores(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'seller_id' => 'required|exists:users,id',
+            'seller_id' => 'nullable|exists:users,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
