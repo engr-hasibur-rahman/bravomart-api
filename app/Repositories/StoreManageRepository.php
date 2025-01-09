@@ -81,11 +81,21 @@ class StoreManageRepository implements StoreManageInterface
             ->paginate($limit);
     }
 
-    public function store(array $data)
+    public function storeForAuthSeller(array $data)
     {
         try {
             $data = Arr::except($data, ['translations']);
             $data['merchant_id'] = auth('api')->id();
+            $store = ComMerchantStore::create($data);
+            return $store->id;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }public function store(array $data)
+    {
+        $data['created_by'] = auth('api')->id();
+        try {
+            $data = Arr::except($data, ['translations']);
             $store = ComMerchantStore::create($data);
             return $store->id;
         } catch (\Throwable $th) {
@@ -125,6 +135,22 @@ class StoreManageRepository implements StoreManageInterface
     }
 
     public function update(array $data)
+    {
+        $data['updated_by'] = auth('api')->id();
+        try {
+            $store = ComMerchantStore::findOrFail($data['id']);
+            if ($store) {
+                $data = Arr::except($data, ['translations']);
+                $store->update($data);
+                return $store->id;
+            } else {
+                return false;
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+    public function updateForSeller(array $data)
     {
         try {
             $store = ComMerchantStore::findOrFail($data['id']);
@@ -321,9 +347,13 @@ class StoreManageRepository implements StoreManageInterface
         ];
     }
 
-    public function getSellerWiseStores(int $SellerId)
+    public function getSellerWiseStores(?int $SellerId)
     {
-        $stores = ComMerchantStore::where('merchant_id', $SellerId)->get();
+        if($SellerId){
+            $stores = ComMerchantStore::where('merchant_id', $SellerId)->get();
+        } else{
+            $stores = ComMerchantStore::where('status', 1)->get();
+        }
         return $stores;
     }
 }
