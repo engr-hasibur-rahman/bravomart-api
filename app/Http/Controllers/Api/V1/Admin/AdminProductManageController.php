@@ -171,57 +171,6 @@ class AdminProductManageController extends Controller
     }
 
     /* Product export (all and both shop wise and product wise) */
-//    public function export(Request $request)
-//    {
-//        // Validate inputs
-//        $validator = Validator::make($request->all(), [
-//            'start_date' => 'nullable|date',
-//            'end_date' => 'nullable|date|after_or_equal:start_date',
-//            'min_id' => 'nullable|integer|min:1',
-//            'max_id' => 'nullable|integer|min:1|gte:min_id',
-//            'format' => 'nullable|string|in:csv,xlsx', // Allow file format selection
-//        ]);
-//        if ($validator->fails()) {
-//            return response()->json([
-//                'status' => false,
-//                'status_code' => 422,
-//                'message' => $validator->errors(),
-//            ]);
-//        }
-//        try {
-//            // Get filters from the request
-//            $selectedShopIds = (array)$request->input('store_ids', []);
-//            $selectedProductIds = (array)$request->input('product_ids', []);
-//            $startDate = $request->input('start_date'); // e.g., '2025-01-01'
-//            $endDate = $request->input('end_date');     // e.g., '2025-01-09'
-//            $minId = $request->input('min_id');         // Minimum product ID
-//            $maxId = $request->input('max_id');         // Maximum product ID
-//            $format = $request->input('format');
-//            if ($format == 'csv') {
-//                $fileName = 'products_' . time() . '.csv';
-//            } elseif ($format == 'xlsx') {
-//                $fileName = 'products_' . time() . '.xlsx';
-//            } else{
-//                $fileName = 'products_' . time() . '.xlsx';
-//            }
-//            return Excel::download(new ProductExport(
-//                $selectedShopIds,
-//                $selectedProductIds,
-//                $startDate,
-//                $endDate,
-//                $minId,
-//                $maxId
-//            ), $fileName, $format == 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
-//
-//        } catch (\Exception $e) {
-//            return response()->json([
-//                'message' => 'Export failed',
-//                'error' => $e->getMessage()
-//            ], 500);
-//        }
-//    }
-
-
     public function export(Request $request)
     {
         // Validate inputs
@@ -231,6 +180,8 @@ class AdminProductManageController extends Controller
             'min_id' => 'nullable|integer|min:1',
             'max_id' => 'nullable|integer|min:1|gte:min_id',
             'format' => 'nullable|string|in:csv,xlsx', // Allow file format selection
+            'export_without_data' => 'nullable|in:yes,no',
+            'export_with_data' => 'nullable|in:yes,no',
         ]);
 
         if ($validator->fails()) {
@@ -242,45 +193,34 @@ class AdminProductManageController extends Controller
         }
 
         try {
-            // Get filters from the request
+            // Define common variables
             $selectedShopIds = (array)$request->input('store_ids', []);
             $selectedProductIds = (array)$request->input('product_ids', []);
             $startDate = $request->input('start_date'); // e.g., '2025-01-01'
             $endDate = $request->input('end_date');     // e.g., '2025-01-09'
             $minId = $request->input('min_id');         // Minimum product ID
             $maxId = $request->input('max_id');         // Maximum product ID
-            $format = $request->input('format', 'xlsx');
+            $format = $request->input('format', 'xlsx'); // Default to 'xlsx' if not provided
+            $fileName = 'products_' . time() . '.' . $format;
 
-            // Generate file name based on the requested format
-            $fileName = 'products_' . time() . ($format == 'csv' ? '.csv' : '.xlsx');
+            // Check export mode
+            $exportWithoutData = $request->input('export_without_data') === 'yes';
+            $exportWithData = $request->input('export_with_data') === 'yes';
 
-            // Fetch data based on filters
-            $data = Product::query()
-                ->when($selectedShopIds, fn($q) => $q->whereIn('shop_id', $selectedShopIds))
-                ->when($selectedProductIds, fn($q) => $q->whereIn('id', $selectedProductIds))
-                ->when($startDate, fn($q) => $q->whereDate('created_at', '>=', $startDate))
-                ->when($endDate, fn($q) => $q->whereDate('created_at', '<=', $endDate))
-                ->when($minId, fn($q) => $q->where('id', '>=', $minId))
-                ->when($maxId, fn($q) => $q->where('id', '<=', $maxId))
-                ->get();
-
-            // Check if data is empty
-            if ($data->isEmpty()) {
-                // Generate an empty CSV file with headers
-                $headers = ['ID', 'Name', 'Price', 'Created At']; // Example headers
-                $emptyCsv = fopen('php://temp', 'r+');
-                fputcsv($emptyCsv, $headers);
-                rewind($emptyCsv);
-
-                return response()->streamDownload(function () use ($emptyCsv) {
-                    fpassthru($emptyCsv);
-                }, $fileName, [
-                    'Content-Type' => 'text/csv',
-                    'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
-                ]);
+            if ($exportWithoutData) {
+                // Create an export with only column headers and no data
+                return Excel::download(new ProductExport(), $fileName, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
+            } elseif ($exportWithData) {
+                // Export only shop-based data
+                return Excel::download(new ProductExport(
+                    $selectedShopIds,
+                    [],
+                    $startDate,
+                    $endDate
+                ), $fileName, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
             }
 
-            // Export the data if not empty
+            // Default export with all filters applied
             return Excel::download(new ProductExport(
                 $selectedShopIds,
                 $selectedProductIds,
@@ -288,16 +228,16 @@ class AdminProductManageController extends Controller
                 $endDate,
                 $minId,
                 $maxId
-            ), $fileName, $format == 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
+            ), $fileName, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
+
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => 'Export failed',
-                'error' => $e->getMessage(),
-            ]);
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
+
 
 
     public function lowOrOutOfStockProducts(Request $request)

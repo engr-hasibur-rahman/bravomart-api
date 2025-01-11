@@ -18,10 +18,17 @@ class MediaController extends Controller
 
     public function mediaUpload(Request $request)
     {
+        if (empty($request->all())) {
+            return response()->json([
+                'error' => 'No data provided in the request.',
+            ], 400);
+        }
+
         $media = $this->mediaService->insert_media_image($request);
+
         return response()->json([
             'message' => 'Media uploaded successfully.',
-            'image_id' => $media->id,
+            'image_id' => $media->id ?? null,
         ], 201);
     }
 

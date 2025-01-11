@@ -532,7 +532,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             }
             // withdraw method
             Route::prefix('commission')->middleware(['permission:' . PermissionKey::ADMIN_COMMISSION_SETTINGS->value])->group(function () {
-                Route::get('/settings', [AdminCommissionManageController::class, 'commissionSettings']);
+                Route::match(['get', 'post'], '/settings', [AdminCommissionManageController::class, 'commissionSettings']);
                 Route::get('/history', [AdminCommissionManageController::class, 'commissionHistory']);
             });
         });
