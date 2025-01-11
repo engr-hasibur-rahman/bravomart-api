@@ -98,6 +98,7 @@ class ProductExport implements FromCollection, WithHeadings
             "category_id",
             "brand_id",
             "unit_id",
+            "tag_id",
             "name",
             "slug",
             "warranty",
