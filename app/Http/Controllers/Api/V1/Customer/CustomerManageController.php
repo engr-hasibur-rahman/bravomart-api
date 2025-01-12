@@ -301,12 +301,27 @@ class CustomerManageController extends Controller
 
     public function updateProfile(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string',
+            'image' => 'nullable|string',
+            'birth_day' => 'nullable|date|date_format:Y-m-d',
+            'gender' => 'nullable|string|in:male,female,others',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "message" => $validator->errors()
+            ]);
+        }
         try {
             if (!auth('sanctum')->check()) {
                 return unauthorized_response();
             }
 
-            $userId = auth('api')->id();
+            $userId = auth('sanctum')->id();
             $user = Customer::findOrFail($userId);
 
             if ($user) {
@@ -314,13 +329,13 @@ class CustomerManageController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
-                    'message' => __('messages.update_success', ['name' => 'User']),
+                    'message' => __('messages.update_success', ['name' => 'Customer']),
                 ]);
             } else {
                 return response()->json([
                     'status' => true,
                     'status_code' => 500,
-                    'message' => __('messages.update_failed'),
+                    'message' => __('messages.update_failed', ['name' => 'Customer']),
                 ]);
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -350,10 +365,10 @@ class CustomerManageController extends Controller
             ], 422);
         }
         try {
-            if (!auth()->guard('api')->user()) {
+            if (!auth('sanctum')->check()) {
                 return unauthorized_response();
             }
-            $userId = auth('api')->id();
+            $userId = auth('sanctum')->id();
             $user = Customer::findOrFail($userId);
             if ($user) {
                 $user->update($request->only('email'));
