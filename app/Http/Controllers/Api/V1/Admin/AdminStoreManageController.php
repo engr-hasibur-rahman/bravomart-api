@@ -9,6 +9,7 @@ use App\Http\Resources\Admin\SellerWiseStoreForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Store\StoreListResource;
 use App\Interfaces\StoreManageInterface;
+use App\Models\ComMerchantStore;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -97,5 +98,11 @@ class AdminStoreManageController extends Controller
     {
         $this->storeRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
+    }
+
+    public function storeRequest()
+    {
+        $stores = ComMerchantStore::pendingStores()->get();
+        return response()->json($stores);
     }
 }
