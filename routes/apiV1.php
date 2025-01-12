@@ -321,7 +321,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
         });
         // Slider manage
-        Route::group(['prefix'=>'slider/','middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['prefix' => 'slider/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [SliderManageController::class, 'index']);
             Route::post('add', [SliderManageController::class, 'store']);
             Route::get('details', [SliderManageController::class, 'show']);
@@ -339,10 +339,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
         });
         // Product Author manage
-        Route::group(['prefix'=>'product/author/','middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_AUTHORS_MANAGE->value]], function () {
+        Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_AUTHORS_MANAGE->value]], function () {
             Route::get('list', [ProductAuthorController::class, 'index']);
             Route::post('add', [ProductAuthorController::class, 'store']);
-            Route::get('details', [ProductAuthorController::class, 'show']);
+            Route::get('details/{id}', [ProductAuthorController::class, 'show']);
             Route::post('update', [ProductAuthorController::class, 'update']);
             Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
             Route::post('change-status', [ProductAuthorController::class, 'changeStatus']);
@@ -634,7 +634,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
             // Staff manage
-            Route::group(['prefix'=>'staff/','middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
+            Route::group(['prefix' => 'staff/', 'middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
                 Route::get('list', [StaffController::class, 'index']);
                 Route::post('add', [StaffController::class, 'store']);
                 Route::get('details', [StaffController::class, 'show']);
@@ -696,7 +696,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
         });  // END STORE ROUTE
         // Product variant manage
-        Route::group(['prefix'=>'product/variant/','middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['prefix' => 'product/variant/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [ProductVariantController::class, 'index']);
             Route::get('details', [ProductVariantController::class, 'show']);
             Route::post('add', [ProductVariantController::class, 'store']);
@@ -706,7 +706,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('deleted/records', [ProductVariantController::class, 'deleted_records']);
         });
         // Seller  Product Author manage
-        Route::group(['prefix'=>'product/author/','middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
+        Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
             Route::get('list', [ProductAuthorController::class, 'sellerAuthors']);
             Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
             Route::get('details', [ProductAuthorController::class, 'show']);
