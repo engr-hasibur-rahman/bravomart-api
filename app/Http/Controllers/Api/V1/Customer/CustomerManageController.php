@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerRequest;
+use App\Http\Resources\Customer\CustomerProfileResource;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Interfaces\CustomerManageInterface;
 use App\Models\Customer;
@@ -282,7 +283,7 @@ class CustomerManageController extends Controller
             $userId = auth('sanctum')->id();
             $user = Customer::findOrFail($userId);
 
-            return new UserDetailsResource($user);
+            return new CustomerProfileResource($user);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'status' => false,
@@ -370,7 +371,7 @@ class CustomerManageController extends Controller
             }
             $userId = auth('sanctum')->id();
             $user = Customer::findOrFail($userId);
-            if ($user) {
+            if ($user && !$user->email_verify_token) {
                 $user->update($request->only('email'));
                 return response()->json([
                     'status' => true,
@@ -381,7 +382,7 @@ class CustomerManageController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => 500,
-                    'message' => __('messages.update_failed'),
+                    'message' => __('messages.update_failed', ['name' => 'User']),
                 ]);
             }
         } catch (\Exception $e) {
