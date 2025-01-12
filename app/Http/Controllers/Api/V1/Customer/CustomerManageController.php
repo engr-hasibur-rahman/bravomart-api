@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerRequest;
 use App\Interfaces\CustomerManageInterface;
+use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -267,5 +269,55 @@ class CustomerManageController extends Controller
             'status_code' => 200,
             'message' => __('messages.email.verify.success')
         ]);
+    }
+
+    public function getProfile()
+    {
+
+    }
+
+    public function updateProfile(Request $request)
+    {
+
+    }
+
+    public function updateEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        try {
+            if (!auth()->guard('api')->user()) {
+                return unauthorized_response();
+            }
+            $userId = auth('api')->id();
+            $user = Customer::findOrFail($userId);
+            if ($user) {
+                $user->update($request->only('email'));
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.update_success', ['name' => 'User']),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 500,
+                    'message' => __('messages.update_failed'),
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.something_went_wrong'),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
