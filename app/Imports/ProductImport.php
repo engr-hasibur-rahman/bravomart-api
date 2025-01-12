@@ -57,9 +57,9 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
                 [
                     "store_id" => $row['store_id'],
                     "category_id" => $row['category_id'],
-                    "brand_id" => $row['brand_id'],
-                    "unit_id" => $row['unit_id'],
-                    "tag_id" => $row['tag_id'],
+                    "brand_id" => $row['brand_id'] ?? null,
+                    "unit_id" => $row['unit_id'] ?? null,
+                    "tag_id" => $row['tag_id'] ?? null,
                     "name" => $row['name'],
                     "slug" => $row['slug'] ?? 'no-slug',
                     "warranty" => $row['warranty'],

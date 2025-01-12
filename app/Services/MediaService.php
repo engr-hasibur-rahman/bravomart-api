@@ -68,9 +68,9 @@ class MediaService
                 'user_id' => auth('sanctum')->id(),
             ]);
         }
+
         return null;
     }
-
     public function load_more_images($request){
         $image_query = Media::query();
         $image_query->where('user_id', auth('sanctum')->id());
@@ -86,13 +86,13 @@ class MediaService
 
         foreach ($all_images as $image){
             // Generate the public URL directly
-            $image_url = null;
-            // Check if the grid version file exists
-            $grid_image_path = "uploads/media-uploader/default/" . basename($image->path);
-            if (Storage::disk('public')->exists($grid_image_path)) {
-                $image_url = asset("storage/{$grid_image_path}");
-            } else {
-                $image_url = asset("storage/uploads/media-uploader/no-image.png");
+            $image_url = asset("storage/{$image->path}");
+            // Check if the grid version exists (without file_exists, use URL generation)
+            $grid_image_url = asset("storage/uploads/media-uploader/default/" . basename($image->path));
+
+            // If the grid version URL is valid, use that
+            if ($grid_image_url) {
+                $image_url = $grid_image_url;
             }
 
             $all_image_files[] = [
