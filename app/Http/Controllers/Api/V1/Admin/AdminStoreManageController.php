@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminStoreRequest;
 use App\Http\Requests\SellerStoreRequest;
+use App\Http\Resources\Admin\AdminStoreRequestResource;
 use App\Http\Resources\Admin\SellerWiseStoreForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Store\StoreListResource;
@@ -102,7 +103,15 @@ class AdminStoreManageController extends Controller
 
     public function storeRequest()
     {
-        $stores = ComMerchantStore::pendingStores()->get();
-        return response()->json($stores);
+        $stores = ComMerchantStore::pendingStores()->paginate(10);
+        return response()->json([
+            'data' => AdminStoreRequestResource::collection($stores),
+            'meta' => new PaginationResource($stores),
+        ]);
+    }
+
+    public function approveStoreRequests(Request $request)
+    {
+
     }
 }
