@@ -78,4 +78,9 @@ class ComMerchantStore extends Model
         return $this->hasMany(Translation::class, 'translatable_id')
             ->where('translatable_type', self::class);
     }
+
+    public function scopePendingStores($query)
+    {
+        return $query->where('status', 0);
+    }
 }
