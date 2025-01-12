@@ -694,6 +694,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::delete('remove/{id}', [BannerManageController::class, 'remove']);
                 });
             });
+
+            // Seller  Product Author manage
+            Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
+                Route::get('list', [ProductAuthorController::class, 'sellerAuthors']);
+                Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
+                Route::get('details', [ProductAuthorController::class, 'show']);
+                Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
+            });
         });  // END STORE ROUTE
         // Product variant manage
         Route::group(['prefix' => 'product/variant/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
@@ -704,13 +712,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('change-status', [ProductVariantController::class, 'status_update']);
             Route::delete('remove/{id}', [ProductVariantController::class, 'destroy']);
             Route::get('deleted/records', [ProductVariantController::class, 'deleted_records']);
-        });
-        // Seller  Product Author manage
-        Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
-            Route::get('list', [ProductAuthorController::class, 'sellerAuthors']);
-            Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
-            Route::get('details', [ProductAuthorController::class, 'show']);
-            Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
         });
     });
     /* --------------------------> vendor route end <----------------------------- */
