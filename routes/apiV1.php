@@ -723,7 +723,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 });
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
+    // media manage
+    Route::group(['prefix' => 'media-upload'], function () {
+        Route::post('/store', [MediaController::class, 'mediaUpload']);
+        Route::get('/load-more', [MediaController::class, 'load_more']);
+        Route::post('/alt', [MediaController::class, 'alt_change']);
+        Route::post('/delete', [MediaController::class, 'delete_media']);
+    });
+
     Route::group(['middleware' => ['check.email.verification.option']], function () {
+
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
             Route::post('update', [CustomerAddressManageController::class, 'update']);
@@ -732,6 +741,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('make-default', [CustomerAddressManageController::class, 'defaultAddress']);
             Route::delete('remove/{id}', [CustomerAddressManageController::class, 'destroy']);
         });
+
         Route::group(['prefix' => 'support-ticket'], function () {
             Route::get('list', [SupportTicketManageController::class, 'index']);
             Route::post('store', [SupportTicketManageController::class, 'store']);
