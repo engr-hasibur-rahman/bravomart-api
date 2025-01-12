@@ -724,6 +724,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
     Route::group(['middleware' => ['check.email.verification.option']], function () {
+        Route::group(['prefix' => 'profile'], function () {
+            Route::get('/', [CustomerManageController::class, 'profile']);
+            Route::post('/update', [CustomerManageController::class, 'updateProfile']);
+            Route::post('/change-email', [CustomerManageController::class, 'updateEmail']);
+        });
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
             Route::post('update', [CustomerAddressManageController::class, 'update']);
