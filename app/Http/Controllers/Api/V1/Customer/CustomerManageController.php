@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerRequest;
+use App\Http\Resources\User\UserDetailsResource;
 use App\Interfaces\CustomerManageInterface;
 use App\Models\Customer;
 use App\Models\User;
@@ -273,12 +274,69 @@ class CustomerManageController extends Controller
 
     public function getProfile()
     {
+        try {
+            if (!auth('sanctum')->check()) {
+                return unauthorized_response();
+            }
 
+            $userId = auth('sanctum')->id();
+            $user = Customer::findOrFail($userId);
+
+            return new UserDetailsResource($user);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.data_not_found'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.something_went_wrong'),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function updateProfile(Request $request)
     {
+        try {
+            if (!auth('sanctum')->check()) {
+                return unauthorized_response();
+            }
 
+            $userId = auth('api')->id();
+            $user = Customer::findOrFail($userId);
+
+            if ($user) {
+                $user->update($request->only('first_name', 'last_name', 'phone', 'image'));
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.update_success', ['name' => 'User']),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 500,
+                    'message' => __('messages.update_failed'),
+                ]);
+            }
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.data_not_found'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.something_went_wrong'),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function updateEmail(Request $request)

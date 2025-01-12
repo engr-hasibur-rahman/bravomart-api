@@ -732,8 +732,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
     });
 
     Route::group(['middleware' => ['check.email.verification.option']], function () {
-        Route::group(['prefix' => 'profile'], function () {
-            Route::get('/', [CustomerManageController::class, 'profile']);
+        Route::group(['prefix' => 'profile/'], function () {
+            Route::get('/', [CustomerManageController::class, 'getProfile']);
             Route::post('/update', [CustomerManageController::class, 'updateProfile']);
             Route::post('/change-email', [CustomerManageController::class, 'updateEmail']);
         });
