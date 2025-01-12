@@ -180,8 +180,7 @@ class AdminProductManageController extends Controller
             'min_id' => 'nullable|integer|min:1',
             'max_id' => 'nullable|integer|min:1|gte:min_id',
             'format' => 'nullable|string|in:csv,xlsx', // Allow file format selection
-            'export_without_data' => 'nullable|in:yes,no',
-            'export_with_data' => 'nullable|in:yes,no',
+            'export_without_data' => 'nullable|boolean'
         ]);
 
         if ($validator->fails()) {
@@ -194,6 +193,7 @@ class AdminProductManageController extends Controller
 
         try {
             // Define common variables
+            $exportWithoutData = $request->input('export_without_data', false);
             $selectedShopIds = (array)$request->input('store_ids', []);
             $selectedProductIds = (array)$request->input('product_ids', []);
             $startDate = $request->input('start_date'); // e.g., '2025-01-01'
@@ -203,23 +203,6 @@ class AdminProductManageController extends Controller
             $format = $request->input('format', 'xlsx'); // Default to 'xlsx' if not provided
             $fileName = 'products_' . time() . '.' . $format;
 
-            // Check export mode
-            $exportWithoutData = $request->input('export_without_data') === 'yes';
-            $exportWithData = $request->input('export_with_data') === 'yes';
-
-            if ($exportWithoutData) {
-                // Create an export with only column headers and no data
-                return Excel::download(new ProductExport(), $fileName, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
-            } elseif ($exportWithData) {
-                // Export only shop-based data
-                return Excel::download(new ProductExport(
-                    $selectedShopIds,
-                    [],
-                    $startDate,
-                    $endDate
-                ), $fileName, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
-            }
-
             // Default export with all filters applied
             return Excel::download(new ProductExport(
                 $selectedShopIds,
@@ -227,7 +210,8 @@ class AdminProductManageController extends Controller
                 $startDate,
                 $endDate,
                 $minId,
-                $maxId
+                $maxId,
+                $exportWithoutData
             ), $fileName, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
 
         } catch (\Exception $e) {

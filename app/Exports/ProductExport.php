@@ -16,6 +16,7 @@ class ProductExport implements FromCollection, WithHeadings
     protected $endDate;
     protected $minId;
     protected $maxId;
+    protected $exportWithoutData;
     protected $defaultColumns = [
         "id",
         "store_id",
@@ -48,7 +49,8 @@ class ProductExport implements FromCollection, WithHeadings
               $startDate = null,
               $endDate = null,
               $minId = null,
-              $maxId = null
+              $maxId = null,
+              $exportWithoutData = false
     )
     {
         $this->shopIds = $shopIds;
@@ -57,6 +59,7 @@ class ProductExport implements FromCollection, WithHeadings
         $this->endDate = $endDate;
         $this->minId = $minId;
         $this->maxId = $maxId;
+        $this->exportWithoutData = $exportWithoutData;
     }
 
     /**
@@ -64,11 +67,15 @@ class ProductExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
+        if ($this->exportWithoutData) {
+            // Return an empty array if export_without_data is true
+            return collect([]);
+        }
         // Start building the query
         $query = Product::query();
-        if (auth('api')->user()->store_owner == 1){
-            $storeIds = ComMerchantStore::where('merchant_id',auth('api')->id())->pluck('id')->toArray();
-            $query->whereIn('store_id',$storeIds);
+        if (auth('api')->user()->store_owner == 1) {
+            $storeIds = ComMerchantStore::where('merchant_id', auth('api')->id())->pluck('id')->toArray();
+            $query->whereIn('store_id', $storeIds);
         }
 
         // Apply shop filter if provided
@@ -98,7 +105,6 @@ class ProductExport implements FromCollection, WithHeadings
             "category_id",
             "brand_id",
             "unit_id",
-            "tag_id",
             "name",
             "slug",
             "warranty",
