@@ -699,7 +699,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
                 Route::get('list', [ProductAuthorController::class, 'sellerAuthors']);
                 Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
-                Route::get('details', [ProductAuthorController::class, 'show']);
+                Route::get('details/{id}', [ProductAuthorController::class, 'show']);
                 Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
             });
         });  // END STORE ROUTE
