@@ -2,9 +2,9 @@
 
 use App\Enums\PermissionKey;
 use Illuminate\Support\Facades\Route;
-use Modules\Wallet\Http\Controllers\Api\WalletCustomerController;
-use Modules\Wallet\Http\Controllers\Api\WalletManageAdminController;
-use Modules\Wallet\Http\Controllers\Api\WalletSellerController;
+use Modules\Wallet\app\Http\Controllers\Api\WalletCustomerController;
+use Modules\Wallet\app\Http\Controllers\Api\WalletManageAdminController;
+use Modules\Wallet\app\Http\Controllers\Api\WalletSellerController;
 
 
 Route::middleware(['auth:sanctum', 'permission:' . PermissionKey::ADMIN_WALLET_MANAGE->value])->prefix('v1')->group(function () {
