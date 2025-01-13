@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UnitRequest;
+use App\Http\Resources\Admin\AdminUnitDetailsResource;
 use App\Http\Resources\Admin\AdminUnitResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\UnitInterface;
@@ -41,7 +42,8 @@ class AdminUnitManageController extends Controller
     }
     public function show(Request $request)
     {
-        return $this->unitRepo->getUnitById($request->id);
+        $unit = $this->unitRepo->getUnitById($request->id);
+        return response()->json(new AdminUnitDetailsResource($unit));
     }
     public function update(UnitRequest $request)
     {
