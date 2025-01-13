@@ -147,7 +147,7 @@ class AdminProductManageController extends Controller
             Excel::import(new ProductImport, $file);
             // Generate a filename with a timestamp
             $timestamp = now()->timestamp;
-            $filename = 'seller/product/' . $timestamp . '_' . $file->getClientOriginalName();
+            $filename = 'admin/product/' . $timestamp . '_' . $file->getClientOriginalName();
             // Save the uploaded file to private storage
             Storage::disk('import')->put($filename, file_get_contents($file));
             return response()->json([

@@ -205,7 +205,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // Store Approval Request Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_APPROVAL->value]], function () {
                 Route::get('request', [AdminStoreManageController::class, 'storeRequest']);
-                Route::post('approve', [AdminStoreManageController::class, 'changeStatus']);
+                Route::post('approve', [AdminStoreManageController::class, 'approveStoreRequests']);
             });
             // Recommended Store Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_RECOMMENDED->value]], function () {
