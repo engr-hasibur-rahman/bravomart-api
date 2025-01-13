@@ -266,15 +266,23 @@ if (!function_exists('translate')) {
         return true;
     }
 
-    if (!function_exists('isModuleActive')) {
-        function isModuleActive(string $moduleName): bool
-        {
-            // Replace this with your logic to check if the module is purchased and active.
-            $modulesConfig = config('modules');
-            return isset($modulesConfig[$moduleName]) && $modulesConfig[$moduleName]['active'] === true;
+    function moduleExists($name){
+        $module_status = json_decode(file_get_contents(__DIR__.'/../../modules_statuses.json'));
+        $folderPath = base_path('./Modules'.DIRECTORY_SEPARATOR .$name);
+        if(file_exists($folderPath) && is_dir($folderPath)){
+            return property_exists($module_status,$name) ? $module_status->$name : false;
         }
+        return false;
     }
 
+    function membershipModuleExistsAndEnable($name){
+        $module_status = json_decode(file_get_contents(__DIR__.'/../../modules_statuses.json'));
+        $folderPath = base_path('./Modules'.DIRECTORY_SEPARATOR .$name);
+        if(file_exists($folderPath) && is_dir($folderPath)){
+            return property_exists($module_status,$name) ? $module_status->$name : false;
+        }
+        return false;
+    }
 
 
 

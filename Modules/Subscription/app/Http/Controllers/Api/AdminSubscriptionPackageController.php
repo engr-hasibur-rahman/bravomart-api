@@ -4,7 +4,8 @@ namespace Modules\Subscription\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Subscription\Models\Subscription;
+use Illuminate\Support\Facades\Validator;
+use Modules\Subscription\app\Models\Subscription;
 
 class AdminSubscriptionPackageController extends Controller
 {
@@ -16,14 +17,37 @@ class AdminSubscriptionPackageController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'validity' => 'required|integer',
             'price' => 'required|numeric',
+            'pos_system' => 'nullable|boolean',
+            'self_delivery' => 'nullable|boolean',
+            'mobile_app' => 'nullable|boolean',
+            'live_chat' => 'nullable|boolean',
+            'order_limit' => 'nullable|integer',
+            'product_limit' => 'nullable|integer',
+            'product_featured_limit' => 'nullable|integer',
         ]);
 
-        $package = Subscription::create($data); // Create a new package
-        return response()->json($package, 201);
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Validation errors
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+        // create the subscription package
+        $subscription = Subscription::create($validator->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Subscription package created successfully',
+        ], 201);
     }
 
     public function show($id)

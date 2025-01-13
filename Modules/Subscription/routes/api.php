@@ -4,15 +4,13 @@ use App\Enums\PermissionKey;
 use Illuminate\Support\Facades\Route;
 use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionPackageController;
 use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionSellerController;
-use Modules\Subscription\app\Http\Controllers\SubscriptionController;
-use Modules\Subscription\Http\Controllers\Api\AdminSubscriptionSettingsController;
+use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionSettingsController;
 
-
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('v1/admin/business-operations/subscription/')->group(function () {
         //  subscription package
         Route::prefix('package/')->middleware(['permission:' . PermissionKey::ADMIN_SUBSCRIPTION_PACKAGE_MANAGE->value])->group(function () {
             Route::get('list', [AdminSubscriptionPackageController::class, 'index']);
-            Route::post('add', [AdminSubscriptionPackageController::class, 'store']);
+            Route::post('store', [AdminSubscriptionPackageController::class, 'store']);
             Route::get('edit/{id}', [AdminSubscriptionPackageController::class, 'show']);
             Route::patch('statusChange', [AdminSubscriptionPackageController::class, 'statusChange']);
             Route::delete('delete/{id}', [AdminSubscriptionPackageController::class, 'destroy']);
