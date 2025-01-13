@@ -11,15 +11,20 @@ use Illuminate\Http\Request;
 
 class UnitRepository implements UnitInterface
 {
-    public function __construct(protected Unit $unit, protected Translation $translation) {}
+    public function __construct(protected Unit $unit, protected Translation $translation)
+    {
+    }
+
     public function translationKeys(): mixed
     {
         return $this->unit->translationKeys;
     }
+
     public function model(): string
     {
         return Unit::class;
     }
+
     public function getPaginatedUnit(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $unit = Unit::leftJoin('translations', function ($join) use ($language) {
@@ -47,6 +52,7 @@ class UnitRepository implements UnitInterface
             ->paginate($limit);
         return $units;
     }
+
     public function store(array $data)
     {
         try {
@@ -57,6 +63,7 @@ class UnitRepository implements UnitInterface
             throw $th;
         }
     }
+
     public function update(array $data)
     {
         try {
@@ -72,6 +79,7 @@ class UnitRepository implements UnitInterface
             throw $th;
         }
     }
+
     public function delete(int|string $id)
     {
         try {
@@ -83,6 +91,7 @@ class UnitRepository implements UnitInterface
             throw $th;
         }
     }
+
     private function deleteTranslation(int|string $id, string $translatable_type)
     {
         try {
@@ -94,27 +103,13 @@ class UnitRepository implements UnitInterface
             throw $th;
         }
     }
+
     public function getUnitById(int|string $id)
     {
         try {
-            $unit = Unit::find($id);
-            $translations = $unit->translations()->get()->groupBy('language');
-            // Initialize an array to hold the transformed data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->unit->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
+            $unit = Unit::with('related_translations')->findOrFail($id);
             if ($unit) {
-                return response()->json([
-                    "data" => $unit->toArray(),
-                    'translations' => $transformedData,
-                    "massage" => "Data was found"
-                ], 201);
+                return $unit;
             } else {
                 return response()->json([
                     "massage" => "Data was not found"
@@ -124,7 +119,8 @@ class UnitRepository implements UnitInterface
             throw $th;
         }
     }
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -154,7 +150,8 @@ class UnitRepository implements UnitInterface
         }
         return true;
     }
-    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
