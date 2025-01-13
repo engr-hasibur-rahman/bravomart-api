@@ -55,7 +55,7 @@ use App\Http\Controllers\Api\V1\Seller\StoreDashboardManageController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
-use App\Http\Controllers\Api\V1\UnitManageController;
+use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
@@ -180,7 +180,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('update', [AdminProductManageController::class, 'update']);
                 Route::delete('remove/{id?}', [AdminProductManageController::class, 'destroy']);
                 Route::post('approve', [AdminProductManageController::class, 'approveProductRequests']);
-                Route::get('request', [AdminProductManageController::class, 'productRequests']);
+                Route::get('request', [AdminProductManageController::class, 'productRequests'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_PRODUCT_APPROVAL_REQ->value);
                 Route::post('export', [AdminProductManageController::class, 'export'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_PRODUCT_BULK_EXPORT->value);
                 Route::post('import', [AdminProductManageController::class, 'import'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_PRODUCT_BULK_IMPORT->value);
                 Route::post('change-status', [AdminProductManageController::class, 'changeStatus']);
@@ -204,7 +204,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
             // Store Approval Request Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_APPROVAL->value]], function () {
-                Route::get('approval-request', [AdminStoreManageController::class, 'storeApproveRequest']);
+                Route::get('request', [AdminStoreManageController::class, 'storeRequest']);
                 Route::post('approve', [AdminStoreManageController::class, 'changeStatus']);
             });
             // Recommended Store Routes
@@ -403,11 +403,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
         // Unit manage
         Route::group(['prefix' => 'unit/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value]], function () {
-            Route::get('list', [UnitManageController::class, 'index']);
-            Route::post('add', [UnitManageController::class, 'store']);
-            Route::get('details', [UnitManageController::class, 'show']);
-            Route::post('update', [UnitManageController::class, 'update']);
-            Route::delete('remove/{id}', [UnitManageController::class, 'destroy']);
+            Route::get('list', [AdminUnitManageController::class, 'index']);
+            Route::post('add', [AdminUnitManageController::class, 'store']);
+            Route::get('details/{id}', [AdminUnitManageController::class, 'show']);
+            Route::post('update', [AdminUnitManageController::class, 'update']);
+            Route::delete('remove/{id}', [AdminUnitManageController::class, 'destroy']);
         });
 
         // Blog manage
@@ -695,6 +695,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::delete('remove/{id}', [BannerManageController::class, 'remove']);
                 });
             });
+
+            // Seller  Product Author manage
+            Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
+                Route::get('list', [ProductAuthorController::class, 'sellerAuthors']);
+                Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
+                Route::get('details/{id}', [ProductAuthorController::class, 'show']);
+                Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
+            });
         });  // END STORE ROUTE
         // Product variant manage
         Route::group(['prefix' => 'product/variant/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
@@ -705,13 +713,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('change-status', [ProductVariantController::class, 'status_update']);
             Route::delete('remove/{id}', [ProductVariantController::class, 'destroy']);
             Route::get('deleted/records', [ProductVariantController::class, 'deleted_records']);
-        });
-        // Seller  Product Author manage
-        Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
-            Route::get('list', [ProductAuthorController::class, 'sellerAuthors']);
-            Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
-            Route::get('details', [ProductAuthorController::class, 'show']);
-            Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
         });
     });
     /* --------------------------> vendor route end <----------------------------- */
@@ -733,6 +734,12 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
     });
 
     Route::group(['middleware' => ['check.email.verification.option']], function () {
+        Route::group(['prefix' => 'profile/'], function () {
+            Route::get('/', [CustomerManageController::class, 'getProfile']);
+            Route::post('/update', [CustomerManageController::class, 'updateProfile']);
+            Route::post('/change-email', [CustomerManageController::class, 'updateEmail']);
+        });
+
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
             Route::post('update', [CustomerAddressManageController::class, 'update']);

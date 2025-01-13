@@ -42,9 +42,10 @@ class UnitRepository implements UnitInterface
         }
         // Apply sorting and pagination
         // Return the result
-        return $unit
+        $units = $unit
             ->orderBy($sortField, $sort)
             ->paginate($limit);
+        return $units;
     }
     public function store(array $data)
     {

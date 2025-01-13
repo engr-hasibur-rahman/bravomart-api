@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminStoreRequest;
 use App\Http\Requests\SellerStoreRequest;
+use App\Http\Resources\Admin\AdminStoreRequestResource;
 use App\Http\Resources\Admin\SellerWiseStoreForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Store\StoreListResource;
 use App\Interfaces\StoreManageInterface;
+use App\Models\ComMerchantStore;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -97,5 +99,19 @@ class AdminStoreManageController extends Controller
     {
         $this->storeRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
+    }
+
+    public function storeRequest()
+    {
+        $stores = ComMerchantStore::pendingStores()->paginate(10);
+        return response()->json([
+            'data' => AdminStoreRequestResource::collection($stores),
+            'meta' => new PaginationResource($stores),
+        ]);
+    }
+
+    public function approveStoreRequests(Request $request)
+    {
+
     }
 }

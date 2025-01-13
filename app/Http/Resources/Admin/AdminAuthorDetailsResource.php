@@ -18,9 +18,11 @@ class AdminAuthorDetailsResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "profile_image" => ImageModifier::generateImageUrl($this->profile_image),
-            "cover_image" => ImageModifier::generateImageUrl($this->cover_image),
-            "name" => $this->id,
+            "profile_image" => $this->profile_image,
+            "profile_image_url" => ImageModifier::generateImageUrl($this->profile_image),
+            "cover_image" => $this->cover_image,
+            "cover_image_url" => ImageModifier::generateImageUrl($this->cover_image),
+            "name" => $this->name,
             "slug" => $this->slug,
             "bio" => $this->bio,
             "born_date" => $this->born_date,
