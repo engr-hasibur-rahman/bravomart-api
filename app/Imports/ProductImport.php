@@ -20,8 +20,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
 {
     public function chunkSize(): int
     {
-        // Number of rows to process at a time
-        return 1000;
+        return 1000; // Number of rows to process at a time
     }
 
     public function collection(\Illuminate\Support\Collection $rows)
@@ -29,29 +28,38 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
         foreach ($rows as $index => $row) {
             $shopId = $row['store_id'];
             $productId = $row['id'];
-            // Check if the shop belongs to the authenticated user
-            $shopExists = ComMerchantStore::where('id', $shopId)
-                ->where('merchant_id', auth('api')->id())
-                ->exists();
+            $slug = $row['slug'];
 
-            if (!$shopExists) {
-                $errors = ["This file contains shop that does not belong to the authenticated user"];
+            // Check if the authenticated user is an admin
+            $isAdmin = auth('api')->user()->activity_scope === 'system_level';
 
-                $validator = Validator::make([], []);
-                $validator->errors()->add('shop_validation', $errors[0]);
+            if (!$isAdmin) {
+                // Check if the shop belongs to the authenticated user
+                $shopExists = ComMerchantStore::where('id', $shopId)
+                    ->where('merchant_id', auth('api')->id())
+                    ->exists();
 
-                throw new ValidationException($validator);
+                if (!$shopExists) {
+                    $errors = ["This file contains shop that does not belong to the authenticated user"];
+
+                    $validator = Validator::make([], []);
+                    $validator->errors()->add('shop_validation', $errors[0]);
+
+                    throw new ValidationException($validator);
+                }
             }
 
             // Check if the product already exists in the database
             $productExists = Product::where('store_id', $shopId)
-                ->where('id', $productId)
+                ->orWhere('id', $productId)
+                ->orWhere('slug', $slug)
                 ->exists();
-
+            //dd($productExists);
             if ($productExists) {
                 // Skip this row if it already exists
                 continue;
             }
+
             // Save or update product to the database
             Product::create(
                 [

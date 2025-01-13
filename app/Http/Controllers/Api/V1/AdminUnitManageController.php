@@ -4,16 +4,18 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UnitRequest;
+use App\Http\Resources\Admin\AdminUnitResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\UnitInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class UnitManageController extends Controller
+class AdminUnitManageController extends Controller
 {
     public function __construct(protected UnitInterface $unitRepo) {}
     public function index(Request $request)
     {
-        return $this->unitRepo->getPaginatedUnit(
+       $units = $this->unitRepo->getPaginatedUnit(
             $request->limit ?? 10,
             $request->page ?? 1,
             $request->language ?? DEFAULT_LANGUAGE,
@@ -22,6 +24,10 @@ class UnitManageController extends Controller
             $request->sort ?? 'asc',
             []
         );
+       return response()->json([
+           'data'=> AdminUnitResource::collection($units),
+           'meta'=> new PaginationResource($units),
+       ]);
     }
     public function store(UnitRequest $request): JsonResponse
     {
