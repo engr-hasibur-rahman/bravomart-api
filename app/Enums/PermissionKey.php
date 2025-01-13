@@ -153,7 +153,6 @@ enum PermissionKey: string
     //             Business Operations  Functionality                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_GEO_AREA_MANAGE = '/admin/business-operations/area/list';
-    case ADMIN_SUBSCRIPTION_PACKAGE_TYPE_MANAGE = '/admin/business-operations/subscription/type/list';
     case ADMIN_SUBSCRIPTION_PACKAGE_MANAGE = '/admin/business-operations/subscription/package/list';
     case ADMIN_SUBSCRIPTION_SELLER_PACKAGE_MANAGE = '/admin/business-operations/subscription/seller/list';
     case ADMIN_SUBSCRIPTION_SETTINGS = '/admin/business-operations/subscription/settings';
@@ -170,7 +169,6 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              System-management Settings                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case ADMIN_SYSTEM_MANAGEMENT_SETTINGS = '/admin/system-management/settings';
     case GENERAL_SETTINGS = '/admin/system-management/general-settings';
     case APPEARANCE_SETTINGS = 'appearance_settings';
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';

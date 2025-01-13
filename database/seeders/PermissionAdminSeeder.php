@@ -1085,17 +1085,6 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_SUBSCRIPTION_PACKAGE_TYPE_MANAGE->value,
-                                    'PermissionTitle' => 'Subscription Type',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'Subscription Type',
-                                        'ar' => 'باقة الاشتراك'
-                                    ]
-                                ],
-                                [
                                     'PermissionName' => PermissionKey::ADMIN_SUBSCRIPTION_PACKAGE_MANAGE->value,
                                     'PermissionTitle' => 'Subscription Package',
                                     'activity_scope' => 'system_level',

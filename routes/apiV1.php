@@ -525,8 +525,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [AdminAreaSetupManageController::class, 'destroy']);
             });
             // Conditionally load Subscription Module routes
+//            dd(343);
             if (function_exists('isModuleActive') && isModuleActive('Subscription')) {
-                Route::group(['prefix' => 'business-operations/subscription'], function () {
+                Route::group(['prefix' => 'subscription/'], function () {
                     include base_path('Modules/Subscription/routes/api.php');
                 });
             }
@@ -540,22 +541,22 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('report-analytics', [AdminReportAnalyticsManageController::class, 'reportList'])->middleware(['permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS->value]);
 
         /*--------------------- System management ----------------------------*/
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_SYSTEM_MANAGEMENT_SETTINGS->value]], function () {
             Route::group(['prefix' => 'system-management'], function () {
-                Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings']);
-                Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization']);
-                Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings']);
-                Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings']);
-                Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings']);
-                Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings']);
-                Route::match(['get', 'post'], '/google-map-settings', [SystemManagementController::class, 'googleMapSettings']);
+                Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings'])->middleware('permission:' . PermissionKey::GENERAL_SETTINGS->value);
+                Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization'])->middleware('permission:' . PermissionKey::FOOTER_CUSTOMIZATION->value);
+                Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings'])->middleware('permission:' . PermissionKey::MAINTENANCE_SETTINGS->value);
+                Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings'])->middleware('permission:' . PermissionKey::SEO_SETTINGS->value);
+                Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings'])->middleware('permission:' . PermissionKey::FIREBASE_SETTINGS->value);
+                Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings'])->middleware('permission:' . PermissionKey::SOCIAL_LOGIN_SETTINGS->value);
+                Route::match(['get', 'post'], '/google-map-settings', [SystemManagementController::class, 'googleMapSettings'])->middleware('permission:' . PermissionKey::GOOGLE_MAP_SETTINGS->value);
                 // database and cache settings
-                Route::post('/cache-management', [SystemManagementController::class, 'cacheManagement']);
-                Route::post('/database-update-controls', [SystemManagementController::class, 'DatabaseUpdateControl']);
+                Route::post('/cache-management', [SystemManagementController::class, 'cacheManagement'])->middleware('permission:' . PermissionKey::CACHE_MANAGEMENT->value);
+                Route::post('/database-update-controls', [SystemManagementController::class, 'DatabaseUpdateControl'])->middleware('permission:' . PermissionKey::DATABASE_UPDATE_CONTROLS->value);
                 // email settings
-                Route::match(['get', 'post'], '/email-settings/smtp', [EmailSettingsController::class, 'smtpSettings']);
-                Route::post('/email-settings/test-mail-send', [EmailSettingsController::class, 'testMailSend']);
-            });
+                Route::group(['middleware' => ['permission:' . PermissionKey::SMTP_SETTINGS->value]], function () {
+                    Route::match(['get', 'post'], '/email-settings/smtp', [EmailSettingsController::class, 'smtpSettings']);
+                    Route::post('/email-settings/test-mail-send', [EmailSettingsController::class, 'testMailSend']);
+                });
         });
 
         /*--------------------- Roles &  permissions manage ----------------------------*/
