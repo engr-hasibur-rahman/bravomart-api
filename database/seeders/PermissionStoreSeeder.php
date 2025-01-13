@@ -173,7 +173,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_BULK_EXPORT->value,
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value,
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -184,7 +184,7 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value,
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_BULK_EXPORT->value,
                                     'PermissionTitle' => 'Bulk Export',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
@@ -352,7 +352,7 @@ class PermissionStoreSeeder extends Seeder
                                 'ar' => 'السحوبات'
                             ]
                         ],
-                            [
+                        [
                             'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value,
                             'PermissionTitle' => 'My Wallet',
                             'activity_scope' => 'store_level',

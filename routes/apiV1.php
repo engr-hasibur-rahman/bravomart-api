@@ -55,7 +55,7 @@ use App\Http\Controllers\Api\V1\Seller\StoreDashboardManageController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
-use App\Http\Controllers\Api\V1\UnitManageController;
+use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
@@ -403,11 +403,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
         // Unit manage
         Route::group(['prefix' => 'unit/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value]], function () {
-            Route::get('list', [UnitManageController::class, 'index']);
-            Route::post('add', [UnitManageController::class, 'store']);
-            Route::get('details', [UnitManageController::class, 'show']);
-            Route::post('update', [UnitManageController::class, 'update']);
-            Route::delete('remove/{id}', [UnitManageController::class, 'destroy']);
+            Route::get('list', [AdminUnitManageController::class, 'index']);
+            Route::post('add', [AdminUnitManageController::class, 'store']);
+            Route::get('details', [AdminUnitManageController::class, 'show']);
+            Route::post('update', [AdminUnitManageController::class, 'update']);
+            Route::delete('remove/{id}', [AdminUnitManageController::class, 'destroy']);
         });
 
         // Blog manage
