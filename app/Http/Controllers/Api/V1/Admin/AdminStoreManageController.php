@@ -121,9 +121,9 @@ class AdminStoreManageController extends Controller
         try {
             $success = $this->storeRepo->approveStores($request->ids);
             if ($success) {
-                return $this->success(__('messages.approved_success', ['name' => 'Stores']));
+                return $this->success(__('messages.approve.success', ['name' => 'Stores']));
             } else {
-                return $this->failed(__('messages.approved_failed', ['name' => 'Stores']));
+                return $this->failed(__('messages.approve.failed', ['name' => 'Stores']));
             }
         } catch (\Exception $e) {
             throw $e;
