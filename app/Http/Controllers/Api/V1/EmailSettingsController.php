@@ -22,9 +22,17 @@ class EmailSettingsController extends Controller
                 'com_site_smtp_mail_encryption' => 'nullable|string',
             ];
 
-            $this->validate($request, $rules);
+            $fields = [
+                'com_site_global_email',
+                'com_site_smtp_mail_mailer',
+                'com_site_smtp_mail_host',
+                'com_site_smtp_mail_post',
+                'com_site_smtp_mail_username',
+                'com_site_smtp_mail_password',
+                'com_site_smtp_mail_encryption',
+            ];
 
-            foreach ($rules as $field) {
+            foreach ($fields as $field) {
                 $value = $request->input($field) ?? null;
                 com_option_update($field, $value);
             }
@@ -51,6 +59,7 @@ class EmailSettingsController extends Controller
             ];
 
             $data = [];
+
             foreach ($fields as $field) {
                 $data[$field] = com_option_get($field);
             }
