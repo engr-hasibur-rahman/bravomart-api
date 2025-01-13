@@ -4,62 +4,50 @@ namespace Modules\Subscription\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Subscription\Models\Subscription;
 
 class AdminSubscriptionPackageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return view('subscription::index');
+        $packages = Subscription::all(); // Fetch all packages
+        return response()->json($packages);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('subscription::create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'validity' => 'required|integer',
+            'price' => 'required|numeric',
+        ]);
+
+        $package = Subscription::create($data); // Create a new package
+        return response()->json($package, 201);
     }
 
-    /**
-     * Show the specified resource.
-     */
     public function show($id)
     {
-        return view('subscription::show');
+        $package = Subscription::findOrFail($id); // Fetch the package by ID
+        return response()->json($package);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function statusChange(Request $request)
     {
-        return view('subscription::edit');
+        $data = $request->validate([
+            'id' => 'required|exists:subscription_packages,id',
+            'status' => 'required|boolean',
+        ]);
+
+        $package = Subscription::findOrFail($data['id']);
+        $package->update(['status' => $data['status']]); // Update status
+        return response()->json(['message' => 'Status updated successfully']);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        //
+        $package = Subscription::findOrFail($id);
+        $package->delete(); // Delete the package
+        return response()->json(['message' => 'Package deleted successfully']);
     }
 }
