@@ -363,12 +363,14 @@ class StoreManageRepository implements StoreManageInterface
     public function approveStores(array $ids)
     {
         try {
-            $products = Product::whereIn('id', $ids)
+            $stores = ComMerchantStore::whereIn('id', $ids)
                 ->where('deleted_at', null)
+                ->where('status', 0)
+                ->orWhere('status', 2)
                 ->update([
-                    'status' => 'approved'
+                    'status' => 1
                 ]);
-            return $products > 0;
+            return $stores > 0;
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
