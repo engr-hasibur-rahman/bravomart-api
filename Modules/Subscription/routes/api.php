@@ -11,8 +11,9 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/business-operations/subscr
         Route::prefix('package/')->middleware(['permission:' . PermissionKey::ADMIN_SUBSCRIPTION_PACKAGE_MANAGE->value])->group(function () {
             Route::get('list', [AdminSubscriptionPackageController::class, 'index']);
             Route::post('store', [AdminSubscriptionPackageController::class, 'store']);
-            Route::get('edit/{id}', [AdminSubscriptionPackageController::class, 'show']);
-            Route::patch('statusChange', [AdminSubscriptionPackageController::class, 'statusChange']);
+            Route::get('details/{id}', [AdminSubscriptionPackageController::class, 'show']);
+            Route::post('update', [AdminSubscriptionPackageController::class, 'update']);
+            Route::post('change-status', [AdminSubscriptionPackageController::class, 'statusChange']);
             Route::delete('delete/{id}', [AdminSubscriptionPackageController::class, 'destroy']);
         });
         // seller list

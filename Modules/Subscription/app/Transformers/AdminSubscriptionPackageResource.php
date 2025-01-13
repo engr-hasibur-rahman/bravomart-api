@@ -1,0 +1,35 @@
+<?php
+
+namespace Modules\Subscription\app\Transformers;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class AdminSubscriptionPackageResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'validity' => $this->validity,
+            'price' => $this->price,
+            'pos_system' => $this->pos_system,
+            'self_delivery' => $this->self_delivery,
+            'mobile_app' => $this->mobile_app,
+            'live_chat' => $this->live_chat,
+            'order_limit' => $this->order_limit,
+            'product_limit' => $this->product_limit,
+            'product_featured_limit' => $this->product_featured_limit,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'description' => $this->description,
+            'image' => $this->image,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
+    }
+}

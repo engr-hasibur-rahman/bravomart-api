@@ -13,9 +13,9 @@ class Subscription extends Model
     protected $fillable = [
         'name',
         'validity',
+        'price',
         'image',
         'description',
-        'price',
         'pos_system',
         'self_delivery',
         'mobile_app',
