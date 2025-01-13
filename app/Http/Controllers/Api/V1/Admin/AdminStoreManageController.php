@@ -112,6 +112,21 @@ class AdminStoreManageController extends Controller
 
     public function approveStoreRequests(Request $request)
     {
-
+        $validator = Validator::make($request->all(), [
+            'ids*' => 'required|array|exists:com_merchant_stores,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+        try {
+            $success = $this->storeRepo->approveStores($request->ids);
+            if ($success) {
+                return $this->success(__('messages.approved_success', ['name' => 'Stores']));
+            } else {
+                return $this->failed(__('messages.approved_failed', ['name' => 'Stores']));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

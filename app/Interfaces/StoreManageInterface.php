@@ -35,4 +35,5 @@ interface StoreManageInterface
     public function storeDashboard(string $slug);
 
     public function getSellerWiseStores(?int $SellerId);
+    public function approveStores(array $ids);
 }

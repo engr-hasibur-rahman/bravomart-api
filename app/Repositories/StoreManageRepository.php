@@ -91,7 +91,9 @@ class StoreManageRepository implements StoreManageInterface
         } catch (\Throwable $th) {
             throw $th;
         }
-    }public function store(array $data)
+    }
+
+    public function store(array $data)
     {
         $data['created_by'] = auth('api')->id();
         try {
@@ -150,6 +152,7 @@ class StoreManageRepository implements StoreManageInterface
             throw $th;
         }
     }
+
     public function updateForSeller(array $data)
     {
         try {
@@ -349,11 +352,28 @@ class StoreManageRepository implements StoreManageInterface
 
     public function getSellerWiseStores(?int $SellerId)
     {
-        if($SellerId){
+        if ($SellerId) {
             $stores = ComMerchantStore::where('merchant_id', $SellerId)->get();
-        } else{
+        } else {
             $stores = ComMerchantStore::where('status', 1)->get();
         }
         return $stores;
+    }
+
+    public function approveStores(array $ids)
+    {
+        try {
+            $products = Product::whereIn('id', $ids)
+                ->where('deleted_at', null)
+                ->update([
+                    'status' => 'approved'
+                ]);
+            return $products > 0;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404
+            ]);
+        }
     }
 }
