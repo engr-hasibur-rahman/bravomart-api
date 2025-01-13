@@ -1226,6 +1226,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Footer Customization',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Footer Customization',
                                         'ar' => 'تخصيص التذييل'
@@ -1236,6 +1237,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Maintenance Settings',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Maintenance Settings',
                                         'ar' => 'إعدادات الصيانة'
@@ -1259,6 +1261,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'SMTP Settings',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'SMTP Settings',
                                         'ar' => 'تخصيص التذييل'
@@ -1269,6 +1272,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Email Templates',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Email Templates',
                                         'ar' => 'قوالب البريد الإلكتروني'
@@ -1281,7 +1285,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'SEO Settings',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['view'],
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'SEO Settings',
                                 'ar' => 'إعدادات تحسين محركات البحث'
@@ -1292,7 +1296,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Third-Party Integrations',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['view'],
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Third-Party Integrations',
                                 'ar' => 'التكاملات مع جهات خارجية'
@@ -1313,6 +1317,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Firebase Settings',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Firebase Settings',
                                         'ar' => 'إعدادات Firebase'
@@ -1323,6 +1328,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Social Login Settings',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Social Login Settings',
                                         'ar' =>  'إعدادات تسجيل الدخول الاجتماعية'
@@ -1335,6 +1341,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Cache Management',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Cache Management',
                                 'ar' => 'إدارة ذاكرة التخزين المؤقت'
@@ -1345,6 +1352,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Database Update Controls',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Database Update Controls',
                                 'ar' => 'عناصر التحكم في تحديث قاعدة البيانات'
@@ -1355,6 +1363,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'App settings',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'App settings',
                                 'ar' => 'إعدادات التطبيق'
