@@ -30,16 +30,9 @@ return new class extends Migration
             $table->boolean('is_featured')->nullable()->default(false);
             $table->time('opening_time')->nullable();
             $table->time('closing_time')->nullable();
-
             $table->string('subscription_type', 50)->nullable();
             $table->string('admin_commission_type')->nullable(); // % or fixed
             $table->decimal('admin_commission_amount', 10, 2)->nullable();
-
-            $table->string('subscription_type', 50)->nullable();
-            $table->unsignedBigInteger('package_id')->nullable();
-            $table->decimal('admin_commi_percent', 5, 2)->nullable(); // Commission percentage
-            $table->decimal('admin_commi_amount', 10, 2)->nullable(); // Fixed commission amount
-
             $table->decimal('delivery_charge', 10, 2)->nullable();
             $table->string('delivery_time', 50)->nullable();
             $table->boolean('delivery_self_system')->nullable()->default(false);
