@@ -405,7 +405,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['prefix' => 'unit/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value]], function () {
             Route::get('list', [AdminUnitManageController::class, 'index']);
             Route::post('add', [AdminUnitManageController::class, 'store']);
-            Route::get('details', [AdminUnitManageController::class, 'show']);
+            Route::get('details/{id}', [AdminUnitManageController::class, 'show']);
             Route::post('update', [AdminUnitManageController::class, 'update']);
             Route::delete('remove/{id}', [AdminUnitManageController::class, 'destroy']);
         });
