@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Wallet\Http\Controllers\WalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +14,5 @@ use Modules\Wallet\Http\Controllers\WalletController;
 */
 
 Route::group([], function () {
-    Route::resource('wallet', WalletController::class)->names('wallet');
+
 });
