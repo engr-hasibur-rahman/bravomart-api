@@ -524,15 +524,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('change-status', [AdminAreaSetupManageController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [AdminAreaSetupManageController::class, 'destroy']);
             });
-//
-//            // Conditionally load Subscription Module routes
-//            if(moduleExists('Subscription')){
-//                Route::group(['prefix' => 'subscription/'], function () {
-//                    include base_path('Modules/Subscription/routes/api.php');
-////                    dd('Routes from Subscription module included');
-//                });
-//            }
-
             // withdraw method
             Route::prefix('commission')->middleware(['permission:' . PermissionKey::ADMIN_COMMISSION_SETTINGS->value])->group(function () {
                 Route::match(['get', 'post'], '/settings', [AdminCommissionManageController::class, 'commissionSettings']);

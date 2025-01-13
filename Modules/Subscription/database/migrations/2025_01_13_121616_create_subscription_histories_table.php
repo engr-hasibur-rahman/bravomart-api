@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscriptions', function (Blueprint $table) {
+        Schema::create('subscription_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Subscription package name
-            $table->integer('validity'); // Validity period in days
-            $table->string('image')->nullable();
-            $table->text('description')->nullable();
+            $table->bigInteger('subscription_id');
+            $table->string('name');
+            $table->integer('validity');
             $table->double('price', 10, 2)->default(0);
             $table->boolean('pos_system')->default(false);
             $table->boolean('self_delivery')->default(false);
@@ -25,7 +24,12 @@ return new class extends Migration
             $table->integer('order_limit')->default(0);
             $table->integer('product_limit')->default(0);
             $table->integer('product_featured_limit')->default(0);
-            $table->integer('status')->default(0)->comment('0=inactive, 1=active');
+            $table->string('payment_gateway')->nullable();
+            $table->string('payment_status')->nullable();
+            $table->string('transaction_id')->nullable();
+            $table->string('manual_image')->nullable();
+            $table->timestamp('expire_date')->nullable();
+            $table->integer('status')->default(0)->comment('0=pending, 1=active, 2=cancelled');
             $table->timestamps();
         });
     }
@@ -35,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscriptions');
+        Schema::dropIfExists('subscription_histories');
     }
 };
