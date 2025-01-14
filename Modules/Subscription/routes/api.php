@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionPackageController;
 use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionSellerController;
 use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionSettingsController;
+use Modules\Subscription\app\Http\Controllers\Api\BuySubscriptionPackageController;
+use Modules\Subscription\app\Http\Controllers\Api\SubscriptionPackageController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1/admin/business-operations/subscription/')->group(function () {
         //  subscription package
@@ -25,4 +27,13 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/business-operations/subscr
         });
         // settings
         Route::get('settings', [AdminSubscriptionSettingsController::class, 'index'])->middleware(['permission:' . PermissionKey::ADMIN_SUBSCRIPTION_SETTINGS->value]);
+});
+
+//package lists
+Route::prefix('v1/subscription/')->group(function () {
+    Route::get('packages', [SubscriptionPackageController::class, 'packages']);
+    // buy store subscription
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('package-buy', [BuySubscriptionPackageController::class, 'buySubscriptionPackage']);
+    });
 });
