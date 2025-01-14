@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('identification_photo_front')->nullable()->comment('Front image of ID');
             $table->string('identification_photo_back')->nullable()->comment('Back image of ID');
             $table->string('address')->nullable();
-            $table->enum('status', ['pending', 'approved', 'inactive'])->default('pending');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->softDeletes();

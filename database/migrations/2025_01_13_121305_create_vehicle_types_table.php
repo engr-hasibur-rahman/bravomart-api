@@ -15,12 +15,14 @@ return new class extends Migration {
             $table->string('name')->unique();
             $table->integer('capacity')->nullable()->comment('Load capacity in kilograms.');
             $table->string('speed_range')->nullable()->comment('Average speed range, e.g., 20-40 km/h.');
-            $table->enum('fuel_type', ['Petrol', 'Diesel', 'Electric', 'Hybrid'])->nullable();
+            $table->enum('fuel_type', ['petrol', 'diesel', 'electric', 'hybrid'])->nullable();
             $table->integer('max_distance')->nullable()->comment('Maximum distance per trip in kilometers.');
             $table->decimal('extra_charge', 8, 2)->nullable()->comment('Applicable if exceed max distance limit');
             $table->decimal('average_fuel_cost', 8, 2)->nullable()->comment('Fuel cost per trip.');
             $table->text('description')->nullable();
             $table->boolean('status')->default(0);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('store_id')->nullable();
             $table->timestamps();
         });
     }
