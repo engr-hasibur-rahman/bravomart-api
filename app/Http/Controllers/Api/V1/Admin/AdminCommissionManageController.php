@@ -24,7 +24,7 @@ class AdminCommissionManageController extends Controller
                 'order_confirmation_by' => 'nullable|string|max:255',
                 'order_include_tax_amount' => 'nullable|boolean',
                 'order_additional_charge_enable_disable' => 'nullable|boolean',
-                'order_additional_charge_name' => 'nullable|string|max:255',
+                'order_additional_charge_name' => 'nullable',
                 'order_additional_charge_amount' => 'nullable|numeric|min:0',
             ]);
 
