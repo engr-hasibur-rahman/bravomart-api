@@ -141,47 +141,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
         });
-
-//        Schema::create('com_merchant_stores', function (Blueprint $table) {
-//            $table->id();
-//            $table->unsignedBigInteger('area_id')->nullable();
-//            $table->foreign('area_id')->references('id')->on('com_areas')->nullOnDelete();
-//            $table->unsignedBigInteger('merchant_id')->nullable();
-//            $table->foreign('merchant_id')->references('id')->on('com_merchant');
-//            $table->string('store_type')->nullable();
-//            $table->string('name');
-//            $table->string('phone')->nullable();
-//            $table->string('email')->nullable();
-//            $table->string('logo')->nullable();
-//            $table->string('banner')->nullable();
-//            $table->string('address')->nullable();
-//            $table->string('latitude')->nullable();
-//            $table->string('longitude')->nullable();
-//            $table->string('slug');
-//            $table->string('vat_tax_number')->nullable();
-//            $table->boolean('is_featured')->nullable();
-//            $table->string('opening_time')->nullable();
-//            $table->string('closing_time')->nullable();
-//            $table->string('subscription_type')->nullable();
-//            $table->double('package_id')->nullable();
-//            $table->double('admin_commi_percent')->nullable();
-//            $table->double('admin_commi_amount')->nullable();
-//            $table->double('delivery_charge')->nullable();
-//            $table->string('delivery_time')->nullable();
-//            $table->boolean('delivery_self_system')->nullable();
-//            $table->boolean('delivery_take_away')->nullable();
-//            $table->double('order_minimum')->nullable();
-//            $table->boolean('veg_status')->nullable();
-//            $table->string('off_day')->nullable();
-//            $table->boolean('enable_saling');
-//            $table->string('meta_title')->nullable();
-//            $table->string('meta_description')->nullable();
-//            $table->string('meta_image')->nullable();
-//            $table->string('status');
-//            $table->unsignedBigInteger('created_by')->nullable();
-//            $table->unsignedBigInteger('updated_by')->nullable();
-//            $table->timestamps();
-//        });
     }
 
     /**
