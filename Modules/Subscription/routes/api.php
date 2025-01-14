@@ -8,6 +8,7 @@ use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionSettingsContr
 use Modules\Subscription\app\Http\Controllers\Api\BuySubscriptionPackageController;
 use Modules\Subscription\app\Http\Controllers\Api\SubscriptionPackageController;
 
+
 Route::middleware(['auth:sanctum'])->prefix('v1/admin/business-operations/subscription/')->group(function () {
         //  subscription package
         Route::prefix('package/')->middleware(['permission:' . PermissionKey::ADMIN_SUBSCRIPTION_PACKAGE_MANAGE->value])->group(function () {
