@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DeliverymanRequest;
 use App\Http\Requests\VehicleTypeRequest;
 use App\Http\Resources\Admin\AdminDeliverymanDetailsResource;
+use App\Http\Resources\Admin\AdminDeliverymanResource;
 use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
 use App\Http\Resources\Admin\AdminVehicleDetailsResource;
@@ -24,7 +25,6 @@ class AdminDeliverymanManageController extends Controller
 
     public function index(Request $request)
     {
-
         $filters = [
             'search' => $request->input('search', null),
             'vehicle_type_id' => $request->input('vehicle_type_id', null),
@@ -36,8 +36,8 @@ class AdminDeliverymanManageController extends Controller
         ];
         $deliverymen = $this->deliverymanRepo->getAllDeliveryman($filters);
         return response()->json([
-            'data' => '',
-            'meta' => ''
+            'data' => AdminDeliverymanResource::collection($deliverymen),
+            'meta' => new PaginationResource($deliverymen)
         ]);
     }
 

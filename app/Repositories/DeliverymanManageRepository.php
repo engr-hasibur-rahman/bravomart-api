@@ -27,7 +27,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function getAllDeliveryman(array $filters)
     {
         $query = DeliveryMan::with([
-            'user',
+            'deliveryman',
             'vehicle_type',
             'area',
             'creator',
@@ -35,7 +35,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         ]);
         if (isset($filters['search'])) {
             $searchTerm = $filters['search'];
-            $query->whereHas('user', function ($q) use ($searchTerm) {
+            $query->whereHas('deliveryman', function ($q) use ($searchTerm) {
                 $q->where('first_name', 'like', '%' . $searchTerm . '%')
                     ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
             });
