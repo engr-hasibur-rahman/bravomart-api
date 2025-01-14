@@ -1,22 +1,32 @@
 <?php
 
-namespace Modules\Subscription\Models;
+namespace Modules\Subscription\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\Subscription\Database\Factories\ComMerchantStoresSubscriptionFactory;
 
 class ComMerchantStoresSubscription extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [];
-
-    // protected static function newFactory(): ComMerchantStoresSubscriptionFactory
-    // {
-    //     // return ComMerchantStoresSubscriptionFactory::new();
-    // }
+    protected $fillable = [
+        'store_id',
+        'subscription_id',
+        'name',
+        'validity',
+        'price',
+        'pos_system',
+        'self_delivery',
+        'mobile_app',
+        'live_chat',
+        'order_limit',
+        'product_limit',
+        'product_featured_limit',
+        'payment_gateway',
+        'payment_status',
+        'transaction_id',
+        'manual_image',
+        'expire_date',
+        'status',
+    ];
 }

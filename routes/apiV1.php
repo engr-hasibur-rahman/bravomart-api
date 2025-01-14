@@ -699,6 +699,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
             });
         });  // END STORE ROUTE
+
         // Product variant manage
         Route::group(['prefix' => 'product/variant/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [ProductVariantController::class, 'index']);
