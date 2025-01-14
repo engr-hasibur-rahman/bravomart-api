@@ -3,7 +3,7 @@
 namespace Modules\Subscription\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Modules\Subscription\app\Http\Requests\BuySubscriptionRequest;
+use Illuminate\Http\Request;
 use Modules\Subscription\app\Services\SubscriptionService;
 
 class BuySubscriptionPackageController extends Controller
@@ -15,7 +15,7 @@ class BuySubscriptionPackageController extends Controller
         $this->subscriptionService = $subscriptionService;
     }
 
-    public function buySubscriptionPackage(BuySubscriptionRequest $request)
+    public function buySubscriptionPackage(Request $request)
     {
         $result = $this->subscriptionService->buySubscriptionPackage($request);
         return response()->json($result);
