@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
+use Modules\Subscription\app\Models\Subscription;
+use Modules\Subscription\app\Models\SubscriptionHistory;
 
 class StoreManageRepository implements StoreManageInterface
 {
@@ -88,7 +91,58 @@ class StoreManageRepository implements StoreManageInterface
             $data['merchant_id'] = auth('api')->id();
             $store = ComMerchantStore::create($data);
 
-            $result = $this->subscriptionService->buySubscriptionPackage($request);
+            // if seller select store business type commission or subscription
+            if(isset($data['store_commission_type']) && !empty($data['store_commission_type'])){
+                // create store wise subscription history
+                // Validate subscription package
+                $subscription_package = Subscription::where('id', $data['subscription_id'])
+                    ->where('status', 1)
+                    ->first();
+
+                // Create subscription history
+                SubscriptionHistory::create([
+                    'store_id' => $store->id,
+                    'subscription_id' => $subscription_package->id,
+                    'name' => $subscription_package->name,
+                    'validity' => $subscription_package->validity,
+                    'price' => $subscription_package->price,
+                    'pos_system' => $subscription_package->pos_system,
+                    'self_delivery' => $subscription_package->self_delivery,
+                    'mobile_app' => $subscription_package->mobile_app,
+                    'live_chat' => $subscription_package->live_chat,
+                    'order_limit' => $subscription_package->order_limit,
+                    'product_limit' => $subscription_package->product_limit,
+                    'product_featured_limit' => $subscription_package->product_featured_limit,
+                    'payment_gateway' => $data['payment_gateway'],
+                    'payment_status' => $data['payment_status'],
+                    'transaction_id' => $data['transaction_id'],
+                    'manual_image' => $data['manual_image'],
+                    'expire_date' => now()->addDays($subscription_package->validity),
+                    'status' => 0,
+                ]);
+
+                // Create store wise subscription
+                ComMerchantStoresSubscription::create([
+                    'store_id' => $store->id,
+                    'subscription_id' => $subscription_package->id,
+                    'name' => $subscription_package->name,
+                    'validity' => $subscription_package->validity,
+                    'price' => $subscription_package->price,
+                    'pos_system' => $subscription_package->pos_system,
+                    'self_delivery' => $subscription_package->self_delivery,
+                    'mobile_app' => $subscription_package->mobile_app,
+                    'live_chat' => $subscription_package->live_chat,
+                    'order_limit' => $subscription_package->order_limit,
+                    'product_limit' => $subscription_package->product_limit,
+                    'product_featured_limit' => $subscription_package->product_featured_limit,
+                    'payment_gateway' => $data['payment_gateway'],
+                    'payment_status' => $data['payment_status'],
+                    'transaction_id' => $data['transaction_id'],
+                    'manual_image' => $data['manual_image'],
+                    'expire_date' => now()->addDays($subscription_package->validity),
+                    'status' => 0,
+                ]);
+            }
 
             return $store->id;
         } catch (\Throwable $th) {
