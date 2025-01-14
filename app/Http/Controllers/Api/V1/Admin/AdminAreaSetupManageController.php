@@ -72,10 +72,10 @@ class AdminAreaSetupManageController extends Controller
         }
     }
 
-    public function changeStatus(int|string $id, string $status = ""): JsonResponse
+    public function changeStatus(Request $request): JsonResponse
     {
         try {
-            $this->areaRepo->changeStatus($id, $status = "");
+            $this->areaRepo->changeStatus($request->id, $request->status);
             return $this->success(translate('messages.status_change_success'));
         } catch (\Exception $e) {
             return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
