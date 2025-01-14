@@ -4,6 +4,8 @@ namespace Modules\Subscription\app\Services;
 
 use Illuminate\Support\Facades\Auth;
 use Modules\Subscription\app\Models\Subscription;
+use Modules\Subscription\app\Models\SubscriptionHistory;
+
 
 class SubscriptionService
 {
@@ -30,62 +32,31 @@ class SubscriptionService
             ];
         }
 
+        $payment_gateway = $request->payment_gateway;
+        $payment_status = 'pending';
 
-//        // if membership payment gateway not select
-//        $commission = AdminCommission::first();
-//        if ($request->selected_payment_gateway == 'cash_on_delivery' || $request->selected_payment_gateway == 'manual_payment') {
-//            $payment_status = 'pending';
-//        } else {
-//            $payment_status = 'pending';
-//        }
-//        if ($membership_details->price > 0) {
-//            if (empty($request->selected_payment_gateway) || is_null($request->selected_payment_gateway)) {
-//                toastr_error(__('Payment gateway is missing. Please try again.'));
-//                return redirect()->back();
-//            }
-//        }
-//        $payment_gateway_name = $request->selected_payment_gateway;
-//
-//        if ($total_service_amount_check == 0) {
-//            return response()->json([
-//                'message' => __('Service price is 0, order cannot be created. Please try other services.'),
-//            ], 400);
-//        }
-//
-//        // create order
-//        $order = Order::create([
-//            'user_id' => $user_id,
-//            'sub_total' => 0,
-//            'tax' => 0,
-//            'total' => 0,
-//            'status' => 0,
-//            'payment_gateway' => $payment_gateway_name,
-//            'payment_status' => $payment_status,
-//            'invoice_number' => $invoiceNumber,
-//        ]);
-//
-//        $order_details = Order::with('client','subOrders.subOrderAddons', 'subOrders.subOrderLocations', 'subOrders.staff', 'subOrders.service', 'subOrders.job', 'subOrders.reviews', 'subOrders.order_complete_request')->find($last_order_id);
-//
-//        try {
-//            // Create order notifications
-//            $this->orderServiceNotification->createOrderNotification($last_order_id, $request);
-//            // Dispatch job to send email in the background
-//            dispatch(new SendOrderCreateEmail($order_details));
-//        }catch (\Exception $exception){
-//
-//        }
-//
-//
-//        return response()->json([
-//            'order_details'=> new OrderDetailsResource($order_details),
-//        ]);
-//
-//
-//
-//        // if subscription payment gateway not selected
-//        if(){
-//
-//        }
+        if($subscription_package){
+            // Create subscription history
+            $subscriptionHistory = SubscriptionHistory::create([
+                'subscription_id' => $request->subscription_id,
+                'name' => $subscription_package->name,
+                'validity' => $subscription_package->validity,
+                'price' => $subscription_package->price,
+                'pos_system' => $subscription_package->pos_system,
+                'self_delivery' => $subscription_package->self_delivery,
+                'mobile_app' => $subscription_package->mobile_app,
+                'live_chat' => $subscription_package->live_chat,
+                'order_limit' => $subscription_package->order_limit,
+                'product_limit' => $subscription_package->product_limit,
+                'product_featured_limit' => $subscription_package->product_featured_limit,
+                'payment_gateway' => $request->payment_gateway,
+                'payment_status' => $payment_status,
+                'transaction_id' => $request->transaction_id, // Make sure to pass this in the request
+                'manual_image' => $request->manual_image, // Optional field
+                'expire_date' => now()->addDays($subscription_package->validity),
+                'status' => 0,
+            ]);
+        }
 
         return [
             'success' => true,
