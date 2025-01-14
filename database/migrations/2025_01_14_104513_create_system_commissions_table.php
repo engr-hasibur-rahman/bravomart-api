@@ -21,10 +21,10 @@ return new class extends Migration
             $table->decimal('default_delivery_commission_charge', 8, 2)->nullable();
             $table->decimal('order_shipping_charge', 8, 2)->nullable();
             $table->string('order_confirmation_by')->nullable(); // 'manual' or 'automatic'
-            $table->boolean('include_tax')->default(false);
-            $table->boolean('additional_charge_enabled')->default(false);
-            $table->string('additional_charge_name')->nullable();
-            $table->decimal('additional_charge_amount', 8, 2)->nullable();
+            $table->boolean('order_include_tax_amount')->default(false);
+            $table->boolean('order_additional_charge_enable_disable')->default(false);
+            $table->string('order_additional_charge_name')->nullable();
+            $table->decimal('order_additional_charge_amount', 8, 2)->nullable();
             $table->timestamps();
         });
     }

@@ -87,6 +87,9 @@ class StoreManageRepository implements StoreManageInterface
             $data = Arr::except($data, ['translations']);
             $data['merchant_id'] = auth('api')->id();
             $store = ComMerchantStore::create($data);
+
+            $result = $this->subscriptionService->buySubscriptionPackage($request);
+
             return $store->id;
         } catch (\Throwable $th) {
             throw $th;

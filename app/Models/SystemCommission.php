@@ -17,17 +17,17 @@ class SystemCommission extends Model
         'default_delivery_commission_charge',   // Default commission for deliveries
         'order_shipping_charge',                // Shipping charge for orders
         'order_confirmation_by',                // Manual or automatic confirmation
-        'include_tax',                          // Include tax in order calculations
-        'additional_charge_enabled',            // Enable or disable additional charge
-        'additional_charge_name',               // Name of the additional charge
-        'additional_charge_amount',             // Amount of the additional charge
+        'order_include_tax_amount',                          // Include tax in order calculations
+        'order_additional_charge_enable_disable',            // Enable or disable additional charge
+        'order_additional_charge_name',               // Name of the additional charge
+        'order_additional_charge_amount',             // Amount of the additional charge
     ];
 
     protected $casts = [
         'subscription_enabled' => 'boolean',
         'commission_enabled' => 'boolean',
-        'include_tax' => 'boolean',
-        'additional_charge_enabled' => 'boolean',
+        'order_include_tax_amount' => 'boolean',
+        'order_additional_charge_enable_disable' => 'boolean',
     ];
 
     public function calculateCommission(float $amount): float
@@ -43,10 +43,10 @@ class SystemCommission extends Model
 
     public function calculateAdditionalCharge(float $amount): float
     {
-        if (!$this->additional_charge_enabled) {
+        if (!$this->order_additional_charge_enable_disable) {
             return 0;
         }
 
-        return $this->additional_charge_amount;
+        return $this->order_additional_charge_amount;
     }
 }

@@ -35,9 +35,12 @@ class SubscriptionService
         $payment_gateway = $request->payment_gateway;
         $payment_status = 'pending';
 
+        // seller_store
+
         if($subscription_package){
             // Create subscription history
             $subscriptionHistory = SubscriptionHistory::create([
+                'store_id' => $request->subscription_id,
                 'subscription_id' => $request->subscription_id,
                 'name' => $subscription_package->name,
                 'validity' => $subscription_package->validity,
