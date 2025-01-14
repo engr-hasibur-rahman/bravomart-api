@@ -20,7 +20,7 @@ class AdminCommissionManageController extends Controller
                 'com_default_delivery_commission_charge' => 'nullable|numeric|max:255',
                 'com_order_shipping_charge' => 'nullable|numeric|max:255',
                 'com_order_confirmation_by' => 'nullable',
-                'com_order_include_tax_amount' => 'nullable|numeric|max:255',
+                'com_order_include_tax_amount' => 'nullable',
                 'com_order_additional_charge_enable_disable' => 'nullable',
                 'com_order_additional_charge_name' => 'nullable|string|max:255',
                 'com_order_additional_charge_amount' => 'nullable|numeric|max:255',

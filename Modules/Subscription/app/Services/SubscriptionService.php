@@ -30,10 +30,62 @@ class SubscriptionService
             ];
         }
 
-        // Business logic for purchasing the subscription
-        $seller->subscription_id = $subscription_package->id;
-        $seller->subscription_expiry = now()->addDays($subscription_package->validity);
-        $seller->save();
+
+//        // if membership payment gateway not select
+//        $commission = AdminCommission::first();
+//        if ($request->selected_payment_gateway == 'cash_on_delivery' || $request->selected_payment_gateway == 'manual_payment') {
+//            $payment_status = 'pending';
+//        } else {
+//            $payment_status = 'pending';
+//        }
+//        if ($membership_details->price > 0) {
+//            if (empty($request->selected_payment_gateway) || is_null($request->selected_payment_gateway)) {
+//                toastr_error(__('Payment gateway is missing. Please try again.'));
+//                return redirect()->back();
+//            }
+//        }
+//        $payment_gateway_name = $request->selected_payment_gateway;
+//
+//        if ($total_service_amount_check == 0) {
+//            return response()->json([
+//                'message' => __('Service price is 0, order cannot be created. Please try other services.'),
+//            ], 400);
+//        }
+//
+//        // create order
+//        $order = Order::create([
+//            'user_id' => $user_id,
+//            'sub_total' => 0,
+//            'tax' => 0,
+//            'total' => 0,
+//            'status' => 0,
+//            'payment_gateway' => $payment_gateway_name,
+//            'payment_status' => $payment_status,
+//            'invoice_number' => $invoiceNumber,
+//        ]);
+//
+//        $order_details = Order::with('client','subOrders.subOrderAddons', 'subOrders.subOrderLocations', 'subOrders.staff', 'subOrders.service', 'subOrders.job', 'subOrders.reviews', 'subOrders.order_complete_request')->find($last_order_id);
+//
+//        try {
+//            // Create order notifications
+//            $this->orderServiceNotification->createOrderNotification($last_order_id, $request);
+//            // Dispatch job to send email in the background
+//            dispatch(new SendOrderCreateEmail($order_details));
+//        }catch (\Exception $exception){
+//
+//        }
+//
+//
+//        return response()->json([
+//            'order_details'=> new OrderDetailsResource($order_details),
+//        ]);
+//
+//
+//
+//        // if subscription payment gateway not selected
+//        if(){
+//
+//        }
 
         return [
             'success' => true,
