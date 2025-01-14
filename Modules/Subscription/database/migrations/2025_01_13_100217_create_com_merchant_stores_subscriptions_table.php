@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('com_merchant_stores_subscriptions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('store_id');
             $table->bigInteger('subscription_id');
             $table->string('name');
             $table->integer('validity');
