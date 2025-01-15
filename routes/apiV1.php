@@ -629,6 +629,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::get('/returned', [SellerProductManageController::class, 'returnedOrders']);
                 });
             });
+
             // seller store manage
             Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_MY_SHOP->value]], function () {
                 Route::get('list', [SellerStoreManageController::class, 'index']);
@@ -639,6 +640,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [SellerStoreManageController::class, 'destroy']);
                 Route::get('deleted/records', [SellerStoreManageController::class, 'deleted_records']);
             });
+
             // seller product manage
             Route::group(['prefix' => 'product/'], function () {
                 // Product Inventory

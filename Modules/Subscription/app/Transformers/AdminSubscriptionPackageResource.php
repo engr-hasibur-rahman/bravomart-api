@@ -2,6 +2,7 @@
 
 namespace Modules\Subscription\app\Transformers;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,7 @@ class AdminSubscriptionPackageResource extends JsonResource
             'product_featured_limit' => $this->product_featured_limit,
             'description' => $this->description,
             'image' => $this->image,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

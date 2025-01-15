@@ -11,6 +11,7 @@ class SubscriptionHistory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'store_id',
         'subscription_id',
         'name',
         'validity',

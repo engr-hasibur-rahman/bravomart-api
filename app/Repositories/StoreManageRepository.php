@@ -92,7 +92,7 @@ class StoreManageRepository implements StoreManageInterface
             $store = ComMerchantStore::create($data);
 
             // if seller select store business type commission or subscription
-            if(isset($data['store_commission_type']) && !empty($data['store_commission_type'])){
+            if(isset($data['subscription_type']) && !empty($data['subscription_type'])){
                 // create store wise subscription history
                 // Validate subscription package
                 $subscription_package = Subscription::where('id', $data['subscription_id'])
