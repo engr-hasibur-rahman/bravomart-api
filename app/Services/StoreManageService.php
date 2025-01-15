@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\SendStoreCreatedEmailJob;
 use App\Models\ComMerchantStore;
 use App\Models\SystemCommission;
 use Illuminate\Http\UploadedFile;
@@ -27,7 +28,7 @@ class StoreManageService
             // store create after commission set
                $store = ComMerchantStore::find($store->id);
                $store_id = $store->id;
-            if (isset($store->subscription_type) && $store->subscription_type == 'commission') {
+            if (isset($store->subscription_type) && $store->subscription_type === 'commission') {
                 // get system commission
                 $system_commission = SystemCommission::first();
                 // update store commission
@@ -35,17 +36,15 @@ class StoreManageService
                 $store->admin_commission_amount = $system_commission->commission_amount;
                 $store->save();
 
-                // email send
+                // Dispatch job to send email in the background
                 try {
-                    // Dispatch job to send email in the background
-                    // for store create mail
-                }catch (\Exception $exception){
-
+                    dispatch(new SendStoreCreatedEmailJob($store));
+                } catch (\Exception $exception) {
                 }
 
                 return $store_id;
 
-            }elseif(isset($store->subscription_type) && $store->subscription_type == 'subscription'){
+            }elseif(isset($store->subscription_type) && $store->subscription_type === 'subscription'){
                 // subscription package
                 $subscription_package = Subscription::where('id', $data['subscription_id'])
                     ->where('status', 1)
@@ -118,14 +117,6 @@ class StoreManageService
                     'expire_date' => now()->addDays($subscription_package->validity),
                     'status' => $subscription_status,
                 ]);
-
-                // subscription info
-                $subscription_title = $subscription_package->name;
-                $subscription_price = $subscription_package->price;
-                // seller info
-                $seller = auth()->guard('api')->user();
-                $seller_name = $seller->first_name . ' ' .$seller->last_name;
-                $seller_email = $seller->email;
             }
             return $store_id;
 

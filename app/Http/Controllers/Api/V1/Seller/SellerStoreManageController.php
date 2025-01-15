@@ -39,7 +39,7 @@ class SellerStoreManageController extends Controller
     public function store(SellerStoreRequest $request): JsonResponse
     {
         $store = $this->storeManageService->storeForAuthSeller($request->all());
-        if ($store && isset($store->id)) {
+        if ($store) {
             $this->storeRepo->storeTranslation($request, $store, 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
             return $this->success(translate('messages.save_success', ['name' => 'Store']));
         } else {
