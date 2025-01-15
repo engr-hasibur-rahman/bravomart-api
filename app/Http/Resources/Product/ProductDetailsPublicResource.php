@@ -35,6 +35,7 @@ class ProductDetailsPublicResource extends JsonResource
             'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'gallery_images' => $this->gallery_images,
+            'gallery_images_urls' => MultipleImageModifier::multipleImageModifier($this->gallery_images),
             'warranty' => $this->warranty,
             'return_in_days' => $this->return_in_days,
             'return_text' => $this->return_text,
