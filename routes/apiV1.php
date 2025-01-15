@@ -369,9 +369,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('details/{id}', [ProductAttributeController::class, 'show']);
             Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
             Route::post('add', [ProductAttributeController::class, 'store']);
-            Route::post('value/add', [ProductAttributeController::class, 'storeAttributeValue']);
             Route::post('update', [ProductAttributeController::class, 'update']);
-            Route::put('status/{id}', [ProductAttributeController::class, 'status_update']);
+            Route::post('status/{id}', [ProductAttributeController::class, 'status_update']);
             Route::delete('remove/{id}', [ProductAttributeController::class, 'destroy']);
         });
         // Coupon manage
