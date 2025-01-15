@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-<<<<<<< HEAD
+
 use App\Http\Requests\DeliverymanRequest;
 use App\Http\Requests\VehicleTypeRequest;
 use App\Http\Resources\Admin\AdminDeliverymanDetailsResource;
@@ -14,13 +14,11 @@ use App\Http\Resources\Admin\AdminVehicleDetailsResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\VehicleType;
-=======
->>>>>>> ec6cc7008589409b3537ffebcadc27707c435a26
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AdminDeliverymanManageController extends Controller
 {
-<<<<<<< HEAD
     public function __construct(protected DeliverymanManageInterface $deliverymanRepo)
     {
 
@@ -245,7 +243,4 @@ class AdminDeliverymanManageController extends Controller
             return $this->failed(__('messages.update_failed', ['name' => 'Vehicle type status']));
         }
     }
-=======
-    //
->>>>>>> ec6cc7008589409b3537ffebcadc27707c435a26
 }

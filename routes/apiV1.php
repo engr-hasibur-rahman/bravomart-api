@@ -452,21 +452,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
         // Admin Deliveryman management
         Route::prefix('deliveryman/')->group(function () {
-            //vehicle-types
-            Route::prefix('vehicle-types/')->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value])->group(function () {
-                Route::get('list', [AdminDeliverymanTypeManageController::class, 'index']);
-                Route::post('add', [AdminDeliverymanTypeManageController::class, 'store']);
-                Route::get('details', [AdminDeliverymanTypeManageController::class, 'show']);
-                Route::put('update', [AdminDeliverymanTypeManageController::class, 'update']);
-                Route::patch('status-change', [AdminDeliverymanTypeManageController::class, 'statusChange']);
-                Route::delete('remove/{id}', [AdminDeliverymanTypeManageController::class, 'destroy']);
-            });
             // delivery man manage
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
                 Route::get('list', [AdminDeliverymanManageController::class, 'index']);
                 Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest']);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
-<<<<<<< HEAD
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
                 Route::post('update', [AdminDeliverymanManageController::class, 'update']);
                 Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
@@ -484,12 +474,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('approve', [AdminDeliverymanManageController::class, 'approveVehicleRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroyVehicle']);
             });
-=======
                 Route::get('details', [AdminDeliverymanManageController::class, 'show']);
                 Route::put('update', [AdminDeliverymanManageController::class, 'update']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
             });
->>>>>>> ec6cc7008589409b3537ffebcadc27707c435a26
             // deliveryman review manage
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_REVIEW->value]], function () {
                 Route::get('reviews', [AdminDeliverymanReviewManageController::class, 'index']);
@@ -737,7 +725,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
     });
     /* --------------------------> delivery route end <-------------------------- */
-});
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
     // media manage

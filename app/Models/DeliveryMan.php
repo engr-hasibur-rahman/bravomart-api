@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class DeliveryMan extends Model
 {
-<<<<<<< HEAD
     protected $fillable = [
         'user_id',
         'vehicle_type_id',
@@ -50,7 +49,4 @@ class DeliveryMan extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
-=======
-    //
->>>>>>> ec6cc7008589409b3537ffebcadc27707c435a26
 }
