@@ -366,7 +366,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         //Product Attribute Management
         Route::group(['prefix' => 'attribute/', 'middleware/' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [ProductAttributeController::class, 'index']);
-            Route::get('details', [ProductAttributeController::class, 'show']);
+            Route::get('details/{id}', [ProductAttributeController::class, 'show']);
             Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
             Route::post('add', [ProductAttributeController::class, 'store']);
             Route::post('value/add', [ProductAttributeController::class, 'storeAttributeValue']);

@@ -59,7 +59,7 @@ enum PermissionKey: string
     case ADMIN_PROMOTIONAL_FLASH_SALE_JOIN_DEALS = '/admin/promotional/flash-deals/join-request';
     case ADMIN_PROMOTIONAL_BANNER_MANAGE = '/admin/promotional/banner/list';
 
-     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Area Management                                         //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_AREA_LIST = '/admin/area';
@@ -78,8 +78,8 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Product Attribute                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case PRODUCT_ATTRIBUTE_LIST = '/admin/attributes';
-    case PRODUCT_ATTRIBUTE_ADD = '/admin/attributes/add-attribute';
+    case PRODUCT_ATTRIBUTE_ADD = '/admin/attribute';
+    case PRODUCT_ATTRIBUTE_LIST = '/admin/attribute/list';
     case PRODUCT_ATTRIBUTE_LIST_STORE = '/store/attributes';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -178,7 +178,7 @@ enum PermissionKey: string
 
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
     case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
-    case DATABASE_UPDATE_CONTROLS  = '/admin/system-management/database-update-controls';
+    case DATABASE_UPDATE_CONTROLS = '/admin/system-management/database-update-controls';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Third-Party Integrations                                                        //
@@ -207,18 +207,18 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Payment Settings Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-     case ADMIN_PAYMENT_SETTINGS = '/admin/payment-gateways/settings';
-     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_PAYMENT_SETTINGS = '/admin/payment-gateways/settings';
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Coupon Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-     case ADMIN_COUPON_MANAGE = '/admin/coupon/list';
-     case ADMIN_COUPON_LINE_MANAGE = '/admin/coupon-line/list';
+    case ADMIN_COUPON_MANAGE = '/admin/coupon/list';
+    case ADMIN_COUPON_LINE_MANAGE = '/admin/coupon-line/list';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Wallet Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_WALLET_MANAGE = '/admin/wallet/list';
-     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Notice Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_NOTICE_MANAGEMENT = '/admin/store-notices';
@@ -227,45 +227,45 @@ enum PermissionKey: string
 
 
     // ############################## Seller PermissionKey Start ################################
-       //-----------Store Settings----------
-        case SELLER_STORE_MY_SHOP = '/seller/store/list';
-        case SELLER_STORE_STORE_NOTICE = '/seller/store/settings/notices';
-        case SELLER_STORE_STORE_CONFIG = '/seller/store/settings/config';
-        case SELLER_STORE_BUSINESS_PLAN = '/seller/store/settings/business-plan';
-        case SELLER_STORE_POS_CONFIG = '/seller/store/pos-config';
-        case SELLER_STORE_POS_SALES = '/seller/store/pos';
-       //------------ SELLER Live Chat
-        case STORE_STORE_MESSAGE = 'store-message';
+    //-----------Store Settings----------
+    case SELLER_STORE_MY_SHOP = '/seller/store/list';
+    case SELLER_STORE_STORE_NOTICE = '/seller/store/settings/notices';
+    case SELLER_STORE_STORE_CONFIG = '/seller/store/settings/config';
+    case SELLER_STORE_BUSINESS_PLAN = '/seller/store/settings/business-plan';
+    case SELLER_STORE_POS_CONFIG = '/seller/store/pos-config';
+    case SELLER_STORE_POS_SALES = '/seller/store/pos';
+    //------------ SELLER Live Chat
+    case STORE_STORE_MESSAGE = 'store-message';
 
-        // ----------- Seller Product Manage
-        case SELLER_STORE_PRODUCT_LIST = '/seller/store/product/list';
-        case SELLER_STORE_PRODUCT_ADD = '/seller/store/product/add';
-        case SELLER_STORE_PRODUCT_STOCK_REPORT = '/seller/store/product/stock-report';
-        case SELLER_STORE_PRODUCT_BULK_EXPORT = '/seller/store/product/export';
-        case SELLER_STORE_PRODUCT_BULK_IMPORT = '/seller/store/product/import';
-        // ----------- Seller Product Inventory
-        case SELLER_STORE_PRODUCT_INVENTORY = '/seller/store/product/inventory';
+    // ----------- Seller Product Manage
+    case SELLER_STORE_PRODUCT_LIST = '/seller/store/product/list';
+    case SELLER_STORE_PRODUCT_ADD = '/seller/store/product/add';
+    case SELLER_STORE_PRODUCT_STOCK_REPORT = '/seller/store/product/stock-report';
+    case SELLER_STORE_PRODUCT_BULK_EXPORT = '/seller/store/product/export';
+    case SELLER_STORE_PRODUCT_BULK_IMPORT = '/seller/store/product/import';
+    // ----------- Seller Product Inventory
+    case SELLER_STORE_PRODUCT_INVENTORY = '/seller/store/product/inventory';
 
-     //-----------Seller Staff Manage----------
-      case SELLER_STAFF_LIST = '/seller/staff/list';
-      case SELLER_STAFF_BAN= '/seller/staff/ban';
-      case SELLER_STAFF_ACTIVE= '/seller/staff/active';
-      case SELLER_STAFF_ROLES_STORE = '/seller/staff/role-stores';
+    //-----------Seller Staff Manage----------
+    case SELLER_STAFF_LIST = '/seller/staff/list';
+    case SELLER_STAFF_BAN = '/seller/staff/ban';
+    case SELLER_STAFF_ACTIVE = '/seller/staff/active';
+    case SELLER_STAFF_ROLES_STORE = '/seller/staff/role-stores';
 
-        //-----------Financial Management----------
-        case SELLER_STORE_FINANCIAL_WALLET = '/seller/store/financial/wallet';
-        case SELLER_STORE_FINANCIAL_WITHDRAWALS= '/seller/store/financial/withdraw';
+    //-----------Financial Management----------
+    case SELLER_STORE_FINANCIAL_WALLET = '/seller/store/financial/wallet';
+    case SELLER_STORE_FINANCIAL_WITHDRAWALS = '/seller/store/financial/withdraw';
 
-        //----------- Promotional control ----------
-        case SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS = '/seller/store/promotional/flash/active-deals';
-        case SELLER_STORE_PROMOTIONAL_FLASH_SALE_MY_DEALS = '/seller/store/promotional/flash/my-deals';
-        case SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS = '/seller/store/promotional/flash/join-deals';
-        case SELLER_STORE_PROMOTIONAL_BANNER_MANAGE = '/seller/store/promotional/banner';
+    //----------- Promotional control ----------
+    case SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS = '/seller/store/promotional/flash/active-deals';
+    case SELLER_STORE_PROMOTIONAL_FLASH_SALE_MY_DEALS = '/seller/store/promotional/flash/my-deals';
+    case SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS = '/seller/store/promotional/flash/join-deals';
+    case SELLER_STORE_PROMOTIONAL_BANNER_MANAGE = '/seller/store/promotional/banner';
 
-        //=============== Seller Order Manger ====================
-     case SELLER_STORE_ORDER_MANAGE = '/seller/store/orders';
-     case SELLER_ORDERS_RETURNED_OR_REFUND = '/seller/orders/returned';
-     case SELLER_ORDERS_REVIEWS_MANAGE = '/seller/orders/reviews';
+    //=============== Seller Order Manger ====================
+    case SELLER_STORE_ORDER_MANAGE = '/seller/store/orders';
+    case SELLER_ORDERS_RETURNED_OR_REFUND = '/seller/orders/returned';
+    case SELLER_ORDERS_REVIEWS_MANAGE = '/seller/orders/reviews';
     //====================== Product Authors (For Book Only)
     case SELLER_PRODUCT_AUTHORS_MANAGE = '/seller/product/author/list';
 
