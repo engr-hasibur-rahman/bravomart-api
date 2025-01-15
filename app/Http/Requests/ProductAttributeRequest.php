@@ -27,6 +27,7 @@ class ProductAttributeRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'product_type' => 'nullable|in:' . implode(',', array_column(StoreType::cases(), 'value')),
+            'value' => 'required'
         ];
     }
 
@@ -37,6 +38,7 @@ class ProductAttributeRequest extends FormRequest
             'name.string' => __('validation.string', ['name' => 'Name']),
             'name.max' => __('validation.max.string', ['name' => 'Name']),
             'product_type.in' => __('validation.in', ['name' => 'Product Type', 'enum' => implode(',', array_column(StoreType::cases(), 'value'))]),
+            'value.required' => __('validation.required', ['value' => 'Value']),
         ];
     }
 

@@ -17,7 +17,7 @@ class ProductAttribute extends Model
         'name'
     ];
 
-    public function attributeValues()
+    public function attribute_values()
     {
         return $this->hasMany(ProductAttributeValue::class, 'attribute_id');
     }
@@ -27,9 +27,9 @@ class ProductAttribute extends Model
         return $this->morphMany(Translation::class, 'translatable');
     }
 
-    // Method to get translation by language and key
-    public function getTranslation(string $key, string $language)
+    public function related_translations()
     {
-        return $this->translations()->where('language', $language)->where('key', $key)->first()->value ?? null;
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
     }
 }

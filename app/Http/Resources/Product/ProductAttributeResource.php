@@ -14,12 +14,16 @@ class ProductAttributeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
             'value' => $this->id,
-            'label' => $this->name,
-            "product_type" => $this->product_type,
-            'attribute_values' => ProductAttributeValueResource::collection($this->attributeValues)
+            'label' => $translation?->where('key', 'name')->first()?->value ?? $this->name,
+            'product_type' => $this->product_type,
+            'attribute_values' => ProductAttributeValueResource::collection($this->attribute_values)
         ];
     }
 }
