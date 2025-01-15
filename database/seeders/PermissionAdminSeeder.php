@@ -261,6 +261,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::PRODUCT_ATTRIBUTE_LIST->value,
                                     'PermissionTitle' => 'Attribute List',
                                     'activity_scope' => 'system_level',
+                                    'options' => ['view'],
                                     'icon' => '',
                                     'translations' => [
                                         'en' => 'Attribute List',
@@ -271,6 +272,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::PRODUCT_ATTRIBUTE_ADD->value,
                                     'PermissionTitle' => 'Add Attribute',
                                     'activity_scope' => 'system_level',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'icon' => '',
                                     'translations' => [
                                         'en' => 'Add Attribute',
