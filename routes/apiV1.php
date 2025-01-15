@@ -366,18 +366,17 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         //Product Attribute Management
         Route::group(['prefix' => 'attribute/', 'middleware/' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [ProductAttributeController::class, 'index']);
-            Route::get('details', [ProductAttributeController::class, 'show']);
+            Route::get('details/{id}', [ProductAttributeController::class, 'show']);
             Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
             Route::post('add', [ProductAttributeController::class, 'store']);
-            Route::post('value/add', [ProductAttributeController::class, 'storeAttributeValue']);
             Route::post('update', [ProductAttributeController::class, 'update']);
-            Route::put('status/{id}', [ProductAttributeController::class, 'status_update']);
+            Route::post('status/{id}', [ProductAttributeController::class, 'status_update']);
             Route::delete('remove/{id}', [ProductAttributeController::class, 'destroy']);
         });
         // Coupon manage
         Route::group(['prefix' => 'coupon/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_MANAGE->value]], function () {
             Route::get('list', [CouponManageController::class, 'index']);
-            Route::get('details', [CouponManageController::class, 'show']);
+            Route::get('details/{id}', [CouponManageController::class, 'show']);
             Route::post('add', [CouponManageController::class, 'store']);
             Route::post('update', [CouponManageController::class, 'update']);
             Route::post('status-change', [CouponManageController::class, 'changeStatus']);
@@ -385,7 +384,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
         Route::group(['prefix' => 'coupon-line/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_LINE_MANAGE->value]], function () {
             Route::get('list', [CouponManageController::class, 'couponLineIndex']);
-            Route::get('details', [CouponManageController::class, 'couponLineShow']);
+            Route::get('details/{id}', [CouponManageController::class, 'couponLineShow']);
             Route::post('add', [CouponManageController::class, 'couponLineStore']);
             Route::post('update', [CouponManageController::class, 'couponLineUpdate']);
             Route::delete('remove/{id}', [CouponManageController::class, 'couponLineDestroy']);
@@ -452,19 +451,28 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
         // Admin Deliveryman management
         Route::prefix('deliveryman/')->group(function () {
-            //vehicle-types
-            Route::prefix('vehicle-types/')->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value])->group(function () {
-                Route::get('list', [AdminDeliverymanTypeManageController::class, 'index']);
-                Route::post('add', [AdminDeliverymanTypeManageController::class, 'store']);
-                Route::get('details', [AdminDeliverymanTypeManageController::class, 'show']);
-                Route::put('update', [AdminDeliverymanTypeManageController::class, 'update']);
-                Route::patch('status-change', [AdminDeliverymanTypeManageController::class, 'statusChange']);
-                Route::delete('remove/{id}', [AdminDeliverymanTypeManageController::class, 'destroy']);
-            });
             // delivery man manage
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
                 Route::get('list', [AdminDeliverymanManageController::class, 'index']);
+                Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest']);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
+                Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
+                Route::post('update', [AdminDeliverymanManageController::class, 'update']);
+                Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
+                Route::post('approve', [AdminDeliverymanManageController::class, 'approveRequest']);
+                Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
+            });
+            //vehicle-types
+            Route::prefix('vehicle-types/')->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value])->group(function () {
+                Route::get('list', [AdminDeliverymanManageController::class, 'indexVehicle']);
+                Route::get('request', [AdminDeliverymanManageController::class, 'vehicleRequest']);
+                Route::post('add', [AdminDeliverymanManageController::class, 'storeVehicle']);
+                Route::get('details/{id}', [AdminDeliverymanManageController::class, 'showVehicle']);
+                Route::post('update', [AdminDeliverymanManageController::class, 'updateVehicle']);
+                Route::post('change-status', [AdminDeliverymanManageController::class, 'changeVehicleStatus']);
+                Route::post('approve', [AdminDeliverymanManageController::class, 'approveVehicleRequest']);
+                Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroyVehicle']);
+            });
                 Route::get('details', [AdminDeliverymanManageController::class, 'show']);
                 Route::put('update', [AdminDeliverymanManageController::class, 'update']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
@@ -520,7 +528,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list', [AdminAreaSetupManageController::class, 'index']);
                 Route::post('add', [AdminAreaSetupManageController::class, 'store']);
                 Route::post('update', [AdminAreaSetupManageController::class, 'update']);
-                Route::get('details', [AdminAreaSetupManageController::class, 'show']);
+                Route::get('details/{id}', [AdminAreaSetupManageController::class, 'show']);
                 Route::post('change-status', [AdminAreaSetupManageController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [AdminAreaSetupManageController::class, 'destroy']);
             });
@@ -718,7 +726,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
     });
     /* --------------------------> delivery route end <-------------------------- */
-});
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
     // media manage

@@ -8,7 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AreaCreateRequest extends FormRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -26,8 +26,7 @@ class AreaCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'     => ['required', 'string', 'max:255'],
-            'code' => 'required|string|unique:com_areas,code,' . $this->id
+            'name' => 'required|string|max:255'
         ];
     }
 
@@ -39,14 +38,9 @@ class AreaCreateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'      => 'Name is required',
-            'name.string'        => 'Name is not a valid string',
-            'name.max:255'       => 'Name can not be more than 255 character',
-
-            'code.required'     => 'email is required',
-            'code.string'        => 'Name is not a valid string',
-            'code.max:255'       => 'Name can not be more than 255 character',
-            'code.unique:com_areas' => 'email must be unique'
+            'name.required' => __('validation.required', ['attribute' => 'Area name']),
+            'name.string' => __('validation.string', ['attribute' => 'Area name']),
+            'name.max' => __('validation.max.string', ['attribute' => 'Area name']),
         ];
     }
 

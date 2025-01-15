@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\ProductAttribute;
 use App\Models\ProductAttributeValue;
 use App\Models\Translation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -78,7 +79,6 @@ class ProductAttributeRepository extends BaseRepository
                 }
             }
         }
-
         // Save translations if available
         if (!empty($translations)) {
             // If updating, delete existing translations first
@@ -88,14 +88,13 @@ class ProductAttributeRepository extends BaseRepository
             $attribute->translations()->createMany($translations);
         }
 
-        return $attribute;
+        return $attribute->id;
     }
 
 
-    public function storeAttributeValues(array $data)
+    public function storeAttributeValues(array $data, int $attributeId)
     {
         try {
-            $attributeId = $data['attribute_id'];
             $values = $data['value']; // Assuming 'value' is an array of values
 
             $insertData = collect($values)->map(function ($value) use ($attributeId) {
@@ -112,4 +111,38 @@ class ProductAttributeRepository extends BaseRepository
             throw $e;
         }
     }
+    public function updateAttributeValues(array $data, int $attributeId)
+    {
+        try {
+            if (!isset($data['value']) || !is_array($data['value'])) {
+                throw new \InvalidArgumentException("The 'value' field must be an array.");
+            }
+
+            $values = $data['value'];
+
+            // Wrap in a transaction for atomicity
+            DB::transaction(function () use ($values, $attributeId) {
+                // Delete existing attribute values
+                ProductAttributeValue::where('attribute_id', $attributeId)->delete();
+
+                // Prepare and insert new values
+                $insertData = collect($values)->map(function ($value) use ($attributeId) {
+                    return [
+                        'attribute_id' => $attributeId,
+                        'value' => $value,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })->toArray();
+                if (!empty($insertData)) {
+                    ProductAttributeValue::insert($insertData);
+                }
+            });
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
 }
