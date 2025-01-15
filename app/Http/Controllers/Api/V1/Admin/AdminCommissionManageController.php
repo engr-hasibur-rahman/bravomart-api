@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\SystemCommission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,62 +12,51 @@ class AdminCommissionManageController extends Controller
     public function commissionSettings(Request $request)
     {
         if ($request->isMethod('POST')) {
-
-            // Validation rules for the input fields
-            $validator = Validator::make($request->all(), [
-                'subscription_enabled' => 'nullable',
-                'commission_enabled' => 'nullable',
-                'com_default_order_commission_rate' => 'nullable|numeric',
-                'com_default_delivery_commission_charge' => 'nullable|numeric',
-                'com_order_shipping_charge' => 'nullable|numeric',
-                'com_order_confirmation_by' => 'nullable|string',
-                'com_order_include_tax_amount' => 'nullable',
-                'com_order_additional_charge_enable_disable' => 'nullable',
-                'com_order_additional_charge_name' => 'nullable|string|max:255',
-                'com_order_additional_charge_amount' => 'nullable|numeric|min:0',
+            // Validate input
+            $validatedData = $request->validate([
+                'subscription_enabled' => 'required|boolean',
+                'commission_enabled' => 'required|boolean',
+                'commission_charge_type' => 'nullable',
+                'commission_amount' => 'nullable|numeric|min:0',
+                'default_order_commission_rate' => 'nullable|numeric|min:0',
+                'default_delivery_commission_charge' => 'nullable|numeric|min:0',
+                'order_shipping_charge' => 'nullable|numeric|min:0',
+                'order_confirmation_by' => 'nullable|string|max:255',
+                'order_include_tax_amount' => 'nullable|boolean',
+                'order_additional_charge_enable_disable' => 'nullable|boolean',
+                'order_additional_charge_name' => 'nullable',
+                'order_additional_charge_amount' => 'nullable|numeric|min:0',
             ]);
 
-            // Check if validation fails
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()]);
+            // Update or create settings
+            $systemCommission = SystemCommission::first();
+            if (!$systemCommission) {
+                $systemCommission = new SystemCommission();
             }
 
-            // Retrieve validated data
-            $validatedData = $validator->validated();
-
-
-            // subscription and commission business models
-            if ($validatedData['subscription_enabled'] === true && $validatedData['commission_enabled'] === true) {
-                $validatedData['com_business_model_type'] = 'commission_subscription_model';
-            } elseif ($validatedData['commission_enabled'] == 'commission') {
-                $validatedData['com_business_model_type'] = 'commission';
-            } elseif ($validatedData['subscription_enabled'] === true) {
-                $validatedData['com_business_model_type'] = 'subscription';
-            }
-
-            // Fields to update in the system (use the validated data)
-            foreach ($validatedData as $field => $value) {
-                com_option_update($field, $value); // Update the field using the helper function
-            }
+            $systemCommission->fill($validatedData);
+            $systemCommission->save();
 
             // Return success response
-            return $this->success(translate('messages.update_success', ['name' => 'Commission Settings']));
+            return response()->json([
+                'success' => true,
+                'message' => 'Commission settings Updated Successfully',
+            ]);
         }
 
-        // Handle GET request
-        $response = [
-            'com_business_model_type' => com_option_get('com_business_model_type'),
-            'com_default_order_commission_rate' => com_option_get('com_default_order_commission_rate'),
-            'com_default_delivery_commission_charge' => com_option_get('com_default_delivery_commission_charge'),
-            'com_order_shipping_charge' => com_option_get('com_order_shipping_charge'),
-            'com_order_confirmation_in_store_or_deliveryman' => com_option_get('com_order_confirmation_in_store_or_deliveryman'),
-            'com_order_include_tax_amount' => com_option_get('com_order_include_tax_amount'),
-            'com_order_additional_charge_enable_disable' => com_option_get('com_order_additional_charge_enable_disable'),
-            'com_order_additional_charge_name' => com_option_get('com_order_additional_charge_name'),
-            'com_order_additional_charge_amount' => com_option_get('com_order_additional_charge_amount'),
-        ];
+        // Handle GET request: Retrieve existing settings
+        $response = SystemCommission::first();
+        if (!$response) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Commission settings not found',
+            ], 400);
+        }
 
-        return $this->success($response);
+        return response()->json([
+            'success' => true,
+            'data' => $response,
+        ]);
     }
 
     public function commissionHistory(Request $request)

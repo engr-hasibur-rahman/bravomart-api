@@ -3,19 +3,11 @@
 namespace App\Repositories;
 
 use App\Interfaces\DeliverymanManageInterface;
-use App\Models\DeliveryMan;
-use App\Models\Translation;
-use App\Models\User;
-use App\Models\VehicleType;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 
 class DeliverymanManageRepository implements DeliverymanManageInterface
 {
-    public function __construct(protected VehicleType $vehicleType, protected Translation $translation)
-    {
 
+<<<<<<< HEAD
     }
 
     public function translationKeys(): mixed
@@ -499,4 +491,6 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
         return true;
     }
+=======
+>>>>>>> ec6cc7008589409b3537ffebcadc27707c435a26
 }

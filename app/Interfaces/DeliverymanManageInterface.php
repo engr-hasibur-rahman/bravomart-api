@@ -1,13 +1,10 @@
 <?php
 
 namespace App\Interfaces;
-
-use Illuminate\Http\Request;
-
 interface DeliverymanManageInterface
 {
-    public function store(array $data);
 
+<<<<<<< HEAD
     public function update(array $data);
 
     public function getAllDeliveryman(array $filters);
@@ -40,4 +37,6 @@ interface DeliverymanManageInterface
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 
     public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
+=======
+>>>>>>> ec6cc7008589409b3537ffebcadc27707c435a26
 }
