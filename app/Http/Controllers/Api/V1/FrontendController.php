@@ -13,6 +13,8 @@ use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
+use App\Http\Resources\Com\Store\StoreListResource;
+use App\Http\Resources\Com\Store\StorePublicListResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Http\Resources\Customer\CustomerPublicResource;
 use App\Http\Resources\Location\AreaPublicResource;
@@ -32,6 +34,7 @@ use App\Interfaces\CityManageInterface;
 use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
+use App\Models\ComMerchantStore;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\ProductAttribute;
@@ -55,6 +58,46 @@ class FrontendController extends Controller
     )
     {
 
+    }
+
+
+    /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
+    public function getStores(Request $request)
+    {
+        try {
+            $query = ComMerchantStore::query();
+
+            // Apply store type filter if provided
+            if ($request->filled('store_type')) {
+                $query->where('store_type', $request->store_type);
+            }
+
+            // Apply featured stores filter if provided
+            if ($request->filled('is_featured')) {
+                $query->where('is_featured', $request->is_featured);
+            }
+
+            // Pagination
+            $perPage = $request->get('per_page', 10);
+            $stores = $query
+                ->with(['area', 'merchant', 'related_translations', 'products'])
+                ->where('status', 1)
+                ->where('deleted_at', null)
+                ->paginate($perPage);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => StorePublicListResource::collection($stores),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
@@ -299,6 +342,7 @@ class FrontendController extends Controller
             'meta' => new PaginationResource($products)
         ]);
     }
+
     public function productDetails($product_slug)
     {
         $product = Product::with([
