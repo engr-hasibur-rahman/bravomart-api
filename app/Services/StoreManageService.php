@@ -26,6 +26,7 @@ class StoreManageService
 
             // store create after commission set
                $store = ComMerchantStore::find($store->id);
+               $store_id = $store->id;
             if (isset($store->subscription_type) && $store->subscription_type == 'commission') {
                 // get system commission
                 $system_commission = SystemCommission::first();
@@ -42,7 +43,7 @@ class StoreManageService
 
                 }
 
-                return $store->id;
+                return $store_id;
 
             }elseif(isset($store->subscription_type) && $store->subscription_type == 'subscription'){
                 // subscription package
@@ -59,13 +60,24 @@ class StoreManageService
                 }
 
                 // if seller store payment using wallet
-                if(isset($data['payment_gateway']) && $data['payment_gateway'] == 'wallet'){
-
+                 $payment_gateway = $data['payment_gateway'];
+                if(isset($payment_gateway) && $payment_gateway == 'wallet'){
+                    // find store and update store status
+                    $store = ComMerchantStore::find($store_id);
+                    $store->status = 1;
+                    $store->save();
+                    // subscription status set
+                    $subscription_status = 1;
+                    $payment_status = 'paid';
+                }else{
+                    $subscription_status = 0;
+                    $payment_status = 'pending';
                 }
+
 
                 // Create subscription history
                 SubscriptionHistory::create([
-                    'store_id' => $store->id,
+                    'store_id' => $store_id,
                     'subscription_id' => $subscription_package->id,
                     'name' => $subscription_package->name,
                     'validity' => $subscription_package->validity,
@@ -77,17 +89,17 @@ class StoreManageService
                     'order_limit' => $subscription_package->order_limit,
                     'product_limit' => $subscription_package->product_limit,
                     'product_featured_limit' => $subscription_package->product_featured_limit,
-                    'payment_gateway' => $data['payment_gateway'] ?? null,
-                    'payment_status' => $data['payment_status'] ?? null,
+                    'payment_gateway' =>$payment_gateway ?? null,
+                    'payment_status' => $payment_status ?? null,
                     'transaction_id' => $data['transaction_id'] ?? null,
                     'manual_image' => $data['manual_image'] ?? null,
                     'expire_date' => now()->addDays($subscription_package->validity),
-                    'status' => 0,
+                    'status' => $subscription_status,
                 ]);
 
                 // Create store wise subscription
                 ComMerchantStoresSubscription::create([
-                    'store_id' => $store->id,
+                    'store_id' => $store_id,
                     'subscription_id' => $subscription_package->id,
                     'name' => $subscription_package->name,
                     'validity' => $subscription_package->validity,
@@ -99,12 +111,12 @@ class StoreManageService
                     'order_limit' => $subscription_package->order_limit,
                     'product_limit' => $subscription_package->product_limit,
                     'product_featured_limit' => $subscription_package->product_featured_limit,
-                    'payment_gateway' => $data['payment_gateway'] ?? null,
-                    'payment_status' => $data['payment_status'] ?? null,
+                    'payment_gateway' => $payment_gateway ?? null,
+                    'payment_status' => $payment_status ?? null,
                     'transaction_id' => $data['transaction_id'] ?? null,
                     'manual_image' => $data['manual_image'] ?? null,
                     'expire_date' => now()->addDays($subscription_package->validity),
-                    'status' => 0,
+                    'status' => $subscription_status,
                 ]);
 
                 // subscription info
@@ -115,10 +127,7 @@ class StoreManageService
                 $seller_name = $seller->first_name . ' ' .$seller->last_name;
                 $seller_email = $seller->email;
             }
-
-
-
-            return $store->id;
+            return $store_id;
 
     }
 

@@ -36,5 +36,6 @@ Route::prefix('v1/subscription/')->group(function () {
     // buy store subscription
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('package-buy', [BuySubscriptionPackageController::class, 'buySubscriptionPackage']);
+        Route::post('package-payment-status-update', [BuySubscriptionPackageController::class, 'packagePaymentStatusUpdate']);
     });
 });
