@@ -377,7 +377,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Coupon manage
         Route::group(['prefix' => 'coupon/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_MANAGE->value]], function () {
             Route::get('list', [CouponManageController::class, 'index']);
-            Route::get('details', [CouponManageController::class, 'show']);
+            Route::get('details/{id}', [CouponManageController::class, 'show']);
             Route::post('add', [CouponManageController::class, 'store']);
             Route::post('update', [CouponManageController::class, 'update']);
             Route::post('status-change', [CouponManageController::class, 'changeStatus']);
@@ -455,9 +455,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // delivery man manage
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
                 Route::get('list', [AdminDeliverymanManageController::class, 'index']);
+                Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest']);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
                 Route::post('update', [AdminDeliverymanManageController::class, 'update']);
+                Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
+                Route::post('approve', [AdminDeliverymanManageController::class, 'approveRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
             });
             //vehicle-types
@@ -467,7 +470,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('add', [AdminDeliverymanManageController::class, 'storeVehicle']);
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'showVehicle']);
                 Route::post('update', [AdminDeliverymanManageController::class, 'updateVehicle']);
-                Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
+                Route::post('change-status', [AdminDeliverymanManageController::class, 'changeVehicleStatus']);
                 Route::post('approve', [AdminDeliverymanManageController::class, 'approveVehicleRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroyVehicle']);
             });

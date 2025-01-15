@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Product;
 
 use App\Actions\ImageModifier;
+use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Com\Product\ProductStorePublicResource;
@@ -35,6 +36,7 @@ class ProductDetailsPublicResource extends JsonResource
             'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'gallery_images' => $this->gallery_images,
+            'gallery_images_urls' => MultipleImageModifier::multipleImageModifier($this->gallery_images),
             'warranty' => $this->warranty,
             'return_in_days' => $this->return_in_days,
             'return_text' => $this->return_text,

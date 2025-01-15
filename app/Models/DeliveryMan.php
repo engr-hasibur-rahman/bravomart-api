@@ -15,7 +15,6 @@ class DeliveryMan extends Model
         'identification_photo_front',
         'identification_photo_back',
         'address',
-        'status',
         'created_by',
         'updated_by',
     ];
@@ -23,6 +22,13 @@ class DeliveryMan extends Model
     public function deliveryman()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    public function scopePendingDeliveryman($query)
+    {
+        return $query->whereHas('deliveryman', function ($q) {
+            $q->where('status', 0)
+                ->where('activity_scope', 'delivery_level');
+        });
     }
 
     public function vehicle_type()

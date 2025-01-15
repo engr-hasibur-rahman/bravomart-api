@@ -218,6 +218,51 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
     }
 
+    public function getDeliverymanRequests()
+    {
+        try {
+            $deliverymen = DeliveryMan::with([
+                'deliveryman',
+                'vehicle_type',
+                'area',
+                'creator',
+                'updater'
+            ])
+                ->where('deleted_at', null)
+                ->pendingDeliveryman()
+                ->paginate(10);
+            return $deliverymen;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    public function approveDeliverymen(array $deliveryman_ids)
+    {
+        try {
+            $deliverymen = User::whereIn('id', $deliveryman_ids)
+                ->where('status', 0)
+                ->where('activity_scope', 'delivery_level')
+                ->where('deleted_at', null)
+                ->update(['status' => 1]);
+            return $deliverymen > 0;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    public function changeStatus(array $data)
+    {
+        try {
+            $deliverymen = User::whereIn('id', $data['deliveryman_ids'])
+                ->where('deleted_at', null)
+                ->where('activity_scope', 'delivery_level')
+                ->update(['status' => $data['status']]);
+            return $deliverymen > 0;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
 
     /*------------------------------------------------------------>Vehicle Type Start<---------------------------------------------------*/
     public function getAllVehicles(array $filters)

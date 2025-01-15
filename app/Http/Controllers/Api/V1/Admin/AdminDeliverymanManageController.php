@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DeliverymanRequest;
 use App\Http\Requests\VehicleTypeRequest;
 use App\Http\Resources\Admin\AdminDeliverymanDetailsResource;
+use App\Http\Resources\Admin\AdminDeliverymanRequestResource;
 use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
 use App\Http\Resources\Admin\AdminVehicleDetailsResource;
@@ -77,6 +78,53 @@ class AdminDeliverymanManageController extends Controller
         }
     }
 
+    public function deliverymanRequest()
+    {
+        $deliverymen = $this->deliverymanRepo->getDeliverymanRequests();
+        if ($deliverymen) {
+            return response()->json([
+                'data' => AdminDeliverymanRequestResource::collection($deliverymen),
+                'meta' => new PaginationResource($deliverymen),
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+            ]);
+        }
+    }
+
+    public function approveRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'deliveryman_ids*' => 'required|array',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $success = $this->deliverymanRepo->approveDeliverymen($request->deliveryman_ids);
+        if ($success) {
+            return $this->success(__('messages.approve.success', ['name' => 'Deliveryman requests']));
+        } else {
+            return $this->failed(__('messages.approve.failed', ['name' => 'Deliveryman requests']));
+        }
+    }
+    public function changeStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'deliveryman_ids*' => 'required|array',
+            'status' => 'required|integer|in:0,1,2',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $success = $this->deliverymanRepo->changeStatus($request->all());
+        if ($success) {
+            return $this->success(__('messages.update_success', ['name' => 'Deliveryman status']));
+        } else {
+            return $this->failed(__('messages.update_failed', ['name' => 'Deliveryman status']));
+        }
+    }
     public function indexVehicle(Request $request)
     {
         $filters = [
@@ -185,7 +233,7 @@ class AdminDeliverymanManageController extends Controller
         }
     }
 
-    public function changeStatus(Request $request)
+    public function changeVehicleStatus(Request $request)
     {
         $success = $this->deliverymanRepo->toggleVehicleStatus($request->id);
         if ($success) {

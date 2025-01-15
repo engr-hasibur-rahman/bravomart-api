@@ -16,6 +16,11 @@ interface DeliverymanManageInterface
 
     public function delete(int $userId);
 
+    public function getDeliverymanRequests();
+
+    public function approveDeliverymen(array $deliveryman_ids);
+    public function changeStatus(array $data);
+
     public function getAllVehicles(array $filters);
 
     public function getVehicleRequests();
