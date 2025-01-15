@@ -86,17 +86,16 @@ class ProductAttributeController extends Controller
 
     }
 
-    public function status_update(Request $request)
+    public function changeStatus(Request $request)
     {
-        $attribute = ProductAttribute::findOrFail($request->id);
-        $data_name = $attribute->name;
-        $attribute->status = !$attribute->status;
-        $attribute->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'Product Attribute: ' . $data_name . ' status Changed successfully',
-            'status' => $attribute->status
-        ]);
+        try {
+            $attribute = ProductAttribute::findOrFail($request->id);
+            $attribute->status = !$attribute->status;
+            $attribute->save();
+            return $this->success(__('messages.update_success', ['name' => 'Product Attribute']));
+        } catch (\Exception $exception) {
+            return $this->failed(__('messages.update_failed', ['name' => 'Product Attribute']));
+        }
     }
 
     public function destroy(int $id)
@@ -124,6 +123,7 @@ class ProductAttributeController extends Controller
             return $this->failed(translate('messages.delete_failed', ['name' => 'Product Attribute']));
         }
     }
+
     public function typeWiseAttributes(Request $request)
     {
         $validator = Validator::make($request->all(), [

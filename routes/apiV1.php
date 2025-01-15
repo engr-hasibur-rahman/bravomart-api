@@ -370,7 +370,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
             Route::post('add', [ProductAttributeController::class, 'store']);
             Route::post('update', [ProductAttributeController::class, 'update']);
-            Route::post('status/{id}', [ProductAttributeController::class, 'status_update']);
+            Route::post('change-status', [ProductAttributeController::class, 'changeStatus']);
             Route::delete('remove/{id}', [ProductAttributeController::class, 'destroy']);
         });
         // Coupon manage
