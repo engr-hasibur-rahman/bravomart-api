@@ -25,6 +25,9 @@ class SellerStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'subscription_type' => 'nullable',
+            'subscription_id' => 'nullable',
+            'payment_gateway' => 'nullable',
             //'area_id' => 'nullable|exists:areas,id',
             //'merchant_id' => 'nullable|exists:merchants,id',
             'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class),
@@ -41,9 +44,6 @@ class SellerStoreRequest extends FormRequest
             'is_featured' => 'nullable|boolean',
             'opening_time' => 'nullable|date_format:H:i',
             'closing_time' => 'nullable|date_format:H:i',
-            'subscription_type' => 'nullable|string|max:50',
-            'admin_commission_type' => 'nullable|numeric|between:0,100',
-            'admin_commission_amount' => 'nullable',
             'delivery_charge' => 'nullable|numeric|min:0',
             'delivery_time' => 'nullable|string|max:50',
             'delivery_self_system' => 'nullable|boolean',
@@ -55,9 +55,6 @@ class SellerStoreRequest extends FormRequest
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'meta_image' => 'nullable|string|max:255',
-            'status' => 'nullable|in:0,1,2',
-            'created_by' => 'nullable|exists:users,id',
-            'updated_by' => 'nullable|exists:users,id',
         ];
     }
 

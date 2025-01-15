@@ -7,14 +7,18 @@ use App\Http\Requests\SellerStoreRequest;
 use App\Http\Resources\Com\Store\OwnerWiseStoreListResource;
 use App\Http\Resources\Com\Store\StoreListResource;
 use App\Interfaces\StoreManageInterface;
+use App\Services\StoreManageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SellerStoreManageController extends Controller
 {
-    public function __construct(protected StoreManageInterface $storeRepo)
+    protected $storeManageService;
+    public function __construct(protected StoreManageInterface $storeRepo, StoreManageService $storeManageService)
     {
+        $this->storeManageService = $storeManageService;
     }
+
 
     public function index(Request $request)
     {
@@ -34,9 +38,9 @@ class SellerStoreManageController extends Controller
 
     public function store(SellerStoreRequest $request): JsonResponse
     {
-        $store = $this->storeRepo->storeForAuthSeller($request->all());
-        $this->storeRepo->storeTranslation($request, $store, 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
-        if ($store) {
+        $store = $this->storeManageService->storeForAuthSeller($request->all());
+        if ($store && isset($store->id)) {
+            $this->storeRepo->storeTranslation($request, $store, 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
             return $this->success(translate('messages.save_success', ['name' => 'Store']));
         } else {
             return $this->failed(translate('messages.save_failed', ['name' => 'Store']));
@@ -45,7 +49,7 @@ class SellerStoreManageController extends Controller
 
     public function update(SellerStoreRequest $request)
     {
-        $store = $this->storeRepo->updateForSeller($request->all());
+        $store = $this->storeManageService->storeUpdateForAuthSeller($request->all());
         $this->storeRepo->updateTranslation($request, $store, 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
         if ($store) {
             return $this->success(translate('messages.update_success', ['name' => 'Store']));
