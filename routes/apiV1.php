@@ -377,7 +377,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Coupon manage
         Route::group(['prefix' => 'coupon/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_MANAGE->value]], function () {
             Route::get('list', [CouponManageController::class, 'index']);
-            Route::get('details', [CouponManageController::class, 'show']);
+            Route::get('details/{id}', [CouponManageController::class, 'show']);
             Route::post('add', [CouponManageController::class, 'store']);
             Route::post('update', [CouponManageController::class, 'update']);
             Route::post('status-change', [CouponManageController::class, 'changeStatus']);
@@ -385,7 +385,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
         Route::group(['prefix' => 'coupon-line/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_LINE_MANAGE->value]], function () {
             Route::get('list', [CouponManageController::class, 'couponLineIndex']);
-            Route::get('details', [CouponManageController::class, 'couponLineShow']);
+            Route::get('details/{id}', [CouponManageController::class, 'couponLineShow']);
             Route::post('add', [CouponManageController::class, 'couponLineStore']);
             Route::post('update', [CouponManageController::class, 'couponLineUpdate']);
             Route::delete('remove/{id}', [CouponManageController::class, 'couponLineDestroy']);
@@ -520,7 +520,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list', [AdminAreaSetupManageController::class, 'index']);
                 Route::post('add', [AdminAreaSetupManageController::class, 'store']);
                 Route::post('update', [AdminAreaSetupManageController::class, 'update']);
-                Route::get('details', [AdminAreaSetupManageController::class, 'show']);
+                Route::get('details/{id}', [AdminAreaSetupManageController::class, 'show']);
                 Route::post('change-status', [AdminAreaSetupManageController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [AdminAreaSetupManageController::class, 'destroy']);
             });
