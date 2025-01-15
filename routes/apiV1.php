@@ -60,6 +60,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\Seller\SellerDeliverymanManageController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -108,6 +109,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/behaviour-list', [FrontendController::class, 'behaviourList']);
     Route::get('/unit-list', [FrontendController::class, 'unitList']);
     Route::get('/customer-list', [FrontendController::class, 'customerList']);
+    Route::get('/store-list', [FrontendController::class, 'getStores']);
 });
 
 
@@ -370,7 +372,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
             Route::post('add', [ProductAttributeController::class, 'store']);
             Route::post('update', [ProductAttributeController::class, 'update']);
-            Route::post('status/{id}', [ProductAttributeController::class, 'status_update']);
+            Route::post('change-status', [ProductAttributeController::class, 'changeStatus']);
             Route::delete('remove/{id}', [ProductAttributeController::class, 'destroy']);
         });
         // Coupon manage
@@ -597,6 +599,26 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('add-customer', [SellerPosSalesController::class, 'addCustomer'])->name('seller.store.pos.addCustomer'); // Add customer for the store
                 Route::post('finalize-sale', [SellerPosSalesController::class, 'finalizeSale'])->name('seller.store.pos.finalizeSale'); // Finalize the sale
                 Route::get('order-history', [SellerPosSalesController::class, 'orderHistory'])->name('seller.store.pos.orderHistory'); // POS order history for the store
+            });
+            // seller deliveryman manage
+            Route::group(['prefix'=>'deliveryman/'],function (){
+                Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
+                    Route::get('list', [SellerDeliverymanManageController::class, 'index']);
+                    Route::post('add', [SellerDeliverymanManageController::class, 'store']);
+                    Route::get('details/{id}', [SellerDeliverymanManageController::class, 'show']);
+                    Route::post('update', [SellerDeliverymanManageController::class, 'update']);
+                    Route::post('change-status', [SellerDeliverymanManageController::class, 'changeStatus']);
+                    Route::delete('remove/{id}', [SellerDeliverymanManageController::class, 'destroy']);
+                });
+                //vehicle-types
+                Route::prefix('vehicle-types/')->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value])->group(function () {
+                    Route::get('list', [SellerDeliverymanManageController::class, 'indexVehicle']);
+                    Route::post('add', [SellerDeliverymanManageController::class, 'storeVehicle']);
+                    Route::get('details/{id}', [SellerDeliverymanManageController::class, 'showVehicle']);
+                    Route::post('update', [SellerDeliverymanManageController::class, 'updateVehicle']);
+                    Route::post('change-status', [SellerDeliverymanManageController::class, 'changeVehicleStatus']);
+                    Route::delete('remove/{id}', [SellerDeliverymanManageController::class, 'destroyVehicle']);
+                });
             });
             // seller product manage
             Route::group(['prefix' => 'orders/'], function () {

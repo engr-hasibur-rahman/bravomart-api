@@ -110,6 +110,7 @@ class AdminDeliverymanManageController extends Controller
             return $this->failed(__('messages.approve.failed', ['name' => 'Deliveryman requests']));
         }
     }
+
     public function changeStatus(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -126,6 +127,7 @@ class AdminDeliverymanManageController extends Controller
             return $this->failed(__('messages.update_failed', ['name' => 'Deliveryman status']));
         }
     }
+
     public function indexVehicle(Request $request)
     {
         $filters = [
