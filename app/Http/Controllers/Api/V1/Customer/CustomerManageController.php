@@ -437,4 +437,25 @@ class CustomerManageController extends Controller
             ]);
         }
     }
+
+    public function deleteAccount()
+    {
+        if (!auth('api_customer')->check()) {
+            unauthorized_response();
+        }
+        $success = $this->customerRepo->deleteAccount();
+        if ($success) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.account_delete_successful')
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.account_delete_failed')
+            ]);
+        }
+    }
 }

@@ -11,4 +11,5 @@ interface CustomerManageInterface
     public function verifyToken(string $token);
     public function resetPassword(array $data);
     public function deactivateAccount();
+    public function deleteAccount();
 }

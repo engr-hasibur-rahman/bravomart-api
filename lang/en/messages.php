@@ -58,6 +58,9 @@ return [
     'account_deactivate_successful' => 'Your account has been deactivated!',
     'account_deactivate_failed' => 'Something went wrong while deactivating your account!',
 
+    'account_delete_successful' => 'Your account has been deleted!',
+    'account_delete_failed' => 'Something went wrong while deleting your account!',
+
 ];
 
 

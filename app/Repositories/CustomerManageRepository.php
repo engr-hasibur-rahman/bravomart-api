@@ -154,5 +154,12 @@ class CustomerManageRepository implements CustomerManageInterface
         $user->currentAccessToken()->delete();
         return true;
     }
+    public function deleteAccount()
+    {
+        $user = auth('api_customer')->user();
+        $user->delete(); // Soft delete
+        $user->currentAccessToken()->delete();
+        return true;
+    }
 
 }
