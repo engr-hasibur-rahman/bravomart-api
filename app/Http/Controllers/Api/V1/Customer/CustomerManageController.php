@@ -10,7 +10,9 @@ use App\Interfaces\CustomerManageInterface;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManageController extends Controller
 {
@@ -52,24 +54,49 @@ class CustomerManageController extends Controller
                 "message" => $validator->errors()
             ]);
         }
-
-        $token = $this->customerRepo->getToken($request->all());
-        dd($token);
-        if ($token) {
+        $customer = Customer::where('email', $request->email)
+            ->first();
+        if (!$customer) {
             return response()->json([
-                "status" => true,
-                "status_code" => 200,
-                "message" => __('messages.login_success', ['name' => 'Customer']),
-                "token" => $token->createToken('customer_auth_token')->plainTextToken,
-                "email_verified" => (bool)$token->email_verified, // shorthand of -> $token->email_verified ? true : false
-            ]);
-        } else {
+                "status" => false,
+                "status_code" => 404,
+                "message" => __('messages.customer.not.found'),
+            ], 404);
+        }
+        // Check if the user's account is deleted
+        if ($customer->deleted_at !== null) {
+            return response()->json([
+                'error' => 'Your account has been deleted. Please contact support.'
+            ], Response::HTTP_GONE); // HTTP 410 Gone
+        }
+        // Check if the user's account is deactivated or disabled
+        if ($customer->status === 0) {
+            return response()->json([
+                'error' => 'Your account has been deactivated. Please contact support.'
+            ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
+        }
+        if ($customer->status === 2) {
+            return response()->json([
+                'error' => 'Your account has been suspended by the admin.'
+            ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
+        }
+        $authCustomer = Hash::check($request->password, $customer->password);
+        // Check if the user exists and if the password is correct
+        if (!$authCustomer) {
             return response()->json([
                 "status" => false,
                 "status_code" => 401,
                 "message" => __('messages.login_failed', ['name' => 'Customer']),
                 "token" => null,
             ], 401);
+        } else {
+            return response()->json([
+                "status" => true,
+                "status_code" => 200,
+                "message" => __('messages.login_success', ['name' => 'Customer']),
+                "token" => $customer->createToken('customer_auth_token')->plainTextToken,
+                "email_verified" => (bool)$customer->email_verified, // shorthand of -> $token->email_verified ? true : false
+            ]);
         }
     }
     /* ---------------------------------------------------------- Reset and Verification -------------------------------------------------------- */

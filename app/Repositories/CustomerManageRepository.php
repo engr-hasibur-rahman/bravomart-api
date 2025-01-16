@@ -34,49 +34,6 @@ class CustomerManageRepository implements CustomerManageInterface
             ], 500);
         }
     }
-
-    public function getToken(array $data)
-    {
-
-            // Attempt to find the user
-            $customer = $this->customer->where('email', $data['email'])
-                ->isActive()
-                ->first();
-            // Check if the user's account is deleted
-            if ($customer->deleted_at !== null) {
-                return response()->json([
-                    'error' => 'Your account has been deleted. Please contact support.'
-                ], Response::HTTP_GONE); // HTTP 410 Gone
-            }
-
-            // Check if the user's account is deactivated or disabled
-            if ($customer->status === 0) {
-                return response()->json([
-                    'error' => 'Your account has been deactivated. Please contact support.'
-                ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
-            }
-
-            if ($customer->status === 2) {
-                return response()->json([
-                    'error' => 'Your account has been suspended by the admin.'
-                ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
-            }
-            if (!$customer) {
-                return response()->json([
-                    "status" => false,
-                    "status_code" => 404,
-                    "message" => __('messages.customer.not.found'),
-                ], 404);
-            }
-            $authCustomer = Hash::check($data['password'], $customer->password);
-            // Check if the user exists and if the password is correct
-            if (!$authCustomer) {
-                return false;
-            }
-            // Build and return the response
-            return $customer;
-
-    }
     /* ------------------------------------------------------ Reset and Verification --------------------------------------------------------------- */
     // Send email verification link
     public function sendVerificationEmail(string $email)
