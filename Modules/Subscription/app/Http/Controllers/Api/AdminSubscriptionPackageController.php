@@ -117,20 +117,26 @@ class AdminSubscriptionPackageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:subscriptions,id',
-            'status' => 'required|integer',
         ]);
 
         // Check if validation fails
         if ($validator->fails()) {
             return response()->json([
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Validation failed',
                 'errors' => $validator->errors()
             ], 422);
         }
 
         $package = Subscription::findOrFail($request->id);
-        $package->update(['status' => $request->status]);
+        if (!$package) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Subscription not found',
+            ]);
+        }
+
+        $package->update(['status' => $package->status == 0 ? 1 : 0 ]);
 
         return response()->json([
             'status' => 'success',
