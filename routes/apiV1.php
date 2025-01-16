@@ -60,6 +60,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\Seller\SellerDeliverymanManageController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -108,6 +109,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/behaviour-list', [FrontendController::class, 'behaviourList']);
     Route::get('/unit-list', [FrontendController::class, 'unitList']);
     Route::get('/customer-list', [FrontendController::class, 'customerList']);
+    Route::get('/store-list', [FrontendController::class, 'getStores']);
 });
 
 
@@ -370,7 +372,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
             Route::post('add', [ProductAttributeController::class, 'store']);
             Route::post('update', [ProductAttributeController::class, 'update']);
-            Route::post('status/{id}', [ProductAttributeController::class, 'status_update']);
+            Route::post('change-status', [ProductAttributeController::class, 'changeStatus']);
             Route::delete('remove/{id}', [ProductAttributeController::class, 'destroy']);
         });
         // Coupon manage
@@ -389,8 +391,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('update', [CouponManageController::class, 'couponLineUpdate']);
             Route::delete('remove/{id}', [CouponManageController::class, 'couponLineDestroy']);
         });
-
-
         // Tag manage
         Route::group(['prefix' => 'tag/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_TAG_LIST->value]], function () {
             Route::get('list', [TagManageController::class, 'index']);
@@ -399,7 +399,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('update', [TagManageController::class, 'update']);
             Route::delete('remove/{id}', [TagManageController::class, 'destroy']);
         });
-
         // Unit manage
         Route::group(['prefix' => 'unit/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value]], function () {
             Route::get('list', [AdminUnitManageController::class, 'index']);
@@ -408,7 +407,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('update', [AdminUnitManageController::class, 'update']);
             Route::delete('remove/{id}', [AdminUnitManageController::class, 'destroy']);
         });
-
         // Blog manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
             Route::get('blog/list', [BlogManageController::class, 'blogIndex']);
@@ -473,15 +471,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('approve', [AdminDeliverymanManageController::class, 'approveVehicleRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroyVehicle']);
             });
-                Route::get('details', [AdminDeliverymanManageController::class, 'show']);
-                Route::put('update', [AdminDeliverymanManageController::class, 'update']);
-                Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
-            });
             // deliveryman review manage
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_REVIEW->value]], function () {
                 Route::get('reviews', [AdminDeliverymanReviewManageController::class, 'index']);
             });
         });
+
+
         // FINANCIAL WITHDRAWALS management
         Route::group(['prefix' => 'financial/'], function () {
             Route::group(['prefix' => 'withdraw/'], function () {
@@ -542,22 +538,22 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('report-analytics', [AdminReportAnalyticsManageController::class, 'reportList'])->middleware(['permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS->value]);
 
         /*--------------------- System management ----------------------------*/
-            Route::group(['prefix' => 'system-management'], function () {
-                Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings'])->middleware('permission:' . PermissionKey::GENERAL_SETTINGS->value);
-                Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization'])->middleware('permission:' . PermissionKey::FOOTER_CUSTOMIZATION->value);
-                Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings'])->middleware('permission:' . PermissionKey::MAINTENANCE_SETTINGS->value);
-                Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings'])->middleware('permission:' . PermissionKey::SEO_SETTINGS->value);
-                Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings'])->middleware('permission:' . PermissionKey::FIREBASE_SETTINGS->value);
-                Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings'])->middleware('permission:' . PermissionKey::SOCIAL_LOGIN_SETTINGS->value);
-                Route::match(['get', 'post'], '/google-map-settings', [SystemManagementController::class, 'googleMapSettings'])->middleware('permission:' . PermissionKey::GOOGLE_MAP_SETTINGS->value);
-                // database and cache settings
-                Route::post('/cache-management', [SystemManagementController::class, 'cacheManagement'])->middleware('permission:' . PermissionKey::CACHE_MANAGEMENT->value);
-                Route::post('/database-update-controls', [SystemManagementController::class, 'DatabaseUpdateControl'])->middleware('permission:' . PermissionKey::DATABASE_UPDATE_CONTROLS->value);
-                // email settings
-                Route::group(['middleware' => ['permission:' . PermissionKey::SMTP_SETTINGS->value]], function () {
-                    Route::match(['get', 'post'], '/email-settings/smtp', [EmailSettingsController::class, 'smtpSettings']);
-                    Route::post('/email-settings/test-mail-send', [EmailSettingsController::class, 'testMailSend']);
-                });
+        Route::group(['prefix' => 'system-management'], function () {
+            Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings'])->middleware('permission:' . PermissionKey::GENERAL_SETTINGS->value);
+            Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization'])->middleware('permission:' . PermissionKey::FOOTER_CUSTOMIZATION->value);
+            Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings'])->middleware('permission:' . PermissionKey::MAINTENANCE_SETTINGS->value);
+            Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings'])->middleware('permission:' . PermissionKey::SEO_SETTINGS->value);
+            Route::match(['get', 'post'], '/firebase-settings', [SystemManagementController::class, 'firebaseSettings'])->middleware('permission:' . PermissionKey::FIREBASE_SETTINGS->value);
+            Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings'])->middleware('permission:' . PermissionKey::SOCIAL_LOGIN_SETTINGS->value);
+            Route::match(['get', 'post'], '/google-map-settings', [SystemManagementController::class, 'googleMapSettings'])->middleware('permission:' . PermissionKey::GOOGLE_MAP_SETTINGS->value);
+            // database and cache settings
+            Route::post('/cache-management', [SystemManagementController::class, 'cacheManagement'])->middleware('permission:' . PermissionKey::CACHE_MANAGEMENT->value);
+            Route::post('/database-update-controls', [SystemManagementController::class, 'DatabaseUpdateControl'])->middleware('permission:' . PermissionKey::DATABASE_UPDATE_CONTROLS->value);
+            // email settings
+            Route::group(['middleware' => ['permission:' . PermissionKey::SMTP_SETTINGS->value]], function () {
+                Route::match(['get', 'post'], '/email-settings/smtp', [EmailSettingsController::class, 'smtpSettings']);
+                Route::post('/email-settings/test-mail-send', [EmailSettingsController::class, 'testMailSend']);
+            });
         });
 
         /*--------------------- Roles &  permissions manage ----------------------------*/
@@ -565,167 +561,186 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('permissions', [PermissionController::class, 'index']);
         Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
         Route::get('module-wise-permissions', [PermissionController::class, 'moduleWisePermissions']);
-
-
         Route::get('roles', [RoleController::class, 'index']);
         Route::post('roles', [RoleController::class, 'store']);
         Route::get('roles/{id}', [RoleController::class, 'show']);
         Route::post('roles-status-update', [RoleController::class, 'roleForStoreOwner']);
     });
-    /* --------------------- admin route end ------------------------- */
+});
+/* --------------------- admin route end ------------------------- */
 
-    /* --------------------- vendor route start ------------------------- */
-    Route::group(['prefix' => 'seller/'], function () {
-        Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
-        Route::get('/store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
-        Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
-        Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
-        // Store manage
-        Route::group(['prefix' => 'store/'], function () {
-            Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);
-            // POS Manage
-            Route::group(['prefix' => 'pos/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_POS_SALES->value]], function () {
-                Route::get('', [SellerPosSalesController::class, 'index'])->name('seller.store.pos.index'); // Show POS dashboard for the store
-                Route::post('process', [SellerPosSalesController::class, 'processSale'])->name('seller.store.pos.process'); // Process a sale for the store
-                Route::get('products', [SellerPosSalesController::class, 'fetchProducts'])->name('seller.store.pos.products'); // Fetch store-specific products
-                Route::post('add-to-cart', [SellerPosSalesController::class, 'addToCart'])->name('seller.store.pos.addToCart'); // Add product to POS cart
-                Route::get('cart', [SellerPosSalesController::class, 'getCart'])->name('seller.store.pos.cart'); // Fetch POS cart for the store
-                Route::post('remove-from-cart', [SellerPosSalesController::class, 'removeFromCart'])->name('seller.store.pos.removeFromCart'); // Remove product from POS cart
-                Route::post('apply-discount', [SellerPosSalesController::class, 'applyDiscount'])->name('seller.store.pos.applyDiscount'); // Apply discount for the store
-                Route::post('apply-tax', [SellerPosSalesController::class, 'applyTax'])->name('seller.store.pos.applyTax'); // Apply tax for the store
-                Route::get('customers', [SellerPosSalesController::class, 'fetchCustomers'])->name('seller.store.pos.customers'); // Fetch store-specific customers
-                Route::post('add-customer', [SellerPosSalesController::class, 'addCustomer'])->name('seller.store.pos.addCustomer'); // Add customer for the store
-                Route::post('finalize-sale', [SellerPosSalesController::class, 'finalizeSale'])->name('seller.store.pos.finalizeSale'); // Finalize the sale
-                Route::get('order-history', [SellerPosSalesController::class, 'orderHistory'])->name('seller.store.pos.orderHistory'); // POS order history for the store
-            });
-            // seller product manage
-            Route::group(['prefix' => 'orders/'], function () {
-                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_ORDER_MANAGE->value]], function () {
-                    Route::get('/', [SellerProductManageController::class, 'allOrders']);
-                });
-                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
-                    Route::get('/returned', [SellerProductManageController::class, 'returnedOrders']);
-                });
-            });
-
-            // seller store manage
-            Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_MY_SHOP->value]], function () {
-                Route::get('list', [SellerStoreManageController::class, 'index']);
-                Route::get('details', [SellerStoreManageController::class, 'show']);
-                Route::post('add', [SellerStoreManageController::class, 'store']);
-                Route::post('update', [SellerStoreManageController::class, 'update']);
-                Route::post('change-status', [SellerStoreManageController::class, 'status_update']);
-                Route::delete('remove/{id}', [SellerStoreManageController::class, 'destroy']);
-                Route::get('deleted/records', [SellerStoreManageController::class, 'deleted_records']);
-            });
-
-            // seller product manage
-            Route::group(['prefix' => 'product/'], function () {
-                // Product Inventory
-                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value]], function () {
-                    Route::get('inventory', [SellerInventoryManageController::class, 'allInventories']);
-                });
-                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_LIST->value]], function () {
-                    Route::get('list', [SellerProductManageController::class, 'index']);
-                    Route::get('details/{slug}', [SellerProductManageController::class, 'show']);
-                    Route::post('add', [SellerProductManageController::class, 'store'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_ADD->value);
-                    Route::post('update', [SellerProductManageController::class, 'update']);
-                    Route::delete('remove/{id}', [SellerProductManageController::class, 'destroy']);
-                    Route::get('deleted/records', [SellerProductManageController::class, 'deleted_records']);
-                    Route::post('export', [SellerProductManageController::class, 'export'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_EXPORT->value);
-                    Route::post('import', [SellerProductManageController::class, 'import'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value);
-                    Route::get('stock-report', [SellerProductManageController::class, 'lowStockProducts'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_STOCK_REPORT->value);
-                });
-            });
-            // Staff manage
-            Route::group(['prefix' => 'staff/', 'middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
-                Route::get('list', [StaffController::class, 'index']);
-                Route::post('add', [StaffController::class, 'store']);
-                Route::get('details', [StaffController::class, 'show']);
-                Route::post('update', [StaffController::class, 'update']);
-                Route::post('change-status', [StaffController::class, 'changestatus']);
-            });
-            // FINANCIAL WITHDRAWALS management
-            Route::group(['prefix' => 'financial/'], function () {
-                // wallet
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value], function () {
-                    Route::get('wallet', [SellerWithdrawController::class, 'myWallet']);
-                });
-                // withdraw history
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
-                    Route::get('withdraw', [SellerWithdrawController::class, 'withdrawHistory']);
-                });
-            });
-            // store settings
-            Route::group(['prefix' => 'settings/'], function () {
-                // store notice
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_NOTICE->value], function () {
-                    Route::get('notices', [SellerStoreSettingsController::class, 'storeNotice']);
-                });
-                // store config
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_CONFIG->value], function () {
-                    Route::match(['get', 'put'], 'config', [SellerStoreSettingsController::class, 'storeConfig']);
-                });
-                // business settings
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_BUSINESS_PLAN->value], function () {
-                    Route::match(['get', 'put'], 'business-plan', [SellerBusinessSettingsController::class, 'businessPlan']);
-                });
-                // pos settings
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
-                    Route::match(['get', 'put'], 'pos-config', [SellerPosSettingsController::class, 'pos-config']);
-                });
-            });
-            // Flash Sale manage
-            Route::group(['prefix' => 'promotional/'], function () {
-                Route::group(['prefix' => 'flash-deals'], function () {
-                    Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_MY_DEALS->value]], function () {
-                        Route::get('my-deals', [SellerFlashSaleProductManageController::class, 'getFlashSaleProducts']);
-                    });
-                    Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value]], function () {
-                        Route::post('join-deals', [SellerFlashSaleProductManageController::class, 'addProductToFlashSale']);
-                    });
-                    Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS->value]], function () {
-                        Route::get('active-deals', [SellerFlashSaleProductManageController::class, 'getValidFlashSales']);
-                    });
-                });
-
-                // Banner Management
-                Route::group(['prefix' => 'banner', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value]], function () {
-                    Route::post('list', [BannerManageController::class, 'list']);
-                    Route::post('add', [BannerManageController::class, 'add']);
-                    Route::get('details', [BannerManageController::class, 'show']);
-                    Route::post('update', [BannerManageController::class, 'update']);
-                    Route::delete('remove/{id}', [BannerManageController::class, 'remove']);
-                });
-            });
-
-            // Seller  Product Author manage
-            Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
-                Route::get('list', [ProductAuthorController::class, 'sellerAuthors']);
-                Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
-                Route::get('details/{id}', [ProductAuthorController::class, 'show']);
-                Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
-            });
-        });  // END STORE ROUTE
-
-        // Product variant manage
-        Route::group(['prefix' => 'product/variant/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-            Route::get('list', [ProductVariantController::class, 'index']);
-            Route::get('details', [ProductVariantController::class, 'show']);
-            Route::post('add', [ProductVariantController::class, 'store']);
-            Route::post('update', [ProductVariantController::class, 'update']);
-            Route::post('change-status', [ProductVariantController::class, 'status_update']);
-            Route::delete('remove/{id}', [ProductVariantController::class, 'destroy']);
-            Route::get('deleted/records', [ProductVariantController::class, 'deleted_records']);
+/* --------------------- vendor route start ------------------------- */
+Route::group(['prefix' => 'seller/'], function () {
+    Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
+    Route::get('/store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
+    Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
+    Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
+    // Store manage
+    Route::group(['prefix' => 'store/'], function () {
+        Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);
+        // POS Manage
+        Route::group(['prefix' => 'pos/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_POS_SALES->value]], function () {
+            Route::get('', [SellerPosSalesController::class, 'index'])->name('seller.store.pos.index'); // Show POS dashboard for the store
+            Route::post('process', [SellerPosSalesController::class, 'processSale'])->name('seller.store.pos.process'); // Process a sale for the store
+            Route::get('products', [SellerPosSalesController::class, 'fetchProducts'])->name('seller.store.pos.products'); // Fetch store-specific products
+            Route::post('add-to-cart', [SellerPosSalesController::class, 'addToCart'])->name('seller.store.pos.addToCart'); // Add product to POS cart
+            Route::get('cart', [SellerPosSalesController::class, 'getCart'])->name('seller.store.pos.cart'); // Fetch POS cart for the store
+            Route::post('remove-from-cart', [SellerPosSalesController::class, 'removeFromCart'])->name('seller.store.pos.removeFromCart'); // Remove product from POS cart
+            Route::post('apply-discount', [SellerPosSalesController::class, 'applyDiscount'])->name('seller.store.pos.applyDiscount'); // Apply discount for the store
+            Route::post('apply-tax', [SellerPosSalesController::class, 'applyTax'])->name('seller.store.pos.applyTax'); // Apply tax for the store
+            Route::get('customers', [SellerPosSalesController::class, 'fetchCustomers'])->name('seller.store.pos.customers'); // Fetch store-specific customers
+            Route::post('add-customer', [SellerPosSalesController::class, 'addCustomer'])->name('seller.store.pos.addCustomer'); // Add customer for the store
+            Route::post('finalize-sale', [SellerPosSalesController::class, 'finalizeSale'])->name('seller.store.pos.finalizeSale'); // Finalize the sale
+            Route::get('order-history', [SellerPosSalesController::class, 'orderHistory'])->name('seller.store.pos.orderHistory'); // POS order history for the store
         });
-    });
-    /* --------------------------> vendor route end <----------------------------- */
-    /* --------------------------> delivery route start <------------------------- */
-    Route::group(['prefix' => 'delivery/'], function () {
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
+        // seller deliveryman manage
+        Route::group(['prefix' => 'deliveryman/'], function () {
+            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
+                Route::get('list', [SellerDeliverymanManageController::class, 'index']);
+                Route::post('add', [SellerDeliverymanManageController::class, 'store']);
+                Route::get('details/{id}', [SellerDeliverymanManageController::class, 'show']);
+                Route::post('update', [SellerDeliverymanManageController::class, 'update']);
+                Route::post('change-status', [SellerDeliverymanManageController::class, 'changeStatus']);
+                Route::delete('remove/{id}', [SellerDeliverymanManageController::class, 'destroy']);
+            });
+            //vehicle-types
+            Route::prefix('vehicle-types/')->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value])->group(function () {
+                Route::get('list', [SellerDeliverymanManageController::class, 'indexVehicle']);
+                Route::post('add', [SellerDeliverymanManageController::class, 'storeVehicle']);
+                Route::get('details/{id}', [SellerDeliverymanManageController::class, 'showVehicle']);
+                Route::post('update', [SellerDeliverymanManageController::class, 'updateVehicle']);
+                Route::post('change-status', [SellerDeliverymanManageController::class, 'changeVehicleStatus']);
+                Route::delete('remove/{id}', [SellerDeliverymanManageController::class, 'destroyVehicle']);
+            });
         });
+        // seller product manage
+        Route::group(['prefix' => 'orders/'], function () {
+            Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_ORDER_MANAGE->value]], function () {
+                Route::get('/', [SellerProductManageController::class, 'allOrders']);
+            });
+            Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
+                Route::get('/returned', [SellerProductManageController::class, 'returnedOrders']);
+            });
+        });
+
+        // seller store manage
+        Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_MY_SHOP->value]], function () {
+            Route::get('list', [SellerStoreManageController::class, 'index']);
+            Route::get('details', [SellerStoreManageController::class, 'show']);
+            Route::post('add', [SellerStoreManageController::class, 'store']);
+            Route::post('update', [SellerStoreManageController::class, 'update']);
+            Route::post('change-status', [SellerStoreManageController::class, 'status_update']);
+            Route::delete('remove/{id}', [SellerStoreManageController::class, 'destroy']);
+            Route::get('deleted/records', [SellerStoreManageController::class, 'deleted_records']);
+        });
+
+        // seller product manage
+        Route::group(['prefix' => 'product/'], function () {
+            // Product Inventory
+            Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value]], function () {
+                Route::get('inventory', [SellerInventoryManageController::class, 'allInventories']);
+            });
+            Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_LIST->value]], function () {
+                Route::get('list', [SellerProductManageController::class, 'index']);
+                Route::get('details/{slug}', [SellerProductManageController::class, 'show']);
+                Route::post('add', [SellerProductManageController::class, 'store'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_ADD->value);
+                Route::post('update', [SellerProductManageController::class, 'update']);
+                Route::delete('remove/{id}', [SellerProductManageController::class, 'destroy']);
+                Route::get('deleted/records', [SellerProductManageController::class, 'deleted_records']);
+                Route::post('export', [SellerProductManageController::class, 'export'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_EXPORT->value);
+                Route::post('import', [SellerProductManageController::class, 'import'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value);
+                Route::get('stock-report', [SellerProductManageController::class, 'lowStockProducts'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_STOCK_REPORT->value);
+            });
+        });
+        // Staff manage
+        Route::group(['prefix' => 'staff/', 'middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
+            Route::get('list', [StaffController::class, 'index']);
+            Route::post('add', [StaffController::class, 'store']);
+            Route::get('details', [StaffController::class, 'show']);
+            Route::post('update', [StaffController::class, 'update']);
+            Route::post('change-status', [StaffController::class, 'changestatus']);
+        });
+        // FINANCIAL WITHDRAWALS management
+        Route::group(['prefix' => 'financial/'], function () {
+            // wallet
+            Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value], function () {
+                Route::get('wallet', [SellerWithdrawController::class, 'myWallet']);
+            });
+            // withdraw history
+            Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
+                Route::get('withdraw', [SellerWithdrawController::class, 'withdrawHistory']);
+            });
+        });
+        // store settings
+        Route::group(['prefix' => 'settings/'], function () {
+            // store notice
+            Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_NOTICE->value], function () {
+                Route::get('notices', [SellerStoreSettingsController::class, 'storeNotice']);
+            });
+            // store config
+            Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_CONFIG->value], function () {
+                Route::match(['get', 'put'], 'config', [SellerStoreSettingsController::class, 'storeConfig']);
+            });
+            // business settings
+            Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_BUSINESS_PLAN->value], function () {
+                Route::match(['get', 'put'], 'business-plan', [SellerBusinessSettingsController::class, 'businessPlan']);
+            });
+            // pos settings
+            Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
+                Route::match(['get', 'put'], 'pos-config', [SellerPosSettingsController::class, 'pos-config']);
+            });
+        });
+        // Flash Sale manage
+        Route::group(['prefix' => 'promotional/'], function () {
+            Route::group(['prefix' => 'flash-deals'], function () {
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_MY_DEALS->value]], function () {
+                    Route::get('my-deals', [SellerFlashSaleProductManageController::class, 'getFlashSaleProducts']);
+                });
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value]], function () {
+                    Route::post('join-deals', [SellerFlashSaleProductManageController::class, 'addProductToFlashSale']);
+                });
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS->value]], function () {
+                    Route::get('active-deals', [SellerFlashSaleProductManageController::class, 'getValidFlashSales']);
+                });
+            });
+
+            // Banner Management
+            Route::group(['prefix' => 'banner', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value]], function () {
+                Route::post('list', [BannerManageController::class, 'list']);
+                Route::post('add', [BannerManageController::class, 'add']);
+                Route::get('details', [BannerManageController::class, 'show']);
+                Route::post('update', [BannerManageController::class, 'update']);
+                Route::delete('remove/{id}', [BannerManageController::class, 'remove']);
+            });
+        });
+
+        // Seller  Product Author manage
+        Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
+            Route::get('list', [ProductAuthorController::class, 'sellerAuthors']);
+            Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
+            Route::get('details/{id}', [ProductAuthorController::class, 'show']);
+            Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
+        });
+    });  // END STORE ROUTE
+
+    // Product variant manage
+    Route::group(['prefix' => 'product/variant/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::get('list', [ProductVariantController::class, 'index']);
+        Route::get('details', [ProductVariantController::class, 'show']);
+        Route::post('add', [ProductVariantController::class, 'store']);
+        Route::post('update', [ProductVariantController::class, 'update']);
+        Route::post('change-status', [ProductVariantController::class, 'status_update']);
+        Route::delete('remove/{id}', [ProductVariantController::class, 'destroy']);
+        Route::get('deleted/records', [ProductVariantController::class, 'deleted_records']);
     });
-    /* --------------------------> delivery route end <-------------------------- */
+});
+/* --------------------------> vendor route end <----------------------------- */
+/* --------------------------> delivery route start <------------------------- */
+Route::group(['prefix' => 'delivery/'], function () {
+    Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
+    });
+});
+/* --------------------------> delivery route end <-------------------------- */
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
     // media manage
