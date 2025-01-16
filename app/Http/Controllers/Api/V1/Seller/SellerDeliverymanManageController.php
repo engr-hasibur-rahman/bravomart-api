@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Seller;
+namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DeliverymanRequest;
