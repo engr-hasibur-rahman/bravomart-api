@@ -131,7 +131,7 @@ class FrontendController extends Controller
             $query = ComMerchantStore::query();
 
             $store = $query->with(['area', 'merchant', 'related_translations', 'products'])
-                ->findOrFail($request->id);
+                ->where('slug',$request->slug)->first();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
