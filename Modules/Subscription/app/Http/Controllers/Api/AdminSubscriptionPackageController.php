@@ -60,7 +60,10 @@ class AdminSubscriptionPackageController extends Controller
     public function show($id)
     {
         $package = Subscription::findOrFail($id); // Fetch the package by ID
-        return response()->json($package);
+        return response()->json([
+            'success' => true,
+            'package' => new AdminSubscriptionPackageResource($package),
+        ]);
     }
 
     public function update(Request $request)
