@@ -110,6 +110,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/unit-list', [FrontendController::class, 'unitList']);
     Route::get('/customer-list', [FrontendController::class, 'customerList']);
     Route::get('/store-list', [FrontendController::class, 'getStores']);
+    Route::get('/store-details', [FrontendController::class, 'getStoreDetails']);
     Route::get('/department-list', [FrontendController::class, 'departmentList']);
 });
 

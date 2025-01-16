@@ -27,6 +27,7 @@ use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
+use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use App\Interfaces\AreaManageInterface;
@@ -113,6 +114,29 @@ class FrontendController extends Controller
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => StorePublicListResource::collection($stores),
+                'meta' => new PaginationResource($stores)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getStoreDetails(Request $request)
+    {
+        try {
+            $query = ComMerchantStore::query();
+
+            $store = $query->with(['area', 'merchant', 'related_translations', 'products'])
+                ->findOrFail($request->id);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => new StoreDetailsPublicResource($store),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -369,7 +393,13 @@ class FrontendController extends Controller
     public function productDetails($product_slug)
     {
         $product = Product::with([
-            'store',
+            'store' => function ($query) {
+                $query->withCount(['products' => function ($q) {
+                    // Add conditions to filter approved products and those that are not deleted
+                    $q->where('status', 'approved')
+                        ->whereNull('deleted_at');
+                }]);
+            },
             'tags',
             'unit',
             'variants',
