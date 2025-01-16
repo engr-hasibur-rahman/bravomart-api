@@ -6,6 +6,7 @@ use App\Enums\Behaviour;
 use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\Department\DepartmentListForDropdown;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
@@ -26,6 +27,7 @@ use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
+use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use App\Interfaces\AreaManageInterface;
@@ -36,6 +38,7 @@ use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\ComMerchantStore;
 use App\Models\Customer;
+use App\Models\Department;
 use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductBrand;
@@ -60,6 +63,27 @@ class FrontendController extends Controller
 
     }
 
+
+    /* -----------------------------------------------------------> Department List <---------------------------------------------------------- */
+    public function departmentList()
+    {
+        $departments = Department::where('status', 1)->get();
+        if ($departments->isNotEmpty()) {
+            return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'data' => DepartmentListForDropdown::collection($departments)
+                ]
+            );
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.data_not_found')
+            ]);
+        }
+
+    }
 
     /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
     public function getStores(Request $request)
@@ -90,6 +114,29 @@ class FrontendController extends Controller
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => StorePublicListResource::collection($stores),
+                'meta' => new PaginationResource($stores)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getStoreDetails(Request $request)
+    {
+        try {
+            $query = ComMerchantStore::query();
+
+            $store = $query->with(['area', 'merchant', 'related_translations', 'products'])
+                ->where('slug',$request->slug)->first();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => new StoreDetailsPublicResource($store),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -346,7 +393,13 @@ class FrontendController extends Controller
     public function productDetails($product_slug)
     {
         $product = Product::with([
-            'store',
+            'store' => function ($query) {
+                $query->withCount(['products' => function ($q) {
+                    // Add conditions to filter approved products and those that are not deleted
+                    $q->where('status', 'approved')
+                        ->whereNull('deleted_at');
+                }]);
+            },
             'tags',
             'unit',
             'variants',
