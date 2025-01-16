@@ -25,6 +25,12 @@ class BuySubscriptionPackageController extends Controller
         return response()->json($result);
     }
 
+    public function renewSubscriptionPackage(Request $request)
+    {
+        $result = $this->subscriptionService->renewSubscriptionPackage($request->all());
+        return response()->json($result);
+    }
+
     public function packagePaymentStatusUpdate(Request $request)
     {
         // Check if the user is authenticated

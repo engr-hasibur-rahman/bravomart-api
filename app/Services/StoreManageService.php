@@ -56,18 +56,37 @@ class StoreManageService
 
 
     public function storeUpdateForAuthSeller($data){
-        try {
-            $store = ComMerchantStore::findOrFail($data['id']);
-            if ($store) {
-                $data = Arr::except($data, ['translations']);
-                $store->update($data);
-                return $store->id;
-            } else {
-                return false;
-            }
-        } catch (\Exception $exception) {
-        }
-    }
 
+        $store = ComMerchantStore::findOrFail($data['id']);
+        if ($store) {
+            $data = Arr::except($data, ['translations']);
+            $store->update($data);
+        }
+
+         $store_id = $store->id;
+        if(isset($store->subscription_type) && $store->subscription_type === 'commission') {
+            // get system commission
+            $system_commission = SystemCommission::first();
+            // update store commission
+            $store->admin_commission_type = $system_commission->commission_type;
+            $store->admin_commission_amount = $system_commission->commission_amount;
+            $store->save();
+
+            // Dispatch job to send email in the background
+            try {
+                dispatch(new SendStoreCreatedEmailJob($store));
+            } catch (\Exception $exception) {
+            }
+            return $store_id;
+        }
+
+        // Store Subscription handle logic
+        if(moduleExistsAndStatus('Subscription')){
+            $this->subscriptionService->renewSubscriptionPackage($store, $data);
+        }
+
+        return $store_id;
+
+    }
 
 }
