@@ -11,4 +11,5 @@ interface CustomerManageInterface
     public function forgetPassword(string $email);
     public function verifyToken(string $token);
     public function resetPassword(array $data);
+    public function deactivateAccount();
 }

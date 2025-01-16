@@ -6,10 +6,12 @@ use App\Interfaces\CustomerManageInterface;
 use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
 use Exception;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManageRepository implements CustomerManageInterface
 {
@@ -35,11 +37,30 @@ class CustomerManageRepository implements CustomerManageInterface
 
     public function getToken(array $data)
     {
-        try {
+
             // Attempt to find the user
             $customer = $this->customer->where('email', $data['email'])
-                ->where('status', 1)
+                ->isActive()
                 ->first();
+            // Check if the user's account is deleted
+            if ($customer->deleted_at !== null) {
+                return response()->json([
+                    'error' => 'Your account has been deleted. Please contact support.'
+                ], Response::HTTP_GONE); // HTTP 410 Gone
+            }
+
+            // Check if the user's account is deactivated or disabled
+            if ($customer->status === 0) {
+                return response()->json([
+                    'error' => 'Your account has been deactivated. Please contact support.'
+                ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
+            }
+
+            if ($customer->status === 2) {
+                return response()->json([
+                    'error' => 'Your account has been suspended by the admin.'
+                ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
+            }
             if (!$customer) {
                 return response()->json([
                     "status" => false,
@@ -54,14 +75,7 @@ class CustomerManageRepository implements CustomerManageInterface
             }
             // Build and return the response
             return $customer;
-        } catch (\Exception $e) {
-            // Handle other exceptions
-            return response()->json([
-                "status" => false,
-                "status_code" => 500,
-                "message" => $e->getMessage()
-            ], 500);
-        }
+
     }
     /* ------------------------------------------------------ Reset and Verification --------------------------------------------------------------- */
     // Send email verification link
@@ -145,6 +159,7 @@ class CustomerManageRepository implements CustomerManageInterface
             ]);
         }
     }
+
     public function resetPassword(array $data)
     {
         $customer = $this->customer
@@ -171,4 +186,16 @@ class CustomerManageRepository implements CustomerManageInterface
             ]);
         }
     }
+
+    public function deactivateAccount()
+    {
+        $user = auth('api_customer')->user();
+        $user->update([
+            'status' => 0,
+            'deactivated_at' => now(),
+        ]);
+        $user->currentAccessToken()->delete();
+        return true;
+    }
+
 }

@@ -55,6 +55,9 @@ return [
     'request_success' => ':name requested successfully!',
     'request_failed' => ':name request failed!',
 
+    'account_deactivate_successful' => 'Your account has been deactivated!',
+    'account_deactivate_failed' => 'Something went wrong while deactivating your account!',
+
 ];
 
 
