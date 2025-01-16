@@ -69,7 +69,6 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
     {
         return $this->ticketMessage->create($messageDetails);
     }
-
     public function replyMessage(array $messageDetails)
     {
         return $this->ticketMessage->create($messageDetails);

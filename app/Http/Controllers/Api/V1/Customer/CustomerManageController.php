@@ -52,16 +52,10 @@ class CustomerManageController extends Controller
                 "message" => $validator->errors()
             ]);
         }
-        try {
-            $token = $this->customerRepo->getToken($request->all());
-            if (!$token) {
-                return response()->json([
-                    "status" => false,
-                    "status_code" => 401,
-                    "message" => __('messages.login_failed', ['name' => 'Customer']),
-                    "token" => null,
-                ], 401);
-            }
+
+        $token = $this->customerRepo->getToken($request->all());
+        dd($token);
+        if ($token) {
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
@@ -69,12 +63,13 @@ class CustomerManageController extends Controller
                 "token" => $token->createToken('customer_auth_token')->plainTextToken,
                 "email_verified" => (bool)$token->email_verified, // shorthand of -> $token->email_verified ? true : false
             ]);
-        } catch (\Exception $e) {
+        } else {
             return response()->json([
                 "status" => false,
-                "status_code" => 500,
-                "message" => $e->getMessage()
-            ]);
+                "status_code" => 401,
+                "message" => __('messages.login_failed', ['name' => 'Customer']),
+                "token" => null,
+            ], 401);
         }
     }
     /* ---------------------------------------------------------- Reset and Verification -------------------------------------------------------- */
@@ -391,6 +386,27 @@ class CustomerManageController extends Controller
                 'status_code' => 500,
                 'message' => __('messages.something_went_wrong'),
                 'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function deactivateAccount()
+    {
+        if (!auth('api_customer')->check()) {
+            unauthorized_response();
+        }
+        $success = $this->customerRepo->deactivateAccount();
+        if ($success) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.account_deactivate_successful')
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.account_deactivate_failed')
             ]);
         }
     }

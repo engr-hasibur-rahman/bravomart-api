@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('stores')->nullable();
             $table->integer('status')->default(0)->comment('0=Inactive,1=Active,2=Suspended');
             $table->rememberToken();
+            $table->timestamp('deactivated_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

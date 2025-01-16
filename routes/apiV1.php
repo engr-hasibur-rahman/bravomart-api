@@ -624,7 +624,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // seller store manage
             Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_MY_SHOP->value]], function () {
                 Route::get('list', [SellerStoreManageController::class, 'index']);
-                Route::get('details', [SellerStoreManageController::class, 'show']);
+                Route::get('details/{id}', [SellerStoreManageController::class, 'show']);
                 Route::post('add', [SellerStoreManageController::class, 'store']);
                 Route::post('update', [SellerStoreManageController::class, 'update']);
                 Route::post('change-status', [SellerStoreManageController::class, 'status_update']);
@@ -741,7 +741,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------------> delivery route end <-------------------------- */
 });
 
-Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
+Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
     // media manage
     Route::group(['prefix' => 'media-upload'], function () {
         Route::post('/store', [MediaController::class, 'mediaUpload']);
@@ -749,14 +749,13 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         Route::post('/alt', [MediaController::class, 'alt_change']);
         Route::post('/delete', [MediaController::class, 'delete_media']);
     });
-
     Route::group(['middleware' => ['check.email.verification.option']], function () {
         Route::group(['prefix' => 'profile/'], function () {
             Route::get('/', [CustomerManageController::class, 'getProfile']);
             Route::post('/update', [CustomerManageController::class, 'updateProfile']);
             Route::post('/change-email', [CustomerManageController::class, 'updateEmail']);
+            Route::get('/deactivate', [CustomerManageController::class, 'deactivateAccount']);
         });
-
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
             Route::post('update', [CustomerAddressManageController::class, 'update']);
@@ -765,7 +764,6 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('make-default', [CustomerAddressManageController::class, 'defaultAddress']);
             Route::delete('remove/{id}', [CustomerAddressManageController::class, 'destroy']);
         });
-
         Route::group(['prefix' => 'support-ticket'], function () {
             Route::get('list', [CustomerSupportTicketManageController::class, 'index']);
             Route::post('store', [CustomerSupportTicketManageController::class, 'store']);
