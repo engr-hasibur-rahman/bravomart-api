@@ -10,6 +10,7 @@ use App\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
 
 class PartnerLoginController extends Controller
 {
@@ -32,7 +33,30 @@ class PartnerLoginController extends Controller
             ->where('activity_scope', 'store_level')
             ->where('status', 1)
             ->first();
-
+        if (!$user) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 404,
+                "message" => __('messages.customer.not.found'),
+            ], 404);
+        }
+        // Check if the user's account is deleted
+        if ($user->deleted_at !== null) {
+            return response()->json([
+                'error' => 'Your account has been deleted. Please contact support.'
+            ], Response::HTTP_GONE); // HTTP 410 Gone
+        }
+        // Check if the user's account is deactivated or disabled
+        if ($user->status === 0) {
+            return response()->json([
+                'error' => 'Your account has been deactivated. Please contact support.'
+            ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
+        }
+        if ($user->status === 2) {
+            return response()->json([
+                'error' => 'Your account has been suspended by the admin.'
+            ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
+        }
         if (!$user || !Hash::check($request->password, $user->password)) {
             return ["success" => false, "token" => null, "permissions" => []];
         }

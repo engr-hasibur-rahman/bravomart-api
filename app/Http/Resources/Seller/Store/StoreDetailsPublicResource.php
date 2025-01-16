@@ -4,6 +4,7 @@ namespace App\Http\Resources\Seller\Store;
 
 use App\Actions\ImageModifier;
 use App\Http\Resources\Com\Seller\SellerDetailsPublicResource;
+use App\Http\Resources\Product\NewArrivalPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -36,8 +37,23 @@ class StoreDetailsPublicResource extends JsonResource
             'veg_status' => $this->veg_status,
             'off_day' => $this->off_day,
             'total_product' => $this->products()->where('deleted_at', null)->where('status', 'approved')->count(),
-            'all_products' => $this->products()->where('deleted_at', null)->where('status', 'approved')->latest()->get(),
-            'featured_products' => $this->products()->where('deleted_at', null)->where('status', 'approved')->inRandomOrder()->take(10)->get(),
+            'all_products' => StoreProductListPublicResource::collection($this->products()
+                ->where('deleted_at', null)
+                ->where('status', 'approved')
+                ->with(['variants' => function ($query) {
+                    $query->take(1);
+                }])
+                ->latest()
+                ->get()),
+            'featured_products' => StoreProductListPublicResource::collection($this->products()
+                ->where('deleted_at', null)
+                ->where('status', 'approved')
+                ->with(['variants' => function ($query) {
+                    $query->take(1);
+                }])
+                ->inRandomOrder()
+                ->take(10)
+                ->get()),
         ];
     }
 }
