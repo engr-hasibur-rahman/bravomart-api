@@ -80,6 +80,7 @@ class AdminSubscriptionPackageController extends Controller
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'image' => 'string|max:255',
             'description' => 'nullable|string',
             'validity' => 'required|integer',
             'price' => 'required|numeric',
