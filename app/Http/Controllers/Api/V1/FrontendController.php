@@ -6,6 +6,7 @@ use App\Enums\Behaviour;
 use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\Department\DepartmentListForDropdown;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
@@ -36,6 +37,7 @@ use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\ComMerchantStore;
 use App\Models\Customer;
+use App\Models\Department;
 use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductBrand;
@@ -60,6 +62,27 @@ class FrontendController extends Controller
 
     }
 
+
+    /* -----------------------------------------------------------> Department List <---------------------------------------------------------- */
+    public function departmentList()
+    {
+        $departments = Department::where('status', 1)->get();
+        if ($departments->isNotEmpty()) {
+            return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'data' => DepartmentListForDropdown::collection($departments)
+                ]
+            );
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.data_not_found')
+            ]);
+        }
+
+    }
 
     /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
     public function getStores(Request $request)
