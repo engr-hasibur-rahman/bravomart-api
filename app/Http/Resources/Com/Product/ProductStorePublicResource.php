@@ -31,6 +31,7 @@ class ProductStorePublicResource extends JsonResource
             "meta_title" => $this->meta_title,
             "meta_description" => $this->meta_description,
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
+            "total_product" => $this->products_count ?? 0
         ];
     }
 }
