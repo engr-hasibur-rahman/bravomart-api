@@ -26,7 +26,8 @@ class SubscriptionPackagePublicResource extends JsonResource
             'product_limit' => $this->product_limit,
             'product_featured_limit' => $this->product_featured_limit,
             'description' => $this->description,
-            'image' => ImageModifier::generateImageUrl($this->image),
+            'image' => $this->image,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
         ];
     }
 }

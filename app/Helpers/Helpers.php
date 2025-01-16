@@ -275,7 +275,7 @@ if (!function_exists('translate')) {
         return false;
     }
 
-    function membershipModuleExistsAndEnable($name){
+    function moduleExistsAndStatus($name){
         $module_status = json_decode(file_get_contents(__DIR__.'/../../modules_statuses.json'));
         $folderPath = base_path('./Modules'.DIRECTORY_SEPARATOR .$name);
         if(file_exists($folderPath) && is_dir($folderPath)){
