@@ -192,14 +192,12 @@ class SellerSupportTicketManageController extends Controller
             // Save the uploaded file to private storage
             Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
         }
-        // Save the uploaded file to private storage
-        Storage::disk('import')->put($filename, file_get_contents($file));
         $messageDetails = [
             'ticket_id' => $request->ticket_id,
             'receiver_id' => $authUser->id,
             'sender_role' => $authUser->activity_scope,
             'message' => $request->message,
-            'file' => $filename,
+            'file' => $filename ?? null,
         ];
         $message = $this->ticketRepo->addMessage($messageDetails);
         // Update the `updated_at` column of the ticket

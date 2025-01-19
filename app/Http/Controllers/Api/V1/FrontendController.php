@@ -88,41 +88,34 @@ class FrontendController extends Controller
     /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
     public function getStores(Request $request)
     {
-        try {
-            $query = ComMerchantStore::query();
+        $query = ComMerchantStore::query();
 
-            // Apply store type filter if provided
-            if ($request->filled('store_type')) {
-                $query->where('store_type', $request->store_type);
-            }
-
-            // Apply featured stores filter if provided
-            if ($request->filled('is_featured')) {
-                $query->where('is_featured', $request->is_featured);
-            }
-
-            // Pagination
-            $perPage = $request->get('per_page', 10);
-            $stores = $query
-                ->with(['area', 'merchant', 'related_translations', 'products'])
-                ->where('status', 1)
-                ->where('deleted_at', null)
-                ->paginate($perPage);
-
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => StorePublicListResource::collection($stores),
-                'meta' => new PaginationResource($stores)
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage(),
-            ]);
+        // Apply store type filter if provided
+        if ($request->filled('store_type')) {
+            $query->where('store_type', $request->store_type);
         }
+
+        // Apply featured stores filter if provided
+        if ($request->filled('is_featured')) {
+            $query->where('is_featured', $request->is_featured);
+        }
+
+        // Pagination
+        $perPage = $request->get('per_page', 10);
+        $stores = $query
+            ->with(['area', 'merchant', 'related_translations', 'products'])
+            ->where('status', 1)
+            ->where('deleted_at', null)
+            ->paginate($perPage);
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.data_found'),
+            'data' => StorePublicListResource::collection($stores),
+            'meta' => new PaginationResource($stores)
+        ]);
+
     }
 
     public function getStoreDetails(Request $request)
@@ -131,7 +124,7 @@ class FrontendController extends Controller
             $query = ComMerchantStore::query();
 
             $store = $query->with(['area', 'merchant', 'related_translations', 'products.variants'])
-                ->where('slug',$request->slug)->first();
+                ->where('slug', $request->slug)->first();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
