@@ -2,7 +2,6 @@
 
 use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
-use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
@@ -16,6 +15,7 @@ use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreDashboardManageController;
 use App\Http\Controllers\StaffController;
@@ -26,12 +26,32 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
         Route::get('/store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
-        Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
+
+        // verify email
+        Route::post('send-verification-email', [SellerManageController::class, 'sendVerificationEmail']);
+        Route::post('verify-email', [SellerManageController::class, 'verifyEmail']);
+        Route::post('resend-verification-email', [SellerManageController::class, 'resendVerificationEmail']);
+
         // profile manage
         Route::group(['prefix' => 'profile/'], function () {
             Route::get('/', [SellerManageController::class, 'getProfile']);
         });
+
+        // Support ticket manage
+        Route::group(['prefix' => 'support-ticket/'], function () {
+            Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
+        });
+
+        // profile manage
+        Route::group(['prefix' => 'profile/'], function () {
+            Route::get('/', [SellerManageController::class, 'getProfile']);
+            Route::post('/update', [SellerManageController::class, 'updateProfile']);
+            Route::post('/change-email', [SellerManageController::class, 'updateEmail']);
+            Route::get('/deactivate', [SellerManageController::class, 'deactivateAccount']);
+            Route::get('/delete', [SellerManageController::class, 'deleteAccount']);
+        });
+
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
             Route::get('dashboard', [SellerStoreDashboardManageController::class, 'dashboard']);
