@@ -47,13 +47,14 @@ use App\Http\Controllers\Api\V1\Seller\SellerBusinessSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerFlashSaleProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerInventoryManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
-use App\Http\Controllers\Api\V1\Seller\StoreDashboardManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreDashboardManageController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
@@ -575,11 +576,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
         // profile manage
         Route::group(['prefix' => 'profile/'], function () {
-            // To be continued .. .. .. .. .. .. . ...
+            Route::get('/', [SellerManageController::class, 'getProfile']);
         });
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
-            Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);
+            Route::get('dashboard', [SellerStoreDashboardManageController::class, 'dashboard']);
             // POS Manage
             Route::group(['prefix' => 'pos/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_POS_SALES->value]], function () {
                 Route::get('', [SellerPosSalesController::class, 'index'])->name('seller.store.pos.index'); // Show POS dashboard for the store
