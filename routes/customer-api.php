@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
-    // media manage
+     // media manage
     Route::group(['prefix' => 'media-upload'], function () {
         Route::post('/store', [MediaController::class, 'mediaUpload']);
         Route::get('/load-more', [MediaController::class, 'load_more']);

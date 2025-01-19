@@ -38,6 +38,7 @@ use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
+use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
