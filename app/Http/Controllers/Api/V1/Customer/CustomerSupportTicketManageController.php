@@ -46,6 +46,7 @@ class CustomerSupportTicketManageController extends Controller
             ]);
         }
     }
+
     public function show(Request $request)
     {
         try {
@@ -169,21 +170,22 @@ class CustomerSupportTicketManageController extends Controller
                 'message' => $validator->errors()
             ]);
         }
-        $file = $request->file('file');
+        $file = $request->hasFile('file');
         if ($file) {
             // Generate a filename with a timestamp
             $timestamp = now()->timestamp;
             $email = str_replace(['@', '.'], '_', auth('api_customer')->user()->email); // Replace '@' and '.' with underscores
             $filename = 'customer/support-ticket/' . $timestamp . '_' . $email . '_' . $file->getClientOriginalName();
+            // Save the uploaded file to private storage
+            Storage::disk('import')->put($filename, file_get_contents($file));
         }
-        // Save the uploaded file to private storage
-        Storage::disk('import')->put($filename, file_get_contents($file));
+
         $messageDetails = [
             'ticket_id' => $request->ticket_id,
             'sender_id' => auth('api_customer')->user()->id,
             'sender_role' => 'customer_level',
             'message' => $request->message,
-            'file' => $filename,
+            'file' => $filename ?? null,
         ];
         $message = $this->ticketRepo->addMessage($messageDetails);
         // Update the `updated_at` column of the ticket

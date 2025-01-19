@@ -575,7 +575,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
         // profile manage
         Route::group(['prefix' => 'profile/'], function () {
-
+            // To be continued .. .. .. .. .. .. . ...
         });
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
@@ -710,7 +710,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::group(['prefix' => 'banner', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value]], function () {
                     Route::post('list', [BannerManageController::class, 'list']);
                     Route::post('add', [BannerManageController::class, 'add']);
-                    Route::get('details', [BannerManageController::class, 'show']);
+                    Route::get('details/{id}', [BannerManageController::class, 'show']);
                     Route::post('update', [BannerManageController::class, 'update']);
                     Route::delete('remove/{id}', [BannerManageController::class, 'remove']);
                 });
@@ -724,7 +724,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
             });
         });  // END STORE ROUTE
-
         // Product variant manage
         Route::group(['prefix' => 'product/variant/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [ProductVariantController::class, 'index']);
