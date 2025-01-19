@@ -7,5 +7,7 @@ use Illuminate\Http\Request;
 
 class SellerBusinessSettingsController extends Controller
 {
-    //
+    public function businessPlanInfo(){
+
+    }
 }

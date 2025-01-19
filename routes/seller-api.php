@@ -150,6 +150,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
             // store settings
             Route::group(['prefix' => 'settings/'], function () {
+                // business settings
+                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_BUSINESS_PLAN->value], function () {
+                    Route::get('business-plan', [SellerBusinessSettingsController::class, 'businessPlanInfo']);
+                });
                 // store notice
                 Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_NOTICE->value], function () {
                     Route::get('notices', [SellerStoreSettingsController::class, 'storeNotice']);
@@ -157,10 +161,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 // store config
                 Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_CONFIG->value], function () {
                     Route::match(['get', 'put'], 'config', [SellerStoreSettingsController::class, 'storeConfig']);
-                });
-                // business settings
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_BUSINESS_PLAN->value], function () {
-                    Route::match(['get', 'put'], 'business-plan', [SellerBusinessSettingsController::class, 'businessPlan']);
                 });
                 // pos settings
                 Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {

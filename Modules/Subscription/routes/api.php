@@ -48,3 +48,5 @@ Route::group(['prefix' => 'seller/store/subscription/'], function () {
         Route::get('history', [StoreSubscriptionManageController::class, 'subscriptionPackageHistory']);
     });
 });
+
+

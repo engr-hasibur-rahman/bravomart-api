@@ -229,9 +229,9 @@ enum PermissionKey: string
     // ############################## Seller PermissionKey Start ################################
     //-----------Store Settings----------
     case SELLER_STORE_MY_SHOP = '/seller/store/list';
+    case SELLER_STORE_BUSINESS_PLAN = '/seller/store/settings/business-plan';
     case SELLER_STORE_STORE_NOTICE = '/seller/store/settings/notices';
     case SELLER_STORE_STORE_CONFIG = '/seller/store/settings/config';
-    case SELLER_STORE_BUSINESS_PLAN = '/seller/store/settings/business-plan';
     case SELLER_STORE_POS_CONFIG = '/seller/store/pos-config';
     case SELLER_STORE_POS_SALES = '/seller/store/pos';
     //------------ SELLER Live Chat

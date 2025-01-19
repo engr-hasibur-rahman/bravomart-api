@@ -475,6 +475,17 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
+                            'PermissionName' => PermissionKey::SELLER_STORE_BUSINESS_PLAN->value,
+                            'PermissionTitle' => 'Business Plan',
+                            'activity_scope' => 'store_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Business Plan',
+                                'ar' => 'إشعار المتجر'
+                            ]
+                        ],
+                        [
                             'PermissionName' => PermissionKey::SELLER_STORE_STORE_NOTICE->value,
                             'PermissionTitle' => 'Store Notice',
                             'activity_scope' => 'store_level',
