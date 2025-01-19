@@ -170,14 +170,18 @@ class CustomerSupportTicketManageController extends Controller
                 'message' => $validator->errors()
             ]);
         }
-        $file = $request->hasFile('file');
-        if ($file) {
+        if ($request->hasFile('file')) {
+            // Retrieve the uploaded file
+            $file = $request->file('file');
+
             // Generate a filename with a timestamp
             $timestamp = now()->timestamp;
             $email = str_replace(['@', '.'], '_', auth('api_customer')->user()->email); // Replace '@' and '.' with underscores
-            $filename = 'customer/support-ticket/' . $timestamp . '_' . $email . '_' . $file->getClientOriginalName();
+            $originalName = $file->getClientOriginalName(); // Get the original file name
+            $filename = 'customer/support-ticket/' . $timestamp . '_' . $email . '_' . $originalName;
+
             // Save the uploaded file to private storage
-            Storage::disk('import')->put($filename, file_get_contents($file));
+            Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
         }
 
         $messageDetails = [
