@@ -25,6 +25,8 @@ class ComMerchantStore extends Model
         'logo',
         'banner',
         'address',
+        'latitude',
+        'longitude',
         'vat_tax_number',
         'is_featured',
         'opening_time',

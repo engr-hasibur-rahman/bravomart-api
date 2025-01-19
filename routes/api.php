@@ -1,26 +1,9 @@
 <?php
 
-use App\Enums\PermissionKey;
-use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\ProductBrandController;
-use App\Http\Controllers\ProductCategoryController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\Api\V1\Store\StoreController;
 use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-
-
-/**
- * ******************************************
- * Available Public Routes
- * ******************************************
- */
-
 
 /* Admin Login */
 Route::post('/token', [UserController::class, 'token']);
