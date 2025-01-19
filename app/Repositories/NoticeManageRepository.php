@@ -4,27 +4,114 @@ namespace App\Repositories;
 
 use App\Interfaces\NoticeManageInterface;
 use App\Models\ComStoreNotice;
+use App\Models\ComStoreNoticeRecipient;
+use Illuminate\Support\Facades\DB;
 
 class NoticeManageRepository implements NoticeManageInterface
 {
     public function createNotice(array $data)
     {
+        DB::beginTransaction(); // Start a transaction
         try {
-            ComStoreNotice::create($data);
+            $notice = ComStoreNotice::create($data);
+            if ($notice && $data['type'] !== 'general') {
+                $data['notice_id'] = $notice->id;
+                $notice_recipient = ComStoreNoticeRecipient::create($data);
+            } else {
+                return false;
+            }
+            if ($notice_recipient) {
+                // Commit the transaction if all went well
+                DB::commit();
+                return true;
+            } else {
+                DB::rollBack();
+                return false;
+            }
+        } catch (\Exception $exception) {
+            // Rollback the transaction if any exception occurs
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    public function getNotice(array $filters)
+    {
+        try {
+            $query = ComStoreNotice::query();
+            if (isset($filters['search'])) {
+                $searchTerm = $filters['search'];
+                // Adding the search condition for both title and message
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->where('title', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('message', 'like', '%' . $searchTerm . '%');
+                });
+            }
+            // Priority filter
+            if (isset($filters['priority']) && !empty($filters['priority'])) {
+                $query->where('priority', $filters['priority']);
+            }
+
+            // Status filter
+            if (isset($filters['status']) && !empty($filters['status'])) {
+                $query->where('status', $filters['status']);
+            }
+
+            // Type filter
+            if (isset($filters['type']) && !empty($filters['type'])) {
+                $query->where('type', $filters['type']);
+            }
+
+            // Paginate the results
+            $perPage = isset($filters['per_page']) ? $filters['per_page'] : 10; // Default to 15 if not provided
+            return $query->paginate($perPage);
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    public function getById($id)
+    {
+        try {
+            $notice = ComStoreNotice::with('recipients')->findOrFail($id);
+            return $notice;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    public function updateNotice(array $data)
+    {
+        try {
+            ComStoreNotice::findorfail($data['id'])->update($data);
             return true;
         } catch (\Exception $exception) {
             return false;
         }
     }
 
-    public function getNotice(array $data)
+    public function toggleStatus($id)
     {
+        try {
+            $notice = ComStoreNotice::findOrFail($id);
+            $notice->status = !$notice->status;
+            $notice->save();
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
 
-    }public function updateNotice(array $data)
-    {
+    }
 
-    }public function deleteNotice(array $data)
+    public function deleteNotice($id)
     {
+        try {
+            $notice = ComStoreNotice::findOrFail($id);
+            $notice->delete();
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
 
     }
 }
