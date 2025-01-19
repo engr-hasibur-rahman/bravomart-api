@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('store_notices', function (Blueprint $table) {
             $table->id();
+            $table->string('type')->nullable()->comment('all_seller, specific_seller');
+            $table->json('seller_id')->nullable(); // specific_seller ids
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('priority')->nullable()->comment('high, ');
+            $table->string('priority')->nullable()->comment('high, medium, low');
+            $table->date('active_date')->nullable();
+            $table->date('expire_date')->nullable();
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }
