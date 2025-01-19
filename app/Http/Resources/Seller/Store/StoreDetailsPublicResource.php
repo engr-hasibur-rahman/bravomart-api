@@ -19,7 +19,7 @@ class StoreDetailsPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'area' => $this->area->name,
+            'area' => $this->area->name ?? null,
             'merchant' => new SellerDetailsPublicResource($this->merchant),
             'store_type' => $this->store_type,
             'name' => $this->name,
