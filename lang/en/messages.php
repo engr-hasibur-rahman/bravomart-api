@@ -50,7 +50,7 @@ return [
     'approve.success' => ':name approved successfully!',
     'approve.failed' => ':name approved failed!',
     'reject.success' => ':name rejected successfully!',
-    'exists'=>':name already exists!',
+    'exists' => ':name already exists!',
 
     'request_success' => ':name requested successfully!',
     'request_failed' => ':name request failed!',
@@ -60,6 +60,9 @@ return [
 
     'account_delete_successful' => 'Your account has been deleted!',
     'account_delete_failed' => 'Something went wrong while deleting your account!',
+
+    'password_update_successful' => 'Password has been successfully updated!',
+    'password_update_failed' => 'Password update failed!',
 
 ];
 
