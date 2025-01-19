@@ -8,7 +8,7 @@ use App\Interfaces\StoreManageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class StoreDashboardManageController extends Controller
+class SellerStoreDashboardManageController extends Controller
 {
     public function __construct(protected StoreManageInterface $storeRepo)
     {
