@@ -25,6 +25,9 @@ class AdminStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'subscription_type' => 'nullable|string|max:50',
+            'subscription_id' => 'nullable|exists:subscriptions,id',
+            'payment_gateway' => 'payment_gateway',
             'area_id' => 'nullable|exists:areas,id',
             'merchant_id' => 'nullable|exists:com_merchant,user_id',
             'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class),
@@ -35,13 +38,12 @@ class AdminStoreRequest extends FormRequest
             'logo' => 'nullable|string|max:255',
             'banner' => 'nullable|string|max:255',
             'address' => 'nullable|string',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'vat_tax_number' => 'nullable|string|max:255',
             'is_featured' => 'nullable|boolean',
             'opening_time' => 'nullable|date_format:H:i',
             'closing_time' => 'nullable|date_format:H:i',
-            'subscription_type' => 'nullable|string|max:50',
-            'admin_commission_amount' => 'nullable|numeric|between:0,100',
-            'admin_commission_type' => 'nullable',
             'delivery_charge' => 'nullable|numeric|min:0',
             'delivery_time' => 'nullable|string|max:50',
             'delivery_self_system' => 'nullable|boolean',
@@ -62,6 +64,7 @@ class AdminStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'subscription_id.exists' => 'The selected subscription id does not exist.',
             'area_id.exists' => 'The selected area does not exist.',
             'merchant_id.exists' => 'The selected merchant does not exist.',
             'store_type.in' => 'The store type must be one of the following: ' . $this->getEnumValues(StoreType::class),
@@ -71,10 +74,12 @@ class AdminStoreRequest extends FormRequest
             'slug.unique' => 'The slug has already been taken.',
             'phone.max' => 'The phone number may not be greater than 15 characters.',
             'email.email' => 'The email must be a valid email address.',
+            'latitude.numeric' => 'The latitude must be a number.',
+            'latitude.between' => 'The latitude must be between -90 and 90.',
+            'longitude.numeric' => 'The longitude must be a number.',
+            'longitude.between' => 'The longitude must be between -180 and 180.',
             'opening_time.date_format' => 'The opening time must be in the format HH:mm.',
             'closing_time.date_format' => 'The closing time must be in the format HH:mm.',
-            'admin_commi_percent.between' => 'The commission percentage must be between 0 and 100.',
-            'admin_commi_amount.numeric' => 'The commission amount must be a number.',
             'status.in' => 'The status must be 0 (Pending), 1 (Active), or 2 (Inactive).',
         ];
     }
