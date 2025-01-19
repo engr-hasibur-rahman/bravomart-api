@@ -93,7 +93,8 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/country-list', [FrontendController::class, 'countriesList']);
     Route::get('/state-list', [FrontendController::class, 'statesList']);
     Route::get('/city-list', [FrontendController::class, 'citiesList']);
-    Route::get('/area-list', [FrontendController::class, 'areasList']);
+    Route::get('/areas', [FrontendController::class, 'areas']);
+    Route::get('/area-list', [FrontendController::class, 'areaList']);
     Route::get('/tag-list', [FrontendController::class, 'tagList']);
     Route::get('/brand-list', [FrontendController::class, 'brandList']);
     Route::get('/product/attribute-list', [FrontendController::class, 'productAttributeList']);
@@ -432,7 +433,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Store Notice manage    
         Route::prefix('store-notices/')->middleware(['permission:' . PermissionKey::ADMIN_NOTICE_MANAGEMENT->value])->group(function () {
             Route::get('/', [AdminStoreNoticeController::class, 'index']); // Get all notices
-            Route::post('/', [AdminStoreNoticeController::class, 'store']); // Create a new notice
+            Route::post('/add', [AdminStoreNoticeController::class, 'store']); // Create a new notice
             Route::get('details', [AdminStoreNoticeController::class, 'show']); // View a specific notice
             Route::post('update', [AdminStoreNoticeController::class, 'update']); // Update a specific notice
             Route::post('change-status', [AdminStoreNoticeController::class, 'statusChange']); // Change notice status

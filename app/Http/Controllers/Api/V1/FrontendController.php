@@ -6,6 +6,7 @@ use App\Enums\Behaviour;
 use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use App\Http\Resources\Com\Department\DepartmentListForDropdown;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
@@ -36,6 +37,7 @@ use App\Interfaces\CityManageInterface;
 use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
+use App\Models\ComArea;
 use App\Models\ComMerchantStore;
 use App\Models\Customer;
 use App\Models\Department;
@@ -501,24 +503,13 @@ class FrontendController extends Controller
                 ->orderBy($sortField, $sort)
                 ->paginate($limit);
 
-            // Return a collection of ProductBrandResource (including the image)
-            if (!auth('api')->check() || auth('api_customer')->check()) {
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.data_found'),
-                    'data' => ProductCategoryPublicResource::collection($categories),
-                    'meta' => new PaginationResource($categories)
-                ]);
-            } else {
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.data_found'),
-                    'data' => ProductCategoryResource::collection($categories),
-                    'meta' => new PaginationResource($categories)
-                ]);
-            }
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => ProductCategoryPublicResource::collection($categories),
+                'meta' => new PaginationResource($categories)
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -680,7 +671,7 @@ class FrontendController extends Controller
     }
 
     // Area
-    public function areasList(Request $request)
+    public function areas(Request $request)
     {
         // Extract filters from the request
         $filters = $request->only(['name', 'city_id', 'status', 'sortBy', 'sortOrder', 'perPage']);
@@ -688,6 +679,12 @@ class FrontendController extends Controller
         // Get the countries from the repository
         $areas = $this->areaRepo->getAreas($filters);
         return AreaPublicResource::collection($areas);
+    }
+
+    public function areaList()
+    {
+        $areas = ComArea::where('status', 1)->latest()->get();
+        return response()->json(ComAreaListForDropdownResource::collection($areas));
     }
 
     public function tagList()
