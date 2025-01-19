@@ -70,12 +70,19 @@ use Illuminate\Support\Facades\Route;
 Route::group(['namespace' => 'Api\V1'], function () {
 
     // For customer register and login
-    Route::post('customer/registration', [CustomerManageController::class, 'register']);
-    Route::post('customer/login', [CustomerManageController::class, 'login']);
-    Route::post('customer/forget-password', [CustomerManageController::class, 'forgetPassword']);
-    Route::post('customer/verify-token', [CustomerManageController::class, 'verifyToken']);
-    Route::post('customer/reset-password', [CustomerManageController::class, 'resetPassword']);
-
+    Route::group(['prefix'=>'customer/'],function (){
+        Route::post('registration', [CustomerManageController::class, 'register']);
+        Route::post('login', [CustomerManageController::class, 'login']);
+        Route::post('forget-password', [CustomerManageController::class, 'forgetPassword']);
+        Route::post('verify-token', [CustomerManageController::class, 'verifyToken']);
+        Route::post('reset-password', [CustomerManageController::class, 'resetPassword']);
+    });
+    Route::group(['prefix'=>'seller/'],function (){
+        // password reset
+        Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
+        Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
+        Route::post('reset-password', [SellerManageController::class, 'resetPassword']);
+    });
     // Blog comment manage
     Route::post('blog/comment', [BlogManageController::class, 'comment']);
     Route::group(['prefix' => 'auth'], function () {
@@ -574,9 +581,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('/store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
         Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
+        // verify email
+        Route::post('send-verification-email', [SellerManageController::class, 'sendVerificationEmail']);
+        Route::post('verify-email', [SellerManageController::class, 'verifyEmail']);
+        Route::post('resend-verification-email', [SellerManageController::class, 'resendVerificationEmail']);
+
         // profile manage
         Route::group(['prefix' => 'profile/'], function () {
             Route::get('/', [SellerManageController::class, 'getProfile']);
+            Route::post('/update', [SellerManageController::class, 'updateProfile']);
+            Route::post('/change-email', [SellerManageController::class, 'updateEmail']);
+            Route::get('/deactivate', [SellerManageController::class, 'deactivateAccount']);
+            Route::get('/delete', [SellerManageController::class, 'deleteAccount']);
         });
         // Store manage
         Route::group(['prefix' => 'store/'], function () {

@@ -287,11 +287,10 @@ class CustomerManageController extends Controller
                 'message' => __('messages.token.invalid')
             ], 400);
         }
-
         return response()->json([
             'status' => true,
             'status_code' => 200,
-            'message' => __('messages.email.verify.success')
+            'message' => __('messages.password_update_successful')
         ]);
     }
 
@@ -348,7 +347,7 @@ class CustomerManageController extends Controller
             $user = Customer::findOrFail($userId);
 
             if ($user) {
-                $user->update($request->only('first_name', 'last_name', 'phone', 'image'));
+                $user->update($request->only('first_name', 'last_name', 'phone', 'image','birth_day', 'gender'));
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
@@ -380,7 +379,7 @@ class CustomerManageController extends Controller
     public function updateEmail(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:customers,email',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -398,13 +397,13 @@ class CustomerManageController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
-                    'message' => __('messages.update_success', ['name' => 'User']),
+                    'message' => __('messages.update_success', ['name' => 'Customer']),
                 ]);
             } else {
                 return response()->json([
                     'status' => true,
                     'status_code' => 500,
-                    'message' => __('messages.update_failed', ['name' => 'User']),
+                    'message' => __('messages.update_failed', ['name' => 'Customer']),
                 ]);
             }
         } catch (\Exception $e) {
