@@ -29,7 +29,6 @@ use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
-use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
@@ -51,10 +50,11 @@ use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreDashboardManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
-use App\Http\Controllers\Api\V1\Seller\SellerStoreDashboardManageController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
@@ -70,14 +70,14 @@ use Illuminate\Support\Facades\Route;
 Route::group(['namespace' => 'Api\V1'], function () {
 
     // For customer register and login
-    Route::group(['prefix'=>'customer/'],function (){
+    Route::group(['prefix' => 'customer/'], function () {
         Route::post('registration', [CustomerManageController::class, 'register']);
         Route::post('login', [CustomerManageController::class, 'login']);
         Route::post('forget-password', [CustomerManageController::class, 'forgetPassword']);
         Route::post('verify-token', [CustomerManageController::class, 'verifyToken']);
         Route::post('reset-password', [CustomerManageController::class, 'resetPassword']);
     });
-    Route::group(['prefix'=>'seller/'],function (){
+    Route::group(['prefix' => 'seller/'], function () {
         // password reset
         Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
         Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
@@ -579,12 +579,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['prefix' => 'seller/'], function () {
         Route::post('/registration', [UserController::class, 'StoreOwnerRegistration']);
         Route::get('/store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
-        Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
-        Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
         // verify email
         Route::post('send-verification-email', [SellerManageController::class, 'sendVerificationEmail']);
         Route::post('verify-email', [SellerManageController::class, 'verifyEmail']);
         Route::post('resend-verification-email', [SellerManageController::class, 'resendVerificationEmail']);
+        Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
+        // Support ticket manage
+        Route::group(['prefix' => 'support-ticket/'], function () {
+            Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
+        });
 
         // profile manage
         Route::group(['prefix' => 'profile/'], function () {
