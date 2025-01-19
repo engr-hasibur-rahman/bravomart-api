@@ -38,8 +38,6 @@ class SellerStoreRequest extends FormRequest
             'logo' => 'nullable|string|max:255',
             'banner' => 'nullable|string|max:255',
             'address' => 'nullable|string',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
             'vat_tax_number' => 'nullable|string|max:255',
             'is_featured' => 'nullable|boolean',
             'opening_time' => 'nullable|date_format:H:i',
@@ -70,14 +68,8 @@ class SellerStoreRequest extends FormRequest
             'slug.unique' => 'The slug has already been taken.',
             'phone.max' => 'The phone number may not be greater than 15 characters.',
             'email.email' => 'The email must be a valid email address.',
-            'latitude.numeric' => 'The latitude must be a number.',
-            'latitude.between' => 'The latitude must be between -90 and 90.',
-            'longitude.numeric' => 'The longitude must be a number.',
-            'longitude.between' => 'The longitude must be between -180 and 180.',
             'opening_time.date_format' => 'The opening time must be in the format HH:mm.',
             'closing_time.date_format' => 'The closing time must be in the format HH:mm.',
-            'admin_commi_percent.between' => 'The commission percentage must be between 0 and 100.',
-            'admin_commi_amount.numeric' => 'The commission amount must be a number.',
             'status.in' => 'The status must be 0 (Pending), 1 (Active), or 2 (Inactive).',
         ];
     }

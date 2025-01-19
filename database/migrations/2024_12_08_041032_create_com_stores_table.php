@@ -23,14 +23,12 @@ return new class extends Migration {
             $table->string('logo')->nullable();
             $table->string('banner')->nullable();
             $table->text('address')->nullable();
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
             $table->string('vat_tax_number')->nullable();
             $table->boolean('is_featured')->nullable()->default(false);
             $table->time('opening_time')->nullable();
             $table->time('closing_time')->nullable();
             $table->string('subscription_type', 50)->nullable();
-            $table->enum('admin_commission_type', ['percent', 'amount'])->nullable(); // percent or amount
+            $table->string('admin_commission_type')->nullable(); // percent or amount
             $table->decimal('admin_commission_amount', 10, 2)->nullable();
             $table->decimal('delivery_charge', 10, 2)->nullable();
             $table->string('delivery_time', 50)->nullable();
