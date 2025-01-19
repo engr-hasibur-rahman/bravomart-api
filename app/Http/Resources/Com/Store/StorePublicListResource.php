@@ -17,7 +17,7 @@ class StorePublicListResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'area' => $this->area->name,
+            'area' => $this->area->name ?? null,
             'merchant' => $this->merchant->first_name.''.$this->merchant->last_name,
             'store_type' => $this->store_type,
             'name' => $this->name,
