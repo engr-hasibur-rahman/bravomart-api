@@ -197,7 +197,7 @@ class SellerSupportTicketManageController extends Controller
             'receiver_id' => $authUser->id,
             'sender_role' => $authUser->activity_scope,
             'message' => $request->message,
-            'file' => $filename,
+            'file' => $filename ?? null,
         ];
         $message = $this->ticketRepo->addMessage($messageDetails);
         // Update the `updated_at` column of the ticket
