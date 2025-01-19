@@ -192,8 +192,6 @@ class SellerSupportTicketManageController extends Controller
             // Save the uploaded file to private storage
             Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
         }
-        // Save the uploaded file to private storage
-        Storage::disk('import')->put($filename, file_get_contents($file));
         $messageDetails = [
             'ticket_id' => $request->ticket_id,
             'receiver_id' => $authUser->id,
