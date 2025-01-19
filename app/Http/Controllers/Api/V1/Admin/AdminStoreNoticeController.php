@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ComStoreNotice;
 use Illuminate\Http\Request;
 
 class AdminStoreNoticeController extends Controller
@@ -12,7 +13,7 @@ class AdminStoreNoticeController extends Controller
      */
     public function index()
     {
-        $notices = StoreNotice::all();
+        $notices = ComStoreNotice::all();
         return response()->json(['data' => $notices], 200);
     }
 
@@ -30,7 +31,7 @@ class AdminStoreNoticeController extends Controller
             'expire_date' => 'required|date|after_or_equal:active_date',
         ]);
 
-        $notice = StoreNotice::create($validated);
+        $notice = ComStoreNotice::create($validated);
 
         return response()->json(['message' => 'Notice created successfully.', 'data' => $notice], 201);
     }
@@ -40,7 +41,7 @@ class AdminStoreNoticeController extends Controller
      */
     public function show($id)
     {
-        $notice = StoreNotice::findOrFail($id);
+        $notice = ComStoreNotice::findOrFail($id);
         return response()->json(['data' => $notice], 200);
     }
 
@@ -49,7 +50,7 @@ class AdminStoreNoticeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $notice = StoreNotice::findOrFail($id);
+        $notice = ComStoreNotice::findOrFail($id);
 
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
@@ -74,7 +75,7 @@ class AdminStoreNoticeController extends Controller
             'status' => 'required|integer|in:0,1',
         ]);
 
-        $notice = StoreNotice::findOrFail($id);
+        $notice = ComStoreNotice::findOrFail($id);
         $notice->status = $validated['status'];
         $notice->save();
 
@@ -86,7 +87,7 @@ class AdminStoreNoticeController extends Controller
      */
     public function destroy($id)
     {
-        $notice = StoreNotice::findOrFail($id);
+        $notice = ComStoreNotice::findOrFail($id);
         $notice->delete();
 
         return response()->json(['message' => 'Notice deleted successfully.'], 200);
