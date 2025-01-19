@@ -710,7 +710,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::group(['prefix' => 'banner', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value]], function () {
                     Route::post('list', [BannerManageController::class, 'list']);
                     Route::post('add', [BannerManageController::class, 'add']);
-                    Route::get('details', [BannerManageController::class, 'show']);
+                    Route::get('details/{id}', [BannerManageController::class, 'show']);
                     Route::post('update', [BannerManageController::class, 'update']);
                     Route::delete('remove/{id}', [BannerManageController::class, 'remove']);
                 });
