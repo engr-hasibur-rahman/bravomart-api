@@ -3,51 +3,40 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\NoticeRequest;
+use App\Interfaces\NoticeManageInterface;
 use App\Models\ComStoreNotice;
 use Illuminate\Http\Request;
 
 class AdminStoreNoticeController extends Controller
 {
-    /**
-     * Display a listing of the notices.
-     */
+    public function __construct(protected NoticeManageInterface $noticeRepo)
+    {
+
+    }
+
     public function index()
     {
         $notices = ComStoreNotice::all();
         return response()->json(['data' => $notices], 200);
     }
 
-    /**
-     * Store a newly created notice in storage.
-     */
-    public function store(Request $request)
+    public function store(NoticeRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'message' => 'nullable|string',
-            'type' => 'required|string|in:general,specific_store,specific_vendor',
-            'priority' => 'integer|min:0|max:2',
-            'active_date' => 'required|date',
-            'expire_date' => 'required|date|after_or_equal:active_date',
-        ]);
-
-        $notice = ComStoreNotice::create($validated);
-
-        return response()->json(['message' => 'Notice created successfully.', 'data' => $notice], 201);
+        $success = $this->noticeRepo->createNotice($request->all());
+        if ($success) {
+            return $this->success(__('messages.save_success', ['name' => 'Notice']));
+        } else {
+            return $this->failed(__('messages.save_failed', ['name' => 'Notice']));
+        }
     }
 
-    /**
-     * Display the specified notice.
-     */
     public function show($id)
     {
         $notice = ComStoreNotice::findOrFail($id);
         return response()->json(['data' => $notice], 200);
     }
 
-    /**
-     * Update the specified notice in storage.
-     */
     public function update(Request $request, $id)
     {
         $notice = ComStoreNotice::findOrFail($id);
@@ -66,9 +55,6 @@ class AdminStoreNoticeController extends Controller
         return response()->json(['message' => 'Notice updated successfully.', 'data' => $notice], 200);
     }
 
-    /**
-     * Update the status of a specific notice.
-     */
     public function statusChange(Request $request, $id)
     {
         $validated = $request->validate([
@@ -82,9 +68,6 @@ class AdminStoreNoticeController extends Controller
         return response()->json(['message' => 'Status updated successfully.', 'data' => $notice], 200);
     }
 
-    /**
-     * Remove the specified notice from storage.
-     */
     public function destroy($id)
     {
         $notice = ComStoreNotice::findOrFail($id);
