@@ -31,10 +31,7 @@ class SubscriptionService
 
             // if package not found
             if (empty($subscription_package)){
-                return [
-                    'success' => false,
-                    'message' => "Subscription package not found",
-                ];
+                return false;
             }
 
             $store_id = $store->id;
@@ -53,7 +50,6 @@ class SubscriptionService
                 $subscription_status = 0;
                 $payment_status = 'pending';
             }
-
 
             // Create subscription history
             SubscriptionHistory::create([
