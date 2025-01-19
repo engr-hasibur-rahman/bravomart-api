@@ -26,10 +26,12 @@ class NoticeRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'message' => 'nullable|string',
-            'type' => 'nullable|enum|in:general,specific_store,specific_vendor',
-            'priority' => 'nullable|enum|in:low,medium,high',
+            'type' => 'nullable|in:general,specific_store,specific_vendor', // Fix enum rule
+            'priority' => 'nullable|in:low,medium,high', // Fix enum rule
             'active_date' => 'nullable|date|date_format:Y-m-d',
-            'expire_date' => 'nullable|date|date_format:Y-m-d|after_or_equal:active_date',
+            'expire_date' => 'nullable|date|date_format:Y-m-d|after_or_equal:active_date', // Ensure after_or_equal rule works
+            'store_id' => 'nullable|exists:com_merchant_stores,id',
+            'seller_id' => 'nullable|exists:users,id',
         ];
     }
 
@@ -40,13 +42,15 @@ class NoticeRequest extends FormRequest
             'title.string' => __('validation.string', ['attribute' => 'Title']),
             'title.max' => __('validation.max.string', ['attribute' => 'Title']),
             'message.string' => __('validation.string', ['attribute' => 'Message']),
-            'type.enum' => __('validation.enum', ['general', 'specific_store', 'specific_vendor']),
-            'priority.enum' => __('validation.enum', ['low', 'medium', 'high']),
+            'type.in' => __('validation.in', ['attribute' => 'Type', 'enum' => 'general,specific_store,specific_vendor']), // Fix enum message
+            'priority.in' => __('validation.in', ['attribute' => 'Priority', 'enum' => 'low,medium,high']), // Fix enum message
             'active_date.date' => __('validation.date', ['attribute' => 'Active Date']),
-            'active_date.date_format' => __('validation.date', ['attribute' => 'Active Date', 'format' => 'Y-m-d']),
+            'active_date.date_format' => __('validation.date_format', ['attribute' => 'Active Date', 'format' => 'Y-m-d']),
             'expire_date.date' => __('validation.date', ['attribute' => 'Expire Date']),
-            'expire_date.date_format' => __('validation.date', ['attribute' => 'Expire Date', 'format' => 'Y-m-d']),
-            'expire_date.after' => __('validation.date', ['attribute' => 'Expire Date']),
+            'expire_date.date_format' => __('validation.date_format', ['attribute' => 'Expire Date', 'format' => 'Y-m-d']),
+            'expire_date.after_or_equal' => __('validation.after_or_equal', ['attribute' => 'Expire Date']), // Fixed message for after_or_equal
+            'store_id.exists' => __('validation.exists', ['attribute' => 'Store ID']),
+            'seller_id.exists' => __('validation.exists', ['attribute' => 'Seller ID']),
         ];
     }
 

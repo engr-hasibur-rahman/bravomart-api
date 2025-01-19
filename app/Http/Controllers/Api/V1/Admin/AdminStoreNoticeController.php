@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NoticeRequest;
+use App\Http\Resources\Admin\AdminNoticeDetailsResource;
+use App\Http\Resources\Admin\AdminNoticeResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\NoticeManageInterface;
 use App\Models\ComStoreNotice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AdminStoreNoticeController extends Controller
 {
@@ -15,14 +19,31 @@ class AdminStoreNoticeController extends Controller
 
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $notices = ComStoreNotice::all();
-        return response()->json(['data' => $notices], 200);
+        $filters = [
+            'priority' => $request->input('priority'),
+            'status' => $request->input('status'),
+            'type' => $request->input('type'),
+            'search' => $request->input('search'),
+            'per_page' => $request->input('per_page'),
+        ];
+        $notices = $this->noticeRepo->getNotice($filters);
+        return response()->json([
+            'data' => AdminNoticeResource::collection($notices),
+            'meta' => new PaginationResource($notices),
+        ]);
     }
 
     public function store(NoticeRequest $request)
     {
+        if ($request->type == 'general' && isset($request->store_id) || isset($request->seller_id)) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'General notices are not allowed to assign specific store or seller'
+            ]);
+        }
         $success = $this->noticeRepo->createNotice($request->all());
         if ($success) {
             return $this->success(__('messages.save_success', ['name' => 'Notice']));
@@ -31,48 +52,45 @@ class AdminStoreNoticeController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(Request $request)
     {
-        $notice = ComStoreNotice::findOrFail($id);
-        return response()->json(['data' => $notice], 200);
+        $notice = $this->noticeRepo->getById($request->id);
+        return response()->json(new AdminNoticeDetailsResource($notice));
     }
 
-    public function update(Request $request, $id)
+    public function update(NoticeRequest $request)
     {
-        $notice = ComStoreNotice::findOrFail($id);
-
-        $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'message' => 'nullable|string',
-            'type' => 'sometimes|required|string|in:general,specific_store,specific_vendor',
-            'priority' => 'integer|min:0|max:2',
-            'active_date' => 'sometimes|required|date',
-            'expire_date' => 'sometimes|required|date|after_or_equal:active_date',
-        ]);
-
-        $notice->update($validated);
-
-        return response()->json(['message' => 'Notice updated successfully.', 'data' => $notice], 200);
+        $success = $this->noticeRepo->updateNotice($request->all());
+        if ($success) {
+            return $this->success(__('messages.update_success', ['name' => 'Notice']));
+        } else {
+            return $this->failed(__('messages.update_failed', ['name' => 'Notice']));
+        }
     }
 
-    public function statusChange(Request $request, $id)
+    public function changeStatus(Request $request)
     {
-        $validated = $request->validate([
-            'status' => 'required|integer|in:0,1',
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
         ]);
-
-        $notice = ComStoreNotice::findOrFail($id);
-        $notice->status = $validated['status'];
-        $notice->save();
-
-        return response()->json(['message' => 'Status updated successfully.', 'data' => $notice], 200);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $success = $this->noticeRepo->toggleStatus($request->id);
+        if ($success) {
+            return $this->success(__('messages.update_success', ['name' => 'Notice status']));
+        } else {
+            return $this->failed(__('messages.update_failed', ['name' => 'Notice status']));
+        }
     }
 
     public function destroy($id)
     {
-        $notice = ComStoreNotice::findOrFail($id);
-        $notice->delete();
-
-        return response()->json(['message' => 'Notice deleted successfully.'], 200);
+        $success = $this->noticeRepo->deleteNotice($id);
+        if ($success) {
+            return $this->success(__('messages.delete_success', ['name' => 'Notice']));
+        } else {
+            return $this->failed(__('messages.delete_failed', ['name' => 'Notice']));
+        }
     }
 }
