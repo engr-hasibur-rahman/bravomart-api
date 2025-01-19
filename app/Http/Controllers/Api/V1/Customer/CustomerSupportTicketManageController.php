@@ -258,6 +258,10 @@ class CustomerSupportTicketManageController extends Controller
             ]);
         }
         $ticketMessages = $this->ticketRepo->getTicketMessages($request->ticket_id);
-        return response()->json(SupportTicketMessageResource::collection($ticketMessages));
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'data' => SupportTicketMessageResource::collection($ticketMessages)
+        ]);
     }
 }
