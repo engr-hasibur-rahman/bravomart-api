@@ -16,6 +16,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('area_id')->nullable();
             $table->unsignedBigInteger('merchant_id')->nullable();
             $table->enum('store_type', array_map(fn($enum) => $enum->value, StoreType::cases()))->nullable(); //medicine/ furniture/ DOOR/ FOOD/ GROCERY
+            $table->string('subscription_type', 50)->nullable();
+            $table->string('admin_commission_type')->nullable(); // percent or amount
+            $table->decimal('admin_commission_amount', 10, 2)->nullable();
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('phone', 15)->nullable();
@@ -23,13 +26,12 @@ return new class extends Migration {
             $table->string('logo')->nullable();
             $table->string('banner')->nullable();
             $table->text('address')->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->string('vat_tax_number')->nullable();
             $table->boolean('is_featured')->nullable()->default(false);
             $table->time('opening_time')->nullable();
             $table->time('closing_time')->nullable();
-            $table->string('subscription_type', 50)->nullable();
-            $table->string('admin_commission_type')->nullable(); // percent or amount
-            $table->decimal('admin_commission_amount', 10, 2)->nullable();
             $table->decimal('delivery_charge', 10, 2)->nullable();
             $table->string('delivery_time', 50)->nullable();
             $table->boolean('delivery_self_system')->nullable()->default(false);

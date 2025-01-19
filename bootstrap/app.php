@@ -13,7 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         using: function () {
             Route::middleware('api')->prefix('api')->group(base_path('routes/api.php'));
-            Route::middleware('api')->prefix('api/v1')->group(base_path('routes/apiV1.php'));
+            Route::middleware('api')->prefix('api/v1')->group(base_path('routes/admin-api.php'));
+            Route::middleware('api')->prefix('api/v1')->group(base_path('routes/seller-api.php'));
+            Route::middleware('api')->prefix('api/v1')->group(base_path('routes/customer-api.php'));
+            Route::middleware('api')->prefix('api/v1')->group(base_path('routes/deliveryman-api.php'));
             Route::middleware('web')->group(base_path('routes/web.php'));
         },        
     )
