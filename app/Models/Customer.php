@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 //class Customer extends Model
 class Customer extends Authenticatable // Extend Authenticatable instead of Model
 {
-    use HasFactory, HasApiTokens;
+    use HasFactory, HasApiTokens, SoftDeletes;
 
     protected $fillable = [
         'first_name',
@@ -31,6 +32,7 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         'email_verify_token',
         'email_verified',
         'email_verified_at',
+        'deactivated_at'
     ];
 
     protected $hidden = [
@@ -42,5 +44,38 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 1 && $this->deleted_at === null;
+    }
+    public function scopeIsActive($query)
+    {
+        return $query->where('status', 1)->whereNull('deleted_at');
+    }
+    public function isDeactivated(): bool
+    {
+        return $this->status === 0;
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->status === 2;
+    }
+
+    public function deleteAccount(): bool
+    {
+        return $this->delete();
+    }
+
+    public function forceDeleteAccount(): bool
+    {
+        return $this->forceDelete();
+    }
+
+    public function restoreAccount(): bool
+    {
+        return $this->restore();
     }
 }

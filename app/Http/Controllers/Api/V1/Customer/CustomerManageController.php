@@ -10,7 +10,9 @@ use App\Interfaces\CustomerManageInterface;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManageController extends Controller
 {
@@ -52,28 +54,48 @@ class CustomerManageController extends Controller
                 "message" => $validator->errors()
             ]);
         }
-        try {
-            $token = $this->customerRepo->getToken($request->all());
-            if (!$token) {
-                return response()->json([
-                    "status" => false,
-                    "status_code" => 401,
-                    "message" => __('messages.login_failed', ['name' => 'Customer']),
-                    "token" => null,
-                ], 401);
-            }
+        $customer = Customer::where('email', $request->email)
+            ->first();
+        if (!$customer) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 404,
+                "message" => __('messages.customer.not.found'),
+            ], 404);
+        }
+        // Check if the user's account is deleted
+        if ($customer->deleted_at !== null) {
+            return response()->json([
+                'error' => 'Your account has been deleted. Please contact support.'
+            ], Response::HTTP_GONE); // HTTP 410 Gone
+        }
+        // Check if the user's account is deactivated or disabled
+        if ($customer->status === 0) {
+            return response()->json([
+                'error' => 'Your account has been deactivated. Please contact support.'
+            ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
+        }
+        if ($customer->status === 2) {
+            return response()->json([
+                'error' => 'Your account has been suspended by the admin.'
+            ], Response::HTTP_FORBIDDEN); // HTTP 403 Forbidden
+        }
+        $authCustomer = Hash::check($request->password, $customer->password);
+        // Check if the user exists and if the password is correct
+        if (!$authCustomer) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 401,
+                "message" => __('messages.login_failed', ['name' => 'Customer']),
+                "token" => null,
+            ], 401);
+        } else {
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.login_success', ['name' => 'Customer']),
-                "token" => $token->createToken('customer_auth_token')->plainTextToken,
-                "email_verified" => (bool)$token->email_verified, // shorthand of -> $token->email_verified ? true : false
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                "status" => false,
-                "status_code" => 500,
-                "message" => $e->getMessage()
+                "token" => $customer->createToken('customer_auth_token')->plainTextToken,
+                "email_verified" => (bool)$customer->email_verified, // shorthand of -> $token->email_verified ? true : false
             ]);
         }
     }
@@ -391,6 +413,48 @@ class CustomerManageController extends Controller
                 'status_code' => 500,
                 'message' => __('messages.something_went_wrong'),
                 'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function deactivateAccount()
+    {
+        if (!auth('api_customer')->check()) {
+            unauthorized_response();
+        }
+        $success = $this->customerRepo->deactivateAccount();
+        if ($success) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.account_deactivate_successful')
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.account_deactivate_failed')
+            ]);
+        }
+    }
+
+    public function deleteAccount()
+    {
+        if (!auth('api_customer')->check()) {
+            unauthorized_response();
+        }
+        $success = $this->customerRepo->deleteAccount();
+        if ($success) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.account_delete_successful')
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.account_delete_failed')
             ]);
         }
     }

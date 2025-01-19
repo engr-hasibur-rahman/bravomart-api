@@ -6,10 +6,12 @@ use App\Interfaces\CustomerManageInterface;
 use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
 use Exception;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManageRepository implements CustomerManageInterface
 {
@@ -29,37 +31,6 @@ class CustomerManageRepository implements CustomerManageInterface
                 "status_code" => 500,
                 "message" => __('messages.error'),
                 "error" => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function getToken(array $data)
-    {
-        try {
-            // Attempt to find the user
-            $customer = $this->customer->where('email', $data['email'])
-                ->where('status', 1)
-                ->first();
-            if (!$customer) {
-                return response()->json([
-                    "status" => false,
-                    "status_code" => 404,
-                    "message" => __('messages.customer.not.found'),
-                ], 404);
-            }
-            $authCustomer = Hash::check($data['password'], $customer->password);
-            // Check if the user exists and if the password is correct
-            if (!$authCustomer) {
-                return false;
-            }
-            // Build and return the response
-            return $customer;
-        } catch (\Exception $e) {
-            // Handle other exceptions
-            return response()->json([
-                "status" => false,
-                "status_code" => 500,
-                "message" => $e->getMessage()
             ], 500);
         }
     }
@@ -145,6 +116,7 @@ class CustomerManageRepository implements CustomerManageInterface
             ]);
         }
     }
+
     public function resetPassword(array $data)
     {
         $customer = $this->customer
@@ -171,4 +143,23 @@ class CustomerManageRepository implements CustomerManageInterface
             ]);
         }
     }
+
+    public function deactivateAccount()
+    {
+        $user = auth('api_customer')->user();
+        $user->update([
+            'status' => 0,
+            'deactivated_at' => now(),
+        ]);
+        $user->currentAccessToken()->delete();
+        return true;
+    }
+    public function deleteAccount()
+    {
+        $user = auth('api_customer')->user();
+        $user->delete(); // Soft delete
+        $user->currentAccessToken()->delete();
+        return true;
+    }
+
 }

@@ -22,11 +22,9 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         if (isset($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);
         }
-
         if (isset($filters['department_id'])) {
             $query->where('department_id', $filters['department_id']);
         }
-
         if (isset($filters['ticket_id'])) {
             return $query->findOrFail($filters['ticket_id']);
         }
@@ -39,11 +37,25 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         return $tickets;
     }
 
+    public function getCustomerTickets(array $filters = [])
+    {
+        $query = $this->ticket->with(['department', 'messages.sender', 'messages.receiver']);
+        if (isset($filters['department_id'])) {
+            $query->where('department_id', $filters['department_id']);
+        }
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        $tickets = $query->where('user_id',auth('api_customer')->user()->id)
+            ->latest()
+            ->paginate($filters['per_page'] ?? 10);
+        // Sort and fetch results
+        return $tickets;
+    }
     public function getTicketById($ticketId)
     {
         return $this->ticket->with(['department', 'user', 'messages.sender', 'messages.receiver'])->findOrFail($ticketId);
     }
-
     public function createTicket(array $data)
     {
         try {
@@ -53,12 +65,10 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
             return false;
         }
     }
-
     public function addMessage(array $messageDetails)
     {
         return $this->ticketMessage->create($messageDetails);
     }
-
     public function replyMessage(array $messageDetails)
     {
         return $this->ticketMessage->create($messageDetails);

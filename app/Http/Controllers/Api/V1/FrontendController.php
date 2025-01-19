@@ -130,7 +130,7 @@ class FrontendController extends Controller
         try {
             $query = ComMerchantStore::query();
 
-            $store = $query->with(['area', 'merchant', 'related_translations', 'products'])
+            $store = $query->with(['area', 'merchant', 'related_translations', 'products.variants'])
                 ->where('slug',$request->slug)->first();
             return response()->json([
                 'status' => true,

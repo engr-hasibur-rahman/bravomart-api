@@ -29,7 +29,9 @@ return new class extends Migration {
             $table->string('verify_method')->default('email'); // Verification method ----> email, phone
             $table->boolean('marketing_email')->default(0);
             $table->boolean('marketing_sms')->default(0);
-            $table->integer('status')->default(1)->comment('1: active, 0: inactive');
+            $table->integer('status')->default(1)->comment('1: active, 0: inactive, 2: suspended');
+            $table->timestamp('deactivated_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

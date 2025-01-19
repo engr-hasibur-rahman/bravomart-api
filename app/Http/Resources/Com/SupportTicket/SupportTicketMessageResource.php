@@ -20,7 +20,7 @@ class SupportTicketMessageResource extends JsonResource
             'sender_details' => new SenderDetailsResource($this->sender),
             'receiver_details' => new ReceiverDetailsResource($this->receiver),
             'message' => [
-                'from' => $this->sender ? $this->sender->first_name : ($this->receiver ? $this->receiver->first_name : 'not received yet!'),
+                'from' => $this->sender ? $this->sender->first_name . ' ' . $this->sender->last_name : ($this->receiver ? $this->receiver->first_name : 'not received yet!'),
                 'role' => $this->sender_role ?? $this->receiver_role,
                 'message' => $this->message,
                 'timestamp' => $this->created_at->diffForHumans()

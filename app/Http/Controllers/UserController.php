@@ -546,5 +546,55 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function deactivateAccount()
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+        $user = auth('api')->user();
+        $user->update([
+            'status' => 0,
+            'deactivated_at' => now(),
+        ]);
+        $success = $user->currentAccessToken()->delete();
+        if ($success) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.account_deactivate_successful')
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.account_deactivate_failed')
+            ]);
+        }
+
+    }
+
+    public function deleteAccount()
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+        $user = auth('api')->user();
+        $user->delete(); // Soft delete
+        $success = $user->currentAccessToken()->delete();
+        if ($success) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.account_delete_successful')
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.account_delete_failed')
+            ]);
+        }
+    }
     /* <---- User profile end ----> */
 }

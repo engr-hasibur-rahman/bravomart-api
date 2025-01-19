@@ -7,24 +7,24 @@ use App\Http\Controllers\Api\v1\Admin\AdminCommissionManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliveryManPaymentController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanTypeManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDisbursementManageController;
-use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
-use App\Http\Controllers\Api\v1\Admin\AdminReportAnalyticsManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminStoreDisbursementController;
-use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
-use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
+use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
+use App\Http\Controllers\Api\v1\Admin\AdminReportAnalyticsManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminStoreDisbursementController;
+use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
+use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
+use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Admin\WithdrawMethodManageController;
+use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\BannerManageController;
@@ -33,6 +33,7 @@ use App\Http\Controllers\Api\V1\Com\SupportTicketManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\CustomerContactMessageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
@@ -43,6 +44,7 @@ use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
 use App\Http\Controllers\Api\V1\Seller\SellerBusinessSettingsController;
+use App\Http\Controllers\Api\V1\Seller\SellerDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerFlashSaleProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerInventoryManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
@@ -55,12 +57,10 @@ use App\Http\Controllers\Api\V1\Seller\StoreDashboardManageController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
-use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\Seller\SellerDeliverymanManageController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -573,6 +573,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('/store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
         Route::post('/support-ticket/messages', [SupportTicketManageController::class, 'replyMessage']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
+        // profile manage
+        Route::group(['prefix' => 'profile/'], function () {
+            // To be continued .. .. .. .. .. .. . ...
+        });
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
             Route::get('dashboard', [StoreDashboardManageController::class, 'dashboard']);
@@ -624,7 +628,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // seller store manage
             Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_MY_SHOP->value]], function () {
                 Route::get('list', [SellerStoreManageController::class, 'index']);
-                Route::get('details', [SellerStoreManageController::class, 'show']);
+                Route::get('details/{id}', [SellerStoreManageController::class, 'show']);
                 Route::post('add', [SellerStoreManageController::class, 'store']);
                 Route::post('update', [SellerStoreManageController::class, 'update']);
                 Route::post('change-status', [SellerStoreManageController::class, 'status_update']);
@@ -706,7 +710,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::group(['prefix' => 'banner', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value]], function () {
                     Route::post('list', [BannerManageController::class, 'list']);
                     Route::post('add', [BannerManageController::class, 'add']);
-                    Route::get('details', [BannerManageController::class, 'show']);
+                    Route::get('details/{id}', [BannerManageController::class, 'show']);
                     Route::post('update', [BannerManageController::class, 'update']);
                     Route::delete('remove/{id}', [BannerManageController::class, 'remove']);
                 });
@@ -720,7 +724,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
             });
         });  // END STORE ROUTE
-
         // Product variant manage
         Route::group(['prefix' => 'product/variant/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [ProductVariantController::class, 'index']);
@@ -741,7 +744,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------------> delivery route end <-------------------------- */
 });
 
-Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer']], function () {
+Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
     // media manage
     Route::group(['prefix' => 'media-upload'], function () {
         Route::post('/store', [MediaController::class, 'mediaUpload']);
@@ -749,14 +752,14 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         Route::post('/alt', [MediaController::class, 'alt_change']);
         Route::post('/delete', [MediaController::class, 'delete_media']);
     });
-
     Route::group(['middleware' => ['check.email.verification.option']], function () {
         Route::group(['prefix' => 'profile/'], function () {
             Route::get('/', [CustomerManageController::class, 'getProfile']);
             Route::post('/update', [CustomerManageController::class, 'updateProfile']);
             Route::post('/change-email', [CustomerManageController::class, 'updateEmail']);
+            Route::get('/deactivate', [CustomerManageController::class, 'deactivateAccount']);
+            Route::get('/delete', [CustomerManageController::class, 'deleteAccount']);
         });
-
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
             Route::post('update', [CustomerAddressManageController::class, 'update']);
@@ -765,15 +768,14 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('make-default', [CustomerAddressManageController::class, 'defaultAddress']);
             Route::delete('remove/{id}', [CustomerAddressManageController::class, 'destroy']);
         });
-
         Route::group(['prefix' => 'support-ticket'], function () {
-            Route::get('list', [SupportTicketManageController::class, 'index']);
-            Route::post('store', [SupportTicketManageController::class, 'store']);
-            Route::post('update', [SupportTicketManageController::class, 'update']);
-            Route::get('details', [SupportTicketManageController::class, 'show']);
-            Route::get('resolve', [SupportTicketManageController::class, 'resolve']);
-            Route::post('add-message', [SupportTicketManageController::class, 'addMessage']);
-            Route::get('messages', [SupportTicketManageController::class, 'getTicketMessages']);
+            Route::get('list', [CustomerSupportTicketManageController::class, 'index']);
+            Route::post('store', [CustomerSupportTicketManageController::class, 'store']);
+            Route::post('update', [CustomerSupportTicketManageController::class, 'update']);
+            Route::get('details', [CustomerSupportTicketManageController::class, 'show']);
+            Route::get('resolve', [CustomerSupportTicketManageController::class, 'resolve']);
+            Route::post('add-message', [CustomerSupportTicketManageController::class, 'addMessage']);
+            Route::get('messages', [CustomerSupportTicketManageController::class, 'getTicketMessages']);
         });
         Route::group(['prefix' => 'wish-list'], function () {
             Route::get('list', [WishListManageController::class, 'getWishlist']);
