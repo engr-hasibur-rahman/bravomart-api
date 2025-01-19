@@ -104,7 +104,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_MY_SHOP->value]], function () {
                 Route::get('list', [SellerStoreManageController::class, 'index']);
                 Route::get('details/{id}', [SellerStoreManageController::class, 'show']);
-                Route::post('add', [SellerStoreManageController::class, 'store']);
+                Route::post('add', [SellerStoreManageController::class, 'store']); // create store
                 Route::post('update', [SellerStoreManageController::class, 'update']);
                 Route::post('change-status', [SellerStoreManageController::class, 'status_update']);
                 Route::delete('remove/{id}', [SellerStoreManageController::class, 'destroy']);

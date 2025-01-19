@@ -30,7 +30,6 @@ class StoreManageService
                $store = ComMerchantStore::find($store->id);
                $store_id = $store->id;
             if (isset($store->subscription_type) && $store->subscription_type === 'commission') {
-
                 // get system commission
                 $system_commission = SystemCommission::first();
 
