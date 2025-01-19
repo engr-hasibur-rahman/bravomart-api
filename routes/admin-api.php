@@ -53,12 +53,19 @@ use Illuminate\Support\Facades\Route;
 Route::group(['namespace' => 'Api\V1'], function () {
 
     // For customer register and login
-    Route::post('customer/registration', [CustomerManageController::class, 'register']);
-    Route::post('customer/login', [CustomerManageController::class, 'login']);
-    Route::post('customer/forget-password', [CustomerManageController::class, 'forgetPassword']);
-    Route::post('customer/verify-token', [CustomerManageController::class, 'verifyToken']);
-    Route::post('customer/reset-password', [CustomerManageController::class, 'resetPassword']);
-
+    Route::group(['prefix' => 'customer/'], function () {
+        Route::post('registration', [CustomerManageController::class, 'register']);
+        Route::post('login', [CustomerManageController::class, 'login']);
+        Route::post('forget-password', [CustomerManageController::class, 'forgetPassword']);
+        Route::post('verify-token', [CustomerManageController::class, 'verifyToken']);
+        Route::post('reset-password', [CustomerManageController::class, 'resetPassword']);
+    });
+    Route::group(['prefix' => 'seller/'], function () {
+        // password reset
+        Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
+        Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
+        Route::post('reset-password', [SellerManageController::class, 'resetPassword']);
+    });
     // Blog comment manage
     Route::post('blog/comment', [BlogManageController::class, 'comment']);
     Route::group(['prefix' => 'auth'], function () {

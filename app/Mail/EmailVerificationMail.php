@@ -15,13 +15,13 @@ class EmailVerificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $customer;
+    public $user;
     public $token;
 
-    public function __construct(Customer $customer)
+    public function __construct($user)
     {
-        $this->customer = $customer;
-        $this->token = $customer->email_verify_token; // Store the token here
+        $this->user = $user;
+        $this->token = $user->email_verify_token; // Store the token here
     }
 
     public function build()
@@ -29,7 +29,7 @@ class EmailVerificationMail extends Mailable
         return $this->subject('Email Verification') // Email subject
         ->view('mail.email-verification-mail') // View path
         ->with([
-            'customer' => $this->customer, // Pass the customer object
+            'customer' => $this->user, // Pass the customer object
             'token' => $this->token, // Pass the token
         ]);
     }
