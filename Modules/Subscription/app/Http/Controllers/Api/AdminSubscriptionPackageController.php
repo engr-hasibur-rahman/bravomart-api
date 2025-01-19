@@ -59,7 +59,7 @@ class AdminSubscriptionPackageController extends Controller
 
     public function show($id)
     {
-        $package = Subscription::findOrFail($id); // Fetch the package by ID
+        $package = Subscription::findOrFail($id);
         return response()->json([
             'success' => true,
             'package' => new AdminSubscriptionPackageResource($package),
@@ -68,16 +68,12 @@ class AdminSubscriptionPackageController extends Controller
 
     public function update(Request $request)
     {
-
-        // Find the existing subscription package by ID
         $subscription = Subscription::find($request->id);
-
-        // If subscription is not found, return an error response
         if (!$subscription) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Subscription package not found',
-            ], 404);  // 404 Not Found
+            ], 404);
         }
 
         // Validate the incoming request data
@@ -103,18 +99,14 @@ class AdminSubscriptionPackageController extends Controller
                 'status' => 'error',
                 'message' => 'Validation failed',
                 'errors' => $validator->errors()
-            ], 422);  // 422 Unprocessable Entity
+            ], 422);
         }
-
-        // Update the subscription with validated data
         $subscription->update($validator->validated());
-
-        // Return success response
         return response()->json([
             'status' => 'success',
             'message' => 'Subscription package updated successfully',
             'data' => $subscription
-        ], 200);  // 200 OK
+        ]);
     }
 
     public function statusChange(Request $request)
