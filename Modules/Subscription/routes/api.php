@@ -31,6 +31,13 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/business-operations/subscr
         Route::get('settings', [AdminSubscriptionSettingsController::class, 'index'])->middleware(['permission:' . PermissionKey::ADMIN_SUBSCRIPTION_SETTINGS->value]);
 });
 
+
+/* --------------------- Seller route start ------------------------- */
+Route::group(['prefix' => 'v1/seller/store/subscription/package/'], function () {
+   Route::get('history', [StoreSubscriptionManageController::class, 'subscriptionPackageHistory']);
+});
+
+
 //package lists
 Route::prefix('v1/subscription/')->group(function () {
     Route::get('packages', [SubscriptionPackageController::class, 'packages']);
@@ -39,13 +46,6 @@ Route::prefix('v1/subscription/')->group(function () {
         Route::post('package/buy', [BuySubscriptionPackageController::class, 'buySubscriptionPackage']);
         Route::post('package/renew', [BuySubscriptionPackageController::class, 'renewSubscriptionPackage']);
         Route::post('package/payment-status-update', [BuySubscriptionPackageController::class, 'packagePaymentStatusUpdate']);
-    });
-});
-
-/* --------------------- Seller route start ------------------------- */
-Route::group(['prefix' => 'seller/store/subscription/'], function () {
-    Route::group(['prefix' => 'package/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_POS_SALES->value]], function () {
-        Route::get('history', [StoreSubscriptionManageController::class, 'subscriptionPackageHistory']);
     });
 });
 
