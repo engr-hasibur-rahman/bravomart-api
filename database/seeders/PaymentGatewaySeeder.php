@@ -16,29 +16,70 @@ class PaymentGatewaySeeder extends Seeder
     public function run(): void
     {
         PaymentGateway::create([
-            'name' => 'paypal',
-            'slug' => 'paypal', // Add a slug value
+            'name' => 'PayPal',
+            'slug' => 'paypal',
             'description' => 'fdf',
             'auth_credentials' => json_encode([
-                'paypal_sandbox_client_id' => 'your-paypal-client-id',
-                'paypal_sandbox_client_secret' => 'your-paypal-client-secret',
-                'paypal_sandbox_client_app_id' => 'sandbox', // or "live"
+                'paypal_sandbox_client_id' => '',
+                'paypal_sandbox_client_secret' => '',
+                'paypal_sandbox_client_app_id' => '',
+                'paypal_live_client_id' => '',
+                'paypal_live_client_secret' => '',
+                'paypal_live_client_app_id' => '',
             ]),
-            'image' => '100',
+            'image' => null,
             'status' => true,
             'is_test_mode' => true,
         ]);
 
         PaymentGateway::create([
-            'name' => 'paypal',
-            'slug' => 'paypal', // Add a slug value
-            'description' => 'fdf',
+            'name' => 'Stripe',
+            'slug' => 'stripe',
+            'description' => 'stripe info',
             'auth_credentials' => json_encode([
-                'paypal_sandbox_client_id' => 'your-paypal-client-id',
-                'paypal_sandbox_client_secret' => 'your-paypal-client-secret',
-                'paypal_sandbox_client_app_id' => 'sandbox', // or "live"
+                'stripe_public_key' => '',
+                'stripe_public_secret' => '',
             ]),
-            'image' => '100',
+            'image' => null,
+            'status' => true,
+            'is_test_mode' => true,
+        ]);
+
+        PaymentGateway::create([
+            'name' => 'Razorpay',
+            'slug' => 'razorpay',
+            'description' => 'razorpay info',
+            'auth_credentials' => json_encode([
+                'razorpay_api_key' => '',
+                'razorpay_api_secret' => '',
+            ]),
+            'image' => null,
+            'status' => true,
+            'is_test_mode' => true,
+        ]);
+
+        PaymentGateway::create([
+            'name' => 'Paytm',
+            'slug' => 'paytm',
+            'description' => 'paytm info',
+            'auth_credentials' => json_encode([
+                'paytm_merchant_key' => '',
+                'paytm_merchant_mid' => '',
+                'paytm_merchant_website' => '',
+                'paytm_cancel_url' => '',
+                'paytm_industry_type' => '',
+            ]),
+            'image' => null,
+            'status' => true,
+            'is_test_mode' => true,
+        ]);
+
+        PaymentGateway::create([
+            'name' => 'Cash One Delivery',
+            'slug' => 'cod',
+            'description' => 'Pay for your order in cash when it is delivered to your doorstep. No online payment required!',
+            'auth_credentials' => null,
+            'image' => null,
             'status' => true,
             'is_test_mode' => true,
         ]);
