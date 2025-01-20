@@ -15,7 +15,10 @@ class WalletSellerController extends Controller
 
     public function index()
     {
-        $wallets = Wallet::where('user_id', auth()->guard('api')->user()->id)->paginate(10);
+        $seller_id =  auth()->guard('api')->user()->id;
+
+        $wallets = Wallet::where('user_id', $seller_id)->paginate(10);
+
         return response()->json([
             'wallets' => WalletListResource::collection($wallets),
             'pagination' => [
