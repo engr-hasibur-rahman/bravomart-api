@@ -4,15 +4,19 @@ namespace App\Services;
 
 
 use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\OrderPackage;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
     public function createOrder($data)
     {
+
+
         DB::beginTransaction();
 
-        try {
+//        try {
             // Get authenticated customer ID
             $customer = auth()->guard('api_customer')->user();
             $customer_id = $customer->id;
@@ -26,7 +30,7 @@ class OrderService
                 'payment_type' => $data['payment_type'], // Payment type (e.g., Credit Card, PayPal)
                 'payment_status' => 'pending', // Payment status (e.g., Pending, Completed)
                 'order_notes' => $data['order_notes'] ?? null, // Optional order notes
-                'order_amount' => $data['total_amount'], // Total order amount
+                'order_amount' => $data['order_amount'], // Total order amount
                 'coupon_code' => $data['coupon_code'] ?? null,
                 'coupon_title' => $data['coupon_title'] ?? null,
                 'coupon_disc_amt_admin' => $data['coupon_disc_amt_admin'] ?? 0, // Admin coupon discount
@@ -43,22 +47,34 @@ class OrderService
                 'refund_status' => null,
             ]);
 
-            // Add order items (products in the order)
-            foreach ($data['items'] as $item) {
-                OrderItem::create([
+            // order package and details
+            foreach ($data['packages'] as $packageData) {
+                // create order package
+                $package = OrderPackage::create([
                     'order_id' => $order->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
+                    'store_id' => $packageData['store_id'],
+                    'order_amount' => $packageData['order_amount'],
                 ]);
+
+                foreach ($packageData['items'] as $itemData) {
+                    // create order details
+                    OrderDetail::create([
+                        'order_id' => $order->id,
+                        'package_id' => $package->id,
+                        'product_id' => $itemData['product_id'],
+                        'rate' => $itemData['rate'],
+                        'quantity' => $itemData['quantity'],
+                        'line_total' => $itemData['line_total'],
+                    ]);
+                }
             }
 
             DB::commit();
             return $order;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e; // Rethrow exception for proper error handling
-        }
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//            throw $e; // Rethrow exception for proper error handling
+//        }
     }
 
     public function updateOrderStatus($orderId, $status)
