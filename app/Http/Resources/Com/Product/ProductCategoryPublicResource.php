@@ -16,22 +16,31 @@ class ProductCategoryPublicResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $language = $request->language;
+        $locales = $this->translations->where('language', $language)->keyBy('key')->toArray();
         return [
-            "id" => $this->id,
-            "category_name" => $this->category_name,
-            "category_slug" => $this->category_slug,
-            "category_name_paths" => $this->category_name_paths . '/' . $this->category_name,
-            "parent_path" => $this->parent_path . '/' . $this->id,
-            "parent_id" => $this->parent_id,
-            "category_level" => $this->category_level,
-            "is_featured" => $this->is_featured,
-            "category_thumb" => ImageModifier::generateImageUrl($this->category_thumb),
-            "category_banner" => ImageModifier::generateImageUrl($this->category_banner),
-            "meta_title" => $this->meta_title,
-            "meta_description" => $this->meta_description,
-            "display_order" => $this->display_order,
+            'id' => $this->id,
+            'value' => $this->id,
+            'label' => $locales['category_name']['value'] ?? $this->category_name,
+            'category_name' => $locales['category_name']['value'] ?? $this->category_name,
+            'parent_id' => $this->parent_id,
+            'childrenRecursive' => ProductChildCategoryResource::collection($this->childrenRecursive),
+            'category_slug' => $locales['category_slug']['value'] ?? $this->category_slug,
+            'category_banner' => '', $this->category_banner,
+            'category_banner_url' => ImageModifier::generateImageUrl($this->category_banner),
+            'category_thumb' => '', $this->category_thumb,
+            'category_thumb_url' => ImageModifier::generateImageUrl($this->category_thumb_url),
+            'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
+            'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
+            'category_name_paths' => $this->category_name_paths,
+            'parent_path' => $this->parent_path,
+            'display_order' => $this->display_order,
+            'created_by' => $this->created_by,
+            'updated_by' => $this->updated_by,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
-//        return parent::toArray($request);
     }
 
 }
