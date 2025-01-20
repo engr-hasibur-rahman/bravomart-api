@@ -3,6 +3,7 @@
 use App\Helpers;
 use App\Models\ComOption;
 use App\Models\Media;
+use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
@@ -109,11 +110,21 @@ if (!function_exists('translate')) {
     if (!function_exists('username_slug_generator')) {
         function username_slug_generator($first_name, $last_name = null)
         {
+            // Generate the base username slug
             $username = Str::slug(trim(strtolower($first_name)));
 
             if ($last_name) {
                 $slugLastName = Str::slug(trim(strtolower($last_name)));
-                return "{$username}-{$slugLastName}";
+                $username = "{$username}-{$slugLastName}";
+            }
+
+            // Ensure the slug is unique
+            $originalUsername = $username;
+            $counter = 1;
+
+            while (User::where('slug', $username)->exists()) {
+                $username = "{$originalUsername}-{$counter}";
+                $counter++;
             }
 
             return $username;
