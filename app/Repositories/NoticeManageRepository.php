@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\NoticeManageInterface;
 use App\Models\ComStoreNotice;
 use App\Models\ComStoreNoticeRecipient;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class NoticeManageRepository implements NoticeManageInterface
@@ -112,6 +113,43 @@ class NoticeManageRepository implements NoticeManageInterface
         } catch (\Exception $exception) {
             return false;
         }
+    }
 
+    public function getSellerStoreNotices()
+    {
+        $userStores = auth('api')->user()->stores;
+        $isStoreOwner = User::where('id', auth('api')->id())
+            ->where('store_owner', 1)
+            ->exists();
+
+        if (!$userStores || !$isStoreOwner) {
+            return [];
+        }
+
+        $query = ComStoreNoticeRecipient::with('notice')
+            ->where(function ($query) use ($userStores) {
+                $query->where(function ($subQuery) {
+                    // Notices specific to the authenticated seller
+                    $subQuery->where('seller_id', auth('api')->id())
+                        ->whereHas('notice', function ($noticeQuery) {
+                            $noticeQuery->where('status', 1); // Only active notices
+                        });
+                })
+                    ->orWhere(function ($subQuery) use ($userStores) {
+                        // Notices for the user's stores
+                        $subQuery->whereNotNull('store_id')
+                            ->whereIn('store_id', $userStores)
+                            ->whereHas('notice', function ($noticeQuery) {
+                                $noticeQuery->where('status', 1); // Only active notices
+                            });
+                    })
+                    ->orWhereHas('notice', function ($noticeQuery) {
+                        // General notices visible to everyone
+                        $noticeQuery->where('type', 'general')
+                            ->where('status', 1); // Only active notices
+                    });
+            });
+
+        return $query->paginate(10);
     }
 }

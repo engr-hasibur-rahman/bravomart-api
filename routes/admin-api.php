@@ -4,6 +4,7 @@ use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
 use App\Http\Controllers\Api\v1\Admin\AdminCommissionManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminContactManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliveryManPaymentController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
@@ -31,7 +32,7 @@ use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
-use App\Http\Controllers\Api\V1\CustomerContactMessageController;
+use App\Http\Controllers\Api\V1\ContactManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\FrontendController;
@@ -249,10 +250,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
                 });
             });
-            // contact message
-            Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_CONTACT_MESSAGES->value], function () {
-                Route::get('contact-messages', [CustomerContactMessageController::class, 'contactMessages']);
-            });
+        });
+        // contact message
+        Route::group(['prefix' => 'contact-messages/', 'middleware' => ['permission:' . PermissionKey::ADMIN_CUSTOMER_CONTACT_MESSAGES->value]], function () {
+            Route::get('list', [AdminContactManageController::class, 'index']);
+            Route::post('reply', [AdminContactManageController::class, 'reply']);
+            Route::post('change-status', [AdminContactManageController::class, 'changeStatus']);
+            Route::delete('remove', [AdminContactManageController::class, 'destroy']);
         });
         // Seller Manage
         Route::group(['prefix' => 'seller/'], function () {
