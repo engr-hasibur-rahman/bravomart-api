@@ -32,10 +32,12 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/business-operations/subscr
 });
 
 
-/* --------------------- Seller route start ------------------------- */
-Route::group(['prefix' => 'v1/seller/store/subscription/package/'], function () {
-   Route::get('history', [StoreSubscriptionManageController::class, 'subscriptionPackageHistory']);
-});
+    /* --------------------- Seller route start ------------------------- */
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::group(['prefix' => 'v1/seller/store/subscription/package/'], function () {
+           Route::get('history', [StoreSubscriptionManageController::class, 'subscriptionPackageHistory']);
+        });
+    });
 
 
 //package lists

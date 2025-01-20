@@ -25,7 +25,7 @@ class SubscriptionHistory extends Model
         'product_featured_limit',
         'payment_gateway',
         'payment_status',
-        'transaction_id',
+        'transaction_ref',
         'manual_image',
         'expire_date',
         'status',

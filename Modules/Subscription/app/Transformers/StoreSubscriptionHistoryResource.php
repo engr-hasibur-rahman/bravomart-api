@@ -27,7 +27,7 @@ class StoreSubscriptionHistoryResource extends JsonResource
             'product_featured_limit' => $this->product_featured_limit,
             'payment_gateway' => $this->payment_gateway,
             'payment_status' => $this->payment_status,
-            'transaction_id' => $this->transaction_id,
+            'transaction_ref' => $this->transaction_ref,
             'manual_image' => $this->manual_image,
             'expire_date' => $this->expire_date,
             'status' => $this->status,

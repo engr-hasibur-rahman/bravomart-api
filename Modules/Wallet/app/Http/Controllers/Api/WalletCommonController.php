@@ -7,28 +7,39 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletTransaction;
-use Modules\Wallet\app\Transformers\WalletListResource;
+use Modules\Wallet\app\Transformers\UserWalletDetailsResource;
 use Modules\Wallet\app\Transformers\WalletTransactionListResource;
 
-class WalletSellerController extends Controller
+class WalletCommonController extends Controller
 {
-
-    public function index()
+    public function myWallet()
     {
-        $wallets = Wallet::where('user_id', auth()->guard('api')->user()->id)->paginate(10);
+         // check which guard is being used
+        if (auth()->guard('api_customer')->check()) {
+            $user = auth()->guard('api_customer')->user();
+        } elseif (auth()->guard('api')->check()) {
+            $user = auth()->guard('api')->user();
+        }
+
+        // If no user is authenticated
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        //  wallets for the authenticated user
+        $wallets = Wallet::forOwner($user)->first();
+
+        if (!$wallets) {
+            return response()->json([
+               'success' => false,
+               'message' => 'User Wallet not found'
+            ],404);
+        }
+
         return response()->json([
-            'wallets' => WalletListResource::collection($wallets),
-            'pagination' => [
-                'total' => $wallets->total(),
-                'per_page' => $wallets->perPage(),
-                'current_page' => $wallets->currentPage(),
-                'last_page' => $wallets->lastPage(),
-                'from' => $wallets->firstItem(),
-                'to' => $wallets->lastItem(),
-            ],
+            'wallets' => new UserWalletDetailsResource($wallets),
         ]);
     }
-
 
     public function depositCreate(Request $request)
     {
@@ -44,19 +55,37 @@ class WalletSellerController extends Controller
         // Check if validation failed
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'message' => $validator->errors()
             ], 422);
         }
 
         $validated = $validator->validated();
-        $user = auth()->guard('api')->user();
+
+        // auth user check
+        if (auth()->guard('api_customer')->check()) {
+            $user = auth()->guard('api_customer')->user();
+        } elseif (auth()->guard('api')->check()) {
+            $user = auth()->guard('api')->user();
+        }
+
+        // If no user is authenticated
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // find user wallet
+        $wallet = Wallet::where('id', $validated['wallet_id'])
+            ->where('owner_id', $user->id)
+            ->first();
+
+        // Check if validation failed
+        if (empty($wallet)) {
+            return response()->json([
+                'message' => 'wallet not found',
+            ], 404);
+        }
 
         try {
-            // Find the wallet where the deposit will be made
-            $wallet = Wallet::where('user_id', $user->id)
-                ->where('id', $validated['wallet_id'])
-                ->firstOrFail();
 
             // Update the wallet balance
             $wallet->balance += $validated['amount'];
@@ -72,9 +101,10 @@ class WalletSellerController extends Controller
                 'purpose' => 'deposit',
                 'status' => 1,
             ]);
+
             return response()->json([
-                    'message' => 'Deposit created successfully']
-            );
+                'message' => 'Deposit created successfully',
+            ]);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -87,9 +117,25 @@ class WalletSellerController extends Controller
 
     public function transactionRecords()
     {
+        // auth user check
+        if (auth()->guard('api_customer')->check()) {
+            $user = auth()->guard('api_customer')->user();
+        } elseif (auth()->guard('api')->check()) {
+            $user = auth()->guard('api')->user();
+        }
 
-        $user = auth()->guard('api')->user();
-        $wallet = Wallet::where('user_id', $user->id)->firstOrFail();
+        // If no user is authenticated
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // user's wallet
+        $wallet = Wallet::forOwner($user)->first();
+        if (!$wallet) {
+            return response()->json(['message' => 'Wallet not found'], 404);
+        }
+
+        // wallet transactions with pagination
         $transactions = WalletTransaction::where('wallet_id', $wallet->id)
             ->paginate(10);
 
@@ -105,5 +151,4 @@ class WalletSellerController extends Controller
             ],
         ]);
     }
-
 }

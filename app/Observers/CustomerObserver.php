@@ -14,8 +14,8 @@ class CustomerObserver
     {
         // Create a wallet for the customer with initial balance
         Wallet::create([
-            'walletable_id' => $customer->id,
-            'walletable_type' => Customer::class,  // Set the polymorphic type
+            'owner_id' => $customer->id,
+            'owner_type' => Customer::class,  // Set the polymorphic type
             'balance' => 0,  // Set initial balance
             'status' => 1,   // Set the wallet as active
         ]);

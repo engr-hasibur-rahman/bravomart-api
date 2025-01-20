@@ -46,7 +46,7 @@ class BuySubscriptionPackageController extends Controller
         // Validate the required inputs using Validator::make
         $validated = Validator::make($request->all(), [
             'store_id' => 'required|integer',
-            'transaction_id' => 'nullable|string|max:255',
+            'transaction_ref' => 'nullable|string|max:255',
         ]);
 
         // Check if validation fails
@@ -87,7 +87,7 @@ class BuySubscriptionPackageController extends Controller
         // Update the subscription history
         $subscription->update([
             'payment_status' => 'paid',
-            'transaction_id' => $request->transaction_id ?? null,
+            'transaction_ref' => $request->transaction_ref ?? null,
             'status' => 1,
         ]);
 
