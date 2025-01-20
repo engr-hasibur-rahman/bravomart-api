@@ -38,6 +38,13 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         });
     });
 
+    // deliveryman wallet routes
+    Route::group(['prefix' => 'deliveryman/wallet'], function () {
+        Route::get('/', [WalletCommonController::class, 'myWallet']);
+        Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
+        Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
+    });
+
     // Customer Wallet
     Route::group(['prefix' => 'customer/wallet'], function () {
         Route::get('/', [WalletCommonController::class, 'myWallet']);

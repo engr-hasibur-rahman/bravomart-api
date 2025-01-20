@@ -55,15 +55,25 @@ class WalletCommonController extends Controller
         // Check if validation failed
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'message' => $validator->errors()
             ], 422);
         }
 
         $validated = $validator->validated();
-        $user = auth()->guard('api')->user();
-        $wallets = Wallet::forOwner($user)->paginate(10);
-        // Find the wallet where the deposit will be made
+
+        // auth user check
+        if (auth()->guard('api_customer')->check()) {
+            $user = auth()->guard('api_customer')->user();
+        } elseif (auth()->guard('api')->check()) {
+            $user = auth()->guard('api')->user();
+        }
+
+        // If no user is authenticated
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // find user wallet
         $wallet = Wallet::where('id', $validated['wallet_id'])
             ->where('owner_id', $user->id)
             ->first();
@@ -107,10 +117,16 @@ class WalletCommonController extends Controller
 
     public function transactionRecords()
     {
-        //check auth
-        $user = auth()->guard('api')->user();
+        // auth user check
+        if (auth()->guard('api_customer')->check()) {
+            $user = auth()->guard('api_customer')->user();
+        } elseif (auth()->guard('api')->check()) {
+            $user = auth()->guard('api')->user();
+        }
+
+        // If no user is authenticated
         if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         // user's wallet
