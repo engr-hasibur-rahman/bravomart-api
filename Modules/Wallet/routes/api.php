@@ -8,21 +8,14 @@ use Modules\Wallet\app\Http\Controllers\Api\WalletCommonController;
 
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::middleware([PermissionKey::ADMIN_WALLET_MANAGE->value])->prefix('v1')->group(function () {
-        Route::group(['prefix' => 'admin/wallet'], function () {
-            // Wallet settings
-            Route::match(['get','post'], 'settings', [WalletManageAdminController::class, 'depositSettings']);
-            // Wallet list
-            Route::get('lists', [WalletManageAdminController::class, 'index']);
-            // Wallet status
-            Route::post('status/{id?}', [WalletManageAdminController::class, 'status']);
-            // Create deposit by admin
-            Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
-            // Wallet transaction records
-            Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords']);
-            // Transaction status
-            Route::post('transactions-status/{id}', [WalletManageAdminController::class, 'transactionStatus']);
-        });
+    // admin wallet manage
+    Route::group(['prefix' => 'admin/wallet', PermissionKey::ADMIN_WALLET_MANAGE->value], function () {
+        Route::match(['get','post'], 'settings', [WalletManageAdminController::class, 'depositSettings']);
+        Route::get('list', [WalletManageAdminController::class, 'index']);
+        Route::post('status/{id?}', [WalletManageAdminController::class, 'status']);
+        Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
+        Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords']);
+        Route::post('transactions-status/{id}', [WalletManageAdminController::class, 'transactionStatus']);
     });
 
     // seller wallet routes

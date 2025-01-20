@@ -64,9 +64,10 @@ class WalletManageAdminController extends Controller
 
         // Check if validation failed
         if ($validator->fails()) {
+            $errors = $validator->errors()->all();
             return response()->json([
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $errors,
             ], 422);
         }
 
@@ -121,7 +122,7 @@ class WalletManageAdminController extends Controller
 
     public function transactionStatus($id)
     {
-        // Get the status of a specific transaction
+        // specific transaction
         $transaction = WalletTransaction::findOrFail($id);
         $transaction->status = $transaction->status == 1 ? 0 : 1;
         $transaction->save();
