@@ -27,7 +27,7 @@ class PlaceOrderRequest extends FormRequest
             'customer_id' => 'required|exists:customers,id',
             'shipping_address_id' => 'required|exists:customer_addresses,id',
             'shipping_time_preferred' => 'nullable|string|max:255',
-            'payment_type' => 'required|string|in:credit_card,paypal,bank_transfer', // Example of payment types
+            'payment_type' => 'required|string|in:paypal,stripe,cod,razorpay,paytm,wallet',
             'payment_status' => 'nullable|string|in:pending,completed,cancelled',
             'order_notes' => 'nullable|string|max:500',
             'order_amount' => 'required|numeric|min:0',
@@ -53,12 +53,14 @@ class PlaceOrderRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(
-            response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 422)
-        );
+        // the error response
+        $errors = $validator->errors()->getMessages();
+        // the response structure
+        $response = [
+            'success' => false,
+            'message' => 'Validation failed',
+            'errors' => $errors
+        ];
+        throw new HttpResponseException(response()->json($response, 422));
     }
 }

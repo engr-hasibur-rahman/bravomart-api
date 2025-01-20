@@ -21,10 +21,9 @@ class PlaceOrderController extends Controller
     // place order
     public function placeOrder(PlaceOrderRequest $request): JsonResponse
     {
+        $data = $request->validated();
+        $order = $this->orderService->createOrder($data);
 
-        $data = $request->validated();  // Get the validated data
-
-        $order = $this->orderService->createOrder($request->all());
         try {
             // Check if the order creation was successful
             if ($order) {

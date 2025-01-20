@@ -16,30 +16,30 @@ class OrderService
 
         DB::beginTransaction();
 
-//        try {
+        try {
             // Get authenticated customer ID
             $customer = auth()->guard('api_customer')->user();
             $customer_id = $customer->id;
 
             // Create the order
             $order = Order::create([
-                'customer_id' => $customer_id, // Customer ID
+                'customer_id' => $customer_id,
                 'shipping_address_id' => $data['shipping_address_id'],
                 'shipping_time_preferred' => $data['shipping_time_preferred'],
-                'delivery_status' => 'pending', // Initial order status
-                'payment_type' => $data['payment_type'], // Payment type (e.g., Credit Card, PayPal)
-                'payment_status' => 'pending', // Payment status (e.g., Pending, Completed)
-                'order_notes' => $data['order_notes'] ?? null, // Optional order notes
-                'order_amount' => $data['order_amount'], // Total order amount
+                'delivery_status' => 'pending',
+                'payment_type' => $data['payment_type'],
+                'payment_status' => 'pending',
+                'order_notes' => $data['order_notes'] ?? null,
+                'order_amount' => $data['order_amount'],
                 'coupon_code' => $data['coupon_code'] ?? null,
                 'coupon_title' => $data['coupon_title'] ?? null,
-                'coupon_disc_amt_admin' => $data['coupon_disc_amt_admin'] ?? 0, // Admin coupon discount
-                'coupon_disc_amt_store' => $data['coupon_disc_amt_store'] ?? 0, // Store coupon discount
-                'product_disc_amt' => $data['product_disc_amt'] ?? 0, // Product discount
-                'flash_disc_amt_admin' => $data['flash_disc_amt_admin'] ?? 0, // Admin flash sale discount
-                'flash_disc_amt_store' => $data['flash_disc_amt_store'] ?? 0, // Store flash sale discount
-                'shipping_charge' => $data['shipping_charge'] ?? 0, // Shipping charge
-                'additional_charge' => $data['additional_charge'] ?? 0, // Additional charge (if any)
+                'coupon_disc_amt_admin' => $data['coupon_disc_amt_admin'] ?? 0,
+                'coupon_disc_amt_store' => $data['coupon_disc_amt_store'] ?? 0,
+                'product_disc_amt' => $data['product_disc_amt'] ?? 0,
+                'flash_disc_amt_admin' => $data['flash_disc_amt_admin'] ?? 0,
+                'flash_disc_amt_store' => $data['flash_disc_amt_store'] ?? 0,
+                'shipping_charge' => $data['shipping_charge'] ?? 0,
+                'additional_charge' => $data['additional_charge'] ?? 0,
                 'confirmed_at' => null,
                 'cancel_request_at' => null,
                 'cancelled_at' => null,
@@ -71,10 +71,10 @@ class OrderService
 
             DB::commit();
             return $order;
-//        } catch (\Exception $e) {
-//            DB::rollBack();
-//            throw $e; // Rethrow exception for proper error handling
-//        }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e; // Rethrow exception for proper error handling
+        }
     }
 
     public function updateOrderStatus($orderId, $status)
