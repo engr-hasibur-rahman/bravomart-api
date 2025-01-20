@@ -138,17 +138,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('update', [StaffController::class, 'update']);
                 Route::post('change-status', [StaffController::class, 'changestatus']);
             });
+
             // FINANCIAL WITHDRAWALS management
             Route::group(['prefix' => 'financial/'], function () {
-                // wallet
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value], function () {
-                    Route::get('wallet', [SellerWithdrawController::class, 'myWallet']);
-                });
-                // withdraw history
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
-                    Route::get('withdraw', [SellerWithdrawController::class, 'withdrawHistory']);
-                });
+
             });
+
             // store settings
             Route::group(['prefix' => 'settings/'], function () {
                 // business settings

@@ -1,37 +1,17 @@
 <?php
 
-namespace Modules\Subscription\app\Http\Controllers\Api;
+namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
-use Modules\Subscription\app\Services\SubscriptionService;
 
-class BuySubscriptionPackageController extends Controller
+class OrderPaymentController extends Controller
 {
-    protected $subscriptionService;
-
-    public function __construct(SubscriptionService $subscriptionService)
-    {
-        $this->subscriptionService = $subscriptionService;
-    }
-
-    public function buySubscriptionPackage(Request $request)
-    {
-        $result = $this->subscriptionService->buySubscriptionPackage($request);
-        return response()->json($result);
-    }
-
-    public function renewSubscriptionPackage(Request $request)
-    {
-        $result = $this->subscriptionService->renewSubscriptionPackage($request->all());
-        return response()->json($result);
-    }
-
-    public function packagePaymentStatusUpdate(Request $request)
+    public function orderPaymentStatusUpdate(Request $request)
     {
         // Check if the user is authenticated
         $user = Auth::guard('sanctum')->user();
@@ -45,8 +25,9 @@ class BuySubscriptionPackageController extends Controller
 
         // Validate the required inputs using Validator::make
         $validated = Validator::make($request->all(), [
-            'store_id' => 'required|integer',
+            'order_id' => 'required|integer',
             'transaction_ref' => 'nullable|string|max:255',
+            'transaction_details' => 'nullable|string|max:1000',
         ]);
 
         // Check if validation fails
@@ -73,21 +54,22 @@ class BuySubscriptionPackageController extends Controller
             ], 403);
         }
 
-        // Find the subscription history
-        $subscription = SubscriptionHistory::where('store_id', $request->store_id)->first();
+        // Find the order
+        $order = Order::where('order_id', $request->order_id)->first();
 
         // Check if the subscription history exists
-        if (empty($subscription)) {
+        if (empty($order)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Subscription not found'
+                'message' => 'Order not found'
             ], 404);
         }
 
         // Update the subscription history
-        $subscription->update([
+        $order->update([
             'payment_status' => 'paid',
             'transaction_ref' => $request->transaction_ref ?? null,
+            'transaction_details' => $request->transaction_details ?? null,
             'status' => 1,
         ]);
 
@@ -97,5 +79,4 @@ class BuySubscriptionPackageController extends Controller
             'message' => 'Payment status updated successfully',
         ]);
     }
-
 }

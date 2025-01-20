@@ -2,6 +2,8 @@
 
 namespace Modules\Wallet\app\Models;
 
+use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -9,20 +11,31 @@ class Wallet extends Model
 {
     use HasFactory;
 
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
+
     /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'walletable_id', // Foreign key for polymorphic relation
-        'walletable_type', // The type of the related model (User, Customer)
+        'owner_id', // Foreign key for polymorphic relation
+        'owner_type', // The type of the related model (User, Customer)
         'balance',
         'status',
     ];
 
     /**
+     * Default attribute values.
+     */
+    protected $attributes = [
+        'balance' => 0,
+        'status' => self::STATUS_ACTIVE,
+    ];
+
+    /**
      * Define the polymorphic relationship to User or Customer.
      */
-    public function walletable()
+    public function owner()
     {
         return $this->morphTo();
     }
@@ -33,6 +46,29 @@ class Wallet extends Model
     public function transactions()
     {
         return $this->hasMany(WalletTransaction::class);
+    }
+
+    /**
+     * Check if the wallet is active.
+     */
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function scopeForOwner($query, $owner)
+    {
+        if (is_null($owner)) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if (!in_array(get_class($owner), [User::class, Customer::class])) {
+            throw new \InvalidArgumentException('Invalid owner type.');
+        }
+
+        return $query->where('owner_id', $owner->id)
+            ->where('owner_type', get_class($owner));
+
     }
 
 
