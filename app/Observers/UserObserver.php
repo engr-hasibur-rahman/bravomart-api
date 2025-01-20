@@ -15,8 +15,8 @@ class UserObserver
         if ($user->activity_scope === 'store_level'){
             // Create a wallet for the user with initial balance
             Wallet::create([
-                'walletable_id' => $user->id,
-                'walletable_type' => User::class,  // Set the polymorphic type
+                'owner_id' => $user->id,
+                'owner_type' => User::class,  // Set the polymorphic type
                 'balance' => 0,  // Set initial balance
                 'status' => 1,   // Set the wallet as active
             ]);

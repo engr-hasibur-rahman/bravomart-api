@@ -3,9 +3,8 @@
 use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
 use Illuminate\Support\Facades\Route;
-use Modules\Wallet\app\Http\Controllers\Api\WalletCustomerController;
 use Modules\Wallet\app\Http\Controllers\Api\WalletManageAdminController;
-use Modules\Wallet\app\Http\Controllers\Api\WalletSellerController;
+use Modules\Wallet\app\Http\Controllers\Api\WalletCommonController;
 
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
@@ -27,12 +26,11 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     });
 
     // seller wallet routes
-    Route::prefix('seller/store/financial/wallet/')->middleware(['permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value])->group(function () {
+    Route::prefix('seller/store/financial/wallet')->middleware(['permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value])->group(function () {
         // seller wallet
-        Route::get('wallet', [SellerWithdrawController::class, 'myWallet']);
-        Route::get('list', [WalletSellerController::class, 'index']);
-        Route::post('deposit', [WalletSellerController::class, 'depositCreate']);
-        Route::get('transactions', [WalletSellerController::class, 'transactionRecords']);
+        Route::get('/', [WalletCommonController::class, 'myWallet']);
+        Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
+        Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
 
         // withdraw history
         Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
@@ -40,15 +38,11 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         });
     });
 
-
-
+    // Customer Wallet
     Route::group(['prefix' => 'customer/wallet'], function () {
-        // Wallet list
-        Route::get('lists', [WalletCustomerController::class, 'index']);
-        // Create deposit by admin
-        Route::post('deposit', [WalletCustomerController::class, 'depositCreate']);
-        // Wallet transaction records
-        Route::get('transactions', [WalletCustomerController::class, 'transactionRecords']);
+        Route::get('/', [WalletCommonController::class, 'myWallet']);
+        Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
+        Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
     });
 
 });
