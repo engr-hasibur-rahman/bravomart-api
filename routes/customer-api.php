@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerMan
 use App\Http\Controllers\Api\V1\Customer\CustomerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Customer\PlaceOrderController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -47,6 +48,10 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('remove', [WishListManageController::class, 'removeFromWishlist']);
         });
     });
+
+    // customer place order
+    Route::post('orders/checkout', [PlaceOrderController::class, 'createOrder']);
+    Route::post('orders/payment-status-update', [PlaceOrderController::class, 'paymentStatusUpdate']);
 
     // customer verify email
     Route::post('send-verification-email', [CustomerManageController::class, 'sendVerificationEmail']);

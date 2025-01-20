@@ -30,10 +30,9 @@ return new class extends Migration
             $table->decimal('shipping_charge')->nullable();
             $table->decimal('additional_charge')->nullable();
             $table->boolean('is_reviewed')->nullable();
-
-
             $table->timestamps();
         });
+
         Schema::table('order_packages', function($table) {
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('store_id')->references('id')->on('com_merchant_stores')->onDelete('cascade');
@@ -46,6 +45,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_stores');
+        Schema::dropIfExists('order_packages');
     }
 };
