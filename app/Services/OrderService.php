@@ -36,7 +36,7 @@ class OrderService
                 'flash_disc_amt_store' => $data['flash_disc_amt_store'] ?? 0,
                 'shipping_charge' => $data['shipping_charge'] ?? 0,
                 'additional_charge_title' => $data['additional_charge_title'] ?? 0,
-                'additional_charge' => $data['additional_charge'] ?? 0,
+                'additional_charge_amt' => $data['additional_charge_amt'] ?? 0,
                 'confirmed_by' => null,
                 'confirmed_at' => null,
                 'cancel_request_by' => null,
@@ -45,19 +45,24 @@ class OrderService
                 'cancelled_at' => null,
                 'delivery_completed_at' => null,
                 'refund_status' => null,
-                'status' => null,
+                'status' => 'pending',
             ]);
 
             // order package and details
-            foreach ($data['packages'] as $packageData) {
+            foreach ($data['order_packages'] as $packageData) {
+
+                // coupon calculate
+                $order_package_coupon = coupon_disc_amt_admin
+
                 // create order package
                 $package = OrderPackage::create([
                     'order_id' => $order->id,
                     'store_id' => $packageData['store_id'],
                     'order_amount' => $packageData['order_amount'],
+                    'coupon_disc_amt_admin' => $packageData['coupon_disc_amt_admin'],
                 ]);
 
-                foreach ($packageData['items'] as $itemData) {
+                foreach ($packageData['order_details'] as $itemData) {
                     // create order details
                     OrderDetail::create([
                         'order_id' => $order->id,

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('area_id')->nullable();
-            $table->string('shipping_type')->nullable(); // like: product type wise set store owner set options
+            $table->string('shipping_type')->nullable(); // like: product type wise set store owner set options // Standard or others
             $table->decimal('order_amount')->nullable();
             $table->decimal('coupon_disc_amt_admin')->nullable(); // store wise discount amount
             $table->decimal('product_disc_amt')->nullable();  // store wise product discount amount
