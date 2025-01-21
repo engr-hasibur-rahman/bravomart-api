@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDisbursementManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminOrderManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminReportAnalyticsManageController;
@@ -160,6 +161,20 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
         });
+
+
+         // Orders & Reviews Manage
+        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_ALL->value]], function () {
+            Route::group(['prefix' => 'orders'], function () {
+                Route::get('/', [AdminOrderManageController::class, 'allOrders']);
+                Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value]], function () {
+                    Route::get('/returned', [AdminOrderManageController::class, 'returnedO']);
+                });
+            });
+        });
+
+
+
         // Product manage
         Route::group(['prefix' => 'product/'], function () {
             // Product Inventory

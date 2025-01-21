@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_activity', function (Blueprint $table) {
+        Schema::create('order_activities', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('store_id')->nullable();
@@ -20,7 +20,6 @@ return new class extends Migration
             $table->unsignedBigInteger('ref_id')->nullable(); // Reference ID from List Table
             $table->string('activity_title')->nullable(); // Text from Reference Table or Fixed text
             $table->string('activity_value')->nullable(); // Value of Given Activity, For Cancel reason there will be no Value, for feedback there may decimal value
-
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_activity');
+        Schema::dropIfExists('order_activities');
     }
 };

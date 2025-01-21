@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreOrderController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreNoticeController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerSupportTicketManageController;
@@ -94,10 +95,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // seller product manage
             Route::group(['prefix' => 'orders/'], function () {
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_ORDER_MANAGE->value]], function () {
-                    Route::get('/', [SellerProductManageController::class, 'allOrders']);
+                    Route::get('/', [SellerStoreOrderController::class, 'allOrders']);
                 });
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
-                    Route::get('/returned', [SellerProductManageController::class, 'returnedOrders']);
+                    Route::get('/returned', [SellerStoreOrderController::class, 'returnedOrders']);
                 });
             });
 
