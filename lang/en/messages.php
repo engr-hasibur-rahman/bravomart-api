@@ -47,8 +47,10 @@ return [
 
     'default.address' => 'Default address can\'t be deleted!',
     'invalid.address' => 'Invalid address!',
+
     'approve.success' => ':name approved successfully!',
     'approve.failed' => ':name approved failed!',
+
     'reject.success' => ':name rejected successfully!',
     'exists' => ':name already exists!',
 

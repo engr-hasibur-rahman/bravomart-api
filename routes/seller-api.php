@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreOrderController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreNoticeController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
@@ -204,6 +205,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('change-status', [ProductVariantController::class, 'status_update']);
             Route::delete('remove/{id}', [ProductVariantController::class, 'destroy']);
             Route::get('deleted/records', [ProductVariantController::class, 'deleted_records']);
+        });
+        // Store Notice manage
+        Route::group(['prefix'=>'store-notices/'],function () {
+            Route::get('list', [SellerStoreNoticeController::class, 'index']); // Get all notices
+            Route::get('details/{id}', [SellerStoreNoticeController::class, 'show']); // View a specific notice
         });
     });
 });

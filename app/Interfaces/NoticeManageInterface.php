@@ -14,4 +14,6 @@ interface NoticeManageInterface
     public function toggleStatus($id);
 
     public function deleteNotice($id);
+
+    public function getSellerStoreNotices();
 }

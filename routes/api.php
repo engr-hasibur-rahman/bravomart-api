@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ContactManageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
@@ -27,3 +28,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('/email-change', [UserController::class, 'userEmailUpdate']);
     });
 });
+Route::post('contact-us', [ContactManageController::class, 'store']);
