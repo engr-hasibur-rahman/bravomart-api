@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerOrderController;
 use App\Http\Controllers\Api\V1\Customer\CustomerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\MediaController;
@@ -50,7 +51,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         });
          // order manage
         Route::group(['prefix' => 'orders/'], function () {
-            Route::get('list', [WishListManageController::class, 'myOrders']);
+            Route::get('list', [CustomerOrderController::class, 'myOrders']);
         });
     });
 
