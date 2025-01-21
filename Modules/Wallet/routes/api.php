@@ -43,6 +43,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         Route::get('/', [WalletCommonController::class, 'myWallet']);
         Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
         Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
+        Route::post('payment-status-update', [WalletCommonController::class, 'paymentStatusUpdate']);
     });
 
 });

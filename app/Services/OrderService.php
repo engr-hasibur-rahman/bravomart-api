@@ -13,7 +13,6 @@ class OrderService
     public function createOrder($data)
     {
 
-
         DB::beginTransaction();
 
         try {
@@ -25,38 +24,45 @@ class OrderService
             $order = Order::create([
                 'customer_id' => $customer_id,
                 'shipping_address_id' => $data['shipping_address_id'],
-                'shipping_time_preferred' => $data['shipping_time_preferred'],
-                'delivery_status' => 'pending',
-                'payment_type' => $data['payment_type'],
+                'payment_gateway' => $data['payment_gateway'],
                 'payment_status' => 'pending',
                 'order_notes' => $data['order_notes'] ?? null,
                 'order_amount' => $data['order_amount'],
                 'coupon_code' => $data['coupon_code'] ?? null,
                 'coupon_title' => $data['coupon_title'] ?? null,
                 'coupon_disc_amt_admin' => $data['coupon_disc_amt_admin'] ?? 0,
-                'coupon_disc_amt_store' => $data['coupon_disc_amt_store'] ?? 0,
                 'product_disc_amt' => $data['product_disc_amt'] ?? 0,
                 'flash_disc_amt_admin' => $data['flash_disc_amt_admin'] ?? 0,
                 'flash_disc_amt_store' => $data['flash_disc_amt_store'] ?? 0,
                 'shipping_charge' => $data['shipping_charge'] ?? 0,
-                'additional_charge' => $data['additional_charge'] ?? 0,
+                'additional_charge_title' => $data['additional_charge_title'] ?? 0,
+                'additional_charge_amt' => $data['additional_charge_amt'] ?? 0,
+                'confirmed_by' => null,
                 'confirmed_at' => null,
+                'cancel_request_by' => null,
                 'cancel_request_at' => null,
+                'cancelled_by' => null,
                 'cancelled_at' => null,
                 'delivery_completed_at' => null,
                 'refund_status' => null,
+                'status' => 'pending',
             ]);
 
             // order package and details
-            foreach ($data['packages'] as $packageData) {
+            foreach ($data['order_packages'] as $packageData) {
+
+                // coupon calculate
+                $order_package_coupon = coupon_disc_amt_admin
+
                 // create order package
                 $package = OrderPackage::create([
                     'order_id' => $order->id,
                     'store_id' => $packageData['store_id'],
                     'order_amount' => $packageData['order_amount'],
+                    'coupon_disc_amt_admin' => $packageData['coupon_disc_amt_admin'],
                 ]);
 
-                foreach ($packageData['items'] as $itemData) {
+                foreach ($packageData['order_details'] as $itemData) {
                     // create order details
                     OrderDetail::create([
                         'order_id' => $order->id,
