@@ -12,16 +12,14 @@ class OrderPackage extends Model
         'area_id',
         'shipping_type',
         'order_amount',
-        'coupon_code',
-        'coupon_title',
         'coupon_disc_amt_admin',
-        'coupon_disc_amt_store',
         'product_disc_amt',
         'flash_disc_amt_admin',
         'flash_disc_amt_store',
         'shipping_charge',
         'additional_charge',
         'is_reviewed',
+        'status',
     ];
 
     public function order()

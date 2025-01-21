@@ -16,28 +16,19 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('area_id')->nullable();
-            $table->string('shipping_type')->nullable();
-            // Keeping Duplicate Column in Order & Store table. Due to our complex order structure, Here we will kep Store wise Summary To Show in his cart. Main Order Table will store Summarized data
+            $table->string('shipping_type')->nullable(); // like: product type wise set store owner set options
             $table->decimal('order_amount')->nullable();
-            $table->string('coupon_code')->nullable();
-            $table->string('coupon_title')->nullable();
-            $table->decimal('coupon_disc_amt_admin')->nullable();
-            $table->decimal('coupon_disc_amt_store')->nullable();
-
-            $table->decimal('product_disc_amt')->nullable();
-            $table->decimal('flash_disc_amt_admin')->nullable();
-            $table->decimal('flash_disc_amt_store')->nullable();
-            $table->decimal('shipping_charge')->nullable();
-            $table->decimal('additional_charge')->nullable();
-            $table->boolean('is_reviewed')->nullable();
+            $table->decimal('coupon_disc_amt_admin')->nullable(); // store wise discount amount
+            $table->decimal('product_disc_amt')->nullable();  // store wise product discount amount
+            $table->decimal('flash_disc_amt_admin')->nullable(); // store wise dis.. discount amount
+            $table->decimal('flash_disc_amt_store')->nullable(); // store wise dis.. discount amount
+            $table->decimal('shipping_charge')->nullable(); // separate store wise shipping charge amount but total shipping amount in main order table
+            $table->decimal('additional_charge')->nullable();  // separate store wise add.. shipping charge amount but total add.. shipping amount in main order table
+            $table->boolean('is_reviewed')->nullable(); // customer review for order wise product reviews check
+            $table->string('status')->default('pending')->comment('pending, active, processing , shipped, delivered, cancelled, on_hold');
             $table->timestamps();
         });
 
-        Schema::table('order_packages', function($table) {
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->foreign('store_id')->references('id')->on('com_merchant_stores')->onDelete('cascade');
-            $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
-        });
     }
 
     /**

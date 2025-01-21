@@ -4,6 +4,7 @@ namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletTransaction;
@@ -92,18 +93,19 @@ class WalletCommonController extends Controller
             $wallet->save();
 
             // Create
-            WalletTransaction::create([
+         $wallet_history = WalletTransaction::create([
                 'wallet_id' => $wallet->id,
-                'transaction_ref' => $validated['transaction_ref'] ?? 'TXN' . strtoupper(uniqid()),
-                'transaction_details' => $validated['transaction_details'] ?? 'Admin deposit',
                 'amount' => $validated['amount'],
                 'type' => 'credit',
                 'purpose' => 'deposit',
-                'status' => 1,
+                'status' => 0,
             ]);
+
+            $wallet_history_id = $wallet_history->id;
 
             return response()->json([
                 'message' => 'Deposit created successfully',
+                'wallet_history_id' => $wallet_history_id,
             ]);
 
         } catch (\Exception $e) {
@@ -151,4 +153,75 @@ class WalletCommonController extends Controller
             ],
         ]);
     }
+
+    public function paymentStatusUpdate(Request $request)
+    {
+
+        // Check if the user is authenticated
+        $user = Auth::guard('sanctum')->user();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Unauthorized'
+            ], 401);
+        }
+
+
+        // Validate the required inputs using Validator::make
+        $validated = Validator::make($request->all(), [
+            'wallet_history_id' => 'required|integer',
+            'transaction_ref' => 'nullable|string|max:255',
+            'transaction_details' => 'nullable|string|max:1000',
+        ]);
+
+        // Check if validation fails
+        if ($validated->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validated->errors(),
+            ], 400);
+        }
+
+        // Get necessary details
+        $customerEmail = $user->email ?? '';
+        $providedHmac = $request->header('X-HMAC');
+        $secretKey = '4b3403665fea6e60060fca1953b6e1eaa5c4dc102174f7e923217b87df40523a';
+
+        // Generate the HMAC for comparison
+        $calculatedHmac = hash_hmac('sha256', $customerEmail, $secretKey);
+
+        // Verify HMAC
+        if (!hash_equals($providedHmac, $calculatedHmac)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Unauthorized Key Not Match'
+            ], 403);
+        }
+
+        // Find the wallet history
+        $wallet = WalletTransaction::where('id', $request->wallet_history_id)->first();
+
+        // Check if the wallet history exists
+        if (empty($wallet)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Wallet not found'
+            ], 404);
+        }
+
+        // Update the wallet history
+        $wallet->update([
+            'payment_status' => 'paid',
+            'transaction_ref' => $request->transaction_ref ?? null,
+            'transaction_details' => $request->transaction_details ?? null,
+            'status' => 1,
+        ]);
+
+        // Return success response
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment status updated successfully',
+        ]);
+    }
+
 }

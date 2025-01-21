@@ -16,35 +16,26 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('area_id')->nullable();
-            $table->unsignedBigInteger('package_id')->nullable();
+            $table->unsignedBigInteger('order_package_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
             $table->string('product_sku')->nullable();
-            $table->string('product_details')->nullable();
-            $table->string('variant_details')->nullable();
-            $table->string('add_ons')->nullable();
-
-            $table->decimal('rate_bef_discount')->nullable();
+            $table->json('variant_details')->nullable(); // product variants
+            $table->decimal('base_price')->nullable(); // product main price
             $table->unsignedBigInteger('product_campaign_id')->nullable();
-            $table->string('discount_type')->nullable();
-            $table->decimal('discount_store_percent')->nullable();
-            $table->decimal('discount_admin_percent')->nullable();
-            $table->decimal('discount_store_amount')->nullable();
-            $table->decimal('discount_admin_amount')->nullable();
-            $table->decimal('rate')->nullable();
+            $table->string('store_discount_type')->nullable(); // percent/ fixed
+            $table->string('store_discount_rate')->nullable(); // percent/ fixed
+            $table->decimal('store_discount_amount')->nullable();  // like 2%
+            $table->decimal('admin_discount_type')->nullable(); // like: 5%
+            $table->decimal('admin_discount_rate')->nullable();
+            $table->decimal('admin_discount_amount')->nullable();
+            $table->decimal('price')->nullable();
             $table->decimal('quantity')->nullable();
-            $table->decimal('total_add_on_value')->nullable();
             $table->decimal('tax_percent')->nullable();
             $table->decimal('tax_amount')->nullable();
-            $table->decimal('line_total')->nullable();
-
+            $table->decimal('line_total_price')->nullable();
             $table->timestamps();
         });
 
-        Schema::table('order_details', function($table) {
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->foreign('store_id')->references('id')->on('com_merchant_stores')->onDelete('cascade');
-            $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
-        });
     }
 
     /**

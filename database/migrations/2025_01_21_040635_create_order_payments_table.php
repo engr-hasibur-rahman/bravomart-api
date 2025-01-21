@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->string('payment_method')->nullable();
-            $table->string('payment_ref')->nullable();
-            $table->decimal('amount')->nullable();
             $table->string('payment_status')->nullable();
+            $table->string('transaction_ref')->nullable();
+            $table->string('transaction_details')->nullable();
+            $table->decimal('paid_amount')->nullable();
             $table->timestamps();
         });
     }

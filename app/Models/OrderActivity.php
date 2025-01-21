@@ -6,5 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderActivity extends Model
 {
-    //
+    protected $table = 'order_activities';
+
+    protected $fillable = [
+        'order_id',
+        'store_id',
+        'activity_from',
+        'activity_type',
+        'ref_id',
+        'activity_title',
+        'activity_value'
+    ];
 }

@@ -13,7 +13,6 @@ class OrderService
     public function createOrder($data)
     {
 
-
         DB::beginTransaction();
 
         try {
@@ -25,26 +24,28 @@ class OrderService
             $order = Order::create([
                 'customer_id' => $customer_id,
                 'shipping_address_id' => $data['shipping_address_id'],
-                'shipping_time_preferred' => $data['shipping_time_preferred'],
-                'delivery_status' => 'pending',
-                'payment_type' => $data['payment_type'],
+                'payment_gateway' => $data['payment_gateway'],
                 'payment_status' => 'pending',
                 'order_notes' => $data['order_notes'] ?? null,
                 'order_amount' => $data['order_amount'],
                 'coupon_code' => $data['coupon_code'] ?? null,
                 'coupon_title' => $data['coupon_title'] ?? null,
                 'coupon_disc_amt_admin' => $data['coupon_disc_amt_admin'] ?? 0,
-                'coupon_disc_amt_store' => $data['coupon_disc_amt_store'] ?? 0,
                 'product_disc_amt' => $data['product_disc_amt'] ?? 0,
                 'flash_disc_amt_admin' => $data['flash_disc_amt_admin'] ?? 0,
                 'flash_disc_amt_store' => $data['flash_disc_amt_store'] ?? 0,
                 'shipping_charge' => $data['shipping_charge'] ?? 0,
+                'additional_charge_title' => $data['additional_charge_title'] ?? 0,
                 'additional_charge' => $data['additional_charge'] ?? 0,
+                'confirmed_by' => null,
                 'confirmed_at' => null,
+                'cancel_request_by' => null,
                 'cancel_request_at' => null,
+                'cancelled_by' => null,
                 'cancelled_at' => null,
                 'delivery_completed_at' => null,
                 'refund_status' => null,
+                'status' => null,
             ]);
 
             // order package and details
