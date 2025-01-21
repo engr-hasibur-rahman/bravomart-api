@@ -48,6 +48,10 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('store', [WishListManageController::class, 'addToWishlist']);
             Route::post('remove', [WishListManageController::class, 'removeFromWishlist']);
         });
+         // order manage
+        Route::group(['prefix' => 'orders/'], function () {
+            Route::get('list', [WishListManageController::class, 'myOrders']);
+        });
     });
 
     // customer place order
