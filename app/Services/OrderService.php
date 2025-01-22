@@ -7,6 +7,8 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderPackage;
+use App\Models\OrderPayment;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
@@ -65,11 +67,19 @@ class OrderService
                 'status' => 'pending',
             ]);
 
+            // create order payment info
+            OrderPayment::create([
+                'order_id' => $order->id,
+                'payment_gateway' => $data['payment_gateway'],
+                'payment_status' => 'pending',
+                'paid_amount' => $order->order_amount,
+            ]);
+
             //  packages and details
-            foreach ($data['order_packages'] as $packageData) {
+            foreach ($data['packages'] as $packageData) {
                 // Calculate discount to the store  (Store specific coupon discount)
                 $order_amount_for_store = calculateStoreShareWithDiscount($packageData['order_amount'], $total_order_amount, $total_discount_amount);
-
+dd($data['packages'],$packageData);
                 // create order package
                 $package = OrderPackage::create([
                     'order_id' => $order->id,
@@ -77,20 +87,59 @@ class OrderService
                     'order_type' => $packageData['order_type'],
                     'delivery_type' => $packageData['delivery_type'],
                     'shipping_type' => $packageData['shipping_type'],
-                    'order_amount' => $packageData['order_amount'],
+                    'order_amount' =>  $order_amount_for_store > 0 ? $order_amount_for_store : $packageData['order_amount'], // Use the store-specific order amount or fall back to the original
                     'coupon_disc_amt_admin' => $order_amount_for_store,  // Store specific coupon discount
+                    'product_disc_amt' => $packageData['product_disc_amt'],
+                    'flash_disc_amt_admin' => $packageData['flash_disc_amt_admin'],
+                    'flash_disc_amt_store' => $packageData['flash_disc_amt_store'],
+                    'shipping_charge' => $packageData['shipping_charge'],
+                    'additional_charge' => $packageData['additional_charge'],
+                    'is_reviewed' => false,
+                    'status' => 'pending',
                 ]);
 
-                foreach ($packageData['order_details'] as $itemData) {
-                    // create order details
-                    OrderDetail::create([
-                        'order_id' => $order->id,
-                        'package_id' => $package->id,
-                        'product_id' => $itemData['product_id'],
-                        'rate' => $itemData['rate'],
-                        'quantity' => $itemData['quantity'],
-                        'line_total' => $itemData['line_total'],
-                    ]);
+                foreach ($packageData['items'] as $itemData) {
+                    // find the product
+                   $product = Product::find($itemData['product_id']);
+                   if (!empty($product)){
+                       // store discount calculate
+                       $storeDiscount = $itemData['store_discount_type'] === 'percent'
+                           ? ($itemData['base_price'] * $itemData['store_discount_rate'] / 100)
+                           : $itemData['store_discount_amount'];
+                       // admin discount calculate
+                       $adminDiscount = $itemData['admin_discount_type'] === 'percent'
+                           ? ($itemData['base_price'] * $itemData['admin_discount_rate'] / 100)
+                           : $itemData['admin_discount_amount'];
+                       // base price calculate
+                       $priceAfterDiscount = $itemData['base_price'] - $storeDiscount - $adminDiscount;
+                       // tax amount calculate
+                       $taxAmount = ($priceAfterDiscount * $itemData['tax_percent']) / 100;
+                       // total line price
+                       $line_total_price = ($priceAfterDiscount + $taxAmount) * $itemData['quantity'];
+
+                       // create order details
+                       OrderDetail::create([
+                           'order_id' => $order->id,
+                           'order_package_id' => $package->id,
+                           'product_id' => $product->id,
+                           'product_sku' => $product->product_sku,
+                           'variant_details' => json_encode($itemData['variant_details']),
+                           'product_campaign_id' => $itemData['product_campaign_id'],
+                           'base_price' => $itemData['base_price'],
+                           'store_discount_type' => $itemData['store_discount_type'],
+                           'store_discount_rate' => $itemData['store_discount_rate'],
+                           'store_discount_amount' => $storeDiscount, // store discount amount
+                           'admin_discount_type' => $itemData['admin_discount_type'],
+                           'admin_discount_rate' => $itemData['admin_discount_rate'],
+                           'admin_discount_amount' => $adminDiscount, // admin discount amount
+                           'price' => $priceAfterDiscount,
+                           'quantity' => $itemData['quantity'],
+                           'tax_percent' => $itemData['tax_percent'],
+                           'tax_amount' => $taxAmount,
+                           'line_total_price' => $line_total_price
+                       ]);
+                   }
+
                 }
             }
 

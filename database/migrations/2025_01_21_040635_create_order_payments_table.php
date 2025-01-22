@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('order_payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
-            $table->string('payment_method')->nullable();
-            $table->string('payment_status')->nullable();
+            $table->string('payment_gateway')->nullable();
+            $table->string('payment_status')->nullable()->comment('pending , paid, failed');
             $table->string('transaction_ref')->nullable();
             $table->string('transaction_details')->nullable();
             $table->decimal('paid_amount')->nullable();

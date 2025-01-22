@@ -40,14 +40,35 @@ class PlaceOrderRequest extends FormRequest
             'shipping_charge' => 'nullable|numeric|min:0',
             'additional_charge_title' => 'nullable|string',
             'additional_charge_amt' => 'nullable|numeric|min:0',
+            // packages
             'packages' => 'required|array',
             'packages.*.store_id' => 'required|exists:com_merchant_stores,id',
+            'packages.*.area_id' => 'required|exists:com_areas,id',
+            'packages.*.order_type' => 'required',
+            'packages.*.delivery_type' => 'required',
+            'packages.*.shipping_type' => 'required',
+            'packages.*.coupon_disc_amt_admin' => 'nullable|numeric',
+            'packages.*.product_disc_amt' => 'nullable|numeric',
+            'packages.*.flash_disc_amt_admin' => 'nullable|numeric',
+            'packages.*.flash_disc_amt_store' => 'nullable|numeric',
+            'packages.*.shipping_charge' => 'nullable|numeric',
+            'packages.*.additional_charge' => 'nullable|numeric',
             'packages.*.order_amount' => 'required|numeric|min:0',
+            // items
             'packages.*.items' => 'required|array',
             'packages.*.items.*.product_id' => 'required|exists:products,id',
-            'packages.*.items.*.price' => 'required|numeric|min:0',
+            'packages.*.items.*.product_campaign_id' => 'nullable|numeric',
+            // discount store
+            'packages.*.items.*.store_discount_type' => 'nullable',
+            'packages.*.items.*.store_discount_rate' => 'nullable|numeric',
+            'packages.*.items.*.store_discount_amount' => 'nullable|numeric',
+            // discount store
+            'packages.*.items.*.admin_discount_type' => 'nullable',
+            'packages.*.items.*.admin_discount_rate' => 'nullable|numeric',
+            'packages.*.items.*.admin_discount_amount' => 'nullable|numeric',
+            // qty and price
             'packages.*.items.*.quantity' => 'required|integer|min:1',
-            'packages.*.items.*.line_total_price' => 'required|numeric|min:0',
+            'packages.*.items.*.line_total_price' => 'nullable|numeric',
         ];
     }
 

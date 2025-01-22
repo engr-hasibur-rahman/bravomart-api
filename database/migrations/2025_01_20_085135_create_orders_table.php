@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->string('shipping_address_id')->nullable();
             $table->string('payment_gateway')->nullable(); // cod, paypal, stripe, paytm, re-pay
-            $table->string('payment_status')->nullable(); // pending , paid, failed
+            $table->string('payment_status')->nullable()->comment('pending , paid, failed');
             $table->string('order_notes')->nullable();
             $table->decimal('order_amount')->nullable();
             $table->string('coupon_code')->nullable();
