@@ -9,6 +9,7 @@ use App\Http\Resources\Admin\AdminDeliverymanDetailsResource;
 use App\Http\Resources\Admin\AdminVehicleDetailsResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Seller\SellerDeliverymanResource;
 use App\Interfaces\DeliverymanManageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -34,8 +35,8 @@ class SellerDeliverymanManageController extends Controller
         ];
         $deliverymen = $this->deliverymanRepo->getAllDeliveryman($filters);
         return response()->json([
-            'data' => '',
-            'meta' => ''
+            'data' => SellerDeliverymanResource::collection($deliverymen),
+            'meta' => new PaginationResource($deliverymen),
         ]);
     }
 
