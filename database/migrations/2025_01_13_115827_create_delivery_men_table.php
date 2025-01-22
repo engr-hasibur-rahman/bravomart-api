@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('delivery_men', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('vehicle_type_id');
             $table->unsignedBigInteger('area_id')->nullable();
             $table->enum('identification_type', ['nid', 'passport', 'driving_license'])->comment('Type of ID provided');

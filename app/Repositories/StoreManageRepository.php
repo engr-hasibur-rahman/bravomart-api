@@ -2,9 +2,13 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Product\BestSellingPublicResource;
+use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Interfaces\StoreManageInterface;
 use App\Models\Banner;
 use App\Models\ComMerchantStore;
+use App\Models\DeliveryMan;
 use App\Models\Order;
 use App\Models\OrderActivity;
 use App\Models\OrderPackage;
@@ -386,7 +390,19 @@ class StoreManageRepository implements StoreManageInterface
         $store['banners'] = $this->getStoreWiseBanners($store->id);
         $store['orders'] = $this->getStoreWiseOrders($store->id);
         $store['recent_orders'] = $this->getStoreWiseRecentOrders($store->id);
+        $store['best_selling'] = $this->getBestSellingProduct($store->id);
+        $store['deliverymen'] = $this->storeWiseDeliveryman($store->id);
         return $store;
+    }
+
+    private function storeWiseDeliveryman(int $storeId)
+    {
+        if ($storeId) {
+            $totalDeliveryman = DeliveryMan::where('store_id', $storeId)->where('status', 'approved')->count();
+            return $totalDeliveryman;
+        } else {
+            return [];
+        }
     }
 
     private function getStoreWiseProducts(int $storeId)
@@ -408,6 +424,17 @@ class StoreManageRepository implements StoreManageInterface
             return [];
         }
 
+    }
+
+    private function getBestSellingProduct(int $storeId)
+    {
+        $bestSellingProducts = Product::where('store_id', $storeId)
+            ->where('status', 'approved')
+            ->where('deleted_at', null)
+            ->orderByDesc('order_count')
+            ->limit(5)
+            ->get();
+        return $bestSellingProducts;
     }
 
     private function getStoreWiseOrders(int $storeId)

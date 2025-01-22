@@ -63,8 +63,10 @@ class StoreDetailsResource extends JsonResource
                 'products_count' => $this->products,
                 'banners_count' => $this->banners,
                 'orders_count'=>$this->orders,
+                'deliveryman_count' => $this->deliverymen
             ],
             'recent_orders' => $this->recent_orders,
+            'best_selling' => $this->best_selling
         ];
     }
 }
