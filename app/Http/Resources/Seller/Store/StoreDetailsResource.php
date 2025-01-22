@@ -19,15 +19,15 @@ class StoreDetailsResource extends JsonResource
             'store_details' => [
                 'id' => $this->id,
                 'merchant' => [
-                    'id' => $this->merchant->user->id,
-                    'first_name' => $this->merchant->user->first_name,
-                    'last_name' => $this->merchant->user->last_name,
-                    'phone' => $this->merchant->user->phone,
-                    'email' => $this->merchant->user->email,
-                    'email_verified' => (bool)$this->merchant->user->email_verified,
-                    'def_lang' => $this->merchant->user->def_lang,
-                    'store_owner' => (bool)$this->merchant->user->store_owner,
-                    'status' => $this->merchant->user->status,
+                    'id' => $this->merchant->id,
+                    'first_name' => $this->merchant->first_name,
+                    'last_name' => $this->merchant->last_name,
+                    'phone' => $this->merchant->phone,
+                    'email' => $this->merchant->email,
+                    'email_verified' => (bool)$this->merchant->email_verified,
+                    'def_lang' => $this->merchant->def_lang,
+                    'store_owner' => (bool)$this->merchant->store_owner,
+                    'status' => $this->merchant->status,
                 ],
                 'store_type' => $this->store_type,
                 'name' => $this->name,
@@ -61,8 +61,12 @@ class StoreDetailsResource extends JsonResource
             ],
             'store_summary' => [
                 'products_count' => $this->products,
-                'banners_count' => $this->banners
-            ]
+                'banners_count' => $this->banners,
+                'orders_count'=>$this->orders,
+                'deliveryman_count' => $this->deliverymen
+            ],
+            'recent_orders' => $this->recent_orders,
+            'best_selling' => $this->best_selling
         ];
     }
 }

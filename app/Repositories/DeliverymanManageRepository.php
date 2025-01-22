@@ -17,6 +17,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function __construct(protected VehicleType $vehicleType, protected Translation $translation)
     {
     }
+
     public function translationKeys(): mixed
     {
         return $this->vehicleType->translationKeys;
@@ -90,6 +91,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             }
             $deliverymanExtra = DeliveryMan::create([
                 'user_id' => $deliveryman->id,
+                'store_id' => $data['store_id'] ?? null,
                 'vehicle_type_id' => $data['vehicle_type_id'],
                 'area_id' => $data['area_id'] ?? null,
                 'identification_type' => $data['identification_type'],
@@ -154,6 +156,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             // Update the DeliveryMan extra details
             $deliveryman->update([
                 'vehicle_type_id' => $data['vehicle_type_id'],
+                'store_id' => $data['store_id'] ?? null,
                 'area_id' => $data['area_id'] ?? null,
                 'identification_type' => $data['identification_type'],
                 'identification_number' => $data['identification_number'],
@@ -162,12 +165,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 'address' => $data['address'] ?? null,
                 'updated_by' => auth('sanctum')->id(),
             ]);
-
             if (!$deliveryman->wasChanged()) {  // Check if anything was updated
                 DB::rollBack();
                 return false;
             }
-
             DB::commit();  // Commit transaction if all updates succeed
             return $user->id;  // Return user ID on success
         } catch (\Exception $exception) {

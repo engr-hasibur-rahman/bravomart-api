@@ -8,6 +8,7 @@ class DeliveryMan extends Model
 {
     protected $fillable = [
         'user_id',
+        'store_id',
         'vehicle_type_id',
         'area_id',
         'identification_type',
@@ -23,6 +24,12 @@ class DeliveryMan extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function store()
+    {
+        return $this->belongsTo(ComMerchantStore::class, 'store_id');
+    }
+
     public function scopePendingDeliveryman($query)
     {
         return $query->whereHas('deliveryman', function ($q) {
@@ -45,6 +52,7 @@ class DeliveryMan extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by');
