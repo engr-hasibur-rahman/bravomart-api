@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->string('shipping_address_id')->nullable();
             $table->string('payment_gateway')->nullable(); // cod, paypal, stripe, paytm, re-pay
-            $table->string('payment_status')->nullable(); // pending , paid, failed
+            $table->string('payment_status')->nullable()->comment('pending , paid, failed');
             $table->string('order_notes')->nullable();
             $table->decimal('order_amount')->nullable();
             $table->string('coupon_code')->nullable();
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('flash_disc_amt_admin')->nullable(); // admin set product for offer sell dis.
             $table->decimal('flash_disc_amt_store')->nullable(); // seller  set product for offer sell dis.
             $table->decimal('shipping_charge')->nullable(); // admin set shipping charge set
-            $table->decimal('additional_charge_title')->nullable();
+            $table->string('additional_charge_title')->nullable();
             $table->decimal('additional_charge_amt')->nullable();
             $table->unsignedBigInteger('confirmed_by')->nullable();
             $table->timestamp('confirmed_at')->nullable();

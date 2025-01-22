@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 use Modules\Subscription\app\Services\SubscriptionService;
@@ -90,6 +91,38 @@ class BuySubscriptionPackageController extends Controller
             'transaction_ref' => $request->transaction_ref ?? null,
             'status' => 1,
         ]);
+
+        //subscription history get after update
+        $subscription = SubscriptionHistory::find($subscription->id);
+        // update com store subscription data
+        $com_store_subscription = ComMerchantStoresSubscription::where('store_id', $subscription->store_id)->first();
+        if (!$com_store_subscription) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Store subscription not found'
+            ], 404);
+        }
+
+        // update com store subscription data exiting data update
+        $com_store_subscription->update($subscription->only([
+            'store_id',
+            'subscription_id',
+            'name',
+            'validity',
+            'price',
+            'pos_system',
+            'self_delivery',
+            'mobile_app',
+            'live_chat',
+            'order_limit',
+            'product_limit',
+            'product_featured_limit',
+            'payment_gateway',
+            'payment_status',
+            'transaction_ref',
+            'expire_date',
+            'status',
+        ]));
 
         // Return success response
         return response()->json([

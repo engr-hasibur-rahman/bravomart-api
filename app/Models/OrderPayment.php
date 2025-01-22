@@ -8,7 +8,7 @@ class OrderPayment extends Model
 {
     protected $fillable = [
       'order_id',
-      'payment_method',
+      'payment_gateway',
       'payment_status',
       'transaction_ref',
       'transaction_details',

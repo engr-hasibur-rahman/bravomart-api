@@ -102,7 +102,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
 
-            // seller store manage
+            // store manage
             Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_MY_SHOP->value]], function () {
                 Route::get('list', [SellerStoreManageController::class, 'index']);
                 Route::get('details/{id}', [SellerStoreManageController::class, 'show']);

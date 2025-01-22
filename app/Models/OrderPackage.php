@@ -10,6 +10,8 @@ class OrderPackage extends Model
         'order_id',
         'store_id',
         'area_id',
+        'order_type',
+        'delivery_type',
         'shipping_type',
         'order_amount',
         'coupon_disc_amt_admin',
