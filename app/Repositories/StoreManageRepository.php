@@ -7,6 +7,7 @@ use App\Models\Banner;
 use App\Models\ComMerchantStore;
 use App\Models\Order;
 use App\Models\OrderActivity;
+use App\Models\OrderPackage;
 use App\Models\Product;
 use App\Models\Translation;
 use Illuminate\Support\Facades\Auth;
@@ -384,6 +385,7 @@ class StoreManageRepository implements StoreManageInterface
         $store['products'] = $this->getStoreWiseProducts($store->id);
         $store['banners'] = $this->getStoreWiseBanners($store->id);
         $store['orders'] = $this->getStoreWiseOrders($store->id);
+        $store['recent_orders'] = $this->getStoreWiseRecentOrders($store->id);
         return $store;
     }
 
@@ -411,14 +413,27 @@ class StoreManageRepository implements StoreManageInterface
     private function getStoreWiseOrders(int $storeId)
     {
         if ($storeId) {
-            $totalOrders = OrderActivity::where('store_id', $storeId)->count();
+            $totalOrders = OrderPackage::where('store_id', $storeId)->count();
+            $pendingOrders = OrderPackage::where('store_id', $storeId)->where('status', 'pending')->count();
             return [
                 'totalOrders' => $totalOrders,
+                'pendingOrders' => $pendingOrders,
             ];
         } else {
             return [];
         }
     }
+
+    private function getStoreWiseRecentOrders(int $storeId)
+    {
+        if ($storeId) {
+            $recentOrders = OrderPackage::where('store_id', $storeId)->latest()->take(5)->get();
+            return $recentOrders;
+        } else {
+            return [];
+        }
+    }
+
     private function getStoreWiseBanners(int $storeId)
     {
         return [
