@@ -92,28 +92,37 @@ class BuySubscriptionPackageController extends Controller
             'status' => 1,
         ]);
 
+        //subscription history get after update
+        $subscription = SubscriptionHistory::find($subscription->id);
         // update com store subscription data
         $com_store_subscription = ComMerchantStoresSubscription::where('store_id', $subscription->store_id)->first();
+        if (!$com_store_subscription) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Store subscription not found'
+            ], 404);
+        }
 
-        $com_store_subscription->update([
-            'store_id' =>  $subscription->store_id,
-            'subscription_id' =>  $subscription->subscription_id,
-            'name' => $subscription->name,
-            'validity' => $subscription->validity,
-            'price' => $subscription->price,
-            'pos_system' => $subscription->pos_system,
-            'self_delivery' => $subscription->self_delivery,
-            'mobile_app' => $subscription->mobile_app,
-            'live_chat' => $subscription->live_chat,
-            'order_limit' => $subscription->order_limit,
-            'product_limit' => $subscription->product_limit,
-            'product_featured_limit' => $subscription->product_featured_limit,
-            'payment_gateway' => $subscription->payment_gateway,
-            'payment_status' => $subscription->payment_status,
-            'transaction_ref' => $subscription->transaction_ref,
-            'expire_date' => $subscription->expire_date,
-            'status' => $subscription->status,
-        ]);
+        // update com store subscription data exiting data update
+        $com_store_subscription->update($subscription->only([
+            'store_id',
+            'subscription_id',
+            'name',
+            'validity',
+            'price',
+            'pos_system',
+            'self_delivery',
+            'mobile_app',
+            'live_chat',
+            'order_limit',
+            'product_limit',
+            'product_featured_limit',
+            'payment_gateway',
+            'payment_status',
+            'transaction_ref',
+            'expire_date',
+            'status',
+        ]));
 
         // Return success response
         return response()->json([

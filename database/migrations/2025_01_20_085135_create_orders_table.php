@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('flash_disc_amt_admin')->nullable(); // admin set product for offer sell dis.
             $table->decimal('flash_disc_amt_store')->nullable(); // seller  set product for offer sell dis.
             $table->decimal('shipping_charge')->nullable(); // admin set shipping charge set
-            $table->decimal('additional_charge_title')->nullable();
+            $table->string('additional_charge_title')->nullable();
             $table->decimal('additional_charge_amt')->nullable();
             $table->unsignedBigInteger('confirmed_by')->nullable();
             $table->timestamp('confirmed_at')->nullable();
