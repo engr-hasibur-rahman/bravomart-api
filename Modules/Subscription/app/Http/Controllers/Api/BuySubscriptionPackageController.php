@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 use Modules\Subscription\app\Services\SubscriptionService;
@@ -89,6 +90,29 @@ class BuySubscriptionPackageController extends Controller
             'payment_status' => 'paid',
             'transaction_ref' => $request->transaction_ref ?? null,
             'status' => 1,
+        ]);
+
+        // update com store subscription data
+        $com_store_subscription = ComMerchantStoresSubscription::where('store_id', $subscription->store_id)->first();
+
+        $com_store_subscription->update([
+            'store_id' =>  $subscription->store_id,
+            'subscription_id' =>  $subscription->subscription_id,
+            'name' => $subscription->name,
+            'validity' => $subscription->validity,
+            'price' => $subscription->price,
+            'pos_system' => $subscription->pos_system,
+            'self_delivery' => $subscription->self_delivery,
+            'mobile_app' => $subscription->mobile_app,
+            'live_chat' => $subscription->live_chat,
+            'order_limit' => $subscription->order_limit,
+            'product_limit' => $subscription->product_limit,
+            'product_featured_limit' => $subscription->product_featured_limit,
+            'payment_gateway' => $subscription->payment_gateway,
+            'payment_status' => $subscription->payment_status,
+            'transaction_ref' => $subscription->transaction_ref,
+            'expire_date' => $subscription->expire_date,
+            'status' => $subscription->status,
         ]);
 
         // Return success response
