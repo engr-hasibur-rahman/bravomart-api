@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Interfaces\StoreManageInterface;
 use App\Models\Banner;
 use App\Models\ComMerchantStore;
+use App\Models\Order;
+use App\Models\OrderActivity;
 use App\Models\Product;
 use App\Models\Translation;
 use Illuminate\Support\Facades\Auth;
@@ -92,7 +94,7 @@ class StoreManageRepository implements StoreManageInterface
             $store = ComMerchantStore::create($data);
 
             // if seller select store business type commission or subscription
-            if(isset($data['subscription_type']) && !empty($data['subscription_type'])){
+            if (isset($data['subscription_type']) && !empty($data['subscription_type'])) {
                 // create store wise subscription history
                 // Validate subscription package
                 $subscription_package = Subscription::where('id', $data['subscription_id'])
@@ -361,7 +363,7 @@ class StoreManageRepository implements StoreManageInterface
             unauthorized_response();
         }
         $seller_id = auth('api')->id();
-        $storeBelongsToSeller = ComMerchantStore::with(['merchant.user'])
+        $storeBelongsToSeller = ComMerchantStore::with(['merchant'])
             ->where('merchant_id', $seller_id)
             ->where('slug', $slug)
             ->first();
@@ -381,25 +383,42 @@ class StoreManageRepository implements StoreManageInterface
         $store = $this->checkStoreBelongsToSeller($slug);
         $store['products'] = $this->getStoreWiseProducts($store->id);
         $store['banners'] = $this->getStoreWiseBanners($store->id);
+        $store['orders'] = $this->getStoreWiseOrders($store->id);
         return $store;
     }
 
     private function getStoreWiseProducts(int $storeId)
     {
-        $totalProductsCount = Product::where('store_id', $storeId)->count();
-        $approvedProductsCount = Product::where('store_id', $storeId)->where('status', 'approved')->count();
-        $pendingProductsCount = Product::where('store_id', $storeId)->where('status', 'pending')->count();
-        $inactiveProductsCount = Product::where('store_id', $storeId)->where('status', 'inactive')->count();
-        $suspendedProductsCount = Product::where('store_id', $storeId)->where('status', 'suspended')->count();
-        return [
-            'total' => $totalProductsCount,
-            'approved' => $approvedProductsCount,
-            'pending' => $pendingProductsCount,
-            'inactive' => $inactiveProductsCount,
-            'suspended' => $suspendedProductsCount,
-        ];
+        if ($storeId) {
+            $totalProductsCount = Product::where('store_id', $storeId)->count();
+            $approvedProductsCount = Product::where('store_id', $storeId)->where('status', 'approved')->count();
+            $pendingProductsCount = Product::where('store_id', $storeId)->where('status', 'pending')->count();
+            $inactiveProductsCount = Product::where('store_id', $storeId)->where('status', 'inactive')->count();
+            $suspendedProductsCount = Product::where('store_id', $storeId)->where('status', 'suspended')->count();
+            return [
+                'total' => $totalProductsCount,
+                'approved' => $approvedProductsCount,
+                'pending' => $pendingProductsCount,
+                'inactive' => $inactiveProductsCount,
+                'suspended' => $suspendedProductsCount,
+            ];
+        } else {
+            return [];
+        }
+
     }
 
+    private function getStoreWiseOrders(int $storeId)
+    {
+        if ($storeId) {
+            $totalOrders = OrderActivity::where('store_id', $storeId)->count();
+            return [
+                'totalOrders' => $totalOrders,
+            ];
+        } else {
+            return [];
+        }
+    }
     private function getStoreWiseBanners(int $storeId)
     {
         return [

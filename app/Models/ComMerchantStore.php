@@ -69,7 +69,7 @@ class ComMerchantStore extends Model
 
     public function merchant()
     {
-        return $this->belongsTo(User::class, 'merchant_id');
+        return $this->belongsTo(User::class, 'merchant_id','merchant_id');
     }
 
     public function related_translations()
