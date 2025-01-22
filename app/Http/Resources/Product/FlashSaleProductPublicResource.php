@@ -42,7 +42,7 @@ class FlashSaleProductPublicResource extends JsonResource
                     "price" => $product->variants[0]->price,
                     "discounted_price" => $discountedPrice,
                 ];
-            }),
+            })->random(),
         ];
     }
 }
