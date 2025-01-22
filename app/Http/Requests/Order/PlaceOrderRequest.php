@@ -57,6 +57,7 @@ class PlaceOrderRequest extends FormRequest
             // items
             'packages.*.items' => 'required|array',
             'packages.*.items.*.product_id' => 'required|exists:products,id',
+            'packages.*.items.*.variant_details' => 'nullable',
             'packages.*.items.*.product_campaign_id' => 'nullable|numeric',
             // discount store
             'packages.*.items.*.store_discount_type' => 'nullable',
@@ -66,6 +67,9 @@ class PlaceOrderRequest extends FormRequest
             'packages.*.items.*.admin_discount_type' => 'nullable',
             'packages.*.items.*.admin_discount_rate' => 'nullable|numeric',
             'packages.*.items.*.admin_discount_amount' => 'nullable|numeric',
+            // tax
+            'packages.*.items.*.tax_percent' => 'nullable',
+            'packages.*.items.*.tax_amount' => 'nullable|numeric',
             // qty and price
             'packages.*.items.*.quantity' => 'required|integer|min:1',
             'packages.*.items.*.line_total_price' => 'nullable|numeric',

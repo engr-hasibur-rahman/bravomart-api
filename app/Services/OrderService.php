@@ -9,6 +9,7 @@ use App\Models\OrderDetail;
 use App\Models\OrderPackage;
 use App\Models\OrderPayment;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
@@ -79,7 +80,6 @@ class OrderService
             foreach ($data['packages'] as $packageData) {
                 // Calculate discount to the store  (Store specific coupon discount)
                 $order_amount_for_store = calculateStoreShareWithDiscount($packageData['order_amount'], $total_order_amount, $total_discount_amount);
-dd($data['packages'],$packageData);
                 // create order package
                 $package = OrderPackage::create([
                     'order_id' => $order->id,
@@ -101,21 +101,45 @@ dd($data['packages'],$packageData);
                 foreach ($packageData['items'] as $itemData) {
                     // find the product
                    $product = Product::find($itemData['product_id']);
+
+                    // Validate product variant
+                    $variant = ProductVariant::find($itemData['variant_details']['variant_id']);
+                    if (!$variant || $variant->product_id !== $itemData['product_id']) {
+                        throw new \Exception("Variant mismatch or not found for product ID: {$itemData['product_id']}");
+                    }
+
+                    // Validate stock
+                    if ($variant->stock_quantity < $itemData['quantity']) {
+                        throw new \Exception("Insufficient stock for variant ID: {$itemData['variant_details']['variant_id']}");
+                    }
+
+                    $basePrice = $variant->price;
+                    $specialPrice = $variant->special_price ?: $basePrice;
+
                    if (!empty($product)){
                        // store discount calculate
-                       $storeDiscount = $itemData['store_discount_type'] === 'percent'
-                           ? ($itemData['base_price'] * $itemData['store_discount_rate'] / 100)
+                       $storeDiscount = ($itemData['store_discount_type'] === 'percentage')
+                           ? ($specialPrice * $itemData['store_discount_rate'] / 100)
                            : $itemData['store_discount_amount'];
                        // admin discount calculate
-                       $adminDiscount = $itemData['admin_discount_type'] === 'percent'
-                           ? ($itemData['base_price'] * $itemData['admin_discount_rate'] / 100)
+                       $adminDiscount = ($itemData['admin_discount_type'] === 'percentage')
+                           ? ($specialPrice * $itemData['admin_discount_rate'] / 100)
                            : $itemData['admin_discount_amount'];
-                       // base price calculate
-                       $priceAfterDiscount = $itemData['base_price'] - $storeDiscount - $adminDiscount;
-                       // tax amount calculate
-                       $taxAmount = ($priceAfterDiscount * $itemData['tax_percent']) / 100;
-                       // total line price
-                       $line_total_price = ($priceAfterDiscount + $taxAmount) * $itemData['quantity'];
+
+                       // Calculate final price
+                       $finalPrice = $specialPrice - $storeDiscount - $adminDiscount;
+
+
+                       // Calculate tax
+                       $taxPercent = $itemData['tax_percent'];
+                       $taxAmount = $finalPrice * ($taxPercent / 100);
+
+                       // Validate line total
+                       $lineTotal = round(($finalPrice + $taxAmount) * $itemData['quantity'], 2);
+                       if (round(abs($itemData['line_total_price'] - $lineTotal), 2) > 0.01) {
+//                           throw new \Exception("Line total mismatch for variant ID: {$itemData['variant_details']['variant_id']}");
+                       }
+
 
                        // create order details
                        OrderDetail::create([
@@ -125,18 +149,18 @@ dd($data['packages'],$packageData);
                            'product_sku' => $product->product_sku,
                            'variant_details' => json_encode($itemData['variant_details']),
                            'product_campaign_id' => $itemData['product_campaign_id'],
-                           'base_price' => $itemData['base_price'],
+                           'base_price' =>  $basePrice,
                            'store_discount_type' => $itemData['store_discount_type'],
                            'store_discount_rate' => $itemData['store_discount_rate'],
                            'store_discount_amount' => $storeDiscount, // store discount amount
                            'admin_discount_type' => $itemData['admin_discount_type'],
                            'admin_discount_rate' => $itemData['admin_discount_rate'],
                            'admin_discount_amount' => $adminDiscount, // admin discount amount
-                           'price' => $priceAfterDiscount,
+                           'price' => $finalPrice,
                            'quantity' => $itemData['quantity'],
                            'tax_percent' => $itemData['tax_percent'],
                            'tax_amount' => $taxAmount,
-                           'line_total_price' => $line_total_price
+                           'line_total_price' => $lineTotal
                        ]);
                    }
 
