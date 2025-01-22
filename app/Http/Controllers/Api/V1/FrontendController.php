@@ -258,6 +258,7 @@ class FrontendController extends Controller
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => TopDealsPublicResource::collection($products),
+                'meta' => new PaginationResource($products)
             ]);
 
         } catch (\Exception $e) {
@@ -299,13 +300,14 @@ class FrontendController extends Controller
                 ->where('status', 'approved')
                 ->where('deleted_at', null)
                 ->orderByDesc('order_count')
-                ->limit($request->limit ?? 10)
-                ->get();
+                ->paginate($request->per_page ?? 10);
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => BestSellingPublicResource::collection($bestSellingProducts),
+                'meta' => new PaginationResource($bestSellingProducts)
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -462,7 +464,8 @@ class FrontendController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => NewArrivalPublicResource::collection($products)
+                'data' => NewArrivalPublicResource::collection($products),
+                'meta' => new PaginationResource($products)
             ]);
 
         } catch (\Exception $e) {
@@ -524,12 +527,10 @@ class FrontendController extends Controller
     {
         try {
             $query = Product::query();
-
             // Apply category filter
             if (isset($request->category_id)) {
                 $query->where('category_id', $request->category_id);
             }
-
             // Apply price range filter
             if (isset($request->min_price) && isset($request->max_price)) {
                 $minPrice = $request->min_price;
@@ -539,12 +540,10 @@ class FrontendController extends Controller
                     $q->whereBetween('price', [$minPrice, $maxPrice]);
                 });
             }
-
             // Apply brand filter
             if (isset($request->brand_id)) {
                 $query->where('brand_id', $request->brand_id);
             }
-
             // Apply availability filter
             if (isset($request->availability)) {
                 $availability = $request->availability;
@@ -555,7 +554,6 @@ class FrontendController extends Controller
                     $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
                 }
             }
-
             // Apply sorting
             if (isset($request->sort)) {
                 switch ($request->sort) {
