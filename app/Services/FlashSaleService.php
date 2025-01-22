@@ -45,7 +45,6 @@ class FlashSaleService
         }, $products);
 
         FlashSaleProduct::insert($bulkData); // Bulk insert for performance
-
         return true;
     }
 
@@ -61,9 +60,16 @@ class FlashSaleService
             ->get();
     }
 
+    public function getAllFlashSaleProducts()
+    {
+        return FlashSaleProduct::with(['product', 'flashSale'])
+            ->where('status', 'approved')
+            ->get();
+    }
+
     public function getValidFlashSales()
     {
-        return FlashSale::query()
+        return FlashSale::with(['approvedProducts.product'])
             ->where('status', true) // Ensure the flash sale is active
             ->where('start_time', '<=', now()) // Valid only after the start time
             ->where('end_time', '>=', now()) // Valid only before the end time
@@ -108,10 +114,11 @@ class FlashSaleService
                 ]);
             // Return true if at least one record was updated
             return $updated > 0;
-        } else{
+        } else {
             return false;
         }
     }
+
     public function rejectFlashSaleProductRequest(array $productIds, string $rejectionReason): bool
     {
         // Validate input

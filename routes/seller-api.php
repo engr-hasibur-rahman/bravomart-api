@@ -207,7 +207,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('deleted/records', [ProductVariantController::class, 'deleted_records']);
         });
         // Store Notice manage
-        Route::group(['prefix'=>'store-notices/'],function () {
+        Route::group(['prefix' => 'store-notices/'], function () {
             Route::get('list', [SellerStoreNoticeController::class, 'index']); // Get all notices
             Route::get('details/{id}', [SellerStoreNoticeController::class, 'show']); // View a specific notice
         });

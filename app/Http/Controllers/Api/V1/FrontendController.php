@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Behaviour;
 use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\FlashSaleResource;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use App\Http\Resources\Com\Department\DepartmentListForDropdown;
@@ -24,10 +25,12 @@ use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Product\BestSellingPublicResource;
+use App\Http\Resources\Product\FlashSaleProductPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
+use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
@@ -48,6 +51,7 @@ use App\Models\ProductCategory;
 use App\Models\Slider;
 use App\Models\Tag;
 use App\Models\Unit;
+use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -59,7 +63,8 @@ class FrontendController extends Controller
         protected CityManageInterface    $cityRepo,
         protected AreaManageInterface    $areaRepo,
         protected BannerManageInterface  $bannerRepo,
-        protected ProductManageInterface $productRepo
+        protected ProductManageInterface $productRepo,
+        protected FlashSaleService       $flashSaleService
     )
     {
 
@@ -316,6 +321,12 @@ class FrontendController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function flashDeals()
+    {
+        $flashSaleProducts = $this->flashSaleService->getValidFlashSales();
+        return response()->json(FlashSaleProductPublicResource::collection($flashSaleProducts));
     }
 
     public function productList(Request $request)
