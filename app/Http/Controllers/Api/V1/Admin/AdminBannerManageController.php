@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Com;
+namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminBannerRequest;
@@ -9,7 +9,7 @@ use App\Interfaces\BannerManageInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class BannerManageController extends Controller
+class AdminBannerManageController extends Controller
 {
     public function __construct(protected BannerManageInterface $bannerRepo)
     {
