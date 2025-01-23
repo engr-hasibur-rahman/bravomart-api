@@ -2,6 +2,8 @@
 
 use App\Helpers;
 use App\Models\ComOption;
+use App\Models\Coupon;
+use App\Models\CouponLine;
 use App\Models\Media;
 use App\Models\User;
 use Illuminate\Support\Facades\App;
@@ -295,6 +297,67 @@ if (!function_exists('translate')) {
         return false;
     }
 
+    // coupon manage
+    function applyCoupon(string $couponCode, $orderAmount)
+    {
+        // Find the coupon by its code
 
+        $coupon = CouponLine::where('coupon_code', $couponCode)->first();
+
+        // Check if the coupon exists
+        if (!$coupon) {
+            return [
+                'success' => false,
+                'message' => 'Coupon not found.',
+            ];
+        }
+
+        // Check if the coupon has expired
+        if ($coupon->expires_at && $coupon->expires_at < now()) {
+            return [
+                'success' => false,
+                'message' => 'Coupon has expired.',
+            ];
+        }
+
+        // Check if the coupon usage limit has been reached
+        if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
+            return [
+                'success' => false,
+                'message' => 'Coupon usage limit reached.',
+            ];
+        }
+
+
+        // Calculate the discount based on the discount type
+        $discount = 0;
+        if ($coupon->discount_type === 'percent') {
+            $discount = ($orderAmount * $coupon->discount) / 100;
+        } elseif ($coupon->discount_type === 'fixed') {
+            $discount = $coupon->discount;
+        }
+
+
+        // Ensure the discount does not exceed the order amount
+        $discount = min($discount, $orderAmount);
+
+
+        // Increment the usage count of the coupon
+        $coupon->increment('usage_count');
+
+        // Return the discount and success response
+        return [
+            'discount_amount' => $discount,
+            'final_order_amount' => $orderAmount - $discount,
+        ];
+
+    }
+
+    function calculateStoreShareWithDiscount($storeOrderAmount, $totalOrderAmount, $totalDiscount)
+    {
+        // Calculate the store's share of the total order amount
+        $storeShare = ($storeOrderAmount / $totalOrderAmount) * $totalDiscount;
+        return $storeShare;
+    }
 
 }

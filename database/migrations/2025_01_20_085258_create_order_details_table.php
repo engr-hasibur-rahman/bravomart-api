@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('area_id')->nullable();
             $table->unsignedBigInteger('order_package_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
+            $table->unsignedBigInteger('behaviour')->nullable()->comment('service, digital, consumable, combo');
             $table->string('product_sku')->nullable();
             $table->json('variant_details')->nullable(); // product variants
             $table->decimal('base_price')->nullable(); // product main price

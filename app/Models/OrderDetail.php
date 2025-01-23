@@ -12,6 +12,7 @@ class OrderDetail extends Model
         'area_id',
         'order_package_id',
         'product_id',
+        'behaviour',
         'product_sku',
         'variant_details',
         'base_price',
