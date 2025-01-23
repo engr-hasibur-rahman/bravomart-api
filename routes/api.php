@@ -38,7 +38,7 @@ Route::post('contact-us', [ContactManageController::class, 'store']);
 
 
 /*--------------------- Route without auth  ----------------------------*/
-Route::group(['namespace' => 'Api\V1'], function () {
+Route::group(['prefix' => 'v1/'], function () {
     // For customer register and login
     Route::group(['prefix' => 'customer/'], function () {
         Route::post('registration', [CustomerManageController::class, 'register']);
