@@ -57,7 +57,20 @@ class BannerManageRepository implements BannerManageInterface
     {
         try {
             $data = Arr::except($data, ['translations']);
-            $banner = Banner::create($data);
+            $banner = Banner::create([
+                'user_id' => auth('api')->id(),
+                'store_id' => $data['store_id'] ?? null,
+                'title' => $data['title'],
+                'description' => $data['description'] ?? null,
+                'background_image' => $data['background_image'] ?? null,
+                'thumbnail_image' => $data['thumbnail_image'] ?? null,
+                'button_text' => $data['button_text'] ?? null,
+                'button_color' => $data['button_color'] ?? null,
+                'redirect_url' => $data['redirect_url'] ?? null,
+                'location' => $data['location'] ?? null,
+                'type' => $data['type'] ?? null,
+                'status' => 1,
+            ]);
             return $banner->id;
         } catch (\Throwable $th) {
             throw $th;
