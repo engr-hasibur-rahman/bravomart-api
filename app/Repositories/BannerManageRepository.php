@@ -21,7 +21,7 @@ class BannerManageRepository implements BannerManageInterface
         return $this->banner->translationKeys;
     }
 
-    public function getPaginatedBanner(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedBanner(int|string $per_page, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $banner = Banner::leftJoin('translations as title_translations', function ($join) use ($language) {
             $join->on('banners.id', '=', 'title_translations.translatable_id')
@@ -50,7 +50,7 @@ class BannerManageRepository implements BannerManageInterface
         // Return the result
         return $banner
             ->orderBy($sortField, $sort)
-            ->paginate($limit);
+            ->paginate($per_page);
     }
 
     public function store(array $data)
@@ -67,7 +67,7 @@ class BannerManageRepository implements BannerManageInterface
                 'button_text' => $data['button_text'] ?? null,
                 'button_color' => $data['button_color'] ?? null,
                 'redirect_url' => $data['redirect_url'] ?? null,
-                'location' => auth('api')->activity_scope == 'system_level' ? 'home_page' : 'store_page',
+                'location' => auth('api')->user()->store_owner == 1 ? 'store_page' : $data['location'],
                 'type' => $data['type'] ?? null,
                 'status' => 1,
             ]);
@@ -80,28 +80,11 @@ class BannerManageRepository implements BannerManageInterface
     public function getBannerById(int|string $id)
     {
         try {
-            $banner = Banner::find($id);
-            $translations = $banner->translations()->get()->groupBy('language');
-            // Initialize an array to hold the transformed data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->banner->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
+            $banner = Banner::with('related_translations', 'creator', 'store')->findorfail($id);
             if ($banner) {
-                return response()->json([
-                    "data" => $banner->toArray(),
-                    'translations' => $transformedData,
-                    "massage" => "Data was found"
-                ], 201);
+                return $banner;
             } else {
-                return response()->json([
-                    "massage" => "Data was not found"
-                ], 404);
+                return false;
             }
         } catch (\Throwable $th) {
             throw $th;

@@ -38,4 +38,9 @@ class Banner extends Model
     public function creator(){
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 }
