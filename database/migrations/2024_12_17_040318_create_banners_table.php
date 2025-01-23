@@ -12,13 +12,18 @@ return new class extends Migration {
     {
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->comment('who created the banner');
             $table->unsignedBigInteger('store_id');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('background_image');
+            $table->string('background_image')->nullable();
+            $table->string('thumbnail_image')->nullable();
+            $table->string('button_text')->nullable();
+            $table->string('button_color')->nullable();
             $table->string('redirect_url')->nullable();
+            $table->string('location')->nullable()->comment('the location of the banner Home Page or Store Page');
+            $table->string('type')->nullable()->comment('Ex: Banner-1, Banner-2, Banner-3');
             $table->integer('status')->default(0)->comment('0=inactive, 1=active');
-            $table->tinyInteger('priority')->default(0)->comment('Higher numbers show first');
             $table->timestamps();
         });
     }
