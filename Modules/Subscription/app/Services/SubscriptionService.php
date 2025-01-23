@@ -12,8 +12,9 @@ use Modules\Subscription\app\Models\SubscriptionHistory;
 
 class SubscriptionService
 {
-    public function buySubscriptionPackage($store, $data)
+    public function buySubscriptionPackage($data)
     {
+
         // Authenticate user
         $seller = Auth::guard('api')->user();
         if (!$seller) {
@@ -22,6 +23,10 @@ class SubscriptionService
                 'message' => 'User is not authenticated.',
             ];
         }
+
+       $store_id = $data['store_id'];
+       $subscription_id = $data['subscription_id'];
+       $payment_gateway = $data['payment_gateway'];
 
         if(isset($store->subscription_type) && $store->subscription_type === 'subscription'){
             // subscription package
@@ -102,7 +107,7 @@ class SubscriptionService
         }
     }
 
-    public function renewSubscriptionPackage($store, $data)
+    public function renewSubscriptionPackage($store_id, $subscription_id, $request_payment_gateway)
     {
         // Authenticate user
         $seller = Auth::guard('api')->user();
@@ -113,103 +118,103 @@ class SubscriptionService
             ];
         }
 
-        if (isset($store->subscription_type) && $store->subscription_type === 'subscription') {
-            // Find active subscription for the store
-            $currentSubscription = ComMerchantStoresSubscription::where('store_id', $store->id)->first();
-
-            // Check if there is an active subscription
-            if (!$currentSubscription) {
-                return [
-                    'success' => false,
-                    'message' => 'No active subscription found for the store.',
-                ];
-            }
-
-            // Fetch the subscription package
-            $subscriptionPackage = Subscription::where('id', $data['subscription_id'])
-                ->where('status', 1)
-                ->first();
-
-            if (!$subscriptionPackage) {
-                return [
-                    'success' => false,
-                    'message' => 'Subscription package not found.',
-                ];
-            }
-
-            $store_id = $store->id;
-
-            // Determine payment gateway
-            $payment_gateway = $data['payment_gateway'];
-            if (isset($payment_gateway) && $payment_gateway === 'wallet') {
-                $subscription_status = 1;
-                $payment_status = 'paid';
-            } else {
-                $subscription_status = 0;
-                $payment_status = 'pending';
-            }
-
-            // Calculate the new expiration date
-            $newExpireDate = Carbon::parse($currentSubscription->expire_date)->gt(now())
-                ? Carbon::parse($currentSubscription->expire_date)->addDays($subscriptionPackage->validity)
-                : now()->addDays($subscriptionPackage->validity);
-
-            // Create subscription history
-            SubscriptionHistory::create([
-                'store_id' => $store_id,
-                'subscription_id' => $subscriptionPackage->id,
-                'name' => $subscriptionPackage->name,
-                'validity' => $subscriptionPackage->validity,
-                'price' => $subscriptionPackage->price,
-                'pos_system' => $subscriptionPackage->pos_system,
-                'self_delivery' => $subscriptionPackage->self_delivery,
-                'mobile_app' => $subscriptionPackage->mobile_app,
-                'live_chat' => $subscriptionPackage->live_chat,
-                'order_limit' => $subscriptionPackage->order_limit,
-                'product_limit' => $subscriptionPackage->product_limit,
-                'product_featured_limit' => $subscriptionPackage->product_featured_limit,
-                'payment_gateway' => $payment_gateway ?? null,
-                'payment_status' => $payment_status ?? null,
-                'transaction_ref' => $data['transaction_ref'] ?? null,
-                'manual_image' => $data['manual_image'] ?? null,
-                'expire_date' => $newExpireDate,
-                'status' => $subscription_status,
-            ]);
-
-            // Update or create store subscription
-            $currentSubscription->updateOrCreate(
-                ['store_id' => $store_id],
-                [
-                    'subscription_id' => $subscriptionPackage->id,
-                    'name' => $subscriptionPackage->name,
-                    'validity' => $subscriptionPackage->validity,
-                    'price' => $subscriptionPackage->price,
-                    'pos_system' => $subscriptionPackage->pos_system,
-                    'self_delivery' => $subscriptionPackage->self_delivery,
-                    'mobile_app' => $subscriptionPackage->mobile_app,
-                    'live_chat' => $subscriptionPackage->live_chat,
-                    'order_limit' => $subscriptionPackage->order_limit,
-                    'product_limit' => $subscriptionPackage->product_limit,
-                    'product_featured_limit' => $subscriptionPackage->product_featured_limit,
-                    'payment_gateway' => $payment_gateway ?? null,
-                    'payment_status' => $payment_status ?? null,
-                    'transaction_ref' => $data['transaction_ref'] ?? null,
-                    'manual_image' => $data['manual_image'] ?? null,
-                    'expire_date' => $newExpireDate,
-                    'status' => $subscription_status,
-                ]
-            );
-
-            return [
-                'success' => true,
-                'message' => 'Subscription renewed successfully.',
-            ];
-        } else {
+        // Fetch the store
+        $store = ComMerchantStore::find($store_id);
+        if (!$store || $store->merchant_id != $seller->id) {
             return [
                 'success' => false,
-                'message' => 'Subscription type not found.',
+                'message' => 'Store not found or access denied.',
             ];
         }
+
+        // Ensure store subscription type is valid
+        if ($store->subscription_type !== 'subscription') {
+            return [
+                'success' => false,
+                'message' => 'Invalid subscription type for the store.',
+            ];
+        }
+
+        // Fetch the active subscription
+        $currentSubscription = ComMerchantStoresSubscription::where('store_id', $store_id)->first();
+        if (!$currentSubscription) {
+            return [
+                'success' => false,
+                'message' => 'No active subscription found for the store.',
+            ];
+        }
+
+        // Fetch the subscription package
+        $subscriptionPackage = Subscription::where('id', $subscription_id)
+            ->where('status', 1)
+            ->first();
+
+        if (!$subscriptionPackage) {
+            return [
+                'success' => false,
+                'message' => 'Subscription package not found.',
+            ];
+        }
+
+        // Determine payment gateway and status
+        $payment_gateway = $request_payment_gateway ?? null;
+        $payment_status = $payment_gateway === 'wallet' ? 'paid' : 'pending';
+        $subscription_status = $payment_gateway === 'wallet' ? 1 : 0;
+
+        // Calculate the new expiration date
+        $newExpireDate = Carbon::parse($currentSubscription->expire_date)->gt(now())
+            ? Carbon::parse($currentSubscription->expire_date)->addDays($subscriptionPackage->validity)
+            : now()->addDays($subscriptionPackage->validity);
+
+
+        // Create subscription history
+        SubscriptionHistory::create([
+            'store_id' => $store_id,
+            'subscription_id' => $subscriptionPackage->id,
+            'name' => $subscriptionPackage->name,
+            'validity' => $subscriptionPackage->validity,
+            'price' => $subscriptionPackage->price,
+            'pos_system' => $subscriptionPackage->pos_system,
+            'self_delivery' => $subscriptionPackage->self_delivery,
+            'mobile_app' => $subscriptionPackage->mobile_app,
+            'live_chat' => $subscriptionPackage->live_chat,
+            'order_limit' => $subscriptionPackage->order_limit,
+            'product_limit' => $subscriptionPackage->product_limit,
+            'product_featured_limit' => $subscriptionPackage->product_featured_limit,
+            'payment_gateway' => $payment_gateway,
+            'payment_status' => $payment_status,
+            'transaction_ref' => null,
+            'manual_image' => null,
+            'expire_date' => $newExpireDate,
+            'status' => $subscription_status,
+        ]);
+
+        // Update or create the current subscription
+        $currentSubscription->update([
+            'subscription_id' => $subscriptionPackage->id,
+            'name' => $subscriptionPackage->name,
+            'validity' => $subscriptionPackage->validity,
+            'price' => $subscriptionPackage->price,
+            'pos_system' => $subscriptionPackage->pos_system,
+            'self_delivery' => $subscriptionPackage->self_delivery,
+            'mobile_app' => $subscriptionPackage->mobile_app,
+            'live_chat' => $subscriptionPackage->live_chat,
+            'order_limit' => $subscriptionPackage->order_limit,
+            'product_limit' => $subscriptionPackage->product_limit,
+            'product_featured_limit' => $subscriptionPackage->product_featured_limit,
+            'payment_gateway' => $payment_gateway,
+            'payment_status' => $payment_status,
+            'transaction_ref' => null,
+            'manual_image' => null,
+            'expire_date' => $newExpireDate,
+            'status' => $subscription_status,
+        ]);
+
+
+        return [
+            'success' => false,
+            'message' => 'Subscription renewed successfully.',
+        ];
 
     }
 
