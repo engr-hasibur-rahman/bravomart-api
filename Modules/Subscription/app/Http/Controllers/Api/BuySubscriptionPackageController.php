@@ -3,9 +3,11 @@
 namespace Modules\Subscription\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ComMerchantStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Modules\Subscription\app\Http\Requests\RenewSubscriptionRequest;
 use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
@@ -22,13 +24,16 @@ class BuySubscriptionPackageController extends Controller
 
     public function buySubscriptionPackage(Request $request)
     {
-        $result = $this->subscriptionService->buySubscriptionPackage($request);
+        $result = $this->subscriptionService->buySubscriptionPackage($request->all());
         return response()->json($result);
     }
 
-    public function renewSubscriptionPackage(Request $request)
+    public function renewSubscriptionPackage(RenewSubscriptionRequest $request)
     {
-        $result = $this->subscriptionService->renewSubscriptionPackage($request->all());
+        $store_id = $request->store_id;
+        $subscription_id = $request->subscription_id;
+        $payment_gateway = $request->payment_gateway;
+        $result = $this->subscriptionService->renewSubscriptionPackage($store_id, $subscription_id, $payment_gateway);
         return response()->json($result);
     }
 
@@ -93,9 +98,9 @@ class BuySubscriptionPackageController extends Controller
         ]);
 
         //subscription history get after update
-        $subscription = SubscriptionHistory::find($subscription->id);
+        $subscription = SubscriptionHistory::where('store_id', $request->store_id)->first();
         // update com store subscription data
-        $com_store_subscription = ComMerchantStoresSubscription::where('store_id', $subscription->store_id)->first();
+        $com_store_subscription = ComMerchantStoresSubscription::where('store_id', $request->store_id)->first();
         if (!$com_store_subscription) {
             return response()->json([
                 'success' => false,
@@ -123,6 +128,23 @@ class BuySubscriptionPackageController extends Controller
             'expire_date',
             'status',
         ]));
+
+
+        // update store type
+        $store = ComMerchantStore::where('id', $request->store_id)
+            ->where('merchant_id', auth()->guard('api')->id())
+            ->first();
+
+        if (!$store) {
+            return response()->json([
+                'message' => 'Store not found or you do not have access to this store.',
+            ], 404);
+        }
+
+        // Update the subscription type
+        $store->update([
+            'subscription_type' => 'subscription',
+        ]);
 
         // Return success response
         return response()->json([
