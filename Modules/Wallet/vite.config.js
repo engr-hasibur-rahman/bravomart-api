@@ -15,14 +15,14 @@ export default defineConfig({
             publicDirectory: '../../public',
             buildDirectory: 'build-wallet',
             input: [
-                __dirname + '/resources/assets/sass/app.scss',
-                __dirname + '/resources/assets/js/app.js'
+                __dirname + '/resources/asset/sass/app.scss',
+                __dirname + '/resources/asset/js/app.js'
             ],
             refresh: true,
         }),
     ],
 });
-// Scen all resources for assets file. Return array
+// Scen all resources for asset file. Return array
 //function getFilePaths(dir) {
 //    const filePaths = [];
 //
@@ -47,11 +47,11 @@ export default defineConfig({
 //const __filename = fileURLToPath(import.meta.url);
 //const __dirname = dirname(__filename);
 
-//const assetsDir = join(__dirname, 'resources/assets');
+//const assetsDir = join(__dirname, 'resources/asset');
 //export const paths = getFilePaths(assetsDir);
 
 
 //export const paths = [
-//    'Modules/Wallet/resources/assets/sass/app.scss',
-//    'Modules/Wallet/resources/assets/js/app.js',
+//    'Modules/Wallet/resources/asset/sass/app.scss',
+//    'Modules/Wallet/resources/asset/js/app.js',
 //];

@@ -12,8 +12,8 @@ export default defineConfig({
             publicDirectory: '../../public',
             buildDirectory: 'build-paymentgateways',
             input: [
-                __dirname + '/resources/assets/sass/app.scss',
-                __dirname + '/resources/assets/js/app.js'
+                __dirname + '/resources/asset/sass/app.scss',
+                __dirname + '/resources/asset/js/app.js'
             ],
             refresh: true,
         }),

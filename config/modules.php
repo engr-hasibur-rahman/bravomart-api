@@ -33,8 +33,8 @@ return [
             'views/master' => 'resources/views/layouts/master.blade.php',
             'scaffold/config' => 'config/config.php',
             'composer' => 'composer.json',
-            'assets/js/app' => 'resources/assets/js/app.js',
-            'assets/sass/app' => 'resources/assets/sass/app.scss',
+            'asset/js/app' => 'resources/asset/js/app.js',
+            'asset/sass/app' => 'resources/asset/sass/app.scss',
             'vite' => 'vite.config.js',
             'package' => 'package.json',
         ],
@@ -73,13 +73,13 @@ return [
 
         /*
         |--------------------------------------------------------------------------
-        | Modules assets path
+        | Modules asset path
         |--------------------------------------------------------------------------
         |
-        | Here you may update the modules' assets path.
+        | Here you may update the modules' asset path.
         |
         */
-        'assets' => public_path('modules'),
+        'asset' => public_path('modules'),
 
         /*
         |--------------------------------------------------------------------------
@@ -155,7 +155,7 @@ return [
             'lang' => ['path' => 'lang', 'generate' => false],
 
             // resource/
-            'assets' => ['path' => 'resources/assets', 'generate' => true],
+            'asset' => ['path' => 'resources/asset', 'generate' => true],
             'component-view' => ['path' => 'resources/views/components', 'generate' => false],
             'views' => ['path' => 'resources/views', 'generate' => true],
 

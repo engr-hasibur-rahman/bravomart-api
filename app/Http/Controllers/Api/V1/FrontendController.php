@@ -27,6 +27,7 @@ use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\FlashSaleProductPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
+use App\Http\Resources\Product\PopularProductPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
@@ -148,6 +149,50 @@ class FrontendController extends Controller
     }
 
     /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
+    public function getPopularProducts(Request $request)
+    {
+        try {
+            $query = Product::query();
+
+            // If an ID is provided, fetch the specific product
+            if (isset($request->id)) {
+                $product = $query
+                    ->with(['variants', 'store'])
+                    ->findOrFail($request->id); // Throws 404 if product not found
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.data_found'),
+                    'data' => new ProductDetailsPublicResource($product)
+                ]);
+            }
+            // Include optional filters for customization
+            if (isset($request->category_id)) {
+                $query->where('category_id', $request->category_id);
+            }
+            if (isset($request->brand_id)) {
+                $query->where('brand_id', $request->brand_id);
+            }
+            // Fetch popular products, sorting by views_count
+            $popularProducts = $query
+                ->with(['variants', 'store'])
+                ->where('status', 'approved')
+                ->where('deleted_at', null)
+                ->orderByDesc('views') // Sort by views count
+                ->paginate($request->per_page ?? 10);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => PopularProductPublicResource::collection($popularProducts),
+                'meta' => new PaginationResource($popularProducts)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([]);
+        }
+    }
+
     public function getTopDeals(Request $request)
     {
         try {
@@ -750,6 +795,7 @@ class FrontendController extends Controller
             return [
                 'value' => $storeType->value,
                 'label' => ucfirst(str_replace('-', ' ', $storeType->value)),
+                'image' => $storeType->image(), // Use the enum's method to get the image URL
             ];
         });
         return response()->json(StoreTypePublicResource::collection($storeTypes));
