@@ -2,6 +2,7 @@
 
 use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminBannerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
 use App\Http\Controllers\Api\v1\Admin\AdminCommissionManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminContactManageController;
@@ -245,9 +246,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
             // Banner Management
-            Route::group(['prefix' => 'banner', 'middleware' => ['permission:' . PermissionKey::ADMIN_PROMOTIONAL_BANNER_MANAGE->value]], function () {
-                Route::post('list', [BannerManageController::class, 'add']);
-                Route::delete('remove/{id}', [BannerManageController::class, 'remove']);
+            Route::group(['prefix' => 'banner/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PROMOTIONAL_BANNER_MANAGE->value]], function () {
+                Route::get('list', [AdminBannerManageController::class, 'index']);
+                Route::post('add', [AdminBannerManageController::class, 'store']);
+                Route::get('details/{id}', [AdminBannerManageController::class, 'show']);
+                Route::post('update', [AdminBannerManageController::class, 'update']);
+                Route::delete('remove/{id}', [AdminBannerManageController::class, 'destroy']);
             });
         });
         // Customer Manage
