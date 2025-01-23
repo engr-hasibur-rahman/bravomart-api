@@ -52,66 +52,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-/*--------------------- Route without auth  ----------------------------*/
-Route::group(['namespace' => 'Api\V1'], function () {
 
-    // For customer register and login
-    Route::group(['prefix' => 'customer/'], function () {
-        Route::post('registration', [CustomerManageController::class, 'register']);
-        Route::post('login', [CustomerManageController::class, 'login']);
-        Route::post('forget-password', [CustomerManageController::class, 'forgetPassword']);
-        Route::post('verify-token', [CustomerManageController::class, 'verifyToken']);
-        Route::post('reset-password', [CustomerManageController::class, 'resetPassword']);
-    });
-    Route::group(['prefix' => 'seller/'], function () {
-        // password reset
-        Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
-        Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
-        Route::post('reset-password', [SellerManageController::class, 'resetPassword']);
-    });
-    // Blog comment manage
-    Route::post('blog/comment', [BlogManageController::class, 'comment']);
-    Route::group(['prefix' => 'auth'], function () {
-        Route::get('google', [UserController::class, 'redirectToGoogle']);
-        Route::get('google/callback', [UserController::class, 'handleGoogleCallback']);
-        Route::post('forget-password', [UserController::class, 'forgetPassword']);
-        Route::post('verify-token', [UserController::class, 'verifyForgetPasswordToken']);
-        Route::post('reset-password', [UserController::class, 'resetPassword']);
-    });
-    // Product Category
-    Route::group(['prefix' => 'product-category/'], function () {
-        Route::get('list', [FrontendController::class, 'productCategoryList']);
-        Route::get('product', [FrontendController::class, 'categoryWiseProducts']);
-    });
-    Route::get('/slider-list', [FrontendController::class, 'allSliders']);
-    Route::get('/product-list', [FrontendController::class, 'productList']);
-    Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);
-    Route::post('/new-arrivals', [FrontendController::class, 'getNewArrivals']);
-    Route::post('/best-selling-products', [FrontendController::class, 'getBestSellingProduct']);
-    Route::post('/top-deal-products', [FrontendController::class, 'getTopDeals']);
-    Route::get('/banner-list', [FrontendController::class, 'index']);
-    Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
-    Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);
-    Route::get('/country-list', [FrontendController::class, 'countriesList']);
-    Route::get('/state-list', [FrontendController::class, 'statesList']);
-    Route::get('/city-list', [FrontendController::class, 'citiesList']);
-    Route::get('/areas', [FrontendController::class, 'areas']);
-    Route::get('/area-list', [FrontendController::class, 'areaList']);
-    Route::get('/tag-list', [FrontendController::class, 'tagList']);
-    Route::get('/brand-list', [FrontendController::class, 'brandList']);
-    Route::get('/product/attribute-list', [FrontendController::class, 'productAttributeList']);
-    Route::get('/store-types', [FrontendController::class, 'storeTypeList']);
-    Route::get('/behaviour-list', [FrontendController::class, 'behaviourList']);
-    Route::get('/unit-list', [FrontendController::class, 'unitList']);
-    Route::get('/customer-list', [FrontendController::class, 'customerList']);
-    Route::get('/store-list', [FrontendController::class, 'getStores']);
-    Route::get('/store-details/{slug}', [FrontendController::class, 'getStoreDetails']);
-    Route::get('/department-list', [FrontendController::class, 'departmentList']);
-    Route::get('/flash-deals', [FrontendController::class, 'flashDeals']);
-});
-
-
-/*--------------------- Route without auth  ----------------------------*/
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
