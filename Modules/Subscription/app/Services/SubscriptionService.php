@@ -37,13 +37,13 @@ class SubscriptionService
             ];
         }
 
-        // Check if the store has a valid subscription type
-        if (isset($store->subscription_type) && $store->subscription_type !== 'subscription') {
-            return [
-                'success' => false,
-                'message' => 'Subscription type not found.',
-            ];
-        }
+//        // Check if the store has a valid subscription type
+//        if (isset($store->subscription_type) && $store->subscription_type !== 'subscription') {
+//            return [
+//                'success' => false,
+//                'message' => 'Subscription type not found.',
+//            ];
+//        }
 
         // Find the subscription package
         $subscription_package = Subscription::where('id', $subscription_id)
@@ -162,7 +162,7 @@ class SubscriptionService
             ]);
         }
 
-
+        $store->update(['subscription_type' => 'subscription']);
 
 
         return [
