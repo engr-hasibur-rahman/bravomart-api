@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BannerRequest;
+use App\Http\Requests\AdminBannerRequest;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Interfaces\BannerManageInterface;
 use Illuminate\Http\JsonResponse;
@@ -30,7 +30,7 @@ class AdminBannerManageController extends Controller
         return BannerPublicResource::collection($banner);
     }
 
-    public function store(BannerRequest $request): JsonResponse
+    public function store(AdminBannerRequest $request): JsonResponse
     {
         $banner = $this->bannerRepo->store($request->all());
         $this->bannerRepo->storeTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
@@ -41,7 +41,7 @@ class AdminBannerManageController extends Controller
         }
     }
 
-    public function update(BannerRequest $request)
+    public function update(AdminBannerRequest $request)
     {
         $banner = $this->bannerRepo->update($request->all());
         $this->bannerRepo->updateTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());

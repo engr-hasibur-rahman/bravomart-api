@@ -38,7 +38,7 @@ Route::post('contact-us', [ContactManageController::class, 'store']);
 
 
 /*--------------------- Route without auth  ----------------------------*/
-Route::group(['namespace' => 'Api\V1'], function () {
+Route::group(['prefix' => 'v1/'], function () {
     // For customer register and login
     Route::group(['prefix' => 'customer/'], function () {
         Route::post('registration', [CustomerManageController::class, 'register']);
@@ -74,6 +74,7 @@ Route::group(['namespace' => 'Api\V1'], function () {
     Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);
     Route::post('/new-arrivals', [FrontendController::class, 'getNewArrivals']);
     Route::post('/best-selling-products', [FrontendController::class, 'getBestSellingProduct']);
+    Route::get('/popular-products', [FrontendController::class, 'getBestSellingProduct']);
     Route::post('/top-deal-products', [FrontendController::class, 'getTopDeals']);
     Route::get('/banner-list', [FrontendController::class, 'index']);
     Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);

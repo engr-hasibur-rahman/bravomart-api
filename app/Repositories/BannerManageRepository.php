@@ -67,7 +67,7 @@ class BannerManageRepository implements BannerManageInterface
                 'button_text' => $data['button_text'] ?? null,
                 'button_color' => $data['button_color'] ?? null,
                 'redirect_url' => $data['redirect_url'] ?? null,
-                'location' => $data['location'] ?? null,
+                'location' => auth('api')->activity_scope == 'system_level' ? 'home_page' : 'store_page',
                 'type' => $data['type'] ?? null,
                 'status' => 1,
             ]);
