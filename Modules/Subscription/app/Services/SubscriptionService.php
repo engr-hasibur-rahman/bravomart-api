@@ -28,33 +28,72 @@ class SubscriptionService
        $subscription_id = $data['subscription_id'];
        $payment_gateway = $data['payment_gateway'];
 
-        if(isset($store->subscription_type) && $store->subscription_type === 'subscription'){
-            // subscription package
-            $subscription_package = Subscription::where('id', $data['subscription_id'])
-                ->where('status', 1)
-                ->first();
+        // Find the store
+        $store = ComMerchantStore::find($store_id);
+        if (!$store) {
+            return [
+                'success' => false,
+                'message' => 'Store not found.',
+            ];
+        }
 
-            // if package not found
-            if (empty($subscription_package)){
-                return false;
-            }
+        // Check if the store has a valid subscription type
+        if (isset($store->subscription_type) && $store->subscription_type !== 'subscription') {
+            return [
+                'success' => false,
+                'message' => 'Subscription type not found.',
+            ];
+        }
 
-            $store_id = $store->id;
+        // Find the subscription package
+        $subscription_package = Subscription::where('id', $subscription_id)
+            ->where('status', 1)
+            ->first();
 
-            // if seller store payment using wallet
-            $payment_gateway = $data['payment_gateway'];
-            if(isset($payment_gateway) && $payment_gateway == 'wallet'){
-                // find store and update store status
-                $store = ComMerchantStore::find($store_id);
-                $store->status = 1;
-                $store->save();
-                // subscription status set
-                $subscription_status = 1;
-                $payment_status = 'paid';
-            }else{
-                $subscription_status = 0;
-                $payment_status = 'pending';
-            }
+        // If package not found
+        if (empty($subscription_package)) {
+            return [
+                'success' => false,
+                'message' => 'Subscription package not found.',
+            ];
+        }
+
+        // Set default values for payment status
+        $subscription_status = 0;
+        $payment_status = 'pending';
+
+        // Check payment gateway (wallet or others)
+        if ($payment_gateway == 'wallet') {
+            // Update store status if paid through wallet
+            $store->status = 1;
+            $store->save();
+
+            $subscription_status = 1;
+            $payment_status = 'paid';
+        }
+
+        // Check for existing subscription and update if found
+        $existing_subscription = ComMerchantStoresSubscription::where('store_id', $store_id)
+            ->where('subscription_id', $subscription_package->id)
+            ->first();
+
+
+        if ($existing_subscription) {
+            // Calculate new validity based on current expire date
+            $new_validity = $subscription_package->validity;
+
+            // Convert the expire_date to a Carbon instance to use addDays()
+            $existing_expiry_date = \Carbon\Carbon::parse($existing_subscription->expire_date);
+
+            // Extend the subscription validity by adding the new validity to the current expire date
+            $new_expire_date = $existing_expiry_date->addDays($new_validity);
+
+            // Update the existing subscription
+            $existing_subscription->expire_date = $new_expire_date;
+            $existing_subscription->status = $subscription_status;
+            $existing_subscription->payment_status = $payment_status;
+            $existing_subscription->payment_gateway = $payment_gateway;
+            $existing_subscription->save();
 
             // Create subscription history
             SubscriptionHistory::create([
@@ -70,15 +109,16 @@ class SubscriptionService
                 'order_limit' => $subscription_package->order_limit,
                 'product_limit' => $subscription_package->product_limit,
                 'product_featured_limit' => $subscription_package->product_featured_limit,
-                'payment_gateway' =>$payment_gateway ?? null,
+                'payment_gateway' => $payment_gateway ?? null,
                 'payment_status' => $payment_status ?? null,
-                'transaction_ref' => $data['transaction_ref'] ?? null,
-                'manual_image' => $data['manual_image'] ?? null,
-                'expire_date' => now()->addDays($subscription_package->validity),
+                'transaction_ref' =>  null,
+                'manual_image' =>  null,
+                'expire_date' => $new_expire_date,
                 'status' => $subscription_status,
             ]);
 
-            // Create store wise subscription
+        } else {
+            // Create a new subscription if no existing one found
             ComMerchantStoresSubscription::create([
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
@@ -94,17 +134,42 @@ class SubscriptionService
                 'product_featured_limit' => $subscription_package->product_featured_limit,
                 'payment_gateway' => $payment_gateway ?? null,
                 'payment_status' => $payment_status ?? null,
-                'transaction_ref' => $data['transaction_ref'] ?? null,
-                'manual_image' => $data['manual_image'] ?? null,
+                'transaction_ref' => null,
+                'manual_image' => null,
                 'expire_date' => now()->addDays($subscription_package->validity),
                 'status' => $subscription_status,
             ]);
-        }else{
-            return [
-                'success' => false,
-                'message' => "Subscription type not found",
-            ];
+            // Create subscription history
+            SubscriptionHistory::create([
+                'store_id' => $store_id,
+                'subscription_id' => $subscription_package->id,
+                'name' => $subscription_package->name,
+                'validity' => $subscription_package->validity,
+                'price' => $subscription_package->price,
+                'pos_system' => $subscription_package->pos_system,
+                'self_delivery' => $subscription_package->self_delivery,
+                'mobile_app' => $subscription_package->mobile_app,
+                'live_chat' => $subscription_package->live_chat,
+                'order_limit' => $subscription_package->order_limit,
+                'product_limit' => $subscription_package->product_limit,
+                'product_featured_limit' => $subscription_package->product_featured_limit,
+                'payment_gateway' => $payment_gateway ?? null,
+                'payment_status' => $payment_status ?? null,
+                'transaction_ref' =>  null,
+                'manual_image' =>  null,
+                'expire_date' => now()->addDays($subscription_package->validity),
+                'status' => $subscription_status,
+            ]);
         }
+
+
+
+
+        return [
+            'success' => true,
+            'message' => 'Subscription successfully purchased.',
+        ];
+
     }
 
     public function renewSubscriptionPackage($store_id, $subscription_id, $request_payment_gateway)
@@ -160,6 +225,7 @@ class SubscriptionService
         $payment_gateway = $request_payment_gateway ?? null;
         $payment_status = $payment_gateway === 'wallet' ? 'paid' : 'pending';
         $subscription_status = $payment_gateway === 'wallet' ? 1 : 0;
+
 
         // Calculate the new expiration date
         $newExpireDate = Carbon::parse($currentSubscription->expire_date)->gt(now())
