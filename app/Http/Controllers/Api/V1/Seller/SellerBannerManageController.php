@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Com;
+namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AdminBannerRequest;
-use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Requests\SellerBannerRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Seller\SellerBannerDetailsResource;
+use App\Http\Resources\Seller\SellerBannerResource;
 use App\Interfaces\BannerManageInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class BannerManageController extends Controller
+class SellerBannerManageController extends Controller
 {
     public function __construct(protected BannerManageInterface $bannerRepo)
     {
@@ -27,10 +29,13 @@ class BannerManageController extends Controller
             $request->sort ?? 'asc',
             []
         );
-        return BannerPublicResource::collection($banner);
+        return response()->json([
+            'data' => SellerBannerResource::collection($banner),
+            'meta' => new PaginationResource($banner)
+        ]);
     }
 
-    public function store(AdminBannerRequest $request): JsonResponse
+    public function store(SellerBannerRequest $request): JsonResponse
     {
         $banner = $this->bannerRepo->store($request->all());
         $this->bannerRepo->storeTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
@@ -41,7 +46,7 @@ class BannerManageController extends Controller
         }
     }
 
-    public function update(AdminBannerRequest $request)
+    public function update(SellerBannerRequest $request)
     {
         $banner = $this->bannerRepo->update($request->all());
         $this->bannerRepo->updateTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
@@ -54,7 +59,8 @@ class BannerManageController extends Controller
 
     public function show(Request $request)
     {
-        return $this->bannerRepo->getBannerById($request->id);
+        $banner = $this->bannerRepo->getBannerById($request->id);
+        return response()->json(new SellerBannerDetailsResource($banner));
     }
 
     public function destroy($id)

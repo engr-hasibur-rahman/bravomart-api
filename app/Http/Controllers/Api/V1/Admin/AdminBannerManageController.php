@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminBannerRequest;
 use App\Http\Resources\Admin\AdminBannerDetailsResource;
 use App\Http\Resources\Admin\AdminBannerResource;
-use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\BannerManageInterface;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AdminBannerManageController extends Controller

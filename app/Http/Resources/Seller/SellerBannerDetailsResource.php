@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Admin;
+namespace App\Http\Resources\Seller;
 
 use App\Actions\ImageModifier;
 use App\Http\Resources\Translation\BannerTranslationResource;
-use App\Http\Resources\Translation\VehicleTypeTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AdminBannerDetailsResource extends JsonResource
+class SellerBannerDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
