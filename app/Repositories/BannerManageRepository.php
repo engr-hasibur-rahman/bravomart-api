@@ -45,9 +45,16 @@ class BannerManageRepository implements BannerManageInterface
         if ($sortField && $sort) {
             $banner->orderBy($sortField, $sort);
         }
-
+        if (auth('api')->user()->store_owner == 1) {
+            return $banner
+                ->where('store_id',auth('api')->user()->stores)
+                ->where('location', 'store_page')
+                ->paginate($per_page);
+        } else {
+            return $banner->paginate($per_page);
+        }
         // Apply pagination and return the result
-        return $banner->paginate($per_page);
+
     }
 
     public function store(array $data)
