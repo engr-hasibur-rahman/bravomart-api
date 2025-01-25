@@ -22,12 +22,18 @@ class BannerPublicResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
-            "title" => $translation ? $translation->where('key', 'title')->first()?->value : $this->title,
-            "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
+            "title" => $translation->isNotEmpty()
+                ? $translation->where('key', 'title')->first()?->value
+                : $this->title,
+            "description" => $translation->isNotEmpty()
+                ? $translation->where('key', 'description')->first()?->value
+                : $this->description,
+            "button_text" => $translation->isNotEmpty()
+                ? $translation->where('key', 'button_text')->first()?->value
+                : $this->button_text,
             "background_image" => ImageModifier::generateImageUrl($this->background_image),
             "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "button_color" => $this->button_color,
-            "button_text" => $translation ? $translation->where('key', 'button_text')->first()?->value : $this->button_text,
             "redirect_url" => $this->redirect_url,
             "location" => $this->location,
             "type" => $this->type,
