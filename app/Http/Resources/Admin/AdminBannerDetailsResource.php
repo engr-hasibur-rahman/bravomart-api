@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Translation\BannerTranslationResource;
 use App\Http\Resources\Translation\VehicleTypeTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,8 +23,8 @@ class AdminBannerDetailsResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "user_id" => $this->creator,
-            "store_id" => $this->store,
+            "creator" => $this->creator->first_name . '' . $this->creator->last_name,
+            "store_id" => $this->store ? $this->store->name : null,
             "title" => $translation ? $translation->where('key', 'title')->first()?->value : $this->title,
             "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
             "background_image" => ImageModifier::generateImageUrl($this->background_image),
@@ -34,7 +35,7 @@ class AdminBannerDetailsResource extends JsonResource
             "location" => $this->location,
             "type" => $this->type,
             "status" => $this->status,
-            "translations" => VehicleTypeTranslationResource::collection($this->related_translations->groupBy('language')),
+            "translations" => BannerTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
 }
