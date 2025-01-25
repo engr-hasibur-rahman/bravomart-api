@@ -22,9 +22,15 @@ class AdminBannerResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
-            "title" => $translation ? $translation->where('key', 'title')->first()?->value : $this->title,
-            "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
-            "button_text" => $translation ? $translation->where('key', 'button_text')->first()?->value : $this->button_text,
+            "title" => $translation->isNotEmpty()
+                ? $translation->where('key', 'title')->first()?->value
+                : $this->title,
+            "description" => $translation->isNotEmpty()
+                ? $translation->where('key', 'description')->first()?->value
+                : $this->description,
+            "button_text" => $translation->isNotEmpty()
+                ? $translation->where('key', 'button_text')->first()?->value
+                : $this->button_text,
             "type" => $this->type,
             "status" => $this->status,
         ];
