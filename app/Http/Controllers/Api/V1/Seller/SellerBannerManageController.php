@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AdminBannerRequest;
 use App\Http\Requests\SellerBannerRequest;
-use App\Http\Resources\Admin\AdminBannerDetailsResource;
-use App\Http\Resources\Admin\AdminBannerResource;
-use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Seller\SellerBannerDetailsResource;
+use App\Http\Resources\Seller\SellerBannerResource;
 use App\Interfaces\BannerManageInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,7 +30,7 @@ class SellerBannerManageController extends Controller
             []
         );
         return response()->json([
-            'data' => AdminBannerResource::collection($banner),
+            'data' => SellerBannerResource::collection($banner),
             'meta' => new PaginationResource($banner)
         ]);
     }
@@ -62,7 +60,7 @@ class SellerBannerManageController extends Controller
     public function show(Request $request)
     {
         $banner = $this->bannerRepo->getBannerById($request->id);
-        return response()->json(new AdminBannerDetailsResource($banner));
+        return response()->json(new SellerBannerDetailsResource($banner));
     }
 
     public function destroy($id)
