@@ -15,31 +15,46 @@ class BannerSeeder extends Seeder
     {
         DB::table('banners')->insert([
             [
-                'store_id' => 1,
-                'title' => 'Winter Sale',
-                'description' => 'Get up to 50% off on winter collections.',
-                'background_image' => 'winter_sale.jpg',
-                'redirect_url' => 'https://example.com/winter-sale',
-                'status' => 1, // Active
-                'priority' => 10,
+                "user_id" => 1,
+                "store_id" => 1,
+                "title" => "New Year Sale",
+                "description" => "Enjoy amazing discounts on our top products!",
+                "background_image" => "https://example.com/images/background.jpg",
+                "thumbnail_image" => "https://example.com/images/thumbnail.jpg",
+                "button_text" => "Shop Now",
+                "button_color" => "#ff5733",
+                "redirect_url" => "https://example.com/sale",
+                "location" => "home_page",
+                "type" => "Banner-1",
+                "status" => true
             ],
             [
-                'store_id' => 2,
-                'title' => 'Summer Clearance',
-                'description' => 'End of summer clearance with huge discounts.',
-                'background_image' => 'summer_clearance.jpg',
-                'redirect_url' => 'https://example.com/summer-clearance',
-                'status' => 1, // Active
-                'priority' => 8,
+                "user_id" => 1,
+                "store_id" => 1,
+                "title" => "New Year Sale",
+                "description" => "Enjoy amazing discounts on our top products!",
+                "background_image" => "https://example.com/images/background.jpg",
+                "thumbnail_image" => "https://example.com/images/thumbnail.jpg",
+                "button_text" => "Shop Now",
+                "button_color" => "#ff5733",
+                "redirect_url" => "https://example.com/sale",
+                "location" => "home_page",
+                "type" => "Banner-1",
+                "status" => true
             ],
             [
-                'store_id' => 3,
-                'title' => 'New Year Special',
-                'description' => 'Ring in the New Year with amazing deals.',
-                'background_image' => 'new_year_special.jpg',
-                'redirect_url' => null, // No redirect URL
-                'status' => 0, // Inactive
-                'priority' => 5,
+                "user_id" => 1,
+                "store_id" => 1,
+                "title" => "New Year Sale",
+                "description" => "Enjoy amazing discounts on our top products!",
+                "background_image" => "https://example.com/images/background.jpg",
+                "thumbnail_image" => "https://example.com/images/thumbnail.jpg",
+                "button_text" => "Shop Now",
+                "button_color" => "#ff5733",
+                "redirect_url" => "https://example.com/sale",
+                "location" => "home_page",
+                "type" => "Banner-1",
+                "status" => true
             ],
         ]);
     }

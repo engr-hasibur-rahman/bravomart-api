@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->comment('who created the banner');
-            $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('store_id')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('background_image')->nullable();

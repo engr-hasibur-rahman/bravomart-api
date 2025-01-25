@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminBannerRequest;
+use App\Http\Resources\Admin\AdminBannerDetailsResource;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\BannerManageInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +21,7 @@ class AdminBannerManageController extends Controller
     public function index(Request $request)
     {
         $banner = $this->bannerRepo->getPaginatedBanner(
-            $request->limit ?? 10,
+            $request->per_page ?? 10,
             $request->page ?? 1,
             $request->language ?? DEFAULT_LANGUAGE,
             $request->search ?? "",
@@ -27,17 +29,20 @@ class AdminBannerManageController extends Controller
             $request->sort ?? 'asc',
             []
         );
-        return BannerPublicResource::collection($banner);
+        return response()->json([
+            'data' => BannerPublicResource::collection($banner),
+            'meta' => new PaginationResource($banner)
+        ]);
     }
 
-    public function store(AdminBannerRequest $request): JsonResponse
+    public function store(AdminBannerRequest $request)
     {
         $banner = $this->bannerRepo->store($request->all());
         $this->bannerRepo->storeTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
         if ($banner) {
-            return $this->success(translate('messages.save_success', ['name' => 'Banner']));
+            return $this->success(__('messages.save_success', ['name' => 'Banner']));
         } else {
-            return $this->failed(translate('messages.save_failed', ['name' => 'Banner']));
+            return $this->failed(__('messages.save_failed', ['name' => 'Banner']));
         }
     }
 
@@ -54,7 +59,8 @@ class AdminBannerManageController extends Controller
 
     public function show(Request $request)
     {
-        return $this->bannerRepo->getBannerById($request->id);
+        $banner = $this->bannerRepo->getBannerById($request->id);
+        return response()->json(new AdminBannerDetailsResource($banner));
     }
 
     public function destroy($id)

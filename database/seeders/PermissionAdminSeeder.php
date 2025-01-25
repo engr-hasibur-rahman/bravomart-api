@@ -59,7 +59,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Pos Settings',
                             'activity_scope' => 'system_level',
                             'icon' => 'BadgeCent',
-                            'options' => ['view','update'],
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Pos Settings',
                                 'ar' => 'المبيعات الفورية'
@@ -190,7 +190,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
-                                    'options' => ['view','update'],
+                                    'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Bulk Import',
                                         'ar' => 'الاستيراد بالجملة'
@@ -497,7 +497,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Recommended Store',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['view','update'],
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Recommended Store',
                                 'ar' => 'المتجر الموصى به'
@@ -549,6 +549,40 @@ class PermissionAdminSeeder extends Seeder
                                     'translations' => [
                                         'en' => 'Join Deals',
                                         'ar' => 'اطلب التسجيل'
+                                    ]
+                                ]
+                            ]
+                        ], [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Banner',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['View'],
+                            'translations' => [
+                                'en' => 'Banner',
+                                'ar' => 'راية'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_BANNER_LIST->value,
+                                    'PermissionTitle' => 'List',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'List',
+                                        'ar' => 'قائمة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_BANNER_MANAGE->value,
+                                    'PermissionTitle' => 'Add Banner',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'delete', 'update', 'others'],
+                                    'translations' => [
+                                        'en' => 'Add Banner',
+                                        'ar' => 'إضافة لافتة'
                                     ]
                                 ]
                             ]
@@ -653,7 +687,7 @@ class PermissionAdminSeeder extends Seeder
                 ],
 
                 // dynamic pages manage
-                 [
+                [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Pages Management',
                     'activity_scope' => 'system_level',
@@ -679,7 +713,7 @@ class PermissionAdminSeeder extends Seeder
                 ],
 
                 // wallet manage
-                 [
+                [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Wallet Management',
                     'activity_scope' => 'system_level',
@@ -1021,7 +1055,7 @@ class PermissionAdminSeeder extends Seeder
                         'en' => 'Notice Management',
                         'ar' => 'إدارة الأعمال'
                     ],
-                    'submenu' => [                       
+                    'submenu' => [
                         [
                             'PermissionName' => PermissionKey::ADMIN_NOTICE_MANAGEMENT->value,
                             'PermissionTitle' => 'Notices',
@@ -1032,7 +1066,7 @@ class PermissionAdminSeeder extends Seeder
                                 'en' => 'Notices',
                                 'ar' => 'إعدادات الأعمال'
                             ]
-                        ]                                                                
+                        ]
                     ]
                 ],
 
@@ -1180,7 +1214,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Payment Settings',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['view','update'],
+                            'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Payment Settings',
                                 'ar' => 'إعدادات الدفع'
@@ -1213,7 +1247,7 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' =>  PermissionKey::APPEARANCE_SETTINGS->value,
+                            'PermissionName' => PermissionKey::APPEARANCE_SETTINGS->value,
                             'PermissionTitle' => 'Appearance Settings',
                             'activity_scope' => 'system_level',
                             'icon' => '',
@@ -1248,7 +1282,7 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' =>  '',
+                            'PermissionName' => '',
                             'PermissionTitle' => 'Email Settings',
                             'activity_scope' => 'system_level',
                             'icon' => '',
@@ -1283,7 +1317,7 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' =>  PermissionKey::SEO_SETTINGS->value,
+                            'PermissionName' => PermissionKey::SEO_SETTINGS->value,
                             'PermissionTitle' => 'SEO Settings',
                             'activity_scope' => 'system_level',
                             'icon' => '',
@@ -1333,7 +1367,7 @@ class PermissionAdminSeeder extends Seeder
                                     'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Social Login Settings',
-                                        'ar' =>  'إعدادات تسجيل الدخول الاجتماعية'
+                                        'ar' => 'إعدادات تسجيل الدخول الاجتماعية'
                                     ]
                                 ]
                             ]
