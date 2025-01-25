@@ -41,6 +41,7 @@ use App\Interfaces\CityManageInterface;
 use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
+use App\Models\Banner;
 use App\Models\ComArea;
 use App\Models\ComMerchantStore;
 use App\Models\Customer;
@@ -677,15 +678,18 @@ class FrontendController extends Controller
     /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
     public function index(Request $request)
     {
-        $banner = $this->bannerRepo->getPaginatedBanner(
-            $request->limit ?? 10,
-            $request->page ?? 1,
-            $request->language ?? DEFAULT_LANGUAGE,
-            $request->search ?? "",
-            $request->sortField ?? 'id',
-            $request->sort ?? 'asc',
-            []
-        );
+        if (isset($request->language)) {
+            $language = $request->language;
+            // Define the base query for the Banner model
+            $banner = Banner::query()->with(['related_translations' => function ($query) use ($language) {
+                $query->where('language', $language)
+                    ->whereIn('key', ['title', 'description', 'button_text']);
+            }]);
+        }
+        $banner = $banner->where('status', 1)
+            ->where('location', 'home_page')
+            ->latest()
+            ->get();
         return BannerPublicResource::collection($banner);
     }
     /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
