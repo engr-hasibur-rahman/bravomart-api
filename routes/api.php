@@ -95,6 +95,8 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/store-details/{slug}', [FrontendController::class, 'getStoreDetails']);
     Route::get('/department-list', [FrontendController::class, 'departmentList']);
     Route::get('/flash-deals', [FrontendController::class, 'flashDeals']);
+    Route::get('/product-suggestion', [FrontendController::class, 'getSearchSuggestions']);
+    Route::get('/keyword-suggestion', [FrontendController::class, 'getKeywordSuggestions']);
 
     // home page footer api route
     Route::get('/footer', [HeaderFooterController::class, 'siteFooterInfo']);

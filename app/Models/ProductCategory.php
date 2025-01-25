@@ -31,11 +31,18 @@ class ProductCategory extends Model implements HasMedia
         return $this->translations()->where('language', $language)->where('key', $key)->first()->value ?? null;
     }
 
-    public function children() {
+    public function children()
+    {
         return $this->hasMany(ProductCategory::class, 'parent_id');
     }
 
-    public function childrenRecursive() {
+    public function parent()
+    {
+        return $this->belongsTo(ProductCategory::class, 'parent_id');
+    }
+
+    public function childrenRecursive()
+    {
         return $this->children()->with('childrenRecursive');
     }
 }
