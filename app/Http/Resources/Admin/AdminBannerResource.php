@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Banner;
+namespace App\Http\Resources\Admin;
 
 use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BannerPublicResource extends JsonResource
+class AdminBannerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,12 +24,7 @@ class BannerPublicResource extends JsonResource
             'id' => $this->id,
             "title" => $translation ? $translation->where('key', 'title')->first()?->value : $this->title,
             "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
-            "background_image" => ImageModifier::generateImageUrl($this->background_image),
-            "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
-            "button_color" => $this->button_color,
             "button_text" => $translation ? $translation->where('key', 'button_text')->first()?->value : $this->button_text,
-            "redirect_url" => $this->redirect_url,
-            "location" => $this->location,
             "type" => $this->type,
             "status" => $this->status,
         ];

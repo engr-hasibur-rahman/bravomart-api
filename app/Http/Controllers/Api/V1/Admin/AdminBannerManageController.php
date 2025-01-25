@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminBannerRequest;
 use App\Http\Resources\Admin\AdminBannerDetailsResource;
+use App\Http\Resources\Admin\AdminBannerResource;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\BannerManageInterface;
@@ -30,7 +31,7 @@ class AdminBannerManageController extends Controller
             []
         );
         return response()->json([
-            'data' => BannerPublicResource::collection($banner),
+            'data' => AdminBannerResource::collection($banner),
             'meta' => new PaginationResource($banner)
         ]);
     }

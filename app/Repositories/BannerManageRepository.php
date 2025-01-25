@@ -24,9 +24,9 @@ class BannerManageRepository implements BannerManageInterface
     public function getPaginatedBanner(int|string $per_page, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         // Define the base query for the Banner model
-        $banner = Banner::with(['related_translations' => function ($query) use ($language) {
+        $banner = Banner::query()->with(['related_translations' => function ($query) use ($language) {
             $query->where('language', $language)
-                ->whereIn('key', ['title', 'description']);
+                ->whereIn('key', ['title', 'description', 'button_text']);
         }]);
 
         // Apply search filter if search parameter exists
@@ -92,13 +92,24 @@ class BannerManageRepository implements BannerManageInterface
     {
         try {
             $banner = Banner::findOrFail($data['id']);
-            if ($banner) {
-                $data = Arr::except($data, ['translations']);
-                $banner->update($data);
-                return $banner->id;
-            } else {
-                return false;
-            }
+            $data = Arr::except($data, ['translations']);
+
+            $banner->update([
+                'user_id' => auth('api')->id(),
+                'store_id' => $data['store_id'] ?? null,
+                'title' => $data['title'],
+                'description' => $data['description'] ?? null,
+                'background_image' => $data['background_image'] ?? null,
+                'thumbnail_image' => $data['thumbnail_image'] ?? null,
+                'button_text' => $data['button_text'] ?? null,
+                'button_color' => $data['button_color'] ?? null,
+                'redirect_url' => $data['redirect_url'] ?? null,
+                'location' => auth('api')->user()->store_owner == 1 ? 'store_page' : $data['location'],
+                'type' => $data['type'] ?? null,
+                'status' => $data['status'] ?? $banner->status,
+            ]);
+
+            return $banner->id;
         } catch (\Throwable $th) {
             throw $th;
         }
