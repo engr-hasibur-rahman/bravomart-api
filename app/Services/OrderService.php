@@ -101,22 +101,13 @@ class OrderService
                 foreach ($packageData['items'] as $itemData) {
                     // find the product
                    $product = Product::with('variants')->find($itemData['product_id']);
-dd($product);
+
                     // Validate product variant
-                    $variant = ProductVariant::find($itemData['variant_details']['variant_id']);
-                    if (!$variant || $variant->product_id !== $itemData['product_id']) {
-                        throw new \Exception("Variant mismatch or not found for product ID: {$itemData['product_id']}");
-                    }
-
-                    // Validate stock
-                    if ($variant->stock_quantity < $itemData['quantity']) {
-                        throw new \Exception("Insufficient stock for variant ID: {$itemData['variant_details']['variant_id']}");
-                    }
-
+                    $variant = $product->variants;
                     $basePrice = $variant->price;
                     $specialPrice = $variant->special_price ?: $basePrice;
 
-                   if (!empty($product)){
+                   if (!empty($product) && !empty($variant)) {
                        // store discount calculate
                        $storeDiscount = ($itemData['store_discount_type'] === 'percentage')
                            ? ($specialPrice * $itemData['store_discount_rate'] / 100)
