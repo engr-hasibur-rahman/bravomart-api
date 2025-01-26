@@ -24,7 +24,7 @@ class WalletSeeder extends Seeder
         ]);
 
         WalletTransaction::create([
-            "wallet_id" => 1,
+            "wallet_id" => 2,
             "transaction_ref" => '123456789',
             "transaction_details" => 'test info',
             "amount" => 100,
