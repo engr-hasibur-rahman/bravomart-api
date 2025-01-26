@@ -170,7 +170,6 @@ class WalletCommonController extends Controller
 
     public function paymentStatusUpdate(Request $request)
     {
-
         // Check if the user is authenticated
         $user = Auth::guard('sanctum')->user();
         if (!$user) {
@@ -183,7 +182,7 @@ class WalletCommonController extends Controller
 
         // Validate the required inputs using Validator::make
         $validated = Validator::make($request->all(), [
-            'wallet_history_id' => 'required|integer',
+            'wallet_history_id' => 'required',
             'transaction_ref' => 'nullable|string|max:255',
             'transaction_details' => 'nullable|string|max:1000',
         ]);

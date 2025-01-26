@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('transaction_details')->nullable();
             $table->double('amount')->default(0);
             $table->string('type')->comment('credit or debit'); // Credit = add, Debit = deduct
-            $table->string('purpose'); // Purpose of the transaction (e.g., 'order', 'promotion', 'refund')
+            $table->string('purpose')->nullable(); // Purpose of the transaction (e.g., 'order', 'promotion', 'refund')
             $table->tinyInteger('status')->default(0)->comment('0=pending, 1=success'); // 1 = success, 0 = pending, etc.
             $table->timestamps();
         });

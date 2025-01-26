@@ -3,6 +3,7 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
@@ -24,9 +25,35 @@ class WalletManageAdminController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $wallets = Wallet::paginate(10);
+
+        $wallets = Wallet::query();
+
+        // Filter by owner_id if provided
+        if ($request->has('owner_id') && $request->input('owner_id') !== '') {
+            $wallets->where('owner_id', $request->input('owner_id'));
+        }
+
+        // Filter by owner_type if provided
+        $wallet_type = $request->has('owner_type') ?
+            ($request->input('owner_type') === 'customer' ? 'App\Models\Customer' :
+                ($request->input('owner_type') === 'user' ? 'App\Models\User' : 'all')) :
+            'all';
+
+        // Apply the filter if the owner_type is valid and not 'all'
+        if ($wallet_type !== 'all') {
+            $wallets->where('owner_type', $wallet_type);
+        }
+
+        // Filter by status if provided
+        if ($request->has('status') && $request->input('status') !== '') {
+            $wallets->where('status', $request->input('status'));
+        }
+
+        // Paginate the results with a default of 10 per page
+        $wallets = $wallets->paginate(10);
+
         return response()->json([
             'wallets' => WalletListResource::collection($wallets),
             'pagination' => [
@@ -103,10 +130,26 @@ class WalletManageAdminController extends Controller
     }
 
 
-    public function transactionRecords()
+    public function transactionRecords(Request $request)
     {
 
-        $transactions = WalletTransaction::paginate(10);
+        // Get the start and end date from the request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = WalletTransaction::query();
+
+        // transactions by date range
+        if ($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate = Carbon::parse($endDate)->endOfDay();
+            // Apply the date filter
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        // Paginate
+        $transactions = $query->paginate(10);
+
         return response()->json([
             'wallets' => WalletTransactionListResource::collection($transactions),
             'pagination' => [
