@@ -214,7 +214,7 @@ class WalletCommonController extends Controller
         if (!hash_equals($providedHmac, $calculatedHmac)) {
             return response()->json([
                 'success' => false,
-                'error' => 'Unauthorized Key Not Match'
+                'message' => 'Unauthorized Key Not Match'
             ], 403);
         }
 
@@ -222,7 +222,7 @@ class WalletCommonController extends Controller
         $wallet_history = WalletTransaction::where('id', $request->wallet_history_id)->first();
 
         // Check if the payment status is already marked as 'paid'
-        if($wallet_history->payment_gateway === 'paid') {
+        if($wallet_history->payment_status === 'paid') {
             return response()->json([
                 'success' => false,
                 'message' => 'The payment gateway status is already marked as paid.'
