@@ -58,6 +58,7 @@ class WalletCommonController extends Controller
             'transaction_ref' => 'nullable|string|unique:wallet_transactions,transaction_ref',
             'type' => 'nullable|string',
             'purpose' => 'nullable|string',
+            'payment_gateway' => 'required|string',
             $wallet_settings
         ]);
 
@@ -96,16 +97,14 @@ class WalletCommonController extends Controller
 
         try {
 
-            // Update the wallet balance
-            $wallet->balance += $validated['amount'];
-            $wallet->save();
-
             // Create
          $wallet_history = WalletTransaction::create([
                 'wallet_id' => $wallet->id,
                 'amount' => $validated['amount'],
                 'type' => 'credit',
                 'purpose' => 'deposit',
+                'payment_gateway' => $request->payment_gateway,
+                'payment_status' => 'pending',
                 'status' => 0,
             ]);
 
@@ -219,10 +218,11 @@ class WalletCommonController extends Controller
         }
 
         // Find the wallet history
-        $wallet = WalletTransaction::where('id', $request->wallet_history_id)->first();
+        $wallet_history = WalletTransaction::where('id', $request->wallet_history_id)->first();
+        $wallet = Wallet::where('id', $wallet_history->wallet_id)->first();
 
         // Check if the wallet history exists
-        if (empty($wallet)) {
+        if (empty($wallet_history)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Wallet not found'
@@ -230,12 +230,16 @@ class WalletCommonController extends Controller
         }
 
         // Update the wallet history
-        $wallet->update([
+        $wallet_history->update([
             'payment_status' => 'paid',
             'transaction_ref' => $request->transaction_ref ?? null,
             'transaction_details' => $request->transaction_details ?? null,
             'status' => 1,
         ]);
+
+        // Update the wallet balance
+        $wallet->balance += $wallet_history->amount;
+        $wallet->save();
 
         // Return success response
         return response()->json([
