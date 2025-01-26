@@ -29,6 +29,7 @@ class WalletSeeder extends Seeder
             "transaction_details" => 'test info',
             "amount" => 100,
             "type" => 'credit',
+            "purpose" => 'check amount',
             "status" => 1,
             "created_at" => Carbon::now(),
             "updated_at" => Carbon::now(),
