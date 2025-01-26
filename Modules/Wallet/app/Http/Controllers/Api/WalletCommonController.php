@@ -3,6 +3,7 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -117,8 +118,13 @@ class WalletCommonController extends Controller
     }
 
 
-    public function transactionRecords()
+    public function transactionRecords(Request $request)
     {
+
+        // Get the start and end date from the request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
         // auth user check
         if (auth()->guard('api_customer')->check()) {
             $user = auth()->guard('api_customer')->user();
@@ -137,9 +143,17 @@ class WalletCommonController extends Controller
             return response()->json(['message' => 'Wallet not found'], 404);
         }
 
-        // wallet transactions with pagination
-        $transactions = WalletTransaction::where('wallet_id', $wallet->id)
-            ->paginate(10);
+        // If both dates are provided, filter transactions by date range
+        if ($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate = Carbon::parse($endDate)->endOfDay();
+            $transactions = WalletTransaction::whereBetween('created_at', [$startDate, $endDate])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+        } else {
+            // all transactions
+            $transactions = WalletTransaction::orderBy('created_at', 'desc')->paginate(10);
+        }
 
         return response()->json([
             'wallets' => WalletTransactionListResource::collection($transactions),
