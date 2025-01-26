@@ -1,10 +1,10 @@
 <?php
 
 use App\Enums\PermissionKey;
-use App\Http\Controllers\Api\V1\Com\BannerManageController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
+use App\Http\Controllers\Api\V1\Seller\SellerBannerManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerBusinessSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerFlashSaleProductManageController;
@@ -13,13 +13,12 @@ use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreDashboardManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
-use App\Http\Controllers\Api\V1\Seller\SellerStoreOrderController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreNoticeController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreOrderController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerSupportTicketManageController;
-use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
-use App\Http\Controllers\Api\V1\Seller\SellerStoreDashboardManageController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -180,12 +179,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
 
                 // Banner Management
-                Route::group(['prefix' => 'banner', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value]], function () {
-                    Route::post('list', [BannerManageController::class, 'list']);
-                    Route::post('add', [BannerManageController::class, 'add']);
-                    Route::get('details/{id}', [BannerManageController::class, 'show']);
-                    Route::post('update', [BannerManageController::class, 'update']);
-                    Route::delete('remove/{id}', [BannerManageController::class, 'remove']);
+                Route::group(['prefix' => 'banner/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value]], function () {
+                    Route::get('list', [SellerBannerManageController::class, 'index']);
+                    Route::post('add', [SellerBannerManageController::class, 'store']);
+                    Route::get('details/{id}', [SellerBannerManageController::class, 'show']);
+                    Route::post('update', [SellerBannerManageController::class, 'update']);
+                    Route::delete('remove/{id}', [SellerBannerManageController::class, 'destroy']);
                 });
             });
 

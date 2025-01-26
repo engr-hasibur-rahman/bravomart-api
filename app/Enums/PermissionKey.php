@@ -57,7 +57,8 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_PROMOTIONAL_FLASH_SALE_MANAGE = '/admin/promotional/flash-deals/list';
     case ADMIN_PROMOTIONAL_FLASH_SALE_JOIN_DEALS = '/admin/promotional/flash-deals/join-request';
-    case ADMIN_PROMOTIONAL_BANNER_MANAGE = '/admin/promotional/banner/list';
+    case ADMIN_PROMOTIONAL_BANNER_MANAGE = '/admin/promotional/banner/';
+    case ADMIN_PROMOTIONAL_BANNER_LIST = '/admin/promotional/banner/list';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Area Management                                         //

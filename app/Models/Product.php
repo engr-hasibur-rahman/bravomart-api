@@ -73,7 +73,33 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class, "product_id");
     }
 
-    // In your Product model
+    public function relatedProductsWithCategoryFallback($limit = 10)
+    {
+        $category = $this->category; // Current product's category
+
+        // Start with the current category and check for related products
+        while ($category) {
+            // Check if the category itself has related products
+            $relatedProducts = Product::query()
+                ->where('id', '!=', $this->id) // Exclude the current product
+                ->where('status', 1) // Only active products
+                ->whereIn('category_id', $category->childrenRecursive()->pluck('id')->toArray()) // Fetch products from this category and its children
+                ->limit($limit)
+                ->get();
+
+            // If related products are found, return them
+            if ($relatedProducts->isNotEmpty()) {
+                return $relatedProducts;
+            }
+
+            // Move to the parent category for fallback
+            $category = $category->parent;
+        }
+
+        // If no related products are found, return an empty collection or fallback logic
+        return collect(); // Optionally, you could fallback to a popular product query here
+    }
+
     public function scopeLowStock($query, $threshold = 10)
     {
         return $query->whereHas('variants', function ($variantQuery) use ($threshold) {
@@ -81,23 +107,27 @@ class Product extends Model
             ->where('stock_quantity', '<', $threshold); // Check low stock condition
         });
     }
+
     public function scopeOutOfStock($query)
     {
         return $query->whereHas('variants', function ($variantQuery) {
             $variantQuery->where('stock_quantity', '=', 0); // Check out of stock condition
         });
     }
+
     public function lowStockVariants($threshold = 10)
     {
         return $this->variants()->where('stock_quantity', '>', 0)
             ->where('stock_quantity', '<', $threshold)
             ->get();
     }
+
     // Get out of stock variants
     public function outOfStockVariants()
     {
         return $this->variants()->where('stock_quantity', '=', 0)->get();
     }
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');

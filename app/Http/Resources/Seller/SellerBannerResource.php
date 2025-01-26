@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Banner;
+namespace App\Http\Resources\Seller;
 
 use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BannerPublicResource extends JsonResource
+class SellerBannerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -31,11 +31,6 @@ class BannerPublicResource extends JsonResource
             "button_text" => $translation->isNotEmpty()
                 ? $translation->where('key', 'button_text')->first()?->value
                 : $this->button_text,
-            "background_image" => ImageModifier::generateImageUrl($this->background_image),
-            "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
-            "button_color" => $this->button_color,
-            "redirect_url" => $this->redirect_url,
-            "location" => $this->location,
             "type" => $this->type,
             "status" => $this->status,
         ];

@@ -21,36 +21,40 @@ class BannerManageRepository implements BannerManageInterface
         return $this->banner->translationKeys;
     }
 
-    public function getPaginatedBanner(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedBanner(int|string $per_page, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $banner = Banner::leftJoin('translations as title_translations', function ($join) use ($language) {
-            $join->on('banners.id', '=', 'title_translations.translatable_id')
-                ->where('title_translations.translatable_type', '=', Banner::class)
-                ->where('title_translations.language', '=', $language)
-                ->where('title_translations.key', '=', 'title');
-        })
-            ->leftJoin('translations as description_translations', function ($join) use ($language) {
-                $join->on('banners.id', '=', 'description_translations.translatable_id')
-                    ->where('description_translations.translatable_type', '=', Banner::class)
-                    ->where('description_translations.language', '=', $language)
-                    ->where('description_translations.key', '=', 'description');
-            })
-            ->select(
-                'banners.*',
-                DB::raw('COALESCE(title_translations.value, banners.title) as title'),
-                DB::raw('COALESCE(description_translations.value, banners.description) as description')
-            );
+        // Define the base query for the Banner model
+        $banner = Banner::query()->with(['related_translations' => function ($query) use ($language) {
+            $query->where('language', $language)
+                ->whereIn('key', ['title', 'description', 'button_text']);
+        }]);
+
         // Apply search filter if search parameter exists
         if ($search) {
-            $banner->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', banners.title, name_translations.value, banners.description, description_translations.value)"), 'like', "%{$search}%");
+            $banner->where(function ($query) use ($search, $language) {
+                $query->whereHas('related_translations', function ($subQuery) use ($search, $language) {
+                    $subQuery->where('language', $language)
+                        ->where('value', 'like', "%{$search}%");
+                })
+                    ->orWhere('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
-        // Apply sorting and pagination
-        // Return the result
-        return $banner
-            ->orderBy($sortField, $sort)
-            ->paginate($limit);
+
+        // Apply sorting
+        if ($sortField && $sort) {
+            $banner->orderBy($sortField, $sort);
+        }
+        if (auth('api')->user()->store_owner == 1) {
+            return $banner
+                ->where('store_id',auth('api')->user()->stores)
+                ->where('location', 'store_page')
+                ->paginate($per_page);
+        } else {
+            return $banner->paginate($per_page);
+        }
+        // Apply pagination and return the result
+
     }
 
     public function store(array $data)
@@ -67,7 +71,7 @@ class BannerManageRepository implements BannerManageInterface
                 'button_text' => $data['button_text'] ?? null,
                 'button_color' => $data['button_color'] ?? null,
                 'redirect_url' => $data['redirect_url'] ?? null,
-                'location' => auth('api')->activity_scope == 'system_level' ? 'home_page' : 'store_page',
+                'location' => auth('api')->user()->store_owner == 1 ? 'store_page' : $data['location'],
                 'type' => $data['type'] ?? null,
                 'status' => 1,
             ]);
@@ -80,28 +84,11 @@ class BannerManageRepository implements BannerManageInterface
     public function getBannerById(int|string $id)
     {
         try {
-            $banner = Banner::find($id);
-            $translations = $banner->translations()->get()->groupBy('language');
-            // Initialize an array to hold the transformed data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->banner->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
+            $banner = Banner::with('related_translations', 'creator', 'store')->findorfail($id);
             if ($banner) {
-                return response()->json([
-                    "data" => $banner->toArray(),
-                    'translations' => $transformedData,
-                    "massage" => "Data was found"
-                ], 201);
+                return $banner;
             } else {
-                return response()->json([
-                    "massage" => "Data was not found"
-                ], 404);
+                return false;
             }
         } catch (\Throwable $th) {
             throw $th;
@@ -112,13 +99,24 @@ class BannerManageRepository implements BannerManageInterface
     {
         try {
             $banner = Banner::findOrFail($data['id']);
-            if ($banner) {
-                $data = Arr::except($data, ['translations']);
-                $banner->update($data);
-                return $banner->id;
-            } else {
-                return false;
-            }
+            $data = Arr::except($data, ['translations']);
+
+            $banner->update([
+                'user_id' => auth('api')->id(),
+                'store_id' => $data['store_id'] ?? null,
+                'title' => $data['title'],
+                'description' => $data['description'] ?? null,
+                'background_image' => $data['background_image'] ?? null,
+                'thumbnail_image' => $data['thumbnail_image'] ?? null,
+                'button_text' => $data['button_text'] ?? null,
+                'button_color' => $data['button_color'] ?? null,
+                'redirect_url' => $data['redirect_url'] ?? null,
+                'location' => auth('api')->user()->store_owner == 1 ? 'store_page' : $data['location'],
+                'type' => $data['type'] ?? null,
+                'status' => $data['status'] ?? $banner->status,
+            ]);
+
+            return $banner->id;
         } catch (\Throwable $th) {
             throw $th;
         }

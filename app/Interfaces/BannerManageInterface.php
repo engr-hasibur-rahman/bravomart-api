@@ -8,7 +8,7 @@ interface BannerManageInterface
 {
     public function translationKeys();
 
-    public function getPaginatedBanner(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters);
+    public function getPaginatedBanner(int|string $per_page, int $page, string $language, string $search, string $sortField, string $sort, array $filters);
 
     public function store(array $data);
 

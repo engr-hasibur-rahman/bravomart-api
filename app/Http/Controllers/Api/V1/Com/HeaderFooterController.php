@@ -33,7 +33,7 @@ class HeaderFooterController extends Controller
             }
         }
 
-        $footer_info = [
+        $footer_info[] = [
             'com_quick_access' => json_decode(com_option_get('com_quick_access'), true) ?? [],
             'com_our_info' => json_decode(com_option_get('com_our_info'), true) ?? [],
             'com_quick_access_enable_disable' => com_option_get('com_quick_access_enable_disable') ?? '',
@@ -58,7 +58,7 @@ class HeaderFooterController extends Controller
         ];
 
         return response()->json([
-           'footer_data' => new FooterInfoResource($footer_info),
+           'data' => new FooterInfoResource($footer_info),
         ]);
     }
 }

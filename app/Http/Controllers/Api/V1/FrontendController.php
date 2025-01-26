@@ -29,7 +29,10 @@ use App\Http\Resources\Product\FlashSaleProductPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\PopularProductPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
+use App\Http\Resources\Product\ProductKeywordSuggestionPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
+use App\Http\Resources\Product\ProductSuggestionPublicResource;
+use App\Http\Resources\Product\RelatedProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
 use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
@@ -41,6 +44,7 @@ use App\Interfaces\CityManageInterface;
 use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
+use App\Models\Banner;
 use App\Models\ComArea;
 use App\Models\ComMerchantStore;
 use App\Models\Customer;
@@ -149,6 +153,72 @@ class FrontendController extends Controller
     }
 
     /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
+
+
+    public function getKeywordSuggestions(Request $request)
+    {
+        // Validate the query input
+        $query = $request->input('query');
+        if (!$query) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Query parameter is required.',
+            ], 400);
+        }
+
+        $maxSuggestions = 50; // Limit the number of suggestions
+
+        // Search dynamically based on product title or description
+        $keywordSuggestions = Product::query()
+            ->where('status', 'approved') // Only active products
+            ->where(function ($productQuery) use ($query) {
+                $productQuery->where('name', 'like', "{$query}%")
+                    ->orWhere('description', 'like', "{$query}%");
+            })
+            ->distinct() // Avoid duplicate suggestions
+            ->limit($maxSuggestions) // Limit results
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => ProductKeywordSuggestionPublicResource::collection($keywordSuggestions),
+        ]);
+    }
+
+    public function getSearchSuggestions(Request $request)
+    {
+        // Validate the query input
+        $query = $request->input('query');
+        if (!$query) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Query parameter is required.',
+            ], 400);
+        }
+
+//        $maxSuggestions = 10;
+        $productSuggestions = Product::query()
+            ->where('status', 'approved')
+            ->where(function ($productQuery) use ($query) {
+                $productQuery->where('name', 'like', "%{$query}%")
+                    ->orWhere('description', 'like', "%{$query}%")
+                    ->orWhereHas('tags', function ($tagQuery) use ($query) {
+                        $tagQuery->where('name', 'like', "%{$query}%");
+                    })
+                    ->orWhereHas('variants', function ($variantQuery) use ($query) {
+                        $variantQuery->where('sku', 'like', "%{$query}%")
+                            ->orWhere('attributes', 'like', "%{$query}%");
+                    });
+            })
+            ->with(['variants:id,product_id,sku,price'])
+//            ->limit($maxSuggestions)
+            ->get();
+        return response()->json([
+            'success' => true,
+            'data' => ProductSuggestionPublicResource::collection($productSuggestions),
+        ]);
+    }
+
     public function getPopularProducts(Request $request)
     {
         try {
@@ -164,7 +234,8 @@ class FrontendController extends Controller
                     'status' => true,
                     'status_code' => 200,
                     'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product)
+                    'data' => new ProductDetailsPublicResource($product),
+                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
                 ]);
             }
             // Include optional filters for customization
@@ -677,15 +748,18 @@ class FrontendController extends Controller
     /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
     public function index(Request $request)
     {
-        $banner = $this->bannerRepo->getPaginatedBanner(
-            $request->limit ?? 10,
-            $request->page ?? 1,
-            $request->language ?? DEFAULT_LANGUAGE,
-            $request->search ?? "",
-            $request->sortField ?? 'id',
-            $request->sort ?? 'asc',
-            []
-        );
+        if (isset($request->language)) {
+            $language = $request->language;
+            // Define the base query for the Banner model
+            $banner = Banner::query()->with(['related_translations' => function ($query) use ($language) {
+                $query->where('language', $language)
+                    ->whereIn('key', ['title', 'description', 'button_text']);
+            }]);
+        }
+        $banner = $banner->where('status', 1)
+            ->where('location', 'home_page')
+            ->latest()
+            ->get();
         return BannerPublicResource::collection($banner);
     }
     /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
