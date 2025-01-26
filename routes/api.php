@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Blog\BlogManageController;
+use App\Http\Controllers\Api\V1\Com\ComSiteGeneralController;
 use App\Http\Controllers\APi\V1\Com\HeaderFooterController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\ContactManageController;
@@ -100,4 +101,5 @@ Route::group(['prefix' => 'v1/'], function () {
 
     // home page footer api route
     Route::get('/footer', [HeaderFooterController::class, 'siteFooterInfo']);
+    Route::get('/site-general-info', [ComSiteGeneralController::class, 'siteGeneralInfo']);
 });
