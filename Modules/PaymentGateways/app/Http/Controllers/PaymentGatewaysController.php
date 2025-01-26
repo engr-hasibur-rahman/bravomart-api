@@ -10,27 +10,6 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Currency;
 
 class PaymentGatewaysController extends Controller
 {
-    public function siteGeneralInfo(){
-        $site_settings = [
-            'com_site_title' => com_option_get('com_site_title'),
-            'com_site_subtitle' => com_option_get('com_site_subtitle'),
-            'com_site_favicon' => com_option_get('com_site_favicon'),
-            'com_site_logo' => com_option_get('com_site_logo'),
-            'com_site_footer_copyright' => com_option_get('com_site_footer_copyright'),
-            'com_site_email' => com_option_get('com_site_email'),
-            'com_site_website_url' => com_option_get('com_site_website_url'),
-            'com_site_contact_number' => com_option_get('com_site_contact_number'),
-            'com_site_full_address' => com_option_get('com_site_full_address'),
-            'com_maintenance_mode' => com_option_get('com_maintenance_mode'),
-            'com_user_login_otp' => com_option_get('com_user_login_otp'),
-            'com_user_email_verification' => com_option_get('com_user_email_verification'),
-        ];
-
-        return response()->json([
-            'site_settings' => $site_settings,
-        ]);
-    }
-
     public function currencySettingsGet(){
         $currencies = [
             'com_site_global_currency' => com_option_get('com_site_global_currency'),

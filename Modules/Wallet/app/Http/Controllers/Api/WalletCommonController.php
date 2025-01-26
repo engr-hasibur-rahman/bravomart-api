@@ -50,6 +50,9 @@ class WalletCommonController extends Controller
     {
 
         $wallet_settings =  com_option_get('max_deposit_per_transaction');
+        if(is_null($wallet_settings)){
+            $wallet_settings = 50000;
+        }
 
         $validator = Validator::make($request->all(), [
             'wallet_id' => 'required|exists:wallets,id',
@@ -59,7 +62,6 @@ class WalletCommonController extends Controller
             'type' => 'nullable|string',
             'purpose' => 'nullable|string',
             'payment_gateway' => 'required|string',
-            $wallet_settings
         ]);
 
         // Check if validation failed
@@ -96,7 +98,6 @@ class WalletCommonController extends Controller
         }
 
         try {
-
             // Create
          $wallet_history = WalletTransaction::create([
                 'wallet_id' => $wallet->id,

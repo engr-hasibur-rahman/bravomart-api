@@ -100,8 +100,8 @@ class OrderService
 
                 foreach ($packageData['items'] as $itemData) {
                     // find the product
-                   $product = Product::find($itemData['product_id']);
-
+                   $product = Product::with('variants')->find($itemData['product_id']);
+dd($product);
                     // Validate product variant
                     $variant = ProductVariant::find($itemData['variant_details']['variant_id']);
                     if (!$variant || $variant->product_id !== $itemData['product_id']) {
