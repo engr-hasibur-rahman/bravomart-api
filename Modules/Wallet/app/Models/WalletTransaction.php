@@ -16,6 +16,8 @@ class WalletTransaction extends Model
         'amount',
         'type',
         'purpose',
+        'payment_gateway',
+        'payment_status',
         'status',
     ];
 
