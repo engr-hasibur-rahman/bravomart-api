@@ -700,6 +700,28 @@ class PermissionAdminSeeder extends Seeder
                                 'en' => 'Wallet Lists',
                                 'ar' => ' قوائم الصفحات'
                             ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_WALLET_TRANSACTION->value,
+                            'PermissionTitle' => 'Transaction History',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Wallet Lists',
+                                'ar' => ' قوائم الصفحات'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_WALLET_SETTINGS->value,
+                            'PermissionTitle' => 'Wallet Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Wallet Lists',
+                                'ar' => ' قوائم الصفحات'
+                            ]
                         ]
                     ]
                 ]
