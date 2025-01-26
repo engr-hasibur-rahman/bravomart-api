@@ -220,6 +220,15 @@ class WalletCommonController extends Controller
 
         // Find the wallet history
         $wallet_history = WalletTransaction::where('id', $request->wallet_history_id)->first();
+
+        // Check if the payment status is already marked as 'paid'
+        if($wallet_history->payment_gateway === 'paid') {
+            return response()->json([
+                'success' => false,
+                'message' => 'The payment gateway status is already marked as paid.'
+            ], 403);
+        }
+
         $wallet = Wallet::where('id', $wallet_history->wallet_id)->first();
 
         // Check if the wallet history exists
