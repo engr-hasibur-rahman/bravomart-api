@@ -38,20 +38,27 @@ class WalletCommonController extends Controller
             ],404);
         }
 
+        $wallet_settings =  com_option_get('max_deposit_per_transaction');
+
         return response()->json([
             'wallets' => new UserWalletDetailsResource($wallets),
+            'max_deposit_per_transaction' => $wallet_settings,
         ]);
     }
 
     public function depositCreate(Request $request)
     {
+
+        $wallet_settings =  com_option_get('max_deposit_per_transaction');
+
         $validator = Validator::make($request->all(), [
             'wallet_id' => 'required|exists:wallets,id',
-            'amount' => 'required|numeric|min:0.01',
+            'amount' => 'required|numeric|min:1|max:' . $wallet_settings, // Adding max limit based on wallet settings
             'transaction_details' => 'nullable|string',
             'transaction_ref' => 'nullable|string|unique:wallet_transactions,transaction_ref',
             'type' => 'nullable|string',
             'purpose' => 'nullable|string',
+            $wallet_settings
         ]);
 
         // Check if validation failed
