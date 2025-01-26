@@ -30,5 +30,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SubscriptionPackageSeeder::class);
         $this->call(DepartmentSeeder::class);
         $this->call(SystemCommissionSeeder::class);
+        $this->call(WalletSeeder::class);
     }
 }

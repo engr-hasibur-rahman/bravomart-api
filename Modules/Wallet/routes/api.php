@@ -10,11 +10,11 @@ use Modules\Wallet\app\Http\Controllers\Api\WalletCommonController;
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // admin wallet manage
     Route::group(['prefix' => 'admin/wallet', PermissionKey::ADMIN_WALLET_MANAGE->value], function () {
-        Route::match(['get','post'], 'settings', [WalletManageAdminController::class, 'depositSettings']);
+        Route::match(['get','post'], 'settings', [WalletManageAdminController::class, 'depositSettings'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_SETTINGS->value]);
         Route::get('list', [WalletManageAdminController::class, 'index']);
         Route::post('status/{id?}', [WalletManageAdminController::class, 'status']);
         Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
-        Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords']);
+        Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_TRANSACTION->value]);
         Route::post('transactions-status/{id}', [WalletManageAdminController::class, 'transactionStatus']);
     });
 
