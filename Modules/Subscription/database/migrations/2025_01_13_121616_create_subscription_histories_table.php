@@ -26,7 +26,7 @@ return new class extends Migration
             $table->integer('product_limit')->default(0);
             $table->integer('product_featured_limit')->default(0);
             $table->string('payment_gateway')->nullable();
-            $table->string('payment_status')->nullable();
+            $table->string('payment_status')->nullable()->comment('pending , paid, failed');
             $table->string('transaction_ref')->nullable();
             $table->string('manual_image')->nullable();
             $table->timestamp('expire_date')->nullable();
