@@ -7,12 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
 use Modules\PaymentGateways\app\Models\PaymentGateway;
+use Modules\PaymentGateways\app\Transformers\PaymentGatewaysListPublicResource;
+use Modules\PaymentGateways\App\Transformers\PaymentGatewaysResource;
 
 class PaymentGatewaySettingsController extends Controller
 {
     public function settingsGetAndUpdate(Request $request, $gateway)
     {
 
+        // update payment gateway  and currency settings
         if ($request->isMethod('POST')) {
 
             if (!empty($request->currency_settings) && $request->currency_settings === 'update') {
@@ -88,6 +91,7 @@ class PaymentGatewaySettingsController extends Controller
             // Perform validation directly on the request
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|exists:payment_gateways,name',
+                'image' => 'nullable|string',
                 'description' => 'nullable|string',
                 'auth_credentials' => 'required|array',
                 'status' => 'required|boolean',
@@ -123,7 +127,6 @@ class PaymentGatewaySettingsController extends Controller
                 'is_test_mode' => $request->get('is_test_mode', $gateway->is_test_mode),
                 'auth_credentials' => json_encode($auth_credentials),
             ]);
-
             Artisan::call('optimize:clear');
 
             return response()->json([
@@ -132,6 +135,8 @@ class PaymentGatewaySettingsController extends Controller
             ]);
         }
 
+
+        // if get current settings
         if (!empty($request->currency_settings) && $request->currency_settings == 'get') {
             // Example: Get all relevant currency settings
             $currencySettings = [
@@ -163,17 +168,20 @@ class PaymentGatewaySettingsController extends Controller
             ]);
         }
 
-        $paymentGateway = PaymentGateway::where('name', $gateway)->first();
+        // if get payment gateway info
+        $gateway_name = $gateway;
+        $paymentGateway = PaymentGateway::where('name', $gateway_name)->first();
         if (!$paymentGateway) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Payment gateway not found.'
             ], 404);
         }
-        $paymentGateway->auth_credentials = json_decode($paymentGateway->auth_credentials);
+
         return response()->json([
             'status' => 'success',
-            'gateways' => $paymentGateway
+            'gateways' =>  new PaymentGatewaysResource($paymentGateway)
         ]);
     }
+
 }
