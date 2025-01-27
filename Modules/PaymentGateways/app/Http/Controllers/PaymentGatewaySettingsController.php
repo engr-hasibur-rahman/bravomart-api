@@ -193,6 +193,7 @@ class PaymentGatewaySettingsController extends Controller
             ], 404);
         }
 
+
         return response()->json([
             'status' => 'success',
             'gateways' =>  new PaymentGatewaysResource($paymentGateway)
