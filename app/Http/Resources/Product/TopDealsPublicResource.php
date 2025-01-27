@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,11 +22,11 @@ class TopDealsPublicResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'image' => $this->image,
+            'image' => ImageModifier::generateImageUrl($this->image),
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
             'price' => optional($this->variants->first())->price,
             'special_price' => optional($this->variants->first())->special_price,
-            'singleVariant' => $this->variants->count() === 1 ? $this->variants->first() : false,
+            'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
             'discount_percentage' => $this->variants->isNotEmpty() && optional($this->variants->first())->price > 0
                 ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
                 : null,

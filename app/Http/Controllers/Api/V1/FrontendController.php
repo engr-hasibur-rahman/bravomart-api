@@ -441,13 +441,24 @@ class FrontendController extends Controller
     public function flashDeals()
     {
         $flashSaleProducts = $this->flashSaleService->getValidFlashSales();
-        return response()->json(FlashSaleWithProductPublicResource::collection($flashSaleProducts));
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.data_found'),
+            'data' => FlashSaleWithProductPublicResource::collection($flashSaleProducts)
+        ]);
     }
 
     public function flashDealProducts(Request $request)
     {
         $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($request->per_page);
-        return response()->json(FlashSaleAllProductPublicResource::collection($flashSaleProducts));
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.data_found'),
+            'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
+            'meta' => new PaginationResource($flashSaleProducts)
+        ]);
     }
 
     public function productList(Request $request)
