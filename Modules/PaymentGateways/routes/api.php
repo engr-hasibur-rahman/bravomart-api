@@ -14,7 +14,6 @@ Route::middleware(['auth:sanctum', 'permission:' . PermissionKey::ADMIN_PAYMENT_
 
 Route::group(['prefix' => 'v1/'], function () {
     // payment gateways lists
-    Route::get('site-general-info', [PaymentGatewaysController::class, 'siteGeneralInfo']);
     Route::get('currency-info', [PaymentGatewaysController::class, 'currencySettingsGet']);
     Route::get('payment-gateways', [PaymentGatewaysController::class, 'paymentGateways']);
 });

@@ -3,6 +3,7 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -37,20 +38,30 @@ class WalletCommonController extends Controller
             ],404);
         }
 
+        $wallet_settings =  com_option_get('max_deposit_per_transaction');
+
         return response()->json([
             'wallets' => new UserWalletDetailsResource($wallets),
+            'max_deposit_per_transaction' => $wallet_settings,
         ]);
     }
 
     public function depositCreate(Request $request)
     {
+
+        $wallet_settings =  com_option_get('max_deposit_per_transaction');
+        if(is_null($wallet_settings)){
+            $wallet_settings = 50000;
+        }
+
         $validator = Validator::make($request->all(), [
             'wallet_id' => 'required|exists:wallets,id',
-            'amount' => 'required|numeric|min:0.01',
+            'amount' => 'required|numeric|min:1|max:' . $wallet_settings, // Adding max limit based on wallet settings
             'transaction_details' => 'nullable|string',
             'transaction_ref' => 'nullable|string|unique:wallet_transactions,transaction_ref',
             'type' => 'nullable|string',
             'purpose' => 'nullable|string',
+            'payment_gateway' => 'required|string',
         ]);
 
         // Check if validation failed
@@ -87,17 +98,14 @@ class WalletCommonController extends Controller
         }
 
         try {
-
-            // Update the wallet balance
-            $wallet->balance += $validated['amount'];
-            $wallet->save();
-
             // Create
          $wallet_history = WalletTransaction::create([
                 'wallet_id' => $wallet->id,
                 'amount' => $validated['amount'],
                 'type' => 'credit',
                 'purpose' => 'deposit',
+                'payment_gateway' => $request->payment_gateway,
+                'payment_status' => 'pending',
                 'status' => 0,
             ]);
 
@@ -117,8 +125,13 @@ class WalletCommonController extends Controller
     }
 
 
-    public function transactionRecords()
+    public function transactionRecords(Request $request)
     {
+
+        // Get the start and end date from the request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
         // auth user check
         if (auth()->guard('api_customer')->check()) {
             $user = auth()->guard('api_customer')->user();
@@ -137,9 +150,17 @@ class WalletCommonController extends Controller
             return response()->json(['message' => 'Wallet not found'], 404);
         }
 
-        // wallet transactions with pagination
-        $transactions = WalletTransaction::where('wallet_id', $wallet->id)
-            ->paginate(10);
+        // If both dates are provided, filter transactions by date range
+        if ($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate = Carbon::parse($endDate)->endOfDay();
+            $transactions = WalletTransaction::whereBetween('created_at', [$startDate, $endDate])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+        } else {
+            // all transactions
+            $transactions = WalletTransaction::orderBy('created_at', 'desc')->paginate(10);
+        }
 
         return response()->json([
             'wallets' => WalletTransactionListResource::collection($transactions),
@@ -156,7 +177,6 @@ class WalletCommonController extends Controller
 
     public function paymentStatusUpdate(Request $request)
     {
-
         // Check if the user is authenticated
         $user = Auth::guard('sanctum')->user();
         if (!$user) {
@@ -169,7 +189,7 @@ class WalletCommonController extends Controller
 
         // Validate the required inputs using Validator::make
         $validated = Validator::make($request->all(), [
-            'wallet_history_id' => 'required|integer',
+            'wallet_history_id' => 'required',
             'transaction_ref' => 'nullable|string|max:255',
             'transaction_details' => 'nullable|string|max:1000',
         ]);
@@ -194,15 +214,25 @@ class WalletCommonController extends Controller
         if (!hash_equals($providedHmac, $calculatedHmac)) {
             return response()->json([
                 'success' => false,
-                'error' => 'Unauthorized Key Not Match'
+                'message' => 'Unauthorized Key Not Match'
             ], 403);
         }
 
         // Find the wallet history
-        $wallet = WalletTransaction::where('id', $request->wallet_history_id)->first();
+        $wallet_history = WalletTransaction::where('id', $request->wallet_history_id)->first();
+
+        // Check if the payment status is already marked as 'paid'
+        if($wallet_history->payment_status === 'paid') {
+            return response()->json([
+                'success' => false,
+                'message' => 'The payment gateway status is already marked as paid.'
+            ], 403);
+        }
+
+        $wallet = Wallet::where('id', $wallet_history->wallet_id)->first();
 
         // Check if the wallet history exists
-        if (empty($wallet)) {
+        if (empty($wallet_history)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Wallet not found'
@@ -210,12 +240,16 @@ class WalletCommonController extends Controller
         }
 
         // Update the wallet history
-        $wallet->update([
+        $wallet_history->update([
             'payment_status' => 'paid',
             'transaction_ref' => $request->transaction_ref ?? null,
             'transaction_details' => $request->transaction_details ?? null,
             'status' => 1,
         ]);
+
+        // Update the wallet balance
+        $wallet->balance += $wallet_history->amount;
+        $wallet->save();
 
         // Return success response
         return response()->json([

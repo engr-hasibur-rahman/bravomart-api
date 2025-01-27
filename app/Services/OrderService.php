@@ -3,7 +3,11 @@
 namespace App\Services;
 
 
+use App\Models\Area;
+use App\Models\ComArea;
 use App\Models\Coupon;
+use App\Models\Customer;
+use App\Models\CustomerAddress;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderPackage;
@@ -99,24 +103,19 @@ class OrderService
                 ]);
 
                 foreach ($packageData['items'] as $itemData) {
+
+                    // find area
+                    $area = ComArea::find($packageData['area_id']);
+
                     // find the product
-                   $product = Product::find($itemData['product_id']);
+                   $product = Product::with('variants','store')->find($itemData['product_id']);
 
                     // Validate product variant
                     $variant = ProductVariant::find($itemData['variant_details']['variant_id']);
-                    if (!$variant || $variant->product_id !== $itemData['product_id']) {
-                        throw new \Exception("Variant mismatch or not found for product ID: {$itemData['product_id']}");
-                    }
-
-                    // Validate stock
-                    if ($variant->stock_quantity < $itemData['quantity']) {
-                        throw new \Exception("Insufficient stock for variant ID: {$itemData['variant_details']['variant_id']}");
-                    }
-
                     $basePrice = $variant->price;
                     $specialPrice = $variant->special_price ?: $basePrice;
 
-                   if (!empty($product)){
+                   if (!empty($product) && !empty($variant)) {
                        // store discount calculate
                        $storeDiscount = ($itemData['store_discount_type'] === 'percentage')
                            ? ($specialPrice * $itemData['store_discount_rate'] / 100)
@@ -140,14 +139,16 @@ class OrderService
 //                           throw new \Exception("Line total mismatch for variant ID: {$itemData['variant_details']['variant_id']}");
                        }
 
-
                        // create order details
                        OrderDetail::create([
+                           'store_id' => $product->store?->id,
+                           'area_id' => $area->id,
                            'order_id' => $order->id,
                            'order_package_id' => $package->id,
                            'product_id' => $product->id,
-                           'product_sku' => $product->product_sku,
-                           'variant_details' => json_encode($itemData['variant_details']),
+                           'product_sku' => $variant->sku,
+                           'behaviour' => $product->behaviour,
+                           'variant_details' => $variant->attributes,
                            'product_campaign_id' => $itemData['product_campaign_id'],
                            'base_price' =>  $basePrice,
                            'store_discount_type' => $itemData['store_discount_type'],

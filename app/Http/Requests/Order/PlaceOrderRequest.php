@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Order;
 
+use App\Rules\ValidateProductVariant;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -57,8 +58,8 @@ class PlaceOrderRequest extends FormRequest
             // items
             'packages.*.items' => 'required|array',
             'packages.*.items.*.product_id' => 'required|exists:products,id',
-            'packages.*.items.*.variant_details' => 'nullable',
             'packages.*.items.*.product_campaign_id' => 'nullable|numeric',
+            'packages.*.items.*.variant_details.variant_id' => 'required|exists:product_variants,id',
             // discount store
             'packages.*.items.*.store_discount_type' => 'nullable',
             'packages.*.items.*.store_discount_rate' => 'nullable|numeric',

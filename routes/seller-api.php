@@ -44,6 +44,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
         });
 
+
         // profile manage
         Route::group(['prefix' => 'profile/'], function () {
             Route::get('/', [SellerManageController::class, 'getProfile']);
