@@ -20,7 +20,9 @@ class PaymentGatewaysResource extends JsonResource
             'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'description' => $this->description,
-            'auth_credentials' => json_decode($this->auth_credentials, true),
+            'auth_credentials' => !empty($this->auth_credentials)
+                ? json_decode($this->auth_credentials, true)
+                : null,
             'is_test_mode' => $this->is_test_mode,
             'status' => $this->status
         ];

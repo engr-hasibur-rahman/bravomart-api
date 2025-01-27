@@ -90,10 +90,10 @@ class PaymentGatewaySettingsController extends Controller
 
             // Perform validation directly on the request
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string|exists:payment_gateways,name',
+                'name' => 'required|string|exists:payment_gateways,slug',
                 'image' => 'nullable|string',
                 'description' => 'nullable|string',
-                'auth_credentials' => 'required|array',
+                'auth_credentials' => 'nullable|array',
                 'status' => 'required|boolean',
                 'is_test_mode' => 'required|boolean',
             ]);
@@ -109,8 +109,7 @@ class PaymentGatewaySettingsController extends Controller
             $validatedData = $validator->validated();
 
             // Proceed with business logic using $validatedData
-            $gateway = PaymentGateway::where('name', $validatedData['name'])->first();
-
+            $gateway = PaymentGateway::where('slug', $validatedData['name'])->first();
 
             if (!$gateway) {
                 return response()->json([
@@ -119,20 +118,36 @@ class PaymentGatewaySettingsController extends Controller
                 ], 400);
             }
 
-            $auth_credentials = $request->get('auth_credentials', []);
-            $gateway->update([
-                'image' => $request->get('image', $gateway->image),
-                'description' => $request->get('description', $gateway->description),
-                'status' => $request->get('status', $gateway->status),
-                'is_test_mode' => $request->get('is_test_mode', $gateway->is_test_mode),
-                'auth_credentials' => json_encode($auth_credentials),
-            ]);
-            Artisan::call('optimize:clear');
+            // if cash on delivery update
+            if($gateway->slug === 'cash_on_delivery') {
+                $gateway->update([
+                    'image' => $request->get('image', $gateway->image),
+                    'description' => $request->get('description', $gateway->description),
+                    'status' => $request->get('status', $gateway->status),
+                    'is_test_mode' => $request->get('is_test_mode', $gateway->is_test_mode),
+                ]);
+                Artisan::call('optimize:clear');
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Payment gateway updated successfully.'
+                ]);
+            }else{
+                // others payment gateway update
+                $auth_credentials = $request->get('auth_credentials', []);
+                $gateway->update([
+                    'image' => $request->get('image', $gateway->image),
+                    'description' => $request->get('description', $gateway->description),
+                    'status' => $request->get('status', $gateway->status),
+                    'is_test_mode' => $request->get('is_test_mode', $gateway->is_test_mode),
+                    'auth_credentials' => json_encode($auth_credentials),
+                ]);
+                Artisan::call('optimize:clear');
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Payment gateway updated successfully.'
+                ]);
+            }
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Payment gateway updated successfully.'
-            ]);
         }
 
 
@@ -170,13 +185,14 @@ class PaymentGatewaySettingsController extends Controller
 
         // if get payment gateway info
         $gateway_name = $gateway;
-        $paymentGateway = PaymentGateway::where('name', $gateway_name)->first();
+        $paymentGateway = PaymentGateway::where('slug', $gateway_name)->first();
         if (!$paymentGateway) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Payment gateway not found.'
             ], 404);
         }
+
 
         return response()->json([
             'status' => 'success',

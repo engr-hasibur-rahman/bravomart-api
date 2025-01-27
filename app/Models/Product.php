@@ -180,4 +180,21 @@ class Product extends Model
         return $this->hasMany(Translation::class, 'translatable_id')
             ->where('translatable_type', self::class);
     }
+
+
+    //  FlashSaleProduct
+    public function flashSale()
+    {
+        return $this->hasOneThrough(
+            FlashSale::class,
+            FlashSaleProduct::class,
+            'product_id',
+            'id',
+            'id',
+            'flash_sale_id'
+        );
+    }
+
+
+    
 }

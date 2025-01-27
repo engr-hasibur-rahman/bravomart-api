@@ -14,6 +14,7 @@ use App\Models\OrderPackage;
 use App\Models\OrderPayment;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\SystemCommission;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
@@ -103,13 +104,10 @@ class OrderService
                 ]);
 
                 foreach ($packageData['items'] as $itemData) {
-
                     // find area
                     $area = ComArea::find($packageData['area_id']);
-
                     // find the product
-                   $product = Product::with('variants','store')->find($itemData['product_id']);
-
+                   $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                     // Validate product variant
                     $variant = ProductVariant::find($itemData['variant_details']['variant_id']);
                     $basePrice = $variant->price;
@@ -129,15 +127,42 @@ class OrderService
                        $finalPrice = $specialPrice - $storeDiscount - $adminDiscount;
 
 
-                       // Calculate tax
-                       $taxPercent = $itemData['tax_percent'];
+                       // get system commission & calculate Tax amount start
+                       $system_commission = SystemCommission::latest()->first();
+
+                       // system commission calculate
+                       $system_commission_type = null;
+                       $system_commission_amount = 0;
+                       if (isset($system_commission) && $system_commission->commission_enabled === true) {
+                           $system_commission_type = $system_commission->commission_type;
+                           $system_commission_amount = $system_commission->commission_amount;
+                       }
+
+                       // check store type
+                       if ($product->store){
+                          $store_subscription_type = $product->store?->subscription_type;
+
+                          // if store commission type commission
+                           if($store_subscription_type  === 'commission'){
+
+                           }
+                       }
+
+
+
+                       dd($system_commission, $product->store);
+
+                       // tax calculate
+                       $store_tax_amount = 5; // $itemData['tax_percent'];
+                       $taxPercent = $store_tax_amount;
                        $taxAmount = $finalPrice * ($taxPercent / 100);
+                       // get system commission & calculate Tax amount end
+
 
                        // Validate line total
-                       $lineTotal = round(($finalPrice + $taxAmount) * $itemData['quantity'], 2);
-                       if (round(abs($itemData['line_total_price'] - $lineTotal), 2) > 0.01) {
-//                           throw new \Exception("Line total mismatch for variant ID: {$itemData['variant_details']['variant_id']}");
-                       }
+                       $line_total_price = round(($finalPrice + $taxAmount) * $itemData['quantity'], 2);
+
+
 
                        // create order details
                        OrderDetail::create([
@@ -150,18 +175,18 @@ class OrderService
                            'behaviour' => $product->behaviour,
                            'variant_details' => $variant->attributes,
                            'product_campaign_id' => $itemData['product_campaign_id'],
-                           'base_price' =>  $basePrice,
                            'store_discount_type' => $itemData['store_discount_type'],
                            'store_discount_rate' => $itemData['store_discount_rate'],
                            'store_discount_amount' => $storeDiscount, // store discount amount
                            'admin_discount_type' => $itemData['admin_discount_type'],
                            'admin_discount_rate' => $itemData['admin_discount_rate'],
                            'admin_discount_amount' => $adminDiscount, // admin discount amount
+                           'base_price' =>  $basePrice,
                            'price' => $finalPrice,
                            'quantity' => $itemData['quantity'],
                            'tax_percent' => $itemData['tax_percent'],
                            'tax_amount' => $taxAmount,
-                           'line_total_price' => $lineTotal
+                           'line_total_price' => $line_total_price
                        ]);
                    }
 
