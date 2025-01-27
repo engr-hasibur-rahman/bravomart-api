@@ -24,6 +24,8 @@ class FlashSaleAllProductPublicResource extends JsonResource
                 $discountedPrice = $this->discount_type === 'percentage'
                     ? $originalPrice - ($originalPrice * ($this->discount_price / 100))
                     : $originalPrice - $this->discount_price;
+                // Limit discounted_price to 2 decimal places
+                $discountedPrice = round($discountedPrice, 2);
                 return [
                     "id" => $product->id,
                     "name" => $product->name,

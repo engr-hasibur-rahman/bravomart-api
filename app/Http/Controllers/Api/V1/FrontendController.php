@@ -716,11 +716,7 @@ class FrontendController extends Controller
                 'status_code' => 200,
                 'message' => 'Products fetched successfully',
                 'data' => ProductPublicResource::collection($products),
-                'pagination' => [
-                    'current_page' => $products->currentPage(),
-                    'total_pages' => $products->lastPage(),
-                    'total_items' => $products->total(),
-                ],
+                'meta' => new PaginationResource($products)
             ]);
 
         } catch (\Exception $e) {
