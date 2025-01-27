@@ -451,19 +451,12 @@ class FrontendController extends Controller
     public function flashDealProducts(Request $request)
     {
         $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($request->per_page);
-
-        $transformedProducts = $flashSaleProducts->flatMap(function ($flashSale) {
-            return $flashSale->approvedProducts->map(function ($approvedProduct) {
-                return new FlashSaleAllProductPublicResource($approvedProduct);
-            });
-        });
-
         return response()->json([
             'status' => true,
             'status_code' => 200,
             'message' => __('messages.data_found'),
-            'data' => $transformedProducts->values(), // Ensure it's a flat array
-            'meta' => new PaginationResource($flashSaleProducts),
+            'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
+            'meta' => new PaginationResource($flashSaleProducts)
         ]);
     }
 
