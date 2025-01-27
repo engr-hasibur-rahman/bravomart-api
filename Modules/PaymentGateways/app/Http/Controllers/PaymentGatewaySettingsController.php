@@ -109,8 +109,7 @@ class PaymentGatewaySettingsController extends Controller
             $validatedData = $validator->validated();
 
             // Proceed with business logic using $validatedData
-            $gateway = PaymentGateway::where('name', $validatedData['name'])->first();
-
+            $gateway = PaymentGateway::where('slug', $validatedData['name'])->first();
 
             if (!$gateway) {
                 return response()->json([
@@ -186,7 +185,7 @@ class PaymentGatewaySettingsController extends Controller
 
         // if get payment gateway info
         $gateway_name = $gateway;
-        $paymentGateway = PaymentGateway::where('name', $gateway_name)->first();
+        $paymentGateway = PaymentGateway::where('slug', $gateway_name)->first();
         if (!$paymentGateway) {
             return response()->json([
                 'status' => 'error',
