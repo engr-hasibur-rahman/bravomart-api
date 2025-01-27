@@ -311,7 +311,6 @@ if (!function_exists('translate')) {
                 'message' => 'Coupon not found.',
             ];
         }
-
         // Check if the coupon has expired
         if ($coupon->expires_at && $coupon->expires_at < now()) {
             return [
@@ -319,7 +318,6 @@ if (!function_exists('translate')) {
                 'message' => 'Coupon has expired.',
             ];
         }
-
         // Check if the coupon usage limit has been reached
         if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
             return [
@@ -327,8 +325,6 @@ if (!function_exists('translate')) {
                 'message' => 'Coupon usage limit reached.',
             ];
         }
-
-
         // Calculate the discount based on the discount type
         $discount = 0;
         if ($coupon->discount_type === 'percent') {
@@ -336,21 +332,15 @@ if (!function_exists('translate')) {
         } elseif ($coupon->discount_type === 'fixed') {
             $discount = $coupon->discount;
         }
-
-
         // Ensure the discount does not exceed the order amount
         $discount = min($discount, $orderAmount);
-
-
         // Increment the usage count of the coupon
         $coupon->increment('usage_count');
-
         // Return the discount and success response
         return [
             'discount_amount' => $discount,
             'final_order_amount' => $orderAmount - $discount,
         ];
-
     }
 
     function calculateStoreShareWithDiscount($storeOrderAmount, $totalOrderAmount, $totalDiscount)
