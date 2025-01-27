@@ -107,7 +107,7 @@ class OrderService
                     // find area
                     $area = ComArea::find($packageData['area_id']);
                     // find the product
-                   $product = Product::with('variants','store')->find($itemData['product_id']);
+                   $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                     // Validate product variant
                     $variant = ProductVariant::find($itemData['variant_details']['variant_id']);
                     $basePrice = $variant->price;
