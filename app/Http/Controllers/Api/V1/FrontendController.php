@@ -48,6 +48,7 @@ use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
 use App\Models\ComArea;
 use App\Models\ComMerchantStore;
+use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Product;
@@ -60,6 +61,7 @@ use App\Models\Unit;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class FrontendController extends Controller
 {
@@ -911,4 +913,81 @@ class FrontendController extends Controller
         $customers = Customer::where('status', 1)->get();
         return response()->json(CustomerPublicResource::collection($customers));
     }
+
+    public function checkCoupon(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'coupon_code' => 'required|string|exists:coupon_lines,coupon_code',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+        // Retrieve the coupon by the provided coupon code
+        $coupon = CouponLine::where('coupon_code', $request->coupon_code)->first();
+        // Handle the case where the coupon is not found
+        if (!$coupon) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.coupon_not_found'),
+            ], 404);
+        }
+        // Check if the coupon is restricted to a specific customer
+        if ($coupon->customer_id !== null) {
+            // If the coupon is tied to a specific customer, ensure the authenticated user is the same
+            if (!auth('api_customer')->check()) {
+                unauthorized_response();
+            }
+
+            // Check if the authenticated customer ID matches the coupon's customer ID
+            if ($coupon->customer_id !== auth('api_customer')->user()->id) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => __('messages.coupon_does_not_belong'),
+                ], 404);
+            }
+        }
+
+        // Check if the coupon is active based on the start and end dates
+        if ($coupon->start_date && $coupon->start_date > now()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,  // Bad Request (Coupon hasn't started yet)
+                'message' => __('messages.coupon_inactive'),
+            ], 400);
+        }
+
+        if ($coupon->end_date && $coupon->end_date < now()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 410,  // Gone (Coupon has expired)
+                'message' => __('messages.coupon_expired'),
+            ], 410);
+        }
+
+        // Check if the coupon usage limit has been reached
+        if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.coupon_limit_reached'),
+            ], 400);
+        }
+        if ($coupon->coupon->status !== 1 && $coupon->status !== 1) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.coupon_inactive'),
+            ]);
+        }
+        // If all checks pass, return the coupon's discount details
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'discount_amount' => $coupon->discount,
+            'discount_type' => $coupon->discount_type,
+        ]);
+    }
+
 }
