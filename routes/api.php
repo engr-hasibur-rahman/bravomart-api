@@ -99,6 +99,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/flash-deal-products', [FrontendController::class, 'flashDealProducts']);
     Route::get('/product-suggestion', [FrontendController::class, 'getSearchSuggestions']);
     Route::get('/keyword-suggestion', [FrontendController::class, 'getKeywordSuggestions']);
+    Route::get('/check-coupon', [FrontendController::class, 'checkCoupon']);
 
     // home page footer api route
     Route::get('/footer', [HeaderFooterController::class, 'siteFooterInfo']);
