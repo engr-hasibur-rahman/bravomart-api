@@ -360,10 +360,11 @@ class FrontendController extends Controller
                     'variants' => function ($q) {
                         $q->select(
                             'id',
+                            'stock_quantity',
                             'product_id',
                             'special_price',
                             'price',
-                            DB::raw('((price - special_price) / price) * 100 as discount_percentage')
+                            DB::raw('ROUND(((price - special_price) / price) * 100, 2) as discount_percentage')
                         )
                             ->whereNotNull('special_price')
                             ->whereColumn('special_price', '<', 'price')

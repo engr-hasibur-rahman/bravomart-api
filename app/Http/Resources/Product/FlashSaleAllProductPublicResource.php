@@ -55,6 +55,5 @@ class FlashSaleAllProductPublicResource extends JsonResource
                 "singleVariant" => $singleVariant,
             ];
         })->random();
-
     }
 }

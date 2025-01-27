@@ -31,7 +31,6 @@ class TopDealsPublicResource extends JsonResource
                 ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
                 : null,
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
-            'translations' => $this->translations
         ];
     }
 }

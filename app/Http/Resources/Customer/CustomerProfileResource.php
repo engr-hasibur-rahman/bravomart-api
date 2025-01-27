@@ -27,7 +27,7 @@ class CustomerProfileResource extends JsonResource
             'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'status' => $this->status,
-            'email_verified' => $this->email_verified,
+            'email_verified' => (bool)$this->email_verified,
         ];
     }
 }
