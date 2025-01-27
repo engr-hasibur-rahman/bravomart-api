@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('behaviour')->nullable()->comment('service, digital, consumable, combo');
             $table->string('product_sku')->nullable();
             $table->json('variant_details')->nullable(); // product variants
-            $table->decimal('base_price')->nullable(); // product main price
             $table->unsignedBigInteger('product_campaign_id')->nullable();
             $table->string('store_discount_type')->nullable(); // percent/ fixed
             $table->decimal('store_discount_rate')->nullable(); // 2% or 100-USD
@@ -29,6 +28,7 @@ return new class extends Migration
             $table->string('admin_discount_type')->nullable(); // percent/ fixed
             $table->decimal('admin_discount_rate')->nullable(); // 2% or 100-USD
             $table->decimal('admin_discount_amount')->nullable(); // 100
+            $table->decimal('base_price')->nullable(); // product main price
             $table->decimal('price')->nullable();
             $table->decimal('quantity')->nullable();
             $table->decimal('tax_percent')->nullable();
