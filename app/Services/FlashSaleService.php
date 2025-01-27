@@ -60,11 +60,14 @@ class FlashSaleService
             ->get();
     }
 
-    public function getAllFlashSaleProducts()
+    public function getAllFlashSaleProducts($per_page)
     {
-        return FlashSaleProduct::with(['product', 'flashSale'])
-            ->where('status', 'approved')
-            ->get();
+        return FlashSale::with(['approvedProducts.product'])
+            ->where('status', true) // Ensure the flash sale is active
+            ->where('start_time', '<=', now()) // Valid only after the start time
+            ->where('end_time', '>=', now()) // Valid only before the end time
+            ->orderBy('start_time', 'asc') // Order by the start time
+            ->paginate($per_page ?? 10);
     }
 
     public function getValidFlashSales()

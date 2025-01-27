@@ -21,14 +21,18 @@ class AdminVehicleDetailsResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "name" => $translation ? $translation->where('key', 'name')->first()?->value : $this->name,
+            "name" => $translation->isNotEmpty()
+                ? $translation->where('key', 'name')->first()?->value
+                : $this->name,
             "capacity" => $this->capacity,
             "speed_range" => $this->speed_range,
             "fuel_type" => $this->fuel_type,
             "max_distance" => $this->max_distance,
             "extra_charge" => $this->extra_charge,
             "average_fuel_cost" => $this->average_fuel_cost,
-            "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
+            "description" => $translation->isNotEmpty()
+                ? $translation->where('key', 'description')->first()?->value
+                : $this->description,
             "status" => $this->status,
             "created_by" => $this->creator->first_name,
             "store" => $this->store->name ?? null,

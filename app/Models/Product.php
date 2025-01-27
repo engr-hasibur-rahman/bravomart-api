@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 class Product extends Model
@@ -76,28 +77,39 @@ class Product extends Model
     public function relatedProductsWithCategoryFallback($limit = 10)
     {
         $category = $this->category; // Current product's category
-
-        // Start with the current category and check for related products
+        if (!$category) {
+            return $this->getFallbackProducts($limit); // Fallback if no category is assigned
+        }
         while ($category) {
-            // Check if the category itself has related products
+            // Get all child categories, including the current category
+            $categoryIds = $category->childrenRecursive()->pluck('id')->toArray();
+            $categoryIds[] = $category->id;
+            // Fetch related products
             $relatedProducts = Product::query()
                 ->where('id', '!=', $this->id) // Exclude the current product
-                ->where('status', 1) // Only active products
-                ->whereIn('category_id', $category->childrenRecursive()->pluck('id')->toArray()) // Fetch products from this category and its children
+                ->where('status', 'approved') // Filter by approved status
+                ->whereIn('category_id', $categoryIds) // Filter by category and its children
                 ->limit($limit)
                 ->get();
-
-            // If related products are found, return them
+            // If products are found, return them
             if ($relatedProducts->isNotEmpty()) {
                 return $relatedProducts;
             }
-
-            // Move to the parent category for fallback
+            // Move to the parent category
             $category = $category->parent;
         }
+        // No related products found, return fallback products
+        return $this->getFallbackProducts($limit);
+    }
 
-        // If no related products are found, return an empty collection or fallback logic
-        return collect(); // Optionally, you could fallback to a popular product query here
+    protected function getFallbackProducts($limit = 10)
+    {
+        return Product::query()
+            ->where('id', '!=', $this->id) // Exclude the current product
+            ->where('status', 'approved') // Filter by approved status
+            ->latest() // Example fallback logic: most popular products
+            ->limit($limit)
+            ->get();
     }
 
     public function scopeLowStock($query, $threshold = 10)
