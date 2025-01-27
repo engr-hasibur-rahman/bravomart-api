@@ -75,8 +75,8 @@ class PaymentGatewaySeeder extends Seeder
         ]);
 
         PaymentGateway::create([
-            'name' => 'Cash One Delivery',
-            'slug' => 'cod',
+            'name' => 'Cash On Delivery',
+            'slug' => 'cash_on_delivery',
             'description' => 'Pay for your order in cash when it is delivered to your doorstep. No online payment required!',
             'auth_credentials' => null,
             'image' => null,

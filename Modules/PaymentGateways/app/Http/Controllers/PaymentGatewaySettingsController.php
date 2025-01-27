@@ -119,20 +119,36 @@ class PaymentGatewaySettingsController extends Controller
                 ], 400);
             }
 
-            $auth_credentials = $request->get('auth_credentials', []);
-            $gateway->update([
-                'image' => $request->get('image', $gateway->image),
-                'description' => $request->get('description', $gateway->description),
-                'status' => $request->get('status', $gateway->status),
-                'is_test_mode' => $request->get('is_test_mode', $gateway->is_test_mode),
-                'auth_credentials' => json_encode($auth_credentials),
-            ]);
-            Artisan::call('optimize:clear');
+            // if cash on delivery update
+            if($gateway->slug === 'cash_on_delivery') {
+                $gateway->update([
+                    'image' => $request->get('image', $gateway->image),
+                    'description' => $request->get('description', $gateway->description),
+                    'status' => $request->get('status', $gateway->status),
+                    'is_test_mode' => $request->get('is_test_mode', $gateway->is_test_mode),
+                ]);
+                Artisan::call('optimize:clear');
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Payment gateway updated successfully.'
+                ]);
+            }else{
+                // others payment gateway update
+                $auth_credentials = $request->get('auth_credentials', []);
+                $gateway->update([
+                    'image' => $request->get('image', $gateway->image),
+                    'description' => $request->get('description', $gateway->description),
+                    'status' => $request->get('status', $gateway->status),
+                    'is_test_mode' => $request->get('is_test_mode', $gateway->is_test_mode),
+                    'auth_credentials' => json_encode($auth_credentials),
+                ]);
+                Artisan::call('optimize:clear');
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Payment gateway updated successfully.'
+                ]);
+            }
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Payment gateway updated successfully.'
-            ]);
         }
 
 
