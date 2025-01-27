@@ -22,8 +22,13 @@ class PopularProductPublicResource extends JsonResource
             'description' => $this->description,
             'image' => $this->image,
             'views' => $this->views,
-            'price' => $this->variants->isNotEmpty() ? $this->variants[0]->price : null,
-            'special_price' => $this->variants->isNotEmpty() ? $this->variants[0]->special_price : null,
+            'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
+            'price' => optional($this->variants->first())->price,
+            'special_price' => optional($this->variants->first())->special_price,
+            'singleVariant' => $this->variants->count() === 1 ? $this->variants->first() : false,
+            'discount_percentage' => $this->variants->isNotEmpty() && optional($this->variants->first())->price > 0
+                ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
+                : null,
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
         ];
     }
