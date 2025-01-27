@@ -15,6 +15,7 @@ class PaymentGatewaySettingsController extends Controller
     public function settingsGetAndUpdate(Request $request, $gateway)
     {
 
+        // update payment gateway  and currency settings
         if ($request->isMethod('POST')) {
 
             if (!empty($request->currency_settings) && $request->currency_settings === 'update') {
@@ -134,6 +135,8 @@ class PaymentGatewaySettingsController extends Controller
             ]);
         }
 
+
+        // if get current settings
         if (!empty($request->currency_settings) && $request->currency_settings == 'get') {
             // Example: Get all relevant currency settings
             $currencySettings = [
@@ -165,6 +168,8 @@ class PaymentGatewaySettingsController extends Controller
             ]);
         }
 
+        // if get payment gateway info
+        $gateway = $request->gateway_name;
         $paymentGateway = PaymentGateway::where('name', $gateway)->first();
         if (!$paymentGateway) {
             return response()->json([
@@ -172,10 +177,11 @@ class PaymentGatewaySettingsController extends Controller
                 'message' => 'Payment gateway not found.'
             ], 404);
         }
-        $paymentGateway->auth_credentials = json_decode($paymentGateway->auth_credentials);
+
         return response()->json([
             'status' => 'success',
             'gateways' =>  new PaymentGatewaysResource($paymentGateway)
         ]);
     }
+
 }
