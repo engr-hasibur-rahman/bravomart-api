@@ -62,12 +62,15 @@ class FlashSaleService
 
     public function getAllFlashSaleProducts($per_page)
     {
-        return FlashSale::with(['approvedProducts.product'])
-            ->where('status', true) // Ensure the flash sale is active
-            ->where('start_time', '<=', now()) // Valid only after the start time
-            ->where('end_time', '>=', now()) // Valid only before the end time
-            ->orderBy('start_time', 'asc') // Order by the start time
+        $flashSaleProducts = FlashSaleProduct::with(['flashSale','product.variants'])
+            ->where('status', 'approved')
+            ->whereHas('flashSale', function ($query) {
+                $query->where('status', true)
+                ->where('start_time', '<=', now())
+                ->where('end_time', '>=', now());
+            })
             ->paginate($per_page ?? 10);
+        return $flashSaleProducts;
     }
 
     public function getValidFlashSales()
