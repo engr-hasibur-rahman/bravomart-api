@@ -66,6 +66,12 @@ return [
     'password_update_successful' => 'Password has been successfully updated!',
     'password_update_failed' => 'Password update failed!',
 
+    'coupon_not_found' => 'Coupon not found.',
+    'coupon_does_not_belong' => 'Coupon does not belong to this user.',
+    'coupon_inactive' => 'Coupon is not yet active.',
+    'coupon_expired' => 'Coupon has expired.',
+    'coupon_limit_reached' => 'Coupon usage limit reached.'
+
 ];
 
 
