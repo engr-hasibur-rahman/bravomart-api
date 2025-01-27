@@ -17,20 +17,30 @@ class StoreDetailsPublicResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
             'area' => $this->area->name ?? null,
             'merchant' => new SellerDetailsPublicResource($this->merchant),
             'store_type' => $this->store_type,
-            'name' => $this->name,
-            'slug' => $this->slug,
+            'name' => $translation->isNotEmpty()
+                ? $translation->where('key', 'name')->first()?->value
+                : $this->name,
+            'slug' => $translation->isNotEmpty()
+                ? $translation->where('key', 'slug')->first()?->value
+                : $this->slug,
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' => $this->logo,
             'logo_url' => ImageModifier::generateImageUrl($this->logo),
             'banner' => $this->banner,
             'banner_url' => ImageModifier::generateImageUrl($this->banner),
-            'address' => $this->address,
+            'address' => $translation->isNotEmpty()
+                ? $translation->where('key', 'address')->first()?->value
+                : $this->address,
             'is_featured' => $this->is_featured,
             'opening_time' => $this->opening_time,
             'closing_time' => $this->closing_time,

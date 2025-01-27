@@ -6,7 +6,7 @@ use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FlashSaleProductPublicResource extends JsonResource
+class FlashSaleWithProductPublicResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

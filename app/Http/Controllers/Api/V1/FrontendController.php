@@ -25,7 +25,8 @@ use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Product\BestSellingPublicResource;
-use App\Http\Resources\Product\FlashSaleProductPublicResource;
+use App\Http\Resources\Product\FlashSaleAllProductPublicResource;
+use App\Http\Resources\Product\FlashSaleWithProductPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
 use App\Http\Resources\Product\PopularProductPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
@@ -94,7 +95,6 @@ class FrontendController extends Controller
                 'message' => __('messages.data_not_found')
             ]);
         }
-
     }
 
     /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
@@ -127,7 +127,6 @@ class FrontendController extends Controller
             'data' => StorePublicListResource::collection($stores),
             'meta' => new PaginationResource($stores)
         ]);
-
     }
 
     public function getStoreDetails(Request $request)
@@ -153,8 +152,6 @@ class FrontendController extends Controller
     }
 
     /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
-
-
     public function getKeywordSuggestions(Request $request)
     {
         // Validate the query input
@@ -227,7 +224,7 @@ class FrontendController extends Controller
             // If an ID is provided, fetch the specific product
             if (isset($request->id)) {
                 $product = $query
-                    ->with(['variants', 'store'])
+                    ->with(['variants', 'store', 'related_translations'])
                     ->findOrFail($request->id); // Throws 404 if product not found
 
                 return response()->json([
@@ -444,7 +441,13 @@ class FrontendController extends Controller
     public function flashDeals()
     {
         $flashSaleProducts = $this->flashSaleService->getValidFlashSales();
-        return response()->json(FlashSaleProductPublicResource::collection($flashSaleProducts));
+        return response()->json(FlashSaleWithProductPublicResource::collection($flashSaleProducts));
+    }
+
+    public function flashDealProducts(Request $request)
+    {
+        $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($request->per_page);
+        return response()->json(FlashSaleAllProductPublicResource::collection($flashSaleProducts));
     }
 
     public function productList(Request $request)
