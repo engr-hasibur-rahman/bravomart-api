@@ -278,7 +278,8 @@ class FrontendController extends Controller
                     'status' => true,
                     'status_code' => 200,
                     'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product)
+                    'data' => new ProductDetailsPublicResource($product),
+                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
                 ]);
             }
             $query->select('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id') // Specify only necessary columns
@@ -405,7 +406,8 @@ class FrontendController extends Controller
                     'status' => true,
                     'status_code' => 200,
                     'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product)
+                    'data' => new ProductDetailsPublicResource($product),
+                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
                 ]);
             }
             // Include filters for customization if needed
@@ -537,7 +539,8 @@ class FrontendController extends Controller
             'status' => true,
             'status_code' => 200,
             'messages' => __('messages.data_found'),
-            'data' => new ProductDetailsPublicResource($product)
+            'data' => new ProductDetailsPublicResource($product),
+            'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
         ]);
 
     }
@@ -556,7 +559,8 @@ class FrontendController extends Controller
                     'status' => true,
                     'status_code' => 200,
                     'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product)
+                    'data' => new ProductDetailsPublicResource($product),
+                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
                 ]);
             }
             // Add filters for sorting new arrivals based on categories, prices, or availability

@@ -82,7 +82,7 @@ class Product extends Model
             // Check if the category itself has related products
             $relatedProducts = Product::query()
                 ->where('id', '!=', $this->id) // Exclude the current product
-                ->where('status', 1) // Only active products
+                ->where('status', 'approved') // Only active products
                 ->whereIn('category_id', $category->childrenRecursive()->pluck('id')->toArray()) // Fetch products from this category and its children
                 ->limit($limit)
                 ->get();
