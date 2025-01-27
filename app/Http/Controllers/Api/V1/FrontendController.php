@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Behaviour;
 use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\FlashSaleResource;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use App\Http\Resources\Com\Department\DepartmentListForDropdown;
@@ -13,10 +12,8 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
-use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
-use App\Http\Resources\Com\Store\StoreListResource;
 use App\Http\Resources\Com\Store\StorePublicListResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Http\Resources\Customer\CustomerPublicResource;
@@ -35,7 +32,6 @@ use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\ProductSuggestionPublicResource;
 use App\Http\Resources\Product\RelatedProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
-use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
@@ -455,12 +451,19 @@ class FrontendController extends Controller
     public function flashDealProducts(Request $request)
     {
         $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($request->per_page);
+
+        $transformedProducts = $flashSaleProducts->flatMap(function ($flashSale) {
+            return $flashSale->approvedProducts->map(function ($approvedProduct) {
+                return new FlashSaleAllProductPublicResource($approvedProduct);
+            });
+        });
+
         return response()->json([
             'status' => true,
             'status_code' => 200,
             'message' => __('messages.data_found'),
-            'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
-            'meta' => new PaginationResource($flashSaleProducts)
+            'data' => $transformedProducts->values(), // Ensure it's a flat array
+            'meta' => new PaginationResource($flashSaleProducts),
         ]);
     }
 

@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
-     // media manage
+    Route::get('/', [CustomerManageController::class, 'getDashboard']);
+    // media manage
     Route::group(['prefix' => 'media-upload'], function () {
         Route::post('/store', [MediaController::class, 'mediaUpload']);
         Route::get('/load-more', [MediaController::class, 'load_more']);
@@ -49,7 +50,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('store', [WishListManageController::class, 'addToWishlist']);
             Route::post('remove', [WishListManageController::class, 'removeFromWishlist']);
         });
-         // order manage
+        // order manage
         Route::group(['prefix' => 'orders/'], function () {
             Route::get('list', [CustomerOrderController::class, 'myOrders']);
         });

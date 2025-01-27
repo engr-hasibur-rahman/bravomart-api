@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerRequest;
+use App\Http\Resources\Customer\CustomerDashboardResource;
 use App\Http\Resources\Customer\CustomerProfileResource;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Interfaces\CustomerManageInterface;
@@ -347,7 +348,7 @@ class CustomerManageController extends Controller
             $user = Customer::findOrFail($userId);
 
             if ($user) {
-                $user->update($request->only('first_name', 'last_name', 'phone', 'image','birth_day', 'gender'));
+                $user->update($request->only('first_name', 'last_name', 'phone', 'image', 'birth_day', 'gender'));
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
@@ -456,5 +457,20 @@ class CustomerManageController extends Controller
                 'message' => __('messages.account_delete_failed')
             ]);
         }
+    }
+
+    public function getDashboard()
+    {
+        // Check if the customer is authenticated
+        if (!auth('api_customer')->check()) {
+            unauthorized_response();
+        }
+        $dashboardData = $this->customerRepo->getDashboard();
+        // Return the response using the resource
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'data' => new CustomerDashboardResource($dashboardData),
+        ]);
     }
 }
