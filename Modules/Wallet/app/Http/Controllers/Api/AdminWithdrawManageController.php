@@ -3,14 +3,17 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\WithdrawalRecord;
 use Illuminate\Http\Request;
+use Modules\Wallet\app\Transformers\AdminWithdrawDetailsResource;
+use Modules\Wallet\app\Transformers\AdminWithdrawListResource;
 
 class AdminWithdrawManageController extends Controller
 {
     public function withdrawAllList()
     {
-        if(auth('api')->user()->activity_scope !== 'system_level'){
+        if (auth('api')->user()->activity_scope !== 'system_level') {
             unauthorized_response();
         }
         $withdraws = WithdrawalRecord::with(['user', 'withdrawGateway'])
@@ -20,7 +23,8 @@ class AdminWithdrawManageController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => $withdraws
+                'data' => AdminWithdrawListResource::collection($withdraws),
+                'meta' => new PaginationResource($withdraws)
             ]);
         } else {
             return response()->json([
@@ -33,7 +37,7 @@ class AdminWithdrawManageController extends Controller
 
     public function withdrawDetails(Request $request)
     {
-        if(auth('api')->user()->activity_scope !== 'system_level'){
+        if (auth('api')->user()->activity_scope !== 'system_level') {
             unauthorized_response();
         }
         $withdraw = WithdrawalRecord::with(['user', 'withdrawGateway'])->find($request->id);
@@ -42,7 +46,7 @@ class AdminWithdrawManageController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => $withdraw
+                'data' => new AdminWithdrawDetailsResource($withdraw)
             ]);
         } else {
             return response()->json([

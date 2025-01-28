@@ -5,7 +5,7 @@ namespace Modules\Wallet\app\Transformers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class WithdrawGatewayListResource extends JsonResource
+class WithdrawListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,9 +14,10 @@ class WithdrawGatewayListResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "name" => $this->name,
-            "fields" => json_decode($this->fields),
+            "amount" => $this->amount,
+            "fee" => $this->fee,
             "status" => $this->status,
+            "withdraw_gateway_name" => $this->withdrawGateway->name,
         ];
     }
 }
