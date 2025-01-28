@@ -13,7 +13,7 @@ use Modules\Wallet\app\Http\Controllers\Api\WalletCommonController;
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // admin wallet manage
     Route::group(['prefix' => 'admin/wallet/', PermissionKey::ADMIN_WALLET_MANAGE->value], function () {
-        Route::match(['get','post'], 'settings', [WalletManageAdminController::class, 'depositSettings'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_SETTINGS->value]);
+        Route::match(['get', 'post'], 'settings', [WalletManageAdminController::class, 'depositSettings'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_SETTINGS->value]);
         Route::get('list', [WalletManageAdminController::class, 'index']);
         Route::post('status/{id?}', [WalletManageAdminController::class, 'status']);
         Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
@@ -23,14 +23,17 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         // withdraw gateway lists add
         Route::group(['prefix' => 'withdraw/'], function () {
             Route::get('/', [AdminWithdrawManageController::class, 'withdrawAllList']);
-            Route::get('/details/{id?}', [AdminWithdrawManageController::class, 'withdrawDetails']);
+            Route::get('details/{id?}', [AdminWithdrawManageController::class, 'withdrawDetails']);
             // gateway manage
-            Route::get('/gateway-list', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayList']);
-            Route::post('/gateway-add', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayAdd']);
+            Route::get('gateway-list', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayList']);
+            Route::post('gateway-add', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayAdd']);
+            Route::get('gateway-details/{id?}', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayDetails']);
+            Route::post('gateway-update', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayUpdate']);
+            Route::delete('gateway-delete/{id}', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayDelete']);
             // withdraw request manage
-            Route::post('/request-list', [AdminWithdrawRequestManageController::class, 'withdrawRequestList']);
-            Route::post('/request-approve', [AdminWithdrawRequestManageController::class, 'withdrawRequestApprove']);
-            Route::post('/request-reject', [AdminWithdrawRequestManageController::class, 'withdrawRequestReject']);
+            Route::post('request-list', [AdminWithdrawRequestManageController::class, 'withdrawRequestList']);
+            Route::post('request-approve', [AdminWithdrawRequestManageController::class, 'withdrawRequestApprove']);
+            Route::post('request-reject', [AdminWithdrawRequestManageController::class, 'withdrawRequestReject']);
         });
 
     });
@@ -46,6 +49,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         // withdraw history
         Route::group(['prefix' => 'withdraw/', 'middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
             Route::get('/', [SellerAndDeliverymanWithdrawController::class, 'withdrawList']);
+            Route::get('details/{id?}', [SellerAndDeliverymanWithdrawController::class, 'withdrawDetails']);
             Route::post('/withdraw-request', [SellerAndDeliverymanWithdrawController::class, 'withdrawRequest']);
         });
     });

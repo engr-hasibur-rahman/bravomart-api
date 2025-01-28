@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('withdraw_gateway_id')->index();
             $table->double('amount');
             $table->double('fee')->default(0.00); // Fee applied to the withdrawal
-            $table->double('gateways_options')->nullable();
+            $table->json('gateways_options')->nullable();
             $table->string('status')->default('pending')->comment('pending, approved, rejected');
             $table->longText('details')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable()->index(); // Approved by reference

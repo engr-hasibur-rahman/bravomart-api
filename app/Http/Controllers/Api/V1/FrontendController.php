@@ -438,6 +438,7 @@ class FrontendController extends Controller
             ]);
         }
     }
+
     public function getTrendingProducts(Request $request)
     {
         try {
@@ -1077,9 +1078,12 @@ class FrontendController extends Controller
         return response()->json([
             'status' => true,
             'status_code' => 200,
-            'discount_amount' => $coupon->discount,
-            'discount_type' => $coupon->discount_type,
+            'message' => __('messages.coupon_applied'),
+            'coupon' => [
+                'title' => $coupon->coupon->title,
+                'discount_amount' => $coupon->discount,
+                'discount_type' => $coupon->discount_type,
+            ]
         ]);
     }
-
 }
