@@ -14,4 +14,9 @@ class WithdrawGateway extends Model
     protected $casts = [
         'fields' => 'array',
     ];
+
+    public function records()
+    {
+        return $this->hasMany(WithdrawalRecord::class, 'withdraw_gateway_id');
+    }
 }

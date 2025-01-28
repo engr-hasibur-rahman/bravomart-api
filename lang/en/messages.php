@@ -52,6 +52,7 @@ return [
     'approve.failed' => ':name approved failed!',
 
     'reject.success' => ':name rejected successfully!',
+    'reject.failed' => ':name rejection failed!',
     'exists' => ':name already exists!',
 
     'request_success' => ':name requested successfully!',
@@ -70,7 +71,8 @@ return [
     'coupon_does_not_belong' => 'Coupon does not belong to this user.',
     'coupon_inactive' => 'Coupon is not yet active.',
     'coupon_expired' => 'Coupon has expired.',
-    'coupon_limit_reached' => 'Coupon usage limit reached.'
+    'coupon_limit_reached' => 'Coupon usage limit reached.',
+    'coupon_applied' => 'Coupon applied successfully!.',
 
 ];
 
