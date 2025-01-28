@@ -54,6 +54,11 @@ class FlashSaleService
         return FlashSale::with('products.product')->get();
     }
 
+    public function getFlashSaleById($id)
+    {
+        return FlashSale::where('id', $id)->get();
+    }
+
     public function getSellerFlashSaleProducts()
     {
         return FlashSaleProduct::with(['product', 'flashSale'])
@@ -63,12 +68,12 @@ class FlashSaleService
 
     public function getAllFlashSaleProducts($per_page)
     {
-        $flashSaleProducts = FlashSaleProduct::with(['flashSale','product.variants'])
+        $flashSaleProducts = FlashSaleProduct::with(['flashSale', 'product.variants'])
             ->where('status', 'approved')
             ->whereHas('flashSale', function ($query) {
                 $query->where('status', true)
-                ->where('start_time', '<=', now())
-                ->where('end_time', '>=', now());
+                    ->where('start_time', '<=', now())
+                    ->where('end_time', '>=', now());
             })
             ->paginate($per_page ?? 10);
         return $flashSaleProducts;
