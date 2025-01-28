@@ -8,6 +8,7 @@ use App\Models\WithdrawGateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Transformers\WithdrawGatewayListResource;
+use Modules\Wallet\app\Transformers\WithdrawGatewayDetailsResource;
 
 class AdminWithdrawGatewayManageController extends Controller
 {
@@ -66,7 +67,7 @@ class AdminWithdrawGatewayManageController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => $gateway
+                'data' => new WithdrawGatewayDetailsResource($gateway)
             ]);
         } else {
             return response()->json([
@@ -82,12 +83,13 @@ class AdminWithdrawGatewayManageController extends Controller
         $validator = Validator::make($request->all(), [
             'id' => 'required|integer|exists:withdraw_gateways,id',
             'name' => 'required|string|max:255',
-            'fields' => 'nullable|json',
-            'status' => 'required|integer|in:0,1',
+            'fields' => 'nullable|array',
+            'status' => 'nullable|integer|in:0,1',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
+        $request['fields'] = json_encode($request['fields']);
         $gateway = WithdrawGateway::findorfail($request->id);
         $success = $gateway->update($request->all());
         if ($success) {

@@ -3,10 +3,12 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\WithdrawalRecord;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Modules\Wallet\app\Transformers\AdminWithdrawRequestResource;
 
 class AdminWithdrawRequestManageController extends Controller
 {
@@ -22,7 +24,8 @@ class AdminWithdrawRequestManageController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => $withdrawRequests
+                'data' => AdminWithdrawRequestResource::collection($withdrawRequests),
+                'meta' => new PaginationResource($withdrawRequests)
             ]);
         } else {
             return response()->json([

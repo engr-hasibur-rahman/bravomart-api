@@ -3,25 +3,29 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\WithdrawalRecord;
 use App\Models\WithdrawGateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Modules\Wallet\app\Transformers\WithdrawDetailsResource;
+use Modules\Wallet\app\Transformers\WithdrawListResource;
 
 class SellerAndDeliverymanWithdrawController extends Controller
 {
     public function withdrawList()
     {
         $withdraws = WithdrawalRecord::with('withdrawGateway')
-            ->where('user_id', auth('api')->id)
+            ->where('user_id', auth('api')->user()->id)
             ->latest()
             ->paginate(10);
-        if (!empty($withdrawRequests)) {
+        if (!empty($withdraws)) {
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => $withdraws
+                'data' => WithdrawListResource::collection($withdraws),
+                'meta' => new PaginationResource($withdraws)
             ]);
         } else {
             return response()->json([
@@ -40,7 +44,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => $withdraw
+                'data' => new WithdrawDetailsResource($withdraw)
             ]);
         } else {
             return response()->json([
@@ -62,25 +66,26 @@ class SellerAndDeliverymanWithdrawController extends Controller
             return response()->json($validator->errors());
         }
         $gateway_options = WithdrawGateway::where('id', $request->withdraw_gateway_id)->first();
+        $gateway_fields = json_decode($gateway_options->fields);
         $success = WithdrawalRecord::create([
             'user_id' => auth('api')->id(),
             'withdraw_gateway_id' => $request->withdraw_gateway_id,
             'amount' => $request->amount,
             'details' => $request->details ?? null,
             'fee' => 0.00,
-            'gateways_options' => json_encode($gateway_options),
+            'gateways_options' => json_encode($gateway_fields),
         ]);
         if ($success) {
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => __('messages.request_success'),
+                'message' => __('messages.request_success', ['name' => 'Withdrawal']),
             ]);
         } else {
             return response()->json([
                 'status' => false,
                 'status_code' => 400,
-                'message' => __('messages.request_failed'),
+                'message' => __('messages.request_failed', ['name' => 'Withdrawal']),
             ]);
         }
     }
