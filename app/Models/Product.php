@@ -112,6 +112,18 @@ class Product extends Model
             ->get();
     }
 
+    public function scopeWithTrendingScore($query)
+    {
+        return $query->selectRaw("
+        *,
+        (0.50 * order_count) + (0.30 * views) + (0.20 * (
+            SELECT COUNT(*) 
+            FROM wishlists 
+            WHERE wishlists.product_id = products.id
+        )) as trending_score
+    ");
+    }
+
     public function scopeLowStock($query, $threshold = 10)
     {
         return $query->whereHas('variants', function ($variantQuery) use ($threshold) {
