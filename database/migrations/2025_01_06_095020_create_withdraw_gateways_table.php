@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('withdraw_gateways', function (Blueprint $table) {
             $table->id();
             $table->string('name'); // Method name (e.g., "PayPal", "Bank Transfer")
-            $table->longText('fields')->nullable()->comment('stored as JSON');
+            $table->json('fields')->nullable()->comment('stored as JSON');
             $table->integer('status')->default(1)->comment('1=active, 0=inactive');
             $table->timestamps();
         });

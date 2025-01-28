@@ -114,6 +114,13 @@ class OrderService
                     $specialPrice = $variant->special_price ?: $basePrice;
 
                    if (!empty($product) && !empty($variant)) {
+
+                       // product flash sale info
+                       $product_flash_sale_id = null;
+                       if (!empty($product->flashSale)){
+                           $product_flash_sale_id = $product->flashSale?->id;
+                       };
+
                        // store discount calculate
                        $storeDiscount = ($itemData['store_discount_type'] === 'percentage')
                            ? ($specialPrice * $itemData['store_discount_rate'] / 100)
@@ -150,6 +157,9 @@ class OrderService
 
 
 
+                       dd($product->flashSale->id);
+
+
                        dd($system_commission, $product->store);
 
                        // tax calculate
@@ -173,8 +183,10 @@ class OrderService
                            'product_id' => $product->id,
                            'product_sku' => $variant->sku,
                            'behaviour' => $product->behaviour,
+
                            'variant_details' => $variant->attributes,
-                           'product_campaign_id' => $itemData['product_campaign_id'],
+                           'product_campaign_id' => $product_flash_sale_id,
+
                            'store_discount_type' => $itemData['store_discount_type'],
                            'store_discount_rate' => $itemData['store_discount_rate'],
                            'store_discount_amount' => $storeDiscount, // store discount amount

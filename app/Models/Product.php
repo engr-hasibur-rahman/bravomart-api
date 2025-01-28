@@ -207,4 +207,9 @@ class Product extends Model
         );
     }
 
+    public function flashSaleProduct()
+    {
+        return $this->hasOne(FlashSaleProduct::class, 'product_id');
+    }
+    
 }
