@@ -531,7 +531,7 @@ class PermissionAdminSeeder extends Seeder
                             'submenu' => [
                                 [
                                     'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_FLASH_SALE_MANAGE->value,
-                                    'PermissionTitle' => 'List',
+                                    'PermissionTitle' => 'All Campaigns',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'update', 'delete', 'others'],
@@ -542,7 +542,7 @@ class PermissionAdminSeeder extends Seeder
                                 ],
                                 [
                                     'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value,
-                                    'PermissionTitle' => 'Join Deals Requests',
+                                    'PermissionTitle' => 'Join Campaign Requests',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'delete', 'update', 'others'],

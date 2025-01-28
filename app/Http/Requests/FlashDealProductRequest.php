@@ -27,6 +27,7 @@ class FlashDealProductRequest extends FormRequest
             'flash_sale_id' => 'required|exists:flash_sales,id',
             'products.*.product_id' => 'required|exists:products,id',
             'store_id' => 'nullable|exists:stores,id',
+            'creator_type' => 'required|string',
         ];
     }
 
@@ -38,6 +39,7 @@ class FlashDealProductRequest extends FormRequest
             'products.*.product_id.required' => __('validation.required', ['attribute' => 'Products']),
             'products.*.product_id.exists' => __('validation.exists', ['attribute' => 'Products']),
             'store_id.exists' => __('validation.exists', ['attribute' => 'Store']),
+            'creator_type.required' => __('validation.required', ['attribute' => 'Flash Sale']),
         ];
     }
 
