@@ -109,7 +109,7 @@ class OrderService
                     // find the product
                    $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                     // Validate product variant
-                    $variant = ProductVariant::find($itemData['variant_details']['variant_id']);
+                    $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
                     $basePrice = $variant->price;
                     $specialPrice = $variant->special_price ?: $basePrice;
 
@@ -117,18 +117,28 @@ class OrderService
 
                        // product flash sale info
                        $product_flash_sale_id = null;
+                       $flash_sale_discount_type = null;
+                       $flash_sale_discount_amount = null;
+                       $flash_sale_product_creator_type = null;
+                       $product_flash_sale_discount_rate = null;
+
                        if (!empty($product->flashSale)){
                            $product_flash_sale_id = $product->flashSale?->id;
+                           $flash_sale_discount_type = $product->flashSale->discount_type;
+                           $flash_sale_discount_amount = $product->flashSale->discount_amount;
+                           $product_flash_sale_discount_rate = $product->flashSale->discount_amount;
                        };
 
-                       // store discount calculate
-                       $storeDiscount = ($itemData['store_discount_type'] === 'percentage')
-                           ? ($specialPrice * $itemData['store_discount_rate'] / 100)
-                           : $itemData['store_discount_amount'];
-                       // admin discount calculate
-                       $adminDiscount = ($itemData['admin_discount_type'] === 'percentage')
-                           ? ($specialPrice * $itemData['admin_discount_rate'] / 100)
-                           : $itemData['admin_discount_amount'];
+                       // flash sale product info
+                       if (!empty($product->flashSaleProduct)){
+                           $flash_sale_product_creator_type = $product->flashSaleProduct?->creator_type;
+                       };
+
+                       // store discount calculate per product wise
+                       $storeDiscount = ($flash_sale_discount_type === 'percentage') ? ($specialPrice * $flash_sale_discount_amount / 100) : $flash_sale_discount_amount;
+                       // admin discount calculate per product wise
+                       $adminDiscount = ($itemData['admin_discount_type'] === 'percentage') ? ($specialPrice * $itemData['admin_discount_rate'] / 100) : $itemData['admin_discount_amount'];
+
 
                        // Calculate final price
                        $finalPrice = $specialPrice - $storeDiscount - $adminDiscount;
@@ -148,7 +158,6 @@ class OrderService
                        // check store type
                        if ($product->store){
                           $store_subscription_type = $product->store?->subscription_type;
-
                           // if store commission type commission
                            if($store_subscription_type  === 'commission'){
 
@@ -156,11 +165,6 @@ class OrderService
                        }
 
 
-
-                       dd($product->flashSale->id);
-
-
-                       dd($system_commission, $product->store);
 
                        // tax calculate
                        $store_tax_amount = 5; // $itemData['tax_percent'];
@@ -187,12 +191,16 @@ class OrderService
                            'variant_details' => $variant->attributes,
                            'product_campaign_id' => $product_flash_sale_id,
 
-                           'store_discount_type' => $itemData['store_discount_type'],
-                           'store_discount_rate' => $itemData['store_discount_rate'],
-                           'store_discount_amount' => $storeDiscount, // store discount amount
+                           // store discount
+                           'store_discount_type' => $flash_sale_discount_type,
+                           'store_discount_rate' => $product_flash_sale_discount_rate,
+                           'store_discount_amount' => $storeDiscount,
+
+                           // admin discount amount
                            'admin_discount_type' => $itemData['admin_discount_type'],
                            'admin_discount_rate' => $itemData['admin_discount_rate'],
-                           'admin_discount_amount' => $adminDiscount, // admin discount amount
+                           'admin_discount_amount' => $adminDiscount,
+
                            'base_price' =>  $basePrice,
                            'price' => $finalPrice,
                            'quantity' => $itemData['quantity'],

@@ -10,7 +10,7 @@ class FlashSaleProduct extends Model
     use HasFactory;
 
     protected $fillable = [
-        'flash_sale_id', 'product_id', 'store_id', 'created_by', 'updated_by',
+        'flash_sale_id', 'product_id', 'store_id', 'creator_type', 'created_by', 'updated_by',
     ];
 
     public function flashSale()

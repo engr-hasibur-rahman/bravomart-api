@@ -15,7 +15,7 @@ class FlashSale extends Model
         'thumbnail_image',
         'cover_image',
         'discount_type',
-        'discount_price',
+        'discount_amount',
         'special_price',
         'purchase_limit',
         'start_time',
