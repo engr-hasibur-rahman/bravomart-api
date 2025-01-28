@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FlashDealProductRequest;
-use App\Http\Resources\Admin\FlashSaleResource;
+use App\Http\Resources\Admin\AdminFlashSaleResource;
 use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
@@ -45,7 +45,7 @@ class SellerFlashSaleProductManageController extends Controller
     public function getValidFlashSales()
     {
         $flashSales = $this->flashSaleService->getValidFlashSales();
-        return response()->json(FlashSaleResource::collection($flashSales));
+        return response()->json(AdminFlashSaleResource::collection($flashSales));
     }
 
 }

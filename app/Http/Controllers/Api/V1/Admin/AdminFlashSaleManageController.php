@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FlashSaleRequest;
-use App\Http\Resources\Admin\FlashSaleResource;
+use App\Http\Resources\Admin\AdminFlashSaleDetailsResource;
+use App\Http\Resources\Admin\AdminFlashSaleResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Services\FlashSaleService;
@@ -57,7 +58,13 @@ class AdminFlashSaleManageController extends Controller
     public function getFlashSale()
     {
         $flashSales = $this->flashSaleService->getAdminFlashSales();
-        return response()->json(FlashSaleResource::collection($flashSales));
+        return response()->json(AdminFlashSaleResource::collection($flashSales));
+    }
+
+    public function FlashSaleDetails(Request $request)
+    {
+        $flashSales = $this->flashSaleService->getFlashSaleById($request->id);
+        return response()->json(AdminFlashSaleDetailsResource::collection($flashSales));
     }
 
     public function changeStatus(Request $request)
@@ -135,7 +142,7 @@ class AdminFlashSaleManageController extends Controller
                 'status_code' => 200,
                 'message' => __('messages.update_success', ['name' => 'Flash sale product request']),
             ]);
-        } else{
+        } else {
             return response()->json([
                 'status' => false,
                 'status_code' => 400,
@@ -143,6 +150,7 @@ class AdminFlashSaleManageController extends Controller
             ]);
         }
     }
+
     public function rejectFlashSaleProducts(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -156,14 +164,14 @@ class AdminFlashSaleManageController extends Controller
                 'errors' => $validator->errors()
             ]);
         }
-        $success = $this->flashSaleService->rejectFlashSaleProductRequest($request->ids,$request->rejection_reason);
+        $success = $this->flashSaleService->rejectFlashSaleProductRequest($request->ids, $request->rejection_reason);
         if ($success) {
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.update_success', ['name' => 'Flash sale product request']),
             ]);
-        } else{
+        } else {
             return response()->json([
                 'status' => false,
                 'status_code' => 400,

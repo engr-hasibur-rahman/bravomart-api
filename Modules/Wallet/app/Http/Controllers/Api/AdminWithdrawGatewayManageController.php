@@ -3,9 +3,11 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\WithdrawGateway;
-use Dotenv\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Modules\Wallet\app\Transformers\WithdrawGatewayListResource;
 
 class AdminWithdrawGatewayManageController extends Controller
 {
@@ -13,12 +15,13 @@ class AdminWithdrawGatewayManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'fields' => 'nullable|json',
-            'status' => 'required|integer|in:0,1',
+            'fields' => 'nullable|array',
+            'status' => 'nullable|integer|in:0,1',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
+        $request['fields'] = json_encode($request['fields']);
         $success = WithdrawGateway::create($request->all());
         if ($success) {
             return response()->json([
@@ -43,7 +46,8 @@ class AdminWithdrawGatewayManageController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => $gateways
+                'data' => WithdrawGatewayListResource::collection($gateways),
+                'meta' => new PaginationResource($gateways)
             ]);
         } else {
             return response()->json([

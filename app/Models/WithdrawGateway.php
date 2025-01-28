@@ -11,9 +11,6 @@ class WithdrawGateway extends Model
         'fields',     // JSON fields (e.g., API keys, account details)
         'status',     // Status (1 = active, 0 = inactive)
     ];
-    protected $casts = [
-        'fields' => 'array',
-    ];
 
     public function records()
     {
