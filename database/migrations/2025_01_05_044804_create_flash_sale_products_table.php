@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('flash_sale_id');
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('store_id')->nullable();
+            $table->string('creator_type')->nullable()->comment('store or admin');
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');

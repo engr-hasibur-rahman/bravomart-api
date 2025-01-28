@@ -22,7 +22,7 @@ class FlashSaleWithProductPublicResource extends JsonResource
             "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "cover_image" => ImageModifier::generateImageUrl($this->cover_image),
             "discount_type" => $this->discount_type,
-            "discount_price" => $this->discount_price,
+            "discount_amount" => $this->discount_amount,
             "special_price" => $this->special_price,
             "start_time" => $this->start_time,
             "end_time" => $this->end_time,
@@ -37,8 +37,8 @@ class FlashSaleWithProductPublicResource extends JsonResource
 
                 // Calculate the discounted price based on discount type
                 $discountedPrice = $this->discount_type === 'percentage'
-                    ? $originalPrice - ($originalPrice * ($this->discount_price / 100))
-                    : $originalPrice - $this->discount_price;
+                    ? $originalPrice - ($originalPrice * ($this->discount_amount / 100))
+                    : $originalPrice - $this->discount_amount;
 
                 // Limit discounted_price to 2 decimal places
                 $discountedPrice = round($discountedPrice, 2);

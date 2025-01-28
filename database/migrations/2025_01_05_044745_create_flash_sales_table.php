@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('thumbnail_image')->nullable();
             $table->string('cover_image')->nullable();
             $table->string('discount_type')->nullable()->comment('percentage or amount');
-            $table->decimal('discount_price', 10, 2)->nullable()->comment('discounted price');
+            $table->decimal('discount_amount', 10, 2)->nullable();
             $table->decimal('special_price', 10, 2)->nullable()->comment('special price for product');
             $table->unsignedInteger('purchase_limit')->nullable();
             $table->timestamp('start_time')->nullable();
