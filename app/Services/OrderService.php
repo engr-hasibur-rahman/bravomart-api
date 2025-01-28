@@ -150,6 +150,9 @@ class OrderService
 
 
 
+                       dd($product);
+
+
                        dd($system_commission, $product->store);
 
                        // tax calculate
