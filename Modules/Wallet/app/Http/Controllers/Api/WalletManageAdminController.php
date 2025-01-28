@@ -45,9 +45,10 @@ class WalletManageAdminController extends Controller
         if ($wallet_type !== 'all') {
             $wallets->where('owner_type', $wallet_type);
         }
+//dd($request->'status',!empty($request->input('status')));
 
         // Filter by status if provided
-        if (!empty($request->input('status')) && $request->input('status') !== '') {
+        if ($request->status !== '') {
             $wallets->where('status', $request->input('status'));
         }
 
