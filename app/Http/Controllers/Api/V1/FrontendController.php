@@ -1012,7 +1012,7 @@ class FrontendController extends Controller
             'coupon_code' => 'required|string|exists:coupon_lines,coupon_code',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json($validator->errors());
         }
         // Retrieve the coupon by the provided coupon code
         $coupon = CouponLine::where('coupon_code', $request->coupon_code)->first();
@@ -1022,7 +1022,7 @@ class FrontendController extends Controller
                 'status' => false,
                 'status_code' => 404,
                 'message' => __('messages.coupon_not_found'),
-            ], 404);
+            ]);
         }
         // Check if the coupon is restricted to a specific customer
         if ($coupon->customer_id !== null) {
@@ -1037,7 +1037,7 @@ class FrontendController extends Controller
                     'status' => false,
                     'status_code' => 404,
                     'message' => __('messages.coupon_does_not_belong'),
-                ], 404);
+                ]);
             }
         }
 
@@ -1047,7 +1047,7 @@ class FrontendController extends Controller
                 'status' => false,
                 'status_code' => 400,  // Bad Request (Coupon hasn't started yet)
                 'message' => __('messages.coupon_inactive'),
-            ], 400);
+            ]);
         }
 
         if ($coupon->end_date && $coupon->end_date < now()) {
@@ -1064,7 +1064,7 @@ class FrontendController extends Controller
                 'status' => false,
                 'status_code' => 400,
                 'message' => __('messages.coupon_limit_reached'),
-            ], 400);
+            ]);
         }
         if ($coupon->coupon->status !== 1 && $coupon->status !== 1) {
             return response()->json([
