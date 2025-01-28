@@ -32,6 +32,7 @@ use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\ProductSuggestionPublicResource;
 use App\Http\Resources\Product\RelatedProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
+use App\Http\Resources\Product\TrendingProductPublicResource;
 use App\Http\Resources\Product\WeekBestProductPublicResource;
 use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
@@ -437,6 +438,51 @@ class FrontendController extends Controller
             ]);
         }
     }
+    public function getTrendingProducts(Request $request)
+    {
+        try {
+            $query = Product::query();
+
+            // If an ID is provided, fetch the specific product
+            if (isset($request->id)) {
+                $product = $query
+                    ->with(['variants', 'store'])
+                    ->findOrFail($request->id); // Throws 404 if product not found
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.data_found'),
+                    'data' => new ProductDetailsPublicResource($product),
+                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
+                ]);
+            }
+
+            // Fetch trending products with scores
+            $trendingProducts = $query
+                ->withTrendingScore() // Use the trending score scope
+                ->with(['variants', 'store'])
+                ->where('status', 'approved')
+                ->whereNull('deleted_at')
+                ->orderByDesc('trending_score') // Sort by calculated trending score
+                ->paginate($request->per_page ?? 10);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => TrendingProductPublicResource::collection($trendingProducts),
+                'meta' => new PaginationResource($trendingProducts)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
 
     public function getWeekBestProducts(Request $request)
     {
