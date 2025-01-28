@@ -3,6 +3,7 @@
 use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\V1\Seller\SellerWithdrawController;
 use Illuminate\Support\Facades\Route;
+use Modules\Wallet\app\Http\Controllers\Api\SellerAndDeliverymanWithdrawController;
 use Modules\Wallet\app\Http\Controllers\Api\WalletManageAdminController;
 use Modules\Wallet\app\Http\Controllers\Api\WalletCommonController;
 
@@ -16,17 +17,34 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
         Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_TRANSACTION->value]);
         Route::post('transactions-status/{id}', [WalletManageAdminController::class, 'transactionStatus']);
+
+        // withdraw gateway lists add
+        Route::group(['prefix' => 'withdraw/'], function () {
+            Route::get('/', [SellerAndDeliverymanWithdrawController::class, 'withdrawAllList']);
+            // gateway manage
+            Route::get('/gateway-list', [SellerAndDeliverymanWithdrawController::class, 'withdrawGatewayList']);
+            Route::post('/gateway-add', [SellerAndDeliverymanWithdrawController::class, 'withdrawGatewayAdd']);
+            // withdraw request manage
+            Route::post('/request-list', [SellerAndDeliverymanWithdrawController::class, 'withdrawRequestList']);
+            Route::post('/request-approve', [SellerAndDeliverymanWithdrawController::class, 'withdrawRequestApprove']);
+            Route::post('/request-reject', [SellerAndDeliverymanWithdrawController::class, 'withdrawRequestReject']);
+        });
+
     });
 
     // seller wallet routes
-    Route::prefix('seller/store/financial/wallet')->middleware(['permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value])->group(function () {
+    Route::prefix('seller/store/financial/')->middleware(['permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value])->group(function () {
         // seller wallet
-        Route::get('/', [WalletCommonController::class, 'myWallet']);
-        Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
-        Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
+        Route::group(['prefix' => 'wallet/'], function () {
+            Route::get('/', [WalletCommonController::class, 'myWallet']);
+            Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
+            Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
+        });
         // withdraw history
-        Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
-            Route::get('withdraw', [SellerWithdrawController::class, 'withdrawHistory']);
+        Route::group(['prefix' => 'withdraw/', 'middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
+            Route::get('/', [SellerAndDeliverymanWithdrawController::class, 'withdrawHistory']);
+            Route::post('/withdraw-request', [SellerAndDeliverymanWithdrawController::class, 'withdrawRequest']);
+            Route::post('/withdraw-request', [SellerAndDeliverymanWithdrawController::class, 'withdrawRequest']);
         });
     });
 

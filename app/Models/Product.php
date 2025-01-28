@@ -194,5 +194,10 @@ class Product extends Model
             'flash_sale_id'
         );
     }
+
+    public function flashSaleProduct()
+    {
+        return $this->hasOne(FlashSaleProduct::class, 'product_id');
+    }
     
 }
