@@ -194,7 +194,5 @@ class Product extends Model
             'flash_sale_id'
         );
     }
-
-
     
 }
