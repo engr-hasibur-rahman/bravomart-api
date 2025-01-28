@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Behaviour;
 use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\FlashSaleResource;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use App\Http\Resources\Com\Department\DepartmentListForDropdown;
@@ -13,10 +12,8 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
-use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
-use App\Http\Resources\Com\Store\StoreListResource;
 use App\Http\Resources\Com\Store\StorePublicListResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Http\Resources\Customer\CustomerPublicResource;
@@ -35,7 +32,7 @@ use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\ProductSuggestionPublicResource;
 use App\Http\Resources\Product\RelatedProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
-use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
+use App\Http\Resources\Product\WeekBestProductPublicResource;
 use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
@@ -431,6 +428,54 @@ class FrontendController extends Controller
                 'message' => __('messages.data_found'),
                 'data' => BestSellingPublicResource::collection($bestSellingProducts),
                 'meta' => new PaginationResource($bestSellingProducts)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getWeekBestProducts(Request $request)
+    {
+        try {
+            $query = Product::query();
+            // If an ID is provided, fetch the specific product
+            if (isset($request->id)) {
+                $product = $query
+                    ->with(['variants', 'store'])
+                    ->findOrFail($request->id); // Throws 404 if product not found
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.data_found'),
+                    'data' => new ProductDetailsPublicResource($product),
+                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
+                ]);
+            }
+            // Filter products created or updated in the last week
+            $lastWeek = now()->subWeek();
+            // Fetch products with the highest order count or rating in the last week
+            $weekBestProducts = $query
+                ->with(['variants', 'store'])
+                ->where('status', 'approved')
+                ->where('deleted_at', null)
+                ->where(function ($query) use ($lastWeek) {
+                    $query->where('created_at', '>=', $lastWeek)
+                        ->orWhere('updated_at', '>=', $lastWeek);
+                })
+                ->orderByDesc('order_count') // Sort by order count (or rating if needed)
+                ->paginate($request->per_page ?? 10);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => WeekBestProductPublicResource::collection($weekBestProducts),
+                'meta' => new PaginationResource($weekBestProducts)
             ]);
         } catch (\Exception $e) {
             return response()->json([

@@ -14,6 +14,13 @@ class CustomerDashboardResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'wishlist_count' => $this['wishlist_count'],
+            'total_orders' => $this['total_orders'],
+            'pending_orders' => $this['pending_orders'],
+            'canceled_orders' => $this['canceled_orders'],
+            'on_hold_products' => $this['on_hold_products'],
+            'recent_orders' => $this['recent_orders'],
+        ];
     }
 }

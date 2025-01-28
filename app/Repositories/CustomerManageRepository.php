@@ -18,11 +18,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManageRepository implements CustomerManageInterface
 {
-    protected $customer_id;
+
 
     public function __construct(protected Customer $customer)
     {
-        $this->customer_id = auth('api_customer')->user()->id;
+
     }
 
     public function register(array $data)
@@ -170,50 +170,51 @@ class CustomerManageRepository implements CustomerManageInterface
 
     public function getDashboard()
     {
+        $customer_id = auth('api_customer')->user()->id;
         return [
-            'wishlist_count' => $this->getWishlistCount(),
-            'total_orders' => $this->getTotalOrders(),
-            'pending_orders' => $this->getPendingOrders(),
-            'canceled_orders' => $this->getCanceledOrders(),
-            'on_hold_products' => $this->getOnHoldProducts(),
-            'recent_orders' => $this->getRecentOrders(),
+            'wishlist_count' => $this->getWishlistCount($customer_id),
+            'total_orders' => $this->getTotalOrders($customer_id),
+            'pending_orders' => $this->getPendingOrders($customer_id),
+            'canceled_orders' => $this->getCanceledOrders($customer_id),
+            'on_hold_products' => $this->getOnHoldProducts($customer_id),
+            'recent_orders' => $this->getRecentOrders($customer_id),
         ];
     }
 
-    protected function getWishlistCount()
+    protected function getWishlistCount($customer_id)
     {
-        return Wishlist::where('customer_id', $this->customer_id)->count();
+        return Wishlist::where('customer_id', $customer_id)->count();
     }
 
-    protected function getTotalOrders()
+    protected function getTotalOrders($customer_id)
     {
-        return Order::where('customer_id', $this->customer_id)->count();
+        return Order::where('customer_id', $customer_id)->count();
     }
 
-    protected function getPendingOrders()
+    protected function getPendingOrders($customer_id)
     {
-        return Order::where('customer_id', $this->customer_id)
+        return Order::where('customer_id', $customer_id)
             ->where('status', 'pending')
             ->count();
     }
 
-    protected function getCanceledOrders()
+    protected function getCanceledOrders($customer_id)
     {
-        return Order::where('customer_id', $this->customer_id)
+        return Order::where('customer_id', $customer_id)
             ->where('status', 'cancelled')
             ->count();
     }
 
-    protected function getOnHoldProducts()
+    protected function getOnHoldProducts($customer_id)
     {
-        return Order::where('customer_id', $this->customer_id)
+        return Order::where('customer_id', $customer_id)
             ->where('status', 'on_hold')
             ->count();
     }
 
-    protected function getRecentOrders()
+    protected function getRecentOrders($customer_id)
     {
-        return Order::where('customer_id', $this->customer_id)
+        return Order::where('customer_id', $customer_id)
             ->where('status', 'delivered')
             ->latest()
             ->limit(5)
