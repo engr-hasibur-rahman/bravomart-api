@@ -47,7 +47,7 @@ class WalletManageAdminController extends Controller
         }
 
         // Filter by status if provided
-        if ($request->has('status') && $request->input('status') !== '') {
+        if ($request->input('status') !== '') {
             $wallets->where('status', $request->input('status'));
         }
 
