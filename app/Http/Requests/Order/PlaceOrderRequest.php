@@ -69,7 +69,7 @@ class PlaceOrderRequest extends FormRequest
             'packages.*.items.*.admin_discount_rate' => 'nullable|numeric',
             'packages.*.items.*.admin_discount_amount' => 'nullable|numeric',
             // tax
-            'packages.*.items.*.tax_percent' => 'nullable',
+            'packages.*.items.*.tax_rate' => 'nullable',
             'packages.*.items.*.tax_amount' => 'nullable|numeric',
             // qty and price
             'packages.*.items.*.quantity' => 'required|integer|min:1',
