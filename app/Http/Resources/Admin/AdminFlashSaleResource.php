@@ -18,9 +18,10 @@ class AdminFlashSaleResource extends JsonResource
         return [
             "id" => $this->id,
             "title" => $this->title,
+            "cover_image" => ImageModifier::generateImageUrl($this->cover_image),
             "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "discount_type" => $this->discount_type,
-            "discount_price" => $this->discount_price,
+            "discount_amount" => $this->discount_amount,
             "special_price" => $this->special_price,
             "purchase_limit" => $this->purchase_limit,
             "start_time" => $this->start_time,
