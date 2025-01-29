@@ -135,13 +135,13 @@ class OrderService
                        };
 
                        // store discount calculate per product wise
-                       $storeDiscount = ($flash_sale_discount_type === 'percentage') ? ($specialPrice * $flash_sale_discount_amount / 100) : $flash_sale_discount_amount;
+                       $flash_sale_store_discount = ($flash_sale_discount_type === 'percentage') ? ($specialPrice * $flash_sale_discount_amount / 100) : $flash_sale_discount_amount;
                        // admin discount calculate per product wise
-                       $adminDiscount = ($itemData['admin_discount_type'] === 'percentage') ? ($specialPrice * $itemData['admin_discount_rate'] / 100) : $itemData['admin_discount_amount'];
+                       $flash_sale_admin_discount = ($itemData['admin_discount_type'] === 'percentage') ? ($specialPrice * $itemData['admin_discount_rate'] / 100) : $itemData['admin_discount_amount'];
 
 
                        // Calculate final price
-                       $finalPrice = $specialPrice - $storeDiscount - $adminDiscount;
+                       $finalPrice = $specialPrice - $flash_sale_admin_discount;
 
 
                        // get system commission & calculate Tax amount start
@@ -194,12 +194,12 @@ class OrderService
                            // store discount
                            'store_discount_type' => $flash_sale_discount_type,
                            'store_discount_rate' => $product_flash_sale_discount_rate,
-                           'store_discount_amount' => $storeDiscount,
+                           'store_discount_amount' => $flash_storeDiscount,
 
                            // admin discount amount
-                           'admin_discount_type' => $itemData['admin_discount_type'],
-                           'admin_discount_rate' => $itemData['admin_discount_rate'],
-                           'admin_discount_amount' => $adminDiscount,
+                           'admin_discount_type' => $flash_sale_discount_type,
+                           'admin_discount_rate' => $product_flash_sale_discount_rate,
+                           'admin_discount_amount' => $flash_storeDiscount,
 
                            'base_price' =>  $basePrice,
                            'price' => $finalPrice,
