@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminStoreRequest;
 use App\Http\Requests\SellerStoreRequest;
+use App\Http\Resources\Admin\AdminStoreDetailsResource;
 use App\Http\Resources\Admin\AdminStoreRequestResource;
 use App\Http\Resources\Admin\SellerWiseStoreForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -64,7 +65,8 @@ class AdminStoreManageController extends Controller
 
     public function show(Request $request)
     {
-        return $this->storeRepo->getStoreById($request->id);
+        $store = $this->storeRepo->getStoreById($request->id);
+        return response()->json(new AdminStoreDetailsResource($store));
     }
 
     public function sellerStores(Request $request)
@@ -127,6 +129,23 @@ class AdminStoreManageController extends Controller
             }
         } catch (\Exception $e) {
             throw $e;
+        }
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:com_merchant_stores,id',
+            'status' => 'required|in:0,1,2',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        $success = $this->storeRepo->changeStatus($request->all());
+        if ($success) {
+            return $this->success(__('messages.update_success', ['name' => 'Stores status']));
+        } else {
+            return $this->failed(__('messages.update_failed', ['name' => 'Stores status']));
         }
     }
 }

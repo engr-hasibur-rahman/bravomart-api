@@ -56,7 +56,7 @@ class StoreDetailsResource extends JsonResource
                 'enable_saling' => (bool)$this->enable_saling,
                 'meta_title' => $this->meta_title,
                 'meta_description' => $this->meta_description,
-                'meta_image' => $this->meta_image,
+                'meta_image' => ImageModifier::generateImageUrl($this->meta_image),
                 'status' => $this->status,
             ],
             'store_summary' => [

@@ -15,12 +15,18 @@ class StoreListResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
-            'area_id' => $this->area_id,
-            'merchant_id' => $this->merchant_id,
+            'area' => $this->area->name ?? null,
+            'merchant' => $this->merchant ? $this->merchant->first_name . '' . $this->merchant->last_name : null,
             'store_type' => $this->store_type,
-            'name' => $this->name,
+            'name' => $translation->isNotEmpty()
+                ? $translation->where('key', 'name')->first()?->value
+                : $this->name,
             'slug' => $this->slug,
             'phone' => $this->phone,
             'email' => $this->email,
@@ -28,7 +34,10 @@ class StoreListResource extends JsonResource
             'logo_url' => ImageModifier::generateImageUrl($this->logo),
             'banner' => $this->banner,
             'banner_url' => ImageModifier::generateImageUrl($this->banner),
-            'address' => $this->address,
+            'address' => $translation->isNotEmpty()
+                ? $translation->where('key', 'address')->first()?->value
+                : $this->address,
+            'tax' => $this->tax,
             'tax_number' => $this->tax_number,
             'is_featured' => $this->is_featured,
             'opening_time' => $this->opening_time,
@@ -44,9 +53,13 @@ class StoreListResource extends JsonResource
             'veg_status' => $this->veg_status,
             'off_day' => $this->off_day,
             'enable_saling' => $this->enable_saling,
-            'meta_title' => $this->meta_title,
-            'meta_description' => $this->meta_description,
-            'meta_image' => $this->meta_image,
+            'meta_title' => $translation->isNotEmpty()
+                ? $translation->where('key', 'meta_title')->first()?->value
+                : $this->meta_title,
+            'meta_description' => $translation->isNotEmpty()
+                ? $translation->where('key', 'meta_description')->first()?->value
+                : $this->meta_description,
+            'meta_image' => ImageModifier::generateImageUrl($this->meta_image),
             'status' => $this->status,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,

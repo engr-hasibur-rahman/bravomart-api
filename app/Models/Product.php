@@ -69,6 +69,11 @@ class Product extends Model
         return $this->morphMany(Translation::class, 'translatable');
     }
 
+    public function reviews()
+    {
+        return $this->morphMany(Review::class, 'reviewable');
+    }
+
     public function variants()
     {
         return $this->hasMany(ProductVariant::class, "product_id");
@@ -211,5 +216,5 @@ class Product extends Model
     {
         return $this->hasOne(FlashSaleProduct::class, 'product_id');
     }
-    
+
 }
