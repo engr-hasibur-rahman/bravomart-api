@@ -15,9 +15,13 @@ class AdminFlashSaleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "title" => $this->title,
+            "title" => $translation ? $translation->where('key', 'title')->first()?->value : $this->title,
             "cover_image" => ImageModifier::generateImageUrl($this->cover_image),
             "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "discount_type" => $this->discount_type,
