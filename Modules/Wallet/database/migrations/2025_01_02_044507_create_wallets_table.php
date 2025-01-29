@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('owner_id');  // Polymorphic ID (User ID or Customer ID)
+            $table->unsignedBigInteger('owner_id');  // Polymorphic ID (User ID or Customer ID or Store ID)
             $table->string('owner_type');  // Polymorphic type (User or Customer)
             $table->double('balance')->default(0);
             $table->tinyInteger('status')->default(1)->comment('0=inactive, 1=active');
