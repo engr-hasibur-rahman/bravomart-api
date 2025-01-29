@@ -141,7 +141,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_LIST->value]], function () {
                 Route::get('list', [AdminStoreManageController::class, 'index']);
                 Route::get('seller-stores', [AdminStoreManageController::class, 'sellerStores']);
-                Route::get('details', [AdminStoreManageController::class, 'show']);
+                Route::get('details/{id}', [AdminStoreManageController::class, 'show']);
             });
             // Store Add Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_ADD->value]], function () {
