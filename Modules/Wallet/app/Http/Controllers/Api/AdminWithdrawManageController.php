@@ -11,14 +11,36 @@ use Modules\Wallet\app\Transformers\AdminWithdrawListResource;
 
 class AdminWithdrawManageController extends Controller
 {
-    public function withdrawAllList()
+    public function withdrawAllList(Request $request)
     {
         if (auth('api')->user()->activity_scope !== 'system_level') {
-            unauthorized_response();
+            return unauthorized_response();
         }
-        $withdraws = WithdrawalRecord::with(['user', 'withdrawGateway'])
-            ->latest()->paginate(10);
-        if (!empty($withdraws)) {
+
+        $query = WithdrawalRecord::with(['user', 'withdrawGateway']);
+
+        if (isset($request->user)) {
+            $query->whereHas('user', function ($userQuery) use ($request) {
+                $userQuery->where('first_name', 'like', "%{$request->user}%")
+                ->orWhere('last_name','like',"%{$request->user}%");
+            });
+        }
+
+        if (isset($request->amount)) {
+            $query->where('amount', $request->amount);
+        }
+
+        if (isset($request->status)) {
+            $query->where('status', $request->status);
+        }
+
+        if (isset($request->start_date) && isset($request->end_date)) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        $withdraws = $query->latest()->paginate($request->per_page ?? 10);
+
+        if ($withdraws->isNotEmpty()) {
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

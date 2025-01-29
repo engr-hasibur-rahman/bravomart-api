@@ -12,6 +12,20 @@ class AdminWithdrawListResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this->id,
+            "amount" => $this->amount,
+            "fee" => $this->fee,
+            "withdraw_gateway_name" => $this->withdrawGateway->name,
+            "gateways_options" => json_decode($this->gateways_options),
+            "status" => $this->status,
+            "details" => $this->details,
+            "approved_by" => $this->approved_by,
+            "approved_at" => $this->approved_at,
+            "created_at" => $this->created_at,
+            "updated_at" => $this->updated_at,
+            "user" => $this->user->first_name . '' . $this->user->last_name,
+
+        ];
     }
 }
