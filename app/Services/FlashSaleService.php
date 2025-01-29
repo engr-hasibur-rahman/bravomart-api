@@ -2,12 +2,8 @@
 
 namespace App\Services;
 
-use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Models\FlashSale;
 use App\Models\FlashSaleProduct;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class FlashSaleService
 {
