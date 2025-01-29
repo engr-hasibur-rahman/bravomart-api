@@ -55,10 +55,14 @@ class AdminFlashSaleManageController extends Controller
         }
     }
 
-    public function getFlashSale()
+    public function getFlashSale(Request $request)
     {
-        $flashSales = $this->flashSaleService->getAdminFlashSales();
-        return response()->json(AdminFlashSaleResource::collection($flashSales));
+        $flashSales = $this->flashSaleService->getAdminFlashSales($request->per_page);
+        return response()->json([
+                'data' => AdminFlashSaleResource::collection($flashSales),
+                'meta' => new PaginationResource($flashSales)
+            ]
+        );
     }
 
     public function FlashSaleDetails(Request $request)
