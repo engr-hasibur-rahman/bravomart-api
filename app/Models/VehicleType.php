@@ -17,10 +17,12 @@ class VehicleType extends Model
         'description',
         'status',
     ];
+
     public $translationKeys = [
         'name',
         'description',
     ];
+
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')

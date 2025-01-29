@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\PermissionKey;
+use App\Http\Controllers\Admin\AdminReviewManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBannerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
@@ -101,7 +102,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
 
-         // Orders & Reviews Manage
+        // Orders & Reviews Manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_ALL->value]], function () {
             Route::group(['prefix' => 'orders'], function () {
                 Route::get('/', [AdminOrderManageController::class, 'allOrders']);
@@ -110,7 +111,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
         });
-
 
 
         // Product manage
@@ -400,6 +400,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('change-status', [AdminStoreNoticeController::class, 'changeStatus']); // Change notice status
             Route::delete('remove/{id}', [AdminStoreNoticeController::class, 'destroy']); // Delete a specific notice
         });
+        Route::group(['prefix' => 'feedback-control/'], function () {
+            Route::group(['prefix' => 'review/'], function () {
+                Route::get('/', [AdminReviewManageController::class, 'index']);
+                Route::post('approve', [AdminReviewManageController::class, 'approveReview']);
+                Route::post('reject', [AdminReviewManageController::class, 'rejectReview']);
+                Route::delete('remove/{id}', [AdminReviewManageController::class, 'destroy']);
+            });
+        });
         // Admin Deliveryman management
         Route::prefix('deliveryman/')->group(function () {
             // delivery man manage
@@ -429,8 +437,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('reviews', [AdminDeliverymanReviewManageController::class, 'index']);
             });
         });
-
-
         // FINANCIAL WITHDRAWALS management
         Route::group(['prefix' => 'financial/'], function () {
             Route::group(['prefix' => 'withdraw/'], function () {
