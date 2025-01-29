@@ -49,9 +49,9 @@ class FlashSaleService
         return true;
     }
 
-    public function getAdminFlashSales()
+    public function getAdminFlashSales($per_page = 10)
     {
-        return FlashSale::with('products.product')->get();
+        return FlashSale::paginate($per_page);
     }
 
     public function getFlashSaleById($id)
