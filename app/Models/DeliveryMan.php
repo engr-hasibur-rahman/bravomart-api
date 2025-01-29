@@ -25,6 +25,11 @@ class DeliveryMan extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function reviews()
+    {
+        return $this->morphMany(Review::class,'reviewable');
+    }
+
     public function store()
     {
         return $this->belongsTo(ComMerchantStore::class, 'store_id');

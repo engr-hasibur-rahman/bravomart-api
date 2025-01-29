@@ -22,12 +22,24 @@ class FlashSale extends Model
         'end_time',
         'status',
     ];
+    public $translationKeys = [
+        'title',
+        'description',
+    ];
+
     public function approvedProducts()
     {
         return $this->hasMany(FlashSaleProduct::class)->where('status', 'approved');
     }
+
     public function products()
     {
         return $this->hasMany(FlashSaleProduct::class);
+    }
+
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
     }
 }

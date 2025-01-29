@@ -58,7 +58,7 @@ class StoreManageRepository implements StoreManageInterface
         }
         // Apply sorting and pagination
         // Return the result
-        return $store
+        return $store->with(['merchant', 'area', 'related_translations'])
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
@@ -172,28 +172,11 @@ class StoreManageRepository implements StoreManageInterface
     public function getStoreById(int|string $id)
     {
         try {
-            $store = ComMerchantStore::findorfail($id);
-            $translations = $store->translations()->get()->groupBy('language');
-            // Initialize an array to hold the transformed data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->store->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
+            $store = ComMerchantStore::with(['related_translations', 'merchant', 'area'])->findorfail($id);
             if ($store) {
-                return response()->json([
-                    "data" => $store->toArray(),
-                    'translations' => $transformedData,
-                    "massage" => "Data was found"
-                ], 201);
+                return $store;
             } else {
-                return response()->json([
-                    "massage" => "Data was not found"
-                ], 404);
+                return false;
             }
         } catch (\Throwable $th) {
             throw $th;
@@ -490,10 +473,21 @@ class StoreManageRepository implements StoreManageInterface
                 ]);
             return $stores > 0;
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 404
-            ]);
+            return false;
+        }
+    }
+
+    public function changeStatus(array $data)
+    {
+        try {
+            $store = ComMerchantStore::where('id', $data['id'])
+                ->where('deleted_at', null)
+                ->update([
+                    'status' => $data['status']
+                ]);
+            return $store > 0;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 }

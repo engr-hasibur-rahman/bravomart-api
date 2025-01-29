@@ -25,6 +25,7 @@ class AdminFlashSaleManageController extends Controller
     public function createFlashSale(FlashSaleRequest $request): JsonResponse
     {
         $flashSale = $this->flashSaleService->createFlashSale($request->validated());
+        $this->flashSaleService->storeTranslation($request, $flashSale, 'App\Models\FlashSale', $this->flashSaleService->translationKeys());
         if ($flashSale) {
             return response()->json([
                 'status' => true,
@@ -42,6 +43,7 @@ class AdminFlashSaleManageController extends Controller
     public function updateFlashSale(FlashSaleRequest $request): JsonResponse
     {
         $flashSale = $this->flashSaleService->updateFlashSale($request->all());
+        $this->flashSaleService->updateTranslation($request, $flashSale, 'App\Models\FlashSale', $this->flashSaleService->translationKeys());
         if ($flashSale) {
             return response()->json([
                 'success' => true,
@@ -68,7 +70,7 @@ class AdminFlashSaleManageController extends Controller
     public function FlashSaleDetails(Request $request)
     {
         $flashSales = $this->flashSaleService->getFlashSaleById($request->id);
-        return response()->json(AdminFlashSaleDetailsResource::collection($flashSales));
+        return response()->json(new AdminFlashSaleDetailsResource($flashSales));
     }
 
     public function changeStatus(Request $request)

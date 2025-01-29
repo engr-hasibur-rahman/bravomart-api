@@ -2,19 +2,26 @@
 
 namespace App\Services;
 
-use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Models\FlashSale;
 use App\Models\FlashSaleProduct;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Models\Translation;
+use Illuminate\Support\Facades\Request;
 
 class FlashSaleService
 {
+    public function __construct(protected FlashSale $flashSale, protected Translation $translation)
+    {
+    }
+
+    public function translationKeys(): mixed
+    {
+        return $this->flashSale->translationKeys;
+    }
+
     public function createFlashSale(array $data)
     {
-        FlashSale::create($data);
-        return true;
+        $flashSale = FlashSale::create($data);
+        return $flashSale->id;
     }
 
     public function updateFlashSale(array $data)
@@ -50,12 +57,12 @@ class FlashSaleService
 
     public function getAdminFlashSales($per_page = 10)
     {
-        return FlashSale::paginate($per_page);
+        return FlashSale::with('related_translations')->paginate($per_page);
     }
 
     public function getFlashSaleById($id)
     {
-        return FlashSale::where('id', $id)->get();
+        return FlashSale::with('related_translations')->where('id', $id)->first();
     }
 
     public function getSellerFlashSaleProducts()
@@ -80,7 +87,7 @@ class FlashSaleService
 
     public function getValidFlashSales()
     {
-        return FlashSale::with(['approvedProducts.product'])
+        return FlashSale::with(['approvedProducts.product', 'related_translations'])
             ->where('status', true) // Ensure the flash sale is active
             ->where('start_time', '<=', now()) // Valid only after the start time
             ->where('end_time', '>=', now()) // Valid only before the end time
@@ -107,7 +114,7 @@ class FlashSaleService
 
     public function getFlashSaleProductRequest()
     {
-        $requests = FlashSaleProduct::pending()->paginate(10);
+        $requests = FlashSaleProduct::with('related_translations')->pending()->paginate(10);
         return $requests;
     }
 
@@ -147,5 +154,74 @@ class FlashSaleService
         } else {
             return false;
         }
+    }
+
+    public function storeTranslation($request, int|string $refid, string $refPath, array $colNames): bool
+    {
+        $translations = [];
+        if ($request['translations']) {
+            foreach ($request['translations'] as $translation) {
+                foreach ($colNames as $key) {
+
+                    // Fallback value if translation key does not exist
+                    $translatedValue = $translation[$key] ?? null;
+
+                    // Skip translation if the value is NULL
+                    if ($translatedValue === null) {
+                        continue; // Skip this field if it's NULL
+                    }
+                    // Collect translation data
+                    $translations[] = [
+                        'translatable_type' => $refPath,
+                        'translatable_id' => $refid,
+                        'language' => $translation['language_code'],
+                        'key' => $key,
+                        'value' => $translatedValue,
+                    ];
+                }
+            }
+        }
+        if (count($translations)) {
+            $this->translation->insert($translations);
+        }
+        return true;
+    }
+
+    public function updateTranslation($request, int|string $refid, string $refPath, array $colNames): bool
+    {
+        $translations = [];
+        if ($request['translations']) {
+            foreach ($request['translations'] as $translation) {
+                foreach ($colNames as $key) {
+
+                    // Fallback value if translation key does not exist
+                    $translatedValue = $translation[$key] ?? null;
+
+                    // Skip translation if the value is NULL
+                    if ($translatedValue === null) {
+                        continue; // Skip this field if it's NULL
+                    }
+
+                    $trans = $this->translation->where('translatable_type', $refPath)->where('translatable_id', $refid)
+                        ->where('language', $translation['language_code'])->where('key', $key)->first();
+                    if ($trans != null) {
+                        $trans->value = $translatedValue;
+                        $trans->save();
+                    } else {
+                        $translations[] = [
+                            'translatable_type' => $refPath,
+                            'translatable_id' => $refid,
+                            'language' => $translation['language_code'],
+                            'key' => $key,
+                            'value' => $translatedValue,
+                        ];
+                    }
+                }
+            }
+        }
+        if (count($translations)) {
+            $this->translation->insert($translations);
+        }
+        return true;
     }
 }
