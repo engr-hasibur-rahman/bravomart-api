@@ -163,7 +163,7 @@ class FrontendController extends Controller
             ], 400);
         }
 
-        $maxSuggestions = 50; // Limit the number of suggestions
+        $maxSuggestions = 10; // Limit the number of suggestions
 
         // Search dynamically based on product title or description
         $keywordSuggestions = Product::query()
@@ -207,7 +207,7 @@ class FrontendController extends Controller
                             ->orWhere('attributes', 'like', "%{$query}%");
                     });
             })
-            ->with(['variants:id,product_id,sku,price'])
+            ->with(['variants:id,product_id,sku,price,stock_quantity'])
 //            ->limit($maxSuggestions)
             ->get();
         return response()->json([

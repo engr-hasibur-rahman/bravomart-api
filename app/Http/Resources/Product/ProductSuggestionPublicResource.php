@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,21 +16,20 @@ class ProductSuggestionPublicResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type' => 'product',
             'id' => $this->id,
+            'store' => $this->store->name,
             'name' => $this->name,
-            'image' => $this->image,
             'slug' => $this->slug,
-            'price' => $this->price,
-            'variants' => $this->whenLoaded('variants', function () {
-                return $this->variants->map(function ($variant) {
-                    return [
-                        'id' => $variant->id,
-                        'sku' => $variant->sku,
-                        'price' => $variant->price,
-                    ];
-                });
-            }),
+            'description' => $this->description,
+            'image' => ImageModifier::generateImageUrl($this->image),
+            'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
+            'price' => optional($this->variants->first())->price,
+            'special_price' => optional($this->variants->first())->special_price,
+            'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
+            'discount_percentage' => $this->variants->isNotEmpty() && optional($this->variants->first())->price > 0
+                ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
+                : null,
+            'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
         ];
     }
 }

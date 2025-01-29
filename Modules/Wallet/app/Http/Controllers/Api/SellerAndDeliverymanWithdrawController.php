@@ -13,13 +13,30 @@ use Modules\Wallet\app\Transformers\WithdrawListResource;
 
 class SellerAndDeliverymanWithdrawController extends Controller
 {
-    public function withdrawList()
+    public function withdrawAllList(Request $request)
     {
-        $withdraws = WithdrawalRecord::with('withdrawGateway')
-            ->where('user_id', auth('api')->user()->id)
-            ->latest()
-            ->paginate(10);
-        if (!empty($withdraws)) {
+        if (auth('api')->user()->activity_scope !== 'system_level') {
+            return unauthorized_response();
+        }
+
+        $query = WithdrawalRecord::with(['withdrawGateway'])
+            ->where('user_id', auth('api')->user()->id);
+
+        if (isset($request->amount)) {
+            $query->where('amount', $request->amount);
+        }
+
+        if (isset($request->status)) {
+            $query->where('status', $request->status);
+        }
+
+        if (isset($request->start_date) && isset($request->end_date)) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        $withdraws = $query->latest()->paginate(10);
+
+        if ($withdraws->isNotEmpty()) {
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
