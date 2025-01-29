@@ -25,9 +25,14 @@ class OrderDetail extends Model
         'admin_discount_amount',
         'price',
         'quantity',
-        'tax_percent',
+        'line_total_excluding_tax',
+        'tax_rate',
         'tax_amount',
+        'total_tax_amount',
         'line_total_price',
+        'admin_commission_type',
+        'admin_commission_rate',
+        'admin_commission_amount',
     ];
 
     public function order_package()

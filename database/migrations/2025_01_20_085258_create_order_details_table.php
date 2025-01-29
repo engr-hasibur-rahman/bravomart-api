@@ -28,12 +28,18 @@ return new class extends Migration
             $table->string('admin_discount_type')->nullable(); // percent/ fixed
             $table->decimal('admin_discount_rate')->nullable(); // 2% or 100-USD
             $table->decimal('admin_discount_amount')->nullable(); // 100
-            $table->decimal('base_price')->nullable(); // product main price
-            $table->decimal('price')->nullable();
+            $table->decimal('base_price')->nullable(); // Original price of the product.
+            $table->decimal('price')->nullable(); // after any discounts
             $table->decimal('quantity')->nullable();
-            $table->decimal('tax_percent')->nullable();
+            $table->decimal('line_total_excluding_tax')->nullable();
+            $table->decimal('tax_rate')->nullable();
             $table->decimal('tax_amount')->nullable();
+            $table->decimal('total_tax_amount')->nullable(); // Total tax amount based on quantity
             $table->decimal('line_total_price')->nullable();
+            // admin commission amount and type
+            $table->string('admin_commission_type')->nullable();
+            $table->decimal('admin_commission_rate', 8, 2)->default(0.00);
+            $table->decimal('admin_commission_amount', 8, 2)->default(0.00);
             $table->timestamps();
         });
 
