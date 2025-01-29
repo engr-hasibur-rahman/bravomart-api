@@ -3,6 +3,7 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ComMerchantStore;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ use Modules\Wallet\app\Transformers\WalletTransactionListResource;
 
 class WalletCommonController extends Controller
 {
-    public function myWallet()
+    public function myWallet(Request $request)
     {
          // check which guard is being used
         if (auth()->guard('api_customer')->check()) {
@@ -29,7 +30,20 @@ class WalletCommonController extends Controller
         }
 
         //  wallets for the authenticated user
-        $wallets = Wallet::forOwner($user)->first();
+        if ($user->activity_scope === 'store_level'){
+            $store =ComMerchantStore::find($request->store_id);
+
+            if (!$store) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Store not found.',
+                ], 404);
+            }
+
+            $wallets = Wallet::forOwner($store)->first();
+        }else{
+            $wallets = Wallet::forOwner($user)->first();
+        }
 
         if (!$wallets) {
             return response()->json([
@@ -145,7 +159,22 @@ class WalletCommonController extends Controller
         }
 
         // user's wallet
-        $wallet = Wallet::forOwner($user)->first();
+        if ($user->activity_scope === 'store_level'){
+            $store =ComMerchantStore::find($request->store_id);
+
+            if (!$store) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Store not found.',
+                ], 404);
+            }
+
+            $wallet = Wallet::forOwner($store)->first();
+        }else{
+            $wallet = Wallet::forOwner($user)->first();
+        }
+
+
         if (!$wallet) {
             return response()->json(['message' => 'Wallet not found'], 404);
         }

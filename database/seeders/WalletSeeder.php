@@ -16,7 +16,28 @@ class WalletSeeder extends Seeder
     {
         Wallet::create([
             "owner_id" => 1,
-            "owner_type" => 'App\Models\User',
+            "owner_type" => 'App\Models\ComMerchantStore',
+            "balance" => 100,
+            "status" => 1,
+            "created_at" => Carbon::now(),
+            "updated_at" => Carbon::now(),
+        ]);
+
+        WalletTransaction::create([
+            "wallet_id" => 2,
+            "transaction_ref" => '123456789',
+            "transaction_details" => 'test info',
+            "amount" => 100,
+            "type" => 'credit',
+            "purpose" => 'check amount',
+            "status" => 1,
+            "created_at" => Carbon::now(),
+            "updated_at" => Carbon::now(),
+        ]);
+
+        Wallet::create([
+            "owner_id" => 2,
+            "owner_type" => 'App\Models\ComMerchantStore',
             "balance" => 100,
             "status" => 1,
             "created_at" => Carbon::now(),

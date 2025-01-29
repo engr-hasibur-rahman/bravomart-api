@@ -27,7 +27,7 @@ class ProductStorePublicResource extends JsonResource
             "address" => $this->address,
             "latitude" => $this->latitude,
             "longitude" => $this->longitude,
-            "vat_tax_number" => $this->vat_tax_number,
+            "tax_number" => $this->tax_number,
             "meta_title" => $this->meta_title,
             "meta_description" => $this->meta_description,
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),

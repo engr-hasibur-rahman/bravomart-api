@@ -29,7 +29,7 @@ class StoreListResource extends JsonResource
             'banner' => $this->banner,
             'banner_url' => ImageModifier::generateImageUrl($this->banner),
             'address' => $this->address,
-            'vat_tax_number' => $this->vat_tax_number,
+            'tax_number' => $this->tax_number,
             'is_featured' => $this->is_featured,
             'opening_time' => $this->opening_time,
             'closing_time' => $this->closing_time,
