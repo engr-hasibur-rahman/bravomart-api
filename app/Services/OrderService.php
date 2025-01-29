@@ -125,15 +125,24 @@ class OrderService
                            $flash_sale_discount_type = $product->flashSale->discount_type;
                            $flash_sale_discount_amount = $product->flashSale->discount_amount;
                            $product_flash_sale_discount_rate = $product->flashSale->discount_amount;
-                           if (is_null($flash_sale_discount_amount)){
+
+                           // Check if the flash sale has expired
+                           $flash_sale_start_time = $product->flashSale->start_time;
+                           $flash_sale_end_time = $product->flashSale->end_time;
+
+                           // Check if current time is within the flash sale period
+                           $current_time = now(); // Get the current time
+                           $is_expired = $current_time->gt($flash_sale_end_time); // Check if current time is greater than the end time
+
+                           if ($is_expired) {
+                               // Flash sale has expired
+                               $product_flash_sale_id = null;
+                               $flash_sale_discount_type = null;
                                $flash_sale_discount_amount = 0;
+                               $product_flash_sale_discount_rate = 0;
                            }
                        };
 
-                       // flash sale product info
-                       if (!empty($product->flashSaleProduct)){
-                           $flash_sale_product_creator_type = $product->flashSaleProduct?->creator_type;
-                       };
 
                        // store and admin discount calculate per product wise
                        // $flash_sale_store_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100) : $flash_sale_discount_amount;
@@ -142,35 +151,6 @@ class OrderService
 
                        // Calculate final price
                        $finalPrice = $basePrice - $flash_sale_admin_discount;
-
-
-                       // Get system commission
-                       $system_commission = SystemCommission::latest()->first();
-
-                       // Initialize commission variables
-                       $system_commission_type = null;
-                       $system_commission_amount = 0.00;
-                       $admin_commission_amount = 0.00;
-
-                       // calculate commission
-                       if (isset($system_commission) && $system_commission->commission_enabled === true) {
-                           // Check store type
-                           if ($product->store) {
-                               $store_subscription_type = $product->store?->subscription_type;
-                               // If store is commission-based
-                               if ($store_subscription_type === 'commission') {
-                                   $system_commission_type = $system_commission->commission_type;
-                                   $system_commission_amount = $system_commission->commission_amount;
-
-                                   // Calculate admin commission based on type
-                                   if ($system_commission_type === 'percentage') {
-                                       $admin_commission_amount = ($finalPrice * $system_commission_amount) / 100.00;
-                                   } elseif ($system_commission_type === 'fixed') {
-                                       $admin_commission_amount = $system_commission_amount;
-                                   }
-                               }
-                           }
-                       }
 
 
                        // after any discounts
@@ -188,6 +168,34 @@ class OrderService
 
                        // Final line total price based on quantity
                        $line_total_price = round(($finalPrice + $taxAmount) * $itemData['quantity'], 2);
+
+
+                       // Get system commission
+                       $system_commission = SystemCommission::latest()->first();
+                       // Initialize commission variables
+                       $system_commission_type = null;
+                       $system_commission_amount = 0.00;
+                       $admin_commission_amount = 0.00;
+                       // calculate commission
+                       if (isset($system_commission) && $system_commission->commission_enabled === true) {
+                           // Check store type
+                           if ($product->store) {
+                               $store_subscription_type = $product->store?->subscription_type;
+                               // If store is commission-based
+                               if ($store_subscription_type === 'commission') {
+                                   $system_commission_type = $system_commission->commission_type;
+                                   $system_commission_amount = $system_commission->commission_amount;
+
+                                   // Calculate admin commission based on type
+                                   if ($system_commission_type === 'percentage') {
+                                       $admin_commission_amount = ($line_total_excluding_tax * $system_commission_amount) / 100.00;
+                                   } elseif ($system_commission_type === 'fixed') {
+                                       $admin_commission_amount = $system_commission_amount;
+                                   }
+                               }
+                           }
+                       }
+
 
                        // create order details
                        OrderDetail::create([
