@@ -68,7 +68,7 @@ class AdminFlashSaleManageController extends Controller
     public function FlashSaleDetails(Request $request)
     {
         $flashSales = $this->flashSaleService->getFlashSaleById($request->id);
-        return response()->json(AdminFlashSaleDetailsResource::collection($flashSales));
+        return response()->json(new AdminFlashSaleDetailsResource($flashSales));
     }
 
     public function changeStatus(Request $request)

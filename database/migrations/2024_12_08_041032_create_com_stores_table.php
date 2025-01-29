@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('area_id')->nullable();
             $table->unsignedBigInteger('merchant_id')->nullable();
             $table->enum('store_type', array_map(fn($enum) => $enum->value, StoreType::cases()))->nullable(); //medicine/ furniture/ DOOR/ FOOD/ GROCERY
+            $table->decimal('tax', 5, 2)->default(0);
+            $table->string('tax_number')->nullable();
             $table->string('subscription_type', 50)->nullable();
             $table->string('admin_commission_type')->nullable(); // percent or amount
             $table->decimal('admin_commission_amount', 10, 2)->nullable();
@@ -28,7 +30,6 @@ return new class extends Migration {
             $table->text('address')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
-            $table->string('vat_tax_number')->nullable();
             $table->boolean('is_featured')->nullable()->default(false);
             $table->time('opening_time')->nullable();
             $table->time('closing_time')->nullable();

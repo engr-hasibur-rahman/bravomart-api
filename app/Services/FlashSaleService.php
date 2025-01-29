@@ -34,7 +34,6 @@ class FlashSaleService
                 'flash_sale_id' => $flashSaleId,
                 'product_id' => $product['product_id'],
                 'store_id' => $product['store_id'] ?? null,
-                'creator_type' => null,
                 'created_by' => auth('api')->id(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -52,7 +51,7 @@ class FlashSaleService
 
     public function getFlashSaleById($id)
     {
-        return FlashSale::where('id', $id)->get();
+        return FlashSale::where('id', $id)->first();
     }
 
     public function getSellerFlashSaleProducts()

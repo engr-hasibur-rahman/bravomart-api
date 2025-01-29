@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Customer\CustomerOrderController;
 use App\Http\Controllers\Api\V1\Customer\CustomerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Customer\CustomerReviewManageController;
 use App\Http\Controllers\Customer\OrderPaymentController;
 use App\Http\Controllers\Customer\PlaceOrderController;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,13 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         // order manage
         Route::group(['prefix' => 'orders/'], function () {
             Route::get('list', [CustomerOrderController::class, 'myOrders']);
+        });
+        Route::group(['prefix' => 'review/'], function () {
+            Route::get('/', [CustomerReviewManageController::class, 'index']);
+            Route::post('add', [CustomerReviewManageController::class, 'store']);
+            Route::get('details/{id}', [CustomerReviewManageController::class, 'show']);
+            Route::post('update', [CustomerReviewManageController::class, 'update']);
+            Route::delete('remove/{id}', [CustomerReviewManageController::class, 'destroy']);
         });
     });
 

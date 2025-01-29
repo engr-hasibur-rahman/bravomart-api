@@ -12,7 +12,7 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        if ($user->activity_scope === 'store_level'){
+        if ($user->activity_scope === 'delivery_level'){
             // Create a wallet for the user with initial balance
             Wallet::create([
                 'owner_id' => $user->id,
