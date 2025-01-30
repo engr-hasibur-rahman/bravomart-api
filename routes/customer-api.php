@@ -3,10 +3,10 @@
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerOrderController;
+use App\Http\Controllers\Api\V1\Customer\CustomerReviewManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\MediaController;
-use App\Http\Controllers\Customer\CustomerReviewManageController;
 use App\Http\Controllers\Customer\OrderPaymentController;
 use App\Http\Controllers\Customer\PlaceOrderController;
 use Illuminate\Support\Facades\Route;

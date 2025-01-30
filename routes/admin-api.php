@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\PermissionKey;
-use App\Http\Controllers\Admin\AdminReviewManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBannerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminOrderManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminReportAnalyticsManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreDisbursementController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
