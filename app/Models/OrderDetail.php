@@ -33,6 +33,7 @@ class OrderDetail extends Model
         'admin_commission_type',
         'admin_commission_rate',
         'admin_commission_amount',
+        'coupon_discount_amount',
     ];
 
     public function order_package()
