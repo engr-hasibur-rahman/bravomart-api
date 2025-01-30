@@ -44,7 +44,6 @@ class PlaceOrderRequest extends FormRequest
             'packages' => 'required|array',
             'packages.*.store_id' => 'required|exists:com_merchant_stores,id',
             'packages.*.area_id' => 'required|exists:com_areas,id',
-            'packages.*.order_type' => 'required',
             'packages.*.delivery_type' => 'required|in:standard_delivery,parcel,takeaway',
             'packages.*.shipping_type' => 'required|in:standard,express,freight',
             'packages.*.coupon_discount_amount_admin' => 'nullable|numeric',
@@ -52,7 +51,6 @@ class PlaceOrderRequest extends FormRequest
             'packages.*.flash_discount_amount_admin' => 'nullable|numeric',      
             'packages.*.shipping_charge' => 'nullable|numeric',
             'packages.*.additional_charge' => 'nullable|numeric',
-            'packages.*.order_amount' => 'required|numeric|min:0',
             // items
             'packages.*.items' => 'required|array',
             'packages.*.items.*.product_id' => 'required|exists:products,id',

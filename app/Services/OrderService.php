@@ -150,7 +150,10 @@ class OrderService
                 }
 
 
-                // shipping charge calculate
+           // shipping charge calculate
+           $order_shipping_charge = intval(com_option_get('order_shipping_charge')) ?? 0;
+            $order_additional_charge_amount = intval(com_option_get('order_additional_charge_amount')) ?? 0;
+
 
             //  packages and details
             foreach ($data['packages'] as $packageData) {
@@ -165,8 +168,8 @@ class OrderService
                     'product_discount_amount' => 0,
                     'flash_discount_amount_admin' => 0,
                     'coupon_discount_amount_admin' => 0,
-                    'shipping_charge' => $packageData['shipping_charge'],
-                    'additional_charge' => $packageData['additional_charge'],
+                    'shipping_charge' => $order_shipping_charge,
+                    'additional_charge' => $order_additional_charge_amount,
                     'is_reviewed' => false,
                     'status' => 'pending',
                 ]);
