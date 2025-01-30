@@ -116,60 +116,86 @@ class OrderService
                        // product flash sale info
                        $product_flash_sale_id = null;
                        $flash_sale_discount_type = null;
-                       $flash_sale_discount_amount = 0;
+                       $flash_sale_discount_amount = 0.00;
                        $flash_sale_product_creator_type = null;
-                       $product_flash_sale_discount_rate = 0;
+                       $product_flash_sale_discount_rate = 0.00;
 
                        if (!empty($product->flashSale) && isset($product->flashSale->discount_amount)){
                            $product_flash_sale_id = $product->flashSale?->id;
                            $flash_sale_discount_type = $product->flashSale->discount_type;
                            $flash_sale_discount_amount = $product->flashSale->discount_amount;
                            $product_flash_sale_discount_rate = $product->flashSale->discount_amount;
-                           if (is_null($flash_sale_discount_amount)){
+
+                           // Check if the flash sale has expired
+                           $flash_sale_start_time = $product->flashSale->start_time;
+                           $flash_sale_end_time = $product->flashSale->end_time;
+
+                           // Check if current time is within the flash sale period
+                           $current_time = now(); // Get the current time
+                           $is_expired = $current_time->gt($flash_sale_end_time); // Check if current time is greater than the end time
+
+                           if ($is_expired) {
+                               // Flash sale has expired
+                               $product_flash_sale_id = null;
+                               $flash_sale_discount_type = null;
                                $flash_sale_discount_amount = 0;
+                               $product_flash_sale_discount_rate = 0;
                            }
                        };
 
-                       // flash sale product info
-                       if (!empty($product->flashSaleProduct)){
-                           $flash_sale_product_creator_type = $product->flashSaleProduct?->creator_type;
-                       };
 
                        // store and admin discount calculate per product wise
                        // $flash_sale_store_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100) : $flash_sale_discount_amount;
-                       $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100) : $flash_sale_discount_amount;
+                       $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100.00) : $flash_sale_discount_amount;
 
 
                        // Calculate final price
                        $finalPrice = $basePrice - $flash_sale_admin_discount;
 
-                       // get system commission & calculate Tax amount start
-                       $system_commission = SystemCommission::latest()->first();
 
-                       // system commission calculate
-                       $system_commission_type = null;
-                       $system_commission_amount = 0;
+                       // after any discounts
+                       $after_any_discount_final_price = $finalPrice;
 
-                       if (isset($system_commission) && $system_commission->commission_enabled === true) {
-                           $system_commission_type = $system_commission->commission_type;
-                           $system_commission_amount = $system_commission->commission_amount;
-                       }
-
-                       // check store type
-                       if ($product->store){
-                          $store_subscription_type = $product->store?->subscription_type;
-                          // if store commission type commission
-                           if($store_subscription_type  === 'commission'){
-
-                           }
-                       }
+                       // total quantity and without tax line total price
+                       $line_total_excluding_tax =  $after_any_discount_final_price * $itemData['quantity'];
 
                        // vat/tax calculate
                        $store_tax_amount = $product->store?->tax;
-                       $taxAmount = $finalPrice * ($store_tax_amount / 100);
+                       $taxAmount = $finalPrice * ($store_tax_amount / 100.00);
 
-                       // final line total price
+                       // Total tax amount based on quantity
+                       $total_tax_amount = $taxAmount * $itemData['quantity'];
+
+                       // Final line total price based on quantity
                        $line_total_price = round(($finalPrice + $taxAmount) * $itemData['quantity'], 2);
+
+
+                       // Get system commission
+                       $system_commission = SystemCommission::latest()->first();
+                       // Initialize commission variables
+                       $system_commission_type = null;
+                       $system_commission_amount = 0.00;
+                       $admin_commission_amount = 0.00;
+                       // calculate commission
+                       if (isset($system_commission) && $system_commission->commission_enabled === true) {
+                           // Check store type
+                           if ($product->store) {
+                               $store_subscription_type = $product->store?->subscription_type;
+                               // If store is commission-based
+                               if ($store_subscription_type === 'commission') {
+                                   $system_commission_type = $system_commission->commission_type;
+                                   $system_commission_amount = $system_commission->commission_amount;
+
+                                   // Calculate admin commission based on type
+                                   if ($system_commission_type === 'percentage') {
+                                       $admin_commission_amount = ($line_total_excluding_tax * $system_commission_amount) / 100.00;
+                                   } elseif ($system_commission_type === 'fixed') {
+                                       $admin_commission_amount = $system_commission_amount;
+                                   }
+                               }
+                           }
+                       }
+
 
                        // create order details
                        OrderDetail::create([
@@ -194,12 +220,20 @@ class OrderService
                            'admin_discount_rate' => $product_flash_sale_discount_rate,
                            'admin_discount_amount' => $flash_sale_admin_discount,
 
+                           // price and qty
                            'base_price' =>  $basePrice,
-                           'price' => $finalPrice,
+                           'price' => $after_any_discount_final_price,
                            'quantity' => $itemData['quantity'],
-                           'tax_percent' => $itemData['tax_percent'],
+                           'line_total_excluding_tax' => $line_total_excluding_tax, // Total without tax
+                           'tax_rate' => $store_tax_amount,
                            'tax_amount' => $taxAmount,
-                           'line_total_price' => $line_total_price
+                           'total_tax_amount' => $total_tax_amount,
+                           'line_total_price' => $line_total_price,
+
+                           // admin commission
+                           'admin_commission_type' => $system_commission_type,
+                           'admin_commission_rate' => $system_commission_amount,
+                           'admin_commission_amount' => $admin_commission_amount,
                        ]);
                    }
 
