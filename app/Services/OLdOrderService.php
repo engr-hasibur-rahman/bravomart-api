@@ -17,7 +17,7 @@ use App\Models\ProductVariant;
 use App\Models\SystemCommission;
 use Illuminate\Support\Facades\DB;
 
-class OrderService
+class OLdOrderService
 {
     public function createOrder($data)
     {
@@ -71,7 +71,8 @@ class OrderService
                 'coupon_discount_amount_admin' => $total_discount_amount ?? 0, // total discount amount
 
                 'product_discount_amount' => $data['product_discount_amount'] ?? 0,
-                'flash_discount_amount_admin' => $data['flash_discount_amount_admin'] ?? 0,           
+                'flash_discount_amount_admin' => $data['flash_discount_amount_admin'] ?? 0,
+                'flash_disc_amt_store' => $data['flash_disc_amt_store'] ?? 0,
                 'shipping_charge' => $data['shipping_charge'] ?? 0,
                 'additional_charge_title' => $data['additional_charge_title'] ?? null,
                 'additional_charge_amt' => $data['additional_charge_amt'] ?? 0,
@@ -150,26 +151,27 @@ class OrderService
                 }
 
 
-           // shipping charge calculate
-           $order_shipping_charge = intval(com_option_get('order_shipping_charge')) ?? 0;
-            $order_additional_charge_amount = intval(com_option_get('order_additional_charge_amount')) ?? 0;
-
-
             //  packages and details
             foreach ($data['packages'] as $packageData) {
+
+                // Calculate discount to the store  (Store specific coupon discount)
+                $order_amount_for_store = calculateStoreShareWithDiscount($packageData['order_amount'], $total_order_amount, $total_discount_amount);
                 // create order package
                 $package = OrderPackage::create([
                     'order_id' => $order->id,
                     'store_id' => $packageData['store_id'],
+
                     'order_type' => 'regular', // if customer order create
                     'delivery_type' => $packageData['delivery_type'],
                     'shipping_type' => $packageData['shipping_type'],
-                    'order_amount' => 0,
-                    'product_discount_amount' => 0,
-                    'flash_discount_amount_admin' => 0,
-                    'coupon_discount_amount_admin' => 0,
-                    'shipping_charge' => $order_shipping_charge,
-                    'additional_charge' => $order_additional_charge_amount,
+
+                    'order_amount' =>  $order_amount_for_store > 0 ? $order_amount_for_store : $packageData['order_amount'], // Use the store-specific order amount or fall back to the original
+                    'coupon_discount_amount_admin' => $order_amount_for_store,  // Store specific coupon discount
+                    'product_discount_amount' => $packageData['product_discount_amount'],
+                    'flash_discount_amount_admin' => $packageData['flash_discount_amount_admin'],
+                    'flash_disc_amt_store' => $packageData['flash_disc_amt_store'],
+                    'shipping_charge' => $packageData['shipping_charge'],
+                    'additional_charge' => $packageData['additional_charge'],
                     'is_reviewed' => false,
                     'status' => 'pending',
                 ]);

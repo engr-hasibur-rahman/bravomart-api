@@ -22,15 +22,14 @@ return new class extends Migration
             $table->string('product_sku')->nullable();
             $table->json('variant_details')->nullable(); // product variants
             $table->unsignedBigInteger('product_campaign_id')->nullable();
-            $table->string('store_discount_type')->nullable(); // percent/ fixed
-            $table->decimal('store_discount_rate')->nullable(); // 2% or 100-USD
-            $table->decimal('store_discount_amount')->nullable();  // 100
+            $table->decimal('base_price')->nullable(); // Original price of the product.
             $table->string('admin_discount_type')->nullable(); // percent/ fixed
             $table->decimal('admin_discount_rate')->nullable(); // 2% or 100-USD
             $table->decimal('admin_discount_amount')->nullable(); // 100
-            $table->decimal('base_price')->nullable(); // Original price of the product.
             $table->decimal('price')->nullable(); // after any discounts
             $table->decimal('quantity')->nullable();
+            $table->decimal('line_total_price_with_qty')->nullable();
+            $table->decimal('coupon_discount_amount', 10, 2)->default(0);
             $table->decimal('line_total_excluding_tax')->nullable();
             $table->decimal('tax_rate')->nullable();
             $table->decimal('tax_amount')->nullable();

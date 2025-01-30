@@ -327,7 +327,7 @@ if (!function_exists('translate')) {
         }
         // Calculate the discount based on the discount type
         $discount = 0;
-        if ($coupon->discount_type === 'percent') {
+        if ($coupon->discount_type === 'percentage') {
             $discount = ($orderAmount * $coupon->discount) / 100;
         } elseif ($coupon->discount_type === 'fixed') {
             $discount = $coupon->discount;
@@ -340,6 +340,8 @@ if (!function_exists('translate')) {
         return [
             'discount_amount' => $discount,
             'final_order_amount' => $orderAmount - $discount,
+            'coupon_type' => $coupon->discount_type,
+            'discount_rate' => $coupon->discount,
         ];
     }
 

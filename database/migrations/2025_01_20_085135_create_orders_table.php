@@ -21,10 +21,9 @@ return new class extends Migration
             $table->decimal('order_amount')->nullable();
             $table->string('coupon_code')->nullable();
             $table->string('coupon_title')->nullable();
-            $table->decimal('coupon_disc_amt_admin')->nullable(); // admin set coupon discount amount
-            $table->decimal('product_disc_amt')->nullable();
-            $table->decimal('flash_disc_amt_admin')->nullable(); // admin set product for offer sell dis.
-            $table->decimal('flash_disc_amt_store')->nullable(); // seller  set product for offer sell dis.
+            $table->decimal('coupon_discount_amount_admin')->nullable(); // admin set coupon discount amount
+            $table->decimal('product_discount_amount')->nullable();
+            $table->decimal('flash_discount_amount_admin')->nullable(); // admin set product for offer sell dis.       
             $table->decimal('shipping_charge')->nullable(); // admin set shipping charge set
             $table->string('additional_charge_title')->nullable();
             $table->decimal('additional_charge_amt')->nullable();
