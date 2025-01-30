@@ -7,7 +7,9 @@ use App\Http\Requests\ReviewRequest;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Customer\CustomerReviewResource;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\Review;
+use App\Models\User;
 use App\Services\ReviewService;
 use Illuminate\Http\Request;
 
@@ -23,6 +25,7 @@ class CustomerReviewManageController extends Controller
         $filters = [
             "min_rating" => $request->min_rating,
             "max_rating" => $request->min_rating,
+            "reviewable_type" => $request->reviewable_type,
             "rating" => $request->rating,
             "status" => $request->status,
             "store_id" => $request->store_id,
@@ -45,6 +48,7 @@ class CustomerReviewManageController extends Controller
     {
         $customer_id = auth('api_customer')->user()->id;
         $order = Order::findorfail($request->order_id);
+
 
         $order_belongs_to_customer = $order->where('customer_id', $customer_id)->exists();
         if (!$order_belongs_to_customer) {
@@ -75,6 +79,29 @@ class CustomerReviewManageController extends Controller
                 'message' => 'This review already exists!'
             ]);
         }
+        if ($request->reviewable_type == 'product') {
+
+            $product = Product::find($request->reviewable_id);
+            if (!$product) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Product not found!'
+                ]);
+            }
+        }
+        if ($request->reviewable_type == 'delivery_man') {
+
+            $user = User::find($request->reviewable_id);
+            $is_deliveryman = $user->isDeliveryman();
+            if (!$is_deliveryman && $user) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 403,
+                    'message' => 'This user is not a delivery man!'
+                ]);
+            }
+        }
 
         $success = $this->reviewService->addReview($request->all());
         if ($success) {
@@ -92,23 +119,9 @@ class CustomerReviewManageController extends Controller
         }
     }
 
-    public function show()
-    {
-
-    }
-
-    public function update()
-    {
-
-    }
-
     public function toggleReaction()
     {
 
     }
 
-    public function destroy()
-    {
-
-    }
 }

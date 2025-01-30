@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,6 +15,23 @@ class AdminStoreRequestResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
+        return [
+            'id' => $this->id,
+            'area' => $this->area->name ?? null,
+            'merchant' => $this->merchant ? $this->merchant->first_name . '' . $this->merchant->last_name : null,
+            'store_type' => $this->store_type,
+            'name' => $translation->isNotEmpty()
+                ? $translation->where('key', 'name')->first()?->value
+                : $this->name,
+            'phone' => $this->phone,
+            'email' => $this->email,
+            'logo' => $this->logo,
+            'logo_url' => ImageModifier::generateImageUrl($this->logo),
+            'status' => $this->status,
+        ];
     }
 }
