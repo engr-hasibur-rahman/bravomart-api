@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Review;
+use App\Models\User;
 
 class ReviewService
 {
@@ -48,19 +49,14 @@ class ReviewService
         if (!auth('api_customer')->check()) {
             unauthorized_response();
         }
-        if ($data['reviewable_type'] == 'delivery_man') {
-            $is_deliveryman = User::
-        }
-
         // check reviewable type
         if ($data['reviewable_type'] === 'product') {
-            $reviewable_type = 'App\\Models\\Product';
+            $reviewable_type = 'App\Models\Product';
         } elseif ($data['reviewable_type'] === 'delivery_man') {
-            $reviewable_type = 'App\\Models\\User';
+            $reviewable_type = 'App\Models\User';
         } else {
             $reviewable_type = 'undefined';
         }
-
         // create review
         if (!empty($data)) {
             $review = Review::create([
@@ -105,10 +101,24 @@ class ReviewService
         if (isset($filters['store_id'])) {
             $query->where('store_id', $filters['store_id']);
         }
+        if (isset($filters['reviewable_type'])) {
+            if ($filters['reviewable_type'] === 'product') {
+                $reviewable_type = 'App\Models\Product';
+            } elseif ($filters['reviewable_type'] === 'delivery_man') {
+                $reviewable_type = 'App\Models\User';
+            } else {
+                $reviewable_type = 'undefined';
+            }
+            $query->where('reviewable_type', $reviewable_type);
+        }
         if (isset($filters['start_date']) && isset($filters['end_date'])) {
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
         return $query->latest()->paginate($filters['per_page'] ?? 10);
     }
 
+    public function reaction()
+    {
+
+    }
 }

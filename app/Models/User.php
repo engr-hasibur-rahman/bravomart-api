@@ -70,6 +70,11 @@ class User extends Authenticatable
         return $query->where('store_owner', true);
     }
 
+    public function isDeliveryman()
+    {
+        return $this->activity_scope === 'delivery_level';
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim("{$this->first_name} {$this->last_name}");
