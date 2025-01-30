@@ -17,8 +17,8 @@ class TopDealsPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'store' => $this->store->name,
-            'category' => $this->category->category_name,
+            'store' => $this->store->name ?? null,
+            'category' => $this->category->category_name ?? null,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,

@@ -144,6 +144,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['prefix' => 'financial/'], function () {
 
             });
+            // Review
+            Route::group(['prefix' => 'review/'], function () {
+
+            });
 
             // store settings
             Route::group(['prefix' => 'settings/'], function () {

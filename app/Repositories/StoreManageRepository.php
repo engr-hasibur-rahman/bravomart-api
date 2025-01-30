@@ -172,7 +172,7 @@ class StoreManageRepository implements StoreManageInterface
     public function getStoreById(int|string $id)
     {
         try {
-            $store = ComMerchantStore::with(['related_translations', 'merchant', 'area'])->findorfail($id);
+            $store = ComMerchantStore::with(['related_translations', 'merchant', 'area', 'activeSubscription'])->findorfail($id);
             if ($store) {
                 return $store;
             } else {

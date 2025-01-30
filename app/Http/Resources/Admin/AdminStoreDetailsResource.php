@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use App\Http\Resources\Translation\StoreTranslationResource;
 use App\Http\Resources\Translation\VehicleTypeTranslationResource;
 use Illuminate\Http\Request;
@@ -23,22 +24,27 @@ class AdminStoreDetailsResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "area" => $this->area,
-            'merchant' => [
+            "area" => new ComAreaListForDropdownResource($this->area),
+            'merchant' => $this->merchant ? [
                 'id' => $this->merchant->id,
                 'first_name' => $this->merchant->first_name,
                 'last_name' => $this->merchant->last_name,
                 'phone' => $this->merchant->phone,
                 'email' => $this->merchant->email,
+                'image' => ImageModifier::generateImageUrl($this->merchant->image),
                 'email_verified' => (bool)$this->merchant->email_verified,
                 'def_lang' => $this->merchant->def_lang,
                 'store_owner' => (bool)$this->merchant->store_owner,
                 'status' => $this->merchant->status,
-            ],
+            ] : null,
             "store_type" => $this->store_type,
             "tax" => $this->tax,
             "tax_number" => $this->tax_number,
             "subscription_type" => $this->subscription_type,
+            "subscription" => $this->subscription_type == 'subscription' && $this->activeSubscription
+                ? $this->activeSubscription->name
+                : null,
+
             "admin_commission_type" => $this->admin_commission_type,
             "admin_commission_amount" => $this->admin_commission_amount,
             "name" => $translation->isNotEmpty()
@@ -48,7 +54,9 @@ class AdminStoreDetailsResource extends JsonResource
             "phone" => $this->phone,
             "email" => $this->email,
             "logo" => $this->logo,
+            "logo_url" => ImageModifier::generateImageUrl($this->logo),
             "banner" => $this->banner,
+            "banner_url" => ImageModifier::generateImageUrl($this->banner),
             "address" => $translation->isNotEmpty()
                 ? $translation->where('key', 'address')->first()?->value
                 : $this->address,
@@ -71,7 +79,8 @@ class AdminStoreDetailsResource extends JsonResource
             "meta_description" => $translation->isNotEmpty()
                 ? $translation->where('key', 'meta_description')->first()?->value
                 : $this->meta_description,
-            "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
+            "meta_image" => $this->meta_image,
+            "meta_image_url" => ImageModifier::generateImageUrl($this->meta_image),
             "status" => $this->status,
             "created_by" => $this->created_by,
             "updated_by" => $this->updated_by,

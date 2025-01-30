@@ -107,9 +107,8 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Feedback Management                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case FEEDBACK_REVIEWS = 'reviews';
-    case FEEDBACK_QUESTIONS = 'questions-Chat';
-    case FEEDBACK_QUERIES = 'product-queries';
+    case ADMIN_FEEDBACK_REVIEWS = '/admin/feedback-control/review';
+    case ADMIN_FEEDBACK_QUESTIONS = '/admin/feedback-control/questions';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  User Permissions                                        //
@@ -258,6 +257,10 @@ enum PermissionKey: string
     //-----------Financial Management----------
     case SELLER_STORE_FINANCIAL_WALLET = '/seller/store/financial/wallet';
     case SELLER_STORE_FINANCIAL_WITHDRAWALS = '/seller/store/financial/withdraw';
+
+    //-----------Feedback Management----------
+    case SELLER_STORE_FEEDBACK_CONTROL_REVIEWS = '/seller/store/feedback-control/review';
+    case SELLER_STORE_FEEDBACK_CONTROL_QUESTIONS = '/seller/store/feedback-control/questions';
 
     //----------- Promotional control ----------
     case SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS = '/seller/store/promotional/flash/active-deals';
