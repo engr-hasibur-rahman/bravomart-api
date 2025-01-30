@@ -39,8 +39,15 @@ class CustomerReviewManageController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
+                'message' => __('messages.data_found'),
                 'data' => CustomerReviewResource::collection($reviews),
                 'meta' => new PaginationResource($reviews)
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.data_not_found')
             ]);
         }
     }
