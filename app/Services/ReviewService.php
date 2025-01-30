@@ -49,7 +49,7 @@ class ReviewService
             unauthorized_response();
         }
         if ($data['reviewable_type'] == 'delivery_man') {
-
+            $is_deliveryman = User::
         }
 
         // check reviewable type
