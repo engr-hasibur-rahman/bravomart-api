@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Review;
+use App\Models\ReviewReaction;
 use App\Models\User;
 
 class ReviewService
@@ -117,8 +118,32 @@ class ReviewService
         return $query->latest()->paginate($filters['per_page'] ?? 10);
     }
 
-    public function reaction()
+    public function reaction($reviewId, $reactionType)
     {
+        $userId = auth('api_customer')->user()->id;
+        $review = Review::findOrFail($reviewId);
+        $existingReaction = ReviewReaction::where('review_id', $reviewId)
+            ->where('user_id', $userId)
+            ->first();
 
+        if ($existingReaction) {
+            if ($existingReaction->reaction_type === $reactionType) {
+                $existingReaction->delete();
+                return true;
+            } else {
+                $existingReaction->update(['reaction_type' => $reactionType]);
+                return true;
+            }
+        }
+
+        ReviewReaction::create([
+            'review_id' => $reviewId,
+            'user_id' => $userId,
+            'reaction_type' => $reactionType,
+        ]);
+        return true;
     }
 }
+
+
+

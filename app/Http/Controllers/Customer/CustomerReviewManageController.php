@@ -12,6 +12,7 @@ use App\Models\Review;
 use App\Models\User;
 use App\Services\ReviewService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CustomerReviewManageController extends Controller
 {
@@ -119,9 +120,29 @@ class CustomerReviewManageController extends Controller
         }
     }
 
-    public function toggleReaction()
+    public function react(Request $request)
     {
-
+        $validator = Validator::make($request->all(), [
+            'review_id' => 'required|exists:reviews,id',
+            'reaction_type' => 'required|in:like,dislike',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        $success = $this->reviewService->reaction($request->review_id, $request->reaction_type);
+        if ($success) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Reaction'])
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.update_failed', ['name' => 'Reaction'])
+            ]);
+        }
     }
 
 }

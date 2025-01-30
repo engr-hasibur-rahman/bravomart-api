@@ -31,6 +31,7 @@ class AdminStoreDetailsResource extends JsonResource
                 'last_name' => $this->merchant->last_name,
                 'phone' => $this->merchant->phone,
                 'email' => $this->merchant->email,
+                'image' => ImageModifier::generateImageUrl($this->image),
                 'email_verified' => (bool)$this->merchant->email_verified,
                 'def_lang' => $this->merchant->def_lang,
                 'store_owner' => (bool)$this->merchant->store_owner,
