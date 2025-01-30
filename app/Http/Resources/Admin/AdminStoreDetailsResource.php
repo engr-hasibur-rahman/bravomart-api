@@ -41,6 +41,10 @@ class AdminStoreDetailsResource extends JsonResource
             "tax" => $this->tax,
             "tax_number" => $this->tax_number,
             "subscription_type" => $this->subscription_type,
+            "subscription" => $this->subscription_type == 'subscription' && $this->activeSubscription
+                ? $this->activeSubscription->name
+                : null,
+
             "admin_commission_type" => $this->admin_commission_type,
             "admin_commission_amount" => $this->admin_commission_amount,
             "name" => $translation->isNotEmpty()

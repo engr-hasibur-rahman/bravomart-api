@@ -122,25 +122,40 @@ class ReviewService
     {
         $userId = auth('api_customer')->user()->id;
         $review = Review::findOrFail($reviewId);
+
+        // Fetch existing reaction if any
         $existingReaction = ReviewReaction::where('review_id', $reviewId)
             ->where('user_id', $userId)
             ->first();
 
         if ($existingReaction) {
             if ($existingReaction->reaction_type === $reactionType) {
+                // Remove reaction and decrement count
                 $existingReaction->delete();
+                $review->decrement("{$reactionType}_count");
+
                 return true;
             } else {
+                // Switch reaction type (like <-> dislike)
+                $oldReactionType = $existingReaction->reaction_type;
                 $existingReaction->update(['reaction_type' => $reactionType]);
+
+                // Update counts
+                $review->increment("{$reactionType}_count");
+                $review->decrement("{$oldReactionType}_count");
+
                 return true;
             }
         }
 
+        // New reaction - add to database and increment count
         ReviewReaction::create([
             'review_id' => $reviewId,
             'user_id' => $userId,
             'reaction_type' => $reactionType,
         ]);
+
+        $review->increment("{$reactionType}_count");
         return true;
     }
 }
