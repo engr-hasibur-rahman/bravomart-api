@@ -58,7 +58,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         Route::group(['prefix' => 'review/'], function () {
             Route::get('/', [CustomerReviewManageController::class, 'index']);
             Route::post('add', [CustomerReviewManageController::class, 'submitReview']);
-            Route::post('{id}/reaction', [CustomerReviewManageController::class, 'toggleReaction']);
+            Route::post('reaction', [CustomerReviewManageController::class, 'react']);
         });
     });
 
