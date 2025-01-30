@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
+use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
 
 class ComMerchantStore extends Model
 {
@@ -70,13 +71,25 @@ class ComMerchantStore extends Model
 
     public function merchant()
     {
-        return $this->belongsTo(User::class, 'merchant_id','merchant_id');
+        return $this->belongsTo(User::class, 'merchant_id', 'merchant_id');
     }
 
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')
             ->where('translatable_type', self::class);
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(ComMerchantStoresSubscription::class, 'store_id', 'id');
+    }
+
+    public function activeSubscription()
+    {
+        return $this->hasOne(ComMerchantStoresSubscription::class, 'store_id', 'id')
+            ->where('status', 1)
+            ->latest(); // Ensure the latest subscription is retrieved
     }
 
     public function products()
