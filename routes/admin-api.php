@@ -147,7 +147,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_ADD->value]], function () {
                 Route::post('add', [AdminStoreManageController::class, 'store']);
                 Route::post('update', [AdminStoreManageController::class, 'update']);
-                Route::post('change-status',[AdminStoreManageController::class, 'changeStatus']);
+                Route::post('change-status', [AdminStoreManageController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [AdminStoreManageController::class, 'destroy']);
                 Route::get('deleted-records', [AdminStoreManageController::class, 'deletedRecords']);
             });

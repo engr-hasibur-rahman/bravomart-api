@@ -10,7 +10,7 @@ class ReviewService
 {
     public function getAllReviews($filters)
     {
-        $query = Review::with(['customer', 'reviewable', 'store', 'order']);
+        $query = Review::with(['customer', 'reviewable', 'store']);
 
         if (isset($filters['customer_name'])) {
             $query->whereHas('customer', function ($customerQuery) use ($filters) {
@@ -19,7 +19,14 @@ class ReviewService
             });
         }
         if (isset($filters['reviewable_type'])) {
-            $query->where('reviewable_type', $filters['reviewable_type']);
+            if ($filters['reviewable_type'] === 'product') {
+                $reviewable_type = 'App\Models\Product';
+            } elseif ($filters['reviewable_type'] === 'delivery_man') {
+                $reviewable_type = 'App\Models\User';
+            } else {
+                $reviewable_type = 'undefined';
+            }
+            $query->where('reviewable_type', $reviewable_type);
         }
 
         if (isset($filters['min_rating']) && isset($filters['max_rating'])) {
@@ -157,6 +164,16 @@ class ReviewService
 
         $review->increment("{$reactionType}_count");
         return true;
+    }
+
+    public function bulkApprove($ids)
+    {
+        if(!empty($ids)) {
+            $reviews = Review::whereIn('id', $ids)
+                ->where('status', 'pending')
+                ->where('status', '!=', 'rejected')
+                ->update(['status' => 'approved']);
+        }
     }
 }
 
