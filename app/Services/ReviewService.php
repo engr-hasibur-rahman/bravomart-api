@@ -44,9 +44,33 @@ class ReviewService
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
 
-
         // Paginate results
         return $query->latest()->paginate(10);
+    }
+
+    public function addReview($data)
+    {
+        if (auth('api_customer')->check()) {
+            unauthorized_response();
+        }
+        if (!empty($data)) {
+            $review = Review::create([
+                "order_id" => $data['order_id'],
+                "store_id" => $data['store_id'],
+                "reviewable_id" => $data['reviewable_id'],
+                "reviewable_type" => $data['reviewable_type'],
+                "customer_id" => auth('api_customer')->user()->id,
+                "review" => $data['review'],
+                "rating" => $data['rating'],
+            ]);
+            if ($review) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
 }
