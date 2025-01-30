@@ -406,7 +406,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('/', [AdminReviewManageController::class, 'index']);
                 Route::post('approve', [AdminReviewManageController::class, 'approveReview']);
                 Route::post('reject', [AdminReviewManageController::class, 'rejectReview']);
-                Route::delete('remove/{id}', [AdminReviewManageController::class, 'destroy']);
+                Route::delete('remove', [AdminReviewManageController::class, 'destroy']);
             });
         });
         // Admin Deliveryman management
