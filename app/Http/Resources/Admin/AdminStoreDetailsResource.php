@@ -25,7 +25,7 @@ class AdminStoreDetailsResource extends JsonResource
         return [
             "id" => $this->id,
             "area" => new ComAreaListForDropdownResource($this->area),
-            'merchant' => [
+            'merchant' => $this->merchant ? [
                 'id' => $this->merchant->id,
                 'first_name' => $this->merchant->first_name,
                 'last_name' => $this->merchant->last_name,
@@ -35,7 +35,7 @@ class AdminStoreDetailsResource extends JsonResource
                 'def_lang' => $this->merchant->def_lang,
                 'store_owner' => (bool)$this->merchant->store_owner,
                 'status' => $this->merchant->status,
-            ],
+            ] : null,
             "store_type" => $this->store_type,
             "tax" => $this->tax,
             "tax_number" => $this->tax_number,
