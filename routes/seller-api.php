@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
 use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
+use App\Http\Controllers\Api\V1\Seller\SellerReviewController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreDashboardManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreNoticeController;
@@ -145,8 +146,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
             });
             // Review
-            Route::group(['prefix' => 'review/'], function () {
-
+            Route::group(['prefix' => 'feedback-control/'], function () {
+                Route::group(['prefix' => 'review/', 'middleware' => 'permission:' . PermissionKey::SELLER_STORE_FEEDBACK_CONTROL_REVIEWS->value], function () {
+                    Route::get('/', [SellerReviewController::class, 'index']);
+                });
             });
 
             // store settings
