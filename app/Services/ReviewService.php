@@ -166,13 +166,40 @@ class ReviewService
         return true;
     }
 
-    public function bulkApprove($ids)
+    public function bulkApprove(array $ids)
     {
-        if(!empty($ids)) {
+        if (!empty($ids)) {
             $reviews = Review::whereIn('id', $ids)
                 ->where('status', 'pending')
                 ->where('status', '!=', 'rejected')
                 ->update(['status' => 'approved']);
+            return $reviews > 0;
+        } else {
+            return false;
+        }
+    }
+
+    public function bulkReject(array $ids)
+    {
+        if (!empty($ids)) {
+            $reviews = Review::whereIn('id', $ids)
+                ->where('status', 'pending')
+                ->where('status', '!=', 'approved')
+                ->update(['status' => 'rejected']);
+            return $reviews > 0;
+        } else {
+            return false;
+        }
+    }
+
+    public function bulkDelete(array $ids)
+    {
+        if (!empty($ids)) {
+            $reviews = Review::whereIn('id', $ids)
+                ->delete();
+            return $reviews > 0;
+        } else {
+            return false;
         }
     }
 }

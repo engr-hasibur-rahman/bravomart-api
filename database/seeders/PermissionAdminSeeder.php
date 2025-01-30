@@ -590,6 +590,44 @@ class PermissionAdminSeeder extends Seeder
                     ]
                 ],
 
+                // Feedback  Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Feedback Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view', 'insert', 'update', 'delete'],
+                    'translations' => [
+                        'en' => 'Feedback Management',
+                        'ar' => 'إدارة المدونة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_FEEDBACK_REVIEWS->value,
+                            'PermissionTitle' => 'Reviews',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Reviews',
+                                'ar' => ' قوائم الصفحات'
+                            ]
+                        ],
+
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_FEEDBACK_QUESTIONS->value,
+                            'PermissionTitle' => 'Questions',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Questions',
+                                'ar' => ' قوائم الصفحات'
+                            ]
+                        ]
+                    ]
+                ],
+
                 // Blog Management
                 [
                     'PermissionName' => '',

@@ -378,23 +378,23 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::FEEDBACK_QUESTIONS->value,
-                            'PermissionTitle' => 'Questions/Chat',
+                            'PermissionName' => PermissionKey::SELLER_STORE_FEEDBACK_CONTROL_REVIEWS->value,
+                            'PermissionTitle' => 'Reviews',
                             'activity_scope' => 'store_level',
                             'icon' => '',
                             'translations' => [
-                                'en' => 'Questions/Chat',
-                                'ar' => 'الأسئلة/الدردشة'
+                                'en' => 'Reviews',
+                                'ar' => '/الدردشة'
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::FEEDBACK_QUERIES->value,
-                            'PermissionTitle' => 'Product Queries',
+                            'PermissionName' => PermissionKey::SELLER_STORE_FEEDBACK_CONTROL_QUESTIONS->value,
+                            'PermissionTitle' => 'Questions',
                             'activity_scope' => 'store_level',
                             'icon' => '',
                             'translations' => [
-                                'en' => 'Product Queries',
-                                'ar' => 'استعلامات المنتج'
+                                'en' => 'Questions',
+                                'ar' => 'الأسئلة/الدردشة'
                             ]
                         ]
                     ]
