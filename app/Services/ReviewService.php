@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ComMerchantStore;
 use App\Models\Review;
 use App\Models\ReviewReaction;
 use App\Models\User;
@@ -123,6 +124,81 @@ class ReviewService
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
         return $query->latest()->paginate($filters['per_page'] ?? 10);
+    }
+
+    public function getSellerReviews($filters, $sellerId)
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+        $seller_stores = ComMerchantStore::where('merchant_id', $sellerId)->pluck('id');
+
+        $query = Review::with(['reviewable', 'store', 'customer'])->whereIn('store_id', $seller_stores->toArray());
+
+        if (isset($filters['min_rating']) && isset($filters['max_rating'])) {
+            $query->whereBetween('rating', [$filters['min_rating'], $filters['max_rating']]);
+        } elseif (isset($filters['min_rating'])) {
+            $query->where('rating', '>=', $filters['min_rating']);
+        } elseif (isset($filters['max_rating'])) {
+            $query->where('rating', '<=', $filters['max_rating']);
+        } elseif (isset($filters['rating'])) {
+            $query->where('rating', $filters['rating']);
+        }
+        if (isset($filters['store_id'])) {
+            $query->where('store_id', $filters['store_id']);
+        }
+        if (isset($filters['reviewable_type'])) {
+            if ($filters['reviewable_type'] === 'product') {
+                $reviewable_type = 'App\Models\Product';
+            } elseif ($filters['reviewable_type'] === 'delivery_man') {
+                $reviewable_type = 'App\Models\User';
+            } else {
+                $reviewable_type = 'undefined';
+            }
+            $query->where('reviewable_type', $reviewable_type);
+        }
+        if (isset($filters['start_date']) && isset($filters['end_date'])) {
+            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+        }
+        return $query->where('status', 'approved')->latest()->paginate($filters['per_page'] ?? 10);
+    }
+
+    public function getDeliverymanReviews($filters, $deliverymanId)
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+
+        $query = Review::with(['reviewable', 'store', 'customer'])
+            ->where('reviewable_type','App\Models\User')
+            ->whereIn('reviewable_id', $deliverymanId);
+
+        if (isset($filters['min_rating']) && isset($filters['max_rating'])) {
+            $query->whereBetween('rating', [$filters['min_rating'], $filters['max_rating']]);
+        } elseif (isset($filters['min_rating'])) {
+            $query->where('rating', '>=', $filters['min_rating']);
+        } elseif (isset($filters['max_rating'])) {
+            $query->where('rating', '<=', $filters['max_rating']);
+        } elseif (isset($filters['rating'])) {
+            $query->where('rating', $filters['rating']);
+        }
+        if (isset($filters['store_id'])) {
+            $query->where('store_id', $filters['store_id']);
+        }
+        if (isset($filters['reviewable_type'])) {
+            if ($filters['reviewable_type'] === 'product') {
+                $reviewable_type = 'App\Models\Product';
+            } elseif ($filters['reviewable_type'] === 'delivery_man') {
+                $reviewable_type = 'App\Models\User';
+            } else {
+                $reviewable_type = 'undefined';
+            }
+            $query->where('reviewable_type', $reviewable_type);
+        }
+        if (isset($filters['start_date']) && isset($filters['end_date'])) {
+            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+        }
+        return $query->where('status', 'approved')->latest()->paginate($filters['per_page'] ?? 10);
     }
 
     public function reaction($reviewId, $reactionType)
