@@ -12,6 +12,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\LowStockProductResource;
 use App\Http\Resources\Product\OutOfStockProductResource;
 use App\Http\Resources\Product\ProductListResource;
+use App\Http\Resources\Product\StoreWiseProductDropdownResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
@@ -223,7 +224,6 @@ class AdminProductManageController extends Controller
     }
 
 
-
     public function lowOrOutOfStockProducts(Request $request)
     {
         if ($request->stock_type == 'low_stock') {
@@ -290,4 +290,26 @@ class AdminProductManageController extends Controller
             ]);
         }
     }
+
+    public function getStoreWiseProducts(Request $request)
+    {
+        $query = Product::where('store_id', $request->store_id)
+            ->where('status', 'approved')
+            ->whereNull('deleted_at'); // Only fetch non-deleted products
+
+        // Apply search filter
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // Paginate results dynamically
+        $products = $query->select('id', 'name')->paginate(20);
+
+        return response()->json([
+            'status' => true,
+            'data' => StoreWiseProductDropdownResource::collection($products),
+            'meta' => new PaginationResource($products),
+        ]);
+    }
+
 }

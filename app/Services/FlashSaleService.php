@@ -185,7 +185,11 @@ class FlashSaleService
     public function getFlashSaleProductRequest()
     {
         $requests = FlashSaleProduct::with('related_translations')->pending()->paginate(10);
-        return $requests;
+        if (!empty($requests)) {
+            return $requests;
+        } else {
+            return null;
+        }
     }
 
     public function approveFlashSaleProductRequest(array $productIds): bool
