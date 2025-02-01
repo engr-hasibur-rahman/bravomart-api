@@ -1173,7 +1173,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Subscription Management',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'PackageCheck',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Subscription Management',
@@ -1218,42 +1218,16 @@ class PermissionAdminSeeder extends Seeder
 
                         // Admin Commission System
                         [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Commission System',
+                            'PermissionName' => PermissionKey::ADMIN_COMMISSION_SETTINGS->value,
+                            'PermissionTitle' => 'Commission Settings',
                             'activity_scope' => 'system_level',
-                            'icon' => 'Money',
-                            'options' => ['view'],
+                            'icon' => 'BadgePercent',
+                            'options' => ['view', 'update', 'others'],
                             'translations' => [
-                                'en' => 'Commission System',
+                                'en' => 'Commission Settings',
                                 'ar' => 'نظام عمولة المسؤول'
                             ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_COMMISSION_SETTINGS->value,
-                                    'PermissionTitle' => 'Commission Settings',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'update', 'others'],
-                                    'translations' => [
-                                        'en' => 'Commission Settings',
-                                        'ar' => 'إعدادات العمولة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_COMMISSION_HISTORY->value,
-                                    'PermissionTitle' => 'Commission History',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'others'],
-                                    'translations' => [
-                                        'en' => 'Commission History',
-                                        'ar' => 'تاريخ العمولة'
-                                    ]
-                                ]
-                            ]
                         ]
-
-
                     ]
                 ],
 
@@ -1273,7 +1247,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_PAYMENT_SETTINGS->value,
                             'PermissionTitle' => 'Payment Settings',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'CreditCard',
                             'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Payment Settings',
