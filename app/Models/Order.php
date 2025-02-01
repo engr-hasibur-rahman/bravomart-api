@@ -17,7 +17,7 @@ class Order extends Model
         'coupon_title',
         'coupon_discount_amount_admin',
         'product_discount_amount',
-        'flash_discount_amount_admin',     
+        'flash_discount_amount_admin',
         'shipping_charge',
         'additional_charge_title',
         'additional_charge_amt',
@@ -35,5 +35,15 @@ class Order extends Model
     public function orderPackages()
     {
         return $this->hasMany(OrderPackage::class, 'order_id', 'id');
+    }
+
+    public function order_details()
+    {
+        return $this->hasMany(OrderDetail::class, 'order_id', 'id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 }

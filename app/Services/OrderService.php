@@ -40,7 +40,6 @@ class OrderService
                     $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
                     // Add to total order amount
                     if (!empty($variant) && isset($variant->price)) {
-                        dump($variant->price);
                         $basePrice = $variant->price ?? 0;
                         $calculate_total_order_amount += $basePrice;
                     }
