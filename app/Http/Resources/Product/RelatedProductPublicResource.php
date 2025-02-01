@@ -16,7 +16,7 @@ class RelatedProductPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'store' => $this->store->name,
+            'store' => $this->store->name ?? null,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
