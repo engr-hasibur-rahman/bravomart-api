@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FlashDealProductRequest;
 use App\Http\Requests\FlashSaleRequest;
 use App\Http\Resources\Admin\AdminFlashSaleDetailsResource;
 use App\Http\Resources\Admin\AdminFlashSaleResource;
@@ -65,6 +66,30 @@ class AdminFlashSaleManageController extends Controller
                 'meta' => new PaginationResource($flashSales)
             ]
         );
+    }
+
+    public function adminAddProductToFlashSale(FlashDealProductRequest $request)
+    {
+        // check if the products are already in flash sale
+        $existingProducts = $this->flashSaleService->getExistingFlashSaleProducts($request->products);
+
+        if ($existingProducts) {
+            return response()->json($existingProducts);
+        }
+        $data = $this->flashSaleService->associateProductsToFlashSale($request->flash_sale_id, $request->products,$request->store_id);
+        if ($data) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.request_success', ['name' => 'Products'])
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.request_failed', ['name' => 'Products'])
+            ]);
+        }
     }
 
     public function FlashSaleDetails(Request $request)
