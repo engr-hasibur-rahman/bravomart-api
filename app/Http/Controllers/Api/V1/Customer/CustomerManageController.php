@@ -294,6 +294,46 @@ class CustomerManageController extends Controller
             'message' => __('messages.password_update_successful')
         ]);
     }
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required|string|min:8|max:15',
+            'new_password' => 'required|string|min:8|max:15|confirmed'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "message" => $validator->errors()
+            ], 422);
+        }
+
+        $result = $this->customerRepo->changePassword($request->only(['old_password', 'new_password']));
+
+        if ($result === 'incorrect_old_password') {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'Incorrect password!'
+            ], 400);
+        }
+
+        if (!$result) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.password_update_failed')
+            ], 500);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.password_update_successful')
+        ]);
+    }
+
 
     public function getProfile()
     {

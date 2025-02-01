@@ -18,6 +18,7 @@ class OrderPackage extends Model
         'product_discount_amount',
         'flash_discount_amount_admin',   
         'shipping_charge',
+        'additional_charge_name',
         'additional_charge',
         'is_reviewed',
         'status',

@@ -148,6 +148,24 @@ class CustomerManageRepository implements CustomerManageInterface
             ]);
         }
     }
+    public function changePassword(array $data)
+    {
+        $customer = $this->customer->where('email', auth('api_customer')->user()->email)->first();
+
+        if (!$customer || !Hash::check($data['old_password'], $customer->password)) {
+            return 'incorrect_old_password';
+        }
+
+        try {
+            $customer->password = Hash::make($data['new_password']);
+            $customer->password_changed_at = now();
+            $customer->save();
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 
     public function deactivateAccount()
     {

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminOrderReportResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 
 class AdminReportAnalyticsManageController extends Controller
@@ -50,57 +53,70 @@ class AdminReportAnalyticsManageController extends Controller
             'per_page' => $request->per_page
         ];
 
-        $query = Order::query();
+        $query = OrderDetail::query();
 
         if (isset($filters['search'])) {
-            $query->where('id', $filters['search']);
+            $query->where('order_id', $filters['search']);
         }
 
         if (isset($filters['type'])) {
-            $query->whereHas('order_details.store', function ($q) use ($filters) {
+            $query->whereHas('store', function ($q) use ($filters) {
                 $q->where('type', $filters['type']);
             });
         }
 
         if (isset($filters['area_id'])) {
-            $query->whereHas('order_details', function ($q) use ($filters) {
-                $q->where('area_id', $filters['area_id']);
-            });
+            $query->where('area_id', $filters['area_id']);
         }
 
         if (isset($filters['payment_gateway'])) {
-            $query->where('payment_gateway', $filters['payment_gateway']);
-        }
-
-        if (isset($filters['payment_status'])) {
-            $query->where('payment_status', $filters['payment_status']);
-        }
-
-        if (isset($filters['order_status'])) {
-            $query->where('status', $filters['order_status']);
-        }
-
-        if (isset($filters['store_id'])) {
-            $query->whereHas('order_details', function ($q) use ($filters) {
-                $q->where('store_id', $filters['store_id']);
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->where('payment_gateway', $filters['payment_gateway']);
             });
         }
 
+        if (isset($filters['payment_status'])) {
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->where('payment_status', $filters['payment_status']);
+            });
+        }
+
+        if (isset($filters['order_status'])) {
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->where('status', $filters['order_status']);
+            });
+        }
+
+        if (isset($filters['store_id'])) {
+            $query->where('store_id', $filters['store_id']);
+        }
+
         if (isset($filters['customer_id'])) {
-            $query->where('customer_id', $filters['customer_id']);
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->where('customer_id', $filters['customer_id']);
+            });
         }
 
         if (isset($filters['start_date']) && isset($filters['end_date'])) {
-            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+            });
         } elseif (isset($filters['start_date'])) {
-            $query->whereDate('created_at', '>=', $filters['start_date']);
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->whereDate('created_at', '>=', $filters['start_date']);
+            });
         } elseif (isset($filters['end_date'])) {
-            $query->whereDate('created_at', '<=', $filters['end_date']);
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->whereDate('created_at', '<=', $filters['end_date']);
+            });
         }
 
-        $orders = $query->with(['order_details'])->latest()->paginate($filters['per_page'] ?? 20);
+        $orderDetails = $query->with(['order.customer', 'store', 'area'])->latest()->paginate($filters['per_page'] ?? 20);
 
-        return response()->json($orders);
+        return response()->json([
+            'data' => AdminOrderReportResource::collection($orderDetails),
+            'meta' => new PaginationResource($orderDetails)
+        ]);
     }
 
 }
