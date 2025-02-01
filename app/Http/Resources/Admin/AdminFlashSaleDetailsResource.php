@@ -21,8 +21,8 @@ class AdminFlashSaleDetailsResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "title" => $translation->where('key', 'title')->first()?->value ?? $this->title,
-            "description" => $translation->where('key', 'description')->first()?->value ?? $this->description,
+            "title" =>  $this->title,
+            "description" => $this->description,
             "thumbnail_image" => $this->thumbnail_image,
             "cover_image" => $this->cover_image,
             "discount_type" => $this->discount_type,
