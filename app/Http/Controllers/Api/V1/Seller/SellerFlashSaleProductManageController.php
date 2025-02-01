@@ -20,7 +20,7 @@ class SellerFlashSaleProductManageController extends Controller
 
     public function addProductToFlashSale(FlashDealProductRequest $request)
     {
-        $success = $this->flashSaleService->associateProductsToFlashSale($request->flash_sale_id, $request->products,$request->store_id);
+        $success = $this->flashSaleService->associateProductsToFlashSale($request->flash_sale_id, $request->products, $request->store_id);
         if ($success) {
             return response()->json([
                 'status' => true,

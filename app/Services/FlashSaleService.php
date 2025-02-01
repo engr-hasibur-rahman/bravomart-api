@@ -30,7 +30,7 @@ class FlashSaleService
     {
         $flashSale = FlashSale::findorfail($data['id']);
         $flashSale->update($data);
-        return true;
+        return $flashSale->id;
     }
 
     public function deleteFlashSale($id)
@@ -96,10 +96,10 @@ class FlashSaleService
     {
         $existingProducts = Product::whereIn('id', $productIds)
             ->where('store_id', $storeId)
-            ->pluck('id') // Get only existing product IDs
+            ->pluck('id')
             ->toArray();
-
-        $missingProducts = array_diff($productIds, $existingProducts); // Find missing product IDs
+        // Find missing product IDs
+        $missingProducts = array_diff($productIds, $existingProducts);
 
         if (!empty($missingProducts)) {
             return [
