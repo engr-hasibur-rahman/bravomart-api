@@ -72,6 +72,9 @@ class AdminFlashSaleManageController extends Controller
     {
         // check the products exists in store or not
         $productsNotInStore = $this->flashSaleService->checkProductsExistInStore($request->store_id, $request->products);
+        if ($productsNotInStore) {
+            return response()->json($productsNotInStore);
+        }
         // check if the products are already in flash sale
         $existingProducts = $this->flashSaleService->getExistingFlashSaleProducts($request->products);
 
@@ -120,12 +123,22 @@ class AdminFlashSaleManageController extends Controller
 
     public function deleteFlashSale($id)
     {
-        $this->flashSaleService->deleteFlashSale($id);
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => __('messages.delete_success', ['name' => 'Flash sale']),
-        ]);
+        $flashSale = $this->flashSaleService->deleteFlashSale($id);
+        $flashSaleProducts = $this->flashSaleService->deleteFlashSaleProducts($id);
+        if ($flashSale && $flashSaleProducts) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.delete_success', ['name' => 'Flash sale']),
+            ]);
+        } else {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.delete_failed', ['name' => 'Flash sale']),
+            ]);
+        }
+
     }
 
     public function deactivateFlashSale()

@@ -40,6 +40,19 @@ class FlashSaleService
         return true;
     }
 
+    public function deleteFlashSaleProducts($id)
+    {
+        $flashSaleProducts = FlashSaleProduct::where('flash_sale_id', $id)->get();
+        if (!empty($flashSaleProducts)) {
+            foreach ($flashSaleProducts as $flashSaleProduct) {
+                $flashSaleProduct->delete();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId)
     {
         $bulkData = array_map(function ($product) use ($flashSaleId, $storeId) {
@@ -100,13 +113,11 @@ class FlashSaleService
             ->toArray();
         // Find missing product IDs
         $missingProducts = array_diff($productIds, $existingProducts);
-
         if (!empty($missingProducts)) {
             return [
                 'status' => false,
                 'status_code' => 422,
                 'message' => 'Some products do not exist in the given store.',
-                'missing_products' => $missingProducts,
             ];
         }
 
