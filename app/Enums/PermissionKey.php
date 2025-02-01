@@ -157,7 +157,6 @@ enum PermissionKey: string
     case ADMIN_SUBSCRIPTION_SELLER_PACKAGE_MANAGE = '/admin/business-operations/subscription/seller/list';
     case ADMIN_SUBSCRIPTION_SETTINGS = '/admin/business-operations/subscription/settings';
     case ADMIN_COMMISSION_SETTINGS = '/admin/business-operations/commission/settings';
-    case ADMIN_COMMISSION_HISTORY = '/admin/business-operations/commission/history';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              System management                                                           //

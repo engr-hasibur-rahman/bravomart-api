@@ -40,7 +40,7 @@ class OrderService
                     $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
                     // Add to total order amount
                     if (!empty($variant) && isset($variant->price)) {
-                        $basePrice = $variant->price ?? 0;
+                        $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
                         $calculate_total_order_amount += $basePrice;
                     }
                 }
@@ -108,7 +108,7 @@ class OrderService
                         // Validate product variant
                         $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
                         if (!empty($variant) && isset($variant->price)) {
-                            $basePrice = $variant->price;
+                            $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
                         }
 
                         if (!empty($product) && !empty($variant)) {
@@ -175,6 +175,7 @@ class OrderService
                 $package = OrderPackage::create([
                     'order_id' => $order->id,
                     'store_id' => $packageData['store_id'],
+                    'area_id' => $packageData['area_id'],
                     'order_type' => 'regular', // if customer order create
                     'delivery_type' => $packageData['delivery_type'],
                     'shipping_type' => $packageData['shipping_type'],
@@ -189,6 +190,13 @@ class OrderService
                     'status' => 'pending',
                 ]);
 
+
+                // set order package discount info
+                $order_package_total_amount = 0;
+                $product_discount_amount = 0;
+                $flash_discount_amount_admin = 0;
+                $coupon_discount_amount_admin = 0;
+
                  // per item calculate
                 foreach ($packageData['items'] as $itemData) {
                     // find area
@@ -198,10 +206,10 @@ class OrderService
                     // Validate product variant
                     $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
                     if (!empty($variant) && isset($variant->price)) {
-                        $basePrice = $variant->price;
+                        $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
                     }
 
-                   if (!empty($product) && !empty($variant)) {
+                    if (!empty($product) && !empty($variant)) {
                        // product flash sale info
                        $product_flash_sale_id = null;
                        $flash_sale_discount_type = null;
@@ -234,7 +242,6 @@ class OrderService
 
 
                        // store and admin discount calculate per product wise
-                       // $flash_sale_store_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100) : $flash_sale_discount_amount;
                        $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100.00) : $flash_sale_discount_amount;
 
 
@@ -311,7 +318,7 @@ class OrderService
 
 
                        // create order details
-                       OrderDetail::create([
+                     $order_details =  OrderDetail::create([
                            'store_id' => $product->store?->id,
                            'area_id' => $area->id,
                            'order_id' => $order->id,
@@ -347,10 +354,26 @@ class OrderService
                            'admin_commission_rate' => $system_commission_amount,
                            'admin_commission_amount' => $admin_commission_amount,
                        ]);
+
+
+                       // set order package discount info
+                       $order_package_total_amount += $order_details->line_total_price;
+                       $product_discount_amount += ($variant?->price - $variant?->special_price);
+                       $flash_discount_amount_admin += $order_details->admin_discount_amount;
+                       $coupon_discount_amount_admin += $order_details->coupon_discount_amount;
                    }
 
-                }
-            }
+                } // end order details
+
+                // update order package details
+                $package->order_amount = $order_package_total_amount; //order package total amount
+                $package->product_discount_amount = $product_discount_amount; // product coupon  discount
+                $package->flash_discount_amount_admin = $flash_discount_amount_admin;  // flash sale discount
+                $package->coupon_discount_amount_admin = $coupon_discount_amount_admin; // admin coupon  discount
+                $package->save();
+
+
+            } // end order package
 
             DB::commit();
             return $order;
