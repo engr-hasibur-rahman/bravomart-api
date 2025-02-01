@@ -150,9 +150,20 @@ class OrderService
                 }
 
 
-           // shipping charge calculate
-           $order_shipping_charge = intval(com_option_get('order_shipping_charge')) ?? 0;
-            $order_additional_charge_amount = intval(com_option_get('order_additional_charge_amount')) ?? 0;
+            // system commission
+            $system_commission = SystemCommission::latest()->first();
+            // shipping charge calculate
+            $order_shipping_charge = $system_commission->order_shipping_charge;
+            $order_additional_charge_enable = $system_commission->order_additional_charge_enable_disable;
+            $order_additional_charge_name = null;
+            $order_additional_charge_amount = 0;
+            // additional charge amount enable disable check
+           if($order_additional_charge_enable === true){
+               $order_additional_charge_name = $system_commission->order_additional_charge_name;
+               $order_additional_charge_amount = $system_commission->order_additional_charge_amount;
+           }
+
+
 
 
             //  packages and details
@@ -169,6 +180,7 @@ class OrderService
                     'flash_discount_amount_admin' => 0,
                     'coupon_discount_amount_admin' => 0,
                     'shipping_charge' => $order_shipping_charge,
+                    'additional_charge_name' => $order_additional_charge_name,
                     'additional_charge' => $order_additional_charge_amount,
                     'is_reviewed' => false,
                     'status' => 'pending',
@@ -267,8 +279,6 @@ class OrderService
                        $line_total_price = $line_total_excluding_tax + $total_tax_amount;
 
 
-                       // Get system commission
-                       $system_commission = SystemCommission::latest()->first();
                        // Initialize commission variables
                        $system_commission_type = null;
                        $system_commission_amount = 0.00;

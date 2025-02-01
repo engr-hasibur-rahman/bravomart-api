@@ -31,6 +31,7 @@ class CustomerOrderResource extends JsonResource
             'product_discount_amount' => $this->product_discount_amount,
             'flash_discount_amount_admin' => $this->flash_discount_amount_admin,        
             'shipping_charge' => $this->shipping_charge,
+            'additional_charge_name' => $this->additional_charge_name,
             'additional_charge' => $this->additional_charge,
             'confirmed_at' => $this->confirmed_at,
             'cancel_request_at' => $this->cancel_request_at,
