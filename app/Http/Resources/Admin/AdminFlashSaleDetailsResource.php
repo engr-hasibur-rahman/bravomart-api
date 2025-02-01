@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Actions\ImageModifier;
 use App\Http\Resources\Translation\FlashSaleTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -21,10 +22,12 @@ class AdminFlashSaleDetailsResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "title" =>  $this->title,
+            "title" => $this->title,
             "description" => $this->description,
             "thumbnail_image" => $this->thumbnail_image,
+            "thumbnail_image_url" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "cover_image" => $this->cover_image,
+            "cover_image_url" => ImageModifier::generateImageUrl($this->cover_image),
             "discount_type" => $this->discount_type,
             "discount_amount" => $this->discount_amount,
             "special_price" => $this->special_price,
