@@ -31,15 +31,19 @@ class OrderService
 
            // Initialize total order amount
            $calculate_total_order_amount = 0;
+           $basePrice = 0;
             foreach ($data['packages'] as $packageData) {
                 foreach ($packageData['items'] as $itemData) {
                     // find the product
                     $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                     // Validate product variant
                     $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
-                    $basePrice = $variant->price;
                     // Add to total order amount
-                    $calculate_total_order_amount += $basePrice;
+                    if (!empty($variant) && isset($variant->price)) {
+                        dump($variant->price);
+                        $basePrice = $variant->price ?? 0;
+                        $calculate_total_order_amount += $basePrice;
+                    }
                 }
             }
 
@@ -104,7 +108,9 @@ class OrderService
                         $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                         // Validate product variant
                         $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
-                        $basePrice = $variant->price;
+                        if (!empty($variant) && isset($variant->price)) {
+                            $basePrice = $variant->price;
+                        }
 
                         if (!empty($product) && !empty($variant)) {
                             // product flash sale info
@@ -150,10 +156,19 @@ class OrderService
                 }
 
 
-           // shipping charge calculate
-           $order_shipping_charge = intval(com_option_get('order_shipping_charge')) ?? 0;
-            $order_additional_charge_amount = intval(com_option_get('order_additional_charge_amount')) ?? 0;
+            // system commission
+            $system_commission = SystemCommission::latest()->first();
+            // shipping charge calculate
+            $order_shipping_charge = $system_commission->order_shipping_charge;
+            $order_additional_charge_enable = $system_commission->order_additional_charge_enable_disable;
+            $order_additional_charge_name = null;
+            $order_additional_charge_amount = 0;
 
+            // additional charge amount enable disable check
+           if($order_additional_charge_enable === true){
+               $order_additional_charge_name = $system_commission->order_additional_charge_name;
+               $order_additional_charge_amount = $system_commission->order_additional_charge_amount;
+           }
 
             //  packages and details
             foreach ($data['packages'] as $packageData) {
@@ -169,6 +184,7 @@ class OrderService
                     'flash_discount_amount_admin' => 0,
                     'coupon_discount_amount_admin' => 0,
                     'shipping_charge' => $order_shipping_charge,
+                    'additional_charge_name' => $order_additional_charge_name,
                     'additional_charge' => $order_additional_charge_amount,
                     'is_reviewed' => false,
                     'status' => 'pending',
@@ -182,7 +198,9 @@ class OrderService
                    $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                     // Validate product variant
                     $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
-                    $basePrice = $variant->price;
+                    if (!empty($variant) && isset($variant->price)) {
+                        $basePrice = $variant->price;
+                    }
 
                    if (!empty($product) && !empty($variant)) {
                        // product flash sale info
@@ -228,6 +246,7 @@ class OrderService
                        $after_flash_sale_discount_final_price = $finalPrice;
 
                        // **Calculate Coupon Discount Per Item**
+                       $per_item_coupon_discount_amount = 0;
                        if (isset($coupon_data['discount_amount'])) {
                            $coupon_discount_type = $coupon_data['coupon_type'];
                            $coupon_discount_rate = $coupon_data['discount_rate'];
@@ -267,8 +286,6 @@ class OrderService
                        $line_total_price = $line_total_excluding_tax + $total_tax_amount;
 
 
-                       // Get system commission
-                       $system_commission = SystemCommission::latest()->first();
                        // Initialize commission variables
                        $system_commission_type = null;
                        $system_commission_amount = 0.00;

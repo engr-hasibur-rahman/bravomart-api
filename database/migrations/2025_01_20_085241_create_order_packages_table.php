@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('product_discount_amount')->nullable();  // store wise product discount amount
             $table->decimal('flash_discount_amount_admin')->nullable(); // store wise dis.. discount amount
             $table->decimal('shipping_charge')->nullable(); // separate store wise shipping charge amount but total shipping amount in main order table
+            $table->string('additional_charge_name')->nullable();
             $table->decimal('additional_charge')->nullable();  // separate store wise add.. shipping charge amount but total add.. shipping amount in main order table
             $table->boolean('is_reviewed')->nullable(); // customer review for order wise product reviews check
             $table->string('status')->default('pending')->comment('pending, active, processing , shipped, delivered, cancelled, on_hold');
