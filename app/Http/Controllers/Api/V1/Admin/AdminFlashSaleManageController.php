@@ -70,13 +70,15 @@ class AdminFlashSaleManageController extends Controller
 
     public function adminAddProductToFlashSale(FlashDealProductRequest $request)
     {
+        // check the products exists in store or not
+        $productsNotInStore = $this->flashSaleService->checkProductsExistInStore($request->store_id, $request->products);
         // check if the products are already in flash sale
         $existingProducts = $this->flashSaleService->getExistingFlashSaleProducts($request->products);
 
         if ($existingProducts) {
             return response()->json($existingProducts);
         }
-        $data = $this->flashSaleService->associateProductsToFlashSale($request->flash_sale_id, $request->products,$request->store_id);
+        $data = $this->flashSaleService->associateProductsToFlashSale($request->flash_sale_id, $request->products, $request->store_id);
         if ($data) {
             return response()->json([
                 'status' => true,
