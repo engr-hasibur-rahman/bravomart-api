@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FlashDealProductRequest;
 use App\Http\Requests\FlashSaleRequest;
 use App\Http\Resources\Admin\AdminFlashSaleDetailsResource;
 use App\Http\Resources\Admin\AdminFlashSaleResource;
@@ -67,6 +68,35 @@ class AdminFlashSaleManageController extends Controller
         );
     }
 
+    public function adminAddProductToFlashSale(FlashDealProductRequest $request)
+    {
+        // check the products exists in store or not
+        $productsNotInStore = $this->flashSaleService->checkProductsExistInStore($request->store_id, $request->products);
+        if ($productsNotInStore) {
+            return response()->json($productsNotInStore);
+        }
+        // check if the products are already in flash sale
+        $existingProducts = $this->flashSaleService->getExistingFlashSaleProducts($request->products);
+
+        if ($existingProducts) {
+            return response()->json($existingProducts);
+        }
+        $data = $this->flashSaleService->associateProductsToFlashSale($request->flash_sale_id, $request->products, $request->store_id);
+        if ($data) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.request_success', ['name' => 'Products'])
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.request_failed', ['name' => 'Products'])
+            ]);
+        }
+    }
+
     public function FlashSaleDetails(Request $request)
     {
         $flashSales = $this->flashSaleService->getFlashSaleById($request->id);
@@ -93,12 +123,22 @@ class AdminFlashSaleManageController extends Controller
 
     public function deleteFlashSale($id)
     {
-        $this->flashSaleService->deleteFlashSale($id);
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => __('messages.delete_success', ['name' => 'Flash sale']),
-        ]);
+        $flashSale = $this->flashSaleService->deleteFlashSale($id);
+        $flashSaleProducts = $this->flashSaleService->deleteFlashSaleProducts($id);
+        if ($flashSale && $flashSaleProducts) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.delete_success', ['name' => 'Flash sale']),
+            ]);
+        } else {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.delete_failed', ['name' => 'Flash sale']),
+            ]);
+        }
+
     }
 
     public function deactivateFlashSale()

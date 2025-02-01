@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Models\FlashSale;
 use App\Models\FlashSaleProduct;
+use App\Models\Product;
 use App\Models\Translation;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
 
 class FlashSaleService
@@ -28,7 +30,7 @@ class FlashSaleService
     {
         $flashSale = FlashSale::findorfail($data['id']);
         $flashSale->update($data);
-        return true;
+        return $flashSale->id;
     }
 
     public function deleteFlashSale($id)
@@ -38,13 +40,26 @@ class FlashSaleService
         return true;
     }
 
-    public function associateProductsToFlashSale(int $flashSaleId, array $products)
+    public function deleteFlashSaleProducts($id)
     {
-        $bulkData = array_map(function ($product) use ($flashSaleId) {
+        $flashSaleProducts = FlashSaleProduct::where('flash_sale_id', $id)->get();
+        if (!empty($flashSaleProducts)) {
+            foreach ($flashSaleProducts as $flashSaleProduct) {
+                $flashSaleProduct->delete();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId)
+    {
+        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId) {
             return [
                 'flash_sale_id' => $flashSaleId,
-                'product_id' => $product['product_id'],
-                'store_id' => $product['store_id'] ?? null,
+                'product_id' => $product,
+                'store_id' => $storeId ?? null,
                 'created_by' => auth('api')->id(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -54,6 +69,61 @@ class FlashSaleService
         FlashSaleProduct::insert($bulkData); // Bulk insert for performance
         return true;
     }
+
+    public function getExistingFlashSaleProducts(array $productIds)
+    {
+        $existingProducts = FlashSaleProduct::whereIn('product_id', $productIds)
+            ->with('product:id,name') // Load product names
+            ->get();
+        if ($existingProducts->isEmpty()) {
+            return null; // No existing products found
+        }
+
+        $flashSaleId = $existingProducts->first()->flash_sale_id;
+
+        // Check if the flash sale is active
+        $flashSale = FlashSale::where('id', $flashSaleId)
+            ->where('start_time', '<=', Carbon::now())
+            ->where('end_time', '>=', Carbon::now())
+            ->first();
+
+        if ($flashSale) {
+            return [
+                'status' => false,
+                'status_code' => 422,
+                'message' => 'Some products are already associated with an active flash sale.',
+                'existing_products' => $existingProducts->map(function ($item) {
+                    return [
+                        'product_id' => $item->product_id,
+                        'product_name' => $item->product->name ?? 'Unknown',
+                        'flash_sale_start' => $item->flashSale->start_time ?? null,
+                        'flash_sale_end' => $item->flashSale->end_time ?? null,
+                    ];
+                }),
+            ];
+        }
+        return null; // No active flash sale found
+    }
+
+    public function checkProductsExistInStore(int $storeId, array $productIds)
+    {
+        $existingProducts = Product::whereIn('id', $productIds)
+            ->where('store_id', $storeId)
+            ->pluck('id')
+            ->toArray();
+        // Find missing product IDs
+        $missingProducts = array_diff($productIds, $existingProducts);
+        if (!empty($missingProducts)) {
+            return [
+                'status' => false,
+                'status_code' => 422,
+                'message' => 'Some products do not exist in the given store.',
+            ];
+        }
+
+        return null;
+    }
+
 
     public function getAdminFlashSales($per_page = 10)
     {

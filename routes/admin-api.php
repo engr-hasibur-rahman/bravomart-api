@@ -169,6 +169,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PROMOTIONAL_FLASH_SALE_MANAGE->value]], function () {
                     Route::get('list', [AdminFlashSaleManageController::class, 'getFlashSale']);
                     Route::post('add', [AdminFlashSaleManageController::class, 'createFlashSale']);
+                    Route::post('add-products', [AdminFlashSaleManageController::class, 'adminAddProductToFlashSale']);
                     Route::get('details/{id}', [AdminFlashSaleManageController::class, 'FlashSaleDetails']);
                     Route::post('update', [AdminFlashSaleManageController::class, 'updateFlashSale']);
                     Route::post('change-status', [AdminFlashSaleManageController::class, 'changeStatus']);
@@ -491,11 +492,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // withdraw method
             Route::prefix('commission')->middleware(['permission:' . PermissionKey::ADMIN_COMMISSION_SETTINGS->value])->group(function () {
                 Route::match(['get', 'post'], '/settings', [AdminCommissionManageController::class, 'commissionSettings']);
-                Route::get('/history', [AdminCommissionManageController::class, 'commissionHistory']);
             });
         });
         // report-analytics
-        Route::get('report-analytics', [AdminReportAnalyticsManageController::class, 'reportList'])->middleware(['permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS->value]);
+        Route::group(['prefix' => 'report-analytics/'], function () {
+            Route::get('reportList', [AdminReportAnalyticsManageController::class, 'reportList'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value);
+            Route::get('order', [AdminReportAnalyticsManageController::class, 'orderReport'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value);
+        });
 
         /*--------------------- System management ----------------------------*/
         Route::group(['prefix' => 'system-management'], function () {
