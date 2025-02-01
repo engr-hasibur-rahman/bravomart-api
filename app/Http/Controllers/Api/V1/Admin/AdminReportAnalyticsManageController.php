@@ -1,13 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Admin;
+namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminOrderReportResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 
 class AdminReportAnalyticsManageController extends Controller
 {
-    public function reportList(Request $request){
+    public function reportList(Request $request)
+    {
         $reports = [
             'transaction_report' => 'Transaction Report Data',
             'item_report' => 'Item Report Data',
@@ -25,11 +30,93 @@ class AdminReportAnalyticsManageController extends Controller
                 'data' => $reports[$reportType],
             ]);
         }
-
         // Default: Return all reports
         return response()->json([
             'message' => 'Admin Report Analytics Index',
             'reports' => array_keys($reports),
         ]);
     }
+
+    public function orderReport(Request $request)
+    {
+        $filters = [
+            'type' => $request->type,
+            'area_id' => $request->area_id,
+            'payment_gateway' => $request->payment_gateway,
+            'payment_status' => $request->payment_status,
+            'order_status' => $request->order_status,
+            'store_id' => $request->store_id,
+            'customer_id' => $request->customer_id,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'search' => $request->search,
+            'per_page' => $request->per_page
+        ];
+
+        $query = OrderDetail::query();
+
+        if (isset($filters['search'])) {
+            $query->where('order_id', $filters['search']);
+        }
+
+        if (isset($filters['type'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('type', $filters['type']);
+            });
+        }
+
+        if (isset($filters['area_id'])) {
+            $query->where('area_id', $filters['area_id']);
+        }
+
+        if (isset($filters['payment_gateway'])) {
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->where('payment_gateway', $filters['payment_gateway']);
+            });
+        }
+
+        if (isset($filters['payment_status'])) {
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->where('payment_status', $filters['payment_status']);
+            });
+        }
+
+        if (isset($filters['order_status'])) {
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->where('status', $filters['order_status']);
+            });
+        }
+
+        if (isset($filters['store_id'])) {
+            $query->where('store_id', $filters['store_id']);
+        }
+
+        if (isset($filters['customer_id'])) {
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->where('customer_id', $filters['customer_id']);
+            });
+        }
+
+        if (isset($filters['start_date']) && isset($filters['end_date'])) {
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+            });
+        } elseif (isset($filters['start_date'])) {
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->whereDate('created_at', '>=', $filters['start_date']);
+            });
+        } elseif (isset($filters['end_date'])) {
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->whereDate('created_at', '<=', $filters['end_date']);
+            });
+        }
+
+        $orderDetails = $query->with(['order.customer', 'store', 'area'])->latest()->paginate($filters['per_page'] ?? 20);
+
+        return response()->json([
+            'data' => AdminOrderReportResource::collection($orderDetails),
+            'meta' => new PaginationResource($orderDetails)
+        ]);
+    }
+
 }

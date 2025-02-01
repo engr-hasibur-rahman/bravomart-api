@@ -43,4 +43,14 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Order::class, 'order_id');
     }
+
+    public function store()
+    {
+        return $this->belongsTo(ComMerchantStore::class, 'store_id');
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(ComArea::class, 'area_id');
+    }
 }

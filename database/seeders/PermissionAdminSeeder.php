@@ -1087,13 +1087,14 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::ADMIN_REPORT_ANALYTICS->value,
-                            'PermissionTitle' => 'Report',
+                            'PermissionName' => PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value,
+                            'PermissionTitle' => 'Order Report',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view'],
                             'translations' => [
-                                'en' => 'Report',
-                                'ar' => 'تقرير المعاملات'
+                                'en' => 'Order Report',
+                                'ar' => 'تقرير الطلب'
                             ]
                         ]
                     ]
