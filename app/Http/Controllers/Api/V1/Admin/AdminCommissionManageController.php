@@ -16,7 +16,7 @@ class AdminCommissionManageController extends Controller
             $validatedData = $request->validate([
                 'subscription_enabled' => 'required|boolean',
                 'commission_enabled' => 'required|boolean',
-                'commission_charge_type' => 'nullable',
+                'commission_type' => 'nullable',
                 'commission_amount' => 'nullable|numeric|min:0',
                 'default_order_commission_rate' => 'nullable|numeric|min:0',
                 'default_delivery_commission_charge' => 'nullable|numeric|min:0',
@@ -59,10 +59,5 @@ class AdminCommissionManageController extends Controller
         ]);
     }
 
-    public function commissionHistory(Request $request)
-    {
-
-        return $this->success('test');
-    }
 
 }
