@@ -27,6 +27,8 @@ class FlashSaleRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'discount_type' => 'nullable|in:percentage,amount',
+            'cover_image' => 'nullable|max:255',
+            'thumbnail_image' => 'nullable|max:255',
             'discount_amount' => 'nullable|numeric',
             'special_price' => 'nullable|numeric',
             'purchase_limit' => 'nullable|integer',
