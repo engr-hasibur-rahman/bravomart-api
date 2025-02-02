@@ -53,14 +53,17 @@ class FlashSaleService
         }
     }
 
-    public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId)
+    public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId, string $rejection_reason)
     {
-        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId) {
+        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId, $rejection_reason) {
             return [
                 'flash_sale_id' => $flashSaleId,
                 'product_id' => $product,
                 'store_id' => $storeId ?? null,
+                'status' => $product['status'],
+                'rejection_reason' => $product['status'] === 'rejected' ? $rejection_reason : null,
                 'created_by' => auth('api')->id(),
+                'updated_by' => auth('api')->id(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -191,6 +194,7 @@ class FlashSaleService
             return null;
         }
     }
+
     public function getFlashSaleProductRequestDetails(int $id)
     {
         $requests = FlashSaleProduct::find($id);
