@@ -87,7 +87,7 @@ class FlashSaleService
                 'product_id' => $product,
                 'store_id' => $storeId ?? null,
                 'status' => $status,
-                'updated_by' => auth('api')->id(),
+                'created_by' => auth('api')->id(),
                 'updated_at' => now(),
             ];
         }, $products);
@@ -149,6 +149,28 @@ class FlashSaleService
         }
 
         return null;
+    }
+
+    public function checkProductsAreApproved(int $flashSaleId, array $productIds)
+    {
+        // Get approved products in this flash sale
+        $approvedProductIds = FlashSaleProduct::whereIn('product_id', $productIds)
+            ->where('flash_sale_id', $flashSaleId)
+            ->where('status', 'approved')
+            ->pluck('product_id')
+            ->toArray();
+
+        // If some products are already approved, return the response
+        if (!empty($approvedProductIds)) {
+            $approvedProducts = Product::whereIn('id', $approvedProductIds)->pluck('name')->toArray();
+            return [
+                'status' => false,
+                'status_code' => 422,
+                'message' => 'Some products are already approved with an active flash sale.',
+                'approved_products' => $approvedProducts,
+            ];
+        }
+        return null; // All products are valid
     }
 
 
