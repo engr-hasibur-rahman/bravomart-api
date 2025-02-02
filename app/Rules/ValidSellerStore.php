@@ -18,7 +18,7 @@ class ValidSellerStore implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         // Fetch the store IDs associated with the authenticated seller
-        $auth_seller_stores_ids = Store::where('merchant_id', auth()->guard('api')->user()->id)
+        $auth_seller_stores_ids = Store::where('store_seller_id', auth()->guard('api')->user()->id)
             ->pluck('id')
             ->toArray();
 

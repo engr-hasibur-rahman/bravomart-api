@@ -85,9 +85,9 @@ class InventoryManageRepository implements InventoryManageInterface
         $sellerId = auth('api')->id();
         // Start the query on the Product model and load related store
         $inventories = Product::query()
-            // Filter products by the seller's store (merchant_id)
+            // Filter products by the seller's store (store_seller_id)
             ->whereHas('store', function ($query) use ($sellerId) {
-                $query->where('merchant_id', $sellerId); // Filter by seller's merchant_id
+                $query->where('store_seller_id', $sellerId); // Filter by seller's store_seller_id
             });
         // Search by name, slug, or description
         if (isset($filters['search'])) {

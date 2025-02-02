@@ -72,7 +72,7 @@ class StaffController extends Controller
                 'slug' => username_slug_generator($request->first_name, $request->last_name),
                 'activity_scope' => 'store_level',
                 'stores' => json_encode($request->stores), // Encode as JSON if needed
-                'merchant_id' => auth()->guard('api')->user()->id, // Authenticated store admin id is merchant ID
+                'store_seller_id' => auth()->guard('api')->user()->id, // Authenticated store admin id is merchant ID
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'image' => $request->image,
@@ -169,7 +169,7 @@ class StaffController extends Controller
             $user->email = $validatedData['email'];
             $user->phone = $validatedData['phone'];
             $user->stores = json_encode($validatedData['stores']);  // Store as JSON
-            $user->merchant_id = auth()->guard('api')->user()->id;  // Set authenticated seller's ID
+            $user->store_seller_id = auth()->guard('api')->user()->id;  // Set authenticated seller's ID
             $user->activity_scope = 'store_level';  // Assuming it's constant for all users
             $user->image = $validatedData['image'] ?? null; // Default status, assuming active
             $user->status = 1;  // Default status, assuming active

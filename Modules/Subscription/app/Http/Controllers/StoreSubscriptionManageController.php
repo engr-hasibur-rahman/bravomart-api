@@ -20,7 +20,7 @@ class StoreSubscriptionManageController extends Controller
         $store_id = $request->store_id;
 
         // get seller store
-        $store = Store::where('id', $store_id)->where('merchant_id', $seller->id)->first();
+        $store = Store::where('id', $store_id)->where('store_seller_id', $seller->id)->first();
 
         if (!$store) {
             return response()->json([

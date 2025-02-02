@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletTransaction;
 
-class ComOptionSettingsSeeder extends Seeder
+class SettingOptionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.

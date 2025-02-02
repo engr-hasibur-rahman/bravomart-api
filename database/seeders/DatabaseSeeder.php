@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Modules\PaymentGateways\app\Models\PaymentGateway;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,23 +11,37 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-//        $this->call(SettingSeeder::class);
-        //$this->call(PermissionSeeder::class);
+        // role & permission
+        $this->call(ModelHasRolesSeeder::class);
         $this->call(PermissionAdminSeeder::class);
         $this->call(PermissionStoreSeeder::class);
+        // location
         $this->call(LocationSeeder::class);
-        $this->call(SliderSeeder::class);
-        $this->call(BannerSeeder::class);
+        $this->call(StoreAreaSeeder::class);
+        // store
+        $this->call(StoreSellerSeeder::class);
+        $this->call(StoreSeeder::class);
+        // customer and user
         $this->call(UserSeeder::class);
-        $this->call(PaymentGatewaySeeder::class);
-        $this->call(ProductAttributeSeeder::class);
+        $this->call(CustomerSeeder::class);
+        // unit brand
         $this->call(BrandSeeder::class);
         $this->call(UnitSeeder::class);
-        $this->call(ComStoreSeeder::class);
+        // Product
+        $this->call(ProductAttributeSeeder::class);
         $this->call(ProductSeeder::class);
+         // payment
+        $this->call(PaymentGatewaySeeder::class);
+        // subscription
         $this->call(SubscriptionPackageSeeder::class);
-        $this->call(DepartmentSeeder::class);
+        // system commission
         $this->call(SystemCommissionSeeder::class);
+        // wallet
         $this->call(WalletSeeder::class);
+        // others
+        $this->call(DepartmentSeeder::class);
+        $this->call(SliderSeeder::class);
+        $this->call(BannerSeeder::class);
+        $this->call(RolesSeeder::class);
     }
 }

@@ -34,7 +34,7 @@ class SellerDetailsResource extends JsonResource
             "facebook_id" => $this->facebook_id,
             "apple_id" => $this->apple_id,
             "store_owner" => (bool)$this->store_owner,
-            "merchant_id" => $this->merchant_id,
+            "store_seller_id" => $this->store_seller_id,
             "stores" => $this->stores,
             "status" => $this->getStatusText($this->status),
             "deleted_at" => $this->deleted_at,

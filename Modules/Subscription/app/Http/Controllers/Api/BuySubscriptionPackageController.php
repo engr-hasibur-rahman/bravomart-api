@@ -132,7 +132,7 @@ class BuySubscriptionPackageController extends Controller
 
         // update store type
         $store = Store::where('id', $request->store_id)
-            ->where('merchant_id', auth()->guard('api')->id())
+            ->where('store_seller_id', auth()->guard('api')->id())
             ->first();
 
         if (!$store) {

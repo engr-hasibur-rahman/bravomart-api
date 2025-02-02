@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -14,18 +15,98 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Customer::create([
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "email" => "john_doe@example.com",
-            "phone" => "123456748900",
-            "password" => "12345678",
-            "image" => null,
-            "birth_day" => "1990-01-01",
-            "gender" => "male",
-            "status" => 1,
-            "email_verified" => 1,
-            "email_verified_at" => Carbon::now(),
-        ]);
+        $users = [
+            [
+                'activity_scope' => 'store_level',
+                'created_at' => '2021-06-27 04:13:00',
+                'email' => 'owner@store.com',
+                'email_verified_at' => null,
+                'first_name' => 'Store Admin',
+                'password' => '$2y$12$D/0ga9RUUqk.EpzWpUNZJuZFL5KPZN1hfVUM115D0e7ZOe107iuQG',
+                'remember_token' => null,
+                'slug' => 'store-owner',
+                'status' => 1,
+                'store_owner' => 1,
+                'stores' => '[1,2,3,4]',
+                'updated_at' => '2023-10-02 06:53:37',
+            ],
+            [
+                'activity_scope' => 'kitchen_level',
+                'created_at' => '2021-08-18 10:30:29',
+                'email' => 'kitchenx@demo.com',
+                'email_verified_at' => null,
+                'first_name' => 'Kitchen X',
+                'password' => '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
+                'remember_token' => null,
+                'slug' => 'kitchen-x',
+                'status' => 1,
+                'store_owner' => 0,
+                'stores' => null,
+                'updated_at' => '2021-08-18 13:17:53',
+            ],
+            [
+                'activity_scope' => 'kitchen_level',
+                'created_at' => '2021-08-18 10:30:29',
+                'email' => 'kitchen@demo.com',
+                'email_verified_at' => null,
+                'first_name' => 'Kitchen',
+                'password' => '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
+                'remember_token' => null,
+                'slug' => 'kitchen',
+                'status' => 1,
+                'store_owner' => 0,
+                'stores' => null,
+                'updated_at' => '2021-08-18 13:17:53',
+            ],
+            [
+                'activity_scope' => 'kitchen_level',
+                'created_at' => '2022-03-17 14:15:08',
+                'email' => 'kitchen2@demo.com',
+                'email_verified_at' => null,
+                'first_name' => 'Kitchen 2',
+                'password' => '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
+                'remember_token' => null,
+                'slug' => 'kitchen-2',
+                'status' => 1,
+                'store_owner' => 0,
+                'stores' => null,
+                'updated_at' => '2022-03-17 14:15:08',
+            ],
+            [
+                'activity_scope' => 'delivery_level',
+                'created_at' => '2022-03-17 16:25:39',
+                'email' => 'deliveryman@demo.com',
+                'email_verified_at' => null,
+                'first_name' => 'Delivery Man',
+                'password' => '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
+                'remember_token' => null,
+                'slug' => 'delivery-man',
+                'status' => 1,
+                'store_owner' => 0,
+                'stores' => null,
+                'updated_at' => '2022-03-17 16:25:39',
+            ],
+            [
+                'activity_scope' => 'fitting_level',
+                'created_at' => '2022-03-17 16:25:39',
+                'email' => 'fitterman@demo.com',
+                'email_verified_at' => null,
+                'first_name' => 'Fitter Man',
+                'password' => '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
+                'remember_token' => null,
+                'slug' => 'fitter-man',
+                'status' => 1,
+                'store_owner' => 0,
+                'stores' => null,
+                'updated_at' => '2022-03-17 16:25:39',
+            ],
+        ];
+
+        foreach ($users as $user) {
+            DB::table('users')->updateOrInsert(
+                ['slug' => $user['slug']],  // Check for existing record with the same slug
+                $user  // Insert or update with the user data
+            );
+        }
     }
 }

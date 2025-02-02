@@ -193,7 +193,7 @@ class UserController extends Controller
             $merchant = StoreSeller::create(['user_id' => $user->id]);
 
             // Save Merchant ID in Users table
-            $user->merchant_id = $merchant->id;
+            $user->store_seller_id = $merchant->id;
             $user->save();
 
             return response()->json([
@@ -208,7 +208,7 @@ class UserController extends Controller
                 "permissions" => $user->getPermissionNames(),
                 "role" => $user->getRoleNames(),
                 "store_owner" => $user->store_owner,
-                "merchant_id" => $user->merchant_id,
+                "store_seller_id" => $user->store_seller_id,
                 "stores" => json_decode($user->stores),
                 "next_stage" => "2"
             ], 200);

@@ -131,7 +131,7 @@ class ReviewService
         if (!auth('api')->check()) {
             unauthorized_response();
         }
-        $seller_stores = Store::where('merchant_id', $sellerId)->pluck('id');
+        $seller_stores = Store::where('store_seller_id', $sellerId)->pluck('id');
 
         $query = Review::with(['reviewable', 'store', 'customer'])->whereIn('store_id', $seller_stores->toArray());
 

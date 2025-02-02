@@ -25,7 +25,7 @@ class StoreManageService
     {
 
         $data = Arr::except($data, ['translations']);
-        $data['merchant_id'] = auth('api')->id();
+        $data['store_seller_id'] = auth('api')->id();
         $store = Store::create($data);
 
         // store create after commission set

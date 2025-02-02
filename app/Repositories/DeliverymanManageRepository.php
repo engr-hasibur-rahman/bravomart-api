@@ -80,7 +80,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 'activity_scope' => 'delivery_level',
                 'password' => $data['password'],
                 'store_owner' => 0,
-                'merchant_id' => null,
+                'store_seller_id' => null,
                 'stores' => null,
                 'status' => $data['status'] ?? 0,
             ]);
@@ -136,7 +136,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 'activity_scope' => 'delivery_level',
                 'password' => $data['password'] ?? $user->password,  // Keep old password if not provided
                 'store_owner' => 0,
-                'merchant_id' => null,
+                'store_seller_id' => null,
                 'stores' => null,
                 'status' => $data['status'] ?? 0,
             ]);
