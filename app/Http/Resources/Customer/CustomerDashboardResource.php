@@ -20,7 +20,16 @@ class CustomerDashboardResource extends JsonResource
             'pending_orders' => $this['pending_orders'],
             'canceled_orders' => $this['canceled_orders'],
             'on_hold_products' => $this['on_hold_products'],
-            'recent_orders' => $this['recent_orders'],
+            'total_support_ticket' => $this['total_support_ticket'],
+            'recent_orders' => collect($this['recent_orders'])->map(function ($orderDetail) {
+                return [
+                    'product_image' => $orderDetail['product']['image'] ?? null, // Product image
+                    'product_name' => $orderDetail['product']['name'] ?? null, // Product name
+                    'order_id' => $orderDetail['order_id'],
+                    'purchased_at' => $orderDetail['order']['created_at'], // Order placement timestamp
+                    'status' => $orderDetail['order']['status'] ?? null, // Order status
+                ];
+            }),
         ];
     }
 }
