@@ -180,6 +180,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     });
                     Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value]], function () {
                         Route::post('join-deals', [SellerFlashSaleProductManageController::class, 'addProductToFlashSale']);
+                        Route::post('update-join-deals', [SellerFlashSaleProductManageController::class, 'updateProductToFlashSale']);
                     });
                     Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS->value]], function () {
                         Route::get('active-deals', [SellerFlashSaleProductManageController::class, 'getValidFlashSales']);
