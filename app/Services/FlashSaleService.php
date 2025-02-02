@@ -53,17 +53,14 @@ class FlashSaleService
         }
     }
 
-    public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId, string $rejection_reason = null, int $status = 1)
+    public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId)
     {
-        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId, $rejection_reason, $status) {
+        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId) {
             return [
                 'flash_sale_id' => $flashSaleId,
                 'product_id' => $product,
                 'store_id' => $storeId ?? null,
-                'status' => auth('api')->user()->activity_scope == 'store_level' ? 0 : $status,
-                'rejection_reason' => $product['status'] === 'rejected' ? $rejection_reason : null,
                 'created_by' => auth('api')->id(),
-                'updated_by' => auth('api')->id(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -72,6 +69,25 @@ class FlashSaleService
         FlashSaleProduct::insert($bulkData); // Bulk insert for performance
         return true;
     }
+//public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId, string $rejection_reason = null, int $status = 1)
+//    {
+//        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId, $rejection_reason, $status) {
+//            return [
+//                'flash_sale_id' => $flashSaleId,
+//                'product_id' => $product,
+//                'store_id' => $storeId ?? null,
+//                'status' => auth('api')->user()->activity_scope == 'store_level' ? 0 : $status,
+//                'rejection_reason' => $product['status'] === 'rejected' ? $rejection_reason : null,
+//                'created_by' => auth('api')->id(),
+//                'updated_by' => auth('api')->id(),
+//                'created_at' => now(),
+//                'updated_at' => now(),
+//            ];
+//        }, $products);
+//
+//        FlashSaleProduct::insert($bulkData); // Bulk insert for performance
+//        return true;
+//    }
 
     public function getExistingFlashSaleProducts(array $productIds)
     {
