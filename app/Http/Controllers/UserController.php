@@ -189,11 +189,11 @@ class UserController extends Controller
             // Assign roles to the user
             $user->assignRole($roles);
 
-            // Create Merchant ID for the user
-            $merchant = StoreSeller::create(['user_id' => $user->id]);
+            // Create seller ID for the user
+            $seller = StoreSeller::create(['user_id' => $user->id]);
 
-            // Save Merchant ID in Users table
-            $user->store_seller_id = $merchant->id;
+            // Save seller ID in Users table
+            $user->store_seller_id = $seller->id;
             $user->save();
 
             return response()->json([

@@ -72,7 +72,7 @@ class StaffController extends Controller
                 'slug' => username_slug_generator($request->first_name, $request->last_name),
                 'activity_scope' => 'store_level',
                 'stores' => json_encode($request->stores), // Encode as JSON if needed
-                'store_seller_id' => auth()->guard('api')->user()->id, // Authenticated store admin id is merchant ID
+                'store_seller_id' => auth()->guard('api')->user()->id, // Authenticated store admin id is seller ID
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'image' => $request->image,

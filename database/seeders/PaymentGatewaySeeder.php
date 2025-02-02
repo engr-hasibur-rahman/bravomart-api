@@ -63,9 +63,9 @@ class PaymentGatewaySeeder extends Seeder
             'slug' => 'paytm',
             'description' => 'paytm info',
             'auth_credentials' => json_encode([
-                'paytm_merchant_key' => '',
-                'paytm_merchant_mid' => '',
-                'paytm_merchant_website' => '',
+                'paytm_seller_key' => '',
+                'paytm_seller_mid' => '',
+                'paytm_seller_website' => '',
                 'paytm_cancel_url' => '',
                 'paytm_industry_type' => '',
             ]),

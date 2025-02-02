@@ -69,7 +69,7 @@ class Store extends Model
         return $this->belongsTo(StoreArea::class, 'area_id');
     }
 
-    public function merchant()
+    public function seller()
     {
         return $this->belongsTo(User::class, 'store_seller_id', 'store_seller_id');
     }

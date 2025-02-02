@@ -22,7 +22,7 @@ class StoreListResource extends JsonResource
         return [
             'id' => $this->id,
             'area' => $this->area->name ?? null,
-            'merchant' => $this->merchant ? $this->merchant->first_name . '' . $this->merchant->last_name : null,
+            'seller' => $this->seller ? $this->seller->first_name . '' . $this->seller->last_name : null,
             'store_type' => $this->store_type,
             'name' => $translation->isNotEmpty()
                 ? $translation->where('key', 'name')->first()?->value

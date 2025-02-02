@@ -58,7 +58,7 @@ class StoreManageRepository implements StoreManageInterface
         }
         // Apply sorting and pagination
         // Return the result
-        return $store->with(['merchant', 'area', 'related_translations'])
+        return $store->with(['seller', 'area', 'related_translations'])
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
@@ -172,7 +172,7 @@ class StoreManageRepository implements StoreManageInterface
     public function getStoreById(int|string $id)
     {
         try {
-            $store = Store::with(['related_translations', 'merchant', 'area', 'activeSubscription'])->findorfail($id);
+            $store = Store::with(['related_translations', 'seller', 'area', 'activeSubscription'])->findorfail($id);
             if ($store) {
                 return $store;
             } else {
@@ -351,7 +351,7 @@ class StoreManageRepository implements StoreManageInterface
             unauthorized_response();
         }
         $seller_id = auth('api')->id();
-        $storeBelongsToSeller = Store::with(['merchant'])
+        $storeBelongsToSeller = Store::with(['seller'])
             ->where('store_seller_id', $seller_id)
             ->where('slug', $slug)
             ->first();

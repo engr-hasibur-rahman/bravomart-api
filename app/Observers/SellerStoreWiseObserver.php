@@ -5,7 +5,7 @@ namespace App\Observers;
 use App\Models\Store;
 use Modules\Wallet\app\Models\Wallet;
 
-class ComMerchantStoreObserver
+class SellerStoreWiseObserver
 {
     /**
      * Handle the Store "created" event.

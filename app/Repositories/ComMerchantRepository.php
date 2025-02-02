@@ -13,7 +13,7 @@ use Prettus\Repository\Eloquent\BaseRepository;
  *
  * @package namespace App\Repositories;
  */
-class ComMerchantRepository extends BaseRepository
+class ComsellerRepository extends BaseRepository
 {
 
     public function model()

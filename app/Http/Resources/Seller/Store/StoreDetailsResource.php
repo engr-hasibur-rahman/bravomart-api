@@ -18,16 +18,16 @@ class StoreDetailsResource extends JsonResource
         return [
             'store_details' => [
                 'id' => $this->id,
-                'merchant' => [
-                    'id' => $this->merchant->id,
-                    'first_name' => $this->merchant->first_name,
-                    'last_name' => $this->merchant->last_name,
-                    'phone' => $this->merchant->phone,
-                    'email' => $this->merchant->email,
-                    'email_verified' => (bool)$this->merchant->email_verified,
-                    'def_lang' => $this->merchant->def_lang,
-                    'store_owner' => (bool)$this->merchant->store_owner,
-                    'status' => $this->merchant->status,
+                'seller' => [
+                    'id' => $this->seller->id,
+                    'first_name' => $this->seller->first_name,
+                    'last_name' => $this->seller->last_name,
+                    'phone' => $this->seller->phone,
+                    'email' => $this->seller->email,
+                    'email_verified' => (bool)$this->seller->email_verified,
+                    'def_lang' => $this->seller->def_lang,
+                    'store_owner' => (bool)$this->seller->store_owner,
+                    'status' => $this->seller->status,
                 ],
                 'store_type' => $this->store_type,
                 'name' => $this->name,

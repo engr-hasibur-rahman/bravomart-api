@@ -67,7 +67,7 @@ class AdminStoreRequest extends FormRequest
         return [
             'subscription_id.exists' => 'The selected subscription id does not exist.',
             'area_id.exists' => 'The selected area does not exist.',
-            'store_seller_id.exists' => 'The selected merchant does not exist.',
+            'store_seller_id.exists' => 'The selected seller does not exist.',
             'store_type.in' => 'The store type must be one of the following: ' . $this->getEnumValues(StoreType::class),
             'name.required' => 'The name field is required.',
             'name.max' => 'The name may not be greater than 255 characters.',
