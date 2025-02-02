@@ -107,6 +107,7 @@ return new class extends Migration {
 
         Schema::create('com_business_modules_settings', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('com_business_module_id');
             $table->unsignedBigInteger('com_area_id');
             // Delivery settings
             $table->integer('delivery_time_per_km');
