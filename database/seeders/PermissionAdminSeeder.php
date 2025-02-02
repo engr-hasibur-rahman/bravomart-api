@@ -606,7 +606,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_FEEDBACK_REVIEWS->value,
                             'PermissionTitle' => 'Reviews',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Star',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Reviews',
@@ -618,7 +618,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_FEEDBACK_QUESTIONS->value,
                             'PermissionTitle' => 'Questions',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'circleHelp',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Questions',
@@ -633,7 +633,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Blog Management',
                     'activity_scope' => 'system_level',
-                    'icon' => '',
+                    'icon' => 'File',
                     'options' => ['view', 'insert', 'update', 'delete'],
                     'translations' => [
                         'en' => 'Blog Management',
@@ -692,7 +692,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Tickets',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Headphones',
                             'translations' => [
                                 'en' => 'Tickets',
                                 'ar' => ' الموظفين'
@@ -740,7 +740,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_PAGES_LIST->value,
                             'PermissionTitle' => 'Page Lists',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'List',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Page Lists',
@@ -766,7 +766,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_WALLET_MANAGE->value,
                             'PermissionTitle' => 'Wallet Lists',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Wallet',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Wallet Lists',
@@ -777,7 +777,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_WALLET_TRANSACTION->value,
                             'PermissionTitle' => 'Transaction History',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'History',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Wallet Lists',
@@ -788,7 +788,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_WALLET_SETTINGS->value,
                             'PermissionTitle' => 'Wallet Settings',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Settings',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Wallet Lists',
@@ -1146,26 +1146,14 @@ class PermissionAdminSeeder extends Seeder
                     'submenu' => [
                         // Area Setup
                         [
-                            'PermissionName' => '',
+                            'PermissionName' => PermissionKey::ADMIN_GEO_AREA_MANAGE->value,
                             'PermissionTitle' => 'Area Setup',
                             'activity_scope' => 'system_level',
                             'icon' => 'Locate',
-                            'options' => ['view'],
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
                             'translations' => [
                                 'en' => 'Area Setup',
                                 'ar' => 'إعداد المنطقة'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_GEO_AREA_MANAGE->value,
-                                    'PermissionTitle' => 'Area List',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Area List',
-                                        'ar' => 'قائمة المناطق'
-                                    ]
-                                ]
                             ]
                         ],
 
