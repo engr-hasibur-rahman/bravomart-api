@@ -53,7 +53,7 @@ class FlashSaleService
         }
     }
 
-    public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId, string $rejection_reason)
+    public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId, string $rejection_reason = null)
     {
         $bulkData = array_map(function ($product) use ($flashSaleId, $storeId, $rejection_reason) {
             return [
