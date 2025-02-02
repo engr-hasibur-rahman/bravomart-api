@@ -24,7 +24,7 @@ class StoreDetailsPublicResource extends JsonResource
         return [
             'id' => $this->id,
             'area' => $this->area->name ?? null,
-            'merchant' => new SellerDetailsPublicResource($this->merchant),
+            'seller' => new SellerDetailsPublicResource($this->seller),
             'store_type' => $this->store_type,
             'name' => $translation->isNotEmpty()
                 ? $translation->where('key', 'name')->first()?->value

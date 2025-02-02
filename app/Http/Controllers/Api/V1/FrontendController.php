@@ -115,7 +115,7 @@ class FrontendController extends Controller
         // Pagination
         $perPage = $request->get('per_page', 10);
         $stores = $query
-            ->with(['area', 'merchant', 'related_translations', 'products'])
+            ->with(['area', 'seller', 'related_translations', 'products'])
             ->where('status', 1)
             ->where('deleted_at', null)
             ->paginate($perPage);
@@ -134,7 +134,7 @@ class FrontendController extends Controller
         try {
             $query = Store::query();
 
-            $store = $query->with(['area', 'merchant', 'related_translations', 'products.variants'])
+            $store = $query->with(['area', 'seller', 'related_translations', 'products.variants'])
                 ->where('slug', $request->slug)->first();
             return response()->json([
                 'status' => true,

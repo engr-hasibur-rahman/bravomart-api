@@ -27,7 +27,7 @@ class SellerResource extends JsonResource
             "image" => ImageModifier::generateImageUrl($this->image),
             "def_lang" => $this->def_lang,
             "store_owner" => (bool)$this->store_owner,
-            "merchant_id" => $this->merchant_id,
+            "store_seller_id" => $this->store_seller_id,
             "stores" => $this->stores,
             "status" => $this->getStatusText($this->status),
         ];

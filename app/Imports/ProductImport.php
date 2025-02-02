@@ -36,7 +36,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
             if (!$isAdmin) {
                 // Check if the shop belongs to the authenticated user
                 $shopExists = Store::where('id', $shopId)
-                    ->where('merchant_id', auth('api')->id())
+                    ->where('store_seller_id', auth('api')->id())
                     ->exists();
 
                 if (!$shopExists) {

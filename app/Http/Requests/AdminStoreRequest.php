@@ -29,7 +29,7 @@ class AdminStoreRequest extends FormRequest
             'subscription_id' => 'nullable|exists:subscriptions,id',
             'payment_gateway' => 'payment_gateway',
             'area_id' => 'nullable|exists:areas,id',
-            'merchant_id' => 'nullable|exists:store_sellers,user_id',
+            'store_seller_id' => 'nullable|exists:store_sellers,user_id',
             'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class),
             'name' => 'required|string|max:255',
             'slug' => 'required|string|unique:stores,slug,' . $this->id,
@@ -67,7 +67,7 @@ class AdminStoreRequest extends FormRequest
         return [
             'subscription_id.exists' => 'The selected subscription id does not exist.',
             'area_id.exists' => 'The selected area does not exist.',
-            'merchant_id.exists' => 'The selected merchant does not exist.',
+            'store_seller_id.exists' => 'The selected seller does not exist.',
             'store_type.in' => 'The store type must be one of the following: ' . $this->getEnumValues(StoreType::class),
             'name.required' => 'The name field is required.',
             'name.max' => 'The name may not be greater than 255 characters.',

@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('area_id')->nullable();
-            $table->unsignedBigInteger('merchant_id')->nullable();
+            $table->unsignedBigInteger('store_seller_id')->nullable();
             $table->enum('store_type', array_map(fn($enum) => $enum->value, StoreType::cases()))->nullable(); //medicine/ furniture/ DOOR/ FOOD/ GROCERY
             $table->decimal('tax', 5, 2)->default(0);
             $table->string('tax_number')->nullable();

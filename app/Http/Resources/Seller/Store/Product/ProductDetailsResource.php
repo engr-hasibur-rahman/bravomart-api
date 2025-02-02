@@ -50,7 +50,7 @@ class ProductDetailsResource extends JsonResource
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
             "variants" => $this->variants,
             "store" => $this->store,
-            "seller" => new SellerListForDropdownResource($this->store->merchant),
+            "seller" => new SellerListForDropdownResource($this->store->seller),
             "category" => $this->category && $this->category->id
                 ? [
                     "id" => $this->category->id,

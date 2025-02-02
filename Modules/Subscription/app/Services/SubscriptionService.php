@@ -185,7 +185,7 @@ class SubscriptionService
 
         // Fetch the store
         $store = Store::find($store_id);
-        if (!$store || $store->merchant_id != $seller->id) {
+        if (!$store || $store->store_seller_id != $seller->id) {
             return [
                 'success' => false,
                 'message' => 'Store not found or access denied.',

@@ -58,7 +58,7 @@ class StoreManageRepository implements StoreManageInterface
         }
         // Apply sorting and pagination
         // Return the result
-        return $store->with(['merchant', 'area', 'related_translations'])
+        return $store->with(['seller', 'area', 'related_translations'])
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
@@ -85,7 +85,7 @@ class StoreManageRepository implements StoreManageInterface
         // Return the result
         return $store
             ->where('deleted_at', null)
-            ->where('merchant_id', auth('api')->id())
+            ->where('store_seller_id', auth('api')->id())
             ->where('status', 1)
             ->orderBy($sortField, $sort)
             ->paginate($limit);
@@ -95,7 +95,7 @@ class StoreManageRepository implements StoreManageInterface
     {
         try {
             $data = Arr::except($data, ['translations']);
-            $data['merchant_id'] = auth('api')->id();
+            $data['store_seller_id'] = auth('api')->id();
             $store = Store::create($data);
 
             // if seller select store business type commission or subscription
@@ -172,7 +172,7 @@ class StoreManageRepository implements StoreManageInterface
     public function getStoreById(int|string $id)
     {
         try {
-            $store = Store::with(['related_translations', 'merchant', 'area', 'activeSubscription'])->findorfail($id);
+            $store = Store::with(['related_translations', 'seller', 'area', 'activeSubscription'])->findorfail($id);
             if ($store) {
                 return $store;
             } else {
@@ -337,7 +337,7 @@ class StoreManageRepository implements StoreManageInterface
         $seller_id = auth('api')->id();
 
         $stores = Store::with('related_translations') // Load all related translations
-        ->where('merchant_id', $seller_id)
+        ->where('store_seller_id', $seller_id)
             ->where('enable_saling', 1)
             ->where('status', 1)
             ->get();
@@ -351,8 +351,8 @@ class StoreManageRepository implements StoreManageInterface
             unauthorized_response();
         }
         $seller_id = auth('api')->id();
-        $storeBelongsToSeller = Store::with(['merchant'])
-            ->where('merchant_id', $seller_id)
+        $storeBelongsToSeller = Store::with(['seller'])
+            ->where('store_seller_id', $seller_id)
             ->where('slug', $slug)
             ->first();
         if ($storeBelongsToSeller) {
@@ -454,7 +454,7 @@ class StoreManageRepository implements StoreManageInterface
     public function getSellerWiseStores(?int $SellerId)
     {
         if ($SellerId) {
-            $stores = Store::where('merchant_id', $SellerId)->get();
+            $stores = Store::where('store_seller_id', $SellerId)->get();
         } else {
             $stores = Store::where('status', 1)->get();
         }

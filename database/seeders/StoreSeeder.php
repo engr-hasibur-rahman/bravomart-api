@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class
-ComStoreSeeder extends Seeder
+StoreSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -22,7 +22,7 @@ ComStoreSeeder extends Seeder
         DB::table('stores')->insert([
             [
                 'area_id' => 1,
-                'merchant_id' => 1,
+                'store_seller_id' => 1,
                 'store_type' => $storeTypes[array_rand($storeTypes)],
                 'name' => 'Store One',
                 'slug' => Str::slug('Store One'),
@@ -60,7 +60,7 @@ ComStoreSeeder extends Seeder
             ],
             [
                 'area_id' => 2,
-                'merchant_id' => 2,
+                'store_seller_id' => 2,
                 'store_type' => $storeTypes[array_rand($storeTypes)],
                 'name' => 'Store Two',
                 'slug' => Str::slug('Store Two'),

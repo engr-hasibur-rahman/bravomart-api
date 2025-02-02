@@ -86,7 +86,7 @@ class PartnerLoginController extends Controller
             'phone' => $user->phone,
             "email_verified" => $email_verified,
             "store_owner" => $user->store_owner,
-            "merchant_id" => $user->merchant_id,
+            "store_seller_id" => $user->store_seller_id,
             "stores" => $stores,
             "role" => $user->getRoleNames()
         ];

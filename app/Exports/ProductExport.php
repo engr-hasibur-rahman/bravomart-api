@@ -74,7 +74,7 @@ class ProductExport implements FromCollection, WithHeadings
         // Start building the query
         $query = Product::query();
         if (auth('api')->user()->store_owner == 1) {
-            $storeIds = Store::where('merchant_id', auth('api')->id())->pluck('id')->toArray();
+            $storeIds = Store::where('store_seller_id', auth('api')->id())->pluck('id')->toArray();
             $query->whereIn('store_id', $storeIds);
         }
 

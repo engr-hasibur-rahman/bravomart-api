@@ -17,7 +17,7 @@ class Store extends Model
     protected $guarded = [];
     protected $fillable = [
         'area_id',
-        'merchant_id',
+        'store_seller_id',
         'store_type',
         'name',
         'slug',
@@ -69,9 +69,9 @@ class Store extends Model
         return $this->belongsTo(StoreArea::class, 'area_id');
     }
 
-    public function merchant()
+    public function seller()
     {
-        return $this->belongsTo(User::class, 'merchant_id', 'merchant_id');
+        return $this->belongsTo(User::class, 'store_seller_id', 'store_seller_id');
     }
 
     public function related_translations()

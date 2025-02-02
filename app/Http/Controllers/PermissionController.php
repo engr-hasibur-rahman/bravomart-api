@@ -29,7 +29,7 @@ class PermissionController extends Controller
         // Now Check if user is a Store User and he have assigned Stores
         if($user->activity_scope=='store_level')
         {
-            $shop_count=Store::where('merchant_id', $user->id)->count();
+            $shop_count=Store::where('store_seller_id', $user->id)->count();
         }
 
         if($shop_count > 0) {

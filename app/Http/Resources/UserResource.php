@@ -37,7 +37,7 @@ class UserResource extends JsonResource
             'activity_scope' => $this->activity_scope,
             'email_verified_at' => $this->email_verified_at,
             "store_owner" => $this->store_owner,
-            "merchant_id" => $this->merchant_id,
+            "store_seller_id" => $this->store_seller_id,
             "stores" => $stores,
             'roles' => $this->roles->pluck('name'),
         ];

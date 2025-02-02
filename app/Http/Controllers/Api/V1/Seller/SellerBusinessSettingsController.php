@@ -15,7 +15,7 @@ class SellerBusinessSettingsController extends Controller
         $seller_id = auth()->guard('api')->id();
 
         $store = Store::where('id', $request->store_id)
-            ->where('merchant_id', $seller_id)
+            ->where('store_seller_id', $seller_id)
             ->first();
 
         if (!$store) {
@@ -49,7 +49,7 @@ class SellerBusinessSettingsController extends Controller
         $seller_id = auth()->guard('api')->id();
 
         $store = Store::where('id', $request->store_id)
-            ->where('merchant_id', $seller_id)
+            ->where('store_seller_id', $seller_id)
             ->first();
 
         if (!$store) {

@@ -12,7 +12,7 @@ INSERT INTO `users` (
         `created_at`,
         `updated_at`,
         `store_owner`,
-        `merchant_id`,
+        `store_seller_id`,
         `stores`,
         `status`
     )
