@@ -14,6 +14,10 @@ class StoreType extends Model
         'total_stores',
         'status'
     ];
+    public $translationKeys = [
+        'name',
+        'description',
+    ];
 
     public function settings()
     {
@@ -23,5 +27,11 @@ class StoreType extends Model
     public function rangeCharges()
     {
         return $this->hasMany(StoreTypeRangeCharge::class, 'com_store_type_id');
+    }
+
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
     }
 }
