@@ -53,14 +53,14 @@ class FlashSaleService
         }
     }
 
-    public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId, string $rejection_reason = null)
+    public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId, string $rejection_reason = null, int $status = 1)
     {
-        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId, $rejection_reason) {
+        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId, $rejection_reason, $status) {
             return [
                 'flash_sale_id' => $flashSaleId,
                 'product_id' => $product,
                 'store_id' => $storeId ?? null,
-                'status' => $product['status'],
+                'status' => auth('api')->user()->activity_scope == 'store_level' ? 0 : $status,
                 'rejection_reason' => $product['status'] === 'rejected' ? $rejection_reason : null,
                 'created_by' => auth('api')->id(),
                 'updated_by' => auth('api')->id(),
