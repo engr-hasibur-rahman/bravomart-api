@@ -7,6 +7,8 @@ use App\Interfaces\CustomerManageInterface;
 use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Ticket;
 use App\Models\Wishlist;
 use Exception;
 use Illuminate\Support\Carbon;
@@ -14,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Modules\Wallet\app\Models\Wallet;
 use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManageRepository implements CustomerManageInterface
@@ -196,6 +199,8 @@ class CustomerManageRepository implements CustomerManageInterface
             'pending_orders' => $this->getPendingOrders($customer_id),
             'canceled_orders' => $this->getCanceledOrders($customer_id),
             'on_hold_products' => $this->getOnHoldProducts($customer_id),
+            'wallet' => $this->getWalletAmount($customer_id),
+            'total_support_ticket' => $this->getSupportTickets($customer_id),
             'recent_orders' => $this->getRecentOrders($customer_id),
         ];
     }
@@ -233,8 +238,14 @@ class CustomerManageRepository implements CustomerManageInterface
 
     protected function getRecentOrders($customer_id)
     {
-        return Order::where('customer_id', $customer_id)
-            ->where('status', 'pending')
+        return OrderDetail::with([
+            'order',
+            'product',
+        ])
+            ->whereHas('order', function ($query) use ($customer_id) {
+                $query->where('customer_id', $customer_id)
+                    ->where('status', 'pending'); // status will be delivered
+            })
             ->latest()
             ->limit(10)
             ->get();
@@ -242,7 +253,28 @@ class CustomerManageRepository implements CustomerManageInterface
 
     protected function getWalletAmount($customer_id)
     {
+        $exists = Wallet::where('owner_id', $customer_id);
+        if (!$exists) {
+            return null;
+        }
+        $isCustomer = $exists->where('owner_type', 'App\Models\Customer')
+            ->where('status', 1)
+            ->first();
+        if ($isCustomer) {
+            return $isCustomer->balance;
+        } else {
+            return null;
+        }
+    }
 
+    protected function getSupportTickets($customer_id)
+    {
+        $tickets = Ticket::where('user_id', $customer_id)->get();
+        if (empty($tickets)) {
+            return null;
+        } else {
+            return $tickets->count();
+        }
     }
 
 }
