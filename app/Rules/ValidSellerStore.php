@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
@@ -18,7 +18,7 @@ class ValidSellerStore implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         // Fetch the store IDs associated with the authenticated seller
-        $auth_seller_stores_ids = ComMerchantStore::where('merchant_id', auth()->guard('api')->user()->id)
+        $auth_seller_stores_ids = Store::where('merchant_id', auth()->guard('api')->user()->id)
             ->pluck('id')
             ->toArray();
 

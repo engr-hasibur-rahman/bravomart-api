@@ -1,1 +1,1 @@
-INSERT INTO `com_merchant` (`user_id`,`status`) VALUES (1,1);
+INSERT INTO `store_sellers` (`user_id`,`status`) VALUES (1,1);

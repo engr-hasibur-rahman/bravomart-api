@@ -5,7 +5,7 @@ namespace App\Http\Controllers\APi\V1\Com;
 use App\Actions\MultipleImageModifier;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\FooterInfoResource;
-use App\Models\ComOption;
+use App\Models\SettingOption;
 use Illuminate\Http\Request;
 
 
@@ -16,7 +16,7 @@ class HeaderFooterController extends Controller
         $imageModifier = new MultipleImageModifier();
         // multiple image get
         $com_payment_methods_image_urls = $imageModifier->multipleImageModifier(com_option_get('com_payment_methods_image'));
-        $ComOptionGet = ComOption::with('translations')
+        $ComOptionGet = SettingOption::with('translations')
             ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'])
             ->get(['id']);
         // transformed data

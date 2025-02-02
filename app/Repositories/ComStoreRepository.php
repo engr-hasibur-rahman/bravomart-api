@@ -3,9 +3,9 @@
 namespace App\Repositories;
 
 use App\Helpers\ComHelper;
-use App\Models\ComArea;
+use App\Models\StoreArea;
 use App\Interfaces\ComAreaInterface;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 
 
 /**
@@ -15,11 +15,11 @@ use App\Models\ComMerchantStore;
 class ComStoreRepository implements ComAreaInterface
 {
 
-    public function __construct(protected ComMerchantStore $store) {}
+    public function __construct(protected Store $store) {}
 
     public function model()
     {
-        return ComMerchantStore::class;
+        return Store::class;
     }
 
     public function translationKeys()

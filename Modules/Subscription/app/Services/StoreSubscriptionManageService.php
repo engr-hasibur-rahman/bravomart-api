@@ -2,14 +2,14 @@
 
 namespace Modules\Subscription\app\Services;
 
-use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
+use Modules\Subscription\app\Models\StoreSubscription;
 
 class StoreSubscriptionManageService
 {
     public function storeSubscriptionInfo($storeId)
     {
 
-        $store_subscription = ComMerchantStoresSubscription::where('store_id', $storeId)->first();
+        $store_subscription = StoreSubscription::where('store_id', $storeId)->first();
 
         if (!$store_subscription) {
             return false;

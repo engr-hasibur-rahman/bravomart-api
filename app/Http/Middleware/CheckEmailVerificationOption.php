@@ -23,7 +23,7 @@ class CheckEmailVerificationOption
             ->first();
 
         // Fetch the option value from the database
-        $emailVerificationEnabled = DB::table('com_options')
+        $emailVerificationEnabled = DB::table('setting_options')
             ->where('option_name', 'com_user_email_verification') // Ensure you're checking the correct key
             ->value('option_value');
         if (!$customerIsEmailVerified && $emailVerificationEnabled !== null) {

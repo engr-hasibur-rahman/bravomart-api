@@ -40,7 +40,7 @@ class SellerStoreManageController extends Controller
     {
         $store = $this->storeManageService->storeForAuthSeller($request->all());
         if ($store) {
-            $this->storeRepo->storeTranslation($request, $store['store_id'], 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
+            $this->storeRepo->storeTranslation($request, $store['store_id'], 'App\Models\Store', $this->storeRepo->translationKeys());
             return $this->success(
                 translate('messages.save_success', ['name' => 'Store']),
                 200,
@@ -54,7 +54,7 @@ class SellerStoreManageController extends Controller
     public function update(SellerStoreRequest $request)
     {
         $store = $this->storeManageService->storeUpdateForAuthSeller($request->all());
-        $this->storeRepo->updateTranslation($request, $store['store_id'], 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
+        $this->storeRepo->updateTranslation($request, $store['store_id'], 'App\Models\Store', $this->storeRepo->translationKeys());
         if ($store) {
             return $this->success(translate('messages.update_success', ['name' => 'Store']));
         } else {

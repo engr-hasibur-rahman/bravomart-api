@@ -45,7 +45,7 @@ class AdminAreaSetupManageController extends Controller
     {
         try {
             $area = $this->areaRepo->store($this->areaService->prepareAddData($request));
-            $this->transRepo->storeTranslation($request, $area->id, 'App\Models\ComArea', $this->areaRepo->translationKeys());
+            $this->transRepo->storeTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
 
             return $this->success(translate('messages.save_success', ['name' => 'Area']));
         } catch (\Exception $e) {
@@ -64,7 +64,7 @@ class AdminAreaSetupManageController extends Controller
         try {
 
             $area = $this->areaRepo->update($this->areaService->prepareAddData($request), $request->id);
-            $this->transRepo->updateTranslation($request, $area->id, 'App\Models\ComArea', $this->areaRepo->translationKeys());
+            $this->transRepo->updateTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
 
             return $this->success(translate('messages.update_success', ['name' => 'Area']));
         } catch (\Exception $e) {

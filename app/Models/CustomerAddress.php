@@ -30,6 +30,6 @@ class CustomerAddress extends Model
 
     public function area()
     {
-        return $this->belongsTo(ComArea::class, 'area_id');
+        return $this->belongsTo(StoreArea::class, 'area_id');
     }
 }

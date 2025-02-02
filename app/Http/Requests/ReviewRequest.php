@@ -25,7 +25,7 @@ class ReviewRequest extends FormRequest
     {
         return [
             'order_id' => 'required|exists:orders,id',
-            'store_id' => 'required|exists:com_merchant_stores,id',
+            'store_id' => 'required|exists:stores,id',
             'reviewable_id' => 'required|integer',
             'reviewable_type' => 'required|string|in:product,delivery_man',
             'review' => 'required|string|min:10|max:1000',

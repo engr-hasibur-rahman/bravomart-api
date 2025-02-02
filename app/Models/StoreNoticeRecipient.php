@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ComStoreNoticeRecipient extends Model
+class StoreNoticeRecipient extends Model
 {
     protected $fillable = [
         "notice_id",
@@ -14,7 +14,7 @@ class ComStoreNoticeRecipient extends Model
 
     public function notice()
     {
-        return $this->belongsTo(ComStoreNotice::class, 'notice_id');
+        return $this->belongsTo(StoreNotice::class, 'notice_id');
     }
 
     public function seller()
@@ -22,6 +22,6 @@ class ComStoreNoticeRecipient extends Model
         return $this->belongsTo(User::class, 'seller_id');
     }
     public function store(){
-        return $this->belongsTo(ComMerchantStore::class, 'store_id');
+        return $this->belongsTo(Store::class, 'store_id');
     }
 }

@@ -77,8 +77,21 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        Schema::create('store_sellers', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+            $table->double('rating')->nullable();
+            $table->integer('num_of_reviews')->nullable();
+            $table->integer('num_of_sale')->nullable();
+            $table->boolean('status')->default(1);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->timestamps();
+        });
+
         //https://github.com/MatanYadaev/laravel-eloquent-spatial package
-        Schema::create('com_areas', function (Blueprint $table) {
+        Schema::create('store_areas', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable();
             $table->string('store_type')->nullable();
@@ -94,43 +107,40 @@ return new class extends Migration {
         });
 
 
-        Schema::create('com_business_modules', function (Blueprint $table) {
+        Schema::create('store_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name'); // Store type name (e.g., Grocery, Pharmacy)
             $table->string('type');
-            $table->string('logo')->nullable();
+            $table->string('image')->nullable();
             $table->text('description')->nullable();
             $table->bigInteger('total_stores')->default(0);
             $table->boolean('status')->default(0)->comment('0=Inactive, 1=Active');
             $table->timestamps();
         });
 
-        Schema::create('com_business_modules_settings', function (Blueprint $table) {
+        Schema::create('store_type_settings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('com_area_id');
-            // Delivery settings
+            $table->unsignedBigInteger('store_type_id');
+            $table->unsignedBigInteger('store_area_id');
             $table->integer('delivery_time_per_km');
             $table->decimal('min_order_delivery_fee', 10, 2)->nullable();
-            // Delivery Charge Methods
             $table->string('delivery_charge_method')->nullable()->comment('fixed', 'per_km', 'range_wise');
             $table->decimal('fixed_charge_amount', 10, 2)->nullable();
             $table->decimal('per_km_charge_amount', 10, 2)->nullable();
-            $table->json('range_wise_charges_data')->nullable();
             $table->timestamps();
         });
 
-        Schema::create('com_merchant', function (Blueprint $table) {
+        Schema::create('store_type_range_charges', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
-            $table->double('rating')->nullable();
-            $table->integer('num_of_reviews')->nullable();
-            $table->integer('num_of_sale')->nullable();
-            $table->boolean('status')->default(1);
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('store_type_id'); // Foreign Key
+            $table->decimal('min_km', 8, 2);
+            $table->decimal('max_km', 8, 2);
+            $table->decimal('charge_amount', 10, 2);
+            $table->boolean('status')->default(1)->comment('0=Inactive, 1=Active');
             $table->timestamps();
         });
+
+
     }
 
     /**
@@ -144,6 +154,10 @@ return new class extends Migration {
         Schema::dropIfExists('product_brand');
         Schema::dropIfExists('product_category');
         Schema::dropIfExists('product_attributes');
-        Schema::dropIfExists('com_merchant_stores');
+        Schema::dropIfExists('store_sellers');
+        Schema::dropIfExists('store_areas');
+        Schema::dropIfExists('store_types');
+        Schema::dropIfExists('store_type_settings');
+        Schema::dropIfExists('store_type_range_charges');
     }
 };

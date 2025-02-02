@@ -18,7 +18,7 @@ class SellerStoreDashboardManageController extends Controller
     public function dashboard(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'slug' => 'required|string|exists:com_merchant_stores,slug',
+            'slug' => 'required|string|exists:stores,slug',
         ]);
         if ($validator->fails()) {
             return response()->json([

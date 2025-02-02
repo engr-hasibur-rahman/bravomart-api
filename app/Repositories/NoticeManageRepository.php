@@ -3,8 +3,8 @@
 namespace App\Repositories;
 
 use App\Interfaces\NoticeManageInterface;
-use App\Models\ComStoreNotice;
-use App\Models\ComStoreNoticeRecipient;
+use App\Models\StoreNotice;
+use App\Models\StoreNoticeRecipient;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -14,10 +14,10 @@ class NoticeManageRepository implements NoticeManageInterface
     {
         DB::beginTransaction(); // Start a transaction
         try {
-            $notice = ComStoreNotice::create($data);
+            $notice = StoreNotice::create($data);
             if ($notice && $data['type'] !== 'general') {
                 $data['notice_id'] = $notice->id;
-                $notice_recipient = ComStoreNoticeRecipient::create($data);
+                $notice_recipient = StoreNoticeRecipient::create($data);
             } else {
                 return false;
             }
@@ -39,7 +39,7 @@ class NoticeManageRepository implements NoticeManageInterface
     public function getNotice(array $filters)
     {
         try {
-            $query = ComStoreNotice::query();
+            $query = StoreNotice::query();
             if (isset($filters['search'])) {
                 $searchTerm = $filters['search'];
                 // Adding the search condition for both title and message
@@ -74,7 +74,7 @@ class NoticeManageRepository implements NoticeManageInterface
     public function getById($id)
     {
         try {
-            $notice = ComStoreNotice::with('recipients')->findOrFail($id);
+            $notice = StoreNotice::with('recipients')->findOrFail($id);
             return $notice;
         } catch (\Exception $exception) {
             return false;
@@ -84,7 +84,7 @@ class NoticeManageRepository implements NoticeManageInterface
     public function updateNotice(array $data)
     {
         try {
-            ComStoreNotice::findorfail($data['id'])->update($data);
+            StoreNotice::findorfail($data['id'])->update($data);
             return true;
         } catch (\Exception $exception) {
             return false;
@@ -94,7 +94,7 @@ class NoticeManageRepository implements NoticeManageInterface
     public function toggleStatus($id)
     {
         try {
-            $notice = ComStoreNotice::findOrFail($id);
+            $notice = StoreNotice::findOrFail($id);
             $notice->status = !$notice->status;
             $notice->save();
             return true;
@@ -107,7 +107,7 @@ class NoticeManageRepository implements NoticeManageInterface
     public function deleteNotice($id)
     {
         try {
-            $notice = ComStoreNotice::findOrFail($id);
+            $notice = StoreNotice::findOrFail($id);
             $notice->delete();
             return true;
         } catch (\Exception $exception) {
@@ -126,7 +126,7 @@ class NoticeManageRepository implements NoticeManageInterface
             return [];
         }
 
-        $query = ComStoreNoticeRecipient::with('notice')
+        $query = StoreNoticeRecipient::with('notice')
             ->where(function ($query) use ($userStores) {
                 $query->where(function ($subQuery) {
                     // Notices specific to the authenticated seller

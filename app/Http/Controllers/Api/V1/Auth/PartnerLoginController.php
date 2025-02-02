@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Helpers\ComHelper;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\CustomPermission;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -69,7 +69,7 @@ class PartnerLoginController extends Controller
             $storeIds = []; // Default to an empty array if the type is neither string nor array
         }
         if (!is_null($storeIds) && is_array($storeIds)) {
-            $stores = ComMerchantStore::whereIn('id', $storeIds)
+            $stores = Store::whereIn('id', $storeIds)
                 ->select(['id', 'name', 'store_type'])
                 ->get()
                 ->toArray();

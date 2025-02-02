@@ -11,7 +11,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('com_merchant_stores', function (Blueprint $table) {
+        Schema::create('stores', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('area_id')->nullable();
             $table->unsignedBigInteger('merchant_id')->nullable();
@@ -57,6 +57,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('com_merchant_stores');
+        Schema::dropIfExists('stores');
     }
 };

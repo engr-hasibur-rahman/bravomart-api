@@ -5,7 +5,7 @@ namespace App\Imports;
 use App\Enums\Behaviour;
 use App\Enums\StatusType;
 use App\Enums\StoreType;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -35,7 +35,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
 
             if (!$isAdmin) {
                 // Check if the shop belongs to the authenticated user
-                $shopExists = ComMerchantStore::where('id', $shopId)
+                $shopExists = Store::where('id', $shopId)
                     ->where('merchant_id', auth('api')->id())
                     ->exists();
 
@@ -94,7 +94,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
     public function rules(): array
     {
         return [
-            "store_id" => 'required|exists:com_merchant_stores,id',
+            "store_id" => 'required|exists:stores,id',
             "category_id" => "required",
             "brand_id" => "required",
             "unit_id" => "required",

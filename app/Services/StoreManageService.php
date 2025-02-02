@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\SendStoreCreatedEmailJob;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\SystemCommission;
 use Illuminate\Support\Arr;
 use Modules\Subscription\app\Services\SubscriptionService;
@@ -26,10 +26,10 @@ class StoreManageService
 
         $data = Arr::except($data, ['translations']);
         $data['merchant_id'] = auth('api')->id();
-        $store = ComMerchantStore::create($data);
+        $store = Store::create($data);
 
         // store create after commission set
-        $store = ComMerchantStore::find($store->id);
+        $store = Store::find($store->id);
         $store_id = $store->id;
         if (isset($store->subscription_type) && $store->subscription_type === 'commission') {
             // get system commission
@@ -73,7 +73,7 @@ class StoreManageService
     public function storeUpdateForAuthSeller($data)
     {
 
-        $store = ComMerchantStore::findOrFail($data['id']);
+        $store = Store::findOrFail($data['id']);
         if ($store) {
             $data = Arr::except($data, ['translations']);
             $store->update($data);

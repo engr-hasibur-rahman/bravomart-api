@@ -2,10 +2,10 @@
 
 namespace Modules\Subscription\app\Services;
 
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
+use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 
@@ -29,7 +29,7 @@ class SubscriptionService
        $payment_gateway = $data['payment_gateway'];
 
         // Find the store
-        $store = ComMerchantStore::find($store_id);
+        $store = Store::find($store_id);
         if (!$store) {
             return [
                 'success' => false,
@@ -73,7 +73,7 @@ class SubscriptionService
         }
 
         // Check for existing subscription and update if found
-        $existing_subscription = ComMerchantStoresSubscription::where('store_id', $store_id)
+        $existing_subscription = StoreSubscription::where('store_id', $store_id)
             ->where('subscription_id', $subscription_package->id)
             ->first();
 
@@ -119,7 +119,7 @@ class SubscriptionService
 
         } else {
             // Create a new subscription if no existing one found
-            ComMerchantStoresSubscription::create([
+            StoreSubscription::create([
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
@@ -184,7 +184,7 @@ class SubscriptionService
         }
 
         // Fetch the store
-        $store = ComMerchantStore::find($store_id);
+        $store = Store::find($store_id);
         if (!$store || $store->merchant_id != $seller->id) {
             return [
                 'success' => false,
@@ -201,7 +201,7 @@ class SubscriptionService
         }
 
         // Fetch the active subscription
-        $currentSubscription = ComMerchantStoresSubscription::where('store_id', $store_id)->first();
+        $currentSubscription = StoreSubscription::where('store_id', $store_id)->first();
         if (!$currentSubscription) {
             return [
                 'success' => false,

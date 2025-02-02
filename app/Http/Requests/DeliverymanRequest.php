@@ -29,7 +29,7 @@ class DeliverymanRequest extends FormRequest
             'password' => 'required|string|min:8|max:12',
             'status' => 'nullable|integer',
             'vehicle_type_id' => 'required|exists:vehicle_types,id',
-            'store_id' => 'nullable|exists:com_merchant_stores,id',
+            'store_id' => 'nullable|exists:stores,id',
             'area_id' => 'nullable|exists:areas,id',
             'identification_type' => 'required|string|in:nid,passport,driving_license',
             'identification_number' => 'required|string',

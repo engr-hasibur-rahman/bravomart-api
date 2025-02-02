@@ -11,7 +11,7 @@ use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
 use App\Models\Translation;
 use App\Models\User;
-use App\Models\ComMerchant;
+use App\Models\StoreSeller;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Exception;
@@ -190,7 +190,7 @@ class UserController extends Controller
             $user->assignRole($roles);
 
             // Create Merchant ID for the user
-            $merchant = ComMerchant::create(['user_id' => $user->id]);
+            $merchant = StoreSeller::create(['user_id' => $user->id]);
 
             // Save Merchant ID in Users table
             $user->merchant_id = $merchant->id;

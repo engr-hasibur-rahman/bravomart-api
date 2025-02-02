@@ -7,7 +7,7 @@ use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Interfaces\StoreManageInterface;
 use App\Models\Banner;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\DeliveryMan;
 use App\Models\Order;
 use App\Models\OrderActivity;
@@ -18,13 +18,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
+use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 
 class StoreManageRepository implements StoreManageInterface
 {
-    public function __construct(protected ComMerchantStore $store, protected Translation $translation)
+    public function __construct(protected Store $store, protected Translation $translation)
     {
     }
 
@@ -35,25 +35,25 @@ class StoreManageRepository implements StoreManageInterface
 
     public function model(): string
     {
-        return ComMerchantStore::class;
+        return Store::class;
     }
 
     public function getAllStores(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $store = ComMerchantStore::leftJoin('translations as name_translations', function ($join) use ($language) {
-            $join->on('com_merchant_stores.id', '=', 'name_translations.translatable_id')
-                ->where('name_translations.translatable_type', '=', ComMerchantStore::class)
+        $store = Store::leftJoin('translations as name_translations', function ($join) use ($language) {
+            $join->on('stores.id', '=', 'name_translations.translatable_id')
+                ->where('name_translations.translatable_type', '=', Store::class)
                 ->where('name_translations.language', '=', $language)
                 ->where('name_translations.key', '=', 'name');
         })->select(
-            'com_merchant_stores.*',
-            DB::raw('COALESCE(name_translations.value, com_merchant_stores.name) as name'),
+            'stores.*',
+            DB::raw('COALESCE(name_translations.value, stores.name) as name'),
         );
 
         // Apply search filter if search parameter exists
         if ($search) {
             $store->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', com_merchant_stores.name, name_translations.value)"), 'like', "%{$search}%");
+                $query->where(DB::raw("CONCAT_WS(' ', stores.name, name_translations.value)"), 'like', "%{$search}%");
             });
         }
         // Apply sorting and pagination
@@ -65,20 +65,20 @@ class StoreManageRepository implements StoreManageInterface
 
     public function getAuthSellerStores(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        $store = ComMerchantStore::leftJoin('translations as name_translations', function ($join) use ($language) {
-            $join->on('com_merchant_stores.id', '=', 'name_translations.translatable_id')
-                ->where('name_translations.translatable_type', '=', ComMerchantStore::class)
+        $store = Store::leftJoin('translations as name_translations', function ($join) use ($language) {
+            $join->on('stores.id', '=', 'name_translations.translatable_id')
+                ->where('name_translations.translatable_type', '=', Store::class)
                 ->where('name_translations.language', '=', $language)
                 ->where('name_translations.key', '=', 'name');
         })->select(
-            'com_merchant_stores.*',
-            DB::raw('COALESCE(name_translations.value, com_merchant_stores.name) as name'),
+            'stores.*',
+            DB::raw('COALESCE(name_translations.value, stores.name) as name'),
         );
 
         // Apply search filter if search parameter exists
         if ($search) {
             $store->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', com_merchant_stores.name, name_translations.value)"), 'like', "%{$search}%");
+                $query->where(DB::raw("CONCAT_WS(' ', stores.name, name_translations.value)"), 'like', "%{$search}%");
             });
         }
         // Apply sorting and pagination
@@ -96,7 +96,7 @@ class StoreManageRepository implements StoreManageInterface
         try {
             $data = Arr::except($data, ['translations']);
             $data['merchant_id'] = auth('api')->id();
-            $store = ComMerchantStore::create($data);
+            $store = Store::create($data);
 
             // if seller select store business type commission or subscription
             if (isset($data['subscription_type']) && !empty($data['subscription_type'])) {
@@ -129,7 +129,7 @@ class StoreManageRepository implements StoreManageInterface
                 ]);
 
                 // Create store wise subscription
-                ComMerchantStoresSubscription::create([
+                StoreSubscription::create([
                     'store_id' => $store->id,
                     'subscription_id' => $subscription_package->id,
                     'name' => $subscription_package->name,
@@ -162,7 +162,7 @@ class StoreManageRepository implements StoreManageInterface
         $data['created_by'] = auth('api')->id();
         try {
             $data = Arr::except($data, ['translations']);
-            $store = ComMerchantStore::create($data);
+            $store = Store::create($data);
             return $store->id;
         } catch (\Throwable $th) {
             throw $th;
@@ -172,7 +172,7 @@ class StoreManageRepository implements StoreManageInterface
     public function getStoreById(int|string $id)
     {
         try {
-            $store = ComMerchantStore::with(['related_translations', 'merchant', 'area', 'activeSubscription'])->findorfail($id);
+            $store = Store::with(['related_translations', 'merchant', 'area', 'activeSubscription'])->findorfail($id);
             if ($store) {
                 return $store;
             } else {
@@ -187,7 +187,7 @@ class StoreManageRepository implements StoreManageInterface
     {
         $data['updated_by'] = auth('api')->id();
         try {
-            $store = ComMerchantStore::findOrFail($data['id']);
+            $store = Store::findOrFail($data['id']);
             if ($store) {
                 $data = Arr::except($data, ['translations']);
                 $store->update($data);
@@ -203,7 +203,7 @@ class StoreManageRepository implements StoreManageInterface
     public function updateForSeller(array $data)
     {
         try {
-            $store = ComMerchantStore::findOrFail($data['id']);
+            $store = Store::findOrFail($data['id']);
             if ($store) {
                 $data = Arr::except($data, ['translations']);
                 $store->update($data);
@@ -219,8 +219,8 @@ class StoreManageRepository implements StoreManageInterface
     public function delete(int|string $id)
     {
         try {
-            $store = ComMerchantStore::findOrFail($id);
-            $this->deleteTranslation($store->id, ComMerchantStore::class);
+            $store = Store::findOrFail($id);
+            $this->deleteTranslation($store->id, Store::class);
             $store->delete();
             return true;
         } catch (\Throwable $th) {
@@ -315,11 +315,11 @@ class StoreManageRepository implements StoreManageInterface
         try {
             switch ($onlyDeleted) {
                 case true:
-                    $records = ComMerchantStore::onlyTrashed()->get();
+                    $records = Store::onlyTrashed()->get();
                     break;
 
                 default:
-                    $records = ComMerchantStore::withTrashed()->get();
+                    $records = Store::withTrashed()->get();
                     break;
             }
             return $records;
@@ -336,7 +336,7 @@ class StoreManageRepository implements StoreManageInterface
 
         $seller_id = auth('api')->id();
 
-        $stores = ComMerchantStore::with('related_translations') // Load all related translations
+        $stores = Store::with('related_translations') // Load all related translations
         ->where('merchant_id', $seller_id)
             ->where('enable_saling', 1)
             ->where('status', 1)
@@ -351,7 +351,7 @@ class StoreManageRepository implements StoreManageInterface
             unauthorized_response();
         }
         $seller_id = auth('api')->id();
-        $storeBelongsToSeller = ComMerchantStore::with(['merchant'])
+        $storeBelongsToSeller = Store::with(['merchant'])
             ->where('merchant_id', $seller_id)
             ->where('slug', $slug)
             ->first();
@@ -454,9 +454,9 @@ class StoreManageRepository implements StoreManageInterface
     public function getSellerWiseStores(?int $SellerId)
     {
         if ($SellerId) {
-            $stores = ComMerchantStore::where('merchant_id', $SellerId)->get();
+            $stores = Store::where('merchant_id', $SellerId)->get();
         } else {
-            $stores = ComMerchantStore::where('status', 1)->get();
+            $stores = Store::where('status', 1)->get();
         }
         return $stores;
     }
@@ -464,7 +464,7 @@ class StoreManageRepository implements StoreManageInterface
     public function approveStores(array $ids)
     {
         try {
-            $stores = ComMerchantStore::whereIn('id', $ids)
+            $stores = Store::whereIn('id', $ids)
                 ->where('deleted_at', null)
                 ->where('status', 0)
                 ->orWhere('status', 2)
@@ -480,7 +480,7 @@ class StoreManageRepository implements StoreManageInterface
     public function changeStatus(array $data)
     {
         try {
-            $store = ComMerchantStore::where('id', $data['id'])
+            $store = Store::where('id', $data['id'])
                 ->where('deleted_at', null)
                 ->update([
                     'status' => $data['status']

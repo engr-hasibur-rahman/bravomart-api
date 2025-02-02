@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('com_merchant_stores_subscriptions', function (Blueprint $table) {
+        Schema::create('store_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('store_id');
             $table->bigInteger('subscription_id');
@@ -40,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('com_merchant_stores_subscriptions');
+        Schema::dropIfExists('store_subscriptions');
     }
 };

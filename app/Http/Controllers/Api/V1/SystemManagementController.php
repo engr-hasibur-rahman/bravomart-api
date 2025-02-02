@@ -6,7 +6,7 @@ use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Controllers\Controller;
 use App\Interfaces\TranslationInterface;
-use App\Models\ComOption;
+use App\Models\SettingOption;
 use App\Models\SystemManagement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -20,7 +20,7 @@ class SystemManagementController extends Controller
 {
     public function __construct(
         protected TranslationInterface $transRepo,
-        protected ComOption $get_com_option,
+        protected SettingOption        $get_com_option,
     ) {}
 
     public function translationKeys(): mixed
@@ -94,10 +94,10 @@ class SystemManagementController extends Controller
 
             // Define the fields that need to be translated
             $fields = ['com_site_title', 'com_site_subtitle', 'com_site_full_address', 'com_site_contact_number', 'com_site_footer_copyright'];
-            $com_options = ComOption::whereIn('option_name', $fields)->get(['id']);
+            $setting_options = SettingOption::whereIn('option_name', $fields)->get(['id']);
 
-            foreach ($com_options as $com_option) {
-                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\ComOption', $this->translationKeys());
+            foreach ($setting_options as $com_option) {
+                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', $this->translationKeys());
             }
 
             return $this->success(translate('messages.update_success', ['name' => 'General Settings']));
@@ -105,7 +105,7 @@ class SystemManagementController extends Controller
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
 
-            $ComOptionGet = ComOption::with('translations')->whereIn('option_name', ['com_site_title', 'com_site_subtitle'])
+            $ComOptionGet = SettingOption::with('translations')->whereIn('option_name', ['com_site_title', 'com_site_subtitle'])
                 ->get(['id']);
 
             // transformed data
@@ -184,10 +184,10 @@ class SystemManagementController extends Controller
 
             // Define the fields that need to be translated
             $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'];
-            $com_options = ComOption::whereIn('option_name', $fields)->get(['id']);
+            $setting_options = SettingOption::whereIn('option_name', $fields)->get(['id']);
 
-            foreach ($com_options as $com_option) {
-                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\ComOption', $this->translationKeys());
+            foreach ($setting_options as $com_option) {
+                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', $this->translationKeys());
             }
 
             return $this->success(translate('messages.update_success', ['name' => 'SEO Settings']));
@@ -195,7 +195,7 @@ class SystemManagementController extends Controller
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
 
-            $ComOptionGet = ComOption::with('translations')
+            $ComOptionGet = SettingOption::with('translations')
                 ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'])
                 ->get(['id']);
 
@@ -339,10 +339,10 @@ class SystemManagementController extends Controller
 
             // Define the fields that need to be translated
             $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'];
-            $com_options = ComOption::whereIn('option_name', $fields)->get(['id']);
+            $setting_options = SettingOption::whereIn('option_name', $fields)->get(['id']);
 
-            foreach ($com_options as $com_option) {
-                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\ComOption', $this->translationKeys());
+            foreach ($setting_options as $com_option) {
+                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', $this->translationKeys());
             }
 
             return $this->success(translate('messages.update_success', ['name' => 'Footer Settings']));
@@ -353,7 +353,7 @@ class SystemManagementController extends Controller
             // multiple image get
             $com_payment_methods_image_urls = $imageModifier->multipleImageModifier(com_option_get('com_payment_methods_image'));
 
-            $ComOptionGet = ComOption::with('translations')
+            $ComOptionGet = SettingOption::with('translations')
                 ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'])
                 ->get(['id']);
 
@@ -416,10 +416,10 @@ class SystemManagementController extends Controller
 
             // Define the fields that need to be translated
             $fields = ['com_maintenance_title', 'com_maintenance_description'];
-            $com_options = ComOption::whereIn('option_name', $fields)->get(['id']);
+            $setting_options = SettingOption::whereIn('option_name', $fields)->get(['id']);
 
-            foreach ($com_options as $com_option) {
-                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\ComOption', $this->translationKeys());
+            foreach ($setting_options as $com_option) {
+                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', $this->translationKeys());
             }
 
             return $this->success(translate('messages.update_success', ['name' => 'Maintenance Settings']));
@@ -427,7 +427,7 @@ class SystemManagementController extends Controller
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
 
-            $ComOptionGet = ComOption::with('translations')
+            $ComOptionGet = SettingOption::with('translations')
                 ->whereIn('option_name', ['com_maintenance_title', 'com_maintenance_description'])
                 ->get(['id']);
 

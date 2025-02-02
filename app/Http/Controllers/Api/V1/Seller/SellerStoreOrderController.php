@@ -15,7 +15,7 @@ class SellerStoreOrderController extends Controller
     public function allOrders(Request $request){
 
        $validator = Validator::make($request->all(), [
-            'store_id' => 'required|exists:com_merchant_stores,id',
+            'store_id' => 'required|exists:stores,id',
         ]);
 
         // Check for validation failure

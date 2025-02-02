@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('com_store_notices', function (Blueprint $table) {
+        Schema::create('store_notices', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->longText('message')->nullable();
@@ -28,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('com_store_notices');
+        Schema::dropIfExists('store_notices');
     }
 };

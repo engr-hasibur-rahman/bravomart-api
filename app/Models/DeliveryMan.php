@@ -32,7 +32,7 @@ class DeliveryMan extends Model
 
     public function store()
     {
-        return $this->belongsTo(ComMerchantStore::class, 'store_id');
+        return $this->belongsTo(Store::class, 'store_id');
     }
 
     public function scopePendingDeliveryman($query)
@@ -50,7 +50,7 @@ class DeliveryMan extends Model
 
     public function area()
     {
-        return $this->belongsTo(ComArea::class, 'area_id');
+        return $this->belongsTo(StoreArea::class, 'area_id');
     }
 
     public function creator()

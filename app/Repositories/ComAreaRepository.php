@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Helpers\ComHelper;
 use App\Http\Resources\Translation\AreaTranslationResource;
 use App\Http\Resources\Translation\TranslationResource;
-use App\Models\ComArea;
+use App\Models\StoreArea;
 use App\Interfaces\ComAreaInterface;
 use Illuminate\Support\Facades\DB;
 
@@ -17,11 +17,11 @@ use Illuminate\Support\Facades\DB;
 class ComAreaRepository implements ComAreaInterface
 {
 
-    public function __construct(protected ComArea $area) {}
+    public function __construct(protected StoreArea $area) {}
 
     public function model(): string
     {
-        return ComArea::class;
+        return StoreArea::class;
     }
 
     public function translationKeys(): mixed
@@ -36,22 +36,22 @@ class ComAreaRepository implements ComAreaInterface
 
     public function getPaginatedList(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        // Query the ComArea model with a left join on translations
-        $areas = ComArea::leftJoin('translations', function ($join) use ($language) {
-            $join->on('com_areas.id', '=', 'translations.translatable_id')
-                ->where('translations.translatable_type', '=', ComArea::class)
+        // Query the StoreArea model with a left join on translations
+        $areas = StoreArea::leftJoin('translations', function ($join) use ($language) {
+            $join->on('store_areas.id', '=', 'translations.translatable_id')
+                ->where('translations.translatable_type', '=', StoreArea::class)
                 ->where('translations.language', '=', $language)
                 ->where('translations.key', '=', 'name');
         })
             ->select(
-                'com_areas.*',
-                DB::raw('COALESCE(translations.value, com_areas.name) as name')
+                'store_areas.*',
+                DB::raw('COALESCE(translations.value, store_areas.name) as name')
             );
 
         // Apply search filter if search parameter exists
         if ($search) {
             $areas->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', com_areas.name, translations.value)"), 'like', "%{$search}%");
+                $query->where(DB::raw("CONCAT_WS(' ', store_areas.name, translations.value)"), 'like', "%{$search}%");
             });
         }
 
@@ -66,7 +66,7 @@ class ComAreaRepository implements ComAreaInterface
     {
         // Find the area by id
         $area = $this->area->with('related_translations')->findOrFail($id);
-//        // Fetch translation which is initialized in ComArea Model grouped by language
+//        // Fetch translation which is initialized in StoreArea Model grouped by language
 //        $translations = $area->translations()->get()->groupBy('language');
 //
 //        // Initialize an array to hold the transformed data

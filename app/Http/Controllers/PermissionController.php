@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ComHelper;
 use App\Http\Resources\PermissionResource;
 use App\Http\Resources\SellerRoleResource;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\CustomPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +29,7 @@ class PermissionController extends Controller
         // Now Check if user is a Store User and he have assigned Stores
         if($user->activity_scope=='store_level')
         {
-            $shop_count=ComMerchantStore::where('merchant_id', $user->id)->count();
+            $shop_count=Store::where('merchant_id', $user->id)->count();
         }
 
         if($shop_count > 0) {

@@ -1,7 +1,7 @@
 <?php
 
 use App\Helpers;
-use App\Models\ComOption;
+use App\Models\SettingOption;
 use App\Models\Coupon;
 use App\Models\CouponLine;
 use App\Models\Media;
@@ -167,7 +167,7 @@ if (!function_exists('translate')) {
 
     function com_option_update($key, $value)
     {
-        $option = ComOption::updateOrCreate(
+        $option = SettingOption::updateOrCreate(
             ['option_name' => $key], // Condition: match by option_name
             ['option_value' => $value] // Update or set option_value
         );
@@ -182,7 +182,7 @@ if (!function_exists('translate')) {
         $option_name = $key;
         $value = \Illuminate\Support\Facades\Cache::remember($option_name, 600, function () use ($option_name) {
             try {
-                return ComOption::where('option_name', $option_name)->first();
+                return SettingOption::where('option_name', $option_name)->first();
             } catch (\Exception $e) {
                 return null;
             }

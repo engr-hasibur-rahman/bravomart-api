@@ -25,7 +25,7 @@ class RenewSubscriptionRequest extends FormRequest
             'store_id' => [
                 'required',
                 'integer',
-                'exists:com_merchant_stores,id',
+                'exists:stores,id',
             ],
             'subscription_id' => [
                 'required',

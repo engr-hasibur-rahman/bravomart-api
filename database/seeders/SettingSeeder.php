@@ -39,6 +39,6 @@ class SettingSeeder extends Seeder
 
         ];
 
-        DB::table('com_options')->insert($data);
+        DB::table('setting_options')->insert($data);
     }
 }

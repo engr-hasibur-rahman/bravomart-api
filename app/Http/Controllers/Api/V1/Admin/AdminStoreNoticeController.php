@@ -8,7 +8,7 @@ use App\Http\Resources\Admin\AdminNoticeDetailsResource;
 use App\Http\Resources\Admin\AdminNoticeResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\NoticeManageInterface;
-use App\Models\ComStoreNotice;
+use App\Models\StoreNotice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 

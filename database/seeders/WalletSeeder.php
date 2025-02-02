@@ -16,7 +16,7 @@ class WalletSeeder extends Seeder
     {
         Wallet::create([
             "owner_id" => 1,
-            "owner_type" => 'App\Models\ComMerchantStore',
+            "owner_type" => 'App\Models\Store',
             "balance" => 100,
             "status" => 1,
             "created_at" => Carbon::now(),
@@ -37,7 +37,7 @@ class WalletSeeder extends Seeder
 
         Wallet::create([
             "owner_id" => 2,
-            "owner_type" => 'App\Models\ComMerchantStore',
+            "owner_type" => 'App\Models\Store',
             "balance" => 100,
             "status" => 1,
             "created_at" => Carbon::now(),

@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
-class ComArea extends Model
+class StoreArea extends Model
 {
     use HasFactory;
 
     //Will Manage Shop Area
-    protected $table = 'com_areas';
+    protected $table = 'store_areas';
     protected $guarded = [];
     protected $fillable = [
         'name',
@@ -32,7 +32,7 @@ class ComArea extends Model
 
     public function stores()
     {
-        return $this->hasMany(ComMerchantStore::class, 'area_id');
+        return $this->hasMany(Store::class, 'area_id');
     }
 
     public function addresses()

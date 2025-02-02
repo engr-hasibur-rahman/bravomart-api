@@ -2,12 +2,11 @@
 
 namespace Modules\Wallet\app\Models;
 
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Session\Store;
 
 class Wallet extends Model
 {
@@ -64,7 +63,7 @@ class Wallet extends Model
             return $query->whereRaw('1 = 0');
         }
 
-        if (!in_array(get_class($owner), [User::class, Customer::class, ComMerchantStore::class])) {
+        if (!in_array(get_class($owner), [User::class, Customer::class, Store::class])) {
             throw new \InvalidArgumentException('Invalid owner type.');
         }
 

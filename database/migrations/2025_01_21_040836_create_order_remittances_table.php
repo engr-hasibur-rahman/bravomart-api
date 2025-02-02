@@ -29,7 +29,6 @@ return new class extends Migration
             $table->decimal('extra_packing_charge')->nullable();
             $table->decimal('extra_packing_charge_store_value')->nullable();
             $table->decimal('extra_packing_charge_admin_commission')->nullable();
-
             $table->timestamps();
         });
     }

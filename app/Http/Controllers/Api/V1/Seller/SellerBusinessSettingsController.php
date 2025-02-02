@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Store\SellerStoreCommissionResource;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use Illuminate\Http\Request;
-use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
+use Modules\Subscription\app\Models\StoreSubscription;
 
 class SellerBusinessSettingsController extends Controller
 {
@@ -14,7 +14,7 @@ class SellerBusinessSettingsController extends Controller
 
         $seller_id = auth()->guard('api')->id();
 
-        $store = ComMerchantStore::where('id', $request->store_id)
+        $store = Store::where('id', $request->store_id)
             ->where('merchant_id', $seller_id)
             ->first();
 
@@ -48,7 +48,7 @@ class SellerBusinessSettingsController extends Controller
     public function businessPlanChange(Request $request){
         $seller_id = auth()->guard('api')->id();
 
-        $store = ComMerchantStore::where('id', $request->store_id)
+        $store = Store::where('id', $request->store_id)
             ->where('merchant_id', $seller_id)
             ->first();
 
