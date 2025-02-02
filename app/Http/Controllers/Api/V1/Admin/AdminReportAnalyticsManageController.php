@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Exports\OrderReportExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\AdminOrderReportResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminReportAnalyticsManageController extends Controller
 {
@@ -111,7 +113,14 @@ class AdminReportAnalyticsManageController extends Controller
             });
         }
 
-        $orderDetails = $query->with(['order.customer', 'store', 'area'])->latest()->paginate($filters['per_page'] ?? 20);
+        $orderDetails = $query->with(['order.customer', 'store', 'area'])
+            ->latest()
+            ->paginate($filters['per_page'] ?? 20);
+        // Check if export option is requested (either csv or xlsx)
+        if ($request->has('export') && in_array($request->export, ['csv', 'xlsx'])) {
+            // Export to CSV or XLSX using the filtered data
+            return Excel::download(new OrderReportExport($orderDetails), 'order_report_' . time() . '.' . $request->export);
+        }
 
         return response()->json([
             'data' => AdminOrderReportResource::collection($orderDetails),

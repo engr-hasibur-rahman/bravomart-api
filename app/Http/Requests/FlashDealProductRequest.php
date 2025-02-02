@@ -25,8 +25,8 @@ class FlashDealProductRequest extends FormRequest
     {
         return [
             'flash_sale_id' => 'required|exists:flash_sales,id',
-            'products.*.product_id' => 'required|exists:products,id',
-            'store_id' => 'nullable|exists:stores,id',
+            'products*' => 'required|exists:products,id',
+            'store_id' => 'nullable|exists:com_merchant_stores,id',
         ];
     }
 
@@ -35,8 +35,8 @@ class FlashDealProductRequest extends FormRequest
         return [
             'flash_sale_id.required' => __('validation.required', ['attribute' => 'Flash Sale']),
             'flash_sale_id.exists' => __('validation.exists', ['attribute' => 'Flash Sale']),
-            'products.*.product_id.required' => __('validation.required', ['attribute' => 'Products']),
-            'products.*.product_id.exists' => __('validation.exists', ['attribute' => 'Products']),
+            'products*.required' => __('validation.required', ['attribute' => 'Products']),
+            'products*.exists' => __('validation.exists', ['attribute' => 'Products']),
             'store_id.exists' => __('validation.exists', ['attribute' => 'Store']),
         ];
     }
