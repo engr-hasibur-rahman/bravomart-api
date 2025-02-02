@@ -162,7 +162,7 @@ class AdminFlashSaleManageController extends Controller
     public function flashSaleProductRequest()
     {
         $requests = $this->flashSaleService->getFlashSaleProductRequest();
-        if (!$requests) {
+        if (!empty($requests)) {
             return response()->json([
                 'data' => FlashSaleProductResource::collection($requests),
                 'meta' => new PaginationResource($requests),
