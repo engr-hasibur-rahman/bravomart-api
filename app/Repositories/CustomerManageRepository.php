@@ -148,6 +148,7 @@ class CustomerManageRepository implements CustomerManageInterface
             ]);
         }
     }
+
     public function changePassword(array $data)
     {
         $customer = $this->customer->where('email', auth('api_customer')->user()->email)->first();
@@ -233,10 +234,15 @@ class CustomerManageRepository implements CustomerManageInterface
     protected function getRecentOrders($customer_id)
     {
         return Order::where('customer_id', $customer_id)
-            ->where('status', 'delivered')
+            ->where('status', 'pending')
             ->latest()
-            ->limit(5)
+            ->limit(10)
             ->get();
+    }
+
+    protected function getWalletAmount($customer_id)
+    {
+
     }
 
 }
