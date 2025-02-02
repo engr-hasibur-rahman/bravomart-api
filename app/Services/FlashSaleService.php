@@ -191,6 +191,15 @@ class FlashSaleService
             return null;
         }
     }
+    public function getFlashSaleProductRequestDetails(int $id)
+    {
+        $requests = FlashSaleProduct::find($id);
+        if (!empty($requests)) {
+            return $requests;
+        } else {
+            return null;
+        }
+    }
 
     public function approveFlashSaleProductRequest(array $productIds): bool
     {
