@@ -77,55 +77,45 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        // Schema::create('product_attribute_group', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->unsignedBigInteger('product_attribute_id');
-        //     $table->foreign('product_attribute_id')->references('id')->on('product_attributes')->onDelete('cascade');
-        //     $table->string('size_label');
-        //     $table->string('color_label');
-        //     $table->string('material_label');
-        //     $table->string('attribute_list');
-        //     $table->unsignedBigInteger('created_by')->nullable();
-        //     $table->unsignedBigInteger('updated_by')->nullable();
-        //     $table->boolean('status')->default(1);
-        //     $table->timestamps();
-        // });
-
-        // Schema::create('product_attribute_line', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->unsignedBigInteger('product_attribute_id');
-        //     $table->foreign('product_attribute_id')->references('id')->on('product_attributes')->onDelete('cascade');
-        //     $table->string('attribute_line_name');
-        //     $table->unsignedBigInteger('created_by')->nullable();
-        //     $table->unsignedBigInteger('updated_by')->nullable();
-        //     $table->boolean('status')->default(1);
-        //     $table->timestamps();
-        // });
-
-        // Schema::create('media', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->unsignedBigInteger('fileable_id');
-        //     $table->string('fileable_type');
-        //     $table->string('type');
-        //     $table->string('name');
-        //     $table->string('src');
-        //     $table->string('extension');
-        //     $table->string('path');
-        //     $table->string('description');
-        //     $table->unsignedBigInteger('created_by')->nullable();
-        //     $table->unsignedBigInteger('updated_by')->nullable();
-        //     $table->timestamps();
-        // });
-
-        //https://github.com/MatanYadaev/laravel-eloquent-spatial
+        //https://github.com/MatanYadaev/laravel-eloquent-spatial package
         Schema::create('com_areas', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable();
+            $table->string('store_type')->nullable();
             $table->string('name');
-            $table->geometry('coordinates', subtype: 'polygon')->nullable();
-            $table->boolean('status')->default(1);
+            // Google Maps-based zone management
+            $table->geometry('coordinates', subtype: 'polygon')->nullable(); // Polygon boundary (Google Maps)
+            $table->decimal('center_latitude', 10, 7)->nullable();
+            $table->decimal('center_longitude', 10, 7)->nullable();
+            $table->boolean('status')->default(0)->comment('0=Inactive, 1=Active');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
+            $table->timestamps();
+        });
+
+
+        Schema::create('com_business_modules', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('type');
+            $table->string('logo')->nullable();
+            $table->text('description')->nullable();
+            $table->bigInteger('total_stores')->default(0);
+            $table->boolean('status')->default(0)->comment('0=Inactive, 1=Active');
+            $table->timestamps();
+        });
+
+        Schema::create('com_business_modules_settings', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('com_area_id');
+            // Delivery settings
+            $table->integer('delivery_time_per_km');
+            $table->decimal('min_order_delivery_fee', 10, 2)->nullable();
+            // Delivery Charge Methods
+            $table->string('delivery_charge_method')->nullable()->comment('fixed', 'per_km', 'range_wise');
+            $table->decimal('fixed_charge_amount', 10, 2)->nullable();
+            $table->decimal('per_km_charge_amount', 10, 2)->nullable();
+            $table->json('range_wise_charges_data')->nullable();
             $table->timestamps();
         });
 
