@@ -36,9 +36,9 @@ class PartnerLoginController extends Controller
         if (!$user) {
             return response()->json([
                 "status" => false,
-                "status_code" => 404,
-                "message" => __('messages.customer.not.found'),
-            ], 404);
+                "status_code" => 422,
+                "message" => 'User is not a seller!',
+            ]);
         }
         // Check if the user's account is deleted
         if ($user->deleted_at !== null) {
