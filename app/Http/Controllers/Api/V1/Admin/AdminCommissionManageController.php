@@ -14,8 +14,8 @@ class AdminCommissionManageController extends Controller
         if ($request->isMethod('POST')) {
             // Validate input
             $validatedData = $request->validate([
-                'subscription_enabled' => 'required|boolean',
-                'commission_enabled' => 'required|boolean',
+                'subscription_enabled' => 'nullable|boolean',
+                'commission_enabled' => 'nullable|boolean',
                 'commission_type' => 'nullable',
                 'commission_amount' => 'nullable|numeric|min:0',
                 'default_order_commission_rate' => 'nullable|numeric|min:0',
@@ -27,6 +27,17 @@ class AdminCommissionManageController extends Controller
                 'order_additional_charge_name' => 'nullable',
                 'order_additional_charge_amount' => 'nullable|numeric|min:0',
             ]);
+
+            // Check if both subscription and commission are disabled
+            if (
+                isset($validatedData['subscription_enabled']) && $validatedData['subscription_enabled'] === false &&
+                isset($validatedData['commission_enabled']) && $validatedData['commission_enabled'] === false
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'At least one option must be enabled.',
+                ], 400); // Use HTTP status code 400 for bad request
+            }
 
             // Update or create settings
             $systemCommission = SystemCommission::first();
