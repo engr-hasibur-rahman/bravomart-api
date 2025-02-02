@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Deliveryman;
 
 use App\Http\Controllers\Controller;
-use App\Models\ComMerchant;
+use App\Models\StoreSeller;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;

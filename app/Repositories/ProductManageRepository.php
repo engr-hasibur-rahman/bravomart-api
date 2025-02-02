@@ -6,7 +6,7 @@ use App\Helpers\MultilangSlug;
 use App\Http\Resources\Seller\Store\Product\ProductDetailsResource;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\Product;
 use App\Models\ProductTag;
 use App\Models\ProductVariant;

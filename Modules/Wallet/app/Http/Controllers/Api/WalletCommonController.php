@@ -3,7 +3,7 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +31,7 @@ class WalletCommonController extends Controller
 
         //  wallets for the authenticated user
         if ($user->activity_scope === 'store_level'){
-            $store =ComMerchantStore::find($request->store_id);
+            $store =Store::find($request->store_id);
 
             if (!$store) {
                 return response()->json([
@@ -160,7 +160,7 @@ class WalletCommonController extends Controller
 
         // user's wallet
         if ($user->activity_scope === 'store_level'){
-            $store =ComMerchantStore::find($request->store_id);
+            $store =Store::find($request->store_id);
 
             if (!$store) {
                 return response()->json([

@@ -5,7 +5,7 @@ namespace App\Helpers;
 use App\Models\Translation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Models\ComOption;
+use App\Models\SettingOption;
 use App\Models\Media;
 
 class ComHelper
@@ -52,7 +52,7 @@ class ComHelper
     {
         $config = null;
 
-        $paymentmethod = ComOption::where('option_name', $name)->first();
+        $paymentmethod = SettingOption::where('option_name', $name)->first();
 
         if ($paymentmethod) {
             $config = json_decode($paymentmethod->value, true);

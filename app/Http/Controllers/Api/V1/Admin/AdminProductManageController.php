@@ -16,7 +16,7 @@ use App\Http\Resources\Product\StoreWiseProductDropdownResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -60,7 +60,7 @@ class AdminProductManageController extends Controller
     {
         $slug = MultilangSlug::makeSlug(Product::class, $request->name, 'slug');
         $request['slug'] = $slug;
-        $request['type'] = ComMerchantStore::where('id', $request['store_id'])->first()->store_type;
+        $request['type'] = Store::where('id', $request['store_id'])->first()->store_type;
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $request['warranty'] = json_encode($request['warranty']);
         $product = $this->productRepo->store($request->all());

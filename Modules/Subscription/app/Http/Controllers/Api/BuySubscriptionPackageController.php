@@ -3,12 +3,12 @@
 namespace Modules\Subscription\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Modules\Subscription\app\Http\Requests\RenewSubscriptionRequest;
-use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
+use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 use Modules\Subscription\app\Services\SubscriptionService;
@@ -100,7 +100,7 @@ class BuySubscriptionPackageController extends Controller
         //subscription history get after update
         $subscription = SubscriptionHistory::where('store_id', $request->store_id)->first();
         // update com store subscription data
-        $com_store_subscription = ComMerchantStoresSubscription::where('store_id', $request->store_id)->first();
+        $com_store_subscription = StoreSubscription::where('store_id', $request->store_id)->first();
         if (!$com_store_subscription) {
             return response()->json([
                 'success' => false,
@@ -131,7 +131,7 @@ class BuySubscriptionPackageController extends Controller
 
 
         // update store type
-        $store = ComMerchantStore::where('id', $request->store_id)
+        $store = Store::where('id', $request->store_id)
             ->where('merchant_id', auth()->guard('api')->id())
             ->first();
 

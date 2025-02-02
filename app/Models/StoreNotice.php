@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ComStoreNotice extends Model
+class StoreNotice extends Model
 {
     protected $fillable = [
         'type',
@@ -18,6 +18,6 @@ class ComStoreNotice extends Model
 
     public function recipients()
     {
-        return $this->hasMany(ComStoreNoticeRecipient::class, 'notice_id');
+        return $this->hasMany(StoreNoticeRecipient::class, 'notice_id');
     }
 }

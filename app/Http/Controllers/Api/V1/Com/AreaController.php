@@ -7,7 +7,7 @@ use App\Http\Requests\AreaCreateRequest;
 use App\Interfaces\ComAreaInterface;
 use App\Interfaces\TranslationInterface;
 use App\Services\AreaService;
-use App\Models\ComArea;
+use App\Models\StoreArea;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -44,7 +44,7 @@ class AreaController extends Controller
     {
         try {
             $area = $this->areaRepo->store($this->areaService->prepareAddData($request));
-            $this->transRepo->storeTranslation($request, $area->id, 'App\Models\ComArea', $this->areaRepo->translationKeys());
+            $this->transRepo->storeTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
 
             return $this->success(translate('messages.save_success', ['name' => $request->name]));
         } catch (\Exception $e) {
@@ -69,7 +69,7 @@ class AreaController extends Controller
         try {
 
             $area = $this->areaRepo->update($this->areaService->prepareAddData($request), $request->id);
-            $this->transRepo->updateTranslation($request, $area->id, 'App\Models\ComArea', $this->areaRepo->translationKeys());
+            $this->transRepo->updateTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
 
             return $this->success(translate('messages.update_success', ['name' => $area->name]));
         } catch (\Exception $e) {

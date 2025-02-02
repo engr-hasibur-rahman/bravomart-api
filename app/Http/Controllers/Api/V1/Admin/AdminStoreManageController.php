@@ -11,7 +11,7 @@ use App\Http\Resources\Admin\SellerWiseStoreForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Store\StoreListResource;
 use App\Interfaces\StoreManageInterface;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -44,7 +44,7 @@ class AdminStoreManageController extends Controller
     public function store(AdminStoreRequest $request): JsonResponse
     {
         $store = $this->storeRepo->store($request->all());
-        $this->storeRepo->storeTranslation($request, $store, 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
+        $this->storeRepo->storeTranslation($request, $store, 'App\Models\Store', $this->storeRepo->translationKeys());
         if ($store) {
             return $this->success(translate('messages.save_success', ['name' => 'Store']));
         } else {
@@ -55,7 +55,7 @@ class AdminStoreManageController extends Controller
     public function update(SellerStoreRequest $request)
     {
         $store = $this->storeRepo->update($request->all());
-        $this->storeRepo->updateTranslation($request, $store, 'App\Models\ComMerchantStore', $this->storeRepo->translationKeys());
+        $this->storeRepo->updateTranslation($request, $store, 'App\Models\Store', $this->storeRepo->translationKeys());
         if ($store) {
             return $this->success(translate('messages.update_success', ['name' => 'Store']));
         } else {
@@ -105,7 +105,7 @@ class AdminStoreManageController extends Controller
 
     public function storeRequest()
     {
-        $stores = ComMerchantStore::pendingStores()->paginate(10);
+        $stores = Store::pendingStores()->paginate(10);
         return response()->json([
             'data' => AdminStoreRequestResource::collection($stores),
             'meta' => new PaginationResource($stores),
@@ -115,7 +115,7 @@ class AdminStoreManageController extends Controller
     public function approveStoreRequests(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ids*' => 'required|array|exists:com_merchant_stores,id',
+            'ids*' => 'required|array|exists:stores,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
@@ -135,7 +135,7 @@ class AdminStoreManageController extends Controller
     public function changeStatus(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|exists:com_merchant_stores,id',
+            'id' => 'required|exists:stores,id',
             'status' => 'required|in:0,1,2',
         ]);
         if ($validator->fails()) {

@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
-use Modules\Subscription\app\Models\ComMerchantStoresSubscription;
+use Modules\Subscription\app\Models\StoreSubscription;
 
-class ComMerchantStore extends Model
+class Store extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $dates = ['deleted_at'];
-    protected $table = 'com_merchant_stores';
+    protected $table = 'stores';
     protected $guarded = [];
     protected $fillable = [
         'area_id',
@@ -66,7 +66,7 @@ class ComMerchantStore extends Model
 
     public function area()
     {
-        return $this->belongsTo(ComArea::class, 'area_id');
+        return $this->belongsTo(StoreArea::class, 'area_id');
     }
 
     public function merchant()
@@ -82,12 +82,12 @@ class ComMerchantStore extends Model
 
     public function subscriptions()
     {
-        return $this->hasMany(ComMerchantStoresSubscription::class, 'store_id', 'id');
+        return $this->hasMany(StoreSubscription::class, 'store_id', 'id');
     }
 
     public function activeSubscription()
     {
-        return $this->hasOne(ComMerchantStoresSubscription::class, 'store_id', 'id')
+        return $this->hasOne(StoreSubscription::class, 'store_id', 'id')
             ->where('status', 1)
             ->latest(); // Ensure the latest subscription is retrieved
     }

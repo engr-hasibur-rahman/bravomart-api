@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use App\Actions\ImageModifier;
 use App\Helpers\ComHelper;
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,7 +20,7 @@ class UserResource extends JsonResource
 
         $stores=[];
         if($this->stores!='') {
-            $stores = ComMerchantStore::whereIn('id', $this->stores)
+            $stores = Store::whereIn('id', $this->stores)
                 ->select(['id', 'name','store_type'])
                 ->get()
                 ->toArray();

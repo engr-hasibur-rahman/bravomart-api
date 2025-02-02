@@ -26,7 +26,7 @@ class FlashDealProductRequest extends FormRequest
         return [
             'flash_sale_id' => 'required|exists:flash_sales,id',
             'products*' => 'required|exists:products,id',
-            'store_id' => 'nullable|exists:com_merchant_stores,id',
+            'store_id' => 'nullable|exists:stores,id',
         ];
     }
 

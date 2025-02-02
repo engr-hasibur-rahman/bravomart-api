@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ComOption extends Model
+class SettingOption extends Model
 {
     use HasFactory;
 
     // Specify the table associated with the model
-    protected $table = 'com_options';
+    protected $table = 'setting_options';
 
     // Specify which fields can be mass assigned
     protected $fillable = ['option_name', 'option_value', 'autoload'];

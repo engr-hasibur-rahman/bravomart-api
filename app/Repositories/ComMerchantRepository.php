@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\ComMerchant;
+use App\Models\StoreSeller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -18,7 +18,7 @@ class ComMerchantRepository extends BaseRepository
 
     public function model()
     {
-        return ComMerchant::class;
+        return StoreSeller::class;
     }
 
     public function boot()

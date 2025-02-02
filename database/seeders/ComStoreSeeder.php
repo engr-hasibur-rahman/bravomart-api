@@ -19,7 +19,7 @@ ComStoreSeeder extends Seeder
 
         $storeTypes = array_map(fn($enum) => $enum->value, StoreType::cases());
 
-        DB::table('com_merchant_stores')->insert([
+        DB::table('stores')->insert([
             [
                 'area_id' => 1,
                 'merchant_id' => 1,

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('com_store_notice_recipients', function (Blueprint $table) {
+        Schema::create('store_notice_recipients', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('notice_id');
             $table->unsignedBigInteger('seller_id')->nullable();
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('com_store_notice_recipients');
+        Schema::dropIfExists('store_notice_recipients');
     }
 };

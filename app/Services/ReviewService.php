@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\Review;
 use App\Models\ReviewReaction;
 use App\Models\User;
@@ -131,7 +131,7 @@ class ReviewService
         if (!auth('api')->check()) {
             unauthorized_response();
         }
-        $seller_stores = ComMerchantStore::where('merchant_id', $sellerId)->pluck('id');
+        $seller_stores = Store::where('merchant_id', $sellerId)->pluck('id');
 
         $query = Review::with(['reviewable', 'store', 'customer'])->whereIn('store_id', $seller_stores->toArray());
 

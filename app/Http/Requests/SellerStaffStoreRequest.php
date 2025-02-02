@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Rules\ValidSellerStore;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;

@@ -4,7 +4,7 @@ namespace App\Services;
 
 
 use App\Models\Area;
-use App\Models\ComArea;
+use App\Models\StoreArea;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
@@ -197,7 +197,7 @@ class OrderService
                  // per item calculate
                 foreach ($packageData['items'] as $itemData) {
                     // find area
-                    $area = ComArea::find($packageData['area_id']);
+                    $area = StoreArea::find($packageData['area_id']);
                     // find the product
                    $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                     // Validate product variant

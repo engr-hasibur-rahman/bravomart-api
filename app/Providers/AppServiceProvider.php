@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\ComMerchantStore;
+use App\Models\Store;
 use App\Models\Customer;
 use App\Models\User;
 use App\Observers\ComMerchantStoreObserver;
@@ -27,6 +27,6 @@ class AppServiceProvider extends ServiceProvider
     {
         User::observe(UserObserver::class);
         Customer::observe(CustomerObserver::class);
-        ComMerchantStore::observe(ComMerchantStoreObserver::class);
+        Store::observe(ComMerchantStoreObserver::class);
     }
 }

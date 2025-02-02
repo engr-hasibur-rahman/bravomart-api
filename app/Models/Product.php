@@ -169,7 +169,7 @@ class Product extends Model
 
     public function store()
     {
-        return $this->belongsTo(ComMerchantStore::class, "store_id");
+        return $this->belongsTo(Store::class, "store_id");
     }
 
     public function wishlists()

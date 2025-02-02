@@ -44,8 +44,8 @@ use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
-use App\Models\ComArea;
-use App\Models\ComMerchantStore;
+use App\Models\StoreArea;
+use App\Models\Store;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -100,7 +100,7 @@ class FrontendController extends Controller
     /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
     public function getStores(Request $request)
     {
-        $query = ComMerchantStore::query();
+        $query = Store::query();
 
         // Apply store type filter if provided
         if ($request->filled('store_type')) {
@@ -132,7 +132,7 @@ class FrontendController extends Controller
     public function getStoreDetails(Request $request)
     {
         try {
-            $query = ComMerchantStore::query();
+            $query = Store::query();
 
             $store = $query->with(['area', 'merchant', 'related_translations', 'products.variants'])
                 ->where('slug', $request->slug)->first();
@@ -920,7 +920,7 @@ class FrontendController extends Controller
 
     public function areaList()
     {
-        $areas = ComArea::where('status', 1)->latest()->get();
+        $areas = StoreArea::where('status', 1)->latest()->get();
         return response()->json(ComAreaListForDropdownResource::collection($areas));
     }
 

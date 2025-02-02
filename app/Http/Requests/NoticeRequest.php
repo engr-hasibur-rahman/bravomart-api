@@ -30,7 +30,7 @@ class NoticeRequest extends FormRequest
             'priority' => 'nullable|in:low,medium,high', // Fix enum rule
             'active_date' => 'nullable|date|date_format:Y-m-d',
             'expire_date' => 'nullable|date|date_format:Y-m-d|after_or_equal:active_date', // Ensure after_or_equal rule works
-            'store_id' => 'nullable|exists:com_merchant_stores,id',
+            'store_id' => 'nullable|exists:stores,id',
             'seller_id' => 'nullable|exists:users,id',
         ];
     }

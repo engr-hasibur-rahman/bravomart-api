@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ComMerchant extends Model
+class StoreSeller extends Model
 {
     use HasFactory;
 
-    protected $table = 'com_merchant';
+    protected $table = 'store_sellers';
 
     protected $guarded = [];
 

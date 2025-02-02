@@ -42,8 +42,8 @@ class PlaceOrderRequest extends FormRequest
             'additional_charge_amt' => 'nullable|numeric|min:0',
             // packages
             'packages' => 'required|array',
-            'packages.*.store_id' => 'required|exists:com_merchant_stores,id',
-            'packages.*.area_id' => 'required|exists:com_areas,id',
+            'packages.*.store_id' => 'required|exists:stores,id',
+            'packages.*.area_id' => 'required|exists:store_areas,id',
             'packages.*.delivery_type' => 'required|in:standard_delivery,parcel,takeaway',
             'packages.*.shipping_type' => 'required|in:standard,express,freight',
             'packages.*.coupon_discount_amount_admin' => 'nullable|numeric',

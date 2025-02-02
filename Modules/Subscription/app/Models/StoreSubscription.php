@@ -5,7 +5,7 @@ namespace Modules\Subscription\app\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ComMerchantStoresSubscription extends Model
+class StoreSubscription extends Model
 {
     use HasFactory;
 
