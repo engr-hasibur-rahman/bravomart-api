@@ -80,7 +80,6 @@ return new class extends Migration {
         Schema::create('store_sellers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
             $table->double('rating')->nullable();
             $table->integer('num_of_reviews')->nullable();
             $table->integer('num_of_sale')->nullable();

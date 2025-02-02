@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         // store
         $this->call(StoreSellerSeeder::class);
         $this->call(StoreSeeder::class);
+        $this->call(StoreTypeSeeder::class);
         // customer and user
         $this->call(UserSeeder::class);
         $this->call(CustomerSeeder::class);
@@ -30,7 +31,7 @@ class DatabaseSeeder extends Seeder
         // Product
         $this->call(ProductAttributeSeeder::class);
         $this->call(ProductSeeder::class);
-         // payment
+        // payment
         $this->call(PaymentGatewaySeeder::class);
         // subscription
         $this->call(SubscriptionPackageSeeder::class);
