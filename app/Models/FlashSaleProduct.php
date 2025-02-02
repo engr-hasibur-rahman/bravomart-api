@@ -23,6 +23,11 @@ class FlashSaleProduct extends Model
         return $this->belongsTo(Product::class, 'product_id'); // Assumes a Product model exists
     }
 
+    public function store()
+    {
+        return $this->belongsTo(ComMerchantStore::class, 'store_id');
+    }
+
     public function scopePending($query)
     {
         return $query->where('status', 'pending');

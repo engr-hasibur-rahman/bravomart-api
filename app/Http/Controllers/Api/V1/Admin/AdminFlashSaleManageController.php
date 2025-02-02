@@ -96,6 +96,28 @@ class AdminFlashSaleManageController extends Controller
             ]);
         }
     }
+    public function adminUpdateProductToFlashSale(FlashDealProductRequest $request)
+    {
+        // check the products exists in store or not
+        $productsNotInStore = $this->flashSaleService->checkProductsExistInStore($request->store_id, $request->products);
+        if ($productsNotInStore) {
+            return response()->json($productsNotInStore);
+        }
+        $data = $this->flashSaleService->updateFlashSaleProducts($request->flash_sale_id, $request->products, $request->store_id);
+        if ($data) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Products'])
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.update_failed', ['name' => 'Products'])
+            ]);
+        }
+    }
 
     public function FlashSaleDetails(Request $request)
     {

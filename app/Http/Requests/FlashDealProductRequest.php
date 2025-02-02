@@ -27,6 +27,8 @@ class FlashDealProductRequest extends FormRequest
             'flash_sale_id' => 'required|exists:flash_sales,id',
             'products*' => 'required|exists:products,id',
             'store_id' => 'nullable|exists:com_merchant_stores,id',
+            'status' => 'nullable|in:pending,approved,rejected',
+            'rejection_reason' => 'nullable|string|max:255',
         ];
     }
 
@@ -38,6 +40,9 @@ class FlashDealProductRequest extends FormRequest
             'products*.required' => __('validation.required', ['attribute' => 'Products']),
             'products*.exists' => __('validation.exists', ['attribute' => 'Products']),
             'store_id.exists' => __('validation.exists', ['attribute' => 'Store']),
+            'status.in' => __('validation.in', ['attribute' => 'Status', 'enum' => 'pending,approved,rejected']),
+            'rejection_reason.string' => __('validation.string', ['attribute' => 'Rejection Reason']),
+            'rejection_reason.max' => __('validation.max.string', ['attribute' => 'Rejection Reason']),
         ];
     }
 

@@ -69,25 +69,33 @@ class FlashSaleService
         FlashSaleProduct::insert($bulkData); // Bulk insert for performance
         return true;
     }
-//public function associateProductsToFlashSale(int $flashSaleId, array $products, int $storeId, string $rejection_reason = null, int $status = 1)
-//    {
-//        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId, $rejection_reason, $status) {
-//            return [
-//                'flash_sale_id' => $flashSaleId,
-//                'product_id' => $product,
-//                'store_id' => $storeId ?? null,
-//                'status' => auth('api')->user()->activity_scope == 'store_level' ? 0 : $status,
-//                'rejection_reason' => $product['status'] === 'rejected' ? $rejection_reason : null,
-//                'created_by' => auth('api')->id(),
-//                'updated_by' => auth('api')->id(),
-//                'created_at' => now(),
-//                'updated_at' => now(),
-//            ];
-//        }, $products);
-//
-//        FlashSaleProduct::insert($bulkData); // Bulk insert for performance
-//        return true;
-//    }
+
+    public function updateFlashSaleProducts(int $flashSaleId, array $products, int $storeId, string $status = 'approved')
+    {
+        $exists = FlashSaleProduct::whereIn('product_id', $products)
+            ->where('flash_sale_id', $flashSaleId)
+            ->where('store_id', $storeId)
+            ->get();
+        if (!empty($exists)) {
+            foreach ($exists as $exist) {
+                $exist->delete();
+            }
+        }
+        $bulkData = array_map(function ($product) use ($flashSaleId, $storeId, $status) {
+            return [
+                'flash_sale_id' => $flashSaleId,
+                'product_id' => $product,
+                'store_id' => $storeId ?? null,
+                'status' => $status,
+                'updated_by' => auth('api')->id(),
+                'updated_at' => now(),
+            ];
+        }, $products);
+
+        FlashSaleProduct::insert($bulkData); // Bulk insert for performance
+        return true;
+    }
+
 
     public function getExistingFlashSaleProducts(array $productIds)
     {
@@ -203,7 +211,7 @@ class FlashSaleService
 
     public function getFlashSaleProductRequest()
     {
-        $requests = FlashSaleProduct::with('related_translations')->pending()->paginate(10);
+        $requests = FlashSaleProduct::with(['related_translations', 'flashSale', 'product', 'store'])->pending()->paginate(10);
         if (!empty($requests)) {
             return $requests;
         } else {
