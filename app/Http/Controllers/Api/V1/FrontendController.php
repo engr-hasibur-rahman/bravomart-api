@@ -137,23 +137,24 @@ class FrontendController extends Controller
 
     public function getStoresDropdown(Request $request)
     {
-        $stores = Store::where('status', 1)
-            ->where('store_type', $request->store_type)
-            ->whereNull('deleted_at')
-            ->get();
-        if (!empty($stores)) {
+        $query = Store::where('status', 1)
+            ->whereNull('deleted_at');
+        if ($request->has('store_type') && !empty($request->store_type)) {
+            $query->where('store_type', $request->store_type);
+        }
+        $stores = $query->paginate(50);
+        if ($stores->isNotEmpty()) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => StorePublicDropdownResource::collection($stores),
-            ]);
-        } else {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
+                'meta' => new PaginationResource($stores)
+            ], 200);
         }
+        return response()->json([
+            'message' => __('messages.data_not_found'),
+        ], 404);
     }
+
 
     public function getStoreDetails(Request $request)
     {
@@ -730,16 +731,14 @@ class FrontendController extends Controller
             ->paginate($request->per_page ?? 10);
 
 
-
-
-        if($products->count() > 0){
+        if ($products->count() > 0) {
             return response()->json([
                 'status' => true,
                 'message' => __('messages.data_found'),
                 'data' => NewArrivalPublicResource::collection($products),
                 'meta' => new PaginationResource($products),
             ]);
-        }else{
+        } else {
             return response()->json([
                 'status' => false,
                 'message' => __('messages.data_not_found'),
