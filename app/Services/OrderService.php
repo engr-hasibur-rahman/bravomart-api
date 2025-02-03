@@ -366,6 +366,10 @@ class OrderService
 
             } // end order package
 
+
+           // final order update
+           $order->save();
+
             DB::commit();
             return $order;
 //        } catch (\Exception $e) {
