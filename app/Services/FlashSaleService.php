@@ -7,6 +7,7 @@ use App\Models\FlashSaleProduct;
 use App\Models\Product;
 use App\Models\Translation;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 class FlashSaleService
@@ -22,11 +23,35 @@ class FlashSaleService
 
     public function createFlashSale(array $data)
     {
-        if (!empty($data['product_ids'] && isset($data['product_ids']))) {
+        DB::beginTransaction(); // Start transaction
 
+        try {
+            $flashSale = FlashSale::create($data);
+
+            if (!empty($data['product_ids']) && is_array($data['product_ids'])) {
+                $flashSaleProducts = [];
+                foreach ($data['product_ids'] as $productId) {
+                    $storeId = Product::where('id', $productId)->value('store_id');
+                    if (!$storeId) {
+                        throw new \Exception("Invalid product ID: $productId");
+                    }
+                    $flashSaleProducts[] = [
+                        'flash_sale_id' => $flashSale->id,
+                        'product_id' => $productId,
+                        'store_id' => $storeId,
+                        'status' => 1,
+                        'created_by' => auth('api')->id(),
+                        'created_at' => now(),
+                    ];
+                }
+                FlashSaleProduct::insert($flashSaleProducts);
+            }
+            DB::commit();
+            return $flashSale->id;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to create flash sale.'], 500);
         }
-        $flashSale = FlashSale::create($data);
-        return $flashSale->id;
     }
 
     public function updateFlashSale(array $data)
