@@ -8,7 +8,9 @@ interface StoreTypeManageInterface
 {
     public function getAllStoreTypes(array $filters);
 
+    public function updateStoreType(array $data);
+
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 
-    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
+    public function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 }

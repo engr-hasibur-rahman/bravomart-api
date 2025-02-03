@@ -47,7 +47,33 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
         } else {
             return null;
         }
+    }
 
+    public function updateStoreType(array $data)
+    {
+        if (empty($data)) {
+            return false;
+        }
+        $storeType = StoreType::find($data['id']);
+        if (!$storeType) {
+            return null;
+        }
+        $updated = $storeType->update([
+            'name' => $data['name'],
+            'description' => $data['description'],
+            'status' => $data['status'] ?? $storeType->status,
+            'image' => $data['image'] ?? $storeType->image,
+        ]);
+        return $updated;
+    }
+
+    public function getStoreTypeById(int $id)
+    {
+        $storeType = StoreType::find($id);
+        if (!$storeType) {
+            return null;
+        }
+        return $storeType;
     }
 
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
@@ -81,41 +107,54 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
         return true;
     }
 
-    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
+    public function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
+        if (empty($request['translations'])) {
+            return false;  // Return false if no translations are provided
+        }
+
         $translations = [];
-        if ($request['translations']) {
-            foreach ($request['translations'] as $translation) {
-                foreach ($colNames as $key) {
+        foreach ($request['translations'] as $translation) {
+            foreach ($colNames as $key) {
+                // Fallback value if translation key does not exist
+                $translatedValue = $translation[$key] ?? null;
 
-                    // Fallback value if translation key does not exist
-                    $translatedValue = $translation[$key] ?? null;
+                // Skip translation if the value is NULL
+                if ($translatedValue === null) {
+                    continue; // Skip this field if it's NULL
+                }
 
-                    // Skip translation if the value is NULL
-                    if ($translatedValue === null) {
-                        continue; // Skip this field if it's NULL
-                    }
+                // Check if a translation exists for the given reference path, ID, language, and key
+                $trans = $this->translation
+                    ->where('translatable_type', $refPath)
+                    ->where('translatable_id', $refid)
+                    ->where('language', $translation['language_code'])
+                    ->where('key', $key)
+                    ->first();
 
-                    $trans = $this->translation->where('translatable_type', $refPath)->where('translatable_id', $refid)
-                        ->where('language', $translation['language_code'])->where('key', $key)->first();
-                    if ($trans != null) {
-                        $trans->value = $translatedValue;
-                        $trans->save();
-                    } else {
-                        $translations[] = [
-                            'translatable_type' => $refPath,
-                            'translatable_id' => $refid,
-                            'language' => $translation['language_code'],
-                            'key' => $key,
-                            'value' => $translatedValue,
-                        ];
-                    }
+                if ($trans) {
+                    // Update the existing translation
+                    $trans->value = $translatedValue;
+                    $trans->save();
+                } else {
+                    // Prepare new translation entry for insertion
+                    $translations[] = [
+                        'translatable_type' => $refPath,
+                        'translatable_id' => $refid,
+                        'language' => $translation['language_code'],
+                        'key' => $key,
+                        'value' => $translatedValue,
+                    ];
                 }
             }
         }
-        if (count($translations)) {
+
+        // Insert new translations if any
+        if (!empty($translations)) {
             $this->translation->insert($translations);
         }
+
         return true;
     }
+
 }

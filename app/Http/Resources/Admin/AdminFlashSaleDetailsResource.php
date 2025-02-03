@@ -29,6 +29,7 @@ class AdminFlashSaleDetailsResource extends JsonResource
                     'id' => $flashSaleProduct->product->id,
                     'value' => $flashSaleProduct->product->id,
                     'label' => $flashSaleProduct->product->name,
+                    'image' => ImageModifier::generateImageUrl($flashSaleProduct->product->image),
                 ];
             }),
             "title" => $this->title,
