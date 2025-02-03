@@ -296,7 +296,7 @@ class FlashSaleService
 
         return $flashSaleProducts->isNotEmpty()
             ? $flashSaleProducts
-            : null;
+            : [];
     }
 
     public function getValidFlashSales()
