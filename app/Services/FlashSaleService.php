@@ -249,6 +249,16 @@ class FlashSaleService
         return FlashSale::with('related_translations')->paginate($per_page);
     }
 
+    public function getAdminFlashSalesDropdown()
+    {
+        $flashSales = FlashSale::paginate(20);
+        if ($flashSales->isEmpty()) {
+            return null;
+        } else {
+            return $flashSales;
+        }
+    }
+
     public function getFlashSaleById($id)
     {
         $flashSale = FlashSale::with(['products.product', 'related_translations'])->where('id', $id)->first();
@@ -266,17 +276,27 @@ class FlashSaleService
             ->get();
     }
 
-    public function getAllFlashSaleProducts($per_page)
+    public function getAllFlashSaleProducts(array $filters)
     {
-        $flashSaleProducts = FlashSaleProduct::with(['flashSale', 'product.variants'])
-            ->where('status', 'approved')
-            ->whereHas('flashSale', function ($query) {
-                $query->where('status', true)
-                    ->where('start_time', '<=', now())
-                    ->where('end_time', '>=', now());
-            })
-            ->paginate($per_page ?? 10);
-        return $flashSaleProducts;
+        $query = FlashSaleProduct::query()->with(['product:id,name,image','store', 'flashSale' ]);
+
+        $query->when(isset($filters['store_id']), fn($q) => $q->where('store_id', $filters['store_id']));
+        $query->when(isset($filters['flash_sale_id']), fn($q) => $q->where('flash_sale_id', $filters['flash_sale_id']));
+        $query->when(isset($filters['status']), fn($q) => $q->where('status', $filters['status']));
+
+        $query->when(isset($filters['start_date']), function ($q) use ($filters) {
+            $q->whereDate('created_at', '>=', $filters['start_date']);
+        });
+        $query->when(isset($filters['end_date']), function ($q) use ($filters) {
+            $q->whereDate('created_at', '<=', $filters['end_date']);
+        });
+
+        $perPage = $filters['per_page'] ?? 10;
+        $flashSaleProducts = $query->paginate($perPage);
+
+        return $flashSaleProducts->isNotEmpty()
+            ? $flashSaleProducts
+            : null;
     }
 
     public function getValidFlashSales()
