@@ -703,9 +703,6 @@ class FrontendController extends Controller
             ->latest()
             ->paginate($request->per_page ?? 10);
 
-
-
-
         if($products->count() > 0){
             return response()->json([
                 'status' => true,

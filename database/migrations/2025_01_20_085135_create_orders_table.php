@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('flash_discount_amount_admin')->nullable(); // admin set product for offer sell dis.       
             $table->decimal('shipping_charge')->nullable(); // admin set shipping charge set
             $table->string('additional_charge_title')->nullable();
-            $table->decimal('additional_charge_amt')->nullable();
+            $table->decimal('additional_charge_amount')->nullable();
             $table->unsignedBigInteger('confirmed_by')->nullable();
             $table->timestamp('confirmed_at')->nullable();
             $table->unsignedBigInteger('cancel_request_by')->nullable();
