@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTypeRequest;
 use App\Interfaces\StoreTypeManageInterface;
 use Illuminate\Http\Request;
 
@@ -35,5 +36,20 @@ class AdminStoreTypeManageController extends Controller
                 'message' => __('messages.data_not_found')
             ]);
         }
+    }
+
+    public function updateStoreType(StoreTypeRequest $request)
+    {
+        $success = $this->storeTypeRepo->updateStoreType($request->all());
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Store Type']),
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Store Type'])
+            ], 500);
+        }
+
     }
 }
