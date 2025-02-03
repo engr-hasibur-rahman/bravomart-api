@@ -292,11 +292,7 @@ class FlashSaleService
         });
 
         $perPage = $filters['per_page'] ?? 10;
-        $flashSaleProducts = $query->paginate($perPage);
-
-        return $flashSaleProducts->isNotEmpty()
-            ? $flashSaleProducts
-            : null;
+        return $query->paginate($perPage);
     }
 
     public function getValidFlashSales()

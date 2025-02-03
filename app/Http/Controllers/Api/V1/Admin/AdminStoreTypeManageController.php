@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTypeRequest;
+use App\Http\Resources\Admin\AdminStoreTypeDetailsResource;
 use App\Interfaces\StoreTypeManageInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AdminStoreTypeManageController extends Controller
 {
@@ -50,6 +52,23 @@ class AdminStoreTypeManageController extends Controller
                 'message' => __('messages.update_failed', ['name' => 'Store Type'])
             ], 500);
         }
+    }
 
+    public function storeTypeDetails(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:store_types,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+        $storeType = $this->storeTypeRepo->getStoreTypeById($request->id);
+        if ($storeType) {
+            return response()->json(new AdminStoreTypeDetailsResource($storeType), 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
     }
 }
