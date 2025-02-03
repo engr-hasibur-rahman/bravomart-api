@@ -75,7 +75,7 @@ class OLdOrderService
                 'flash_disc_amt_store' => $data['flash_disc_amt_store'] ?? 0,
                 'shipping_charge' => $data['shipping_charge'] ?? 0,
                 'additional_charge_title' => $data['additional_charge_title'] ?? null,
-                'additional_charge_amt' => $data['additional_charge_amt'] ?? 0,
+                'additional_charge_amount' => $data['additional_charge_amount'] ?? 0,
                 'confirmed_by' => null,
                 'confirmed_at' => null,
                 'cancel_request_by' => null,

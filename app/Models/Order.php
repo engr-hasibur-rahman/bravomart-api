@@ -20,7 +20,7 @@ class Order extends Model
         'flash_discount_amount_admin',
         'shipping_charge',
         'additional_charge_title',
-        'additional_charge_amt',
+        'additional_charge_amount',
         'confirmed_by',
         'confirmed_at',
         'cancel_request_by',

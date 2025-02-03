@@ -27,7 +27,7 @@ class AdminOrderReportResource extends JsonResource
             "product_discount_amount" => $this->order ? $this->order->product_discount_amount : null,
             "flash_discount_amount_admin" => $this->order ? $this->order->flash_discount_amount_admin : null,
             "shipping_charge" => $this->order ? $this->order->shipping_charge : null,
-            "additional_charge_amt" => $this->order ? $this->order->additional_charge_amt : null,
+            "additional_charge_amount" => $this->order ? $this->order->additional_charge_amount : null,
             "refund_status" => $this->order ? $this->order->refund_status : null,
             "status" => $this->order ? $this->order->status : null,
             "base_price" => $this->base_price,
