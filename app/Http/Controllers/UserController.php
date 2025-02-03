@@ -124,7 +124,7 @@ class UserController extends Controller
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([
                     "status" => false,
-                    "message" => __('messages.login_failed', ['name' => 'User']),
+                    "message" => __('messages.login_failed', ['name' => 'Admin']),
                     "token" => null,
                     "permissions" => [],
                 ], 401);
@@ -143,7 +143,7 @@ class UserController extends Controller
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
-                "message" => __('messages.login_success', ['name' => 'User']),
+                "message" => __('messages.login_success', ['name' => 'Admin']),
                 "token" => $user->createToken('auth_token')->plainTextToken,
 //                "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
                 "email_verified" => $email_verified,
@@ -154,7 +154,7 @@ class UserController extends Controller
             return response()->json([
                 "status" => false,
                 "status_code" => 422,
-                "message" => __('messages.validation_failed', ['name' => 'User']),
+                "message" => __('messages.validation_failed', ['name' => 'Admin']),
                 "errors" => $e->errors(),
             ], 422);
         } catch (Exception $e) {
