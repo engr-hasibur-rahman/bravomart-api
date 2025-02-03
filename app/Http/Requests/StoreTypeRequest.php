@@ -24,6 +24,7 @@ class StoreTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'id' => 'required|exists:store_types,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|string',
@@ -34,6 +35,9 @@ class StoreTypeRequest extends FormRequest
     public function messages()
     {
         return [
+            'id.required' => __('validation.required', ['attribute' => 'ID']),
+            'id.exists' => __('validation.exists', ['attribute' => 'ID']),
+
             'name.required' => __('validation.required', ['attribute' => 'Name']),
             'name.string' => __('validation.string', ['attribute' => 'Name']),
             'name.max' => __('validation.max.string', ['attribute' => 'Name', 'max' => '255']),

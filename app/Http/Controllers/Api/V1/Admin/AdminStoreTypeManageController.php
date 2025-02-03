@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTypeRequest;
 use App\Http\Resources\Admin\AdminStoreTypeDetailsResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Interfaces\StoreTypeManageInterface;
 use Illuminate\Http\Request;
@@ -28,23 +29,20 @@ class AdminStoreTypeManageController extends Controller
         $store_types = $this->storeTypeRepo->getAllStoreTypes($filters);
         if ($store_types) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'data' => StoreTypePublicResource::collection($store_types),
-                'meta' => new StoreTypePublicResource($store_types)
-            ]);
+                'meta' => new PaginationResource($store_types)
+            ],200);
         } else {
             return response()->json([
-                'status' => false,
-                'status_code' => 404,
                 'message' => __('messages.data_not_found')
-            ]);
+            ],404);
         }
     }
 
     public function updateStoreType(StoreTypeRequest $request)
     {
         $success = $this->storeTypeRepo->updateStoreType($request->all());
+        $this->storeTypeRepo->createOrUpdateTranslation($request, $success, 'App\Models\StoreType', $this->storeTypeRepo->translationKeys());
         if ($success) {
             return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Store Type']),
@@ -58,7 +56,7 @@ class AdminStoreTypeManageController extends Controller
 
     public function storeTypeDetails(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(['id' => $request->route('id')], [
             'id' => 'required|exists:store_types,id',
         ]);
         if ($validator->fails()) {

@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\StoreTypeManageInterface;
 use App\Models\StoreType;
 use App\Models\Translation;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class StoreTypeManageRepository implements StoreTypeManageInterface
 {
@@ -58,18 +58,18 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
         if (!$storeType) {
             return null;
         }
-        $updated = $storeType->update([
+        $storeType->update([
             'name' => $data['name'],
             'description' => $data['description'],
             'status' => $data['status'] ?? $storeType->status,
             'image' => $data['image'] ?? $storeType->image,
         ]);
-        return $updated;
+        return $storeType->id;
     }
 
     public function getStoreTypeById(int $id)
     {
-        $storeType = StoreType::find($id);
+        $storeType = StoreType::with('related_translations')->find($id);
         if (!$storeType) {
             return null;
         }

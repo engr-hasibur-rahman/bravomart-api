@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 interface StoreTypeManageInterface
 {
