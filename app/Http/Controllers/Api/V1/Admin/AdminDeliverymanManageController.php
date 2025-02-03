@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-
 use App\Http\Requests\DeliverymanRequest;
 use App\Http\Requests\VehicleTypeRequest;
 use App\Http\Resources\Admin\AdminDeliverymanDetailsResource;
 use App\Http\Resources\Admin\AdminDeliverymanRequestResource;
+use App\Http\Resources\Admin\AdminVehicleDetailsResource;
 use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
-use App\Http\Resources\Admin\AdminVehicleDetailsResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\DeliverymanManageInterface;
-use App\Models\VehicleType;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
 class AdminDeliverymanManageController extends Controller

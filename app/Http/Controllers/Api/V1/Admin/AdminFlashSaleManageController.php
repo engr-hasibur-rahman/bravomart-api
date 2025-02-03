@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\FlashDealProductRequest;
 use App\Http\Requests\FlashSaleRequest;
 use App\Http\Resources\Admin\AdminFlashSaleDetailsResource;
+use App\Http\Resources\Admin\AdminFlashSaleDropdownResource;
+use App\Http\Resources\Admin\AdminFlashSaleProductResource;
 use App\Http\Resources\Admin\AdminFlashSaleResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
@@ -68,6 +70,32 @@ class AdminFlashSaleManageController extends Controller
         );
     }
 
+    public function getAllFlashSaleProducts(Request $request)
+    {
+        $filters = [
+            'store_id' => $request->store_id,
+            'flash_sale_id' => $request->flash_sale_id,
+            'status' => $request->status,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'per_page' => $request->per_page,
+        ];
+        $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($filters);
+        if ($flashSaleProducts->isEmpty()) {
+            return [];
+        }
+        if ($flashSaleProducts) {
+            return response()->json([
+                'data' => AdminFlashSaleProductResource::collection($flashSaleProducts),
+                'meta' => new PaginationResource($flashSaleProducts)
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+    }
+
     public function adminAddProductToFlashSale(FlashDealProductRequest $request)
     {
         // check the products exists in store or not
@@ -96,6 +124,7 @@ class AdminFlashSaleManageController extends Controller
             ]);
         }
     }
+
     public function adminUpdateProductToFlashSale(FlashDealProductRequest $request)
     {
         // check the products exists in store or not
@@ -122,7 +151,26 @@ class AdminFlashSaleManageController extends Controller
     public function FlashSaleDetails(Request $request)
     {
         $flashSales = $this->flashSaleService->getFlashSaleById($request->id);
-        return response()->json(new AdminFlashSaleDetailsResource($flashSales));
+        if ($flashSales) {
+            return response()->json(new AdminFlashSaleDetailsResource($flashSales));
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+
+    }
+
+    public function flashSaleDropdown()
+    {
+        $flashSale = $this->flashSaleService->getAdminFlashSalesDropdown();
+        if ($flashSale) {
+            return response()->json(AdminFlashSaleDropdownResource::collection($flashSale));
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
     }
 
     public function changeStatus(Request $request)

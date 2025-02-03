@@ -25,7 +25,7 @@ class FlashSaleProduct extends Model
 
     public function store()
     {
-        return $this->belongsTo(ComsellerStore::class, 'store_id');
+        return $this->belongsTo(Store::class, 'store_id');
     }
 
     public function scopePending($query)

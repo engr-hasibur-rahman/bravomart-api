@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Com\Store\StorePublicDropdownResource;
 use App\Http\Resources\Translation\FlashSaleTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,12 +17,21 @@ class AdminFlashSaleDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+//        return parent::toArray($request);
         // Get the requested language from the query parameter
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
+            "products" => $this->products->map(function ($flashSaleProduct) {
+                return [
+                    'id' => $flashSaleProduct->product->id,
+                    'value' => $flashSaleProduct->product->id,
+                    'label' => $flashSaleProduct->product->name,
+                    'image' => ImageModifier::generateImageUrl($flashSaleProduct->product->image),
+                ];
+            }),
             "title" => $this->title,
             "description" => $this->description,
             "thumbnail_image" => $this->thumbnail_image,

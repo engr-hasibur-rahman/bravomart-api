@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Resources\Com\Store;
+namespace App\Http\Resources\Admin;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Translation\StoreTypeTranslationResource;
+use App\Http\Resources\Translation\VehicleTypeTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class StoreTypePublicResource extends JsonResource
+class AdminStoreTypeDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,14 +23,15 @@ class StoreTypePublicResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "name" => $translation ? $translation->where('key', 'name')->first()?->value : $this->name,
+            "name" => $this->name,
             "type" => $this->type,
             "image" => ImageModifier::generateImageUrl($this->image),
-            "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
+            "description" =>  $this->description,
             "total_stores" => $this->total_stores,
             "status" => $this->status,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
+            "translations" => StoreTypeTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
 }

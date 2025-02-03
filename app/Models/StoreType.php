@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class StoreType extends Model
 {
+    protected $guarded = ['type'];
     protected $fillable = [
         'name',
-        'type',
         'image',
         'description',
         'total_stores',
