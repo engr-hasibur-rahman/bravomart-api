@@ -169,8 +169,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['prefix' => 'flash-deals'], function () {
                 Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PROMOTIONAL_FLASH_SALE_MANAGE->value]], function () {
                     Route::get('list', [AdminFlashSaleManageController::class, 'getFlashSale']);
+                    Route::get('list-dropdown', [AdminFlashSaleManageController::class, 'flashSaleDropdown']);
                     Route::post('add', [AdminFlashSaleManageController::class, 'createFlashSale']);
                     Route::post('add-products', [AdminFlashSaleManageController::class, 'adminAddProductToFlashSale']);
+                    Route::get('all-products', [AdminFlashSaleManageController::class, 'getAllFlashSaleProducts']);
                     Route::post('update-products', [AdminFlashSaleManageController::class, 'adminUpdateProductToFlashSale']);
                     Route::get('details/{id}', [AdminFlashSaleManageController::class, 'FlashSaleDetails']);
                     Route::post('update', [AdminFlashSaleManageController::class, 'updateFlashSale']);
