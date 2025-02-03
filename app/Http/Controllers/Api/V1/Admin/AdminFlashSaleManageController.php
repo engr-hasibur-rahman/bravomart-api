@@ -67,7 +67,6 @@ class AdminFlashSaleManageController extends Controller
             ]
         );
     }
-
     public function adminAddProductToFlashSale(FlashDealProductRequest $request)
     {
         // check the products exists in store or not

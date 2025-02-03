@@ -95,6 +95,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/unit-list', [FrontendController::class, 'unitList']);
     Route::get('/customer-list', [FrontendController::class, 'customerList']);
     Route::get('/store-list', [FrontendController::class, 'getStores']);
+    Route::get('/store-list-dropdown', [FrontendController::class, 'getStoresDropdown']);
     Route::get('/store-details/{slug}', [FrontendController::class, 'getStoreDetails']);
     Route::get('/department-list', [FrontendController::class, 'departmentList']);
     Route::get('/flash-deals', [FrontendController::class, 'flashDeals']);

@@ -19,6 +19,37 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
         return $this->storeType->translationKeys;
     }
 
+    public function getAllStoreTypes(array $filters)
+    {
+        $query = StoreType::query();
+
+        if (isset($filters['search'])) {
+            $searchTerm = '%' . $filters['search'] . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', $searchTerm)
+                    ->orWhere('description', 'LIKE', $searchTerm)
+                    ->orWhereHas('related_translations', function ($q) use ($searchTerm) {
+                        $q->whereIn('key', ['name', 'description'])
+                            ->where('value', 'LIKE', $searchTerm);
+                    });
+            });
+        }
+        if (isset($filters['type'])) {
+            $query->where('type', $filters['type']);
+        }
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        $perPage = $filters['per_page'] ?? 10;
+        $store_types = $query->with('related_translations')->paginate($perPage);
+        if (!empty($store_types)) {
+            return $store_types;
+        } else {
+            return null;
+        }
+
+    }
+
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];

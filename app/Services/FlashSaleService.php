@@ -22,6 +22,9 @@ class FlashSaleService
 
     public function createFlashSale(array $data)
     {
+        if (!empty($data['product_ids'] && isset($data['product_ids']))) {
+
+        }
         $flashSale = FlashSale::create($data);
         return $flashSale->id;
     }
