@@ -152,6 +152,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //             Business Operations  Functionality                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_STORE_TYPE_MANAGE = '/admin/business-operations/store-type';
     case ADMIN_GEO_AREA_MANAGE = '/admin/business-operations/area/list';
     case ADMIN_SUBSCRIPTION_PACKAGE_MANAGE = '/admin/business-operations/subscription/package/list';
     case ADMIN_SUBSCRIPTION_SELLER_PACKAGE_MANAGE = '/admin/business-operations/subscription/seller/list';

@@ -1144,6 +1144,18 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'عمليات الأعمال'
                     ],
                     'submenu' => [
+                        // Store Type
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_STORE_TYPE_MANAGE->value,
+                            'PermissionTitle' => 'Store Type',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Locate',
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Store Type',
+                                'ar' => 'نوع المتجر'
+                            ]
+                        ],
                         // Area Setup
                         [
                             'PermissionName' => PermissionKey::ADMIN_GEO_AREA_MANAGE->value,
