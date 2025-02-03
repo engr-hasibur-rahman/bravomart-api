@@ -14,6 +14,7 @@ use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
+use App\Http\Resources\Com\Store\StorePublicDropdownResource;
 use App\Http\Resources\Com\Store\StorePublicListResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Http\Resources\Customer\CustomerPublicResource;
@@ -119,14 +120,39 @@ class FrontendController extends Controller
             ->where('status', 1)
             ->where('deleted_at', null)
             ->paginate($perPage);
+        if (!empty($stores)) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => StorePublicListResource::collection($stores),
+                'meta' => new PaginationResource($stores)
+            ]);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+    }
 
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => __('messages.data_found'),
-            'data' => StorePublicListResource::collection($stores),
-            'meta' => new PaginationResource($stores)
-        ]);
+    public function getStoresDropdown(Request $request)
+    {
+        $stores = Store::where('status', 1)
+            ->where('store_type', $request->store_type)
+            ->whereNull('deleted_at')
+            ->get();
+        if (!empty($stores)) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => StorePublicDropdownResource::collection($stores),
+            ]);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
     }
 
     public function getStoreDetails(Request $request)
@@ -981,7 +1007,14 @@ class FrontendController extends Controller
                 'image' => $storeType->image(), // Use the enum's method to get the image URL
             ];
         });
-        return response()->json(StoreTypePublicResource::collection($storeTypes));
+        if (!empty($storeTypes)) {
+            return response()->json(StoreTypePublicResource::collection($storeTypes));
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ], 404);
+        }
+
     }
 
     public function behaviourList()
