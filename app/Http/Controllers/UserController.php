@@ -109,9 +109,16 @@ class UserController extends Controller
 
             // Attempt to find the user
             $user = User::where('email', $request->email)
-                // ->where('activity_scope', 'system_level') // Uncomment if needed
+                ->where('activity_scope', 'system_level') // Uncomment if needed
                 ->where('status', 1)
                 ->first();
+            if (!$user){
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 422,
+                    'message'=> 'User is not an admin!'
+                ]);
+            }
 
             // Check if the user exists and if the password is correct
             if (!$user || !Hash::check($request->password, $user->password)) {
