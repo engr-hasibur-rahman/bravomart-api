@@ -10,6 +10,7 @@ use App\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class PartnerLoginController extends Controller
@@ -24,10 +25,13 @@ class PartnerLoginController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
 
         $user = User::where('email', $request->email)
             ->where('activity_scope', 'store_level')
@@ -79,6 +83,7 @@ class PartnerLoginController extends Controller
 
         return [
             "success" => true,
+            "message" => __('messages.login_success', ['name' => 'Seller']),
             "token" => $user->createToken('auth_token')->plainTextToken,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,

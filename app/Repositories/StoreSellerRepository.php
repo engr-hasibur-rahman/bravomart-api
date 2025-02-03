@@ -3,17 +3,15 @@
 namespace App\Repositories;
 
 use App\Models\StoreSeller;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Prettus\Repository\Criteria\RequestCriteria;
-use Prettus\Repository\Exceptions\RepositoryException;
 use Prettus\Repository\Eloquent\BaseRepository;
+use Prettus\Repository\Exceptions\RepositoryException;
 
 /**
  *
  * @package namespace App\Repositories;
  */
-class ComsellerRepository extends BaseRepository
+class StoreSellerRepository extends BaseRepository
 {
 
     public function model()
