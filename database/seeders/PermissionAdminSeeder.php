@@ -618,7 +618,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_FEEDBACK_QUESTIONS->value,
                             'PermissionTitle' => 'Questions',
                             'activity_scope' => 'system_level',
-                            'icon' => 'circleHelp',
+                            'icon' => 'CircleHelp',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Questions',
@@ -644,7 +644,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Blogs',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'PenTool',
                             'translations' => [
                                 'en' => 'Blogs',
                                 'ar' => ' الموظفين'

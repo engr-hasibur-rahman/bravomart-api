@@ -680,68 +680,75 @@ class FrontendController extends Controller
 
     }
 
+
     public function getNewArrivals(Request $request)
     {
-        try {
-            $query = Product::query();
-            // If an ID is provided, fetch the specific product
-            if (isset($request->id)) {
-                $product = $query
-                    ->with(['variants', 'store'])
-                    ->findOrFail($request->id); // Throws 404 if product not found
+        $query = Product::query();
+
+        if ($request->has('id') && !empty($request->id)) {
+            try {
+                $product = $query->with(['variants', 'store'])->findOrFail($request->id);
 
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
                     'message' => __('messages.data_found'),
                     'data' => new ProductDetailsPublicResource($product),
-                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
+                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback()),
                 ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => __('messages.data_not_found'),
+                ], 404);
             }
-            // Add filters for sorting new arrivals based on categories, prices, or availability
-            if (isset($request->category_id)) {
-                $query->where('category_id', $request->category_id);
-            }
+        }
 
-            if (isset($request->min_price) && isset($request->max_price)) {
-                // Filter by price from the related variants
-                $query->whereHas('variants', function ($q) use ($request) {
-                    $q->whereBetween('price', [$request->min_price, $request->max_price]);
-                });
-            }
-            if (isset($request->availability)) {
-                $availability = $request->availability;
 
-                if ($availability) {
-                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0));
-                } else {
-                    $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
-                }
-            }
-            // Include product details and sort by created_at to get new arrivals
-            $products = $query
-                ->with(['variants', 'store'])
-                ->where('status', 'approved')
-                ->where('deleted_at', null)
-                ->latest()
-                ->paginate($request->per_page ?? 10);
+        if (!empty($request->category_id)) {
+            $query->where('category_id', $request->category_id);
+        }
 
+        if (!empty($request->min_price) && !empty($request->max_price)) {
+            $query->whereHas('variants', function ($q) use ($request) {
+                $q->whereBetween('price', [$request->min_price, $request->max_price]);
+            });
+        }
+
+
+        if (!empty($request->availability)) {
+            $availability = $request->availability;
+            $query->whereHas('variants', fn($q) => $q->where('stock_quantity', $availability ? '>' : '=', 0));
+        }
+
+
+        $products = $query
+            ->with(['variants', 'store'])
+            ->where('status', 'approved')
+            ->where('deleted_at', null)
+            ->latest()
+            ->paginate($request->per_page ?? 10);
+
+
+
+
+        if($products->count() > 0){
             return response()->json([
                 'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => NewArrivalPublicResource::collection($products),
-                'meta' => new PaginationResource($products)
+                'meta' => new PaginationResource($products),
             ]);
-
-        } catch (\Exception $e) {
+        }else{
             return response()->json([
                 'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage()
-            ]);
+                'message' => __('messages.data_not_found'),
+            ], 404);
         }
+
+
     }
+
 
     /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
     public function productCategoryList(Request $request)
