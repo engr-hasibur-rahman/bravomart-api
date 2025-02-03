@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTypeRequest;
 use App\Http\Resources\Admin\AdminStoreTypeDetailsResource;
+use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Interfaces\StoreTypeManageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +30,8 @@ class AdminStoreTypeManageController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'data' => $store_types
+                'data' => StoreTypePublicResource::collection($store_types),
+                'meta' => new StoreTypePublicResource($store_types)
             ]);
         } else {
             return response()->json([
