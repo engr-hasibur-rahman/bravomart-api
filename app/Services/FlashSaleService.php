@@ -251,7 +251,7 @@ class FlashSaleService
 
     public function getFlashSaleById($id)
     {
-        $flashSale = FlashSale::with(['products.store', 'related_translations'])->where('id', $id)->first();
+        $flashSale = FlashSale::with(['products.product', 'related_translations'])->where('id', $id)->first();
         if (!empty($flashSale)) {
             return $flashSale;
         } else {
