@@ -67,6 +67,7 @@ class AdminFlashSaleManageController extends Controller
             ]
         );
     }
+
     public function adminAddProductToFlashSale(FlashDealProductRequest $request)
     {
         // check the products exists in store or not
@@ -95,6 +96,7 @@ class AdminFlashSaleManageController extends Controller
             ]);
         }
     }
+
     public function adminUpdateProductToFlashSale(FlashDealProductRequest $request)
     {
         // check the products exists in store or not
@@ -121,7 +123,14 @@ class AdminFlashSaleManageController extends Controller
     public function FlashSaleDetails(Request $request)
     {
         $flashSales = $this->flashSaleService->getFlashSaleById($request->id);
-        return response()->json(new AdminFlashSaleDetailsResource($flashSales));
+        if ($flashSales) {
+            return response()->json(new AdminFlashSaleDetailsResource($flashSales));
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+
     }
 
     public function changeStatus(Request $request)

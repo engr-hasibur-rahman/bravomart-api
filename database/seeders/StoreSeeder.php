@@ -60,7 +60,7 @@ StoreSeeder extends Seeder
             ],
             [
                 'area_id' => 2,
-                'store_seller_id' => 2,
+                'store_seller_id' => 1,
                 'store_type' => $storeTypes[array_rand($storeTypes)],
                 'name' => 'Store Two',
                 'slug' => Str::slug('Store Two'),

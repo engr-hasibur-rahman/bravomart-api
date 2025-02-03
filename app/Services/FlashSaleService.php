@@ -39,9 +39,10 @@ class FlashSaleService
                         'flash_sale_id' => $flashSale->id,
                         'product_id' => $productId,
                         'store_id' => $storeId,
-                        'status' => 1,
+                        'status' => 'approved',
                         'created_by' => auth('api')->id(),
                         'created_at' => now(),
+                        'updated_at' => now(),
                     ];
                 }
                 FlashSaleProduct::insert($flashSaleProducts);
@@ -56,9 +57,50 @@ class FlashSaleService
 
     public function updateFlashSale(array $data)
     {
-        $flashSale = FlashSale::findorfail($data['id']);
-        $flashSale->update($data);
-        return $flashSale->id;
+        DB::beginTransaction(); // Start transaction
+
+        try {
+            // Find existing Flash Sale
+            $flashSale = FlashSale::findOrFail($data['id']);
+            $flashSale->update($data);
+
+            // Check if product_ids exist and are valid
+            if (!empty($data['product_ids']) && is_array($data['product_ids'])) {
+                // Remove old associations first
+                FlashSaleProduct::where('flash_sale_id', $flashSale->id)->delete();
+
+                $flashSaleProducts = [];
+
+                foreach ($data['product_ids'] as $productId) {
+                    $storeId = Product::where('id', $productId)->value('store_id');
+
+                    if (!$storeId) {
+                        throw new \Exception("Invalid product ID: $productId");
+                    }
+
+                    $flashSaleProducts[] = [
+                        'flash_sale_id' => $flashSale->id,
+                        'product_id' => $productId,
+                        'store_id' => $storeId,
+                        'status' => 'approved',
+                        'created_by' => auth('api')->id(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                // Bulk insert new products
+                FlashSaleProduct::insert($flashSaleProducts);
+            }
+
+            DB::commit(); // Commit transaction if successful
+
+            return $flashSale->id;
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback if any error occurs
+
+            return response()->json(['error' => 'Failed to update flash sale.'], 500);
+        }
     }
 
     public function deleteFlashSale($id)
@@ -209,7 +251,12 @@ class FlashSaleService
 
     public function getFlashSaleById($id)
     {
-        return FlashSale::with('related_translations')->where('id', $id)->first();
+        $flashSale = FlashSale::with(['products.store', 'related_translations'])->where('id', $id)->first();
+        if (!empty($flashSale)) {
+            return $flashSale;
+        } else {
+            return null;
+        }
     }
 
     public function getSellerFlashSaleProducts()
