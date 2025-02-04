@@ -14,6 +14,7 @@ class StoreArea extends Model
     protected $table = 'store_areas';
     protected $guarded = [];
     protected $fillable = [
+        'state',
         'name',
         'code',
         'coordinates',
@@ -24,6 +25,13 @@ class StoreArea extends Model
     public $translationKeys = [
         'name'
     ];
+
+
+    // relationship with store type settings
+    public function storeTypeSettings()
+    {
+        return $this->hasMany(StoreTypeSetting::class);
+    }
 
     public function translations()
     {

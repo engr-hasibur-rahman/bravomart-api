@@ -332,8 +332,10 @@ if (!function_exists('translate')) {
         } elseif ($coupon->discount_type === 'fixed') {
             $discount = $coupon->discount;
         }
+
         // Ensure the discount does not exceed the order amount
         $discount = min($discount, $orderAmount);
+
         // Increment the usage count of the coupon
         $coupon->increment('usage_count');
         // Return the discount and success response
