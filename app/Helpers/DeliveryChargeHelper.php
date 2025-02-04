@@ -79,15 +79,21 @@ class DeliveryChargeHelper
                 $delivery_charge = $settings->fixed_charge_amount;
             } elseif ($settings->delivery_charge_method === 'per_km') {
                 $delivery_charge = $settings->per_km_charge_amount * $distance;
+            } elseif ($settings->delivery_charge_method === 'range-wise'){
+                // Get the range-wise charge based on distance
+                $range_charge = DB::table('store_area_range_charges')
+                    ->where('store_area_id', $areaId)
+                    ->where('min_km', '<=', $distance)
+                    ->where('max_km', '>=', $distance)
+                    ->first();
+
+                $delivery_charge = $range_charge->charge_amount ?? $settings->min_order_delivery_fee;
             }
         }
 
-        dd($delivery_charge, $delivery_charge);
 
-
-        // Ensure minimum delivery fee
+        // minimum delivery fee check and add
         $delivery_charge = max($settings->min_order_delivery_fee, $delivery_charge);
-
 
         return [
             'delivery_method' => $settings->delivery_charge_method,
