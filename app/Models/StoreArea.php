@@ -22,6 +22,9 @@ class StoreArea extends Model
         'center_longitude',
         'state',
         'city',
+        'status',
+        'created_by',
+        'updated_by',
     ];
     protected $casts = [
         'coordinates' => Polygon::class,

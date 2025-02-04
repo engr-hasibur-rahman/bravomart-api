@@ -12,7 +12,7 @@ use App\Http\Controllers\Customer\PlaceOrderController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status','no.code.input']], function () {
+Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status', 'no.code.input']], function () {
     Route::get('/', [CustomerManageController::class, 'getDashboard']);
     // media manage
     Route::group(['prefix' => 'media-upload'], function () {
@@ -55,6 +55,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         // order manage
         Route::group(['prefix' => 'orders/'], function () {
             Route::get('list', [CustomerOrderController::class, 'myOrders']);
+            Route::get('check-coupon', [CustomerOrderController::class, 'checkCoupon']);
         });
         Route::group(['prefix' => 'review/'], function () {
             Route::get('/', [CustomerReviewManageController::class, 'index']);
