@@ -174,11 +174,24 @@ class CustomerManageRepository implements CustomerManageInterface
     public function deactivateAccount()
     {
         $user = auth('api_customer')->user();
+
+        // Mark the account as deactivated by setting the 'deactivated_at' timestamp
         $user->update([
-            'status' => 0,
             'deactivated_at' => now(),
         ]);
-        $user->currentAccessToken()->delete();
+
+        return true;
+    }
+
+    public function activateAccount()
+    {
+        $user = auth('api_customer')->user();
+
+        // Activate the account by setting the 'deactivated_at' field to null
+        $user->update([
+            'deactivated_at' => null,
+        ]);
+
         return true;
     }
 

@@ -59,6 +59,7 @@ return [
     'request_failed' => ':name request failed!',
 
     'account_deactivate_successful' => 'Your account has been deactivated!',
+    'account_activate_successful' => 'Your account has been activated!',
     'account_deactivate_failed' => 'Something went wrong while deactivating your account!',
 
     'account_delete_successful' => 'Your account has been deleted!',

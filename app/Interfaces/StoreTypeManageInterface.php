@@ -12,7 +12,7 @@ interface StoreTypeManageInterface
 
     public function updateStoreType(array $data);
 
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
+    public function createStoreTypeSettings(array $data);
 
     public function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 }

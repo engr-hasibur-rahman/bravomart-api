@@ -27,7 +27,7 @@ class StoreTypeRequest extends FormRequest
             'id' => 'required|exists:store_types,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|string',
+            'image' => 'nullable|integer',
             'status' => 'nullable|in:0,1',
         ];
     }
@@ -45,7 +45,7 @@ class StoreTypeRequest extends FormRequest
             'description.max' => __('validation.max.string', ['attribute' => 'Description', 'max' => '1000']),
             'description.string' => __('validation.string', ['attribute' => 'Description']),
 
-            'image.string' => __('validation.string', ['attribute' => 'Image']),
+            'image.integer' => __('validation.integer', ['attribute' => 'Image']),
 
             'status.integer' => __('validation.integer', ['attribute' => 'Status']),
             'status.in' => __('validation.in', ['attribute' => 'Status']),
