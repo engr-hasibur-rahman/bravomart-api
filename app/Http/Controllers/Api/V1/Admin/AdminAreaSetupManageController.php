@@ -10,6 +10,7 @@ use App\Http\Resources\Admin\AreaResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\ComAreaInterface;
 use App\Interfaces\TranslationInterface;
+use App\Models\StoreArea;
 use App\Models\StoreAreaSetting;
 use App\Services\AreaService;
 use Illuminate\Http\JsonResponse;
@@ -71,10 +72,12 @@ class AdminAreaSetupManageController extends Controller
         }
     }
 
-    public function changeStatus(int|string $id, string $status = ""): JsonResponse
+    public function changeStatus(Request $request)
     {
         try {
-            $this->areaRepo->changeStatus($id, $status = "");
+            $area = StoreArea::findOrFail($request->id);
+            $area->status = !$area->status;
+            $area->save();
             return $this->success(translate('messages.status_change_success'));
         } catch (\Exception $e) {
             return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
