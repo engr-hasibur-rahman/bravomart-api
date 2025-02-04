@@ -90,15 +90,33 @@ class AdminAreaSetupManageController extends Controller
 
     public function updateStoreAreaSetting(StoreAreaSettingsRequest $request)
     {
-        $success = StoreAreaSetting::create($request->all());
-        if ($success) {
+        try {
+            $storeAreaSetting = StoreAreaSetting::updateOrCreate(
+                ['store_area_id' => $request->store_area_id], // Condition to check existing record
+                $request->all() // Data to insert/update
+            );
+
             return response()->json([
-                'message' => __('messages.save_success', ['name' => 'Store Area Settings']),
-            ], 201);
-        } else {
+                'status' => true,
+                'message' => __('messages.update_success', ['name' => 'Store Area Settings']),
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => __('messages.save_failed', ['name' => 'Store Area Settings']),
+                'status' => false,
+                'message' => __('messages.update_failed', ['name' => 'Store Area Settings']),
+                'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+
+    public function storeAreaSettingsDetails(Request $request)
+    {
+        $storeAreaSettings = StoreAreaSetting::where('store_area_id',$request->store_area_id)->first();
+        if ($storeAreaSettings) {
+            return response()->json($storeAreaSettings, 200);
+        } else {
+            return response()->json(['message' => __('messages.data_not_found')], 404);
         }
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\WishListRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Customer\WishListResource;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
@@ -17,22 +18,17 @@ class WishListManageController extends Controller
             unauthorized_response();
         }
         $request['customer_id'] = auth('api_customer')->user()->id;
-        try {
-            $exists = Wishlist::where('customer_id', $request['customer_id'])
-                ->where('product_id', $request->product_id)
-                ->exists();
-            if ($exists) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 401,
-                    'message' => __('messages.exists', ['name' => 'Product'])
-                ]);
-            }
-            Wishlist::create(request()->all());
-            return $this->success(translate('messages.save_success', ['name' => 'Wish List']));
-        } catch (\Exception $e) {
-            throw $e;
+        $exists = Wishlist::where('customer_id', $request['customer_id'])
+            ->where('product_id', $request->product_id)
+            ->exists();
+        if ($exists) {
+            return response()->json([
+                'message' => __('messages.exists', ['name' => 'Product'])
+            ], 401);
         }
+        Wishlist::create(request()->all());
+        return $this->success(translate('messages.save_success', ['name' => 'Wish List']));
+
     }
 
     public function removeFromWishlist(Request $request)
@@ -40,38 +36,33 @@ class WishListManageController extends Controller
         if (!auth('api_customer')->check()) {
             unauthorized_response();
         }
-        try {
-            $validator = Validator::make($request->all(), [
-                'product_id' => 'required|exists:products,id',
-            ]);
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()]);
-            }
-            Wishlist::where('customer_id', auth('api_customer')->user()->id)
-                ->where('product_id', $request->product_id)
-                ->delete();
-            return $this->success(translate('messages.delete_success', ['name' => 'Wish List']));
-        } catch (\Exception $e) {
-            throw $e;
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|exists:products,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
+        Wishlist::where('customer_id', auth('api_customer')->user()->id)
+            ->where('product_id', $request->product_id)
+            ->delete();
+        return $this->success(translate('messages.delete_success', ['name' => 'Wish List']));
+
     }
 
     public function getWishlist()
     {
         try {
-            $wishlist = Wishlist::with(['product.variants', 'product.store'])->where('customer_id', auth('api_customer')->user()->id)->get();
+            $wishlist = Wishlist::with(['product.variants', 'product.store'])
+                ->where('customer_id', auth('api_customer')->user()->id)
+                ->paginate(18);
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'wishlist' => WishlistResource::collection($wishlist)
-            ]);
+                'wishlist' => WishlistResource::collection($wishlist),
+                'meta' => new PaginationResource($wishlist),
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage()
-            ]);
+            ], 500);
         }
     }
 }
