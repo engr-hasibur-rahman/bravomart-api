@@ -6,6 +6,7 @@ use App\Helpers\ComHelper;
 use App\Models\StoreArea;
 use App\Interfaces\ComAreaInterface;
 use App\Models\Store;
+use App\Models\StoreAreaSetting;
 
 
 /**
@@ -100,6 +101,19 @@ class ComStoreRepository implements ComAreaInterface
         $store->delete();
         return true;
     }
+
+    public function updateStoreAreaSettings(array $data)
+    {
+        if (empty($data)) {
+            return false;
+        }
+        $success = StoreAreaSetting::create($data);
+        if (!$success) {
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * @inheritDoc

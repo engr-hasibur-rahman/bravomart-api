@@ -39,7 +39,7 @@ class StoreArea extends Model
     // Relationship with store type settings
     public function storeTypeSettings()
     {
-        return $this->hasMany(StoreTypeSetting::class, 'store_area_id', 'id');
+        return $this->hasMany(StoreAreaSetting::class, 'store_area_id', 'id');
     }
 
     public function translations()

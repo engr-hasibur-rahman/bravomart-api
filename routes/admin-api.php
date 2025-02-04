@@ -491,9 +491,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 Route::get('details/{id}', [AdminStoreTypeManageController::class, 'storeTypeDetails']);
                 Route::post('update', [AdminStoreTypeManageController::class, 'updateStoreType']);
                 Route::post('change-status', [AdminStoreTypeManageController::class, 'changeStatus']);
-                Route::group(['prefix' => 'settings/'], function () {
-                    Route::post('add', [AdminStoreTypeManageController::class, 'createStoreTypeSettings']);
-                });
             });
             // area setup
             Route::prefix('area/')->middleware(['permission:' . PermissionKey::ADMIN_GEO_AREA_MANAGE->value])->group(function () {
@@ -503,6 +500,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 Route::get('details/{id}', [AdminAreaSetupManageController::class, 'show']);
                 Route::post('change-status', [AdminAreaSetupManageController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [AdminAreaSetupManageController::class, 'destroy']);
+                Route::post('settings/update', [AdminAreaSetupManageController::class, 'updateStoreAreaSetting']);
             });
             // withdraw method
             Route::prefix('commission')->middleware(['permission:' . PermissionKey::ADMIN_COMMISSION_SETTINGS->value])->group(function () {
