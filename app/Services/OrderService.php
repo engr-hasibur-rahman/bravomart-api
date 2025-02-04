@@ -39,14 +39,14 @@ class OrderService
                     $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
                     // Add to total order amount
                     if (!empty($variant) && isset($variant->price)) {
-                        $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
+                        $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
                     }
                 }
             }
 
             // calculate order coupon
             if(isset($data['coupon_code'])){
-                $coupon_data = applyCoupon($data['coupon_code'], 0);
+                $coupon_data = applyCoupon($data['coupon_code'], $basePrice);
                 if (isset($coupon_data['final_order_amount'])){
                     $total_order_amount = $coupon_data['final_order_amount'];
                     $total_discount_amount = $coupon_data['discount_amount'];
@@ -162,12 +162,19 @@ class OrderService
            }
 
             //  packages and details
+            $shipping_charge = 0;
             foreach ($data['packages'] as $packageData) {
+
+                // area wise delivery/shipping charge calculate
+                $store_area = StoreArea::with('storeTypeSettings')->find($packageData['area_id']);
+
+                dd($store_area);
+
                 // create order package
                 $package = OrderPackage::create([
                     'order_id' => $order->id,
                     'store_id' => $packageData['store_id'],
-                    'area_id' => $packageData['area_id'],
+                    'area_id' => $store_area->id,
                     'order_type' => 'regular', // if customer order create
                     'delivery_type' => $packageData['delivery_type'],
                     'shipping_type' => $packageData['shipping_type'],
@@ -364,10 +371,24 @@ class OrderService
                 $package->save();
 
 
+                // Accumulate package values for the main order
+                $order_package_total_amount += $order_package_total_amount;
+                $product_discount_amount += $product_discount_amount;
+                $flash_discount_amount_admin += $flash_discount_amount_admin;
+                $coupon_discount_amount_admin += $coupon_discount_amount_admin;
+                $shipping_charge += $package->shipping_charge;
             } // end order package
 
 
-           // final order update
+
+           // main order update all package price wise
+           $order->product_discount_amount = $product_discount_amount;
+           $order->flash_discount_amount_admin = $flash_discount_amount_admin;
+           $order->coupon_discount_amount_admin = $coupon_discount_amount_admin;
+           $order->additional_charge_title = $order_additional_charge_name;
+           $order->additional_charge_amount = $order_additional_charge_amount;
+           $order->shipping_charge = $shipping_charge;
+           $order->order_amount = $order_package_total_amount;
            $order->save();
 
             DB::commit();
