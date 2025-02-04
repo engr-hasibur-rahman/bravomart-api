@@ -48,5 +48,6 @@ class DatabaseSeeder extends Seeder
         // store area settings
         $this->call(StoreAreaSettingsSeeder::class);
         $this->call(StoreAreaRangeWiseChargeSeeder::class);
+        $this->call(CouponSeeder::class);
     }
 }
