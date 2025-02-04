@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Behaviour;
-use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
@@ -45,8 +44,6 @@ use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
-use App\Models\StoreArea;
-use App\Models\Store;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -55,6 +52,9 @@ use App\Models\ProductAttribute;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\Slider;
+use App\Models\Store;
+use App\Models\StoreArea;
+use App\Models\StoreType;
 use App\Models\Tag;
 use App\Models\Unit;
 use App\Services\FlashSaleService;
@@ -1006,14 +1006,8 @@ class FrontendController extends Controller
 
     public function storeTypeList()
     {
-        $storeTypes = collect(StoreType::cases())->map(function ($storeType) {
-            return [
-                'value' => $storeType->value,
-                'label' => ucfirst(str_replace('-', ' ', $storeType->value)),
-                'image' => $storeType->image(), // Use the enum's method to get the image URL
-            ];
-        });
-        if (!empty($storeTypes)) {
+        $storeTypes = StoreType::with('related_translations')->get();
+        if ($storeTypes) {
             return response()->json(StoreTypePublicResource::collection($storeTypes));
         } else {
             return response()->json([
