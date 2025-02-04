@@ -10,6 +10,7 @@ use App\Http\Resources\Admin\AreaResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\ComAreaInterface;
 use App\Interfaces\TranslationInterface;
+use App\Models\StoreAreaSetting;
 use App\Services\AreaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -89,7 +90,7 @@ class AdminAreaSetupManageController extends Controller
 
     public function updateStoreAreaSetting(StoreAreaSettingsRequest $request)
     {
-        $success = $this->areaRepo->updateStoreAreaSettings($request->all());
+        $success = StoreAreaSetting::create($request->all());
         if ($success) {
             return response()->json([
                 'message' => __('messages.save_success', ['name' => 'Store Area Settings']),

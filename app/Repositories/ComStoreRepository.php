@@ -102,18 +102,6 @@ class ComStoreRepository implements ComAreaInterface
         return true;
     }
 
-    public function updateStoreAreaSettings(array $data)
-    {
-        if (empty($data)) {
-            return false;
-        }
-        $success = StoreAreaSetting::create($data);
-        if (!$success) {
-            return false;
-        }
-        return true;
-    }
-
 
     /**
      * @inheritDoc
