@@ -11,6 +11,7 @@ interface StoreTypeManageInterface
     public function getStoreTypeById(int $id);
 
     public function updateStoreType(array $data);
+    public function toogleStatus(int $id);
 
     public function createStoreTypeSettings(array $data);
 

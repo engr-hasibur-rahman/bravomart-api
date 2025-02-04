@@ -138,4 +138,15 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
         return true;
     }
 
+    public function toogleStatus(int $id)
+    {
+        $storeType = StoreType::find($id);
+        if (!$storeType) {
+            return false;
+        }
+        return $storeType->update([
+            'status' => !$storeType->status
+        ]);
+    }
+
 }

@@ -490,6 +490,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum','no.code.
                 Route::get('list', [AdminStoreTypeManageController::class, 'allStoreTypes']);
                 Route::get('details/{id}', [AdminStoreTypeManageController::class, 'storeTypeDetails']);
                 Route::post('update', [AdminStoreTypeManageController::class, 'updateStoreType']);
+                Route::post('change-status', [AdminStoreTypeManageController::class, 'changeStatus']);
             });
             // area setup
             Route::prefix('area/')->middleware(['permission:' . PermissionKey::ADMIN_GEO_AREA_MANAGE->value])->group(function () {
