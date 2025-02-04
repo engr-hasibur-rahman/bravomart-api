@@ -17,7 +17,6 @@ class StoreArea extends Model
         'name',
         'code',
         'coordinates',
-        'store_type',
         'center_latitude',
         'center_longitude',
         'state',

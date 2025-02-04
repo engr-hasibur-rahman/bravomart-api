@@ -56,6 +56,28 @@ if (!function_exists('translate')) {
     }
 
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
+    if (!function_exists('calculateCenterPoint')) {
+        function calculateCenterPoint(array $coordinates)
+        {
+            if (empty($coordinates)) {
+                return ['center_latitude' => null, 'center_longitude' => null];
+            }
+
+            $totalLat = 0;
+            $totalLng = 0;
+            $count = count($coordinates);
+
+            foreach ($coordinates as $coordinate) {
+                $totalLat += $coordinate['lat'];
+                $totalLng += $coordinate['lng'];
+            }
+
+            return [
+                'center_latitude' => $totalLat / $count,
+                'center_longitude' => $totalLng / $count,
+            ];
+        }
+    }
     if (!function_exists('generateRandomCouponCode')) {
         function generateRandomCouponCode()
         {

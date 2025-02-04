@@ -93,8 +93,9 @@ class ComAreaRepository implements ComAreaInterface
     }
     public function store(array $data): string|object
     {
+
         $area = $this->area->newInstance();
-       
+
         foreach ($data as $column => $value) {        
             // skips the translation field
             if ($column <> 'translations') {

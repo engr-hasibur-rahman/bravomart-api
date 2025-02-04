@@ -93,7 +93,6 @@ return new class extends Migration {
         Schema::create('store_areas', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable();
-            $table->string('store_type')->nullable();
             $table->string('state')->nullable();
             $table->string('city')->nullable();
             $table->string('name');
