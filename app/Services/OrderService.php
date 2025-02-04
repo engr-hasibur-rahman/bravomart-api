@@ -3,6 +3,7 @@
 namespace App\Services;
 
 
+use App\Helpers\DeliveryChargeHelper;
 use App\Models\Area;
 use App\Models\StoreArea;
 use App\Models\Coupon;
@@ -163,18 +164,29 @@ class OrderService
 
             //  packages and details
             $shipping_charge = 0;
+            $customer_lat = $data['customer_latitude'] ?? null;
+            $customer_lng = $data['customer_longitude'] ?? null;
+
             foreach ($data['packages'] as $packageData) {
 
-                // area wise delivery/shipping charge calculate
-                $store_area = StoreArea::with('storeTypeSettings')->find($packageData['area_id']);
+                // area wise calculate delivery charge
+                $deliveryChargeData = DeliveryChargeHelper::calculateDeliveryCharge(
+                    $packageData['area_id'],
+                    $customer_lat,
+                    $customer_lng
+                );
 
-                dd($store_area);
+                // if area wise delivery charge 0 then add default shipping change
+                $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
+                if ($deliveryChargeData['delivery_charge'] === 0){
+                   $final_shipping_charge = $order_shipping_charge;
+                }
 
                 // create order package
                 $package = OrderPackage::create([
                     'order_id' => $order->id,
                     'store_id' => $packageData['store_id'],
-                    'area_id' => $store_area->id,
+                    'area_id' => $packageData['area_id'],
                     'order_type' => 'regular', // if customer order create
                     'delivery_type' => $packageData['delivery_type'],
                     'shipping_type' => $packageData['shipping_type'],
@@ -182,7 +194,7 @@ class OrderService
                     'product_discount_amount' => 0,
                     'flash_discount_amount_admin' => 0,
                     'coupon_discount_amount_admin' => 0,
-                    'shipping_charge' => $order_shipping_charge,
+                    'shipping_charge' => $final_shipping_charge,
                     'additional_charge_name' => $order_additional_charge_name,
                     'additional_charge' => $order_additional_charge_amount,
                     'is_reviewed' => false,

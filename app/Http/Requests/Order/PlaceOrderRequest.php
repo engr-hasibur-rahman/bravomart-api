@@ -26,6 +26,8 @@ class PlaceOrderRequest extends FormRequest
     {
         return [
             'customer_id' => 'required|exists:customers,id',
+            'customer_latitude' => 'required',
+            'customer_longitude' => 'required',
             'shipping_address_id' => 'required|exists:customer_addresses,id',
             'shipping_time_preferred' => 'nullable|string|max:255',
             'payment_gateway' => 'required|string|in:paypal,stripe,cash_on_delivery,razorpay,paytm,wallet',
