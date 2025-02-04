@@ -501,6 +501,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 Route::post('change-status', [AdminAreaSetupManageController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [AdminAreaSetupManageController::class, 'destroy']);
                 Route::post('settings/update', [AdminAreaSetupManageController::class, 'updateStoreAreaSetting']);
+                Route::get('settings/details/{store_area_id}', [AdminAreaSetupManageController::class, 'storeAreaSettingsDetails']);
             });
             // withdraw method
             Route::prefix('commission')->middleware(['permission:' . PermissionKey::ADMIN_COMMISSION_SETTINGS->value])->group(function () {
