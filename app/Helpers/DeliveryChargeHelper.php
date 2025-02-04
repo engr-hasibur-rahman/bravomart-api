@@ -84,6 +84,7 @@ class DeliveryChargeHelper
 
         dd($delivery_charge, $delivery_charge);
 
+
         // Ensure minimum delivery fee
         $delivery_charge = max($settings->min_order_delivery_fee, $delivery_charge);
 
