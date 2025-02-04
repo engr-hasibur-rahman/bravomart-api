@@ -54,7 +54,7 @@ class WishListManageController extends Controller
         try {
             $wishlist = Wishlist::with(['product.variants', 'product.store'])
                 ->where('customer_id', auth('api_customer')->user()->id)
-                ->paginate(18);
+                ->paginate(8);
             return response()->json([
                 'wishlist' => WishlistResource::collection($wishlist),
                 'meta' => new PaginationResource($wishlist),
