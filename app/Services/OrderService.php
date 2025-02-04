@@ -29,8 +29,7 @@ class OrderService
             $customer = auth()->guard('api_customer')->user();
             $customer_id = $customer->id;
 
-           // Initialize total order amount
-           $calculate_total_order_amount = 0;
+           // calculate  base price
            $basePrice = 0;
             foreach ($data['packages'] as $packageData) {
                 foreach ($packageData['items'] as $itemData) {
@@ -41,18 +40,13 @@ class OrderService
                     // Add to total order amount
                     if (!empty($variant) && isset($variant->price)) {
                         $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
-                        $calculate_total_order_amount += $basePrice;
                     }
                 }
             }
 
-            // Coupon Apply
-            $total_order_amount =  $data['order_amount'] ?? 0;
-            $total_discount_amount = $data['discount_amount'] ?? 0;
-
             // calculate order coupon
             if(isset($data['coupon_code'])){
-                $coupon_data = applyCoupon($data['coupon_code'], $data['order_amount']);
+                $coupon_data = applyCoupon($data['coupon_code'], 0);
                 if (isset($coupon_data['final_order_amount'])){
                     $total_order_amount = $coupon_data['final_order_amount'];
                     $total_discount_amount = $coupon_data['discount_amount'];
@@ -67,15 +61,15 @@ class OrderService
                 'payment_gateway' => $data['payment_gateway'],
                 'payment_status' => 'pending',
                 'order_notes' => $data['order_notes'] ?? null,
-                'order_amount' => $total_order_amount, // total order amount
                 'coupon_code' => $data['coupon_code'] ?? null,
                 'coupon_title' => $data['coupon_title'] ?? null,
-                'coupon_discount_amount_admin' => $total_discount_amount ?? 0, // total discount amount
-                'product_discount_amount' => $data['product_discount_amount'] ?? 0,
-                'flash_discount_amount_admin' => $data['flash_discount_amount_admin'] ?? 0,           
-                'shipping_charge' => $data['shipping_charge'] ?? 0,
-                'additional_charge_title' => $data['additional_charge_title'] ?? null,
-                'additional_charge_amt' => $data['additional_charge_amt'] ?? 0,
+                'product_discount_amount' => 0,
+                'coupon_discount_amount_admin' => 0,
+                'flash_discount_amount_admin' => 0,
+                'shipping_charge' => 0,
+                'additional_charge_title' => null,
+                'additional_charge_amount' => 0,
+                'order_amount' => 0,
                 'confirmed_by' => null,
                 'confirmed_at' => null,
                 'cancel_request_by' => null,
@@ -101,6 +95,7 @@ class OrderService
                 // this calculations only for main order base price calculate
                 foreach ($data['packages'] as $packageData) {
                     foreach ($packageData['items'] as $itemData) {
+
                         // find the product
                         $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                         // Validate product variant
@@ -370,6 +365,10 @@ class OrderService
 
 
             } // end order package
+
+
+           // final order update
+           $order->save();
 
             DB::commit();
             return $order;
