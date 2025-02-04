@@ -15,6 +15,7 @@ use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
 use App\Http\Resources\Com\Store\StorePublicDropdownResource;
 use App\Http\Resources\Com\Store\StorePublicListResource;
+use App\Http\Resources\Com\Store\StoreTypeDropdownPublicResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Http\Resources\Customer\CustomerPublicResource;
 use App\Http\Resources\Location\AreaPublicResource;
@@ -730,7 +731,7 @@ class FrontendController extends Controller
             ->latest()
             ->paginate($request->per_page ?? 10);
 
-        if($products->count() > 0){
+        if ($products->count() > 0) {
             return response()->json([
                 'status' => true,
                 'message' => __('messages.data_found'),
@@ -1005,9 +1006,9 @@ class FrontendController extends Controller
 
     public function storeTypeList()
     {
-        $storeTypes = StoreType::with('related_translations')->get();
+        $storeTypes = StoreType::get();
         if ($storeTypes) {
-            return response()->json(StoreTypePublicResource::collection($storeTypes));
+            return response()->json(StoreTypeDropdownPublicResource::collection($storeTypes));
         } else {
             return response()->json([
                 'message' => __('messages.data_not_found'),
