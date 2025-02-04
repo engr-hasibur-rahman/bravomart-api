@@ -18,7 +18,7 @@ class StoreTypeDropdownPublicResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'value' => $this->id,
+            'value' => $this->type,
             'label' => $this->type,
         ];
     }
