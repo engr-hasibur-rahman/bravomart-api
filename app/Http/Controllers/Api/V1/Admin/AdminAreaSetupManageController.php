@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Admin;
+namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AreaCreateRequest;
@@ -9,7 +9,6 @@ use App\Http\Resources\Admin\AreaResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\ComAreaInterface;
 use App\Interfaces\TranslationInterface;
-use App\Models\Area;
 use App\Services\AreaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -62,10 +61,8 @@ class AdminAreaSetupManageController extends Controller
     public function update(AreaCreateRequest $request): JsonResponse
     {
         try {
-
             $area = $this->areaRepo->update($this->areaService->prepareAddData($request), $request->id);
             $this->transRepo->updateTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
-
             return $this->success(translate('messages.update_success', ['name' => 'Area']));
         } catch (\Exception $e) {
             return $this->failed(translate('messages.update_failed', ['name' => 'Area']));

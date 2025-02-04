@@ -12,7 +12,7 @@ use App\Http\Controllers\Customer\PlaceOrderController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
+Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status','no.code.input']], function () {
     Route::get('/', [CustomerManageController::class, 'getDashboard']);
     // media manage
     Route::group(['prefix' => 'media-upload'], function () {
