@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTypeRequest;
+use App\Http\Requests\StoreTypeSettingsRequest;
 use App\Http\Resources\Admin\AdminStoreTypeDetailsResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
@@ -70,5 +71,9 @@ class AdminStoreTypeManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
+    }
+    public function createStoreTypeSettings(StoreTypeSettingsRequest $request)
+    {
+
     }
 }

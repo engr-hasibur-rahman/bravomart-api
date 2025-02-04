@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\StoreTypeManageInterface;
 use App\Models\StoreType;
+use App\Models\StoreTypeSetting;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 
@@ -75,33 +76,14 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
         return $storeType;
     }
 
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
+    public function createStoreTypeSettings(array $data)
     {
-        $translations = [];
-        if ($request['translations']) {
-            foreach ($request['translations'] as $translation) {
-                foreach ($colNames as $key) {
-
-                    // Fallback value if translation key does not exist
-                    $translatedValue = $translation[$key] ?? null;
-
-                    // Skip translation if the value is NULL
-                    if ($translatedValue === null) {
-                        continue; // Skip this field if it's NULL
-                    }
-                    // Collect translation data
-                    $translations[] = [
-                        'translatable_type' => $refPath,
-                        'translatable_id' => $refid,
-                        'language' => $translation['language_code'],
-                        'key' => $key,
-                        'value' => $translatedValue,
-                    ];
-                }
-            }
+        if (empty($data)) {
+            return false;
         }
-        if (count($translations)) {
-            $this->translation->insert($translations);
+        $success = StoreTypeSetting::create($data);
+        if (!$success) {
+            return false;
         }
         return true;
     }
