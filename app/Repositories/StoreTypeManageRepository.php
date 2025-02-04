@@ -21,8 +21,7 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
 
     public function getAllStoreTypes(array $filters)
     {
-        $query = StoreType::query();
-
+        $query = StoreType::with('related_translations');
         if (isset($filters['search'])) {
             $searchTerm = '%' . $filters['search'] . '%';
             $query->where(function ($q) use ($searchTerm) {
@@ -41,7 +40,7 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
             $query->where('status', $filters['status']);
         }
         $perPage = $filters['per_page'] ?? 10;
-        $store_types = $query->with('related_translations')->paginate($perPage);
+        $store_types = $query->paginate($perPage);
         if (!empty($store_types)) {
             return $store_types;
         } else {

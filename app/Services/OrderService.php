@@ -166,7 +166,7 @@ class OrderService
             foreach ($data['packages'] as $packageData) {
 
                 // area wise delivery/shipping charge calculate
-                $store_area = StoreArea::find($packageData['area_id']);
+                $store_area = StoreArea::with('storeTypeSettings')->find($packageData['area_id']);
 
                 dd($store_area);
 

@@ -18,19 +18,29 @@ class StoreArea extends Model
         'name',
         'code',
         'coordinates',
+        'store_type',
+        'center_latitude',
+        'center_longitude',
+        'state',
+        'city',
+        'status',
+        'created_by',
+        'updated_by',
     ];
     protected $casts = [
         'coordinates' => Polygon::class,
     ];
     public $translationKeys = [
-        'name'
+        'name',
+        'state',
+        'city',
     ];
 
 
-    // relationship with store type settings
+    // Relationship with store type settings
     public function storeTypeSettings()
     {
-        return $this->hasMany(StoreTypeSetting::class);
+        return $this->hasMany(StoreTypeSetting::class, 'store_area_id', 'id');
     }
 
     public function translations()
@@ -53,6 +63,7 @@ class StoreArea extends Model
     {
         return $this->translations()->where('language', $language)->where('key', $key)->first()->value ?? null;
     }
+
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')

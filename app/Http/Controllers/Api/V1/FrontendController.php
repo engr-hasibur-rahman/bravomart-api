@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Behaviour;
-use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
@@ -16,6 +15,7 @@ use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
 use App\Http\Resources\Com\Store\StorePublicDropdownResource;
 use App\Http\Resources\Com\Store\StorePublicListResource;
+use App\Http\Resources\Com\Store\StoreTypeDropdownPublicResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Http\Resources\Customer\CustomerPublicResource;
 use App\Http\Resources\Location\AreaPublicResource;
@@ -45,8 +45,6 @@ use App\Interfaces\CountryManageInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
-use App\Models\StoreArea;
-use App\Models\Store;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -55,6 +53,9 @@ use App\Models\ProductAttribute;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\Slider;
+use App\Models\Store;
+use App\Models\StoreArea;
+use App\Models\StoreType;
 use App\Models\Tag;
 use App\Models\Unit;
 use App\Services\FlashSaleService;
@@ -730,7 +731,7 @@ class FrontendController extends Controller
             ->latest()
             ->paginate($request->per_page ?? 10);
 
-        if($products->count() > 0){
+        if ($products->count() > 0) {
             return response()->json([
                 'status' => true,
                 'message' => __('messages.data_found'),
@@ -1005,15 +1006,9 @@ class FrontendController extends Controller
 
     public function storeTypeList()
     {
-        $storeTypes = collect(StoreType::cases())->map(function ($storeType) {
-            return [
-                'value' => $storeType->value,
-                'label' => ucfirst(str_replace('-', ' ', $storeType->value)),
-                'image' => $storeType->image(), // Use the enum's method to get the image URL
-            ];
-        });
-        if (!empty($storeTypes)) {
-            return response()->json(StoreTypePublicResource::collection($storeTypes));
+        $storeTypes = StoreType::get();
+        if ($storeTypes) {
+            return response()->json(StoreTypeDropdownPublicResource::collection($storeTypes));
         } else {
             return response()->json([
                 'message' => __('messages.data_not_found'),
@@ -1045,83 +1040,5 @@ class FrontendController extends Controller
         return response()->json(CustomerPublicResource::collection($customers));
     }
 
-    public function checkCoupon(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'coupon_code' => 'required|string|exists:coupon_lines,coupon_code',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
-        }
-        // Retrieve the coupon by the provided coupon code
-        $coupon = CouponLine::where('coupon_code', $request->coupon_code)->first();
-        // Handle the case where the coupon is not found
-        if (!$coupon) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 404,
-                'message' => __('messages.coupon_not_found'),
-            ]);
-        }
-        // Check if the coupon is restricted to a specific customer
-        if ($coupon->customer_id !== null) {
-            // If the coupon is tied to a specific customer, ensure the authenticated user is the same
-            if (!auth('api_customer')->check()) {
-                unauthorized_response();
-            }
 
-            // Check if the authenticated customer ID matches the coupon's customer ID
-            if ($coupon->customer_id !== auth('api_customer')->user()->id) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 404,
-                    'message' => __('messages.coupon_does_not_belong'),
-                ]);
-            }
-        }
-
-        // Check if the coupon is active based on the start and end dates
-        if ($coupon->start_date && $coupon->start_date > now()) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,  // Bad Request (Coupon hasn't started yet)
-                'message' => __('messages.coupon_inactive'),
-            ]);
-        }
-
-        if ($coupon->end_date && $coupon->end_date < now()) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 410,  // Gone (Coupon has expired)
-                'message' => __('messages.coupon_expired'),
-            ], 410);
-        }
-
-        // Check if the coupon usage limit has been reached
-        if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => __('messages.coupon_limit_reached'),
-            ]);
-        }
-        if ($coupon->coupon->status !== 1 && $coupon->status !== 1) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => __('messages.coupon_inactive'),
-            ]);
-        }
-        // If all checks pass, return the coupon's discount details
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => __('messages.coupon_applied'),
-            'coupon' => [
-                'title' => $coupon->coupon->title,
-                'discount_amount' => $coupon->discount,
-                'discount_type' => $coupon->discount_type,
-            ]
-        ]);
-    }
 }

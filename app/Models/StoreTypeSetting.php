@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class StoreTypeSetting extends Model
 {
     protected $fillable = [
-        'com_store_type_id',
-        'com_area_id',
+        'store_type_id',
+        'store_area_id',
         'delivery_time_per_km',
         'min_order_delivery_fee',
         'delivery_charge_method',
@@ -18,11 +18,11 @@ class StoreTypeSetting extends Model
 
     public function storeType()
     {
-        return $this->belongsTo(StoreType::class, 'com_store_type_id');
+        return $this->belongsTo(StoreType::class, 'store_type_id');
     }
 
-    public function area()
+    public function storeArea()
     {
-        return $this->belongsTo(StoreArea::class, 'com_area_id');
+        return $this->belongsTo(StoreArea::class, 'store_area_id');
     }
 }
