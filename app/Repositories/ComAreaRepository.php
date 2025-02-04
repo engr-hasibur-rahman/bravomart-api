@@ -36,7 +36,6 @@ class ComAreaRepository implements ComAreaInterface
 
     public function getPaginatedList(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
-        // Query the StoreArea model with a left join on translations
         $areas = StoreArea::leftJoin('translations', function ($join) use ($language) {
             $join->on('store_areas.id', '=', 'translations.translatable_id')
                 ->where('translations.translatable_type', '=', StoreArea::class)
@@ -45,10 +44,11 @@ class ComAreaRepository implements ComAreaInterface
         })
             ->select(
                 'store_areas.*',
-                DB::raw('COALESCE(translations.value, store_areas.name) as name')
+                DB::raw('COALESCE(translations.value, store_areas.name) as name'),
+                DB::raw('(SELECT COUNT(*) FROM stores WHERE stores.area_id = store_areas.id) AS store_count') // Store count
             );
 
-        // Apply search filter if search parameter exists
+        // Apply search filter
         if ($search) {
             $areas->where(function ($query) use ($search) {
                 $query->where(DB::raw("CONCAT_WS(' ', store_areas.name, translations.value)"), 'like', "%{$search}%");
@@ -56,11 +56,11 @@ class ComAreaRepository implements ComAreaInterface
         }
 
         // Apply sorting and pagination
-        // Return the result
         return $areas
-            ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            ->orderBy($sortField ?? 'id', $sort ?? 'asc')
             ->paginate($limit);
     }
+
 
     public function getById($id): mixed
     {
