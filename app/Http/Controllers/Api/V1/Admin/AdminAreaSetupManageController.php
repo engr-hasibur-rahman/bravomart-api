@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AreaCreateRequest;
+use App\Http\Requests\StoreAreaSettingsRequest;
 use App\Http\Resources\Admin\AreaDetailsResource;
 use App\Http\Resources\Admin\AreaResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -84,4 +85,21 @@ class AdminAreaSetupManageController extends Controller
         $this->areaRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
     }
+
+
+    public function updateStoreAreaSetting(StoreAreaSettingsRequest $request)
+    {
+        $success = $this->areaRepo->updateStoreAreaSettings($request->all());
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.save_success', ['name' => 'Store Area Settings']),
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => __('messages.save_failed', ['name' => 'Store Area Settings']),
+            ], 500);
+        }
+    }
+
+
 }

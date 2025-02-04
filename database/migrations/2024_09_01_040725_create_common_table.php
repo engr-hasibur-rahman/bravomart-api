@@ -89,6 +89,17 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        Schema::create('store_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name'); // Store type name (e.g., Grocery, Pharmacy)
+            $table->string('type');
+            $table->string('image')->nullable();
+            $table->text('description')->nullable();
+            $table->bigInteger('total_stores')->default(0);
+            $table->boolean('status')->default(0)->comment('0=Inactive, 1=Active');
+            $table->timestamps();
+        });
+
         //https://github.com/MatanYadaev/laravel-eloquent-spatial package
         Schema::create('store_areas', function (Blueprint $table) {
             $table->id();
@@ -107,21 +118,10 @@ return new class extends Migration {
         });
 
 
-        Schema::create('store_types', function (Blueprint $table) {
+        Schema::create('store_area_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Store type name (e.g., Grocery, Pharmacy)
-            $table->string('type');
-            $table->string('image')->nullable();
-            $table->text('description')->nullable();
-            $table->bigInteger('total_stores')->default(0);
-            $table->boolean('status')->default(0)->comment('0=Inactive, 1=Active');
-            $table->timestamps();
-        });
-
-        Schema::create('store_type_settings', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('store_type_id');
             $table->unsignedBigInteger('store_area_id');
+            $table->unsignedBigInteger('store_type_id');
             $table->integer('delivery_time_per_km');
             $table->decimal('min_order_delivery_fee', 10, 2)->nullable();
             $table->string('delivery_charge_method')->nullable()->comment('fixed, per_km, range_wise');
@@ -131,8 +131,9 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('store_type_range_charges', function (Blueprint $table) {
+        Schema::create('store_area_range_charges', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('store_area_id');
             $table->unsignedBigInteger('store_type_id'); // Foreign Key
             $table->decimal('min_km', 8, 2);
             $table->decimal('max_km', 8, 2);

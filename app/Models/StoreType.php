@@ -21,12 +21,12 @@ class StoreType extends Model
 
     public function settings()
     {
-        return $this->hasMany(StoreTypeSetting::class, 'com_store_type_id');
+        return $this->hasMany(StoreAreaSetting::class, 'com_store_type_id');
     }
 
     public function rangeCharges()
     {
-        return $this->hasMany(StoreTypeRangeCharge::class, 'com_store_type_id');
+        return $this->hasMany(StoreAreaRangeCharge::class, 'com_store_type_id');
     }
 
     public function related_translations()

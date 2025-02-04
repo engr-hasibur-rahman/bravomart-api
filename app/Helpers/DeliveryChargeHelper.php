@@ -60,10 +60,26 @@ class DeliveryChargeHelper
 
         // Calculate delivery charge
         $delivery_charge = 0;
-        if ($settings->delivery_charge_method === 'fixed') {
-            $delivery_charge = $settings->fixed_charge_amount;
-        } elseif ($settings->delivery_charge_method === 'per_km') {
-            $delivery_charge = $settings->per_km_charge_amount * $distance;
+
+        // Check if customer is outside the store's area using spatial check
+        $is_out_of_area = DB::table('store_areas')
+            ->select(DB::raw('ST_Contains(coordinates, ST_GeomFromText(?)) AS is_inside'))
+            ->where('id', $areaId)
+            ->addBinding("POINT({$customerLng} {$customerLat})", 'select')
+            ->first()
+            ->is_inside;
+
+
+        // If the customer is out of area
+        if (!$is_out_of_area) {
+            // If the customer is out of area, check if `out_of_area_delivery_charge` is applicable
+            $delivery_charge = $settings->out_of_area_delivery_charge;
+        }else{
+            if ($settings->delivery_charge_method === 'fixed') {
+                $delivery_charge = $settings->fixed_charge_amount;
+            } elseif ($settings->delivery_charge_method === 'per_km') {
+                $delivery_charge = $settings->per_km_charge_amount * $distance;
+            }
         }
 
         // Ensure minimum delivery fee

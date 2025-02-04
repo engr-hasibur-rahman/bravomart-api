@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\StoreTypeManageInterface;
 use App\Models\StoreType;
-use App\Models\StoreTypeSetting;
+use App\Models\StoreAreaSetting;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 
@@ -74,18 +74,6 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
             return null;
         }
         return $storeType;
-    }
-
-    public function createStoreTypeSettings(array $data)
-    {
-        if (empty($data)) {
-            return false;
-        }
-        $success = StoreTypeSetting::create($data);
-        if (!$success) {
-            return false;
-        }
-        return true;
     }
 
     public function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
