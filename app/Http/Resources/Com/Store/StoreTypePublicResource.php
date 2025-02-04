@@ -21,10 +21,14 @@ class StoreTypePublicResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "name" => $translation ? $translation->where('key', 'name')->first()?->value : $this->name,
+            "name" => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
+                : $this->name,
             "type" => $this->type,
             "image" => ImageModifier::generateImageUrl($this->image),
-            "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
+            "description" => !empty($translation) && $translation->where('key', 'description')->first()
+                ? $translation->where('key', 'description')->first()->value
+                : $this->description,
             "total_stores" => $this->total_stores,
             "status" => $this->status,
             "created_at" => $this->created_at,

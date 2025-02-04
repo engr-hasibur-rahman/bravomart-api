@@ -19,13 +19,17 @@ class StoreArea extends Model
         'coordinates',
         'store_type',
         'center_latitude',
-        'center_longitude'
+        'center_longitude',
+        'state',
+        'city',
     ];
     protected $casts = [
         'coordinates' => Polygon::class,
     ];
     public $translationKeys = [
-        'name'
+        'name',
+        'state',
+        'city',
     ];
 
     public function translations()
@@ -48,6 +52,7 @@ class StoreArea extends Model
     {
         return $this->translations()->where('language', $language)->where('key', $key)->first()->value ?? null;
     }
+
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')

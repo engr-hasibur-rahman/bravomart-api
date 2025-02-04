@@ -94,6 +94,8 @@ return new class extends Migration {
             $table->id();
             $table->string('code')->nullable();
             $table->string('store_type')->nullable();
+            $table->string('state')->nullable();
+            $table->string('city')->nullable();
             $table->string('name');
             // Google Maps-based zone management
             $table->geometry('coordinates', subtype: 'polygon')->nullable(); // Polygon boundary (Google Maps)
