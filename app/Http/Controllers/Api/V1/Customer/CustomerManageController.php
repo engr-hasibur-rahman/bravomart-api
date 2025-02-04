@@ -97,6 +97,7 @@ class CustomerManageController extends Controller
                 "message" => __('messages.login_success', ['name' => 'Customer']),
                 "token" => $customer->createToken('customer_auth_token')->plainTextToken,
                 "email_verified" => (bool)$customer->email_verified, // shorthand of -> $token->email_verified ? true : false
+                "account_status" => $customer->deactivated_at ? 'deactivated' : 'active',
             ]);
         }
     }
@@ -294,6 +295,7 @@ class CustomerManageController extends Controller
             'message' => __('messages.password_update_successful')
         ]);
     }
+
     public function changePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -457,24 +459,33 @@ class CustomerManageController extends Controller
         }
     }
 
-    public function deactivateAccount()
+    public function activeDeactiveAccount()
     {
         if (!auth('api_customer')->check()) {
-            unauthorized_response();
+            return unauthorized_response();
         }
-        $success = $this->customerRepo->deactivateAccount();
+
+        $user = auth('api_customer')->user();
+
+        // Check if the account is already deactivated
+        if ($user->deactivated_at) {
+            // Account is deactivated, activate it
+            $success = $this->customerRepo->activateAccount();
+            $message = __('messages.account_activate_successful');
+        } else {
+            // Account is active, deactivate it
+            $success = $this->customerRepo->deactivateAccount();
+            $message = __('messages.account_deactivate_successful');
+        }
+
         if ($success) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.account_deactivate_successful')
-            ]);
+                'message' => $message
+            ], 200);
         } else {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => __('messages.account_deactivate_failed')
-            ]);
+                'message' => __('messages.account_action_failed')
+            ], 500);
         }
     }
 

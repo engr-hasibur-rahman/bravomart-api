@@ -11,8 +11,9 @@ interface StoreTypeManageInterface
     public function getStoreTypeById(int $id);
 
     public function updateStoreType(array $data);
+    public function toogleStatus(int $id);
 
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
+    public function createStoreTypeSettings(array $data);
 
     public function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 }

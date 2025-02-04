@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTypeRequest;
+use App\Http\Requests\StoreTypeSettingsRequest;
 use App\Http\Resources\Admin\AdminStoreTypeDetailsResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
@@ -31,11 +32,11 @@ class AdminStoreTypeManageController extends Controller
             return response()->json([
                 'data' => StoreTypePublicResource::collection($store_types),
                 'meta' => new PaginationResource($store_types)
-            ],200);
+            ], 200);
         } else {
             return response()->json([
                 'message' => __('messages.data_not_found')
-            ],404);
+            ], 404);
         }
     }
 
@@ -70,5 +71,34 @@ class AdminStoreTypeManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
+    }
+
+    public function createStoreTypeSettings(StoreTypeSettingsRequest $request)
+    {
+        $success = $this->storeTypeRepo->createStoreTypeSettings($request->all());
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.save_success', ['name' => 'Store Type Settings']),
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => __('messages.save_failed', ['name' => 'Store Type Settings']),
+            ], 500);
+        }
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $success = $this->storeTypeRepo->toogleStatus($request->id);
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Store Type Settings status']),
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Store Type Settings status'])
+            ], 500);
+        }
+
     }
 }

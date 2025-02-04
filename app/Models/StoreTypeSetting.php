@@ -12,6 +12,7 @@ class StoreTypeSetting extends Model
         'delivery_time_per_km',
         'min_order_delivery_fee',
         'delivery_charge_method',
+        'out_of_area_delivery_charge',
         'fixed_charge_amount',
         'per_km_charge_amount'
     ];

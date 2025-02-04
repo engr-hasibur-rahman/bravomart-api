@@ -27,7 +27,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('/update', [CustomerManageController::class, 'updateProfile']);
             Route::post('/change-email', [CustomerManageController::class, 'updateEmail']);
             Route::post('/change-password', [CustomerManageController::class, 'changePassword']);
-            Route::get('/deactivate', [CustomerManageController::class, 'deactivateAccount']);
+            Route::get('/activate-deactivate', [CustomerManageController::class, 'activeDeactiveAccount']);
             Route::get('/delete', [CustomerManageController::class, 'deleteAccount']);
         });
         Route::group(['prefix' => 'address/'], function () {

@@ -86,15 +86,21 @@ class ComAreaRepository implements ComAreaInterface
         return [
             'id' => $area->id,
             'code' => $area->code,
-            'name' => $area->name,
+            'state' => $area->state,
+            'city' => $area->city,
+            'status' => $area->status,
+            'center_latitude' => $area->center_latitude,
+            'center_longitude' => $area->center_longitude,
+            'created_by' => $area->created_by,
             'coordinates' => ComHelper::format_coordiantes($formated_coordinates['coordinates']),
             'translations' => AreaTranslationResource::collection($area->related_translations->groupBy('language')),
         ];
     }
     public function store(array $data): string|object
     {
+
         $area = $this->area->newInstance();
-       
+
         foreach ($data as $column => $value) {        
             // skips the translation field
             if ($column <> 'translations') {

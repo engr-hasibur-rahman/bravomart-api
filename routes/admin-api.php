@@ -51,7 +51,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum','no.code.input']], function () {
+Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code.input']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
     // media manage
@@ -490,6 +490,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum','no.code.
                 Route::get('list', [AdminStoreTypeManageController::class, 'allStoreTypes']);
                 Route::get('details/{id}', [AdminStoreTypeManageController::class, 'storeTypeDetails']);
                 Route::post('update', [AdminStoreTypeManageController::class, 'updateStoreType']);
+                Route::post('change-status', [AdminStoreTypeManageController::class, 'changeStatus']);
+                Route::group(['prefix' => 'settings/'], function () {
+                    Route::post('add', [AdminStoreTypeManageController::class, 'createStoreTypeSettings']);
+                });
             });
             // area setup
             Route::prefix('area/')->middleware(['permission:' . PermissionKey::ADMIN_GEO_AREA_MANAGE->value])->group(function () {
