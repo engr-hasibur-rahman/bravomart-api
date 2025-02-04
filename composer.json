@@ -39,6 +39,7 @@
         },
         "files": [
             "app/Helpers/PermissionHelpers.php",
+            "app/Helpers/DeliveryChargeHelper.php",
             "app/Helpers/ComHelper.php",
             "app/Helpers/Helpers.php",
             "app/Helpers/MultilangSlug.php"

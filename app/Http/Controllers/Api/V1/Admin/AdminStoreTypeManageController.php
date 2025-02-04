@@ -32,11 +32,11 @@ class AdminStoreTypeManageController extends Controller
             return response()->json([
                 'data' => StoreTypePublicResource::collection($store_types),
                 'meta' => new PaginationResource($store_types)
-            ],200);
+            ], 200);
         } else {
             return response()->json([
                 'message' => __('messages.data_not_found')
-            ],404);
+            ], 404);
         }
     }
 
@@ -72,8 +72,18 @@ class AdminStoreTypeManageController extends Controller
             ], 404);
         }
     }
+
     public function createStoreTypeSettings(StoreTypeSettingsRequest $request)
     {
-
+        $success = $this->storeTypeRepo->createStoreTypeSettings($request->all());
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.save_success', ['name' => 'Store Type Settings']),
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => __('messages.save_failed', ['name' => 'Store Type Settings']),
+            ], 500);
+        }
     }
 }

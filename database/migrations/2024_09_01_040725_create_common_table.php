@@ -125,6 +125,7 @@ return new class extends Migration {
             $table->integer('delivery_time_per_km');
             $table->decimal('min_order_delivery_fee', 10, 2)->nullable();
             $table->string('delivery_charge_method')->nullable()->comment('fixed, per_km, range_wise');
+            $table->decimal('out_of_area_delivery_charge',10, 2)->nullable();
             $table->decimal('fixed_charge_amount', 10, 2)->nullable();
             $table->decimal('per_km_charge_amount', 10, 2)->nullable();
             $table->timestamps();

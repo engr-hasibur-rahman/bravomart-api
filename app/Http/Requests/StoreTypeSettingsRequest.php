@@ -31,6 +31,7 @@ class StoreTypeSettingsRequest extends FormRequest
             'delivery_charge_method' => 'nullable|string|in:fixed,per_km,range_wise',
             'fixed_charge_amount' => 'nullable|numeric|min:0',
             'per_km_charge_amount' => 'nullable|numeric|min:0',
+            'out_of_area_delivery_charge' => 'nullable|numeric|min:0',
         ];
     }
 
@@ -58,6 +59,9 @@ class StoreTypeSettingsRequest extends FormRequest
 
             'per_km.numeric' => __('validation.numeric', ['attribute' => 'Per KM']),
             'per_km.min' => __('validation.min', ['attribute' => 'Per KM']),
+
+            'out_of_area_delivery_charge.numeric'=>__('validation.numeric', ['attribute' => 'Out Of Area Delivery Charge']),
+            'out_of_area_delivery_charge.min' => __('validation.min', ['attribute' => 'Out Of Area Delivery Charge']),
         ];
     }
 
