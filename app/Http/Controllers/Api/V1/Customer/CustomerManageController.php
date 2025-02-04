@@ -97,6 +97,7 @@ class CustomerManageController extends Controller
                 "message" => __('messages.login_success', ['name' => 'Customer']),
                 "token" => $customer->createToken('customer_auth_token')->plainTextToken,
                 "email_verified" => (bool)$customer->email_verified, // shorthand of -> $token->email_verified ? true : false
+                "account_status" => $customer->deactivated_at ? 'deactivated' : 'active',
             ]);
         }
     }

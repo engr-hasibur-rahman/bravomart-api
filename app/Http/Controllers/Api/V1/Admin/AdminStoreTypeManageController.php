@@ -86,4 +86,19 @@ class AdminStoreTypeManageController extends Controller
             ], 500);
         }
     }
+
+    public function changeStatus(Request $request)
+    {
+        $success = $this->storeTypeRepo->toogleStatus($request->id);
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Store Type Settings status']),
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Store Type Settings status'])
+            ], 500);
+        }
+
+    }
 }
