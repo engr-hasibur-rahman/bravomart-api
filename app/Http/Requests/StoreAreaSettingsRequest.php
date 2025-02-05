@@ -41,7 +41,7 @@ class StoreAreaSettingsRequest extends FormRequest
                 'required',
                 'numeric',
                 function ($attribute, $value, $fail) {
-                    $index = explode('.', $attribute)[1]; // Get the index (e.g., "0" from "charges.0.max_km")
+                    $index = explode('.', $attribute)[1];
                     $minKm = request()->input("charges.$index.min_km");
 
                     if ($minKm !== null && $value <= $minKm) {
@@ -74,7 +74,7 @@ class StoreAreaSettingsRequest extends FormRequest
             'per_km.numeric' => __('validation.numeric', ['attribute' => 'Per KM']),
             'per_km.min' => __('validation.min', ['attribute' => 'Per KM']),
 
-            'out_of_area_delivery_charge.numeric'=>__('validation.numeric', ['attribute' => 'Out Of Area Delivery Charge']),
+            'out_of_area_delivery_charge.numeric' => __('validation.numeric', ['attribute' => 'Out Of Area Delivery Charge']),
             'out_of_area_delivery_charge.min' => __('validation.min', ['attribute' => 'Out Of Area Delivery Charge']),
 
             'charges.required' => __('validation.required', ['attribute' => 'charges']),
