@@ -137,7 +137,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('store_area_settings_range_charges', function (Blueprint $table) {
+        Schema::create('store_area_setting_range_charges', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('store_area_setting_id');
             $table->decimal('min_km', 8, 2);
@@ -146,7 +146,6 @@ return new class extends Migration {
             $table->boolean('status')->default(1)->comment('0=Inactive, 1=Active');
             $table->timestamps();
         });
-
 
     }
 

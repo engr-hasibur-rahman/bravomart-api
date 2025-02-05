@@ -22,6 +22,10 @@ class DatabaseSeeder extends Seeder
         $this->call(StoreSellerSeeder::class);
         $this->call(StoreSeeder::class);
         $this->call(StoreTypeSeeder::class);
+        $this->call(StoreAreaSettingsSeeder::class);
+        $this->call(StoreAreaSettingRangeChargeSeeder::class);
+        $this->call(StoreAreaSettingStoreTypeSeeder::class);
+
         // customer and user
         $this->call(UserSeeder::class);
         $this->call(CustomerSeeder::class);
@@ -44,10 +48,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SliderSeeder::class);
         $this->call(BannerSeeder::class);
         $this->call(RolesSeeder::class);
-
-        // store area settings
-        $this->call(StoreAreaSettingsSeeder::class);
-        $this->call(StoreAreaRangeWiseChargeSeeder::class);
         $this->call(CouponSeeder::class);
     }
 }
