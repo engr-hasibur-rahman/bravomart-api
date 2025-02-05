@@ -146,8 +146,9 @@ class AdminAreaSetupManageController extends Controller
         $storeAreaSettings = StoreAreaSetting::with(['storeTypes','rangeCharges'])->where('store_area_id', $request->store_area_id)->first();
         if ($storeAreaSettings) {
             return response()->json(new AdminAreaSettingsDetailsResource($storeAreaSettings), 200);
-        } else {
-            return response()->json(['message' => __('messages.data_not_found')], 404);
+        }  else {
+
+            return response()->json(['message' => __('messages.settings_not_created_yet')], 200);
         }
     }
 
