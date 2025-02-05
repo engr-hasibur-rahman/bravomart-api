@@ -19,14 +19,10 @@ class StoreType extends Model
         'description',
     ];
 
-    public function settings()
+    public function areaDetails()
     {
-        return $this->hasMany(StoreAreaSetting::class, 'com_store_type_id');
-    }
-
-    public function rangeCharges()
-    {
-        return $this->hasMany(StoreAreaRangeCharge::class, 'com_store_type_id');
+        return $this->belongsToMany(StoreAreaSetting::class, 'store_area_setting_store_types', 'store_type_id', 'store_area_setting_id')
+            ->with(['rangeCharges']);
     }
 
     public function related_translations()

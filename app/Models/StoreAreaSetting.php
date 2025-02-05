@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class StoreAreaSetting extends Model
 {
     protected $fillable = [
-        'store_type_id',
         'store_area_id',
         'delivery_time_per_km',
         'min_order_delivery_fee',
@@ -17,13 +16,13 @@ class StoreAreaSetting extends Model
         'per_km_charge_amount'
     ];
 
-    public function storeType()
-    {
-        return $this->belongsTo(StoreType::class, 'store_type_id');
-    }
-
     public function storeArea()
     {
         return $this->belongsTo(StoreArea::class, 'store_area_id');
+    }
+
+    public function storeTypes()
+    {
+        return $this->belongsToMany(StoreType::class, 'store_area_setting_store_types', 'store_area_setting_id', 'store_type_id');
     }
 }
