@@ -25,4 +25,9 @@ class StoreAreaSetting extends Model
     {
         return $this->belongsToMany(StoreType::class, 'store_area_setting_store_types', 'store_area_setting_id', 'store_type_id');
     }
+
+    public function rangeCharges()
+    {
+        return $this->hasMany(StoreAreaSettingRangeCharge::class, 'store_area_setting_id');
+    }
 }

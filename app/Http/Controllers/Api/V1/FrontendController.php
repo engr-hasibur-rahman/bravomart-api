@@ -1011,9 +1011,7 @@ class FrontendController extends Controller
                 'message' => __('messages.data_not_found'),
             ], 404);
         }
-
     }
-
     public function behaviourList()
     {
         $behaviours = collect(Behaviour::cases())->map(function ($behaviour) {

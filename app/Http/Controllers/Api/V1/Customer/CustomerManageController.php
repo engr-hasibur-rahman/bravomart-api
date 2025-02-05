@@ -98,6 +98,8 @@ class CustomerManageController extends Controller
                 "token" => $customer->createToken('customer_auth_token')->plainTextToken,
                 "email_verified" => (bool)$customer->email_verified, // shorthand of -> $token->email_verified ? true : false
                 "account_status" => $customer->deactivated_at ? 'deactivated' : 'active',
+                "marketing_email" => (bool)$customer->marketing_email,
+                "activity_notification" => (bool)$customer->activity_notification,
             ]);
         }
     }

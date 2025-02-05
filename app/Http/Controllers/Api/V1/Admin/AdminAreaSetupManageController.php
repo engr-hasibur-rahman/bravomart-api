@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AddAreaChargeRequest;
 use App\Http\Requests\AreaCreateRequest;
 use App\Http\Requests\StoreAreaSettingsRequest;
+use App\Http\Resources\Admin\AdminAreaSettingsDetailsResource;
 use App\Http\Resources\Admin\AreaDetailsResource;
 use App\Http\Resources\Admin\AreaResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -104,15 +105,12 @@ class AdminAreaSetupManageController extends Controller
                 ['store_area_id' => $request->store_area_id],
                 $request->except(['store_type_ids', 'charges']) // Exclude unnecessary fields
             );
-
             // Sync store types only if provided
             if (!empty($request->store_type_ids)) {
                 $storeAreaSetting->storeTypes()->sync($request->store_type_ids);
             }
-
             // Delete the existing charges for the store area setting
             StoreAreaSettingRangeCharge::where('store_area_setting_id', $storeAreaSetting->id)->delete();
-
             // Insert new charges
             if (!empty($request->charges)) {
                 $chargeData = array_map(function ($charge) use ($storeAreaSetting) {
@@ -126,34 +124,28 @@ class AdminAreaSetupManageController extends Controller
                         'updated_at' => now(),
                     ];
                 }, $request->charges);
-
                 // Insert the new charges in bulk
                 StoreAreaSettingRangeCharge::insert($chargeData);
             }
-
-            DB::commit(); // Commit transaction
-
+            DB::commit();
             return response()->json([
-                'status' => true,
                 'message' => __('messages.update_success', ['name' => 'Store Area Settings']),
             ], 200);
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback on failure
+            DB::rollBack();
 
             return response()->json([
-                'status' => false,
                 'message' => __('messages.update_failed', ['name' => 'Store Area Settings']),
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
-
     public function storeAreaSettingsDetails(Request $request)
     {
-        $storeAreaSettings = StoreAreaSetting::where('store_area_id', $request->store_area_id)->first();
+        $storeAreaSettings = StoreAreaSetting::with(['storeTypes','rangeCharges'])->where('store_area_id', $request->store_area_id)->first();
         if ($storeAreaSettings) {
-            return response()->json($storeAreaSettings, 200);
+            return response()->json(new AdminAreaSettingsDetailsResource($storeAreaSettings), 200);
         } else {
             return response()->json(['message' => __('messages.data_not_found')], 404);
         }
