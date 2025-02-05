@@ -100,7 +100,6 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        //https://github.com/MatanYadaev/laravel-eloquent-spatial package
         Schema::create('store_areas', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable();
@@ -121,7 +120,6 @@ return new class extends Migration {
         Schema::create('store_area_settings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('store_area_id');
-            $table->unsignedBigInteger('store_type_id');
             $table->integer('delivery_time_per_km');
             $table->decimal('min_order_delivery_fee', 10, 2)->nullable();
             $table->string('delivery_charge_method')->nullable()->comment('fixed, per_km, range_wise');
@@ -131,10 +129,17 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('store_area_range_charges', function (Blueprint $table) {
+        Schema::create('store_area_setting_store_types', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('store_area_id');
-            $table->unsignedBigInteger('store_type_id'); // Foreign Key
+            $table->unsignedBigInteger('store_area_setting_id');
+            $table->unsignedBigInteger('store_type_id');
+            $table->boolean('status')->default(1)->comment('0=Inactive, 1=Active');
+            $table->timestamps();
+        });
+
+        Schema::create('store_area_settings_range_charges', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('store_area_setting_id');
             $table->decimal('min_km', 8, 2);
             $table->decimal('max_km', 8, 2);
             $table->decimal('charge_amount', 10, 2);

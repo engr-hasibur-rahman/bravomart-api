@@ -4,18 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class StoreAreaRangeCharge extends Model
+class StoreAreaSettingRangeCharge extends Model
 {
     protected $fillable = [
-        'com_store_type_id',
+        'store_area_setting_id',
         'min_km',
         'max_km',
         'charge_amount',
         'status'
     ];
 
-    public function storeType()
+    public function storeAreaSetting()
     {
-        return $this->belongsTo(StoreType::class, 'com_store_type_id');
+        return $this->belongsTo(StoreAreaSetting::class);
     }
+
 }

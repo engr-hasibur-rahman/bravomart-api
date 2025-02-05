@@ -49,7 +49,7 @@ class DeliveryChargeHelper
         $remaining_distance = $distance;
 
         // Get the slabs for this store area
-        $slabs = DB::table('store_area_range_charges')
+        $slabs = DB::table('store_area_settings_range_charges')
             ->where('store_area_id', $areaId)
             ->orderBy('min_km', 'asc') // Ensure slabs are in order
             ->get();
@@ -178,7 +178,7 @@ class DeliveryChargeHelper
 //            $delivery_charge = $settings->per_km_charge_amount * $distance;
 //        } elseif ($settings->delivery_charge_method === 'range-wise'){
 //            // Get the range-wise charge based on distance
-//            $range_charge = DB::table('store_area_range_charges')
+//            $range_charge = DB::table('store_area_settings_range_charges')
 //                ->where('store_area_id', $areaId)
 //                ->where('min_km', '<=', $distance)
 //                ->where('max_km', '>=', $distance)
