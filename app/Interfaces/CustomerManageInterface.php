@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Interfaces;
+use App\Models\Customer;
+
 interface CustomerManageInterface
 {
     public function register(array $data);
@@ -18,8 +20,6 @@ interface CustomerManageInterface
     public function resetPassword(array $data);
 
     public function changePassword(array $data);
-
-    public function deactivateAccount();
 
     public function activateAccount();
 
