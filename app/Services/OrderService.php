@@ -47,13 +47,18 @@ class OrderService
             }
 
             // calculate order coupon
-            $coupon_data = [];
             if(isset($data['coupon_code'])){
                 $coupon_data = applyCoupon($data['coupon_code'], $basePrice);
                 if (isset($coupon_data['final_order_amount'])){
                     $total_order_amount = $coupon_data['final_order_amount'];
                     $total_discount_amount = $coupon_data['discount_amount'];
                 }
+            }else{
+                $coupon_data = [
+                    'success' => false,
+                    'coupon_code' => null,
+                    'coupon_title' => null,
+                ];
             }
 
 
@@ -64,8 +69,8 @@ class OrderService
                 'payment_gateway' => $data['payment_gateway'],
                 'payment_status' => 'pending',
                 'order_notes' => $data['order_notes'] ?? null,
-                'coupon_code' => isset($coupon_data['success']) && $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
-                'coupon_title' => isset($coupon_data['success']) && $coupon_data['success'] === false ? null : $data['coupon_title'] ?? null,
+                'coupon_code' => $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
+                'coupon_title' => $coupon_data['success'] === false ? null : $data['coupon_title'] ?? null,
                 'product_discount_amount' => 0,
                 'coupon_discount_amount_admin' => 0,
                 'flash_discount_amount_admin' => 0,
