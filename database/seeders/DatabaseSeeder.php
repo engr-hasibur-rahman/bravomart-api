@@ -44,6 +44,10 @@ class DatabaseSeeder extends Seeder
         $this->call(SliderSeeder::class);
         $this->call(BannerSeeder::class);
         $this->call(RolesSeeder::class);
+
+        // store area settings
+        $this->call(StoreAreaSettingsSeeder::class);
+        $this->call(StoreAreaRangeWiseChargeSeeder::class);
         $this->call(CouponSeeder::class);
     }
 }

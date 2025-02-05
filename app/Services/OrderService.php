@@ -62,8 +62,8 @@ class OrderService
                 'payment_gateway' => $data['payment_gateway'],
                 'payment_status' => 'pending',
                 'order_notes' => $data['order_notes'] ?? null,
-                'coupon_code' => $data['coupon_code'] ?? null,
-                'coupon_title' => $data['coupon_title'] ?? null,
+                'coupon_code' => $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
+                'coupon_title' => $coupon_data['success'] === false ? null : $data['coupon_title'] ?? null,
                 'product_discount_amount' => 0,
                 'coupon_discount_amount_admin' => 0,
                 'flash_discount_amount_admin' => 0,
@@ -170,13 +170,9 @@ class OrderService
             foreach ($data['packages'] as $packageData) {
 
                 // area wise calculate delivery charge
-                $deliveryChargeData = DeliveryChargeHelper::calculateDeliveryCharge(
-                    $packageData['area_id'],
-                    $customer_lat,
-                    $customer_lng
-                );
+                $deliveryChargeData = DeliveryChargeHelper::calculateDeliveryCharge($packageData['area_id'], $customer_lat, $customer_lng);
 
-                // if area wise delivery charge 0 then add default shipping change
+                // if area wise delivery charge 0 then add default delivery change
                 $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
                 if ($deliveryChargeData['delivery_charge'] === 0){
                    $final_shipping_charge = $order_shipping_charge;
@@ -400,6 +396,7 @@ class OrderService
            $order->additional_charge_title = $order_additional_charge_name;
            $order->additional_charge_amount = $order_additional_charge_amount;
            $order->shipping_charge = $shipping_charge;
+
            $order->order_amount = $order_package_total_amount;
            $order->save();
 

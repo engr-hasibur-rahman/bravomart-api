@@ -6,6 +6,7 @@ use App\Http\Controllers\APi\V1\Com\HeaderFooterController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\ContactManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
+use App\Http\Controllers\Api\V1\DeliveryChargeCalculateController;
 use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\PermissionController;
@@ -106,4 +107,7 @@ Route::group(['prefix' => 'v1/'], function () {
     // home page footer api route
     Route::get('/footer', [HeaderFooterController::class, 'siteFooterInfo']);
     Route::get('/site-general-info', [ComSiteGeneralController::class, 'siteGeneralInfo']);
+
+    // delivery charge calculate
+    Route::post('/calculate-delivery-charge', [DeliveryChargeCalculateController::class, 'calculateDeliveryCharge']);
 });
