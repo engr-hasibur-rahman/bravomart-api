@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->integer('verified')->default(0)->comment('0: not verified, 1: verified');
             $table->string('verify_method')->default('email'); // Verification method ----> email, phone
+            $table->boolean('activity_notification')->default(1);
             $table->boolean('marketing_email')->default(0);
             $table->boolean('marketing_sms')->default(0);
             $table->integer('status')->default(1)->comment('1: active, 0: inactive, 2: suspended');
