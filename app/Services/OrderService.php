@@ -185,7 +185,7 @@ class OrderService
 
                 // if area wise delivery charge 0 then add default delivery change
                 $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
-                if ($deliveryChargeData['delivery_charge'] === 0){
+                if ($deliveryChargeData['delivery_charge'] == 0){
                    $final_shipping_charge = $order_shipping_charge;
                 }
 
