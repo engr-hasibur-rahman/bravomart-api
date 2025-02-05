@@ -88,6 +88,7 @@ class ComAreaRepository implements ComAreaInterface
             'code' => $area->code,
             'state' => $area->state,
             'city' => $area->city,
+            'name' => $area->name,
             'status' => $area->status,
             'center_latitude' => $area->center_latitude,
             'center_longitude' => $area->center_longitude,
