@@ -17,6 +17,8 @@ class AreaTranslationResource extends JsonResource
         return [
             "language_code" => $this->first()->language,
             "name" => $this->where('key', 'name')->first()?->value,
+            "city" => $this->where('key', 'city')->first()?->value,
+            "state" => $this->where('key', 'state')->first()?->value,
         ];
     }
 }
