@@ -174,7 +174,6 @@ class FrontendController extends Controller
             'message' => __('messages.data_found'),
             'data' => new StoreDetailsPublicResource($store),
         ]);
-
     }
 
     /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
