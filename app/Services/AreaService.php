@@ -32,8 +32,10 @@ class AreaService
             'coordinates' => new Polygon([new LineString($polygon)]),
             'center_latitude' => $center['center_latitude'],
             'center_longitude' => $center['center_longitude'],
-            'status' => $request->status,
+            'status' => $request->status ?? 1,
             'created_by' => auth('api')->id(),
         ];
     }
+
+
 }
