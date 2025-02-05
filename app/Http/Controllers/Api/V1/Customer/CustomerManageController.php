@@ -524,4 +524,28 @@ class CustomerManageController extends Controller
             'data' => new CustomerDashboardResource($dashboardData),
         ]);
     }
+
+    public function activityNotificationToggle()
+    {
+        $customer = auth('api_customer')->user();
+        $customer->activity_notification = !$customer->activity_notification;
+        $customer->save();
+
+        return response()->json([
+            'message' => __('messages.account_activity_notification_update_success'),
+            'status' => $customer->activity_notification
+        ], 200);
+    }
+
+    public function marketingEmailToggle()
+    {
+        $customer = auth('api_customer')->user();
+        $customer->marketing_email = !$customer->marketing_email;
+        $customer->save();
+
+        return response()->json([
+            'message' => __('messages.account_marketing_notification_update_success'),
+            'status' => $customer->marketing_email
+        ], 200);
+    }
 }
