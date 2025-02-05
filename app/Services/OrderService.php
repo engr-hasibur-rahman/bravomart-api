@@ -183,11 +183,24 @@ class OrderService
                 // area wise calculate delivery charge
                 $deliveryChargeData = DeliveryChargeHelper::calculateDeliveryCharge($store_area_id, $customer_lat, $customer_lng);
 
-                // if area wise delivery charge 0 then add default delivery change
-                $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
-                if ($deliveryChargeData['delivery_charge'] == 0){
-                   $final_shipping_charge = $order_shipping_charge;
+                // Ensure delivery charge data is an array to avoid errors
+                if (!is_array($deliveryChargeData)) {
+                    $deliveryChargeData = ['delivery_charge' => null];
                 }
+
+                // Get the delivery charge or default to 0
+                $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
+
+
+                // If area-wise delivery charge is 0 or not set, use the default order shipping charge
+                if (empty($deliveryChargeData['delivery_charge']) || $deliveryChargeData['delivery_charge'] == 0) {
+                    $final_shipping_charge = $order_shipping_charge;
+                }
+//                // if area wise delivery charge 0 then add default delivery change
+//                $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
+//                if ($deliveryChargeData['delivery_charge'] == 0){
+//                   $final_shipping_charge = $order_shipping_charge;
+//                }
 
                 // create order package
                 $package = OrderPackage::create([
