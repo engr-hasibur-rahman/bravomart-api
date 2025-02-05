@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddAreaChargeRequest;
 use App\Http\Requests\AreaCreateRequest;
 use App\Http\Requests\StoreAreaSettingsRequest;
 use App\Http\Resources\Admin\AreaDetailsResource;
@@ -115,12 +116,17 @@ class AdminAreaSetupManageController extends Controller
 
     public function storeAreaSettingsDetails(Request $request)
     {
-        $storeAreaSettings = StoreAreaSetting::where('store_area_id',$request->store_area_id)->first();
+        $storeAreaSettings = StoreAreaSetting::where('store_area_id', $request->store_area_id)->first();
         if ($storeAreaSettings) {
             return response()->json($storeAreaSettings, 200);
         } else {
             return response()->json(['message' => __('messages.data_not_found')], 404);
         }
+    }
+
+    public function addAreaCharges(AddAreaChargeRequest $request)
+    {
+
     }
 
 

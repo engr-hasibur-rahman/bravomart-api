@@ -35,6 +35,7 @@ class CustomerDetailsResource extends JsonResource
             "marketing_email" => $this->marketing_email,
             "marketing_sms" => $this->marketing_sms,
             "status" => $this->status,
+            "deleted_at" => $this->deleted_at,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
         ];
