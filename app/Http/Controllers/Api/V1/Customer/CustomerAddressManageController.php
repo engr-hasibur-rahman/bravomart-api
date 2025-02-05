@@ -143,16 +143,12 @@ class CustomerAddressManageController extends Controller
             $address->delete();
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.delete_success', ['name' => 'Address']),
-            ]);
+            ],200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage(),
-            ]);
+            ],500);
         }
     }
 }
