@@ -13,9 +13,12 @@ use App\Interfaces\ComAreaInterface;
 use App\Interfaces\TranslationInterface;
 use App\Models\StoreArea;
 use App\Models\StoreAreaSetting;
+use App\Models\StoreAreaSettingRangeCharge;
+use App\Models\StoreAreaSettingStoreType;
 use App\Services\AreaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminAreaSetupManageController extends Controller
 {
@@ -94,17 +97,34 @@ class AdminAreaSetupManageController extends Controller
 
     public function updateStoreAreaSetting(StoreAreaSettingsRequest $request)
     {
+        DB::beginTransaction(); // Start transaction
+
         try {
+            // Update or Create Store Area Setting
             $storeAreaSetting = StoreAreaSetting::updateOrCreate(
-                ['store_area_id' => $request->store_area_id], // Condition to check existing record
-                $request->all() // Data to insert/update
+                ['store_area_id' => $request->store_area_id],
+                $request->except('store_type_ids') // Exclude store_type_ids from direct update
             );
+
+            // Handle store_type_ids only if provided
+            if (!empty($request->store_type_ids)) {
+                $storeAreaSetting->storeTypes()->sync($request->store_type_ids); // Efficient many-to-many sync
+            }
+            if (!empty($request->charges)) {
+                $store_area_setting_range_charges = StoreAreaSettingRangeCharge::create([
+                    \
+                ]);
+            }
+
+            DB::commit();
 
             return response()->json([
                 'status' => true,
                 'message' => __('messages.update_success', ['name' => 'Store Area Settings']),
             ], 200);
         } catch (\Exception $e) {
+            DB::rollBack();
+
             return response()->json([
                 'status' => false,
                 'message' => __('messages.update_failed', ['name' => 'Store Area Settings']),
@@ -123,11 +143,5 @@ class AdminAreaSetupManageController extends Controller
             return response()->json(['message' => __('messages.data_not_found')], 404);
         }
     }
-
-    public function addAreaCharges(AddAreaChargeRequest $request)
-    {
-
-    }
-
 
 }
