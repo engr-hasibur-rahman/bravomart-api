@@ -14,7 +14,6 @@ class StoreAreaSettingsSeeder extends Seeder
     {
         StoreAreaSetting::create([
             "store_area_id" => 1,
-            "store_type_id" => 1,
             "delivery_time_per_km" => 2,
             "min_order_delivery_fee" => 10,
             "out_of_area_delivery_charge" => 500,
