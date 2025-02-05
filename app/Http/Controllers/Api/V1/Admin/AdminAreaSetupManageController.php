@@ -94,7 +94,6 @@ class AdminAreaSetupManageController extends Controller
         return $this->success(translate('messages.delete_success'));
     }
 
-
     public function updateStoreAreaSetting(StoreAreaSettingsRequest $request)
     {
         DB::beginTransaction(); // Start transaction
@@ -103,27 +102,43 @@ class AdminAreaSetupManageController extends Controller
             // Update or Create Store Area Setting
             $storeAreaSetting = StoreAreaSetting::updateOrCreate(
                 ['store_area_id' => $request->store_area_id],
-                $request->except('store_type_ids') // Exclude store_type_ids from direct update
+                $request->except(['store_type_ids', 'charges']) // Exclude unnecessary fields
             );
 
-            // Handle store_type_ids only if provided
+            // Sync store types only if provided
             if (!empty($request->store_type_ids)) {
-                $storeAreaSetting->storeTypes()->sync($request->store_type_ids); // Efficient many-to-many sync
-            }
-            if (!empty($request->charges)) {
-                $store_area_setting_range_charges = StoreAreaSettingRangeCharge::create([
-                    \
-                ]);
+                $storeAreaSetting->storeTypes()->sync($request->store_type_ids);
             }
 
-            DB::commit();
+            // Delete the existing charges for the store area setting
+            StoreAreaSettingRangeCharge::where('store_area_setting_id', $storeAreaSetting->id)->delete();
+
+            // Insert new charges
+            if (!empty($request->charges)) {
+                $chargeData = array_map(function ($charge) use ($storeAreaSetting) {
+                    return [
+                        'store_area_setting_id' => $storeAreaSetting->id,
+                        'min_km' => $charge['min_km'],
+                        'max_km' => $charge['max_km'],
+                        'charge_amount' => $charge['charge_amount'],
+                        'status' => $charge['status'] ?? 1, // Default to active
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }, $request->charges);
+
+                // Insert the new charges in bulk
+                StoreAreaSettingRangeCharge::insert($chargeData);
+            }
+
+            DB::commit(); // Commit transaction
 
             return response()->json([
                 'status' => true,
                 'message' => __('messages.update_success', ['name' => 'Store Area Settings']),
             ], 200);
         } catch (\Exception $e) {
-            DB::rollBack();
+            DB::rollBack(); // Rollback on failure
 
             return response()->json([
                 'status' => false,

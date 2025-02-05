@@ -36,20 +36,28 @@ class StoreAreaSettingsRequest extends FormRequest
 
             // Charges Array Validation
             'charges' => 'required|array|min:1',
-            'charges.*.store_area_setting_id' => 'required|exists:store_area_settings,id',
             'charges.*.min_km' => 'required|numeric|min:0',
-            'charges.*.max_km' => ['required', 'numeric', 'gt:min_km'], // Fixed the gt rule
+            'charges.*.max_km' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    $index = explode('.', $attribute)[1]; // Get the index (e.g., "0" from "charges.0.max_km")
+                    $minKm = request()->input("charges.$index.min_km");
+
+                    if ($minKm !== null && $value <= $minKm) {
+                        $fail(__('validation.gt', ['attribute' => 'Maximum KM', 'value' => 'Minimum KM']));
+                    }
+                }
+            ],
             'charges.*.charge_amount' => 'required|numeric|min:0',
-            'charges.*.status' => 'nullable|boolean', // Ensures it's a valid boolean value
+            'charges.*.status' => 'nullable|boolean',
         ];
     }
+
 
     public function messages()
     {
         return [
-            'store_area_setting_id.required' => __('validation.required', ['attribute' => 'Store Area ID']),
-            'store_area_setting_id.exists' => __('validation.exists', ['attribute' => 'Store Area ID']),
-
             'delivery_time_per_km.required' => __('validation.required', ['attribute' => 'Delivery Time Per KM']),
             'delivery_time_per_km.integer' => __('validation.integer', ['attribute' => 'Delivery Time Per KM']),
             'delivery_time_per_km.min' => __('validation.min', ['attribute' => 'Delivery Time Per KM']),
