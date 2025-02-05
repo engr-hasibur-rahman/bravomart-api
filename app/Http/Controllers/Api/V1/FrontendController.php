@@ -159,24 +159,21 @@ class FrontendController extends Controller
 
     public function getStoreDetails(Request $request)
     {
-        try {
-            $query = Store::query();
+        $query = Store::query();
 
-            $store = $query->with(['area', 'seller', 'related_translations', 'products.variants'])
-                ->where('slug', $request->slug)->first();
+        $store = $query->with(['area', 'seller', 'related_translations', 'products.variants'])
+            ->where('slug', $request->slug)->first();
+        if (!$store && empty($store)) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => new StoreDetailsPublicResource($store),
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage(),
-            ]);
+                'message' => __('messages.data_not_found')
+            ], 404);
         }
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.data_found'),
+            'data' => new StoreDetailsPublicResource($store),
+        ]);
     }
 
     /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
@@ -1014,9 +1011,7 @@ class FrontendController extends Controller
                 'message' => __('messages.data_not_found'),
             ], 404);
         }
-
     }
-
     public function behaviourList()
     {
         $behaviours = collect(Behaviour::cases())->map(function ($behaviour) {

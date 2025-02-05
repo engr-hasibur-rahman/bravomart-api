@@ -98,6 +98,8 @@ class CustomerManageController extends Controller
                 "token" => $customer->createToken('customer_auth_token')->plainTextToken,
                 "email_verified" => (bool)$customer->email_verified, // shorthand of -> $token->email_verified ? true : false
                 "account_status" => $customer->deactivated_at ? 'deactivated' : 'active',
+                "marketing_email" => (bool)$customer->marketing_email,
+                "activity_notification" => (bool)$customer->activity_notification,
             ]);
         }
     }
@@ -523,5 +525,29 @@ class CustomerManageController extends Controller
             'status_code' => 200,
             'data' => new CustomerDashboardResource($dashboardData),
         ]);
+    }
+
+    public function activityNotificationToggle()
+    {
+        $customer = auth('api_customer')->user();
+        $customer->activity_notification = !$customer->activity_notification;
+        $customer->save();
+
+        return response()->json([
+            'message' => __('messages.account_activity_notification_update_success'),
+            'status' => $customer->activity_notification
+        ], 200);
+    }
+
+    public function marketingEmailToggle()
+    {
+        $customer = auth('api_customer')->user();
+        $customer->marketing_email = !$customer->marketing_email;
+        $customer->save();
+
+        return response()->json([
+            'message' => __('messages.account_marketing_notification_update_success'),
+            'status' => $customer->marketing_email
+        ], 200);
     }
 }

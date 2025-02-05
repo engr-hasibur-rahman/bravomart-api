@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AddAreaChargeRequest;
 use App\Http\Requests\AreaCreateRequest;
 use App\Http\Requests\StoreAreaSettingsRequest;
+use App\Http\Resources\Admin\AdminAreaSettingsDetailsResource;
 use App\Http\Resources\Admin\AreaDetailsResource;
 use App\Http\Resources\Admin\AreaResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -13,9 +14,12 @@ use App\Interfaces\ComAreaInterface;
 use App\Interfaces\TranslationInterface;
 use App\Models\StoreArea;
 use App\Models\StoreAreaSetting;
+use App\Models\StoreAreaSettingRangeCharge;
+use App\Models\StoreAreaSettingStoreType;
 use App\Services\AreaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminAreaSetupManageController extends Controller
 {
@@ -91,43 +95,61 @@ class AdminAreaSetupManageController extends Controller
         return $this->success(translate('messages.delete_success'));
     }
 
-
     public function updateStoreAreaSetting(StoreAreaSettingsRequest $request)
     {
-        try {
-            $storeAreaSetting = StoreAreaSetting::updateOrCreate(
-                ['store_area_id' => $request->store_area_id], // Condition to check existing record
-                $request->all() // Data to insert/update
-            );
+        DB::beginTransaction(); // Start transaction
 
+        try {
+            // Update or Create Store Area Setting
+            $storeAreaSetting = StoreAreaSetting::updateOrCreate(
+                ['store_area_id' => $request->store_area_id],
+                $request->except(['store_type_ids', 'charges']) // Exclude unnecessary fields
+            );
+            // Sync store types only if provided
+            if (!empty($request->store_type_ids)) {
+                $storeAreaSetting->storeTypes()->sync($request->store_type_ids);
+            }
+            // Delete the existing charges for the store area setting
+            StoreAreaSettingRangeCharge::where('store_area_setting_id', $storeAreaSetting->id)->delete();
+            // Insert new charges
+            if (!empty($request->charges)) {
+                $chargeData = array_map(function ($charge) use ($storeAreaSetting) {
+                    return [
+                        'store_area_setting_id' => $storeAreaSetting->id,
+                        'min_km' => $charge['min_km'],
+                        'max_km' => $charge['max_km'],
+                        'charge_amount' => $charge['charge_amount'],
+                        'status' => $charge['status'] ?? 1, // Default to active
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }, $request->charges);
+                // Insert the new charges in bulk
+                StoreAreaSettingRangeCharge::insert($chargeData);
+            }
+            DB::commit();
             return response()->json([
-                'status' => true,
                 'message' => __('messages.update_success', ['name' => 'Store Area Settings']),
             ], 200);
         } catch (\Exception $e) {
+            DB::rollBack();
+
             return response()->json([
-                'status' => false,
                 'message' => __('messages.update_failed', ['name' => 'Store Area Settings']),
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
-
     public function storeAreaSettingsDetails(Request $request)
     {
-        $storeAreaSettings = StoreAreaSetting::where('store_area_id', $request->store_area_id)->first();
+        $storeAreaSettings = StoreAreaSetting::with(['storeTypes','rangeCharges'])->where('store_area_id', $request->store_area_id)->first();
         if ($storeAreaSettings) {
-            return response()->json($storeAreaSettings, 200);
-        } else {
-            return response()->json(['message' => __('messages.data_not_found')], 404);
+            return response()->json(new AdminAreaSettingsDetailsResource($storeAreaSettings), 200);
+        }  else {
+
+            return response()->json(['message' => __('messages.settings_not_created_yet')], 200);
         }
     }
-
-    public function addAreaCharges(AddAreaChargeRequest $request)
-    {
-
-    }
-
 
 }

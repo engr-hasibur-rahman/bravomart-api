@@ -75,6 +75,11 @@ return [
     'coupon_limit_reached' => 'Coupon usage limit reached.',
     'coupon_applied' => 'Coupon applied successfully!.',
 
+    'account_activity_notification_update_success' =>'Activity notification preference updated successfully!',
+    'account_marketing_notification_update_success' =>'Marketing email preference updated successfully!',
+
+    'settings_not_created_yet' => 'Settings not created yet!',
+
 ];
 
 
