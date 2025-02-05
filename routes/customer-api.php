@@ -27,7 +27,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('/update', [CustomerManageController::class, 'updateProfile']);
             Route::post('/change-email', [CustomerManageController::class, 'updateEmail']);
             Route::post('/change-password', [CustomerManageController::class, 'changePassword']);
-            Route::get('/activate-deactivate', [CustomerManageController::class, 'activeDeactiveAccount']);
+            Route::post('/activate-deactivate', [CustomerManageController::class, 'activeDeactiveAccount']);
             Route::get('/change-activity-notification-status', [CustomerManageController::class, 'activityNotificationToggle']);
             Route::get('/change-marketing-email-status', [CustomerManageController::class, 'marketingEmailToggle']);
             Route::get('/delete', [CustomerManageController::class, 'deleteAccount']);

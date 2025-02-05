@@ -6,6 +6,7 @@ use App\Http\Resources\Customer\CustomerDashboardResource;
 use App\Interfaces\CustomerManageInterface;
 use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
+use App\Models\CustomerDeactivationReason;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Ticket;
@@ -13,6 +14,7 @@ use App\Models\Wishlist;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -171,17 +173,8 @@ class CustomerManageRepository implements CustomerManageInterface
         }
     }
 
-    public function deactivateAccount()
-    {
-        $user = auth('api_customer')->user();
 
-        // Mark the account as deactivated by setting the 'deactivated_at' timestamp
-        $user->update([
-            'deactivated_at' => now(),
-        ]);
 
-        return true;
-    }
 
     public function activateAccount()
     {

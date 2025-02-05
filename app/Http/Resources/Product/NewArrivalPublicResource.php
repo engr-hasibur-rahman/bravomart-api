@@ -18,6 +18,7 @@ class NewArrivalPublicResource extends JsonResource
         return [
             'id' => $this->id,
             'store' => $this->store->name ?? null,
+            'store_id' => $this->store->id ?? null,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,

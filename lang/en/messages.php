@@ -10,6 +10,8 @@ return [
     'email.resend.failed' => 'Email resend failed',
     'email.resend.success' => 'Email resend successfully',
 
+    'something_went_wrong' => 'Something went wrong',
+
     'save_success' => ':name Successfully added!',
     'save_failed' => 'Failed to save new :name',
 
