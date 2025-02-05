@@ -20,7 +20,7 @@ class CustomerAddressResource extends JsonResource
             "type" => $this->type,
             "contact_number" => $this->contact_number,
             "address" => $this->address,
-            "area" => $this->area->name,
+            "area" => $this->area->name ?? null,
             "road" => $this->road,
             "house" => $this->house,
             "floor" => $this->floor,
@@ -33,8 +33,6 @@ class CustomerAddressResource extends JsonResource
     public function with($request): array
     {
         return [
-            'status' => true,
-            'status_code' => 200,
             'message' => __('messages.data_found'),
         ];
     }
