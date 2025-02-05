@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\StoreAreaRangeCharge;
+use App\Models\StoreAreaSettingRangeCharge;
 use Illuminate\Database\Seeder;
 
 class StoreAreaRangeWiseChargeSeeder extends Seeder
@@ -48,7 +48,7 @@ class StoreAreaRangeWiseChargeSeeder extends Seeder
         ];
 
         foreach ($rangeCharges as $charge) {
-            StoreAreaRangeCharge::create($charge);
+            StoreAreaSettingRangeCharge::create($charge);
         }
     }
 }
