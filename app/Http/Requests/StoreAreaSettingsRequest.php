@@ -35,10 +35,10 @@ class StoreAreaSettingsRequest extends FormRequest
             'out_of_area_delivery_charge' => 'nullable|numeric|min:0',
 
             // Charges Array Validation
-            'charges' => 'required|array|min:1',
-            'charges.*.min_km' => 'required|numeric|min:0',
+            'charges' => 'nullable|array|min:1',
+            'charges.*.min_km' => 'nullable|numeric|min:0',
             'charges.*.max_km' => [
-                'required',
+                'nullable',
                 'numeric',
                 function ($attribute, $value, $fail) {
                     $index = explode('.', $attribute)[1];
@@ -49,7 +49,7 @@ class StoreAreaSettingsRequest extends FormRequest
                     }
                 }
             ],
-            'charges.*.charge_amount' => 'required|numeric|min:0',
+            'charges.*.charge_amount' => 'nullable|numeric|min:0',
             'charges.*.status' => 'nullable|boolean',
         ];
     }
@@ -77,28 +77,16 @@ class StoreAreaSettingsRequest extends FormRequest
             'out_of_area_delivery_charge.numeric' => __('validation.numeric', ['attribute' => 'Out Of Area Delivery Charge']),
             'out_of_area_delivery_charge.min' => __('validation.min', ['attribute' => 'Out Of Area Delivery Charge']),
 
-            'charges.required' => __('validation.required', ['attribute' => 'charges']),
             'charges.array' => __('validation.array', ['attribute' => 'charges']),
             'charges.min' => __('validation.min.numeric', ['attribute' => 'charges', 'min' => 1]),
-
-            'charges.*.store_area_id.required' => __('validation.required', ['attribute' => 'Store Area ID']),
             'charges.*.store_area_id.exists' => __('validation.exists', ['attribute' => 'Store Area ID']),
-
-            'charges.*.store_type_id.required' => __('validation.required', ['attribute' => 'Store Type ID']),
             'charges.*.store_type_id.exists' => __('validation.exists', ['attribute' => 'Store Type ID']),
-
-            'charges.*.min_km.required' => __('validation.required', ['attribute' => 'Minimum KM']),
             'charges.*.min_km.numeric' => __('validation.numeric', ['attribute' => 'Minimum KM']),
             'charges.*.min_km.min' => __('validation.min.numeric', ['attribute' => 'Minimum KM', 'min' => 0]),
-
-            'charges.*.max_km.required' => __('validation.required', ['attribute' => 'Maximum KM']),
             'charges.*.max_km.numeric' => __('validation.numeric', ['attribute' => 'Maximum KM']),
             'charges.*.max_km.gt' => __('validation.gt', ['attribute' => 'Maximum KM', 'value' => 'Minimum KM']),
-
-            'charges.*.charge_amount.required' => __('validation.required', ['attribute' => 'Charge Amount']),
             'charges.*.charge_amount.numeric' => __('validation.numeric', ['attribute' => 'Charge Amount']),
             'charges.*.charge_amount.min' => __('validation.min.numeric', ['attribute' => 'Charge Amount', 'min' => 0]),
-
             'charges.*.status.boolean' => __('validation.boolean', ['attribute' => 'Status']),
         ];
     }
