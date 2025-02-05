@@ -36,7 +36,7 @@ class OrderDetail extends Model
 
     public function order_package()
     {
-        return $this->belongsTo(OrderPackage::class, 'package_id');
+        return $this->belongsTo(OrderPackage::class, 'order_package_id');
     }
 
     public function order()

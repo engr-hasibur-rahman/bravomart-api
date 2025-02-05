@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
 use App\Http\Controllers\Api\V1\DeliveryChargeCalculateController;
 use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\Seller\SellerManageController;
+use App\Http\Controllers\Api\V1\TaxInfoController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
@@ -110,4 +111,5 @@ Route::group(['prefix' => 'v1/'], function () {
 
     // delivery charge calculate
     Route::post('/calculate-delivery-charge', [DeliveryChargeCalculateController::class, 'calculateDeliveryCharge']);
+    Route::post('/store-tax-info', [TaxInfoController::class, 'storeTaxInformation']);
 });

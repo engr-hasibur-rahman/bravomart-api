@@ -37,9 +37,17 @@ class Order extends Model
         return $this->hasMany(OrderPackage::class, 'order_id', 'id');
     }
 
-    public function order_details()
+    // Order -> OrderPackage -> OrderDetails (Nested Relationship)
+    public function orderDetails()
     {
-        return $this->hasMany(OrderDetail::class, 'order_id', 'id');
+        return $this->hasManyThrough(OrderDetail::class, OrderPackage::class, 'order_id', 'order_package_id', 'id', 'id');
+    }
+
+
+    // Order -> OrderPayment (One-to-One relationship)
+    public function orderPayment()
+    {
+        return $this->hasOne(OrderPayment::class, 'order_id', 'id');
     }
 
     public function customer()
