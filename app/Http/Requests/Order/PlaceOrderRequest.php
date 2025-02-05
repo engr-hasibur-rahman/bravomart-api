@@ -25,13 +25,11 @@ class PlaceOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => 'required|exists:customers,id',
             'customer_latitude' => 'required',
             'customer_longitude' => 'required',
             'shipping_address_id' => 'required|exists:customer_addresses,id',
             'shipping_time_preferred' => 'nullable|string|max:255',
             'payment_gateway' => 'required|string|in:paypal,stripe,cash_on_delivery,razorpay,paytm,wallet',
-            'payment_status' => 'nullable|string|in:pending,completed,cancelled',
             'order_notes' => 'nullable|string|max:500',
             'order_amount' => 'nullable|numeric|min:0',
             'coupon_code' => 'nullable|string|max:50',
@@ -45,7 +43,6 @@ class PlaceOrderRequest extends FormRequest
             // packages
             'packages' => 'required|array',
             'packages.*.store_id' => 'required|exists:stores,id',
-            'packages.*.area_id' => 'required|exists:store_areas,id',
             'packages.*.delivery_type' => 'required|in:standard_delivery,parcel,takeaway',
             'packages.*.shipping_type' => 'required|in:standard,express,freight',
             'packages.*.coupon_discount_amount_admin' => 'nullable|numeric',
@@ -57,7 +54,7 @@ class PlaceOrderRequest extends FormRequest
             'packages.*.items' => 'required|array',
             'packages.*.items.*.product_id' => 'required|exists:products,id',
             'packages.*.items.*.product_campaign_id' => 'nullable|numeric',
-            'packages.*.items.*.variant_details.variant_id' => 'required|exists:product_variants,id',
+            'packages.*.items.*.variant_id' => 'required|exists:product_variants,id',
             // discount store
             'packages.*.items.*.admin_discount_type' => 'nullable',
             'packages.*.items.*.admin_discount_rate' => 'nullable|numeric',

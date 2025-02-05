@@ -14,4 +14,9 @@ class OrderPayment extends Model
       'transaction_details',
       'paid_amount',
     ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
 }

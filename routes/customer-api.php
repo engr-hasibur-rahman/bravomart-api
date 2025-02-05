@@ -55,6 +55,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         // order manage
         Route::group(['prefix' => 'orders/'], function () {
             Route::get('list', [CustomerOrderController::class, 'myOrders']);
+            Route::get('details/{id}', [CustomerOrderController::class, 'OrderDetails']);
             Route::get('check-coupon', [CustomerOrderController::class, 'checkCoupon']);
         });
         Route::group(['prefix' => 'review/'], function () {
