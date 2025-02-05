@@ -46,8 +46,8 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesSeeder::class);
 
         // store area settings
-        $this->call(StoreAreaSettingsSeeder::class);
-        $this->call(StoreAreaRangeWiseChargeSeeder::class);
+//        $this->call(StoreAreaSettingsSeeder::class);
+//        $this->call(StoreAreaRangeWiseChargeSeeder::class);
         $this->call(CouponSeeder::class);
     }
 }
