@@ -703,7 +703,6 @@ class FrontendController extends Controller
             }
         }
 
-
         if (!empty($request->category_id)) {
             $query->where('category_id', $request->category_id);
         }
@@ -713,7 +712,6 @@ class FrontendController extends Controller
                 $q->whereBetween('price', [$request->min_price, $request->max_price]);
             });
         }
-
 
         if (!empty($request->availability)) {
             $availability = $request->availability;
@@ -741,10 +739,89 @@ class FrontendController extends Controller
                 'message' => __('messages.data_not_found'),
             ], 404);
         }
-
-
     }
 
+    public function getTopRatedProducts(Request $request)
+    {
+        $query = Product::query();
+
+        if ($request->has('id') && !empty($request->id)) {
+            try {
+                $product = $query->with(['variants', 'store'])->findOrFail($request->id);
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.data_found'),
+                    'data' => new ProductDetailsPublicResource($product),
+                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback()),
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => __('messages.data_not_found'),
+                ], 404);
+            }
+        }
+
+        // Apply filters
+        if (!empty($request->category_id)) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if (!empty($request->min_price) && !empty($request->max_price)) {
+            $query->whereHas('variants', function ($q) use ($request) {
+                $q->whereBetween('price', [$request->min_price, $request->max_price]);
+            });
+        }
+
+        if (!empty($request->availability)) {
+            $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '>', 0));
+        }
+
+        $products = $query
+            ->with(['variants', 'store'])
+            ->where('products.status', 'approved')
+            ->whereNull('products.deleted_at')
+            ->leftJoin('reviews', function ($join) {
+                $join->on('products.id', '=', 'reviews.reviewable_id')
+                    ->where('reviews.reviewable_type', '=', Product::class)
+                    ->where('reviews.status', '=', 'approved');
+            })
+            ->select([
+                'products.id',
+                'products.name',
+                'products.slug',
+                'products.image',
+                'products.store_id',
+                'products.status',
+                DB::raw('COALESCE(AVG(reviews.rating), 0) as avg_rating')
+            ])
+            ->groupBy([
+                'products.id',
+                'products.name',
+                'products.slug',
+                'products.image',
+                'products.store_id',
+                'products.status'
+            ])
+            ->orderByDesc('avg_rating')
+            ->paginate($request->per_page ?? 10);
+
+        if ($products->count() > 0) {
+            return response()->json([
+                'status' => true,
+                'message' => __('messages.data_found'),
+                'data' => NewArrivalPublicResource::collection($products),
+                'meta' => new PaginationResource($products),
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.data_not_found'),
+            ], 404);
+        }
+    }
 
     /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
     public function productCategoryList(Request $request)
@@ -1012,6 +1089,7 @@ class FrontendController extends Controller
             ], 404);
         }
     }
+
     public function behaviourList()
     {
         $behaviours = collect(Behaviour::cases())->map(function ($behaviour) {
