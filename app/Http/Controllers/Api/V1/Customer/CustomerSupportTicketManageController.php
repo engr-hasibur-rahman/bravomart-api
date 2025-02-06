@@ -43,23 +43,19 @@ class CustomerSupportTicketManageController extends Controller
             ], 500);
         }
     }
+
     public function show(Request $request)
     {
         try {
             $ticketId = $request->input('id');
             $ticket = $this->ticketRepo->getTicketById($ticketId);
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
                 'data' => new SupportTicketDetailsResource($ticket)
-            ]);
+            ],200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage()
-            ]);
+            ],500);
         }
     }
 
@@ -72,16 +68,12 @@ class CustomerSupportTicketManageController extends Controller
             $request['user_id'] = auth('api_customer')->user()->id;
             $ticket = $this->ticketRepo->createTicket($request->all());
             return response()->json([
-                'status' => true,
-                'status_code' => 201,
                 'message' => __('messages.save_success', ['name' => 'Support Ticket']),
-            ], 201);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage()
-            ]);
+            ], 500);
         }
     }
 
@@ -95,18 +87,14 @@ class CustomerSupportTicketManageController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'status_code' => 400,
                 'message' => $validator->errors()
-            ]);
+            ],400);
         }
         $isClosed = Ticket::findorfail($request->input('id'))->pluck('status')->contains(0);
         if ($isClosed) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => __('messages.ticket.closed')
-            ]);
+            ],422);
         }
         try {
             $this->ticketRepo->updateTicket($request->only([
@@ -116,16 +104,12 @@ class CustomerSupportTicketManageController extends Controller
                 'subject'
             ]));
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.update_success', ['name' => 'Support Ticket']),
-            ]);
+            ],200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage()
-            ]);
+            ],500);
         }
     }
 
@@ -135,16 +119,12 @@ class CustomerSupportTicketManageController extends Controller
         try {
             $this->ticketRepo->resolveTicket($ticketId);
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.ticket.resolved'),
-            ]);
+            ],200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage()
-            ]);
+            ],500);
         }
     }
 

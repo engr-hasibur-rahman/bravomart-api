@@ -81,6 +81,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/trending-products', [FrontendController::class, 'getTrendingProducts']);
     Route::get('/popular-products', [FrontendController::class, 'getPopularProducts']);
     Route::post('/top-deal-products', [FrontendController::class, 'getTopDeals']);
+    Route::get('/top-rated-products', [FrontendController::class, 'getTopRatedProducts']);
     Route::get('/banner-list', [FrontendController::class, 'index']);
     Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
     Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);
