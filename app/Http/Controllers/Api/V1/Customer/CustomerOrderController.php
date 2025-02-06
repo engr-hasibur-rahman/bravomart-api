@@ -15,7 +15,7 @@ class CustomerOrderController extends Controller
     public function myOrders(){
 
         $customer_id = auth()->guard('api_customer')->user()->id;
-        $orders = Order::where('customer_id', $customer_id)
+        $orders = Order::with('orderPackages.order_details')->where('customer_id', $customer_id)
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -24,6 +24,29 @@ class CustomerOrderController extends Controller
             'meta' => new PaginationResource($orders)
         ]);
     }
+
+    public function OrderDetails($id=null){
+        $customer_id = auth()->guard('api_customer')->user()->id;
+
+        $order = Order::with(['orderPayment','orderPackages', 'orderDetails'])
+            ->where('id', $id)
+            ->where('customer_id', $customer_id)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if (!$order) {
+            return response()->json([
+                'error' => 'Order not found or you do not have access to it'
+            ], 404);
+        }
+
+        dd($order);
+
+        return response()->json([
+            'order_details' => $order
+        ]);
+    }
+
     public function checkCoupon(Request $request)
     {
         $validator = Validator::make($request->all(), [

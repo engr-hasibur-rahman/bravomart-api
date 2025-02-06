@@ -31,6 +31,11 @@ class OrderPackage extends Model
 
     public function order_details()
     {
-        return $this->hasMany(OrderDetail::class, 'package_id');
+        return $this->hasMany(OrderDetail::class, 'order_package_id');
+    }
+
+    public function orderPackage()
+    {
+        return $this->belongsTo(OrderPackage::class, 'package_id');
     }
 }

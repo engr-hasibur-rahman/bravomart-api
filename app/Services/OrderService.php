@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Helpers\DeliveryChargeHelper;
 use App\Models\Area;
+use App\Models\Store;
 use App\Models\StoreArea;
 use App\Models\Coupon;
 use App\Models\Customer;
@@ -37,7 +38,7 @@ class OrderService
                     // find the product
                     $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                     // Validate product variant
-                    $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
+                    $variant = ProductVariant::where('id', $itemData['variant_id'])->where('product_id', $product->id)->first();
                     // Add to total order amount
                     if (!empty($variant) && isset($variant->price)) {
                         $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
@@ -52,6 +53,12 @@ class OrderService
                     $total_order_amount = $coupon_data['final_order_amount'];
                     $total_discount_amount = $coupon_data['discount_amount'];
                 }
+            }else{
+                $coupon_data = [
+                    'success' => false,
+                    'coupon_code' => null,
+                    'coupon_title' => null,
+                ];
             }
 
 
@@ -100,7 +107,7 @@ class OrderService
                         // find the product
                         $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                         // Validate product variant
-                        $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
+                        $variant = ProductVariant::where('id',$itemData['variant_id'])->where('product_id', $product->id)->first();
                         if (!empty($variant) && isset($variant->price)) {
                             $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
                         }
@@ -169,20 +176,37 @@ class OrderService
 
             foreach ($data['packages'] as $packageData) {
 
-                // area wise calculate delivery charge
-                $deliveryChargeData = DeliveryChargeHelper::calculateDeliveryCharge($packageData['area_id'], $customer_lat, $customer_lng);
+                // find store wise area id
+                $store_info = Store::find($packageData['store_id']);
+                $store_area_id = $store_info->area_id;
 
-                // if area wise delivery charge 0 then add default delivery change
-                $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
-                if ($deliveryChargeData['delivery_charge'] === 0){
-                   $final_shipping_charge = $order_shipping_charge;
+                // area wise calculate delivery charge
+                $deliveryChargeData = DeliveryChargeHelper::calculateDeliveryCharge($store_area_id, $customer_lat, $customer_lng);
+
+                // Ensure delivery charge data is an array to avoid errors
+                if (!is_array($deliveryChargeData)) {
+                    $deliveryChargeData = ['delivery_charge' => null];
                 }
+
+                // Get the delivery charge or default to 0
+                $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
+
+
+                // If area-wise delivery charge is 0 or not set, use the default order shipping charge
+                if (empty($deliveryChargeData['delivery_charge']) || $deliveryChargeData['delivery_charge'] == 0) {
+                    $final_shipping_charge = $order_shipping_charge;
+                }
+//                // if area wise delivery charge 0 then add default delivery change
+//                $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
+//                if ($deliveryChargeData['delivery_charge'] == 0){
+//                   $final_shipping_charge = $order_shipping_charge;
+//                }
 
                 // create order package
                 $package = OrderPackage::create([
                     'order_id' => $order->id,
                     'store_id' => $packageData['store_id'],
-                    'area_id' => $packageData['area_id'],
+                    'area_id' => $store_area_id,
                     'order_type' => 'regular', // if customer order create
                     'delivery_type' => $packageData['delivery_type'],
                     'shipping_type' => $packageData['shipping_type'],
@@ -206,12 +230,10 @@ class OrderService
 
                  // per item calculate
                 foreach ($packageData['items'] as $itemData) {
-                    // find area
-                    $area = StoreArea::find($packageData['area_id']);
                     // find the product
-                   $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
+                    $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                     // Validate product variant
-                    $variant = ProductVariant::where('id', $itemData['variant_details']['variant_id'])->where('product_id', $product->id)->first();
+                    $variant = ProductVariant::where('id', $itemData['variant_id'])->where('product_id', $product->id)->first();
                     if (!empty($variant) && isset($variant->price)) {
                         $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
                     }
@@ -326,7 +348,7 @@ class OrderService
                        // create order details
                      $order_details =  OrderDetail::create([
                            'store_id' => $product->store?->id,
-                           'area_id' => $area->id,
+                           'area_id' => $product->store?->area_id,
                            'order_id' => $order->id,
                            'order_package_id' => $package->id,
                            'product_id' => $product->id,
