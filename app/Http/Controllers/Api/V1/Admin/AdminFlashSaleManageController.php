@@ -10,7 +10,9 @@ use App\Http\Resources\Admin\AdminFlashSaleDropdownResource;
 use App\Http\Resources\Admin\AdminFlashSaleProductResource;
 use App\Http\Resources\Admin\AdminFlashSaleResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Product\StoreWiseProductDropdownResource;
 use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
+use App\Models\Product;
 use App\Services\FlashSaleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -308,5 +310,29 @@ class AdminFlashSaleManageController extends Controller
                 'message' => __('messages.update_failed', ['name' => 'Flash sale product request'])
             ]);
         }
+    }
+    public function getProductsNotInFlashSale(Request $request)
+    {
+        $query = Product::with('store')->where('status', 'approved')
+            ->whereNull('deleted_at'); // Only fetch non-deleted products
+
+        // Apply search filter
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+        if ($request->has('store_id') && !empty($request->store_id)) {
+            $query->where('store_id', $request->store_id);
+        }
+
+        // Ensure the product is not part of any flash sale
+        $query->whereDoesntHave('flashSaleProduct');
+
+        // Paginate results dynamically
+        $products = $query->paginate(20);
+        return response()->json([
+            'status' => true,
+            'data' => StoreWiseProductDropdownResource::collection($products),
+            'meta' => new PaginationResource($products),
+        ]);
     }
 }

@@ -293,13 +293,15 @@ class AdminProductManageController extends Controller
 
     public function getStoreWiseProducts(Request $request)
     {
-        $query = Product::where('store_id', $request->store_id)
-            ->where('status', 'approved')
+        $query = Product::where('status', 'approved')
             ->whereNull('deleted_at'); // Only fetch non-deleted products
 
         // Apply search filter
         if ($request->has('search') && !empty($request->search)) {
             $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+        if ($request->has('store_id') && !empty($request->store_id)) {
+            $query->where('store_id', $request->store_id);
         }
 
         // Paginate results dynamically

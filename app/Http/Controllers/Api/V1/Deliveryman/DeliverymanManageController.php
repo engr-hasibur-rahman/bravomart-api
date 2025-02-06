@@ -148,6 +148,9 @@ class DeliverymanManageController extends Controller
 
     public function getMyOrders()
     {
+        if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
+            unauthorized_response();
+        }
         $orders = $this->deliverymanRepo->deliverymanOrders();
         if ($orders->isEmpty()) {
             return [];
@@ -166,6 +169,9 @@ class DeliverymanManageController extends Controller
 
     public function getOrderRequest()
     {
+        if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
+            unauthorized_response();
+        }
         $order_requests = $this->deliverymanRepo->orderRequests();
         if ($order_requests->isEmpty()) {
             return [];
@@ -192,7 +198,11 @@ class DeliverymanManageController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        $deliveryman = auth('api')->user();
 
+        if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
+            unauthorized_response();
+        }
         $success = $this->deliverymanRepo->updateOrderStatus($request->status, $request->id);
 
         if ($success === 'accepted') {
@@ -213,4 +223,28 @@ class DeliverymanManageController extends Controller
             ], 500);
         }
     }
+
+    public function orderDeliveryHistory()
+    {
+        $order_histories = $this->deliverymanRepo->deliverymanOrderHistory();
+
+        if ($order_histories === 'unauthorized') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access. Please log in.',
+            ], 401);
+        }
+
+        if ($order_histories->isEmpty()) {
+            return response()->json([
+                'message' => __('messages.no_order_history_found')
+            ], 404); // No order history found
+        }
+
+        return response()->json([
+            'data' => DeliverymanMyOrdersResource::collection($order_histories),
+            'meta' => new PaginationResource($order_histories)
+        ], 200); // Return paginated order history
+    }
+
 }

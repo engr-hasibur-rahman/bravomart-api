@@ -437,9 +437,6 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     // -------------------------------------------------------- Delivery man order manage ---------------------------------------------------
     public function deliverymanOrders()
     {
-        if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
-            unauthorized_response();
-        }
         $deliveryman = auth('api')->user();
         $orders = Order::where('confirmed_by', $deliveryman->id)
             ->latest()
@@ -449,10 +446,12 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function orderRequests()
     {
-        if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
-            unauthorized_response();
-        }
-        $order_requests = Order::whereNull('confirmed_by')
+        $deliveryman = auth('api')->user();
+        $order_requests = Order::with('orderDeliveryHistory')
+            ->whereNull('confirmed_by')
+            ->whereDoesntHave('orderDeliveryHistory', function ($query) use ($deliveryman) {
+                $query->where('deliveryman_id', $deliveryman->id);
+            })
             ->latest()
             ->paginate(10);
         return $order_requests;
@@ -462,9 +461,6 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     {
         $deliveryman = auth('api')->user();
 
-        if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
-            return false;
-        }
         DB::beginTransaction();
 
         try {
@@ -493,6 +489,21 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             DB::rollBack();
             return false;
         }
+    }
+
+    public function deliverymanOrderHistory()
+    {
+        $deliveryman = auth('api')->user();
+
+        if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
+            return 'unauthorized'; // Return 'unauthorized' if user is not a deliveryman
+        }
+
+        // Fetch the order history of the deliveryman with associated order details
+        return OrderDeliveryHistory::with('order')
+            ->where('deliveryman_id', $deliveryman->id)
+            ->latest()
+            ->paginate(10); // Paginate results
     }
 
 
