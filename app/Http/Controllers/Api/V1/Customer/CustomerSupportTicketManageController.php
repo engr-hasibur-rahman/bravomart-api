@@ -43,7 +43,6 @@ class CustomerSupportTicketManageController extends Controller
             ], 500);
         }
     }
-
     public function show(Request $request)
     {
         try {

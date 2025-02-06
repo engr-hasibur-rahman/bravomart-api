@@ -174,6 +174,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                     Route::post('add', [AdminFlashSaleManageController::class, 'createFlashSale']);
                     Route::post('add-products', [AdminFlashSaleManageController::class, 'adminAddProductToFlashSale']);
                     Route::get('all-products', [AdminFlashSaleManageController::class, 'getAllFlashSaleProducts']);
+                    Route::get('store-wise-products', [AdminFlashSaleManageController::class, 'getProductsNotInFlashSale']);
                     Route::post('update-products', [AdminFlashSaleManageController::class, 'adminUpdateProductToFlashSale']);
                     Route::get('details/{id}', [AdminFlashSaleManageController::class, 'FlashSaleDetails']);
                     Route::post('update', [AdminFlashSaleManageController::class, 'updateFlashSale']);
