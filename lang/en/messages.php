@@ -77,10 +77,15 @@ return [
     'coupon_limit_reached' => 'Coupon usage limit reached.',
     'coupon_applied' => 'Coupon applied successfully!.',
 
-    'account_activity_notification_update_success' =>'Activity notification preference updated successfully!',
-    'account_marketing_notification_update_success' =>'Marketing email preference updated successfully!',
+    'account_activity_notification_update_success' => 'Activity notification preference updated successfully!',
+    'account_marketing_notification_update_success' => 'Marketing email preference updated successfully!',
 
     'settings_not_created_yet' => 'Settings not created yet!',
+
+    'deliveryman_order_request_success' => 'Order request accepted successfully!',
+    'deliveryman_order_request_ignore_successful' =>'Order request ignored successfully!',
+    'deliveryman_order_already_taken' => 'This order has been already confirmed by other deliveryman!',
+
 
 ];
 

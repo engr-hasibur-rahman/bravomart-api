@@ -11,6 +11,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
 class DeliverymanManageController extends Controller
@@ -173,6 +174,38 @@ class DeliverymanManageController extends Controller
             return response()->json([
                 'data' => DeliverymanMyOrdersResource::collection($order_requests),
                 'meta' => new PaginationResource($order_requests)
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.something_went_wrong')
+            ], 500);
+        }
+    }
+
+    public function handleOrderRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:orders,id',
+            'status' => 'required|in:accepted,ignored',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $success = $this->deliverymanRepo->updateOrderStatus($request->status, $request->id);
+
+        if ($success === 'accepted') {
+            return response()->json([
+                'message' => __('messages.deliveryman_order_request_accept_successful')
+            ], 200);
+        } elseif ($success === 'already confirmed') {
+            return response()->json([
+                'message' => __('messages.deliveryman_order_already_taken')
+            ], 422);
+        } elseif ($success === 'ignored') {
+            return response()->json([
+                'message' => __('messages.deliveryman_order_request_ignore_successful')
             ], 200);
         } else {
             return response()->json([

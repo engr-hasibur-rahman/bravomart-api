@@ -26,24 +26,21 @@ class CustomerSupportTicketManageController extends Controller
     {
         try {
             $filters = $request->only([
+                'search',
+                'priority',
                 'department_id',
                 'status',
                 'per_page',
             ]);
             $tickets = $this->ticketRepo->getCustomerTickets($filters);
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
                 'data' => SupportTicketResource::collection($tickets),
                 'meta' => new PaginationResource($tickets)
-            ]);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage()
-            ]);
+            ], 500);
         }
     }
 
