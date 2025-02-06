@@ -12,10 +12,10 @@ return new class extends Migration {
     {
         Schema::create('product_queries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('customer_id')->constrained('users')->cascadeOnDelete();
+            $table->unsignedBigInteger('product_id');
+            $table->foreignId('customer_id');
             $table->text('question');
-            $table->foreignId('seller_id')->nullable()->constrained('users')->cascadeOnDelete();
+            $table->unsignedBigInteger('seller_id');
             $table->text('reply')->nullable();
             $table->timestamp('replied_at')->nullable();
             $table->boolean('status')->default(1);

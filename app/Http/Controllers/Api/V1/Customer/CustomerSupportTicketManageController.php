@@ -83,6 +83,7 @@ class CustomerSupportTicketManageController extends Controller
             'id' => 'required',
             'department_id' => 'nullable|exists:departments,id',
             'title' => 'nullable|string|max:255',
+            'priority' => 'nullable|in:low,high,medium,urgent',
             'subject' => 'nullable|string|max:255',
         ]);
         if ($validator->fails()) {
