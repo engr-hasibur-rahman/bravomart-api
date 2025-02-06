@@ -5,10 +5,12 @@ namespace App\Repositories;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
 use App\Models\Order;
+use App\Models\OrderDeliveryHistory;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\VehicleType;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
@@ -455,6 +457,44 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             ->paginate(10);
         return $order_requests;
     }
+
+    public function updateOrderStatus(string $status, int $order_id)
+    {
+        $deliveryman = auth('api')->user();
+
+        if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
+            return false;
+        }
+        DB::beginTransaction();
+
+        try {
+            $order = Order::find($order_id);
+
+
+            if ($status === 'accepted') {
+                if ($order->confirmed_by !== null) {
+                    return 'already confirmed';
+                }
+                $order->update([
+                    'confirmed_by' => $deliveryman->id,
+                    'confirmed_at' => Carbon::now(),
+                ]);
+            }
+
+            OrderDeliveryHistory::create([
+                'order_id' => $order_id,
+                'deliveryman_id' => $deliveryman->id,
+                'status' => $status,
+            ]);
+
+            DB::commit();
+            return $status;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return false;
+        }
+    }
+
 
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {

@@ -42,6 +42,8 @@ interface DeliverymanManageInterface
 
     public function orderRequests();
 
+    public function updateOrderStatus(string $status, int $order_id);
+
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 
     public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
