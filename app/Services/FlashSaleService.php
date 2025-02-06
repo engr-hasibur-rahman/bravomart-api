@@ -244,10 +244,27 @@ class FlashSaleService
     }
 
 
-    public function getAdminFlashSales($per_page = 10)
+    public function getAdminFlashSales($filters)
     {
-        return FlashSale::with('related_translations')->paginate($per_page);
+        $query = FlashSale::with('related_translations');
+
+        if (!empty($filters['title']) && isset($filters['title'])) {
+            $query->where('title', 'like', '%' . $filters['title'] . '%');
+        }
+
+        if (!empty($filters['start_date']) && isset($filters['start_date'])) {
+            $query->whereDate('start_time', '>=', $filters['start_date']);
+        }
+
+        if (!empty($filters['end_date']) && isset($filters['end_date'])) {
+            $query->whereDate('end_time', '<=', $filters['end_date']);
+        }
+
+        $perPage = (!empty($filters['per_page']) && isset($filters['per_page'])) ? $filters['per_page'] : 10;
+
+        return $query->paginate($perPage);
     }
+
 
     public function getAdminFlashSalesDropdown()
     {
