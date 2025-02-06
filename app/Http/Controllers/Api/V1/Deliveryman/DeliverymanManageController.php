@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Deliveryman;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Deliveryman\DeliverymanMyOrdersResource;
+use App\Interfaces\DeliverymanManageInterface;
 use App\Models\StoreSeller;
 use App\Models\User;
 use Exception;
@@ -12,6 +15,11 @@ use Spatie\Permission\Models\Role;
 
 class DeliverymanManageController extends Controller
 {
+    public function __construct(protected DeliverymanManageInterface $deliverymanRepo)
+    {
+
+    }
+
     public function registration(Request $request)
     {
 
@@ -135,5 +143,41 @@ class DeliverymanManageController extends Controller
             'totalOrders' => $totalOrders,
             'totalDelivered' => $totalDelivered,
         ]);
+    }
+
+    public function getMyOrders()
+    {
+        $orders = $this->deliverymanRepo->deliverymanOrders();
+        if ($orders->isEmpty()) {
+            return [];
+        }
+        if ($orders) {
+            return response()->json([
+                'data' => DeliverymanMyOrdersResource::collection($orders),
+                'meta' => new PaginationResource($orders)
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.something_went_wrong')
+            ], 500);
+        }
+    }
+
+    public function getOrderRequest()
+    {
+        $order_requests = $this->deliverymanRepo->orderRequests();
+        if ($order_requests->isEmpty()) {
+            return [];
+        }
+        if ($order_requests) {
+            return response()->json([
+                'data' => DeliverymanMyOrdersResource::collection($order_requests),
+                'meta' => new PaginationResource($order_requests)
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.something_went_wrong')
+            ], 500);
+        }
     }
 }

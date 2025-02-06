@@ -62,7 +62,13 @@ class AdminFlashSaleManageController extends Controller
 
     public function getFlashSale(Request $request)
     {
-        $flashSales = $this->flashSaleService->getAdminFlashSales($request->per_page);
+        $filters = [
+            "title" => $request->title,
+            "start_date" => $request->start_date,
+            "end_date" => $request->end_date,
+            "per_page" => $request->per_page,
+        ];
+        $flashSales = $this->flashSaleService->getAdminFlashSales($filters);
         return response()->json([
                 'data' => AdminFlashSaleResource::collection($flashSales),
                 'meta' => new PaginationResource($flashSales)

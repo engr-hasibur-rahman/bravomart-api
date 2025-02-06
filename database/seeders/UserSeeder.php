@@ -78,7 +78,7 @@ class UserSeeder extends Seeder
                 'email' => 'deliveryman@demo.com',
                 'email_verified_at' => null,
                 'first_name' => 'Delivery Man',
-                'password' => '$2y$10$UVs.WftC2iIdLQsHz9Tbdu7OmUXG3P7wyjHvJqCunyJ7JE8ekyXr.',
+                'password' => Hash::make('12345678'),
                 'remember_token' => null,
                 'slug' => 'delivery-man',
                 'status' => 1,

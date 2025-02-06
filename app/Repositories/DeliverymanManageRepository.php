@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
+use App\Models\Order;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\VehicleType;
@@ -429,6 +430,30 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         } catch (\Throwable $th) {
             return false;
         }
+    }
+
+    // -------------------------------------------------------- Delivery man order manage ---------------------------------------------------
+    public function deliverymanOrders()
+    {
+        if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
+            unauthorized_response();
+        }
+        $deliveryman = auth('api')->user();
+        $orders = Order::where('confirmed_by', $deliveryman->id)
+            ->latest()
+            ->paginate(5);
+        return $orders;
+    }
+
+    public function orderRequests()
+    {
+        if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
+            unauthorized_response();
+        }
+        $order_requests = Order::whereNull('confirmed_by')
+            ->latest()
+            ->paginate(10);
+        return $order_requests;
     }
 
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
