@@ -51,11 +51,11 @@ class CustomerSupportTicketManageController extends Controller
             $ticket = $this->ticketRepo->getTicketById($ticketId);
             return response()->json([
                 'data' => new SupportTicketDetailsResource($ticket)
-            ],200);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage()
-            ],500);
+            ], 500);
         }
     }
 
@@ -89,28 +89,29 @@ class CustomerSupportTicketManageController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => $validator->errors()
-            ],400);
+            ], 400);
         }
         $isClosed = Ticket::findorfail($request->input('id'))->pluck('status')->contains(0);
         if ($isClosed) {
             return response()->json([
                 'message' => __('messages.ticket.closed')
-            ],422);
+            ], 422);
         }
         try {
             $this->ticketRepo->updateTicket($request->only([
                 'id',
                 'department_id',
                 'title',
+                'priority',
                 'subject'
             ]));
             return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Support Ticket']),
-            ],200);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage()
-            ],500);
+            ], 500);
         }
     }
 
@@ -121,11 +122,11 @@ class CustomerSupportTicketManageController extends Controller
             $this->ticketRepo->resolveTicket($ticketId);
             return response()->json([
                 'message' => __('messages.ticket.resolved'),
-            ],200);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage()
-            ],500);
+            ], 500);
         }
     }
 
