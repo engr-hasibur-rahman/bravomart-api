@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerOrderController;
+use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
 use App\Http\Controllers\Api\V1\Customer\CustomerReviewManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
@@ -62,6 +63,11 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         });
         Route::group(['prefix' => 'review/'], function () {
             Route::get('/', [CustomerReviewManageController::class, 'index']);
+            Route::post('add', [CustomerReviewManageController::class, 'submitReview']);
+            Route::post('reaction', [CustomerReviewManageController::class, 'react']);
+        });
+        Route::group(['prefix' => 'product-query/'], function () {
+            Route::post('ask-question', [CustomerProductQueryController::class, 'askQuestion']);
             Route::post('add', [CustomerReviewManageController::class, 'submitReview']);
             Route::post('reaction', [CustomerReviewManageController::class, 'react']);
         });
