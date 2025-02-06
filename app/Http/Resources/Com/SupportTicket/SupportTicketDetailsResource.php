@@ -16,6 +16,7 @@ class SupportTicketDetailsResource extends JsonResource
     {
         return [
             'ticket_id' => $this->id,
+            'department_id' => $this->department_id,
             'status' => $this->status,
             'priority' => $this->priority,
             'title' => $this->title,
