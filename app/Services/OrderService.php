@@ -196,11 +196,32 @@ class OrderService
                 if (empty($deliveryChargeData['delivery_charge']) || $deliveryChargeData['delivery_charge'] == 0) {
                     $final_shipping_charge = $order_shipping_charge;
                 }
-//                // if area wise delivery charge 0 then add default delivery change
-//                $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
-//                if ($deliveryChargeData['delivery_charge'] == 0){
-//                   $final_shipping_charge = $order_shipping_charge;
-//                }
+
+                
+
+                 // Initialize commission variables
+                 $system_commission_type = null;
+                 $system_default_delivery_commission_charge = 0.00;
+                 $admin_commission_amount = 0.00;
+                 // calculate commission
+                 if (isset($system_commission) && $system_commission->commission_enabled === true) {
+                     // Check store type
+                     if ($product->store) {
+                         $store_subscription_type = $product->store?->subscription_type;
+                         // If store is commission-based
+                         if ($store_subscription_type === 'commission') {
+                             $system_commission_type = $system_commission->commission_type;
+                             $system_default_delivery_commission_charge = $system_commission->default_delivery_commission_charge;
+
+                             // Calculate admin commission based on type
+                             if ($system_commission_type === 'percentage') {
+                                 $admin_commission_amount = ($line_total_excluding_tax * $system_default_delivery_commission_charge) / 100.00;
+                             } elseif ($system_commission_type === 'fixed') {
+                                 $admin_commission_amount = $system_default_delivery_commission_charge;
+                             }
+                         }
+                     }
+                 }
 
                 // create order package
                 $package = OrderPackage::create([
@@ -389,6 +410,10 @@ class OrderService
                        $product_discount_amount += ($variant?->price - $variant?->special_price);
                        $flash_discount_amount_admin += $order_details->admin_discount_amount;
                        $coupon_discount_amount_admin += $order_details->coupon_discount_amount;
+
+                       // order package update other info
+                       $package_order_amount_store_value += $order_details->line_total_price - $order_details->admin_commission_amount;
+                       $package_order_amount_admin_commission += $order_details->admin_commission_amount;
                    }
 
                 } // end order details
