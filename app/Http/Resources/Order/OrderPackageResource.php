@@ -14,6 +14,14 @@ class OrderPackageResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'order_id' => $this->order_id,
+            'payment_gateway' => $this->payment_gateway,
+            'payment_status' => $this->payment_status,
+            'transaction_ref' => $this->transaction_ref,
+            'transaction_details' => $this->transaction_details,
+            'paid_amount' => $this->paid_amount,
+        ];
     }
 }

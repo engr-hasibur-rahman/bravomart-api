@@ -14,7 +14,8 @@ class AdminOrderManageController extends Controller
 
         $store_id = $request->store_id;
 
-        $orders = Order::orderBy('created_at', 'desc')
+        $orders = Order::with(['customer','orderPackages.orderDetails', 'orderPayment'])
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return response()->json([
