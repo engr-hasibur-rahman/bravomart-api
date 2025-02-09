@@ -16,7 +16,7 @@ class CustomerOrderController extends Controller
     {
 
         $customer_id = auth()->guard('api_customer')->user()->id;
-        $orders = Order::with('orderPackages.orderDetails')->where('customer_id', $customer_id)
+        $orders = Order::with(['customer','orderPackages.orderDetails', 'orderPayment'])->where('customer_id', $customer_id)
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
