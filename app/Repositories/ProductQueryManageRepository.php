@@ -6,6 +6,7 @@ use App\Interfaces\ProductQueryManageInterface;
 use App\Models\ProductQuery;
 use App\Models\Store;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ProductQueryManageRepository implements ProductQueryManageInterface
 {
@@ -130,6 +131,22 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
             })
             ->latest()
             ->paginate($data['per_page'] ?? 10);
+    }
+
+    public function bulkDelete(array $ids)
+    {
+        $queries = ProductQuery::whereIn('id', $ids)->get();
+
+        if ($queries->isEmpty()) {
+            return false; // Or return an appropriate response
+        }
+        return ProductQuery::whereIn('id', $ids)->delete();
+    }
+
+    public function changeStatus(int $id)
+    {
+        return ProductQuery::where('id', $id)->exists() &&
+            ProductQuery::where('id', $id)->update(['status' => DB::raw('NOT status')]);
     }
 
 }
