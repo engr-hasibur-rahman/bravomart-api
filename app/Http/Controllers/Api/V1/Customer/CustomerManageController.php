@@ -507,6 +507,12 @@ class CustomerManageController extends Controller
         }
 
         if ($request->type == 'activate') {
+            $alreadyActivated = $customer->deactivated_at == null;
+            if ($alreadyActivated) {
+                return response()->json([
+                    'message' => __('messages.account_already_activated')
+                ],422);
+            }
             $activate = $this->customerRepo->activateAccount();
             if ($activate) {
                 return response()->json([
