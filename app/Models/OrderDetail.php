@@ -36,7 +36,7 @@ class OrderDetail extends Model
 
     public function order_package()
     {
-        return $this->belongsTo(OrderPackage::class, 'order_package_id');
+        return $this->belongsTo(OrderPackage::class, 'order_package_id', 'id');
     }
 
     public function order()
@@ -58,4 +58,6 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
+
+
 }

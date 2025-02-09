@@ -43,7 +43,7 @@ class AdminOrderResource extends JsonResource
             'updated_at' => $this->updated_at,
             'customer' => new CustomerResource($this->whenLoaded('customer')),
             'order_packages' => OrderPackageResource::collection($this->whenLoaded('orderPackages')),
-//            'order_payment' => new OrderPaymentResource($this->whenLoaded('orderPayment')),
+            'order_payment' => new OrderPaymentResource($this->whenLoaded('orderPayment')),
         ];
     }
 }
