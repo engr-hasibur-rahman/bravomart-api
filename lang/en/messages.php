@@ -63,9 +63,13 @@ return [
     'account_deactivate_successful' => 'Your account has been deactivated!',
     'account_activate_successful' => 'Your account has been activated!',
     'account_deactivate_failed' => 'Something went wrong while deactivating your account!',
+    'account_already_deactivated' => 'Your account has been already deactivated!',
 
     'account_delete_successful' => 'Your account has been deleted!',
     'account_delete_failed' => 'Something went wrong while deleting your account!',
+
+    'account_activity_notification_update_success' => 'Activity notification preference updated successfully!',
+    'account_marketing_notification_update_success' => 'Marketing email preference updated successfully!',
 
     'password_update_successful' => 'Password has been successfully updated!',
     'password_update_failed' => 'Password update failed!',
@@ -76,9 +80,6 @@ return [
     'coupon_expired' => 'Coupon has expired.',
     'coupon_limit_reached' => 'Coupon usage limit reached.',
     'coupon_applied' => 'Coupon applied successfully!.',
-
-    'account_activity_notification_update_success' => 'Activity notification preference updated successfully!',
-    'account_marketing_notification_update_success' => 'Marketing email preference updated successfully!',
 
     'settings_not_created_yet' => 'Settings not created yet!',
 
