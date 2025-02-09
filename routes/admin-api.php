@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminOrderManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminProductQueryManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminReportAnalyticsManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
@@ -414,6 +415,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 Route::post('approve', [AdminReviewManageController::class, 'approveReview']);
                 Route::post('reject', [AdminReviewManageController::class, 'rejectReview']);
                 Route::post('remove', [AdminReviewManageController::class, 'destroy']);
+            });
+            Route::group(['prefix' => 'questions/'], function () {
+                Route::get('/', [AdminProductQueryManageController::class, 'getAllQueries']);
             });
         });
         // Admin Deliveryman management

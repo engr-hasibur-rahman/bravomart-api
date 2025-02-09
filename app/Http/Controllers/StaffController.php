@@ -113,7 +113,7 @@ class StaffController extends Controller
         return new UserResource($user);
     }
 
-    public function changestatus(Request $request)
+    public function changeStatus(Request $request)
     {
         try {
             // Validate the incoming request
