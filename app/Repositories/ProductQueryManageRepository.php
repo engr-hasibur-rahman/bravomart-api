@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\ProductQueryManageInterface;
 use App\Models\ProductQuery;
 use App\Models\Store;
+use Illuminate\Support\Carbon;
 
 class ProductQueryManageRepository implements ProductQueryManageInterface
 {
@@ -32,5 +33,34 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
             })
             ->latest()
             ->paginate(10);
+    }
+
+    public function getSellerQuestions(array $data)
+    {
+        return ProductQuery::query()
+            ->where('seller_id', auth('api')->id())
+            ->when(isset($data['date_filter']), function ($query) use ($data) {
+                switch ($data['date_filter']) {
+                    case 'last_week':
+                        $query->whereBetween('created_at', [Carbon::now()->subWeek(), Carbon::now()]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [Carbon::now()->subMonth(), Carbon::now()]);
+                        break;
+                    case 'last_year':
+                        $query->whereBetween('created_at', [Carbon::now()->subYear(), Carbon::now()]);
+                        break;
+                }
+            })
+            ->when(isset($data['reply_status']), function ($query) use ($data) {
+                if ($data['reply_status'] === 'not_replied') {
+                    $query->whereNull('replied_at');
+                } elseif ($data['reply_status'] === 'replied') {
+                    $query->whereNotNull('replied_at')->latest('replied_at');
+                }
+            })
+            ->where('status', 1)
+            ->latest()
+            ->paginate($data['per_page'] ?? 10);
     }
 }
