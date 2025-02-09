@@ -19,4 +19,5 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'delivery-man/'], function ()
         });
 
     });
+
 });
