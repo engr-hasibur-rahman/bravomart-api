@@ -24,6 +24,7 @@ class OrderPackage extends Model
         'delivery_charge_admin_commission',
         'additional_charge_name',
         'additional_charge',
+        'additional_charge_commission',
         'is_reviewed',
         'status',
     ];

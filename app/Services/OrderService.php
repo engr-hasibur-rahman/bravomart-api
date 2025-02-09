@@ -162,11 +162,13 @@ class OrderService
             $order_additional_charge_enable = $system_commission->order_additional_charge_enable_disable;
             $order_additional_charge_name = null;
             $order_additional_charge_amount = 0;
+            $order_additional_charge_commission = 0;
 
             // additional charge amount enable disable check
            if($order_additional_charge_enable === true){
                $order_additional_charge_name = $system_commission->order_additional_charge_name;
                $order_additional_charge_amount = $system_commission->order_additional_charge_amount;
+               $order_additional_charge_commission = $system_commission->additional_charge_commission;
            }
 
             //  packages and details
@@ -200,28 +202,28 @@ class OrderService
                 
 
                  // Initialize commission variables
-                 $system_commission_type = null;
-                 $system_default_delivery_commission_charge = 0.00;
-                 $admin_commission_amount = 0.00;
-                 // calculate commission
-                 if (isset($system_commission) && $system_commission->commission_enabled === true) {
-                     // Check store type
-                     if ($product->store) {
-                         $store_subscription_type = $product->store?->subscription_type;
-                         // If store is commission-based
-                         if ($store_subscription_type === 'commission') {
-                             $system_commission_type = $system_commission->commission_type;
-                             $system_default_delivery_commission_charge = $system_commission->default_delivery_commission_charge;
+                //  $system_commission_type = null;
+                //  $system_default_delivery_commission_charge = 0.00;
+                //  $admin_commission_amount = 0.00;
+                //  // calculate commission
+                //  if (isset($system_commission) && $system_commission->commission_enabled === true) {
+                //      // Check store type
+                //      if ($product->store) {
+                //          $store_subscription_type = $product->store?->subscription_type;
+                //          // If store is commission-based
+                //          if ($store_subscription_type === 'commission') {
+                //              $system_commission_type = $system_commission->commission_type;
+                //              $system_default_delivery_commission_charge = $system_commission->default_delivery_commission_charge;
 
-                             // Calculate admin commission based on type
-                             if ($system_commission_type === 'percentage') {
-                                 $admin_commission_amount = ($line_total_excluding_tax * $system_default_delivery_commission_charge) / 100.00;
-                             } elseif ($system_commission_type === 'fixed') {
-                                 $admin_commission_amount = $system_default_delivery_commission_charge;
-                             }
-                         }
-                     }
-                 }
+                //              // Calculate admin commission based on type
+                //              if ($system_commission_type === 'percentage') {
+                //                  $admin_commission_amount = ($line_total_excluding_tax * $system_default_delivery_commission_charge) / 100.00;
+                //              } elseif ($system_commission_type === 'fixed') {
+                //                  $admin_commission_amount = $system_default_delivery_commission_charge;
+                //              }
+                //          }
+                //      }
+                //  }
 
                 // create order package
                 $package = OrderPackage::create([
@@ -238,6 +240,7 @@ class OrderService
                     'shipping_charge' => $final_shipping_charge,
                     'additional_charge_name' => $order_additional_charge_name,
                     'additional_charge' => $order_additional_charge_amount,
+                    'additional_charge_commission' => $order_additional_charge_commission,
                     'is_reviewed' => false,
                     'status' => 'pending',
                 ]);
@@ -248,6 +251,8 @@ class OrderService
                 $product_discount_amount = 0;
                 $flash_discount_amount_admin = 0;
                 $coupon_discount_amount_admin = 0;
+                $package_order_amount_store_value = 0;
+                $package_order_amount_admin_commission = 0;
 
                  // per item calculate
                 foreach ($packageData['items'] as $itemData) {
