@@ -24,32 +24,20 @@ class ProductPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'store' => $this->store ? $this->store->name : '',
-            'category' => new ProductCategoryPublicResource($this->category),
-            'brand' => new ProductBrandPublicResource($this->brand),
-            'unit' => new ProductUnitPublicResource($this->unit),
-            'tag' => new TagPublicResource($this->tag),
-            'type' => $this->type,
-            'behaviour' => $this->behaviour,
+            'store' => $this->store->name ?? null,
+            'store_id' => $this->store->id ?? null,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'image' => $this->image,
-            'image_url' => ImageModifier::generateImageUrl($this->image),
-            'gallery_images' => $this->gallery_images,
-            'gallery_images_urls' => MultipleImageModifier::multipleImageModifier($this->gallery_images),
-            'warranty' => $this->warranty,
-            'return_in_days' => $this->return_in_days,
-            'return_text' => $this->return_text,
-            'allow_change_in_mind' => $this->allow_change_in_mind,
-            'cash_on_delivery' => $this->cash_on_delivery,
-            'variants' => ProductVariantPublicResource::collection($this->variants),
-            'views' => $this->views,
-            'status' => $this->status,
-            'available_time_starts' => $this->available_time_starts,
-            'available_time_ends' => $this->available_time_ends,
+            'image' => ImageModifier::generateImageUrl($this->image),
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
-            "translations" => ProductTranslationResource::collection($this->related_translations->groupBy('language')),
+            'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
+            'price' => optional($this->variants->first())->price,
+            'special_price' => optional($this->variants->first())->special_price,
+            'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
+            'discount_percentage' => $this->variants->isNotEmpty() && optional($this->variants->first())->price > 0
+                ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
+                : null,
         ];
     }
 }

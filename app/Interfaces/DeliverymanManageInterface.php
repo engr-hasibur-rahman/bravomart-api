@@ -19,6 +19,7 @@ interface DeliverymanManageInterface
     public function getDeliverymanRequests();
 
     public function approveDeliverymen(array $deliveryman_ids);
+
     public function changeStatus(array $data);
 
     public function getAllVehicles(array $filters);
@@ -36,6 +37,14 @@ interface DeliverymanManageInterface
     public function getVehicleById(int $id);
 
     public function deleteVehicle(int $id);
+
+    public function deliverymanOrders();
+
+    public function orderRequests();
+
+    public function updateOrderStatus(string $status, int $order_id);
+
+    public function deliverymanOrderHistory();
 
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 

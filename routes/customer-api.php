@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerOrderController;
+use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
 use App\Http\Controllers\Api\V1\Customer\CustomerReviewManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
@@ -27,7 +28,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('/update', [CustomerManageController::class, 'updateProfile']);
             Route::post('/change-email', [CustomerManageController::class, 'updateEmail']);
             Route::post('/change-password', [CustomerManageController::class, 'changePassword']);
-            Route::get('/activate-deactivate', [CustomerManageController::class, 'activeDeactiveAccount']);
+            Route::post('/activate-deactivate', [CustomerManageController::class, 'activeDeactiveAccount']);
             Route::get('/change-activity-notification-status', [CustomerManageController::class, 'activityNotificationToggle']);
             Route::get('/change-marketing-email-status', [CustomerManageController::class, 'marketingEmailToggle']);
             Route::get('/delete', [CustomerManageController::class, 'deleteAccount']);
@@ -63,6 +64,11 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         Route::group(['prefix' => 'review/'], function () {
             Route::get('/', [CustomerReviewManageController::class, 'index']);
             Route::post('add', [CustomerReviewManageController::class, 'submitReview']);
+            Route::post('reaction', [CustomerReviewManageController::class, 'react']);
+        });
+        Route::group(['prefix' => 'product-query/'], function () {
+            Route::post('ask-question', [CustomerProductQueryController::class, 'askQuestion']);
+            Route::get('search-question', [CustomerProductQueryController::class, 'searchQuestion']);
             Route::post('reaction', [CustomerReviewManageController::class, 'react']);
         });
     });

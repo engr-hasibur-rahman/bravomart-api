@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,6 +12,10 @@ return new class extends Migration
     {
         Schema::create('order_delivery_histories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('order_id');
+            $table->unsignedBigInteger('deliveryman_id');
+            $table->text('reason')->nullable()->comment('Reason for ignoring or cancelling delivery');
+            $table->enum('status', ['accepted', 'ignored', 'delivered', 'cancelled'])->comment('accepted, ignored, delivered, cancelled');
             $table->timestamps();
         });
     }

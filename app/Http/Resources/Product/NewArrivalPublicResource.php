@@ -18,10 +18,11 @@ class NewArrivalPublicResource extends JsonResource
         return [
             'id' => $this->id,
             'store' => $this->store->name ?? null,
+            'store_id' => $this->store->id ?? null,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            ImageModifier::generateImageUrl($this->image),
+            'image' => ImageModifier::generateImageUrl($this->image),
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
             'price' => optional($this->variants->first())->price,
             'special_price' => optional($this->variants->first())->special_price,

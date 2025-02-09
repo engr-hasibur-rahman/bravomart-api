@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CustomerOrderController extends Controller
 {
-    public function myOrders(){
+    public function myOrders()
+    {
 
         $customer_id = auth()->guard('api_customer')->user()->id;
         $orders = Order::with('orderPackages.order_details')->where('customer_id', $customer_id)
@@ -25,10 +26,11 @@ class CustomerOrderController extends Controller
         ]);
     }
 
-    public function OrderDetails($id=null){
+    public function OrderDetails($id = null)
+    {
         $customer_id = auth()->guard('api_customer')->user()->id;
 
-        $order = Order::with(['orderPayment','orderPackages', 'orderDetails'])
+        $order = Order::with(['orderPayment', 'orderPackages', 'orderDetails'])
             ->where('id', $id)
             ->where('customer_id', $customer_id)
             ->orderBy('created_at', 'desc')
@@ -53,7 +55,7 @@ class CustomerOrderController extends Controller
             'coupon_code' => 'required|string|exists:coupon_lines,coupon_code',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json(['message' => $validator->errors()], 422);
         }
         // Retrieve the coupon by the provided coupon code
         $coupon = CouponLine::where('coupon_code', $request->coupon_code)->first();
@@ -74,7 +76,7 @@ class CustomerOrderController extends Controller
             if ($coupon->customer_id !== auth('api_customer')->user()->id) {
                 return response()->json([
                     'message' => __('messages.coupon_does_not_belong'),
-                ],400);
+                ], 400);
             }
         }
 
@@ -82,15 +84,12 @@ class CustomerOrderController extends Controller
         if ($coupon->start_date && $coupon->start_date > now()) {
             return response()->json([
                 'status' => false,
-                'status_code' => 400,  // Bad Request (Coupon hasn't started yet)
                 'message' => __('messages.coupon_inactive'),
-            ]);
+            ], 400);
         }
 
         if ($coupon->end_date && $coupon->end_date < now()) {
             return response()->json([
-                'status' => false,
-                'status_code' => 410,  // Gone (Coupon has expired)
                 'message' => __('messages.coupon_expired'),
             ], 410);
         }
@@ -98,28 +97,22 @@ class CustomerOrderController extends Controller
         // Check if the coupon usage limit has been reached
         if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
             return response()->json([
-                'status' => false,
-                'status_code' => 400,
                 'message' => __('messages.coupon_limit_reached'),
-            ]);
+            ], 400);
         }
         if ($coupon->coupon->status !== 1 && $coupon->status !== 1) {
             return response()->json([
-                'status' => false,
-                'status_code' => 400,
                 'message' => __('messages.coupon_inactive'),
-            ]);
+            ], 400);
         }
         // If all checks pass, return the coupon's discount details
         return response()->json([
-            'status' => true,
-            'status_code' => 200,
             'message' => __('messages.coupon_applied'),
             'coupon' => [
                 'title' => $coupon->coupon->title,
                 'discount_amount' => $coupon->discount,
                 'discount_type' => $coupon->discount_type,
             ]
-        ]);
+        ], 200);
     }
 }

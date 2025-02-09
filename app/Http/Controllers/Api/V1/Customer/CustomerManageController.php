@@ -9,6 +9,7 @@ use App\Http\Resources\Customer\CustomerProfileResource;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Interfaces\CustomerManageInterface;
 use App\Models\Customer;
+use App\Models\CustomerDeactivationReason;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -461,32 +462,70 @@ class CustomerManageController extends Controller
         }
     }
 
-    public function activeDeactiveAccount()
+    public function activeDeactiveAccount(Request $request)
     {
         if (!auth('api_customer')->check()) {
-            return unauthorized_response();
+            unauthorized_response();
         }
-
-        $user = auth('api_customer')->user();
-
-        // Check if the account is already deactivated
-        if ($user->deactivated_at) {
-            // Account is deactivated, activate it
-            $success = $this->customerRepo->activateAccount();
-            $message = __('messages.account_activate_successful');
-        } else {
-            // Account is active, deactivate it
-            $success = $this->customerRepo->deactivateAccount();
-            $message = __('messages.account_deactivate_successful');
+        $validator = Validator::make($request->all(), [
+            'type' => 'required|string|in:activate,deactivate',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
+        $customer = auth('api_customer')->user();
+        if ($request->type == 'deactivate') {
+            $validator = Validator::make($request->only(['reason', 'description']), [
+                'reason' => 'required|string|max:255',
+                'description' => 'required|string|max:500',
+            ]);
 
-        if ($success) {
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => $validator->errors()
+                ], 422);
+            }
+            $alreadyDeactivated = $customer->deactivated_at;
+            if ($alreadyDeactivated) {
+                return response()->json([
+                    'message' => __('messages.account_already_deactivated')
+                ],422);
+            }
+            $reason = CustomerDeactivationReason::create([
+                'customer_id' => $customer->id,
+                'reason' => $request->reason,
+                'description' => $request->description
+            ]);
+            if ($reason) {
+                $customer->update([
+                    'deactivated_at' => now(),
+                ]);
+            }
             return response()->json([
-                'message' => $message
+                'message' => __('messages.account_deactivate_successful')
             ], 200);
+        }
+
+        if ($request->type == 'activate') {
+            $alreadyActivated = $customer->deactivated_at == null;
+            if ($alreadyActivated) {
+                return response()->json([
+                    'message' => __('messages.account_already_activated')
+                ],422);
+            }
+            $activate = $this->customerRepo->activateAccount();
+            if ($activate) {
+                return response()->json([
+                    'message' => __('messages.account_activate_successful')
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.account_activate_failed')
+                ], 500);
+            }
         } else {
             return response()->json([
-                'message' => __('messages.account_action_failed')
+                'message' => __('messages.something_went_wrong')
             ], 500);
         }
     }

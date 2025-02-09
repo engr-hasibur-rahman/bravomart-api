@@ -40,8 +40,18 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
     public function getCustomerTickets(array $filters = [])
     {
         $query = $this->ticket->with(['department', 'messages.sender', 'messages.receiver']);
+        if (isset($filters['search']) && !empty($filters['search'])) {
+            $searchTerm = '%' . $filters['search'] . '%';
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('title', 'like', $searchTerm)
+                    ->orWhere('subject', 'like', $searchTerm);
+            });
+        }
         if (isset($filters['department_id'])) {
             $query->where('department_id', $filters['department_id']);
+        }
+        if (isset($filters['priority'])) {
+            $query->where('priority', $filters['priority']);
         }
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);

@@ -4,10 +4,13 @@ namespace App\Repositories;
 
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
+use App\Models\Order;
+use App\Models\OrderDeliveryHistory;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\VehicleType;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
@@ -430,6 +433,79 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             return false;
         }
     }
+
+    // -------------------------------------------------------- Delivery man order manage ---------------------------------------------------
+    public function deliverymanOrders()
+    {
+        $deliveryman = auth('api')->user();
+        $orders = Order::where('confirmed_by', $deliveryman->id)
+            ->latest()
+            ->paginate(5);
+        return $orders;
+    }
+
+    public function orderRequests()
+    {
+        $deliveryman = auth('api')->user();
+        $order_requests = Order::with('orderDeliveryHistory')
+            ->whereNull('confirmed_by')
+            ->whereDoesntHave('orderDeliveryHistory', function ($query) use ($deliveryman) {
+                $query->where('deliveryman_id', $deliveryman->id);
+            })
+            ->latest()
+            ->paginate(10);
+        return $order_requests;
+    }
+
+    public function updateOrderStatus(string $status, int $order_id)
+    {
+        $deliveryman = auth('api')->user();
+
+        DB::beginTransaction();
+
+        try {
+            $order = Order::find($order_id);
+
+
+            if ($status === 'accepted') {
+                if ($order->confirmed_by !== null) {
+                    return 'already confirmed';
+                }
+                $order->update([
+                    'confirmed_by' => $deliveryman->id,
+                    'confirmed_at' => Carbon::now(),
+                ]);
+            }
+
+            OrderDeliveryHistory::create([
+                'order_id' => $order_id,
+                'deliveryman_id' => $deliveryman->id,
+                'status' => $status,
+            ]);
+
+            DB::commit();
+            return $status;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    public function deliverymanOrderHistory()
+    {
+        $deliveryman = auth('api')->user();
+
+        if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
+            return 'unauthorized'; // Return 'unauthorized' if user is not a deliveryman
+        }
+
+        // Fetch the order history of the deliveryman with associated order details
+        return OrderDeliveryHistory::with('order')
+            ->where('deliveryman_id', $deliveryman->id)
+            ->latest()
+            ->paginate(10); // Paginate results
+    }
+
 
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
