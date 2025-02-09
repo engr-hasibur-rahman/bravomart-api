@@ -139,7 +139,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 Route::post('add', [StaffController::class, 'store']);
                 Route::get('details', [StaffController::class, 'show']);
                 Route::post('update', [StaffController::class, 'update']);
-                Route::post('change-status', [StaffController::class, 'changestatus']);
+                Route::post('change-status', [StaffController::class, 'changeStatus']);
             });
 
             // FINANCIAL WITHDRAWALS management
@@ -153,6 +153,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 });
                 Route::group(['prefix' => 'questions/', 'middleware' => 'permission:' . PermissionKey::SELLER_STORE_FEEDBACK_CONTROL_QUESTIONS->value], function () {
                     Route::get('/', [SellerProductQueryController::class, 'getQuestions']);
+                    Route::post('reply', [SellerProductQueryController::class, 'replyQuestion']);
                 });
             });
 

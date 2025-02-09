@@ -63,4 +63,73 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
             ->latest()
             ->paginate($data['per_page'] ?? 10);
     }
+
+    public function replyQuestion(array $data)
+    {
+        $question = ProductQuery::find($data['question_id']);
+        if (!$question) {
+            return false;
+        }
+        return $question->update([
+            'reply' => $data['reply'],
+            'replied_at' => Carbon::now(),
+        ]);
+    }
+
+    public function getAllQuestionsAndReplies(array $data)
+    {
+        return ProductQuery::query()
+            ->when(isset($data['search']), function ($query) use ($data) {
+                $searchTerm = $data['search'];
+
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('product_id', $searchTerm)
+                        ->orWhereHas('product', function ($q) use ($searchTerm) {
+                            $q->where('name', 'LIKE', '%' . $searchTerm . '%');
+                        });
+                });
+
+                $query->orWhere(function ($q) use ($searchTerm) {
+                    $q->where('seller_id', $searchTerm)
+                        ->orWhereHas('seller', function ($q) use ($searchTerm) {
+                            $q->where('first_name', 'LIKE', '%' . $searchTerm . '%')
+                                ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%');
+                        });
+                });
+
+                $query->orWhere(function ($q) use ($searchTerm) {
+                    $q->where('customer_id', $searchTerm)
+                        ->orWhereHas('customer', function ($q) use ($searchTerm) {
+                            $q->where('first_name', 'LIKE', '%' . $searchTerm . '%')
+                                ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%');
+                        });
+                });
+            })
+            ->when(isset($data['date_filter']), function ($query) use ($data) {
+                switch ($data['date_filter']) {
+                    case 'last_week':
+                        $query->whereBetween('created_at', [Carbon::now()->subWeek(), Carbon::now()]);
+                        break;
+                    case 'last_month':
+                        $query->whereBetween('created_at', [Carbon::now()->subMonth(), Carbon::now()]);
+                        break;
+                    case 'last_year':
+                        $query->whereBetween('created_at', [Carbon::now()->subYear(), Carbon::now()]);
+                        break;
+                }
+            })
+            ->when(isset($data['reply_status']), function ($query) use ($data) {
+                if ($data['reply_status'] === 'not_replied') {
+                    $query->whereNull('replied_at');
+                } elseif ($data['reply_status'] === 'replied') {
+                    $query->whereNotNull('replied_at')->latest('replied_at');
+                }
+            })
+            ->when(isset($data['status']), function ($query) use ($data) {
+                $query->where('status', $data['status']);
+            })
+            ->latest()
+            ->paginate($data['per_page'] ?? 10);
+    }
+
 }
