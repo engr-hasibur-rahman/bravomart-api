@@ -26,6 +26,7 @@ class AdminCommissionManageController extends Controller
                 'order_additional_charge_enable_disable' => 'nullable|boolean',
                 'order_additional_charge_name' => 'nullable',
                 'order_additional_charge_amount' => 'nullable|numeric|min:0',
+                'order_additional_charge_commission' => 'nullable|numeric|min:0',
             ]);
 
             // Check if both subscription and commission are disabled

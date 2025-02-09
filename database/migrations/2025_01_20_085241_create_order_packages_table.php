@@ -20,10 +20,15 @@ return new class extends Migration
             $table->string('delivery_type')->nullable()->comment('standard_delivery, parcel, takeaway'); // Delivery Type (Defines how the customer will receive the order: home delivery, pickup, etc.)
             $table->string('shipping_type')->nullable()->comment('standard, express, freight');  // Shipping Type (Defines how the goods are shipped: courier service, standard shipping, etc.)
             $table->decimal('order_amount')->nullable();
+            $table->decimal('order_amount_store_value')->nullable(); // Amount under this delivery package
+            $table->decimal('order_amount_admin_commission')->nullable(); // Amount under this delivery package         
+
             $table->decimal('product_discount_amount')->nullable();  // store wise product discount amount
             $table->decimal('flash_discount_amount_admin')->nullable(); // store wise dis.. discount amount
             $table->decimal('coupon_discount_amount_admin')->nullable(); // store wise discount amount
             $table->decimal('shipping_charge')->nullable(); // separate store wise shipping charge amount but total shipping amount in main order table
+            $table->decimal('delivery_charge_admin')->nullable(); // If central Delivery then Value will be here
+            $table->decimal('delivery_charge_admin_commission')->nullable(); // If Store delivery then admin will receive commission       
             $table->string('additional_charge_name')->nullable();
             $table->decimal('additional_charge')->nullable();  // separate store wise add.. shipping charge amount but total add.. shipping amount in main order table
             $table->boolean('is_reviewed')->nullable(); // customer review for order wise product reviews check
