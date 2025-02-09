@@ -2,10 +2,11 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\Customer\CustomerResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class OrderPackageResource extends JsonResource
+class SellerStoreOrderPackageResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

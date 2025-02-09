@@ -34,13 +34,11 @@ class OrderPackage extends Model
         return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
-    public function order_details()
+    // Add the missing relationship
+    public function orderDetails()
     {
-        return $this->hasMany(OrderDetail::class, 'order_package_id');
+        return $this->hasMany(OrderDetail::class, 'order_package_id', 'id');
     }
 
-    public function orderPackage()
-    {
-        return $this->belongsTo(OrderPackage::class, 'package_id');
-    }
+
 }

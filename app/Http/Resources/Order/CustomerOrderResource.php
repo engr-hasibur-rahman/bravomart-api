@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\Customer\CustomerResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -41,6 +42,9 @@ class CustomerOrderResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'customer' => new CustomerResource($this->whenLoaded('customer')),
+            'order_packages' => CustomerOrderPackageResource::collection($this->whenLoaded('orderPackages')),
+            'order_payment' => new CustomerOrderPaymentResource($this->whenLoaded('orderPayment')),
         ];
     }
 }

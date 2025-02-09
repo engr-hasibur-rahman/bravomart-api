@@ -372,7 +372,7 @@ class OrderService
 
 
                        // create order details
-                     $order_details =  OrderDetail::create([
+                     $orderDetails =  OrderDetail::create([
                            'store_id' => $product->store?->id,
                            'area_id' => $product->store?->area_id,
                            'order_id' => $order->id,
@@ -411,14 +411,14 @@ class OrderService
 
 
                        // set order package discount info
-                       $order_package_total_amount += $order_details->line_total_price;
+                       $order_package_total_amount += $orderDetails->line_total_price;
                        $product_discount_amount += ($variant?->price - $variant?->special_price);
-                       $flash_discount_amount_admin += $order_details->admin_discount_amount;
-                       $coupon_discount_amount_admin += $order_details->coupon_discount_amount;
+                       $flash_discount_amount_admin += $orderDetails->admin_discount_amount;
+                       $coupon_discount_amount_admin += $orderDetails->coupon_discount_amount;
 
                        // order package update other info
-                       $package_order_amount_store_value += $order_details->line_total_price - $order_details->admin_commission_amount;
-                       $package_order_amount_admin_commission += $order_details->admin_commission_amount;
+                       $package_order_amount_store_value += $orderDetails->line_total_price - $orderDetails->admin_commission_amount;
+                       $package_order_amount_admin_commission += $orderDetails->admin_commission_amount;
                    }
 
                 } // end order details
