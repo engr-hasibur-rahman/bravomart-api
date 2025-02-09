@@ -485,6 +485,12 @@ class CustomerManageController extends Controller
                     'message' => $validator->errors()
                 ], 422);
             }
+            $alreadyDeactivated = $customer->deactivated_at;
+            if ($alreadyDeactivated) {
+                return response()->json([
+                    'message' => __('messages.account_already_deactivated')
+                ],422);
+            }
             $reason = CustomerDeactivationReason::create([
                 'customer_id' => $customer->id,
                 'reason' => $request->reason,
