@@ -19,4 +19,18 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
             'seller_id' => $seller,
         ]);
     }
+
+    public function searchQuestion(array $data)
+    {
+        return ProductQuery::query()
+            ->where('product_id', $data['product_id'])
+            ->where('status', 1)
+            ->where('customer_id', '!=', auth('api_customer')->user()->id) // Exclude the logged-in customer's questions
+            ->where(function ($query) use ($data) {
+                $query->where('question', 'LIKE', '%' . $data['search'] . '%')
+                    ->orWhere('reply', 'LIKE', '%' . $data['search'] . '%');
+            })
+            ->latest()
+            ->paginate(10);
+    }
 }
