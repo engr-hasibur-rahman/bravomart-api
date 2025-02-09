@@ -21,6 +21,7 @@ class SystemCommission extends Model
         'order_additional_charge_enable_disable',            // Enable or disable additional charge
         'order_additional_charge_name',               // Name of the additional charge
         'order_additional_charge_amount',             // Amount of the additional charge
+        'order_additional_charge_commission',             // Amount of the additional charge
     ];
 
     protected $casts = [
