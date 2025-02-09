@@ -91,6 +91,10 @@ return [
     'customer_product_query_submitted_successful' => 'Your query has been submitted successfully!',
     'customer_product_query_submitted_failed' => 'Your query submission failed!',
 
+    'reply_success' => 'Replied successfully!',
+
+
+
 
 ];
 

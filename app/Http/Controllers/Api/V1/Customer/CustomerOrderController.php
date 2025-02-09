@@ -112,6 +112,7 @@ class CustomerOrderController extends Controller
                 'title' => $coupon->coupon->title,
                 'discount_amount' => $coupon->discount,
                 'discount_type' => $coupon->discount_type,
+                'code' => $coupon->coupon->code,
             ]
         ], 200);
     }

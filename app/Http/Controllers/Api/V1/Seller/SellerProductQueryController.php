@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\ProductQueryManageInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SellerProductQueryController extends Controller
 {
@@ -39,6 +40,22 @@ class SellerProductQueryController extends Controller
 
     public function replyQuestion(Request $request)
     {
-
+        $validator = Validator::make($request->all(), [
+            'question_id' => 'required|integer|exists:product_queries,id',
+            'reply' => 'required|string|max:1000',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $reply = $this->productQueryRepo->replyQuestion($request->all());
+        if ($reply) {
+            return response()->json([
+                'message' => __('messages.reply_success')
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
     }
 }

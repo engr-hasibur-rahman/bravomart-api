@@ -8,4 +8,8 @@ interface ProductQueryManageInterface
     public function searchQuestion(array $data);
 
     public function getSellerQuestions(array $data);
+
+    public function replyQuestion(array $data);
+
+    public function getAllQuestionsAndReplies(array $data);
 }
