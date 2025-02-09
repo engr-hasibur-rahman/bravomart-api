@@ -349,9 +349,9 @@ class OrderService
                        // Initialize commission variables
                        $system_commission_type = null;
                        $system_commission_amount = 0.00;
-                       $admin_commission_amount = 0.00;
+                       $admin_commission_amount = 0.00;                     
                        // calculate commission
-                       if (isset($system_commission) && $system_commission->commission_enabled === true) {
+                       if (isset($system_commission) && $system_commission->commission_enabled === true) {                      
                            // Check store type
                            if ($product->store) {
                                $store_subscription_type = $product->store?->subscription_type;
@@ -359,7 +359,7 @@ class OrderService
                                if ($store_subscription_type === 'commission') {
                                    $system_commission_type = $system_commission->commission_type;
                                    $system_commission_amount = $system_commission->commission_amount;
-
+                                  
                                    // Calculate admin commission based on type
                                    if ($system_commission_type === 'percentage') {
                                        $admin_commission_amount = ($line_total_excluding_tax * $system_commission_amount) / 100.00;
@@ -428,6 +428,8 @@ class OrderService
                 $package->product_discount_amount = $product_discount_amount; // product coupon  discount
                 $package->flash_discount_amount_admin = $flash_discount_amount_admin;  // flash sale discount
                 $package->coupon_discount_amount_admin = $coupon_discount_amount_admin; // admin coupon  discount
+                $package->order_amount_store_value = $package_order_amount_store_value; // order_amount_admin_commission
+                $package->order_amount_admin_commission = $package_order_amount_admin_commission; // order_amount_admin_commission
                 $package->save();
 
 
