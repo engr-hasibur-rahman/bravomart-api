@@ -27,10 +27,8 @@ class CustomerOrderResource extends JsonResource
             'order_amount' => $this->order_amount,
             'coupon_code' => $this->coupon_code,
             'coupon_title' => $this->coupon_title,
-            'coupon_discount_amount_admin' => $this->coupon_discount_amount_admin,
             'coupon_disc_amt_store' => $this->coupon_disc_amt_store,
             'product_discount_amount' => $this->product_discount_amount,
-            'flash_discount_amount_admin' => $this->flash_discount_amount_admin,        
             'shipping_charge' => $this->shipping_charge,
             'additional_charge_name' => $this->additional_charge_name,
             'additional_charge' => $this->additional_charge,
@@ -42,7 +40,6 @@ class CustomerOrderResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'customer' => new CustomerResource($this->whenLoaded('customer')),
             'order_packages' => CustomerOrderPackageResource::collection($this->whenLoaded('orderPackages')),
             'order_payment' => new CustomerOrderPaymentResource($this->whenLoaded('orderPayment')),
         ];

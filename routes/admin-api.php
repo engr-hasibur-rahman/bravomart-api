@@ -106,11 +106,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
 
         // Orders & Reviews Manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_ALL->value]], function () {
-            Route::group(['prefix' => 'orders'], function () {
-                Route::get('/{order_id?}', [AdminOrderManageController::class, 'allOrders']);
+            Route::group(['prefix' => 'orders/'], function () {
+                Route::get('invoice', [AdminOrderManageController::class, 'invoice']);
                 Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value]], function () {
                     Route::get('/returned', [AdminOrderManageController::class, 'returnedO']);
                 });
+                // Dynamic route should be last
+                Route::get('{order_id?}', [AdminOrderManageController::class, 'allOrders']);
             });
         });
 

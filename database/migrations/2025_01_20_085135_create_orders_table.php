@@ -29,6 +29,8 @@ return new class extends Migration
             $table->decimal('additional_charge_amount')->nullable();
             $table->unsignedBigInteger('confirmed_by')->nullable();
             $table->timestamp('confirmed_at')->nullable();
+            $table->string('invoice_number')->unique()->nullable();
+            $table->timestamp('invoice_date')->nullable();
             $table->unsignedBigInteger('cancel_request_by')->nullable();
             $table->timestamp('cancel_request_at')->nullable();
             $table->unsignedBigInteger('cancelled_by')->nullable();
