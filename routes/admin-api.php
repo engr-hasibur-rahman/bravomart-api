@@ -107,7 +107,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
         // Orders & Reviews Manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_ALL->value]], function () {
             Route::group(['prefix' => 'orders'], function () {
-                Route::get('/', [AdminOrderManageController::class, 'allOrders']);
+                Route::get('/{order_id?}', [AdminOrderManageController::class, 'allOrders']);
                 Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value]], function () {
                     Route::get('/returned', [AdminOrderManageController::class, 'returnedO']);
                 });
