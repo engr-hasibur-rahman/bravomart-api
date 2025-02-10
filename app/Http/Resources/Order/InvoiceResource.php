@@ -31,9 +31,16 @@ class InvoiceResource extends JsonResource
             'invoice_date' => $this->invoice_date ? Carbon::parse($this->invoice_date)->format('d-M-Y') : null,
             'payment_status' => $this->payment_status,
             'order_amount' => $this->orderPackages->map->order_amount->sum(),
-            'packages' => $this->orderPackages,
-            'items' => $this->orderPackages->map(function ($package) {
-                return $package->orderDetails->map(function ($item) {
+            'packages' => $this->orderPackages->flatMap(function ($package) {
+                $subtotal = 0;
+                $tax_rate_sum = 0;
+                $tax_amount_sum = 0;
+                $total_tax_amount_sum = 0;
+                $items = $package->orderDetails->map(function ($item) use (&$subtotal, &$tax_rate_sum, &$tax_amount_sum, &$total_tax_amount_sum) {
+                    $subtotal += $item->line_total_price;
+                    $tax_rate_sum += $item->tax_rate;
+                    $tax_amount_sum += $item->tax_amount;
+                    $total_tax_amount_sum += $item->total_tax_amount;
                     return [
                         'id' => $item->id,
                         'name' => $item->product->name,
@@ -45,6 +52,13 @@ class InvoiceResource extends JsonResource
                         'total_tax_amount' => $item->total_tax_amount,
                     ];
                 });
+                return array_merge($items->toArray(), [
+                    'subtotal' => $subtotal,
+                    'tax_rate_sum' => $tax_rate_sum,
+                    'tax_amount_sum' => $tax_amount_sum,
+                    'total_tax_amount_sum' => $total_tax_amount_sum,
+                    'total' => $subtotal + $total_tax_amount_sum,
+                ]);
             }),
         ];
     }
