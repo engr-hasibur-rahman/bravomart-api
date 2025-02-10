@@ -28,7 +28,6 @@ class AdminOrderManageController extends Controller
             return response()->json(new AdminOrderResource($order));
         }
 
-        // Otherwise, return a paginated list of orders
         $orders = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
