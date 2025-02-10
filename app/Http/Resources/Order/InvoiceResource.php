@@ -21,11 +21,14 @@ class InvoiceResource extends JsonResource
                 'name' => $this->customer->first_name . ' ' . $this->customer->last_name,
                 'email' => $this->customer->email,
                 'phone' => $this->customer->phone,
-                'shipping_address' => $this->shippingAddress ?
-                    "{$this->shippingAddress->house}, Road {$this->shippingAddress->road}, Floor {$this->shippingAddress->floor}\n" .
-                    "{$this->shippingAddress->address}\n" .
-                    "Postal Code: {$this->shippingAddress->postal_code}\n" .
-                    "Contact: {$this->shippingAddress->contact_number}" : null,
+                'shipping_address' => $this->shippingAddress ? [
+                    'house' => $this->shippingAddress->house,
+                    'road' => $this->shippingAddress->road,
+                    'floor' => $this->shippingAddress->floor,
+                    'address' => $this->shippingAddress->address,
+                    'postal_code' => $this->shippingAddress->postal_code,
+                    'contact' => $this->shippingAddress->contact_number
+                ] : null
             ] : null,
             'invoice_number' => '#' . $this->invoice_number,
             'invoice_date' => $this->invoice_date ? Carbon::parse($this->invoice_date)->format('d-M-Y') : null,

@@ -33,6 +33,7 @@ use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\ProductSuggestionPublicResource;
 use App\Http\Resources\Product\RelatedProductPublicResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
+use App\Http\Resources\Product\TopRatedProductPublicResource;
 use App\Http\Resources\Product\TrendingProductPublicResource;
 use App\Http\Resources\Product\WeekBestProductPublicResource;
 use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
@@ -812,7 +813,7 @@ class FrontendController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => __('messages.data_found'),
-                'data' => NewArrivalPublicResource::collection($products),
+                'data' => TopRatedProductPublicResource::collection($products),
                 'meta' => new PaginationResource($products),
             ]);
         } else {

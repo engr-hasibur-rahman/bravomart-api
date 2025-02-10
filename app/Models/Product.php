@@ -12,7 +12,7 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $appends = ['wishlist'];
+    protected $appends = ['wishlist', 'rating', 'review_count'];
     protected $dates = ['deleted_at'];
     protected $table = "products";
     protected $fillable = [
@@ -216,5 +216,19 @@ class Product extends Model
     {
         return $this->hasOne(FlashSaleProduct::class, 'product_id');
     }
+
+    // Get the average rating of the product (if reviews exist)
+    public function getRatingAttribute()
+    {
+        $averageRating = $this->reviews()->where('status', 'approved')->avg('rating'); // Get average rating from approved reviews
+        return $averageRating ? round($averageRating, 1) : 0; // Return 0 if no approved reviews
+    }
+
+// Get the total count of approved reviews for the product
+    public function getReviewCountAttribute()
+    {
+        return $this->reviews()->where('status', 'approved')->count(); // Get count of approved reviews
+    }
+
 
 }
