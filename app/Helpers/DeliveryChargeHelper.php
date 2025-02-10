@@ -13,13 +13,13 @@ class DeliveryChargeHelper
 
     public static function calculateDeliveryCharge($areaId, $customerLat, $customerLng)
     {
-    
+
         // Get the store area and settings
-        $store_area = StoreArea::with('storeTypeSettings')->find($areaId);   
-    
+        $store_area = StoreArea::with('storeTypeSettings')->find($areaId);
+
          // If not found, try to find the nearest store area based on latitude & longitude
          if (!$store_area) {
-            $store_area = StoreArea::selectRaw(
+            $store_area = StoreArea::with('storeTypeSettings')->selectRaw(
                     "*, ST_Distance_Sphere(point(center_longitude, center_latitude), point(?, ?)) as distance",
                     [$customerLng, $customerLat]
                 )
@@ -28,8 +28,13 @@ class DeliveryChargeHelper
                 ->where('status', 1) // Only consider active areas
                 ->orderBy('distance') // Get the closest area
                 ->first();
+            if (!$store_area) {
+                return response()->json([
+                    'message' => 'Both area_id and center latitude and center longitude are not available'
+                ], 404)->original;
+            }
         }
-               
+
 
         // for test Optionally update coordinates if needed
         //    self::updateStoreAreaCoordinates($areaId);
