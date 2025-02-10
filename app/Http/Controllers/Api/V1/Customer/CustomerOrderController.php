@@ -12,13 +12,22 @@ use Illuminate\Support\Facades\Validator;
 
 class CustomerOrderController extends Controller
 {
-    public function myOrders()
+    public function myOrders(Request $request)
     {
-
         $customer_id = auth()->guard('api_customer')->user()->id;
-        $orders = Order::with(['customer','orderPackages.orderDetails', 'orderPayment'])->where('customer_id', $customer_id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+
+        // Start the query
+        $ordersQuery = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment'])
+            ->where('customer_id', $customer_id)
+            ->orderBy('created_at', 'desc');
+
+        // Apply the status filter if it's present in the request
+        $ordersQuery->when($request->status, function ($query) use ($request) {
+            $query->where('status', $request->status);
+        });
+
+        // Get the paginated results
+        $orders = $ordersQuery->paginate(10);
 
         return response()->json([
             'orders' => CustomerOrderResource::collection($orders),
@@ -41,7 +50,6 @@ class CustomerOrderController extends Controller
                 'error' => 'Order not found or you do not have access to it'
             ], 404);
         }
-
 
         return response()->json([
             'orderDetails' => $order

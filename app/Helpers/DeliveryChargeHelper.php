@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\StoreArea;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use MatanYadaev\EloquentSpatial\Objects\LineString;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
@@ -19,7 +20,7 @@ class DeliveryChargeHelper
 
          // If not found, try to find the nearest store area based on latitude & longitude
          if (!$store_area) {
-            $store_area = StoreArea::with('storeTypeSettings')->selectRaw(
+            $store_area = StoreArea::selectRaw(
                     "*, ST_Distance_Sphere(point(center_longitude, center_latitude), point(?, ?)) as distance",
                     [$customerLng, $customerLat]
                 )
@@ -33,6 +34,9 @@ class DeliveryChargeHelper
                     'message' => 'Both area_id and center latitude and center longitude are not available'
                 ], 404)->original;
             }
+            Log::info('Store Area: ' . $store_area);
+            Log::info('Store Area Settings: ' . $store_area->storeTypeSettings);
+            dd();
         }
 
 
