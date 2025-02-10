@@ -418,6 +418,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             });
             Route::group(['prefix' => 'questions/'], function () {
                 Route::get('/', [AdminProductQueryManageController::class, 'getAllQueries']);
+                Route::post('change-status', [AdminProductQueryManageController::class, 'changeStatus']);
+                Route::post('remove', [AdminProductQueryManageController::class, 'destroy']);
             });
         });
         // Admin Deliveryman management

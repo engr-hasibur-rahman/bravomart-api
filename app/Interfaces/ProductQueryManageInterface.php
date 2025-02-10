@@ -12,4 +12,8 @@ interface ProductQueryManageInterface
     public function replyQuestion(array $data);
 
     public function getAllQuestionsAndReplies(array $data);
+
+    public function bulkDelete(array $ids);
+
+    public function changeStatus(int $id);
 }
