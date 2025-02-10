@@ -6,7 +6,7 @@ use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PopularProductPublicResource extends JsonResource
+class TopRatedProductPublicResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,15 +15,13 @@ class PopularProductPublicResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'id' => $this->id,
+        return ['id' => $this->id,
             'store' => $this->store->name ?? null,
             'store_id' => $this->store->id ?? null,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
             'image' => ImageModifier::generateImageUrl($this->image),
-            'views' => $this->views,
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
             'price' => optional($this->variants->first())->price,
             'special_price' => optional($this->variants->first())->special_price,
@@ -32,8 +30,8 @@ class PopularProductPublicResource extends JsonResource
                 ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
                 : null,
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
-            'rating'=>$this->rating,
-            'review_count'=>$this->review_count,
-        ];
+            'rating' => $this->rating,
+            'review_count' => $this->review_count,
+            ];
     }
 }
