@@ -31,7 +31,7 @@ class BestSellingPublicResource extends JsonResource
                 ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
                 : null,
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
-            'rating'=>$this->rating,
+            'rating' => number_format((float) $this->rating, 2, '.', ''),
             'review_count'=>$this->review_count,
         ];
 
