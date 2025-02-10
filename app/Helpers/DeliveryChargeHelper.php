@@ -15,10 +15,7 @@ class DeliveryChargeHelper
     {
     
         // Get the store area and settings
-        $store_area = StoreArea::with('storeTypeSettings')->find($areaId);
-        // if (!$store_area || !$store_area->storeTypeSettings) {
-        //     return false;
-        // }
+        $store_area = StoreArea::with('storeTypeSettings')->find($areaId);   
     
          // If not found, try to find the nearest store area based on latitude & longitude
          if (!$store_area) {
@@ -32,21 +29,10 @@ class DeliveryChargeHelper
                 ->orderBy('distance') // Get the closest area
                 ->first();
         }
+               
 
-         // If still no area is found, return a default admin-defined area
-        // if (!$store_area) {
-        //     $default_area = StoreArea::where('status', 1)->where('is_default', true)->first();
-        //     if (!$default_area) {
-        //         return false; // No valid area found at all
-        //     }
-        //     $store_area = $default_area;
-        // }
-
-       
-
-        // for test lat long range wise
-        // Optionally update coordinates if needed
-//        self::updateStoreAreaCoordinates($areaId);
+        // for test Optionally update coordinates if needed
+        //    self::updateStoreAreaCoordinates($areaId);
 
 
         $settings = $store_area->storeTypeSettings->first();
@@ -64,12 +50,22 @@ class DeliveryChargeHelper
         $distance = max(1, round($distance, 2)); // Ensure at least 1km and rounding to 2 decimal points
 
         // Check if customer is inside the area
+        // $is_out_of_area = DB::table('store_areas')
+        //     ->select(DB::raw('ST_Contains(coordinates, ST_GeomFromText(?)) AS is_inside'))
+        //     ->where('id', $areaId)
+        //     ->addBinding("POINT({$customerLng} {$customerLat})", 'select')
+        //     ->first()
+        //     ->is_inside;
+
+        // new add
         $is_out_of_area = DB::table('store_areas')
-            ->select(DB::raw('ST_Contains(coordinates, ST_GeomFromText(?)) AS is_inside'))
-            ->where('id', $areaId)
-            ->addBinding("POINT({$customerLng} {$customerLat})", 'select')
-            ->first()
-            ->is_inside;
+        ->select(DB::raw('ST_Contains(coordinates, ST_GeomFromText(?)) AS is_inside'))
+        ->where('id', $areaId)
+        ->addBinding("POINT({$customerLng} {$customerLat})", 'select')
+        ->first();
+
+          // new add  Ensure the query result is not null before accessing 'is_inside'
+         $is_inside_area = $is_out_of_area ? (bool) $is_out_of_area->is_inside : false;
 
         // If the customer is out of area, add out-of-area charge
         $out_of_area_delivery_charge = $is_out_of_area ? 0 : $settings->out_of_area_delivery_charge;

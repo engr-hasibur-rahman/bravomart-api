@@ -5,7 +5,7 @@ namespace App\Http\Resources\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class OrderPackageResource extends JsonResource
+class CustomerOrderPackageResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -36,7 +36,7 @@ class OrderPackageResource extends JsonResource
             'additional_charge_commission' => $this->additional_charge_commission,
             'is_reviewed' => $this->is_reviewed,
             'status' => $this->status,
-            'orderDetails' => OrderDetailsResource::collection($this->whenLoaded('orderDetails')),
+            'orderDetails' => CustomerOrderDetailsResource::collection($this->whenLoaded('orderDetails')),
         ];
     }
 }
