@@ -23,6 +23,8 @@ class Order extends Model
         'additional_charge_amount',
         'confirmed_by',
         'confirmed_at',
+        'invoice_number',
+        'invoice_date',
         'cancel_request_by',
         'cancel_request_at',
         'cancelled_by',
@@ -31,6 +33,15 @@ class Order extends Model
         'refund_status',
         'status',
     ];
+
+    // This function generates invoice when the order is created
+    protected static function booted()
+    {
+        static::creating(function ($order) {
+            $order->invoice_number = 'INV-' . now()->year . '-' . time();
+            $order->invoice_date = now();
+        });
+    }
 
     public function orderPackages()
     {
@@ -53,6 +64,11 @@ class Order extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
+    }
+
+    public function shippingAddress()
+    {
+        return $this->belongsTo(CustomerAddress::class, 'shipping_address_id', 'id');
     }
 
     public function orderDeliveryHistory()

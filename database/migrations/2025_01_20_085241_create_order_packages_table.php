@@ -35,7 +35,6 @@ return new class extends Migration
             $table->string('status')->default('pending')->comment('pending, active, processing , shipped, delivered, cancelled, on_hold');
             $table->timestamps();
         });
-
     }
 
     /**

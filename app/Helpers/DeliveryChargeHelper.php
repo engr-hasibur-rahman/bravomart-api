@@ -18,32 +18,36 @@ class DeliveryChargeHelper
         // Get the store area and settings
         $store_area = StoreArea::with('storeTypeSettings')->find($areaId);
 
-         // If not found, try to find the nearest store area based on latitude & longitude
-         if (!$store_area) {
-            $store_area = StoreArea::selectRaw(
-                    "*, ST_Distance_Sphere(point(center_longitude, center_latitude), point(?, ?)) as distance",
-                    [$customerLng, $customerLat]
-                )
+        // If not found, try to find the nearest store area based on latitude & longitude
+        if (!$store_area) {
+            $store_area = StoreArea::with('storeTypeSettings')->selectRaw(
+                "*, ST_Distance_Sphere(point(center_longitude, center_latitude), point(?, ?)) as distance",
+                [$customerLng, $customerLat]
+            )
                 ->whereNotNull('center_latitude')
                 ->whereNotNull('center_longitude')
-                ->where('status', 1) // Only consider active areas
-                ->orderBy('distance') // Get the closest area
+                ->where('status', 1)
+                ->orderBy('distance')
                 ->first();
             if (!$store_area) {
                 return response()->json([
                     'message' => 'Both area_id and center latitude and center longitude are not available'
                 ], 404)->original;
             }
-            Log::info('Store Area: ' . $store_area);
-            Log::info('Store Area Settings: ' . $store_area->storeTypeSettings);
-            dd();
+            if ($store_area->storeTypeSettings->isEmpty()) {
+                $settings = DB::table('store_area_settings')
+                    ->where('store_area_id', $store_area->id)
+                    ->first();
+
+                if (!$settings) {
+                    return response()->json([
+                        'message' => 'No settings found for the store area.'
+                    ], 404)->original;
+                }
+            }
         }
-
-
         // for test Optionally update coordinates if needed
         //    self::updateStoreAreaCoordinates($areaId);
-
-
         $settings = $store_area->storeTypeSettings->first();
         $store_lat = $store_area->center_latitude;
         $store_lng = $store_area->center_longitude;
@@ -68,13 +72,13 @@ class DeliveryChargeHelper
 
         // new add
         $is_out_of_area = DB::table('store_areas')
-        ->select(DB::raw('ST_Contains(coordinates, ST_GeomFromText(?)) AS is_inside'))
-        ->where('id', $areaId)
-        ->addBinding("POINT({$customerLng} {$customerLat})", 'select')
-        ->first();
+            ->select(DB::raw('ST_Contains(coordinates, ST_GeomFromText(?)) AS is_inside'))
+            ->where('id', $areaId)
+            ->addBinding("POINT({$customerLng} {$customerLat})", 'select')
+            ->first();
 
-          // new add  Ensure the query result is not null before accessing 'is_inside'
-         $is_inside_area = $is_out_of_area ? (bool) $is_out_of_area->is_inside : false;
+        // new add  Ensure the query result is not null before accessing 'is_inside'
+        $is_inside_area = $is_out_of_area ? (bool)$is_out_of_area->is_inside : false;
 
         // If the customer is out of area, add out-of-area charge
         $out_of_area_delivery_charge = $is_out_of_area ? 0 : $settings->out_of_area_delivery_charge;
@@ -87,51 +91,50 @@ class DeliveryChargeHelper
 
         $storeAreaSetting = $store_area->storeTypeSettings->first();
 
-          if ($settings->delivery_charge_method === 'fixed') {
+        if ($settings->delivery_charge_method === 'fixed') {
             $delivery_charge = $settings->fixed_charge_amount;
         } elseif ($settings->delivery_charge_method === 'per_km') {
             $delivery_charge = $settings->per_km_charge_amount * $distance;
-        } elseif ($settings->delivery_charge_method === 'range-wise'){
-              // Get the slabs for this store area
-              $slabs = DB::table('store_area_setting_range_charges')
-                  ->where('store_area_setting_id', $storeAreaSetting->id)
-                  ->orderBy('min_km', 'asc') // Ensure slabs are in order
-                  ->get();
+        } elseif ($settings->delivery_charge_method === 'range-wise') {
+            // Get the slabs for this store area
+            $slabs = DB::table('store_area_setting_range_charges')
+                ->where('store_area_setting_id', $storeAreaSetting->id)
+                ->orderBy('min_km', 'asc') // Ensure slabs are in order
+                ->get();
 
-              // Loop through the slabs and calculate the charge
-              foreach ($slabs as $slab) {
-                  $slab_min = $slab->min_km;
-                  $slab_max = $slab->max_km;
-                  $slab_rate = $slab->charge_amount;
+            // Loop through the slabs and calculate the charge
+            foreach ($slabs as $slab) {
+                $slab_min = $slab->min_km;
+                $slab_max = $slab->max_km;
+                $slab_rate = $slab->charge_amount;
 
 
-                  // Check if there is remaining distance in the current slab range
-                  if ($remaining_distance <= 0) {
-                      break; // No remaining distance, stop the loop
-                  }
+                // Check if there is remaining distance in the current slab range
+                if ($remaining_distance <= 0) {
+                    break; // No remaining distance, stop the loop
+                }
 
-                  if ($remaining_distance > $slab_max) {
-                      // If the remaining distance is greater than the slab's max, apply the full slab rate
-                      $distance_in_this_slab = $slab_max - $slab_min;
-                      $delivery_charge += $distance_in_this_slab * $slab_rate;
-                      $remaining_distance -= $distance_in_this_slab;
+                if ($remaining_distance > $slab_max) {
+                    // If the remaining distance is greater than the slab's max, apply the full slab rate
+                    $distance_in_this_slab = $slab_max - $slab_min;
+                    $delivery_charge += $distance_in_this_slab * $slab_rate;
+                    $remaining_distance -= $distance_in_this_slab;
 
-                  } elseif ($remaining_distance > $slab_min) {
-                      // If the remaining distance fits within the current slab
-                      $distance_in_this_slab = $remaining_distance - $slab_min;
-                      $delivery_charge += $distance_in_this_slab * $slab_rate;
-                      $remaining_distance = 0; // No remaining distance to calculate
-                  }
-              }
+                } elseif ($remaining_distance > $slab_min) {
+                    // If the remaining distance fits within the current slab
+                    $distance_in_this_slab = $remaining_distance - $slab_min;
+                    $delivery_charge += $distance_in_this_slab * $slab_rate;
+                    $remaining_distance = 0; // No remaining distance to calculate
+                }
+            }
 
-              // If there is still remaining distance, apply it to the last slab's rate
-              if ($remaining_distance > 0) {
-                  // Get the last slab
-                  $last_slab = $slabs->last();
-                  $delivery_charge += $remaining_distance * $last_slab->charge_amount;
-              }
+            // If there is still remaining distance, apply it to the last slab's rate
+            if ($remaining_distance > 0) {
+                // Get the last slab
+                $last_slab = $slabs->last();
+                $delivery_charge += $remaining_distance * $last_slab->charge_amount;
+            }
         }
-
 
 
         // Add out-of-area charge if applicable
@@ -147,7 +150,6 @@ class DeliveryChargeHelper
             'info' => $out_of_area_delivery_info,
         ];
     }
-
 
 
     public static function updateStoreAreaCoordinates(int $areaId)
