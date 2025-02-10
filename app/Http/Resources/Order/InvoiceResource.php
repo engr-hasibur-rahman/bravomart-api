@@ -55,13 +55,14 @@ class InvoiceResource extends JsonResource
                         'total_tax_amount' => $item->total_tax_amount,
                     ];
                 });
-                return array_merge($items->toArray(), [
+                return [
+                    'items'=>$items,
                     'subtotal' => $subtotal,
                     'tax_rate_sum' => $tax_rate_sum,
                     'tax_amount_sum' => $tax_amount_sum,
                     'total_tax_amount_sum' => $total_tax_amount_sum,
                     'total' => $subtotal + $total_tax_amount_sum,
-                ]);
+                ];
             }),
         ];
     }
