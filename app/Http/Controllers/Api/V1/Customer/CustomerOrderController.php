@@ -42,7 +42,6 @@ class CustomerOrderController extends Controller
             ], 404);
         }
 
-        dd($order);
 
         return response()->json([
             'orderDetails' => $order
