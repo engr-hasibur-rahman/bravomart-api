@@ -16,11 +16,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $appends = ['rating'];
     protected $fillable = [
         'first_name',
         'last_name',
@@ -39,30 +35,15 @@ class User extends Authenticatable
         'apple_id',
         'def_lang'
     ];
-
-
     protected $guard_name = 'api';
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    // In your User model, use the $casts property directly
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'stores' => 'array',  // Ensures stores is cast to an array
+        'stores' => 'array',
     ];
 
     public function scopeIsSeller($query)
@@ -80,29 +61,12 @@ class User extends Authenticatable
         return trim("{$this->first_name} {$this->last_name}");
     }
 
-    /**
-     * Get roles for the user.
-     */
-    //    public function roles()
-    //    {
-    //        return $this->belongsToMany(CustomRole::class, 'model_has_roles', 'model_id', 'role_id')
-    //            ->where(function ($query) {
-    //                $query->where('model_type', self::class)->orWhereNull('model_type');
-    //            });
-    //    }
-
-    /**
-     * Get permissions directly assigned to the user.
-     */
     public function directPermissions()
     {
         return $this->belongsToMany(CustomPermission::class, 'model_has_permissions', 'model_id', 'permission_id')
             ->where('model_type', self::class);
     }
 
-    /**
-     * Get permissions via roles.
-     */
     public function rolePermissionsQuery()
     {
         return CustomPermission::whereHas('roles', function ($query) {
@@ -115,9 +79,6 @@ class User extends Authenticatable
         return $this->rolePermissionsQuery()->get();
     }
 
-    /**
-     * Get all permissions for the user (direct + via roles).
-     */
     public function allPermissions()
     {
         $directPermissions = $this->directPermissions()->pluck('name');
@@ -126,7 +87,6 @@ class User extends Authenticatable
         return $directPermissions->merge($rolePermissions)->unique();
     }
 
-    /* Get linked social accounts */
     public function linkedSocialAccounts()
     {
         return $this->hasOne(LinkedSocialAccount::class);
@@ -134,6 +94,20 @@ class User extends Authenticatable
 
     public function deliveryman()
     {
-        return $this->hasOne(Deliveryman::class, 'user_id');
+        return $this->hasOne(DeliveryMan::class, 'user_id', 'id');
     }
+
+    public function reviews()
+    {
+        return $this->morphMany(Review::class,'reviewable');
+    }
+    public function getRatingAttribute()
+    {
+        $averageRating = $this->reviews()
+            ->where('reviewable_type', User::class)
+            ->where('status', 'approved')
+            ->avg('rating');
+        return $averageRating;
+    }
+
 }
