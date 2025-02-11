@@ -18,7 +18,6 @@ class OtheChargeInfoResource extends JsonResource
             'order_include_tax_amount' => $this->order_include_tax_amount ? true : false,
             'order_additional_charge_name' => $this->order_additional_charge_name,
             'order_additional_charge_amount' => $this->order_additional_charge_amount,
-            'order_additional_charge_commission' => $this->order_additional_charge_commission,
         ];
     }
 }
