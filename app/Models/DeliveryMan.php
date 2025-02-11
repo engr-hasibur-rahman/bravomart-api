@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DeliveryMan extends Model
 {
+
     protected $fillable = [
         'user_id',
         'store_id',
@@ -20,15 +21,11 @@ class DeliveryMan extends Model
         'updated_by',
     ];
 
-    public function deliveryman()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
     public function reviews()
     {
         return $this->morphMany(Review::class,'reviewable');
     }
+
 
     public function store()
     {
@@ -61,5 +58,9 @@ class DeliveryMan extends Model
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

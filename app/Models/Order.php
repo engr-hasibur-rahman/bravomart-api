@@ -75,4 +75,10 @@ class Order extends Model
     {
         return $this->hasMany(OrderDeliveryHistory::class, 'order_id', 'id');
     }
+
+    public function deliveryman()
+    {
+        return $this->belongsTo(User::class, 'confirmed_by', 'id');
+    }
+
 }

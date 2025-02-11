@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Customer\CustomerResource;
+use App\Http\Resources\Deliveryman\DeliverymanResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -30,7 +31,7 @@ class AdminOrderResource extends JsonResource
             'coupon_discount_amount_admin' => $this->coupon_discount_amount_admin,
             'coupon_disc_amt_store' => $this->coupon_disc_amt_store,
             'product_discount_amount' => $this->product_discount_amount,
-            'flash_discount_amount_admin' => $this->flash_discount_amount_admin,   
+            'flash_discount_amount_admin' => $this->flash_discount_amount_admin,
             'shipping_charge' => $this->shipping_charge,
             'additional_charge' => $this->additional_charge,
             'confirmed_at' => $this->confirmed_at,
@@ -41,6 +42,7 @@ class AdminOrderResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'customer' => new CustomerResource($this->whenLoaded('customer')),
             'order_packages' => OrderPackageResource::collection($this->whenLoaded('orderPackages')),
             'order_payment' => new OrderPaymentResource($this->whenLoaded('orderPayment')),

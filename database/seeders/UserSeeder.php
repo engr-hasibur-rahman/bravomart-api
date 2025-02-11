@@ -107,6 +107,24 @@ class UserSeeder extends Seeder
                 ['slug' => $user['slug']],  // Check for existing record with the same slug
                 $user  // Insert or update with the user data
             );
+            if ($user['activity_scope'] === 'delivery_level') {
+                DB::table('delivery_men')->insert(
+                    [
+                        'user_id' => 6,
+                        'store_id' => 1, // Change as per your need
+                        'vehicle_type_id' => 1, // Change as per your need
+                        'area_id' => null,
+                        'identification_type' => 'nid',
+                        'identification_number' => '123456789',
+                        'status' => 'approved',
+                        'created_by' => 1,
+                        'updated_by' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
         }
+
     }
 }
