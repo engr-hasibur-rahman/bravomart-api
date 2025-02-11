@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
+use App\Http\Resources\Seller\Store\StoreDetailsResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -37,6 +39,7 @@ class OrderPackageResource extends JsonResource
             'is_reviewed' => $this->is_reviewed,
             'status' => $this->status,
             'orderDetails' => OrderDetailsResource::collection($this->whenLoaded('orderDetails')),
+            'store' => $this->whenLoaded('store'),
         ];
     }
 }

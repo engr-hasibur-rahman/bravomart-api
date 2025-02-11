@@ -18,7 +18,7 @@ class OrderPackage extends Model
         'order_amount_admin_commission',
         'coupon_discount_amount_admin',
         'product_discount_amount',
-        'flash_discount_amount_admin',   
+        'flash_discount_amount_admin',
         'shipping_charge',
         'delivery_charge_admin',
         'delivery_charge_admin_commission',
@@ -38,6 +38,11 @@ class OrderPackage extends Model
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class, 'order_package_id', 'id');
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id', 'id');
     }
 
 
