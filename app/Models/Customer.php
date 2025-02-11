@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -50,10 +51,12 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
     {
         return $this->status === 1 && $this->deleted_at === null;
     }
+
     public function scopeIsActive($query)
     {
         return $query->where('status', 1)->whereNull('deleted_at');
     }
+
     public function isDeactivated(): bool
     {
         return $this->status === 0;
@@ -77,5 +80,15 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
     public function restoreAccount(): bool
     {
         return $this->restore();
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(CustomerAddress::class, 'customer_id');
+    }
+
+    public function defaultAddress()
+    {
+        return $this->hasOne(CustomerAddress::class)->where('is_default', 1);
     }
 }
