@@ -32,11 +32,14 @@ class ReviewService
 
         if (isset($filters['min_rating']) && isset($filters['max_rating'])) {
             $query->whereBetween('rating', [$filters['min_rating'], $filters['max_rating']]);
-        } elseif (isset($filters['min_rating'])) {
+        }
+        if (isset($filters['min_rating'])) {
             $query->where('rating', '>=', $filters['min_rating']);
-        } elseif (isset($filters['max_rating'])) {
+        }
+        if (isset($filters['max_rating'])) {
             $query->where('rating', '<=', $filters['max_rating']);
-        } elseif (isset($filters['rating'])) {
+        }
+        if (isset($filters['rating'])) {
             $query->where('rating', $filters['rating']);
         }
 
@@ -170,7 +173,7 @@ class ReviewService
         }
 
         $query = Review::with(['reviewable', 'store', 'customer'])
-            ->where('reviewable_type','App\Models\User')
+            ->where('reviewable_type', 'App\Models\User')
             ->whereIn('reviewable_id', $deliverymanId);
 
         if (isset($filters['min_rating']) && isset($filters['max_rating'])) {
