@@ -15,11 +15,11 @@ class StoreAreaSeeder extends Seeder
     {
         $areas = [
             [
-                'code' => 'NY-001',
-                'state' => 'New York',
-                'city' => 'New York City',
-                'name' => 'Manhattan',
-                'coordinates' => "POLYGON((-73.985428 40.748817, -73.981428 40.748818, -73.982429 40.748819, -73.983429 40.748820, -73.985428 40.748817))",
+                'code' => 'BD-001',
+                'state' => 'Dhaka',
+                'city' => 'Dhaka City',
+                'name' => 'Gulshan',
+                'coordinates' => "POLYGON((90.402992 23.795349, 90.405081 23.796130, 90.406190 23.794773, 90.407000 23.793232, 90.402992 23.795349))",
             ],
             [
                 'code' => 'NY-002',
