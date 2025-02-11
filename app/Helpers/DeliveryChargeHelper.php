@@ -144,6 +144,7 @@ class DeliveryChargeHelper
         $delivery_charge = max($settings->min_order_delivery_fee, $delivery_charge);
 
         return [
+            'message' => 'Calculation successful',
             'delivery_method' => $settings->delivery_charge_method,
             'delivery_charge' => round($delivery_charge, 2),
             'distance_km' => round($distance, 2),
