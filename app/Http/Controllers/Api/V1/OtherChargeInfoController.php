@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class OtherChargeInfoController extends Controller
 {
-    public function otherChargeInformation(Request $request){
+    public function otherChargeInformation(){
         $data = SystemCommission::first();
         if (is_null($data) || $data->order_additional_charge_enable_disable === false) {
             return response()->json([

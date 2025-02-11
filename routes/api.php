@@ -114,5 +114,5 @@ Route::group(['prefix' => 'v1/'], function () {
     // delivery charge calculate
     Route::post('/calculate-delivery-charge', [DeliveryChargeCalculateController::class, 'calculateDeliveryCharge']);
     Route::post('/store-tax-info', [TaxInfoController::class, 'storeTaxInformation']);
-    Route::post('/other-charge-info', [OtherChargeInfoController::class, 'otherChargeInformation']);
+    Route::get('/other-charge-info', [OtherChargeInfoController::class, 'otherChargeInformation']);
 });
