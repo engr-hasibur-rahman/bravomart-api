@@ -23,6 +23,7 @@ class RelatedProductPublicResource extends JsonResource
             'description' => $this->description,
             'image' => $this->image,
             'views' => $this->views,
+            'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
             'price' => $this->variants->isNotEmpty() ? $this->variants[0]->price : null,
             'special_price' => $this->variants->isNotEmpty() ? $this->variants[0]->special_price : null,
