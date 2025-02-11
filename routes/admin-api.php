@@ -108,8 +108,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_ALL->value]], function () {
             Route::group(['prefix' => 'orders/'], function () {
                 Route::get('invoice', [AdminOrderManageController::class, 'invoice']);
+                Route::post('change-order-status', [AdminOrderManageController::class, 'changeOrderStatus']);
+                Route::post('change-payment-status', [AdminOrderManageController::class, 'changePaymentStatus']);
+                Route::post('assign-deliveryman', [AdminOrderManageController::class, 'assignDeliveryMan']);
+                Route::post('cancel-order', [AdminOrderManageController::class, 'cancelOrder']);
                 Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value]], function () {
-                    Route::get('/returned', [AdminOrderManageController::class, 'returnedO']);
+                    Route::get('/returned', [AdminOrderManageController::class, 'returned']);
                 });
                 // Dynamic route should be last
                 Route::get('{order_id?}', [AdminOrderManageController::class, 'allOrders']);
@@ -429,6 +433,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             // delivery man manage
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
                 Route::get('list', [AdminDeliverymanManageController::class, 'index']);
+                Route::get('list-dropdown', [AdminDeliverymanManageController::class, 'deliverymanDropdownList']);
                 Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest']);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
