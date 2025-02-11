@@ -17,12 +17,21 @@ class AdminOrderManageController extends Controller
         $order_id = $request->order_id;
 
         if ($order_id) {
-            $order = Order::with(['customer', 'orderPackages.orderDetails','orderPackages.store', 'orderPayment', 'deliveryman'])
+            $order = Order::with(['customer', 'orderPackages.orderDetails', 'orderPackages.store', 'orderPayment', 'deliveryman'])
                 ->where('id', $order_id)
                 ->first();
             if (!$order) {
                 return response()->json(['message' => 'Order not found'], 404);
             }
+            $deliveryman_id = $order->confirmed_by;
+            $total_delivered = Order::where('confirmed_by', $deliveryman_id)->where('status', 'delivered')->count();
+            $last_delivered_location = Order::with('shippingAddress')
+                ->where('confirmed_by', $deliveryman_id)
+                ->where('status', 'delivered')
+                ->orderBy('delivery_completed_at','desc')
+                ->first();
+            $order->deliveryman->last_delivered_location = $last_delivered_location->shippingAddress->address;
+            $order->deliveryman->total_delivered = $total_delivered;
             return response()->json(new AdminOrderResource($order));
         }
         $query = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment']);
