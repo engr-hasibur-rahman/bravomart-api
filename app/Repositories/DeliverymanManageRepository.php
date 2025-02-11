@@ -575,4 +575,17 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
         return true;
     }
+
+    public function deliverymanListDropdown(array $filter)
+    {
+        $query = User::where('activity_scope', 'delivery_level');
+        if (isset($filter['search'])) {
+            $search = $filter['search'];
+            $query->where(function ($query) use ($search) {
+                $query->where('first_name', 'like', '%' . $search . '%');
+                $query->orWhere('last_name', 'like', '%' . $search . '%');
+            });
+        }
+        return $query->get();
+    }
 }

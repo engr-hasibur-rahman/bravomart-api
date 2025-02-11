@@ -46,6 +46,8 @@ interface DeliverymanManageInterface
 
     public function deliverymanOrderHistory();
 
+    public function deliverymanListDropdown(array $filter);
+
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 
     public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames);

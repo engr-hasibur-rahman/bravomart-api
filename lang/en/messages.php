@@ -87,13 +87,16 @@ return [
     'deliveryman_order_request_success' => 'Order request accepted successfully!',
     'deliveryman_order_request_ignore_successful' => 'Order request ignored successfully!',
     'deliveryman_order_already_taken' => 'This order has been already confirmed by other deliveryman!',
+    'deliveryman_assign_successful' => 'Deliveryman assigned successfully!',
+    'deliveryman_assign_failed' => 'Deliveryman assign failed!',
 
     'customer_product_query_submitted_successful' => 'Your query has been submitted successfully!',
     'customer_product_query_submitted_failed' => 'Your query submission failed!',
 
     'reply_success' => 'Replied successfully!',
 
-
+    'order_cancel_successful' => 'Order cancelled successfully!',
+    'order_cancel_failed' => 'Order cancellation failed!',
 
 
 ];
