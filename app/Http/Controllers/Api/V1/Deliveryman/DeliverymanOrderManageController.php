@@ -15,6 +15,7 @@ class DeliverymanOrderManageController extends Controller
     {
 
     }
+
     public function getMyOrders()
     {
         if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
@@ -42,6 +43,9 @@ class DeliverymanOrderManageController extends Controller
             unauthorized_response();
         }
         $order_requests = $this->deliverymanRepo->orderRequests();
+        if (!$order_requests) {
+            return [];
+        }
         if ($order_requests->isEmpty()) {
             return [];
         }

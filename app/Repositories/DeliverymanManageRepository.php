@@ -6,6 +6,7 @@ use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
 use App\Models\Order;
 use App\Models\OrderDeliveryHistory;
+use App\Models\SystemCommission;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\VehicleType;
@@ -446,6 +447,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function orderRequests()
     {
+        $system_commission = SystemCommission::first();
+        if (optional($system_commission)->order_confirmation_by === 'store') {
+            return false;
+        }
         $deliveryman = auth('api')->user();
         $order_requests = Order::with('orderDeliveryHistory')
             ->whereNull('confirmed_by')
