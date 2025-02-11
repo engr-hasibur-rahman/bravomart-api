@@ -16,7 +16,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    protected $appends = ['rating'];
+    protected $appends = ['rating','review_count'];
     protected $fillable = [
         'first_name',
         'last_name',
@@ -108,6 +108,13 @@ class User extends Authenticatable
             ->where('status', 'approved')
             ->avg('rating');
         return $averageRating;
+    }
+    public function getReviewCountAttribute()
+    {
+        return $this->reviews()
+            ->where('reviewable_type', User::class)
+            ->where('status', 'approved')
+            ->count();
     }
 
 }

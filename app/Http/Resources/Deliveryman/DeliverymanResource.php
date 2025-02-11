@@ -19,7 +19,8 @@ class DeliverymanResource extends JsonResource
             "name" => $this->first_name . ' ' . $this->last_name,
             "phone" => $this->phone,
             "email" => $this->email,
-            'rating' => number_format((float) $this->rating, 2, '.', ''),
+            'rating' => number_format((float)$this->rating, 2, '.', ''),
+            'review_count' => $this->review_count
         ];
     }
 }
