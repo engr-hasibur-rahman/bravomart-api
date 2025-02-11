@@ -20,7 +20,7 @@ class AdminReviewManageController extends Controller
     {
         $filters = [
             "min_rating" => $request->min_rating,
-            "max_rating" => $request->min_rating,
+            "max_rating" => $request->max_rating,
             "reviewable_type" => $request->reviewable_type,
             "customer_name" => $request->customer_name,
             "rating" => $request->rating,
