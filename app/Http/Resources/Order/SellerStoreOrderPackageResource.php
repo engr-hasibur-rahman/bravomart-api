@@ -36,6 +36,7 @@ class SellerStoreOrderPackageResource extends JsonResource
             'additional_charge' => $this->additional_charge,
             'additional_charge_commission' => $this->additional_charge_commission,
             'is_reviewed' => $this->is_reviewed,
+            'payment_status' => $this->order->payment_status ?? null,
             'status' => $this->status,
             'customer' => new CustomerResource($this->order->customer),
             'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetails')),
