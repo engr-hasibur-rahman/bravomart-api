@@ -84,20 +84,27 @@ class CustomerOrderController extends Controller
                 'message' => __('messages.order_already_delivered')
             ], 422);
         }
-        $success = $order->update([
-            'cancelled_by' => auth('api_customer')->user()->id,
-            'cancelled_at' => Carbon::now(),
-            'status' => 'cancelled'
-        ]);
-        if ($success) {
-            return response()->json([
-                'message' => __('messages.order_cancel_successful')
-            ], 200);
+        if ($order->status === 'pending') {
+            $success = $order->update([
+                'cancelled_by' => auth('api_customer')->user()->id,
+                'cancelled_at' => Carbon::now(),
+                'status' => 'cancelled'
+            ]);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.order_cancel_successful')
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.order_cancel_failed')
+                ], 500);
+            }
         } else {
             return response()->json([
-                'message' => __('messages.order_cancel_failed')
-            ], 500);
+                'message' => __('messages.order_status_not_changeable')
+            ],422);
         }
+
     }
 
     public function checkCoupon(Request $request)
