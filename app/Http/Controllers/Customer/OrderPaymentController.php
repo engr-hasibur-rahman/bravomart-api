@@ -55,7 +55,7 @@ class OrderPaymentController extends Controller
         }
 
         // Find the order
-        $order = Order::where('order_id', $request->order_id)->first();
+        $order = Order::where('id', $request->order_id)->first();
 
         // Check if the subscription history exists
         if (empty($order)) {
