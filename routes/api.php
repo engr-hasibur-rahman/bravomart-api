@@ -115,4 +115,6 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::post('/calculate-delivery-charge', [DeliveryChargeCalculateController::class, 'calculateDeliveryCharge']);
     Route::post('/store-tax-info', [TaxInfoController::class, 'storeTaxInformation']);
     Route::get('/other-charge-info', [OtherChargeInfoController::class, 'otherChargeInformation']);
+    Route::post('/checkout-info', [OtherChargeInfoController::class, 'getCheckoutInfo']);
+
 });
