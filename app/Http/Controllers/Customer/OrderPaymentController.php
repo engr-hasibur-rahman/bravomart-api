@@ -14,7 +14,7 @@ class OrderPaymentController extends Controller
     public function orderPaymentStatusUpdate(Request $request)
     {
         // Check if the user is authenticated
-        $user = Auth::guard('sanctum')->user();
+        $user = Auth::guard('api_customer')->user();
         if (!$user) {
             return response()->json([
                 'success' => false,
