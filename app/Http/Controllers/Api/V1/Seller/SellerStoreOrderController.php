@@ -23,7 +23,7 @@ class SellerStoreOrderController extends Controller
     public function allOrders(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'store_id' => 'required|exists:stores,id',
+            'store_id' => 'nullable|exists:stores,id',
             'package_id' => 'nullable|exists:order_packages,id',
         ]);
         if ($validator->fails()) {
@@ -40,26 +40,33 @@ class SellerStoreOrderController extends Controller
             }
             return response()->json(new SellerStoreOrderPackageResource($order_package_details));
         }
-        $store = Store::where('id', $request->store_id)
-            ->where('store_seller_id', auth('api')->user()->id)
-            ->first();
+        if (isset($request->store_id)){
+            $store = Store::where('id', $request->store_id)
+                ->where('store_seller_id', auth('api')->user()->id)
+                ->first();
 
-        // auth seller store check
-        if (empty($store) || !$store) {
+            // auth seller store check
+            if (empty($store) || !$store) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Store not found',
+                ], 404);
+            }
+
+            // get store wise order info
+            $order_packages = OrderPackage::with(['order.customer', 'orderDetails', 'order.orderPayment'])->where('store_id', $request->store_id)
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+
             return response()->json([
-                'success' => false,
-                'message' => 'Store not found',
-            ], 404);
+                'order_packages' => SellerStoreOrderPackageResource::collection($order_packages),
+                'meta' => new PaginationResource($order_packages)
+            ]);
+        } else {
+            return response()->json([
+                'messages' => __('messages.data_not_found'),
+            ],404);
         }
 
-        // get store wise order info
-        $order_packages = OrderPackage::with(['order.customer', 'orderDetails', 'order.orderPayment'])->where('store_id', $request->store_id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return response()->json([
-            'order_packages' => SellerStoreOrderPackageResource::collection($order_packages),
-            'meta' => new PaginationResource($order_packages)
-        ]);
     }
 }
