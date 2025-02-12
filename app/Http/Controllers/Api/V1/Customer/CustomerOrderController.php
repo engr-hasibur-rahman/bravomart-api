@@ -77,6 +77,11 @@ class CustomerOrderController extends Controller
                 'message' => __('messages.order_already_cancelled')
             ], 422);
         }
+        if ($order->status === 'delivered'){
+            return response()->json([
+                'message' => __('messages.order_already_delivered')
+            ],422);
+        }
         $success = $order->update([
             'cancelled_by' => auth('api_customer')->user()->id,
             'cancelled_at' => Carbon::now(),

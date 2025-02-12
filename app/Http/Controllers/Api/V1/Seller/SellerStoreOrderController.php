@@ -22,19 +22,24 @@ class SellerStoreOrderController extends Controller
 {
     public function allOrders(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'store_id' => 'required|exists:stores,id',
+            'package_id' => 'nullable|exists:order_packages,id',
         ]);
-
-        // Check for validation failure
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors(),
-            ], 422);
+            return response()->json($validator->errors(), 422);
         }
-
+        if ($request->package_id) {
+            $order_package_details = OrderPackage::with(['order.customer', 'orderDetails', 'order.orderPayment'])
+                ->where('id', $request->package_id)
+                ->first();
+            if (!$order_package_details) {
+                return response()->json([
+                    'message' => __('message.data_not_found'),
+                ], 404);
+            }
+            return response()->json(new SellerStoreOrderPackageResource($order_package_details));
+        }
         $store = Store::where('id', $request->store_id)
             ->where('store_seller_id', auth('api')->user()->id)
             ->first();
@@ -52,17 +57,8 @@ class SellerStoreOrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        $firstOrderPackage = $order_packages->first();
-
         return response()->json([
-            'order' => $firstOrderPackage ? new SellerStoreOrderResource($firstOrderPackage) : null,
             'order_packages' => SellerStoreOrderPackageResource::collection($order_packages),
-            'customer' => $firstOrderPackage && $firstOrderPackage->order
-                ? new CustomerResource($firstOrderPackage->order->customer)
-                : null,
-            'order_payment' => $firstOrderPackage && $firstOrderPackage->order
-                ? new SellerStoreOrderPaymentResource($firstOrderPackage->order->orderPayment)
-                : null,
             'meta' => new PaginationResource($order_packages)
         ]);
     }
