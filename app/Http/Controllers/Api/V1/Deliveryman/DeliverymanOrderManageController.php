@@ -23,10 +23,13 @@ class DeliverymanOrderManageController extends Controller
         }
         $orders = $this->deliverymanRepo->deliverymanOrders();
         if ($orders->isEmpty()) {
-            return [];
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ], 404);
         }
         if ($orders) {
             return response()->json([
+                'message' => __('messages.data_found'),
                 'data' => DeliverymanMyOrdersResource::collection($orders),
                 'meta' => new PaginationResource($orders)
             ], 200);
@@ -51,6 +54,7 @@ class DeliverymanOrderManageController extends Controller
         }
         if ($order_requests) {
             return response()->json([
+                'message' => __('messages.data_found'),
                 'data' => DeliverymanMyOrdersResource::collection($order_requests),
                 'meta' => new PaginationResource($order_requests)
             ], 200);
@@ -103,7 +107,6 @@ class DeliverymanOrderManageController extends Controller
 
         if ($order_histories === 'unauthorized') {
             return response()->json([
-                'status' => false,
                 'message' => 'Unauthorized access. Please log in.',
             ], 401);
         }
@@ -115,6 +118,7 @@ class DeliverymanOrderManageController extends Controller
         }
 
         return response()->json([
+            'message' => __('messages.data_found'),
             'data' => DeliverymanMyOrdersResource::collection($order_histories),
             'meta' => new PaginationResource($order_histories)
         ], 200);

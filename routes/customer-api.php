@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerBlogController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerOrderController;
 use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
@@ -32,6 +33,9 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::get('/change-activity-notification-status', [CustomerManageController::class, 'activityNotificationToggle']);
             Route::get('/change-marketing-email-status', [CustomerManageController::class, 'marketingEmailToggle']);
             Route::get('/delete', [CustomerManageController::class, 'deleteAccount']);
+        });
+        Route::group(['prefix' => 'blog/'], function () {
+            Route::post('comment', [CustomerBlogController::class, 'comment']);
         });
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
