@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Customer\CustomerResource;
+use App\Http\Resources\Deliveryman\DeliverymanResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -32,6 +33,7 @@ class CustomerOrderResource extends JsonResource
             'shipping_charge' => $this->shipping_charge,
             'additional_charge_name' => $this->additional_charge_name,
             'additional_charge' => $this->additional_charge,
+            'confirmed_by' => $this->confirmed_by,
             'confirmed_at' => $this->confirmed_at,
             'cancel_request_at' => $this->cancel_request_at,
             'cancelled_at' => $this->cancelled_at,
@@ -40,6 +42,7 @@ class CustomerOrderResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_packages' => CustomerOrderPackageResource::collection($this->whenLoaded('orderPackages')),
             'order_payment' => new CustomerOrderPaymentResource($this->whenLoaded('orderPayment')),
         ];

@@ -18,7 +18,7 @@ class CustomerOrderController extends Controller
     {
         $customer_id = auth()->guard('api_customer')->user()->id;
         $order_id = $request->order_id;
-        $ordersQuery = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment'])
+        $ordersQuery = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment', 'deliveryman'])
             ->where('customer_id', $customer_id);
 
         if ($order_id) {
@@ -79,10 +79,10 @@ class CustomerOrderController extends Controller
                 'message' => __('messages.order_already_cancelled')
             ], 422);
         }
-        if ($order->status === 'delivered'){
+        if ($order->status === 'delivered') {
             return response()->json([
                 'message' => __('messages.order_already_delivered')
-            ],422);
+            ], 422);
         }
         $success = $order->update([
             'cancelled_by' => auth('api_customer')->user()->id,

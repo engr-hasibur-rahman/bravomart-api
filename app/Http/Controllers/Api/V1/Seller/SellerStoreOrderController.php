@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Customer\CustomerResource;
+use App\Http\Resources\Order\InvoiceResource;
 use App\Http\Resources\Order\OrderDetailsResource;
 use App\Http\Resources\Order\OrderPaymentResource;
 use App\Http\Resources\Order\SellerStoreOrderPackageResource;
@@ -67,6 +68,17 @@ class SellerStoreOrderController extends Controller
                 'messages' => __('messages.data_not_found'),
             ],404);
         }
+    }
 
+    public function invoice(Request $request)
+    {
+        $order_package_id = $request->order_id;
+        $order = OrderPackage::with(['customer', 'orderPackages.orderDetails.product', 'orderPayment', 'shippingAddress'])
+            ->where('id', $order_package_id)
+            ->first();
+        if (!$order) {
+            return response()->json(['message' => __('messages.data_not_found')], 404);
+        }
+        return response()->json(new InvoiceResource($order));
     }
 }

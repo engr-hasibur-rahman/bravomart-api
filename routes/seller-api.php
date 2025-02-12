@@ -98,6 +98,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             Route::group(['prefix' => 'orders/'], function () {
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_ORDER_MANAGE->value]], function () {
                     Route::get('{package_id?}', [SellerStoreOrderController::class, 'allOrders']);
+                    Route::get('invoice', [SellerStoreOrderController::class, 'invoice']);
                 });
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
                     Route::get('/returned', [SellerStoreOrderController::class, 'returnedOrders']);
