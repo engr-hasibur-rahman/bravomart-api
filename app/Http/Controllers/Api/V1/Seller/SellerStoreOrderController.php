@@ -20,9 +20,10 @@ use Illuminate\Support\Facades\Validator;
 
 class SellerStoreOrderController extends Controller
 {
-    public function allOrders(Request $request){
+    public function allOrders(Request $request)
+    {
 
-       $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'store_id' => 'required|exists:stores,id',
         ]);
 
@@ -39,7 +40,7 @@ class SellerStoreOrderController extends Controller
             ->first();
 
         // auth seller store check
-        if (empty($store) || !$store){
+        if (empty($store) || !$store) {
             return response()->json([
                 'success' => false,
                 'message' => 'Store not found',
@@ -47,7 +48,7 @@ class SellerStoreOrderController extends Controller
         }
 
         // get store wise order info
-        $order_packages = OrderPackage::with(['order.customer','orderDetails', 'order.orderPayment'])->where('store_id', $request->store_id)
+        $order_packages = OrderPackage::with(['order.customer', 'orderDetails', 'order.orderPayment'])->where('store_id', $request->store_id)
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

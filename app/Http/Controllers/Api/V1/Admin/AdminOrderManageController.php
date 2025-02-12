@@ -15,7 +15,6 @@ class AdminOrderManageController extends Controller
 {
     public function allOrders(Request $request)
     {
-        $store_id = $request->store_id;
         $order_id = $request->order_id;
 
         if ($order_id) {
@@ -32,8 +31,11 @@ class AdminOrderManageController extends Controller
                 ->where('status', 'delivered')
                 ->orderBy('delivery_completed_at', 'desc')
                 ->first();
-            $order->deliveryman->last_delivered_location = $last_delivered_location->shippingAddress->address;
-            $order->deliveryman->total_delivered = $total_delivered;
+            if ($order->deliveryman) {
+                $order->deliveryman->last_delivered_location = optional($last_delivered_location?->shippingAddress)->address ?? 'No address available';
+                $order->deliveryman->total_delivered = $total_delivered ?? 0;
+            }
+
             return response()->json(new AdminOrderResource($order));
         }
         $query = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment']);
