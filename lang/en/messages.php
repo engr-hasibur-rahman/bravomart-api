@@ -99,6 +99,7 @@ return [
     'order_cancel_failed' => 'Order cancellation failed!',
     'order_already_cancelled' => 'Order has been already cancelled!',
     'order_already_delivered' => 'Order has been already delivered!',
+    'order_status_not_changeable' => 'This order status cannot be changed!',
 
 
 ];

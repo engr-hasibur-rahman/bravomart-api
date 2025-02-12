@@ -76,7 +76,6 @@ class AdminOrderManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
-            'status' => 'required|in:pending,active,processing,shipped,delivered,cancelled,on_hold',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -87,17 +86,23 @@ class AdminOrderManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        $success = $order->update([
-            'status' => $request->status
-        ]);
-        if ($success) {
-            return response()->json([
-                'message' => __('messages.update_success', ['name' => 'Order status'])
-            ], 200);
+        if ($order->status == 'pending') {
+            $success = $order->update([
+                'status' => 'active'
+            ]);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.update_success', ['name' => 'Order status'])
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.update_failed', ['name' => 'Order status'])
+                ], 500);
+            }
         } else {
             return response()->json([
-                'message' => __('messages.update_failed', ['name' => 'Order status'])
-            ], 500);
+                'message' => __('messages.order_status_not_changeable')
+            ], 422);
         }
     }
 
