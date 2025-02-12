@@ -98,6 +98,7 @@ return [
     'order_cancel_successful' => 'Order cancelled successfully!',
     'order_cancel_failed' => 'Order cancellation failed!',
     'order_already_cancelled' => 'Order has been already cancelled!',
+    'order_already_delivered' => 'Order has been already delivered!',
 
 
 ];
