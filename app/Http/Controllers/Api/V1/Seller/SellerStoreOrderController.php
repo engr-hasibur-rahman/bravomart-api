@@ -72,13 +72,17 @@ class SellerStoreOrderController extends Controller
 
     public function invoice(Request $request)
     {
-        $order_package_id = $request->order_id;
-        $order = OrderPackage::with(['customer', 'orderPackages.orderDetails.product', 'orderPayment', 'shippingAddress'])
-            ->where('id', $order_package_id)
+        $order_package = OrderPackage::with(['order.customer', 'order.orderPackages.orderDetails.product', 'order.orderPayment', 'order.shippingAddress'])
+            ->where('id', $request->order_package_id)
             ->first();
-        if (!$order) {
+
+        if (!$order_package) {
             return response()->json(['message' => __('messages.data_not_found')], 404);
         }
+
+        $order = $order_package->order;
+        $order->setRelation('orderPackages', collect([$order_package]));
+
         return response()->json(new InvoiceResource($order));
     }
 }
