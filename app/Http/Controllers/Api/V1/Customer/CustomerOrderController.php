@@ -15,22 +15,23 @@ class CustomerOrderController extends Controller
     public function myOrders(Request $request)
     {
         $customer_id = auth()->guard('api_customer')->user()->id;
-
-        // Start the query
+        $order_id = $request->order_id;
         $ordersQuery = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment'])
-            ->where('customer_id', $customer_id)
-            ->orderBy('created_at', 'desc');
+            ->where('customer_id', $customer_id);
 
-        // Apply the status filter if it's present in the request
+        if ($order_id) {
+            $order_details = $ordersQuery->where('id', $order_id)->first();
+            return response()->json(new CustomerOrderResource($order_details), 200);
+        }
+
         $ordersQuery->when($request->status, function ($query) use ($request) {
             $query->where('status', $request->status);
         });
 
-        // Get the paginated results
-        $orders = $ordersQuery->paginate(10);
+        $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate(10);
 
         return response()->json([
-            'orders' => CustomerOrderResource::collection($orders),
+            'data' => CustomerOrderResource::collection($orders),
             'meta' => new PaginationResource($orders)
         ]);
     }

@@ -111,12 +111,12 @@ class DeliverymanOrderManageController extends Controller
         if ($order_histories->isEmpty()) {
             return response()->json([
                 'message' => __('messages.no_order_history_found')
-            ], 404); // No order history found
+            ], 404);
         }
 
         return response()->json([
             'data' => DeliverymanMyOrdersResource::collection($order_histories),
             'meta' => new PaginationResource($order_histories)
-        ], 200); // Return paginated order history
+        ], 200);
     }
 }
