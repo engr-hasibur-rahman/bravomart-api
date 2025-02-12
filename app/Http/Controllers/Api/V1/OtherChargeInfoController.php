@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Helpers\DeliveryChargeHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\OtheChargeInfoResource;
+use App\Http\Resources\Order\StoreTaxInfoResource;
+use App\Models\Store;
 use App\Models\SystemCommission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class OtherChargeInfoController extends Controller
 {
@@ -23,4 +27,48 @@ class OtherChargeInfoController extends Controller
             'tax_info' => new OtheChargeInfoResource($data)
         ]);
     }
+
+    public function getCheckoutInfo(Request $request)
+    {
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), [
+            'area_id' => 'required|integer',
+            'customer_latitude' => 'required|numeric',
+            'customer_longitude' => 'required|numeric',
+            'store_ids' => 'required|array',
+            'store_ids.*' => 'integer|exists:stores,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation Error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Handle delivery charge calculation
+        $areaId = $request->input('area_id');
+        $customerLat = $request->input('customer_latitude');
+        $customerLng = $request->input('customer_longitude');
+        $deliveryCharge = DeliveryChargeHelper::calculateDeliveryCharge($areaId, $customerLat, $customerLng);
+
+        // Handle tax info
+        $storeIds = array_unique($request->input('store_ids'));
+        $taxInfo = Store::whereIn('id', $storeIds)->select('id', 'tax')->get();
+
+        // Handle other charges
+        $otherCharges = SystemCommission::first();
+        $otherChargeInfo = ($otherCharges && $otherCharges->order_additional_charge_enable_disable)
+            ? new OtheChargeInfoResource($otherCharges)
+            : 'no additional charge';
+
+        return response()->json([
+            'success' => true,
+            'delivery_charge' => $deliveryCharge,
+            'tax_info' => StoreTaxInfoResource::collection($taxInfo),
+            'other_charge_info' => $otherChargeInfo
+        ]);
+    }
+
 }

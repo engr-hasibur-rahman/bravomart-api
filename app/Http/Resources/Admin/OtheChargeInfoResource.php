@@ -16,6 +16,7 @@ class OtheChargeInfoResource extends JsonResource
     {
         return [
             'order_include_tax_amount' => $this->order_include_tax_amount ? true : false,
+            'order_additional_charge_enable_disable' => $this->order_additional_charge_enable_disable,
             'order_additional_charge_name' => $this->order_additional_charge_name,
             'order_additional_charge_amount' => $this->order_additional_charge_amount,
         ];
