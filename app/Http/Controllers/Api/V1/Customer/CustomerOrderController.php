@@ -29,9 +29,11 @@ class CustomerOrderController extends Controller
             return response()->json(new CustomerOrderResource($order_details), 200);
         }
 
-        $ordersQuery->when($request->status, function ($query) use ($request) {
-            $query->where('status', $request->status);
-        });
+        $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
+
+        $ordersQuery->when($request->payment_status, fn($query) => $query->where('payment_status', $request->payment_status));
+
+        $ordersQuery->when($request->search, fn($query) => $query->where('id', 'like', '%' . $request->search . '%'));
 
         $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate(10);
 
