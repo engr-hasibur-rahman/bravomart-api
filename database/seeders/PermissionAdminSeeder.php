@@ -662,7 +662,7 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_BLOG_POSTS->value,
+                                    'PermissionName' => PermissionKey::ADMIN_BLOG_MANAGE->value,
                                     'PermissionTitle' => 'Posts',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',

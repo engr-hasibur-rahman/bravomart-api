@@ -34,6 +34,7 @@ class AdminOrderResource extends JsonResource
             'flash_discount_amount_admin' => $this->flash_discount_amount_admin,
             'shipping_charge' => $this->shipping_charge,
             'additional_charge' => $this->additional_charge,
+            'confirmed_by' => $this->confirmed_by,
             'confirmed_at' => $this->confirmed_at,
             'cancel_request_at' => $this->cancel_request_at,
             'cancelled_at' => $this->cancelled_at,

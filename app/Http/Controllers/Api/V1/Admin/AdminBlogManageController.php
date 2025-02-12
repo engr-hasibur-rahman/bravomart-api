@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Blog;
+namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
@@ -13,10 +13,9 @@ use App\Models\BlogCategory;
 use App\Models\BlogComment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class BlogManageController extends Controller
+class AdminBlogManageController extends Controller
 {
     public function __construct(protected BlogManageInterface $blogRepo)
     {
@@ -131,6 +130,7 @@ class BlogManageController extends Controller
     public function blogStore(BlogRequest $request): JsonResponse
     {
         $request['slug'] = MultilangSlug::makeSlug(Blog::class, $request->title, 'slug');
+        $request['admin_id'] = auth('api')->user()->id;
         try {
             $blog = $this->blogRepo->store($request->all(), Blog::class);
             $this->blogRepo->storeTranslation($request, $blog, 'App\Models\Blog', $this->blogRepo->translationKeysForBlog());
@@ -204,25 +204,4 @@ class BlogManageController extends Controller
         return response()->json(BlogCategoryListResource::collection($category));
     }
     /* <---------------------------------------------------Blog end-----------------------------------------------------> */
-    /* <---------------------------------------------------Comment start-----------------------------------------------------> */
-    public function comment(CommentRequest $request)
-    {
-        try {
-            if (!auth()->guard('api')->check()) {
-                return unauthorized_response();
-            } else {
-                $userId = auth('api')->id();
-                $request['user_id'] = $userId;
-                BlogComment::create($request->all());
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 201,
-                    'message' => __('messages.save_success', ['name' => 'Comment']),
-                ]);
-            }
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
-    /* <---------------------------------------------------Comment end-----------------------------------------------------> */
 }

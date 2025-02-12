@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerBlogController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerOrderController;
 use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
@@ -33,6 +34,9 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::get('/change-marketing-email-status', [CustomerManageController::class, 'marketingEmailToggle']);
             Route::get('/delete', [CustomerManageController::class, 'deleteAccount']);
         });
+        Route::group(['prefix' => 'blog/'], function () {
+            Route::post('comment', [CustomerBlogController::class, 'comment']);
+        });
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
             Route::post('update', [CustomerAddressManageController::class, 'update']);
@@ -57,9 +61,10 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         });
         // order manage
         Route::group(['prefix' => 'orders/'], function () {
-            Route::get('list', [CustomerOrderController::class, 'myOrders']);
-            Route::get('details/{id}', [CustomerOrderController::class, 'OrderDetails']);
+            Route::get('invoice', [CustomerOrderController::class, 'invoice']);
+            Route::post('cancel-order', [CustomerOrderController::class, 'cancelOrder']);
             Route::get('check-coupon', [CustomerOrderController::class, 'checkCoupon']);
+            Route::get('{order_id?}', [CustomerOrderController::class, 'myOrders']);
         });
         Route::group(['prefix' => 'review/'], function () {
             Route::get('/', [CustomerReviewManageController::class, 'index']);

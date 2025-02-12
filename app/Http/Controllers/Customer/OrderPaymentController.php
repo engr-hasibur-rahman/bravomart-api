@@ -14,7 +14,7 @@ class OrderPaymentController extends Controller
     public function orderPaymentStatusUpdate(Request $request)
     {
         // Check if the user is authenticated
-        $user = Auth::guard('sanctum')->user();
+        $user = Auth::guard('api_customer')->user();
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -55,7 +55,7 @@ class OrderPaymentController extends Controller
         }
 
         // Find the order
-        $order = Order::where('order_id', $request->order_id)->first();
+        $order = Order::where('id', $request->order_id)->first();
 
         // Check if the subscription history exists
         if (empty($order)) {

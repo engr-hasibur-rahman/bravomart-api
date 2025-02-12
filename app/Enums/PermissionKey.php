@@ -192,6 +192,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_BLOG_CATEGORY = '/admin/blog/category';
     case ADMIN_BLOG_POSTS = '/admin/blog/posts';
+    case ADMIN_BLOG_MANAGE = '/admin/blog';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Support Tickets Management                                                        //

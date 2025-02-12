@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api\V1\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\CustomerOrderResource;
+use App\Http\Resources\Order\InvoiceResource;
 use App\Models\CouponLine;
 use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,45 +17,94 @@ class CustomerOrderController extends Controller
     public function myOrders(Request $request)
     {
         $customer_id = auth()->guard('api_customer')->user()->id;
+        $order_id = $request->order_id;
+        $ordersQuery = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment', 'deliveryman'])
+            ->where('customer_id', $customer_id);
 
-        // Start the query
-        $ordersQuery = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment'])
-            ->where('customer_id', $customer_id)
-            ->orderBy('created_at', 'desc');
+        if ($order_id) {
+            $order_details = $ordersQuery->where('id', $order_id)->first();
+            if (!$order_details) {
+                return response()->json(['message' => 'Order not found'], 404);
+            }
+            return response()->json(new CustomerOrderResource($order_details), 200);
+        }
 
-        // Apply the status filter if it's present in the request
-        $ordersQuery->when($request->status, function ($query) use ($request) {
-            $query->where('status', $request->status);
-        });
+        $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 
-        // Get the paginated results
-        $orders = $ordersQuery->paginate(10);
+        $ordersQuery->when($request->payment_status, fn($query) => $query->where('payment_status', $request->payment_status));
+
+        $ordersQuery->when($request->search, fn($query) => $query->where('id', 'like', '%' . $request->search . '%'));
+
+        $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate(10);
 
         return response()->json([
-            'orders' => CustomerOrderResource::collection($orders),
+            'message' => __('messages.data_found'),
+            'data' => CustomerOrderResource::collection($orders),
             'meta' => new PaginationResource($orders)
         ]);
     }
 
-    public function OrderDetails($id = null)
+    public function invoice(Request $request)
     {
-        $customer_id = auth()->guard('api_customer')->user()->id;
+        $order_id = $request->order_id;
+        $order = Order::with(['orderPackages.orderDetails.product', 'orderPayment', 'shippingAddress'])
+            ->where('id', $order_id)
+            ->where('customer_id', auth('api_customer')->user()->id)
+            ->first();
+        if (!$order) {
+            return response()->json(['message' => __('messages.data_not_found')], 404);
+        }
+        return response()->json(new InvoiceResource($order));
+    }
 
-        $order = Order::with(['orderPayment', 'orderPackages', 'orderDetails'])
-            ->where('id', $id)
-            ->where('customer_id', $customer_id)
-            ->orderBy('created_at', 'desc')
+    public function cancelOrder(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required|exists:orders,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $order = Order::where('id', $request->order_id)
+            ->where('customer_id', auth('api_customer')->user()->id)
             ->first();
 
         if (!$order) {
             return response()->json([
-                'error' => 'Order not found or you do not have access to it'
+                'message' => __('messages.data_not_found')
             ], 404);
         }
+        if ($order->cancelled_by !== null || $order->cancelled_at !== null || $order->status === 'cancelled') {
+            return response()->json([
+                'message' => __('messages.order_already_cancelled')
+            ], 422);
+        }
+        if ($order->status === 'delivered') {
+            return response()->json([
+                'message' => __('messages.order_already_delivered')
+            ], 422);
+        }
+        if ($order->status === 'pending') {
+            $success = $order->update([
+                'cancelled_by' => auth('api_customer')->user()->id,
+                'cancelled_at' => Carbon::now(),
+                'status' => 'cancelled'
+            ]);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.order_cancel_successful')
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.order_cancel_failed')
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'message' => __('messages.order_status_not_changeable')
+            ],422);
+        }
 
-        return response()->json([
-            'orderDetails' => $order
-        ]);
     }
 
     public function checkCoupon(Request $request)

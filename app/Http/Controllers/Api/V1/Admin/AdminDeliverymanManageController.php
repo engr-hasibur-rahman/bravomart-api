@@ -11,8 +11,9 @@ use App\Http\Resources\Admin\AdminVehicleDetailsResource;
 use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Deliveryman\DeliverymanDropdownResource;
 use App\Interfaces\DeliverymanManageInterface;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class AdminDeliverymanManageController extends Controller
@@ -242,5 +243,21 @@ class AdminDeliverymanManageController extends Controller
         } else {
             return $this->failed(__('messages.update_failed', ['name' => 'Vehicle type status']));
         }
+    }
+
+    public function deliverymanDropdownList(Request $request)
+    {
+        $filter = [
+            'search' => $request->search,
+        ];
+        $deliverymen = $this->deliverymanRepo->deliverymanListDropdown($filter);
+        if ($deliverymen->isEmpty()) {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ], 404);
+        }
+        return response()->json([
+            'data' => DeliverymanDropdownResource::collection($deliverymen)
+        ], 200);
     }
 }

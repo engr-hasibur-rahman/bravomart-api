@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Blog\BlogManageController;
+use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
 use App\Http\Controllers\Api\V1\Com\ComSiteGeneralController;
 use App\Http\Controllers\APi\V1\Com\HeaderFooterController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\TaxInfoController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
 use Illuminate\Support\Facades\Route;
 
 /* Admin Login */
@@ -57,8 +56,7 @@ Route::group(['prefix' => 'v1/'], function () {
         Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
         Route::post('reset-password', [SellerManageController::class, 'resetPassword']);
     });
-    // Blog comment manage
-    Route::post('blog/comment', [BlogManageController::class, 'comment']);
+
     Route::group(['prefix' => 'auth'], function () {
         Route::get('google', [UserController::class, 'redirectToGoogle']);
         Route::get('google/callback', [UserController::class, 'handleGoogleCallback']);

@@ -6,6 +6,7 @@ use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
 use App\Models\Order;
 use App\Models\OrderDeliveryHistory;
+use App\Models\SystemCommission;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\VehicleType;
@@ -446,6 +447,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function orderRequests()
     {
+        $system_commission = SystemCommission::first();
+        if (optional($system_commission)->order_confirmation_by === 'store') {
+            return false;
+        }
         $deliveryman = auth('api')->user();
         $order_requests = Order::with('orderDeliveryHistory')
             ->whereNull('confirmed_by')
@@ -574,5 +579,18 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             $this->translation->insert($translations);
         }
         return true;
+    }
+
+    public function deliverymanListDropdown(array $filter)
+    {
+        $query = User::where('activity_scope', 'delivery_level');
+        if (isset($filter['search'])) {
+            $search = $filter['search'];
+            $query->where(function ($query) use ($search) {
+                $query->where('first_name', 'like', '%' . $search . '%');
+                $query->orWhere('last_name', 'like', '%' . $search . '%');
+            });
+        }
+        return $query->get();
     }
 }

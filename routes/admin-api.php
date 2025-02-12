@@ -25,13 +25,13 @@ use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreTypeManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
+use App\Http\Controllers\Api\V1\Admin\AdminBlogManageController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Admin\WithdrawMethodManageController;
 use App\Http\Controllers\Api\V1\AdminUnitManageController;
-use App\Http\Controllers\Api\V1\Blog\BlogManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
@@ -108,8 +108,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_ALL->value]], function () {
             Route::group(['prefix' => 'orders/'], function () {
                 Route::get('invoice', [AdminOrderManageController::class, 'invoice']);
+                Route::post('change-order-status', [AdminOrderManageController::class, 'changeOrderStatus']);
+                Route::post('change-payment-status', [AdminOrderManageController::class, 'changePaymentStatus']);
+                Route::post('assign-deliveryman', [AdminOrderManageController::class, 'assignDeliveryMan']);
+                Route::post('cancel-order', [AdminOrderManageController::class, 'cancelOrder']);
                 Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value]], function () {
-                    Route::get('/returned', [AdminOrderManageController::class, 'returnedO']);
+                    Route::get('/returned', [AdminOrderManageController::class, 'returned']);
                 });
                 // Dynamic route should be last
                 Route::get('{order_id?}', [AdminOrderManageController::class, 'allOrders']);
@@ -372,26 +376,24 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             Route::delete('remove/{id}', [AdminUnitManageController::class, 'destroy']);
         });
         // Blog manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
-            Route::get('blog/list', [BlogManageController::class, 'blogIndex']);
-        });
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
-            Route::post('blog/add', [BlogManageController::class, 'blogStore']);
-            Route::get('blog/details', [BlogManageController::class, 'blogShow']);
-            Route::post('blog/update', [BlogManageController::class, 'blogUpdate']);
-            Route::delete('blog/remove/{id}', [BlogManageController::class, 'blogDestroy']);
+        Route::group(['prefix' => 'blog/', 'middleware' => ['permission:' . PermissionKey::ADMIN_BLOG_MANAGE->value]], function () {
+            Route::get('list', [AdminBlogManageController::class, 'blogIndex']);
+            Route::post('add', [AdminBlogManageController::class, 'blogStore']);
+            Route::get('details/{id}', [AdminBlogManageController::class, 'blogShow']);
+            Route::post('update', [AdminBlogManageController::class, 'blogUpdate']);
+            Route::delete('remove/{id}', [AdminBlogManageController::class, 'blogDestroy']);
         });
         // Blog category manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
-            Route::get('blog/category/list', [BlogManageController::class, 'blogCategoryIndex']);
+            Route::get('blog/category/list', [AdminBlogManageController::class, 'blogCategoryIndex']);
         });
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
-            Route::get('blog/category/fetch/list', [BlogManageController::class, 'blogCategoryList']);
-            Route::post('blog/category/add', [BlogManageController::class, 'blogCategoryStore']);
-            Route::get('blog/category/details', [BlogManageController::class, 'blogCategoryShow']);
-            Route::post('blog/category/update', [BlogManageController::class, 'blogCategoryUpdate']);
-            Route::post('blog/category/status-change', [BlogManageController::class, 'categoryStatusChange']);
-            Route::delete('blog/category/remove/{id}', [BlogManageController::class, 'blogCategoryDestroy']);
+            Route::get('blog/category/fetch/list', [AdminBlogManageController::class, 'blogCategoryList']);
+            Route::post('blog/category/add', [AdminBlogManageController::class, 'blogCategoryStore']);
+            Route::get('blog/category/details', [AdminBlogManageController::class, 'blogCategoryShow']);
+            Route::post('blog/category/update', [AdminBlogManageController::class, 'blogCategoryUpdate']);
+            Route::post('blog/category/status-change', [AdminBlogManageController::class, 'categoryStatusChange']);
+            Route::delete('blog/category/remove/{id}', [AdminBlogManageController::class, 'blogCategoryDestroy']);
         });
         // Pages manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PAGES_LIST->value]], function () {
@@ -429,6 +431,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             // delivery man manage
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
                 Route::get('list', [AdminDeliverymanManageController::class, 'index']);
+                Route::get('list-dropdown', [AdminDeliverymanManageController::class, 'deliverymanDropdownList']);
                 Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest']);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
