@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlogRequest;
-use App\Http\Requests\CommentRequest;
-use App\Http\Resources\Blog\BlogCategoryListResource;
+use App\Http\Resources\Admin\AdminBlogDetailsResource;
+use App\Http\Resources\Admin\AdminBlogResource;
+use App\Http\Resources\Admin\AdminBlogCategoryListResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\BlogManageInterface;
 use App\Models\Blog;
 use App\Models\BlogCategory;
-use App\Models\BlogComment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -24,7 +25,7 @@ class AdminBlogManageController extends Controller
     /* <---------------------------------------------------Blog category start-----------------------------------------------------> */
     public function blogCategoryIndex(Request $request)
     {
-        return $this->blogRepo->getPaginatedCategory(
+        $blog_categories = $this->blogRepo->getPaginatedCategory(
             $request->limit ?? 10,
             $request->page ?? 1,
             $request->language ?? 'en',
@@ -111,7 +112,7 @@ class AdminBlogManageController extends Controller
     /* <---------------------------------------------------Blog start -----------------------------------------------------> */
     public function blogIndex(Request $request)
     {
-        return $this->blogRepo->getPaginatedBlog(
+        $blogs = $this->blogRepo->getPaginatedBlog(
             $request->limit ?? 10,
             $request->page ?? 1,
             $request->language ?? 'en',
@@ -120,11 +121,25 @@ class AdminBlogManageController extends Controller
             $request->sort ?? 'asc',
             []
         );
+        if ($blogs->isEmpty()) {
+            return [];
+        }
+        return response()->json([
+            'data' => AdminBlogResource::collection($blogs),
+            'meta' => new PaginationResource($blogs)
+        ], 200);
     }
 
     public function blogShow(Request $request)
     {
-        return $this->blogRepo->getBlogById($request->id);
+        $blog = $this->blogRepo->getBlogById($request->id);
+        if ($blog) {
+            return response()->json(new AdminBlogDetailsResource($blog), 200);
+        } else {
+            return response()->json([
+                'message' => __('message.data_not_found')
+            ], 404);
+        }
     }
 
     public function blogStore(BlogRequest $request): JsonResponse
@@ -201,7 +216,7 @@ class AdminBlogManageController extends Controller
     public function blogCategoryList()
     {
         $category = BlogCategory::all();
-        return response()->json(BlogCategoryListResource::collection($category));
+        return response()->json(AdminBlogCategoryListResource::collection($category));
     }
     /* <---------------------------------------------------Blog end-----------------------------------------------------> */
 }

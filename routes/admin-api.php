@@ -382,19 +382,19 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             Route::get('details/{id}', [AdminBlogManageController::class, 'blogShow']);
             Route::post('update', [AdminBlogManageController::class, 'blogUpdate']);
             Route::delete('remove/{id}', [AdminBlogManageController::class, 'blogDestroy']);
+            // Blog category manage
+            Route::group(['prefix' => 'category/', 'middleware' => ['permission:' . PermissionKey::ADMIN_BLOG_CATEGORY_MANAGE->value]], function () {
+                Route::get('list', [AdminBlogManageController::class, 'blogCategoryIndex']);
+                Route::get('fetch/list', [AdminBlogManageController::class, 'blogCategoryList']);
+                Route::post('add', [AdminBlogManageController::class, 'blogCategoryStore']);
+                Route::get('details/{id}', [AdminBlogManageController::class, 'blogCategoryShow']);
+                Route::post('update', [AdminBlogManageController::class, 'blogCategoryUpdate']);
+                Route::post('change-status', [AdminBlogManageController::class, 'categoryStatusChange']);
+                Route::delete('remove/{id}', [AdminBlogManageController::class, 'blogCategoryDestroy']);
+            });
         });
-        // Blog category manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_LIST->value]], function () {
-            Route::get('blog/category/list', [AdminBlogManageController::class, 'blogCategoryIndex']);
-        });
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_AREA_ADD->value]], function () {
-            Route::get('blog/category/fetch/list', [AdminBlogManageController::class, 'blogCategoryList']);
-            Route::post('blog/category/add', [AdminBlogManageController::class, 'blogCategoryStore']);
-            Route::get('blog/category/details', [AdminBlogManageController::class, 'blogCategoryShow']);
-            Route::post('blog/category/update', [AdminBlogManageController::class, 'blogCategoryUpdate']);
-            Route::post('blog/category/status-change', [AdminBlogManageController::class, 'categoryStatusChange']);
-            Route::delete('blog/category/remove/{id}', [AdminBlogManageController::class, 'blogCategoryDestroy']);
-        });
+
+
         // Pages manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PAGES_LIST->value]], function () {
             Route::get('pages/list', [PagesManageController::class, 'pagesIndex']);

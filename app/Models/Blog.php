@@ -50,4 +50,9 @@ class Blog extends Model
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 }

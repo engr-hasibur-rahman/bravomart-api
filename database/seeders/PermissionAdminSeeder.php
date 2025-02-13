@@ -652,10 +652,11 @@ class PermissionAdminSeeder extends Seeder
 
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_BLOG_CATEGORY->value,
+                                    'PermissionName' => PermissionKey::ADMIN_BLOG_CATEGORY_MANAGE->value,
                                     'PermissionTitle' => 'Category',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Category',
                                         'ar' => ' الموظفين'
@@ -666,6 +667,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Posts',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Posts',
                                         'ar' => 'دعامات'
