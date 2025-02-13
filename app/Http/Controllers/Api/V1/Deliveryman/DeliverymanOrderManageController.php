@@ -49,12 +49,12 @@ class DeliverymanOrderManageController extends Controller
         if (!$order_requests) {
             return response()->json([
                 'message' => __('messages.data_not_found'),
-            ],404);
+            ], 404);
         }
         if ($order_requests->isEmpty()) {
             return response()->json([
                 'message' => __('messages.data_not_found'),
-            ],404);
+            ], 404);
         }
         if ($order_requests) {
             return response()->json([
@@ -74,6 +74,7 @@ class DeliverymanOrderManageController extends Controller
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:orders,id',
             'status' => 'required|in:accepted,ignored',
+            'reason' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -84,7 +85,7 @@ class DeliverymanOrderManageController extends Controller
         if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
             unauthorized_response();
         }
-        $success = $this->deliverymanRepo->updateOrderStatus($request->status, $request->id);
+        $success = $this->deliverymanRepo->updateOrderStatus($request->status, $request->id, $request->reason);
 
         if ($success === 'accepted') {
             return response()->json([
@@ -97,6 +98,10 @@ class DeliverymanOrderManageController extends Controller
         } elseif ($success === 'ignored') {
             return response()->json([
                 'message' => __('messages.deliveryman_order_request_ignore_successful')
+            ], 200);
+        } elseif ($success === 'reason is required') {
+            return response()->json([
+                'message' => __('validation.required', ["attribute" => "Reason"])
             ], 200);
         } else {
             return response()->json([
