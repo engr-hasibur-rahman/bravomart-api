@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlogRequest;
+use App\Http\Resources\Admin\AdminBlogCategoryListResource;
+use App\Http\Resources\Admin\AdminBlogCategoryResource;
 use App\Http\Resources\Admin\AdminBlogDetailsResource;
 use App\Http\Resources\Admin\AdminBlogResource;
-use App\Http\Resources\Admin\AdminBlogCategoryListResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\BlogManageInterface;
 use App\Models\Blog;
@@ -34,6 +35,10 @@ class AdminBlogManageController extends Controller
             $request->sort ?? 'asc',
             []
         );
+        return response()->json([
+            'data' => AdminBlogCategoryResource::collection($blog_categories),
+            'meta' => new PaginationResource($blog_categories)
+        ]);
     }
 
     public function blogCategoryStore(Request $request): JsonResponse
@@ -113,7 +118,7 @@ class AdminBlogManageController extends Controller
     public function blogIndex(Request $request)
     {
         $blogs = $this->blogRepo->getPaginatedBlog(
-            $request->limit ?? 10,
+            $request->per_page ?? 10,
             $request->page ?? 1,
             $request->language ?? 'en',
             $request->search ?? "",

@@ -13,7 +13,7 @@ interface BlogManageInterface
     /* <-------------------------------------------- BLOG CATEGORY ONLY ---------------------------------------------------------> */
     /* <-------------------------------------------- BLOG ONLY ---------------------------------------------------------> */
     public function translationKeysForBlog();
-    public function getPaginatedBlog(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters);
+    public function getPaginatedBlog(int|string $per_page, int $page, string $language, string $search, string $sortField, string $sort, array $filters);
     /* <-------------------------------------------- BLOG ONLY ---------------------------------------------------------> */
 
     /* <-------------------------------------------- COMMON ---------------------------------------------------------> */

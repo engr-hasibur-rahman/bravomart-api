@@ -79,4 +79,9 @@ class Order extends Model
         return $this->belongsTo(User::class, 'confirmed_by', 'id');
     }
 
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id', 'id');
+    }
+
 }
