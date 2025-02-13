@@ -652,7 +652,7 @@ class PermissionAdminSeeder extends Seeder
 
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_BLOG_CATEGORY->value,
+                                    'PermissionName' => PermissionKey::ADMIN_BLOG_CATEGORY_MANAGE->value,
                                     'PermissionTitle' => 'Category',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
