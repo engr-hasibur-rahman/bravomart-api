@@ -226,32 +226,23 @@ class AdminBlogManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:blog_categories,id',
-            'status' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => $validator->errors(),
-            ]);
+            return response()->json($validator->errors(), 422);
         }
-        try {
-            $category = BlogCategory::findOrFail($request->id);
-            $category->status = $request->status;
-            $category->save();
-
+        $category = BlogCategory::find($request->id);
+        if ($category) {
+            $category->updateOrFail([
+                'status' => !$category->status
+            ]);
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.update_success', ['name' => 'Blog Category']),
-            ]);
-        } catch (\Exception $e) {
+            ], 200);
+        } else {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage(),
-            ]);
+                'message' => __('messages.data_not_found')
+            ], 404);
         }
     }
 
