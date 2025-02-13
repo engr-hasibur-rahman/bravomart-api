@@ -47,10 +47,14 @@ class DeliverymanOrderManageController extends Controller
         }
         $order_requests = $this->deliverymanRepo->orderRequests();
         if (!$order_requests) {
-            return [];
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ],404);
         }
         if ($order_requests->isEmpty()) {
-            return [];
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ],404);
         }
         if ($order_requests) {
             return response()->json([
