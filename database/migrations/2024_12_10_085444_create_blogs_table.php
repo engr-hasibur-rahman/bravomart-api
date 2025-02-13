@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('image')->nullable();
             $table->integer('views')->default(0);
             $table->enum('visibility', ['public', 'private'])->default('public')->comment('allowed only = private , public');
-            $table->boolean('status')->default(0)->comment('0 = draft, 1 = published');
+            $table->integer('status')->default(0)->comment('0 = draft, 1 = published');
             $table->timestamp('schedule_date')->nullable();
             $table->text('tag_name')->nullable();
             $table->string('meta_title')->nullable();
