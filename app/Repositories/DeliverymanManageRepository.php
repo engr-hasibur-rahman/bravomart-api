@@ -462,7 +462,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         return $order_requests;
     }
 
-    public function updateOrderStatus(string $status, int $order_id)
+    public function updateOrderStatus(string $status, int $order_id, string $reason)
     {
         $deliveryman = auth('api')->user();
 
@@ -480,13 +480,24 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     'confirmed_by' => $deliveryman->id,
                     'confirmed_at' => Carbon::now(),
                 ]);
+                OrderDeliveryHistory::create([
+                    'order_id' => $order_id,
+                    'deliveryman_id' => $deliveryman->id,
+                    'status' => $status,
+                ]);
+            }
+            if ($status === 'ignored') {
+                if (!$reason) {
+                    return 'reason is required';
+                }
+                OrderDeliveryHistory::create([
+                    'order_id' => $order_id,
+                    'deliveryman_id' => $deliveryman->id,
+                    'reason' => $reason,
+                    'status' => $status,
+                ]);
             }
 
-            OrderDeliveryHistory::create([
-                'order_id' => $order_id,
-                'deliveryman_id' => $deliveryman->id,
-                'status' => $status,
-            ]);
 
             DB::commit();
             return $status;
