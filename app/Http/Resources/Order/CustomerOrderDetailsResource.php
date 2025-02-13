@@ -20,7 +20,6 @@ class CustomerOrderDetailsResource extends JsonResource
             'order_id' => $this->order_id,
             'store_id' => $this->store_id,
             'area_id' => $this->area_id,
-            'order_package_id' => $this->order_package_id,
             'product_id' => $this->product_id,
             'product_image_url' => ImageModifier::generateImageUrl($this->product_id),
             'behaviour' => $this->behaviour, // service, digital, consumable, combo

@@ -16,16 +16,18 @@ class PlaceOrderDetailsResource extends JsonResource
     {
         return [
             'order_id' => $this->id,
-            'customer_id' => $this->customer_id,
-            'shipping_address_id' => $this->shipping_address_id,
+            'invoice_number' => $this->invoice_number,
+            'invoice_date' =>  optional($this->invoice_date)->toDateTimeString(),
+            'order_type' => $this->order_type,
+            'delivery_type' => $this->delivery_type,
+            'shipping_type' => $this->shipping_type,
+            'shipping_charge' => $this->shipping_charge,
+            'additional_charge_name' => $this->additional_charge_name,
+            'additional_charge_amount' => $this->additional_charge_amount,
+            'additional_charge_commission' => $this->additional_charge_commission,
             'order_amount' => $this->order_amount,
-            'payment_type' => $this->payment_type,
-            'payment_status' => $this->payment_status,
-            'delivery_status' => $this->delivery_status,
-            'order_notes' => $this->order_notes,
-            'coupon_code' => $this->coupon_code,
+            'status' => $this->status,
             'created_at' => $this->created_at->toDateTimeString(),
-            'order_packages' => OrderPackageResource::collection($this->whenLoaded('orderItems')),
         ];
     }
 }

@@ -13,7 +13,7 @@ use App\Http\Resources\Order\SellerStoreOrderPaymentResource;
 use App\Http\Resources\Order\SellerStoreOrderResource;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use App\Models\OrderPackage;
+use App\Models\OrderMaster;
 use App\Models\OrderPayment;
 use App\Models\Store;
 use Illuminate\Http\Request;
@@ -25,13 +25,13 @@ class SellerStoreOrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'store_id' => 'nullable|exists:stores,id',
-            'package_id' => 'nullable|exists:order_packages,id',
+            'package_id' => 'nullable|exists:order_masters,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
         if ($request->package_id) {
-            $order_package_details = OrderPackage::with(['order.customer', 'orderDetails', 'order.orderPayment'])
+            $order_package_details = OrderMaster::with(['order.customer', 'orderDetails', 'order.orderPayment'])
                 ->where('id', $request->package_id)
                 ->first();
             if (!$order_package_details) {
@@ -55,13 +55,13 @@ class SellerStoreOrderController extends Controller
             }
 
             // get store wise order info
-            $order_packages = OrderPackage::with(['order.customer', 'orderDetails', 'order.orderPayment'])->where('store_id', $request->store_id)
+            $order_masters = OrderMaster::with(['order.customer', 'orderDetails', 'order.orderPayment'])->where('store_id', $request->store_id)
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
             return response()->json([
-                'order_packages' => SellerStoreOrderPackageResource::collection($order_packages),
-                'meta' => new PaginationResource($order_packages)
+                'order_masters' => SellerStoreOrderPackageResource::collection($order_masters),
+                'meta' => new PaginationResource($order_masters)
             ]);
         } else {
             return response()->json([
@@ -72,7 +72,7 @@ class SellerStoreOrderController extends Controller
 
     public function invoice(Request $request)
     {
-        $order_package = OrderPackage::with(['order.customer', 'order.orderPackages.orderDetails.product', 'order.orderPayment', 'order.shippingAddress'])
+        $order_package = OrderMaster::with(['order.customer', 'order.orderMaster.orderDetails.product', 'order.orderPayment', 'order.shippingAddress'])
             ->where('id', $request->order_package_id)
             ->first();
 
@@ -81,7 +81,7 @@ class SellerStoreOrderController extends Controller
         }
 
         $order = $order_package->order;
-        $order->setRelation('orderPackages', collect([$order_package]));
+        $order->setRelation('orderMaster', collect([$order_package]));
 
         return response()->json(new InvoiceResource($order));
     }

@@ -13,24 +13,26 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('customer_id')->nullable();
-            $table->string('shipping_address_id')->nullable();
-            $table->string('payment_gateway')->nullable(); // cod, paypal, stripe, paytm, re-pay
-            $table->string('payment_status')->nullable()->comment('pending , paid, failed');
-            $table->string('order_notes')->nullable();
-            $table->decimal('order_amount')->nullable();
-            $table->string('coupon_code')->nullable();
-            $table->string('coupon_title')->nullable();
-            $table->decimal('coupon_discount_amount_admin')->nullable(); // admin set coupon discount amount
-            $table->decimal('product_discount_amount')->nullable();
-            $table->decimal('flash_discount_amount_admin')->nullable(); // admin set product for offer sell dis.       
-            $table->decimal('shipping_charge')->nullable(); // admin set shipping charge set
-            $table->string('additional_charge_title')->nullable();
-            $table->decimal('additional_charge_amount')->nullable();
-            $table->unsignedBigInteger('confirmed_by')->nullable();
-            $table->timestamp('confirmed_at')->nullable();
+            $table->unsignedBigInteger('order_master_id')->nullable();
+            $table->unsignedBigInteger('store_id')->nullable();
+            $table->unsignedBigInteger('area_id')->nullable();
             $table->string('invoice_number')->unique()->nullable();
             $table->timestamp('invoice_date')->nullable();
+            $table->string('order_type')->nullable()->comment('regular, pos'); // Order Type (Defines the nature of the order: regular, POS, etc.)
+            $table->string('delivery_type')->nullable()->comment('standard_delivery, parcel, takeaway'); // Delivery Type (Defines how the customer will receive the order: home delivery, pickup, etc.)
+            $table->string('shipping_type')->nullable()->comment('standard, express, freight');  // Shipping Type (Defines how the goods are shipped: courier service, standard shipping, etc.)
+            $table->decimal('order_amount')->nullable();
+            $table->decimal('order_amount_store_value')->nullable(); // Amount under this delivery package
+            $table->decimal('order_amount_admin_commission')->nullable(); // Amount under this delivery package
+            $table->decimal('product_discount_amount')->nullable();  // store wise product discount amount
+            $table->decimal('flash_discount_amount_admin')->nullable(); // store wise dis.. discount amount
+            $table->decimal('coupon_discount_amount_admin')->nullable(); // store wise discount amount
+            $table->decimal('shipping_charge')->nullable(); // separate store wise shipping charge amount but total shipping amount in main order table
+            $table->decimal('delivery_charge_admin')->nullable(); // If central Delivery then Value will be here
+            $table->decimal('delivery_charge_admin_commission')->nullable(); // If Store delivery then admin will receive commission
+            $table->boolean('is_reviewed')->nullable(); // customer review for order wise product reviews check
+            $table->unsignedBigInteger('confirmed_by')->nullable();
+            $table->timestamp('confirmed_at')->nullable();
             $table->unsignedBigInteger('cancel_request_by')->nullable();
             $table->timestamp('cancel_request_at')->nullable();
             $table->unsignedBigInteger('cancelled_by')->nullable();
