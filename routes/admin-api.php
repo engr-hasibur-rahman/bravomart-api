@@ -381,6 +381,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             Route::post('add', [AdminBlogManageController::class, 'blogStore']);
             Route::get('details/{id}', [AdminBlogManageController::class, 'blogShow']);
             Route::post('update', [AdminBlogManageController::class, 'blogUpdate']);
+            Route::post('change-status', [AdminBlogManageController::class, 'changeStatus']);
             Route::delete('remove/{id}', [AdminBlogManageController::class, 'blogDestroy']);
             // Blog category manage
             Route::group(['prefix' => 'category/', 'middleware' => ['permission:' . PermissionKey::ADMIN_BLOG_CATEGORY_MANAGE->value]], function () {

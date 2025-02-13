@@ -180,6 +180,35 @@ class AdminBlogManageController extends Controller
         return $this->success(translate('messages.delete_success'));
     }
 
+    public function changeStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:blogs,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        try {
+            $blog = Blog::find($request->id);
+            if (!$blog) {
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ], 404);
+            }
+            $blog->updateOrFail([
+                'status' => !$blog->status
+            ]);
+
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Blog status']),
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Blog status']),
+            ], 500);
+        }
+    }
+
     public function categoryStatusChange(Request $request)
     {
         $validator = Validator::make($request->all(), [
