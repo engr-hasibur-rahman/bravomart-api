@@ -4,6 +4,9 @@ namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Customer\CustomerResource;
 use App\Http\Resources\Deliveryman\DeliverymanResource;
+use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
+use App\Http\Resources\Seller\Store\StoreDetailsResource;
+use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,21 +21,15 @@ class CustomerOrderResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'customer_id' => $this->customer_id,
-            'shipping_address_id' => $this->shipping_address_id,
-            'shipping_time_preferred' => $this->shipping_time_preferred,
-            'delivery_status' => $this->delivery_status,
-            'payment_type' => $this->payment_type,
-            'payment_status' => $this->payment_status,
-            'order_notes' => $this->order_notes,
+            'invoice_number' => $this->invoice_number,
+            'invoice_date' => $this->invoice_date,
+            'order_type' => $this->order_type,
+            'delivery_type' => $this->delivery_type,
+            'shipping_type' => $this->shipping_type,
             'order_amount' => $this->order_amount,
-            'coupon_code' => $this->coupon_code,
-            'coupon_title' => $this->coupon_title,
-            'coupon_disc_amt_store' => $this->coupon_disc_amt_store,
             'product_discount_amount' => $this->product_discount_amount,
             'shipping_charge' => $this->shipping_charge,
-            'additional_charge_name' => $this->additional_charge_name,
-            'additional_charge' => $this->additional_charge,
+            'is_reviewed' => $this->is_reviewed,
             'confirmed_by' => $this->confirmed_by,
             'confirmed_at' => $this->confirmed_at,
             'cancel_request_at' => $this->cancel_request_at,
@@ -42,6 +39,7 @@ class CustomerOrderResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
         ];

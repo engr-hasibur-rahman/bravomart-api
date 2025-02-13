@@ -103,7 +103,7 @@ class BlogManageRepository implements BlogManageInterface
     }
     /* <-------------------------------------------- BLOG CATEGORY MANAGEMENT END ---------------------------------------------------------> */
     /* <-------------------------------------------- BLOG MANAGEMENT START ---------------------------------------------------------> */
-    public function getPaginatedBlog(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedBlog(int|string $per_page, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $blog = Blog::leftJoin('translations as title_translations', function ($join) use ($language) {
             $join->on('blogs.id', '=', 'title_translations.translatable_id')
@@ -155,7 +155,7 @@ class BlogManageRepository implements BlogManageInterface
         return $blog
             ->with('category', 'admin')
             ->orderBy($sortField, $sort)
-            ->paginate($limit);
+            ->paginate($per_page);
 
     }
 
