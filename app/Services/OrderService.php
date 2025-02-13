@@ -12,7 +12,7 @@ use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use App\Models\OrderPackage;
+use App\Models\OrderMaster;
 use App\Models\OrderPayment;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -62,40 +62,27 @@ class OrderService
             }
 
 
-            // Create the order
-            $order = Order::create([
+            // create order master
+        $order_master = OrderMaster::create([
                 'customer_id' => $customer_id,
+                'area_id' => 0, // main zone id
                 'shipping_address_id' => $data['shipping_address_id'],
+                'coupon_code' => $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
+                'coupon_title' => $coupon_data['success'] === false ? null : $data['coupon_title'] ?? null,
+                'coupon_discount_amount_admin' => 0,
+                'product_discount_amount' => 0,
+                'flash_discount_amount_admin' => 0,
+                'shipping_charge' => 0,
+                'additional_charge_name' => null,
+                'additional_charge_amount' => 0,
+                'additional_charge_commission' => 0,
+                'order_amount' => 0,
+                'paid_amount' => 0,
                 'payment_gateway' => $data['payment_gateway'],
                 'payment_status' => 'pending',
                 'order_notes' => $data['order_notes'] ?? null,
-                'coupon_code' => $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
-                'coupon_title' => $coupon_data['success'] === false ? null : $data['coupon_title'] ?? null,
-                'product_discount_amount' => 0,
-                'coupon_discount_amount_admin' => 0,
-                'flash_discount_amount_admin' => 0,
-                'shipping_charge' => 0,
-                'additional_charge_title' => null,
-                'additional_charge_amount' => 0,
-                'order_amount' => 0,
-                'confirmed_by' => null,
-                'confirmed_at' => null,
-                'cancel_request_by' => null,
-                'cancel_request_at' => null,
-                'cancelled_by' => null,
-                'cancelled_at' => null,
-                'delivery_completed_at' => null,
-                'refund_status' => null,
-                'status' => 'pending',
             ]);
 
-            // create order payment info
-            OrderPayment::create([
-                'order_id' => $order->id,
-                'payment_gateway' => $data['payment_gateway'],
-                'payment_status' => 'pending',
-                'paid_amount' => $order->order_amount,
-            ]);
 
 
                $calculate_total_order_amount_base_price = 0; // To accumulate the total price
@@ -159,17 +146,6 @@ class OrderService
             $system_commission = SystemCommission::latest()->first();
             // shipping charge calculate
             $order_shipping_charge = $system_commission->order_shipping_charge;
-            $order_additional_charge_enable = $system_commission->order_additional_charge_enable_disable;
-            $order_additional_charge_name = null;
-            $order_additional_charge_amount = 0;
-            $order_additional_charge_commission = 0;
-
-            // additional charge amount enable disable check
-           if($order_additional_charge_enable === true){
-               $order_additional_charge_name = $system_commission->order_additional_charge_name;
-               $order_additional_charge_amount = $system_commission->order_additional_charge_amount;
-               $order_additional_charge_commission = $system_commission->additional_charge_commission;
-           }
 
             //  packages and details
             $shipping_charge = 0;
@@ -199,48 +175,19 @@ class OrderService
                     $final_shipping_charge = $order_shipping_charge;
                 }
 
-                
-
-                 // Initialize commission variables
-                //  $system_commission_type = null;
-                //  $system_default_delivery_commission_charge = 0.00;
-                //  $admin_commission_amount = 0.00;
-                //  // calculate commission
-                //  if (isset($system_commission) && $system_commission->commission_enabled === true) {
-                //      // Check store type
-                //      if ($product->store) {
-                //          $store_subscription_type = $product->store?->subscription_type;
-                //          // If store is commission-based
-                //          if ($store_subscription_type === 'commission') {
-                //              $system_commission_type = $system_commission->commission_type;
-                //              $system_default_delivery_commission_charge = $system_commission->default_delivery_commission_charge;
-
-                //              // Calculate admin commission based on type
-                //              if ($system_commission_type === 'percentage') {
-                //                  $admin_commission_amount = ($line_total_excluding_tax * $system_default_delivery_commission_charge) / 100.00;
-                //              } elseif ($system_commission_type === 'fixed') {
-                //                  $admin_commission_amount = $system_default_delivery_commission_charge;
-                //              }
-                //          }
-                //      }
-                //  }
-
-                // create order package
-                $package = OrderPackage::create([
-                    'order_id' => $order->id,
+                // create order main order package wise
+                $package = Order::create([
+                    'order_master_id' => $order_master->id,
                     'store_id' => $packageData['store_id'],
                     'area_id' => $store_area_id,
                     'order_type' => 'regular', // if customer order create
                     'delivery_type' => $packageData['delivery_type'],
                     'shipping_type' => $packageData['shipping_type'],
                     'order_amount' => 0,
+                    'coupon_discount_amount_admin' => 0,
                     'product_discount_amount' => 0,
                     'flash_discount_amount_admin' => 0,
-                    'coupon_discount_amount_admin' => 0,
                     'shipping_charge' => $final_shipping_charge,
-                    'additional_charge_name' => $order_additional_charge_name,
-                    'additional_charge' => $order_additional_charge_amount,
-                    'additional_charge_commission' => $order_additional_charge_commission,
                     'is_reviewed' => false,
                     'status' => 'pending',
                 ]);
@@ -370,13 +317,11 @@ class OrderService
                            }
                        }
 
-
                        // create order details
-                     $orderDetails =  OrderDetail::create([
+                        $orderDetails =  OrderDetail::create([
+                           'order_id' => $product->id,
                            'store_id' => $product->store?->id,
                            'area_id' => $product->store?->area_id,
-                           'order_id' => $order->id,
-                           'order_package_id' => $package->id,
                            'product_id' => $product->id,
                            'product_sku' => $variant->sku,
                            'behaviour' => $product->behaviour,
@@ -408,7 +353,6 @@ class OrderService
                            'admin_commission_rate' => $system_commission_amount,
                            'admin_commission_amount' => $admin_commission_amount,
                        ]);
-
 
                        // set order package discount info
                        $order_package_total_amount += $orderDetails->line_total_price;
@@ -444,18 +388,20 @@ class OrderService
 
 
            // main order update all package price wise
-           $order->product_discount_amount = $product_discount_amount;
-           $order->flash_discount_amount_admin = $flash_discount_amount_admin;
-           $order->coupon_discount_amount_admin = $coupon_discount_amount_admin;
-           $order->additional_charge_title = $order_additional_charge_name;
-           $order->additional_charge_amount = $order_additional_charge_amount;
-           $order->shipping_charge = $shipping_charge;
-
-           $order->order_amount = $order_package_total_amount;
-           $order->save();
+            $order_master->product_discount_amount = $product_discount_amount;
+            $order_master->flash_discount_amount_admin = $flash_discount_amount_admin;
+            $order_master->coupon_discount_amount_admin = $coupon_discount_amount_admin;
+            $order_master->shipping_charge = $shipping_charge;
+            $order_master->order_amount = $order_package_total_amount;
+            $order_master->save();
 
             DB::commit();
-            return $order;
+
+            // return all order id
+            $all_orders = Order::where('order_master_id', $order_master->id)->get();
+            $order_master = OrderMaster::find($order_master->id);
+
+            return [$all_orders, $order_master];
 //        } catch (\Exception $e) {
 //            DB::rollBack();
 //            throw $e; // Rethrow exception for proper error handling

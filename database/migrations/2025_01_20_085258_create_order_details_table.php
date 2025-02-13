@@ -15,7 +15,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('area_id')->nullable();
-            $table->unsignedBigInteger('order_package_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
             $table->string('behaviour')->nullable()->comment('service, digital, consumable, combo');
             $table->string('product_sku')->nullable();

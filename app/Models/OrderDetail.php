@@ -10,7 +10,6 @@ class OrderDetail extends Model
         'order_id',
         'store_id',
         'area_id',
-        'order_package_id',
         'product_id',
         'behaviour',
         'product_sku',
@@ -33,11 +32,6 @@ class OrderDetail extends Model
         'admin_commission_amount',
         'coupon_discount_amount',
     ];
-
-    public function order_package()
-    {
-        return $this->belongsTo(OrderPackage::class, 'order_package_id', 'id');
-    }
 
     public function order()
     {

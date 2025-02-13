@@ -38,7 +38,7 @@ class PlaceOrderRequest extends FormRequest
             'product_discount_amount' => 'nullable|numeric|min:0',
             'flash_discount_amount_admin' => 'nullable|numeric|min:0',        
             'shipping_charge' => 'nullable|numeric|min:0',
-            'additional_charge_title' => 'nullable|string',
+            'additional_charge_name' => 'nullable|string',
             'additional_charge_amount' => 'nullable|numeric|min:0',
             // packages
             'packages' => 'required|array',
