@@ -28,4 +28,9 @@ class BlogCategory extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 }
