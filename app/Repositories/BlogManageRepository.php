@@ -2,16 +2,14 @@
 
 namespace App\Repositories;
 
-use App\Http\Resources\Blog\BlogDetailsResource;
-use App\Http\Resources\Blog\BlogListResource;
+use App\Http\Resources\Admin\AdminBlogDetailsResource;
 use App\Interfaces\BlogManageInterface;
 use App\Models\Blog;
 use App\Models\BlogCategory;
-use App\Models\Coupon;
 use App\Models\Translation;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class BlogManageRepository implements BlogManageInterface
 {
@@ -164,42 +162,32 @@ class BlogManageRepository implements BlogManageInterface
     public function getBlogById(int|string $id)
     {
         try {
-            $blog = Blog::find($id);
+            $blog = Blog::with('related_translations')->find($id);
 
             if (!$blog) {
-                return response()->json([
-                    "message" => __('messages.data_not_found')
-                ], 404);
+                return false;
             }
 
-            // Get all translations grouped by language
-            $translations = $blog->translations()->get()->groupBy('language');
+//            // Get all translations grouped by language
+//            $translations = $blog->translations()->get()->groupBy('language');
+//
+//            // Prepare translations data
+//            $transformedData = [];
+//            foreach ($translations as $language => $items) {
+//                $languageInfo = ['language' => $language];
+//
+//                // Iterate all column names to assign language values
+//                foreach ($this->blog->translationKeys as $columnName) {
+//                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
+//                }
+//                $transformedData[] = $languageInfo;
+//            }
 
-            // Prepare translations data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-
-                // Iterate all column names to assign language values
-                foreach ($this->blog->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
-
-            // Return response with BlogDetailsResource and translations
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => new BlogDetailsResource($blog),
-                'translations' => $transformedData
-            ], 200);
+            // Return response with AdminBlogDetailsResource and translations
+            return $blog;
 
         } catch (\Throwable $th) {
-            return response()->json([
-                'error' => $th->getMessage()
-            ], 500);
+            return false;
         }
     }
 
