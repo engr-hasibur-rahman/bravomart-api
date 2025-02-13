@@ -33,8 +33,8 @@ class InvoiceResource extends JsonResource
             'invoice_number' => '#' . $this->invoice_number,
             'invoice_date' => $this->invoice_date ? Carbon::parse($this->invoice_date)->format('d-M-Y') : null,
             'payment_status' => $this->payment_status,
-            'order_amount' => $this->orderPackages->map->order_amount->sum(),
-            'packages' => $this->orderPackages->flatMap(function ($package) {
+            'order_amount' => $this->orderMaster->map->order_amount->sum(),
+            'packages' => $this->orderMaster->flatMap(function ($package) {
                 $subtotal = 0;
                 $tax_rate_sum = 0;
                 $tax_amount_sum = 0;

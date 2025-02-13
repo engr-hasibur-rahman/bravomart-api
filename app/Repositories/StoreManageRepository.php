@@ -11,7 +11,7 @@ use App\Models\Store;
 use App\Models\DeliveryMan;
 use App\Models\Order;
 use App\Models\OrderActivity;
-use App\Models\OrderPackage;
+use App\Models\OrderMaster;
 use App\Models\Product;
 use App\Models\Translation;
 use Illuminate\Support\Facades\Auth;
@@ -423,8 +423,8 @@ class StoreManageRepository implements StoreManageInterface
     private function getStoreWiseOrders(int $storeId)
     {
         if ($storeId) {
-            $totalOrders = OrderPackage::where('store_id', $storeId)->count();
-            $pendingOrders = OrderPackage::where('store_id', $storeId)->where('status', 'pending')->count();
+            $totalOrders = OrderMaster::where('store_id', $storeId)->count();
+            $pendingOrders = OrderMaster::where('store_id', $storeId)->where('status', 'pending')->count();
             return [
                 'totalOrders' => $totalOrders,
                 'pendingOrders' => $pendingOrders,
@@ -437,7 +437,7 @@ class StoreManageRepository implements StoreManageInterface
     private function getStoreWiseRecentOrders(int $storeId)
     {
         if ($storeId) {
-            $recentOrders = OrderPackage::where('store_id', $storeId)->latest()->take(5)->get();
+            $recentOrders = OrderMaster::where('store_id', $storeId)->latest()->take(5)->get();
             return $recentOrders;
         } else {
             return [];

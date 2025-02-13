@@ -45,7 +45,7 @@ class AdminOrderResource extends JsonResource
             'updated_at' => $this->updated_at,
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'customer' => new CustomerResource($this->whenLoaded('customer')),
-            'order_packages' => OrderPackageResource::collection($this->whenLoaded('orderPackages')),
+            'order_masters' => OrderPackageResource::collection($this->whenLoaded('orderMaster')),
             'order_payment' => new OrderPaymentResource($this->whenLoaded('orderPayment')),
         ];
     }

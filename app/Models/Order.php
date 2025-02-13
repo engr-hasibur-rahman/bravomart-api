@@ -7,24 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'customer_id',
-        'shipping_address_id',
-        'payment_gateway',
-        'payment_status',
-        'order_notes',
+        'order_master_id',
+        'store_id',
+        'area_id',
+        'invoice_number',
+        'invoice_date',
+        'order_type',
+        'delivery_type',
+        'shipping_type',
         'order_amount',
-        'coupon_code',
-        'coupon_title',
+        'order_amount_store_value',
+        'order_amount_admin_commission',
         'coupon_discount_amount_admin',
         'product_discount_amount',
         'flash_discount_amount_admin',
         'shipping_charge',
-        'additional_charge_title',
-        'additional_charge_amount',
+        'delivery_charge_admin',
+        'delivery_charge_admin_commission',
+        'is_reviewed',
         'confirmed_by',
         'confirmed_at',
-        'invoice_number',
-        'invoice_date',
         'cancel_request_by',
         'cancel_request_at',
         'cancelled_by',
@@ -34,32 +36,28 @@ class Order extends Model
         'status',
     ];
 
+    public function orderMaster()
+    {
+        return $this->belongsTo(OrderMaster::class, 'order_master_id', 'id');
+    }
+
+
     // This function generates invoice when the order is created
     protected static function booted()
     {
         static::creating(function ($order) {
-            $order->invoice_number = 'INV-' . now()->year . '-' . time();
+            $order->invoice_number = 'INV-' . now()->year . '-' . time() . '-' . rand(1000, 9999);
             $order->invoice_date = now();
         });
     }
 
-    public function orderPackages()
-    {
-        return $this->hasMany(OrderPackage::class, 'order_id', 'id');
-    }
 
-    // Order -> OrderPackage -> OrderDetails (Nested Relationship)
+    // Order -> OrderMaster -> OrderDetails (Nested Relationship)
     public function orderDetails()
     {
-        return $this->hasManyThrough(OrderDetail::class, OrderPackage::class, 'order_id', 'order_package_id', 'id', 'id');
+        return $this->hasManyThrough(OrderDetail::class, Order::class, 'order_master_id', 'order_id', 'id', 'id');
     }
 
-
-    // Order -> OrderPayment (One-to-One relationship)
-    public function orderPayment()
-    {
-        return $this->hasOne(OrderPayment::class, 'order_id', 'id');
-    }
 
     public function customer()
     {

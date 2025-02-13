@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api\V1\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Order\CustomerOrderPackageResource;
 use App\Http\Resources\Order\CustomerOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
+use App\Http\Resources\Order\OrderMasterResource;
 use App\Models\CouponLine;
 use App\Models\Order;
+use App\Models\OrderMaster;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -18,8 +21,8 @@ class CustomerOrderController extends Controller
     {
         $customer_id = auth()->guard('api_customer')->user()->id;
         $order_id = $request->order_id;
-        $ordersQuery = Order::with(['customer', 'orderPackages.orderDetails', 'orderPayment', 'deliveryman'])
-            ->where('customer_id', $customer_id);
+        $order_master_ids =  OrderMaster::where('customer_id', $customer_id)->pluck('id');
+        $ordersQuery = Order::with(['orderMaster','customer', 'orderDetails', 'deliveryman'])->whereIn('order_master_id', $order_master_ids);
 
         if ($order_id) {
             $order_details = $ordersQuery->where('id', $order_id)->first();
@@ -47,7 +50,7 @@ class CustomerOrderController extends Controller
     public function invoice(Request $request)
     {
         $order_id = $request->order_id;
-        $order = Order::with(['orderPackages.orderDetails.product', 'orderPayment', 'shippingAddress'])
+        $order = Order::with(['orderMaster.orderDetails.product', 'orderPayment', 'shippingAddress'])
             ->where('id', $order_id)
             ->where('customer_id', auth('api_customer')->user()->id)
             ->first();
