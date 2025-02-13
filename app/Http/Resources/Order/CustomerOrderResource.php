@@ -20,8 +20,9 @@ class CustomerOrderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'order_id' => $this->id,
             'invoice_number' => $this->invoice_number,
+            'order_date' => $this->created_at,
             'invoice_date' => $this->invoice_date,
             'order_type' => $this->order_type,
             'delivery_type' => $this->delivery_type,
@@ -35,10 +36,8 @@ class CustomerOrderResource extends JsonResource
             'cancel_request_at' => $this->cancel_request_at,
             'cancelled_at' => $this->cancelled_at,
             'delivery_completed_at' => $this->delivery_completed_at,
-            'refund_status' => $this->refund_status,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'refund_status' => $this->refund_status,
             'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
