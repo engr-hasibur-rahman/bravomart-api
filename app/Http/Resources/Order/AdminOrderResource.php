@@ -19,6 +19,7 @@ class AdminOrderResource extends JsonResource
     {
         return [
             'order_id' => $this->id,
+            'store' => $this->store->name ?? null,
             'invoice_number' => $this->invoice_number,
             'order_date' => $this->created_at,
             'invoice_date' => $this->invoice_date,
@@ -37,7 +38,7 @@ class AdminOrderResource extends JsonResource
             'payment_status' => $this->orderMaster->payment_status,
             'status' => $this->status,
             'refund_status' => $this->refund_status,
-            'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
+            'store_details' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
             'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetails')),
