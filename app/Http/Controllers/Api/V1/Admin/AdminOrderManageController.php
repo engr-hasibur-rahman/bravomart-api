@@ -38,21 +38,21 @@ class AdminOrderManageController extends Controller
 
             return response()->json(new AdminOrderResource($order));
         }
-        $query = Order::with(['customer', 'orderMaster.orderDetails', 'orderPayment']);
+        $ordersQuery = Order::with(['customer', 'orderMaster', 'store', 'deliveryman']);
 
-        if (isset($request->status)) {
-            $query->where('status', $request->status);
-        }
+        $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 
-        if (isset($request->payment_status)) {
-            $query->where('payment_status', $request->payment_status);
-        }
+        $ordersQuery->when($request->created_at, fn($query) => $query->where('created_at', $request->created_at));
 
-        if (isset($request->search)) {
-            $query->where('id', 'like', '%' . $request->search . '%');
-        }
+        $ordersQuery->when($request->payment_status, function ($query) use ($request) {
+            $query->whereHas('orderMaster', function ($q) use ($request) {
+                $q->where('payment_status', $request->payment_status);
+            });
+        });
 
-        $orders = $query->orderBy('created_at', 'desc')->paginate(10);
+        $ordersQuery->when($request->search, fn($query) => $query->where('id', 'like', '%' . $request->search . '%'));
+
+        $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate(10);
 
         return response()->json([
             'orders' => AdminOrderResource::collection($orders),
