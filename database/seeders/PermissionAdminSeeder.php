@@ -656,6 +656,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Category',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Category',
                                         'ar' => ' الموظفين'
@@ -666,6 +667,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Posts',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Posts',
                                         'ar' => 'دعامات'

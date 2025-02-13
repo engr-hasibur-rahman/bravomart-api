@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Blog;
+namespace App\Http\Resources\Admin;
 
 use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BlogListResource extends JsonResource
+class AdminBlogListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
