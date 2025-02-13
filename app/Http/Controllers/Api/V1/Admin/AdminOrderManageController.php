@@ -38,11 +38,11 @@ class AdminOrderManageController extends Controller
 
             return response()->json(new AdminOrderResource($order));
         }
-        $ordersQuery = Order::with(['customer', 'orderMaster', 'store', 'deliveryman']);
+        $ordersQuery = Order::with(['customer', 'orderMaster','orderDetails', 'store', 'deliveryman']);
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 
-        $ordersQuery->when($request->created_at, fn($query) => $query->where('created_at', $request->created_at));
+        $ordersQuery->when($request->created_at, fn($query) => $query->whereDate('created_at', $request->created_at));
 
         $ordersQuery->when($request->payment_status, function ($query) use ($request) {
             $query->whereHas('orderMaster', function ($q) use ($request) {
