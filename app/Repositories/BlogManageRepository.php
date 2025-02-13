@@ -72,33 +72,15 @@ class BlogManageRepository implements BlogManageInterface
     public function getCategoryById(int|string $id)
     {
         try {
-            $blogCategory = BlogCategory::find($id);
-            $translations = $blogCategory->translations()->get()->groupBy('language');
-            // Initialize an array to hold the transformed data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->blogCategory->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
+            $blogCategory = BlogCategory::with('related_translations')->find($id);
+
             if ($blogCategory) {
-                return response()->json([
-                    "status" => true,
-                    "status_code" => 201,
-                    "massage" => __('messages.data_found'),
-                    "data" => $blogCategory->toArray(),
-                    'translations' => $transformedData,
-                ], 201);
+                return $blogCategory;
             } else {
-                return response()->json([
-                    "massage" => __('messages.data_not_found')
-                ], 404);
+                return false;
             }
         } catch (\Throwable $th) {
-            throw $th;
+            return false;
         }
     }
     /* <-------------------------------------------- BLOG CATEGORY MANAGEMENT END ---------------------------------------------------------> */

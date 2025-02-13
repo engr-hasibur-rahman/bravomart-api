@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlogRequest;
+use App\Http\Resources\Admin\AdminBlogCategoryDetailsResource;
 use App\Http\Resources\Admin\AdminBlogCategoryListResource;
 use App\Http\Resources\Admin\AdminBlogCategoryResource;
 use App\Http\Resources\Admin\AdminBlogDetailsResource;
@@ -105,7 +106,14 @@ class AdminBlogManageController extends Controller
 
     public function blogCategoryShow(Request $request)
     {
-        return $this->blogRepo->getCategoryById($request->id);
+        $blog_category = $this->blogRepo->getCategoryById($request->id);
+        if ($blog_category) {
+            return response()->json(new AdminBlogCategoryDetailsResource($blog_category));
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
     }
 
     public function blogCategoryDestroy($id)
