@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\OtherChargeInfoController;
 use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\TaxInfoController;
+use App\Http\Controllers\Customer\PlaceOrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,7 @@ Route::post('contact-us', [ContactManageController::class, 'store']);
 
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['prefix' => 'v1/'], function () {
+
     // For customer register and login
     Route::group(['prefix' => 'customer/'], function () {
         Route::post('registration', [CustomerManageController::class, 'register']);
@@ -50,6 +52,7 @@ Route::group(['prefix' => 'v1/'], function () {
         Route::post('verify-token', [CustomerManageController::class, 'verifyToken']);
         Route::post('reset-password', [CustomerManageController::class, 'resetPassword']);
     });
+
     Route::group(['prefix' => 'seller/'], function () {
         // password reset
         Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
@@ -114,5 +117,8 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::post('/store-tax-info', [TaxInfoController::class, 'storeTaxInformation']);
     Route::get('/other-charge-info', [OtherChargeInfoController::class, 'otherChargeInformation']);
     Route::post('/checkout-info', [OtherChargeInfoController::class, 'getCheckoutInfo']);
+
+    // customer place order
+    Route::post('orders/checkout', [PlaceOrderController::class, 'placeOrder']);
 
 });

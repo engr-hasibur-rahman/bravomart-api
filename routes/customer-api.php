@@ -78,8 +78,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         });
     });
 
-    // customer place order
-    Route::post('orders/checkout', [PlaceOrderController::class, 'placeOrder']);
+    // customer place order payment update
     Route::post('orders/payment-status-update', [OrderPaymentController::class, 'orderPaymentStatusUpdate']);
 
     // customer verify email
