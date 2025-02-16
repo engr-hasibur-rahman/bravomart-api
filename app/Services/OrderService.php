@@ -28,6 +28,11 @@ class OrderService
         DB::beginTransaction();
 
 //        try {
+
+         // guest user login
+
+
+
             // Get authenticated customer ID
             $customer = auth()->guard('api_customer')->user();
             $customer_id = $customer->id;
@@ -206,7 +211,7 @@ class OrderService
                     'area_id' => $store_area_id,
                     'order_type' => 'regular', // if customer order create
                     'delivery_type' => $packageData['delivery_type'],
-                    'delivery_option' => $packageData['delivery_option'],
+                    'delivery_option' => 'standard',
                     'delivery_time' => $packageData['delivery_time'],
                     'order_amount' => 0,
                     'coupon_discount_amount_admin' => 0,
