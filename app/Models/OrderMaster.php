@@ -54,5 +54,10 @@ class OrderMaster extends Model
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
+    public function shippingAddress()
+    {
+        return $this->belongsTo(CustomerAddress::class, 'shipping_address_id', 'id');
+    }
+
 
 }

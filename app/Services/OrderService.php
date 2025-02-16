@@ -320,7 +320,7 @@ class OrderService
 
                        // create order details
                         $orderDetails =  OrderDetail::create([
-                           'order_id' => $product->id,
+                           'order_id' => $package->id,
                            'store_id' => $product->store?->id,
                            'area_id' => $product->store?->area_id,
                            'product_id' => $product->id,
