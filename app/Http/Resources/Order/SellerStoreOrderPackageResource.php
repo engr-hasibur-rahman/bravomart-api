@@ -20,6 +20,7 @@ class SellerStoreOrderPackageResource extends JsonResource
         return [
             'order_id' => $this->id,
             'store' => $this->store->name ?? null,
+            'customer_name' => $this->orderMaster->customer->name ?? null,
             'invoice_number' => $this->invoice_number,
             'order_date' => $this->created_at,
             'invoice_date' => $this->invoice_date,
