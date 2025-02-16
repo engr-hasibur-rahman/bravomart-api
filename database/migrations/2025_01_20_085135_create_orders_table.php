@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('invoice_number')->unique()->nullable();
             $table->timestamp('invoice_date')->nullable();
             $table->string('order_type')->nullable()->comment('regular, pos'); // Order Type (Defines the nature of the order: regular, POS, etc.)
-            $table->string('delivery_type')->nullable()->comment('standard_delivery, parcel, takeaway'); // Delivery Type (Defines how the customer will receive the order: home delivery, pickup, etc.)
+            $table->string('delivery_type')->nullable()->comment('home_delivery, parcel, takeaway'); // Delivery Type (Defines how the customer will receive the order: home delivery, pickup, etc.)
             $table->string('delivery_option')->nullable()->comment('standard, express, freight');  // Shipping Type (Defines how the goods are shipped: courier service, standard shipping, etc.)
             $table->string('delivery_time')->nullable();  // 10:00PM - 11:00AM
             $table->decimal('order_amount')->nullable();
