@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Product;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,8 +16,9 @@ class TopRatedProductPublicResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return ['id' => $this->id,
-            'store' => $this->store->name ?? null,
+        return [
+            'id' => $this->id,
+            'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'store_id' => $this->store->id ?? null,
             'name' => $this->name,
             'slug' => $this->slug,
@@ -30,8 +32,8 @@ class TopRatedProductPublicResource extends JsonResource
                 ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
                 : null,
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
-            'rating' => number_format((float) $this->rating, 2, '.', ''),
+            'rating' => number_format((float)$this->rating, 2, '.', ''),
             'review_count' => $this->review_count,
-            ];
+        ];
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Translation\ProductTranslationResource;
+use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -24,7 +25,7 @@ class ProductPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'store' => $this->store->name ?? null,
+            'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'store_id' => $this->store->id ?? null,
             'name' => $this->name,
             'slug' => $this->slug,

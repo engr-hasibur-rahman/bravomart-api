@@ -24,6 +24,7 @@ class StoreDetailsForOrderResource extends JsonResource
             "store_type" => $this->store_type,
             "logo" => ImageModifier::generateImageUrl($this->logo),
             "tax" => $this->tax,
+            "delivery_time" => $this->delivery_time
         ];
     }
 }

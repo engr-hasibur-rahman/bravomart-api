@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Product;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +22,7 @@ class FlashSaleWithProductPublicResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
+            'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             "title" => $translation ? $translation->where('key', 'title')->first()?->value : $this->title,
             "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
             "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
