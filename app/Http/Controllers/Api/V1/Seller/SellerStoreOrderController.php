@@ -25,14 +25,14 @@ class SellerStoreOrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'store_id' => 'nullable|exists:stores,id',
-            'package_id' => 'nullable|exists:order_masters,id',
+            'order_id' => 'nullable|exists:orders,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        if ($request->package_id) {
-            $order_package_details = OrderMaster::with(['order.customer', 'orderDetails', 'order.orderPayment'])
-                ->where('id', $request->package_id)
+        if ($request->order_id) {
+            $order_package_details = Order::with(['orderMaster.customer', 'orderDetails', 'orderMaster', 'store', 'deliveryman','orderMaster.shippingAddress'])
+                ->where('id', $request->order_id)
                 ->first();
             if (!$order_package_details) {
                 return response()->json([
@@ -55,7 +55,7 @@ class SellerStoreOrderController extends Controller
             }
 
             // get store wise order info
-            $order_masters = OrderMaster::with(['order.customer', 'orderDetails', 'order.orderPayment'])->where('store_id', $request->store_id)
+            $order_masters = Order::with(['customer', 'orderMaster', 'orderDetails', 'store', 'deliveryman','orderMaster.shippingAddress'])->where('store_id', $request->store_id)
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
