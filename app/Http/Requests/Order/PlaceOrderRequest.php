@@ -25,9 +25,25 @@ class PlaceOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
+
+            // Guest Checkout Validation
+            'guest_info' => 'nullable|array',
+            'guest_info.guest_order' => 'required_with:guest_info|boolean',
+
+            // Apply validation only if 'guest_order' is true
+            'guest_info.name' => 'required_if:guest_info.guest_order,true|string|max:255',
+            'guest_info.email' => 'required_if:guest_info.guest_order,true|email|max:255|unique:customers,email',
+            'guest_info.phone' => 'required_if:guest_info.guest_order,true|string|regex:/^(\+?\d{1,3})?\d{7,15}$/|unique:customers,phone',
+            'guest_info.password' => 'required_if:guest_info.guest_order,true|string|min:6|max:32',
+
             'customer_latitude' => 'required',
             'customer_longitude' => 'required',
-            'shipping_address_id' => 'required|exists:customer_addresses,id',
+
+            // Shipping Address Validation (required only for logged-in users)
+            'shipping_address_id' => auth('api_customer')->check()
+                ? 'required|exists:customer_addresses,id'
+                : 'nullable|exists:customer_addresses,id',
+
             'shipping_time_preferred' => 'nullable|string|max:255',
             'payment_gateway' => 'required|string|in:paypal,stripe,cash_on_delivery,razorpay,paytm,wallet',
             'order_notes' => 'nullable|string|max:500',

@@ -13,11 +13,14 @@ use App\Models\CustomerAddress;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderMaster;
-use App\Models\OrderPayment;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\SystemCommission;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Modules\Subscription\app\Models\StoreSubscription;
 
 class OrderService
@@ -29,8 +32,47 @@ class OrderService
 
 //        try {
 
-         // guest user login
 
+        $customer = auth()->guard('api_customer')->user();
+
+        // guest registration/login
+        $token_login = null;
+        $customer_info = null;
+        if (!$customer && isset($data['guest_info']['guest_order']) && $data['guest_info']['guest_order'] === true) {
+            $guestData = $data['guest_info'];
+            // Check if email already exists
+            $customer = Customer::where('email', $guestData['email'])->first();
+
+            $fullName = trim($guestData['name']);
+            $nameParts = preg_split('/\s+/', $fullName, -1, PREG_SPLIT_NO_EMPTY);
+            $firstName = $nameParts[0] ?? ''; // First word as first name
+            $lastName = isset($nameParts[1]) ? implode(' ', array_slice($nameParts, 1)) : '';
+
+
+            if (!$customer) {
+                // Register guest as a customer
+                $customer_info = Customer::create([
+                    'first_name' => $firstName,
+                    'last_name'  => $lastName,
+                    'email' => $guestData['email'],
+                    'phone' => $guestData['phone'],
+                    'password' => Hash::make($guestData['password']),
+                ]);
+                // Generate token for guest
+                $token_login = $customer_info->createToken('guest_token')->plainTextToken;
+            }
+
+        }
+
+        // If customer is still null after guest login
+            if (!$customer) {
+                return false;
+            }
+
+            // Check if the user is authenticated
+            if (!auth('api_customer')->check()) {
+                return false;
+            }
 
 
             // Get authenticated customer ID
@@ -437,7 +479,12 @@ class OrderService
             $all_orders = Order::where('order_master_id', $order_master->id)->get();
             $order_master = OrderMaster::find($order_master->id);
 
-            return [$all_orders, $order_master];
+            return [
+                $all_orders,
+                $order_master,
+                'customer' => $customer_info,
+                'token' => $token_login,
+            ];
 //        } catch (\Exception $e) {
 //            DB::rollBack();
 //            throw $e; // Rethrow exception for proper error handling
