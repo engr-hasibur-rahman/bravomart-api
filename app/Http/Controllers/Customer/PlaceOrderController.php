@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\PlaceOrderRequest;
 use App\Http\Resources\Order\OrderMasterResource;
 use App\Http\Resources\Order\PlaceOrderDetailsResource;
+use App\Http\Resources\Order\PlaceOrderMasterResource;
 use App\Models\Order;
 use App\Models\OrderMaster;
 use App\Services\OrderService;
@@ -46,7 +47,7 @@ class PlaceOrderController extends Controller
                     'success' => true,
                     'message' => 'Order placed successfully.',
                     'orders' => PlaceOrderDetailsResource::collection($all_orders),
-                    'order_master' => new OrderMasterResource($order_master),
+                    'order_master' => new PlaceOrderMasterResource($order_master),
                 ]);
             }
             // order wasn't created

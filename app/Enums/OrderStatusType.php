@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Enums;
+
+enum OrderStatusType: string
+{
+    case PENDING = 'pending';
+    case ACTIVE = 'active';
+    case PROCESSING = 'processing';
+    case SHIPPED = 'shipped';
+    case DELIVERED = 'delivered';
+    case CANCELLED = 'cancelled';
+    case ON_HOLD = 'on_hold';
+}
