@@ -27,6 +27,14 @@ class PlaceOrderController extends Controller
         $data = $request->validated();
         $orders = $this->orderService->createOrder($data);
 
+        // if return false
+        if($orders === false){
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to place order. Please try again.',
+            ], 400);
+        }
+
         // response order data
         $all_orders = $orders[0];
         $order_master = $orders[1];

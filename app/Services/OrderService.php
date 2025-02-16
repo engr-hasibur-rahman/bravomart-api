@@ -18,6 +18,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\SystemCommission;
 use Illuminate\Support\Facades\DB;
+use Modules\Subscription\app\Models\StoreSubscription;
 
 class OrderService
 {
@@ -31,9 +32,31 @@ class OrderService
             $customer = auth()->guard('api_customer')->user();
             $customer_id = $customer->id;
 
-           // calculate  base price
-           $basePrice = 0;
+            // calculate  base price
+            $basePrice = 0;
             foreach ($data['packages'] as $packageData) {
+
+                 // if type subscription
+                 $store = Store::find($packageData['store_id']);
+                // subscription check start
+                if ($store->subscription_type === 'subscription'){
+                    // check store subscription package
+                    $store_subscription = StoreSubscription::where('store_id', $store->id)
+                        ->whereDate('expire_date', '>=', now())
+                        ->first();
+                    // if expire subscription
+                    if (empty($store_subscription)){
+                        return false;
+                    }
+                    //  condition
+                    $total_store_order = Order::whereNotIn('status', ['pending', 'cancelled', 'on_hold'])->count();
+                    // check order limit
+                    if (!empty($store_subscription) && $store_subscription->order_limit <= $total_store_order) {
+                        return false;
+                     }
+                 } // subscription check end
+
+
                 foreach ($packageData['items'] as $itemData) {
                     // find the product
                     $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
@@ -46,7 +69,8 @@ class OrderService
                 }
             }
 
-            // calculate order coupon
+
+        // calculate order coupon
             if(isset($data['coupon_code'])){
                 $coupon_data = applyCoupon($data['coupon_code'], $basePrice);
                 if (isset($coupon_data['final_order_amount'])){
