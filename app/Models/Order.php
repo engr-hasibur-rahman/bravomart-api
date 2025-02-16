@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Modules\Subscription\app\Models\StoreSubscription;
 
 class Order extends Model
 {
@@ -36,6 +37,25 @@ class Order extends Model
         'refund_status',
         'status',
     ];
+
+    // Hook into the status update
+    public static function boot()
+    {
+        parent::boot();
+
+        static::updated(function ($order) {
+            // Only proceed if the status was changed to 'delivered' or 'cancelled'
+            if (in_array($order->status, ['delivered', 'cancelled'])) {
+                $storeSubscription = StoreSubscription::where('store_id', $order->store_id)->first();
+                if ($storeSubscription) {
+                    // Decrement order limit
+                    $storeSubscription->order_limit -= 1;
+                    $storeSubscription->save();
+                }
+            }
+        });
+    }
+
 
     public function orderMaster()
     {
