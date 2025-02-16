@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api\V1\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Customer\CustomerResource;
+use App\Http\Resources\Order\AdminOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
 use App\Http\Resources\Order\OrderDetailsResource;
 use App\Http\Resources\Order\OrderPaymentResource;
+use App\Http\Resources\Order\OrderSummaryResource;
 use App\Http\Resources\Order\SellerStoreOrderPackageResource;
 use App\Http\Resources\Order\SellerStoreOrderPaymentResource;
 use App\Http\Resources\Order\SellerStoreOrderResource;
@@ -32,15 +34,20 @@ class SellerStoreOrderController extends Controller
             return response()->json($validator->errors(), 422);
         }
         if ($request->order_id) {
-            $order_package_details = Order::with(['orderMaster.customer', 'orderDetails', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
+            $order = Order::with(['orderMaster.customer', 'orderDetails', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
                 ->where('id', $request->order_id)
                 ->first();
-            if (!$order_package_details) {
+            if (!$order) {
                 return response()->json([
                     'message' => __('message.data_not_found'),
                 ], 404);
             }
-            return response()->json(new SellerStoreOrderPackageResource($order_package_details));
+            return response()->json(
+                [
+                    'order_data' => new AdminOrderResource($order),
+                    'order_summary' => new OrderSummaryResource($order->orderDetails)
+                ],200
+            );
         }
         if (isset($request->store_id)) {
             $store = Store::where('id', $request->store_id)
@@ -73,17 +80,21 @@ class SellerStoreOrderController extends Controller
 
     public function invoice(Request $request)
     {
-        $order_package = OrderMaster::with(['order.customer', 'order.orderMaster.orderDetails.product', 'order.orderPayment', 'order.shippingAddress'])
-            ->where('id', $request->order_package_id)
+        $order = Order::with(['orderMaster.customer', 'orderMaster', 'orderDetails.product', 'orderMaster.shippingAddress'])
+            ->where('id', $request->order_id)
             ->first();
 
-        if (!$order_package) {
+        if (!$order) {
             return response()->json(['message' => __('messages.data_not_found')], 404);
         }
 
-        $order = $order_package->order;
-        $order->setRelation('orderMaster', collect([$order_package]));
-
+        if ($order->orderMaster) {
+            $order->customer = $order->orderMaster->customer;
+            $order->shipping_address = $order->orderMaster->shippingAddress;
+        }
+        if (!$order) {
+            return response()->json(['message' => __('messages.data_not_found')], 404);
+        }
         return response()->json(new InvoiceResource($order));
     }
 

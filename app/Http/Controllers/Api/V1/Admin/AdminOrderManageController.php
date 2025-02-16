@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\AdminOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
+use App\Http\Resources\Order\OrderSummaryResource;
 use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class AdminOrderManageController extends Controller
         $order_id = $request->order_id;
 
         if ($order_id) {
-            $order = Order::with(['orderMaster.customer', 'orderDetails', 'orderMaster', 'store', 'deliveryman','orderMaster.shippingAddress'])
+            $order = Order::with(['orderMaster.customer', 'orderDetails.order', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
                 ->where('id', $order_id)
                 ->first();
             if (!$order) {
@@ -35,10 +36,14 @@ class AdminOrderManageController extends Controller
                 $order->deliveryman->last_delivered_location = optional($last_delivered_location?->shippingAddress)->address ?? 'No address available';
                 $order->deliveryman->total_delivered = $total_delivered ?? 0;
             }
-
-            return response()->json(new AdminOrderResource($order));
+            return response()->json(
+                [
+                    'order_data' => new AdminOrderResource($order),
+                    'order_summary' => new OrderSummaryResource($order->orderDetails)
+                ],200
+            );
         }
-        $ordersQuery = Order::with(['customer', 'orderMaster', 'orderDetails', 'store', 'deliveryman','orderMaster.shippingAddress']);
+        $ordersQuery = Order::with(['customer', 'orderMaster', 'orderDetails', 'store', 'deliveryman', 'orderMaster.shippingAddress']);
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 
@@ -66,7 +71,7 @@ class AdminOrderManageController extends Controller
         $order = Order::with(['orderMaster.customer', 'orderMaster', 'orderDetails.product', 'orderMaster.shippingAddress'])
             ->where('id', $order_id)
             ->first();
-        if ($order->orderMaster){
+        if ($order->orderMaster) {
             $order->customer = $order->orderMaster->customer;
             $order->shipping_address = $order->orderMaster->shippingAddress;
         }

@@ -204,6 +204,12 @@ class OrderService
                     $final_shipping_charge = $order_shipping_charge;
                 }
 
+                // delivery time
+                $delivery_time = null;
+                if(isset($packageData['delivery_time'])){
+                    $delivery_time = $packageData['delivery_time'] ?? null;
+                }
+
                 // create order main order package wise
                 $package = Order::create([
                     'order_master_id' => $order_master->id,
@@ -212,7 +218,7 @@ class OrderService
                     'order_type' => 'regular', // if customer order create
                     'delivery_type' => $packageData['delivery_type'],
                     'delivery_option' => 'standard',
-                    'delivery_time' => $packageData['delivery_time'],
+                    'delivery_time' => $delivery_time,
                     'order_amount' => 0,
                     'coupon_discount_amount_admin' => 0,
                     'product_discount_amount' => 0,
