@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\Customer\CustomerResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,7 @@ class OrderMasterResource extends JsonResource
             'transaction_ref' => $this->transaction_ref,
             'transaction_details' => $this->transaction_details,
             'order_notes' => $this->order_notes,
+            'customer' => new CustomerResource($this->whenLoaded('customer')),
         ];
     }
 }

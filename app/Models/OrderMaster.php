@@ -49,5 +49,10 @@ class OrderMaster extends Model
         return $this->belongsTo(Store::class, 'store_id', 'id');
     }
 
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
+    }
+
 
 }
