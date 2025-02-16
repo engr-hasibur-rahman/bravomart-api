@@ -230,7 +230,7 @@ class OldOrderService
                     'area_id' => $store_area_id,
                     'order_type' => 'regular', // if customer order create
                     'delivery_type' => $packageData['delivery_type'],
-                    'shipping_type' => $packageData['shipping_type'],
+                    'delivery_option' => $packageData['delivery_option'],
                     'order_amount' => 0,
                     'product_discount_amount' => 0,
                     'flash_discount_amount_admin' => 0,
