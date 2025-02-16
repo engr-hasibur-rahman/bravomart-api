@@ -26,6 +26,7 @@ class AdminOrderResource extends JsonResource
             'order_type' => $this->order_type,
             'delivery_type' => $this->delivery_type,
             'delivery_option' => $this->delivery_option,
+            'delivery_time' => $this->delivery_time,
             'order_amount' => $this->order_amount,
             'product_discount_amount' => $this->product_discount_amount,
             'shipping_charge' => $this->shipping_charge,
@@ -42,6 +43,7 @@ class AdminOrderResource extends JsonResource
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
             'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetails')),
+            'order_summary' => OrderSummaryResource::collection($this->whenLoaded('orderDetails')),
         ];
     }
 }
