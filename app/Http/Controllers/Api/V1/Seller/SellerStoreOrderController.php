@@ -16,6 +16,7 @@ use App\Models\OrderDetail;
 use App\Models\OrderMaster;
 use App\Models\OrderPayment;
 use App\Models\Store;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -25,14 +26,14 @@ class SellerStoreOrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'store_id' => 'nullable|exists:stores,id',
-            'package_id' => 'nullable|exists:order_masters,id',
+            'order_id' => 'nullable|exists:orders,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        if ($request->package_id) {
-            $order_package_details = OrderMaster::with(['order.customer', 'orderDetails', 'order.orderPayment'])
-                ->where('id', $request->package_id)
+        if ($request->order_id) {
+            $order_package_details = Order::with(['orderMaster.customer', 'orderDetails', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
+                ->where('id', $request->order_id)
                 ->first();
             if (!$order_package_details) {
                 return response()->json([
@@ -41,7 +42,7 @@ class SellerStoreOrderController extends Controller
             }
             return response()->json(new SellerStoreOrderPackageResource($order_package_details));
         }
-        if (isset($request->store_id)){
+        if (isset($request->store_id)) {
             $store = Store::where('id', $request->store_id)
                 ->where('store_seller_id', auth('api')->user()->id)
                 ->first();
@@ -55,7 +56,7 @@ class SellerStoreOrderController extends Controller
             }
 
             // get store wise order info
-            $order_masters = OrderMaster::with(['order.customer', 'orderDetails', 'order.orderPayment'])->where('store_id', $request->store_id)
+            $order_masters = Order::with(['customer', 'orderMaster', 'orderDetails', 'store', 'deliveryman', 'orderMaster.shippingAddress'])->where('store_id', $request->store_id)
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
@@ -66,7 +67,7 @@ class SellerStoreOrderController extends Controller
         } else {
             return response()->json([
                 'messages' => __('messages.data_not_found'),
-            ],404);
+            ], 404);
         }
     }
 
@@ -84,5 +85,47 @@ class SellerStoreOrderController extends Controller
         $order->setRelation('orderMaster', collect([$order_package]));
 
         return response()->json(new InvoiceResource($order));
+    }
+
+    public function cancelOrder(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required|exists:orders,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $seller_id = auth('api')->user()->id;
+        $seller_stores = Store::where('store_seller_id', $seller_id)->pluck('id');
+        $order = Order::find($request->order_id);
+        if (!$order) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+
+        if (!$seller_stores->contains($order->store_id)) {
+            return response()->json(['message' => 'Order belongs to the seller\'s store.'], 422);
+        }
+        if ($order->status === 'pending') {
+            $success = $order->update([
+                'cancelled_by' => auth('api')->user()->id,
+                'cancelled_at' => Carbon::now(),
+                'status' => 'cancelled'
+            ]);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.order_cancel_successful')
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.order_cancel_failed')
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'message' => __('messages.order_status_not_changeable')
+            ], 422);
+        }
     }
 }
