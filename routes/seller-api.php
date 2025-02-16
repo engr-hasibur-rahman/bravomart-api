@@ -99,7 +99,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_ORDER_MANAGE->value]], function () {
                     Route::get('invoice', [SellerStoreOrderController::class, 'invoice']);
                     Route::get('{order_id?}', [SellerStoreOrderController::class, 'allOrders']);
-
+                    Route::post('cancel-order', [SellerStoreOrderController::class, 'cancelOrder']);
                 });
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
                     Route::get('/returned', [SellerStoreOrderController::class, 'returnedOrders']);
