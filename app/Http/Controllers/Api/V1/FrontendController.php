@@ -562,24 +562,44 @@ class FrontendController extends Controller
     public function flashDeals()
     {
         $flashSaleProducts = $this->flashSaleService->getValidFlashSales();
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => __('messages.data_found'),
-            'data' => FlashSaleWithProductPublicResource::collection($flashSaleProducts)
-        ]);
+        if ($flashSaleProducts->count() > 0) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => FlashSaleWithProductPublicResource::collection($flashSaleProducts)
+            ]);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
     }
-
     public function flashDealProducts(Request $request)
     {
-        $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($request->per_page);
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => __('messages.data_found'),
-            'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
-            'meta' => new PaginationResource($flashSaleProducts)
-        ]);
+        $filters = [
+            "store_id" => $request->store_id,
+            "flash_sale_id" => $request->flash_sale_id,
+            "status" => $request->status,
+            "start_date" => $request->start_date,
+            "end_date" => $request->end_date,
+            "per_page" => $request->per_page,
+        ];
+        $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($filters);
+        if ($flashSaleProducts->count() > 0) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
+                'meta' => new PaginationResource($flashSaleProducts)
+            ]);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ], 404);
+        }
+
     }
 
     public function productList(Request $request)
