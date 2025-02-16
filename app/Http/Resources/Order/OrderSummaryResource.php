@@ -14,12 +14,14 @@ class OrderSummaryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $orderDetails = $this->resource; // Access the full collection
+
         return [
-            'subtotal' => round($this->sum('line_total_price'), 2),
-            'tax_rate_sum' => round($this->sum('tax_rate'), 2),
-            'tax_amount_sum' => round($this->sum('tax_amount'),2),
-            'total_tax_amount_sum' => round($this->sum('total_tax_amount'), 2),
-            'total' => round($this->sum('line_total_price') + $this->sum('total_tax_amount'), 2),
+            'subtotal' => round($orderDetails->sum('line_total_price'), 2),
+            'tax_rate_sum' => round($orderDetails->sum('tax_rate'), 2),
+            'tax_amount_sum' => round($orderDetails->sum('tax_amount'), 2),
+            'total_tax_amount_sum' => round($orderDetails->sum('total_tax_amount'), 2),
+            'total' => round($orderDetails->sum('line_total_price') + $orderDetails->sum('total_tax_amount'), 2),
         ];
     }
 

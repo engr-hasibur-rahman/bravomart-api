@@ -43,7 +43,7 @@ class SellerStoreOrderPackageResource extends JsonResource
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
             'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetails')),
-            'order_summary' => OrderSummaryResource::collection($this->whenLoaded('orderDetails')),
+            'order_summary' => new OrderSummaryResource($this->whenLoaded('orderDetails')),
         ];
     }
 }
