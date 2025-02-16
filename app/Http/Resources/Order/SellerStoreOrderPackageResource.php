@@ -3,6 +3,8 @@
 namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Customer\CustomerResource;
+use App\Http\Resources\Deliveryman\DeliverymanResource;
+use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,31 +18,32 @@ class SellerStoreOrderPackageResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'order_id' => $this->order_id,
-            'store_id' => $this->store_id,
-            'area_id' => $this->area_id,
+            'order_id' => $this->id,
+            'store' => $this->store->name ?? null,
+            'invoice_number' => $this->invoice_number,
+            'order_date' => $this->created_at,
+            'invoice_date' => $this->invoice_date,
             'order_type' => $this->order_type,
             'delivery_type' => $this->delivery_type,
             'delivery_option' => $this->delivery_option,
+            'delivery_time' => $this->delivery_time,
             'order_amount' => $this->order_amount,
-            'order_amount_store_value' => $this->order_amount_store_value,
-            'order_amount_admin_commission' => $this->order_amount_admin_commission,
             'product_discount_amount' => $this->product_discount_amount,
-            'flash_discount_amount_admin' => $this->flash_discount_amount_admin,
-            'coupon_discount_amount_admin' => $this->coupon_discount_amount_admin,
             'shipping_charge' => $this->shipping_charge,
-            'delivery_charge_admin' => $this->delivery_charge_admin,
-            'delivery_charge_admin_commission' => $this->delivery_charge_admin_commission,
-            'additional_charge_name' => $this->additional_charge_name,
-            'additional_charge' => $this->additional_charge,
-            'additional_charge_commission' => $this->additional_charge_commission,
             'is_reviewed' => $this->is_reviewed,
-            'payment_status' => $this->order->payment_status ?? null,
+            'confirmed_by' => $this->confirmed_by,
+            'confirmed_at' => $this->confirmed_at,
+            'cancel_request_at' => $this->cancel_request_at,
+            'cancelled_at' => $this->cancelled_at,
+            'delivery_completed_at' => $this->delivery_completed_at,
+            'payment_status' => $this->orderMaster->payment_status,
             'status' => $this->status,
-            'customer' => new CustomerResource($this->order->customer),
+            'refund_status' => $this->refund_status,
+            'store_details' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
+            'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
+            'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
             'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetails')),
-            'order_payment' => new OrderPaymentResource($this->order->orderPayment),
+            'order_summary' => OrderSummaryResource::collection($this->whenLoaded('orderDetails')),
         ];
     }
 }
