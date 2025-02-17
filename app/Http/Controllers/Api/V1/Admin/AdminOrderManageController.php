@@ -19,7 +19,7 @@ class AdminOrderManageController extends Controller
         $order_id = $request->order_id;
 
         if ($order_id) {
-            $order = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
+            $order = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
                 ->where('id', $order_id)
                 ->first();
             if (!$order) {
