@@ -295,7 +295,6 @@ class AdminDeliverymanManageController extends Controller
             'search' => $request->search,
         ];
         $deliverymen = $this->deliverymanRepo->deliverymanListDropdown($filter);
-        dd($deliverymen);
         if ($deliverymen->isEmpty()) {
             return response()->json([
                 'message' => __('messages.data_not_found'),
