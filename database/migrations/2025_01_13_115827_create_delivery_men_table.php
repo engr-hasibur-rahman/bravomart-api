@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('store_id')->nullable();
-            $table->unsignedBigInteger('vehicle_type_id');
+            $table->unsignedBigInteger('vehicle_type_id')->nullable();
             $table->unsignedBigInteger('area_id')->nullable();
             $table->enum('identification_type', ['nid', 'passport', 'driving_license'])->comment('Type of ID provided');
             $table->string('identification_number')->unique()->comment('Unique identification number');
