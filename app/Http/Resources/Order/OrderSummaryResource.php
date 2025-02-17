@@ -14,20 +14,31 @@ class OrderSummaryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $subtotal = round($this->orderDetail->sum('line_total_price'), 2);
+        $coupon_discount = round($this->orderDetail->sum('coupon_discount_amount'), 2);
+        $total_tax_amount = round($this->orderDetail->sum('total_tax_amount'), 2);
+        $product_discount_amount = round($this->product_discount_amount, 2);
+        $shipping_charge = round($this->shipping_charge, 2);
+        $additional_charge = round(optional($this->orderMaster)->additional_charge, 2) ?? 0;
+
+        // Total Amount Calculation
+        $total_amount = ($subtotal - $coupon_discount - $product_discount_amount)
+            + $total_tax_amount
+            + $shipping_charge
+            + $additional_charge;
+
         return [
-            'subtotal' => round($this->orderDetail->sum('line_total_price'), 2),
-            'coupon_discount' => round($this->orderDetail->sum('coupon_discount_amount'), 2),
+            'subtotal' => $subtotal,
+            'coupon_discount' => $coupon_discount,
             'tax_rate' => round($this->orderDetail->sum('tax_rate'), 2) ?? 0,
-            'total_tax_amount' => round($this->orderDetail->sum('total_tax_amount'), 2) ?? 0,
-
-            // Fetch data from Order model
-            'product_discount_amount' => round($this->product_discount_amount, 2),
-            'shipping_charge' => round($this->shipping_charge, 2),
-
-            // Fetch data from OrderMaster relation
-            'additional_charge' => round(optional($this->orderMaster)->additional_charge, 2) ?? 0,
+            'total_tax_amount' => $total_tax_amount,
+            'product_discount_amount' => $product_discount_amount,
+            'shipping_charge' => $shipping_charge,
+            'additional_charge' => $additional_charge,
+            'total_amount' => round($total_amount, 2), // Final total amount
         ];
     }
+
 
 
 }
