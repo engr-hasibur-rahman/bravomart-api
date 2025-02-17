@@ -8,6 +8,7 @@ use App\Http\Resources\Order\CustomerOrderPackageResource;
 use App\Http\Resources\Order\CustomerOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
 use App\Http\Resources\Order\OrderMasterResource;
+use App\Http\Resources\Order\OrderSummaryResource;
 use App\Models\CouponLine;
 use App\Models\Order;
 use App\Models\OrderMaster;
@@ -26,11 +27,14 @@ class CustomerOrderController extends Controller
             ->whereIn('order_master_id', $order_master_ids);
 
         if ($order_id) {
-            $order_details = $ordersQuery->where('id', $order_id)->first();
-            if (!$order_details) {
+            $order = $ordersQuery->where('id', $order_id)->first();
+            if (!$order) {
                 return response()->json(['message' => 'Order not found'], 404);
             }
-            return response()->json(new CustomerOrderResource($order_details), 200);
+            return response()->json([
+                'order_data' => new CustomerOrderResource($order),
+                'order_summary' => new OrderSummaryResource($order),
+            ], 200);
         }
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
