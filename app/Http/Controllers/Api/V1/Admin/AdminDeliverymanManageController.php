@@ -57,8 +57,25 @@ class AdminDeliverymanManageController extends Controller
         }
     }
 
-    public function update(DeliverymanRequest $request)
+    public function update(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:15',
+            'status' => 'nullable|integer',
+            'vehicle_type_id' => 'nullable|exists:vehicle_types,id',
+            'area_id' => 'nullable|exists:areas,id',
+            'address' => 'nullable|string|max:255',
+            'identification_type' => 'nullable',
+            'identification_number' => 'nullable',
+            'identification_photo_front' => 'nullable',
+            'identification_photo_back' => 'nullable',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
         $deliveryman = $this->deliverymanRepo->update($request->all());
         if ($deliveryman) {
             return $this->success(__('messages.update_success', ['name' => 'Deliveryman']));
