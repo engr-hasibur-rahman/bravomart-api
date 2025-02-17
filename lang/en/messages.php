@@ -89,6 +89,7 @@ return [
     'deliveryman_order_already_taken' => 'This order has been already confirmed by other deliveryman!',
     'deliveryman_assign_successful' => 'Deliveryman assigned successfully!',
     'deliveryman_assign_failed' => 'Deliveryman assign failed!',
+    'deliveryman_can_not_be_assigned' => 'Deliveryman can\'t be assigned!',
 
     'customer_product_query_submitted_successful' => 'Your query has been submitted successfully!',
     'customer_product_query_submitted_failed' => 'Your query submission failed!',
@@ -100,6 +101,7 @@ return [
     'order_already_cancelled' => 'Order has been already cancelled!',
     'order_already_delivered' => 'Order has been already delivered!',
     'order_status_not_changeable' => 'This order status cannot be changed!',
+    'order_does_not_belong_to_seller' => 'This order does not belong to this seller!',
 
 
 ];
