@@ -50,6 +50,9 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawGatewayManageController;
+use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawRequestManageController;
+use Modules\Wallet\app\Http\Controllers\Api\WalletManageAdminController;
 
 
 Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code.input']], function () {
@@ -458,19 +461,43 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 Route::get('reviews', [AdminDeliverymanReviewManageController::class, 'index']);
             });
         });
+
+
         // FINANCIAL WITHDRAWALS management
         Route::group(['prefix' => 'financial/'], function () {
+            // waller manage
+            Route::group(['prefix' => 'wallet/', PermissionKey::ADMIN_WALLET_MANAGE->value], function () {
+                Route::match(['get', 'post'], 'settings', [WalletManageAdminController::class, 'depositSettings'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_SETTINGS->value]);
+                Route::get('list', [WalletManageAdminController::class, 'index']);
+                Route::post('status/{id?}', [WalletManageAdminController::class, 'status']);
+                Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
+                Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_TRANSACTION->value]);
+                Route::post('transactions-status/{id}', [WalletManageAdminController::class, 'transactionStatus']);
+            });
+
+            // withdrawals manage
             Route::group(['prefix' => 'withdraw/'], function () {
-                // withdraw history
+                Route::get('/', [AdminWithdrawManageController::class, 'withdrawAllList']);
+                Route::get('details/{id?}', [AdminWithdrawManageController::class, 'withdrawDetails']);
+                // gateway manage
+                Route::get('gateway-list', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayList']);
+                Route::post('gateway-add', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayAdd']);
+                Route::get('gateway-details/{id?}', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayDetails']);
+                Route::post('gateway-update', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayUpdate']);
+                Route::delete('gateway-delete/{id}', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayDelete']);
+
+                // withdraw request manage
+                Route::post('request-list', [AdminWithdrawRequestManageController::class, 'withdrawRequestList']);
+                Route::post('request-approve', [AdminWithdrawRequestManageController::class, 'withdrawRequestApprove']);
+                Route::post('request-reject', [AdminWithdrawRequestManageController::class, 'withdrawRequestReject']);
+
                 Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY->value], function () {
                     Route::get('history', [AdminWithdrawManageController::class, 'withdrawHistory']);
                     Route::get('details/{id}', [AdminWithdrawManageController::class, 'withdrawDetails']);
                 });
-                // withdraw REQUEST
                 Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value], function () {
                     Route::get('request', [AdminWithdrawManageController::class, 'withdrawRequest']);
                 });
-                // withdraw settings
                 Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value], function () {
                     Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
                     Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
@@ -485,19 +512,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                     Route::delete('/{id}', [WithdrawMethodManageController::class, 'destroy']);
                 });
             });
-
-            // FINANCIAL DISBURSEMENTS (Payments & Payouts)
-            Route::group(['prefix' => 'disbursement/'], function () {
-                // Store Disbursement (for store payments)
-                Route::get('store', [AdminStoreDisbursementController::class, 'storeDisbursement'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_STORE_DISBURSEMENT->value);
-                // Delivery Man Disbursement (for delivery personnel payouts)
-                Route::get('delivery-man', [AdminDisbursementManageController::class, 'deliveryManDisbursement'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_DISBURSEMENT->value);
-            });
             // Collect Cash (for cash collection)
             Route::get('cash-collect', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
-            // Delivery Man Payments (View and process delivery man payments)
-            Route::get('delivery-man-payments', [AdminDeliveryManPaymentController::class, 'deliveryManPayments'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_PAYMENTS->value);
         });
+
+
         // business-operations
         Route::group(['prefix' => 'business-operations/'], function () {
             // store type
