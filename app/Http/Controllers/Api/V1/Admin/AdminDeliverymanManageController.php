@@ -34,7 +34,7 @@ class AdminDeliverymanManageController extends Controller
             'status' => $request->input('status', null),
             'identification_type' => $request->input('identification_type', null),
             'created_by' => $request->input('created_by', null),
-            'per_page' => $request->input('per_page', 10) // Default to 10 if not provided
+            'per_page' => $request->input('per_page')
         ];
         $deliverymen = $this->deliverymanRepo->getAllDeliveryman($filters);
         return response()->json([
