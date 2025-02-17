@@ -574,7 +574,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function deliverymanListDropdown(array $filter)
     {
-        $query = User::with('deliveryman')->where('activity_scope', 'delivery_level');
+        $query = User::with('deliveryman.area')->where('activity_scope', 'delivery_level');
         if (isset($filter['search'])) {
             $search = $filter['search'];
             $query->where(function ($query) use ($search) {

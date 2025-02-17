@@ -93,6 +93,7 @@ class AdminOrderManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
+
         if ($request->status === 'cancelled') {
             $success = $order->update([
                 'cancelled_by' => auth('api')->user()->id,
@@ -196,7 +197,7 @@ class AdminOrderManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        if ($order->status === 'pending') {
+        if ($order->status !== 'delivered') {
             $success = $order->update([
                 'cancelled_by' => auth('api')->user()->id,
                 'cancelled_at' => Carbon::now(),
