@@ -36,12 +36,11 @@ class AdminOrderManageController extends Controller
                 $order->deliveryman->last_delivered_location = optional($last_delivered_location?->shippingAddress)->address ?? 'No address available';
                 $order->deliveryman->total_delivered = $total_delivered ?? 0;
             }
-
             return response()->json(
                 [
                     'order_data' => new AdminOrderResource($order),
-                    'order_summary' => OrderSummaryResource::collection($order->orderDetail),
-                ],200
+                    'order_summary' => new OrderSummaryResource($order->orderDetail),
+                ], 200
             );
         }
         $ordersQuery = Order::with(['customer', 'orderMaster', 'orderDetail', 'store', 'deliveryman', 'orderMaster.shippingAddress']);
