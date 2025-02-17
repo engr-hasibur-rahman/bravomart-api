@@ -103,6 +103,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'identification_photo_front' => $data['identification_photo_front'] ?? null,
             'identification_photo_back' => $data['identification_photo_back'] ?? null,
             'address' => $data['address'] ?? null,
+            'status' => 'approved',
             'created_by' => auth('api')->user()->id,
         ]);
 
@@ -120,7 +121,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     {
         DB::beginTransaction();
         // Find the existing user record
-        $user = User::find($data['id']);
+        $user = User::find($data['user_id']);
         if (!$user) {
             DB::rollBack();
             return null;  // Return null if user does not exist
@@ -132,22 +133,16 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'last_name' => $data['last_name'] ?? null,
             'slug' => username_slug_generator($data['first_name'], $data['last_name']),
             'phone' => $data['phone'] ?? null,
-            'email' => $data['email'],
             'activity_scope' => 'delivery_level',
-            'password' => $data['password'] ?? $user->password,  // Keep old password if not provided
             'store_owner' => 0,
             'store_seller_id' => null,
             'stores' => null,
             'status' => $data['status'] ?? 0,
         ]);
 
-        if (!$user->wasChanged()) {  // Check if anything was updated
-            DB::rollBack();
-            return false;
-        }
-
         // Find and update the associated DeliveryMan record
-        $deliveryman = DeliveryMan::where('user_id', $data['id'])->first();
+        $deliveryman = DeliveryMan::where('user_id', $data['user_id'])->first();
+
         if (!$deliveryman) {
             DB::rollBack();
             return null;  // Return null if DeliveryMan does not exist
@@ -158,17 +153,11 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'vehicle_type_id' => $data['vehicle_type_id'],
             'store_id' => $data['store_id'] ?? null,
             'area_id' => $data['area_id'] ?? null,
-            'identification_type' => $data['identification_type'],
-            'identification_number' => $data['identification_number'],
             'identification_photo_front' => $data['identification_photo_front'] ?? null,
             'identification_photo_back' => $data['identification_photo_back'] ?? null,
             'address' => $data['address'] ?? null,
-            'updated_by' => auth('sanctum')->id(),
+            'updated_by' => auth('api')->user()->id,
         ]);
-        if (!$deliveryman->wasChanged()) {  // Check if anything was updated
-            DB::rollBack();
-            return false;
-        }
         DB::commit();  // Commit transaction if all updates succeed
         return $user->id;  // Return user ID on success
 
