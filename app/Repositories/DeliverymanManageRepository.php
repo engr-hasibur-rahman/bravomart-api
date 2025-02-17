@@ -150,7 +150,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
         // Update the DeliveryMan extra details
         $deliveryman->update([
-            'vehicle_type_id' => $data['vehicle_type_id']?? null,
+            'vehicle_type_id' => $data['vehicle_type_id'] ?? null,
             'store_id' => $data['store_id'] ?? null,
             'area_id' => $data['area_id'] ?? null,
             'identification_photo_front' => $data['identification_photo_front'] ?? null,
@@ -405,6 +405,16 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
     }
 
+    public function vehicleTypeDropdown()
+    {
+        $vehicleTypes = VehicleType::where('status', 1)->get();
+        if ($vehicleTypes->count() > 0) {
+            return $vehicleTypes;
+        } else {
+            return false;
+        }
+    }
+
     // -------------------------------------------------------- Delivery man order manage ---------------------------------------------------
     public function deliverymanOrders()
     {
@@ -564,7 +574,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function deliverymanListDropdown(array $filter)
     {
-        $query = User::where('activity_scope', 'delivery_level');
+        $query = User::with('deliveryman')->where('activity_scope', 'delivery_level');
         if (isset($filter['search'])) {
             $search = $filter['search'];
             $query->where(function ($query) use ($search) {
@@ -572,6 +582,6 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 $query->orWhere('last_name', 'like', '%' . $search . '%');
             });
         }
-        return $query->get();
+        return $query->paginate(10);
     }
 }

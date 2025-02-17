@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Enums\FuelType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DeliverymanRequest;
 use App\Http\Requests\VehicleTypeRequest;
@@ -11,6 +12,7 @@ use App\Http\Resources\Admin\AdminDeliverymanResource;
 use App\Http\Resources\Admin\AdminVehicleDetailsResource;
 use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
+use App\Http\Resources\Admin\AdminVehicleTypeDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Deliveryman\DeliverymanDropdownResource;
 use App\Interfaces\DeliverymanManageInterface;
@@ -186,6 +188,7 @@ class AdminDeliverymanManageController extends Controller
 
     public function storeVehicle(VehicleTypeRequest $request)
     {
+
         $vehicle = $this->deliverymanRepo->addVehicle($request->all());
         $this->deliverymanRepo->storeTranslation($request, $vehicle, 'App\Models\VehicleType', $this->deliverymanRepo->translationKeys());
         if ($vehicle) {
@@ -217,6 +220,18 @@ class AdminDeliverymanManageController extends Controller
             return $this->success(__('messages.update_success', ['name' => 'Vehicle type']));
         } else {
             return $this->failed(__('messages.update_failed', ['name' => 'Vehicle type']));
+        }
+    }
+
+    public function vehicleTypeDropdown()
+    {
+        $vehicle_types = $this->deliverymanRepo->vehicleTypeDropdown();
+        if ($vehicle_types) {
+            return response()->json(AdminVehicleTypeDropdownResource::collection($vehicle_types),200);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
         }
     }
 
@@ -280,6 +295,7 @@ class AdminDeliverymanManageController extends Controller
             'search' => $request->search,
         ];
         $deliverymen = $this->deliverymanRepo->deliverymanListDropdown($filter);
+        dd($deliverymen);
         if ($deliverymen->isEmpty()) {
             return response()->json([
                 'message' => __('messages.data_not_found'),

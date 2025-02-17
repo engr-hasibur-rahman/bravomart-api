@@ -36,6 +36,8 @@ interface DeliverymanManageInterface
 
     public function getVehicleById(int $id);
 
+    public function vehicleTypeDropdown();
+
     public function deleteVehicle(int $id);
 
     public function deliverymanOrders();
