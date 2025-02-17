@@ -96,7 +96,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         $deliverymanExtra = DeliveryMan::create([
             'user_id' => $deliveryman->id,
             'store_id' => $data['store_id'] ?? null,
-            'vehicle_type_id' => $data['vehicle_type_id'],
+            'vehicle_type_id' => $data['vehicle_type_id'] ?? null,
             'area_id' => $data['area_id'] ?? null,
             'identification_type' => $data['identification_type'],
             'identification_number' => $data['identification_number'],
