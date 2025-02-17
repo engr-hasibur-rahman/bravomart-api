@@ -108,7 +108,6 @@ class DeliveryChargeHelper
                     $slab_max = $slab->max_km;
                     $slab_rate = $slab->charge_amount;
 
-
                     // Check if there is remaining distance in the current slab range
                     if ($remaining_distance <= 0) {
                         break; // No remaining distance, stop the loop
