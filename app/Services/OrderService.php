@@ -240,8 +240,8 @@ class OrderService
                     'store_id' => $packageData['store_id'],
                     'area_id' => $store_area_id,
                     'order_type' => 'regular', // if customer order create
-                    'delivery_type' => $packageData['delivery_type'],
-                    'delivery_option' => 'standard',
+                    'delivery_option' => $packageData['delivery_option'],
+                    'delivery_type' => 'standard',
                     'delivery_time' => $delivery_time,
                     'order_amount' => 0,
                     'coupon_discount_amount_admin' => 0,
