@@ -28,7 +28,7 @@ class AdminOrderManageController extends Controller
             }
             $deliveryman_id = $order->confirmed_by;
             $total_delivered = Order::where('confirmed_by', $deliveryman_id)->where('status', 'delivered')->count();
-            $last_delivered_location = Order::with('shippingAddress')
+            $last_delivered_location = Order::with('orderMaster.shippingAddress')
                 ->where('confirmed_by', $deliveryman_id)
                 ->where('status', 'delivered')
                 ->orderBy('delivery_completed_at', 'desc')

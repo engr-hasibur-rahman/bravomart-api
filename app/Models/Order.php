@@ -38,6 +38,12 @@ class Order extends Model
         'status',
     ];
 
+    public function orderMaster()
+    {
+        return $this->belongsTo(OrderMaster::class, 'order_master_id', 'id');
+    }
+
+
     // Hook into the status update
     public static function boot()
     {
@@ -54,12 +60,6 @@ class Order extends Model
                 }
             }
         });
-    }
-
-
-    public function orderMaster()
-    {
-        return $this->belongsTo(OrderMaster::class, 'order_master_id', 'id');
     }
 
 
