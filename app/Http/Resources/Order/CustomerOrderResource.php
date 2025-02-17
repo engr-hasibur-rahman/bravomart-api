@@ -45,7 +45,7 @@ class CustomerOrderResource extends JsonResource
             'store_details' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
-            'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetails')),
+            'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetail')),
         ];
     }
 }
