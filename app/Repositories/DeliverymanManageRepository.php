@@ -64,7 +64,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         if (isset($filters['created_by'])) {
             $query->where('created_by', $filters['created_by']);
         }
-        $deliverymen = $query->paginate(isset($filters['per_page']) ?? 10);
+        $deliverymen = $query->paginate($filters['per_page'] ?? 10);
 
         return $deliverymen;
     }
