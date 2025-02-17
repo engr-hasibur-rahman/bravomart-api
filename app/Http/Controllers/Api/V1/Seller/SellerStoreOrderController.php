@@ -46,7 +46,7 @@ class SellerStoreOrderController extends Controller
                 [
                     'order_data' => new AdminOrderResource($order),
                     'order_summary' => new OrderSummaryResource($order->orderDetails)
-                ],200
+                ], 200
             );
         }
         if (isset($request->store_id)) {
@@ -98,6 +98,47 @@ class SellerStoreOrderController extends Controller
         return response()->json(new InvoiceResource($order));
     }
 
+    public function changeOrderStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required|exists:orders,id',
+            'status' => 'required|in:pending,confirmed,processing'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $seller_id = auth('api')->user()->id;
+        $seller_stores = Store::where('store_seller_id', $seller_id)->pluck('id');
+        $order = Order::find($request->order_id);
+        if (!$order) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+
+        if (!$seller_stores->contains($order->store_id)) {
+            return response()->json(['message' => 'Order doesn\'t belongs to the seller\'s store.'], 422);
+        }
+        if ($order->status === 'pending' || $order->status === 'confirmed' || $order->status === 'processing') {
+            $success = $order->update([
+                'status' => $request->status
+            ]);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.update_success',['name' => 'Order status'])
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.update_failed',['name' => 'Order status'])
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'message' => __('messages.order_status_not_changeable')
+            ], 422);
+        }
+    }
+
     public function cancelOrder(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -118,7 +159,7 @@ class SellerStoreOrderController extends Controller
         if (!$seller_stores->contains($order->store_id)) {
             return response()->json(['message' => 'Order belongs to the seller\'s store.'], 422);
         }
-        if ($order->status === 'pending') {
+        if ($order->status === 'pending' || $order->status === 'confirmed' ) {
             $success = $order->update([
                 'cancelled_by' => auth('api')->user()->id,
                 'cancelled_at' => Carbon::now(),

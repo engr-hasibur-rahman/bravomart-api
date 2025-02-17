@@ -35,6 +35,7 @@ class AdminDeliverymanDetailsResource extends JsonResource
             'identification_photo_back' => $this->identification_photo_back,
             'identification_photo_back_url' => ImageModifier::generateImageUrl($this->identification_photo_back),
             'vehicle_type' => $this->vehicle_type->name ?? null,
+            'vehicle_type_id' => $this->vehicle_type_id ?? null,
             'area' => $this->area->name ?? null,
             'area_id' => $this->area_id ?? null,
             'address' => $this->address,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Enums\OrderStatusType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\AdminOrderResource;
@@ -81,6 +82,7 @@ class AdminOrderManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
+            'status' => 'required|in:' . implode(',', array_column(OrderStatusType::cases(), 'value')),
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -91,9 +93,11 @@ class AdminOrderManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        if ($order->status === 'pending') {
+        if ($request->status === 'cancelled') {
             $success = $order->update([
-                'status' => 'confirmed'
+                'cancelled_by' => auth('api')->user()->id,
+                'cancelled_at' => Carbon::now(),
+                'status' => 'cancelled'
             ]);
             if ($success) {
                 return response()->json([
@@ -104,10 +108,18 @@ class AdminOrderManageController extends Controller
                     'message' => __('messages.update_failed', ['name' => 'Order status'])
                 ], 500);
             }
+        }
+        $success = $order->update([
+            'status' => $request->status
+        ]);
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Order status'])
+            ], 200);
         } else {
             return response()->json([
-                'message' => __('messages.order_status_not_changeable')
-            ], 422);
+                'message' => __('messages.update_failed', ['name' => 'Order status'])
+            ], 500);
         }
     }
 
@@ -126,6 +138,7 @@ class AdminOrderManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
+
         $success = $order->update([
             'payment_status' => $request->status
         ]);
