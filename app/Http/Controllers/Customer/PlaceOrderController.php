@@ -26,6 +26,18 @@ class PlaceOrderController extends Controller
     public function placeOrder(PlaceOrderRequest $request): JsonResponse
     {
         $data = $request->validated();
+
+        // login check
+        if (!auth()->guard('api_customer')->user()
+            && isset($data['guest_info'])
+            && isset($data['guest_info']['guest_order'])
+            && $data['guest_info']['guest_order'] === false) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please login to proceed with the order.',
+            ], 400);
+        }
+
         $orders = $this->orderService->createOrder($data);
         // if return false
         if($orders === false){
@@ -52,9 +64,9 @@ class PlaceOrderController extends Controller
 
                 // Check if customer info and token are set, and include them in the response
                 if (isset($orders['customer']) && isset($orders['token'])) {
-                    $response['customer'] = $orders['customer'];
+//                    $response['customer'] = $orders['customer'];
                     $response['token'] = $orders['token'];
-                    $response['message'] = 'Guest registered and logged in successfully.'; // Change the message if needed
+//                    $response['message'] = 'Guest registered and logged in successfully.'; // Change the message if needed
                 }
 
                 return response()->json($response);
