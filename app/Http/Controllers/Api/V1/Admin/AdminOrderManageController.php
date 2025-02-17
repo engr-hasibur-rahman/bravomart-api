@@ -19,7 +19,7 @@ class AdminOrderManageController extends Controller
         $order_id = $request->order_id;
 
         if ($order_id) {
-            $order = Order::with(['orderMaster.customer', 'orderDetails.order', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
+            $order = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
                 ->where('id', $order_id)
                 ->first();
             if (!$order) {
@@ -36,14 +36,15 @@ class AdminOrderManageController extends Controller
                 $order->deliveryman->last_delivered_location = optional($last_delivered_location?->shippingAddress)->address ?? 'No address available';
                 $order->deliveryman->total_delivered = $total_delivered ?? 0;
             }
+
             return response()->json(
                 [
                     'order_data' => new AdminOrderResource($order),
-                    'order_summary' => new OrderSummaryResource($order->orderDetails)
+                    'order_summary' => OrderSummaryResource::collection($order->orderDetail),
                 ],200
             );
         }
-        $ordersQuery = Order::with(['customer', 'orderMaster', 'orderDetails', 'store', 'deliveryman', 'orderMaster.shippingAddress']);
+        $ordersQuery = Order::with(['customer', 'orderMaster', 'orderDetail', 'store', 'deliveryman', 'orderMaster.shippingAddress']);
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 

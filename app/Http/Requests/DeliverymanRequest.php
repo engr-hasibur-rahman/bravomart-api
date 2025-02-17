@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class DeliverymanRequest extends FormRequest
 {
@@ -28,7 +30,7 @@ class DeliverymanRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users,email,' . $this->id,
             'password' => 'required|string|min:8|max:12',
             'status' => 'nullable|integer',
-            'vehicle_type_id' => 'required|exists:vehicle_types,id',
+            'vehicle_type_id' => 'nullable|exists:vehicle_types,id',
             'store_id' => 'nullable|exists:stores,id',
             'area_id' => 'nullable|exists:areas,id',
             'identification_type' => 'required|string|in:nid,passport,driving_license',
@@ -69,5 +71,10 @@ class DeliverymanRequest extends FormRequest
             'address.max' => __('validation.max.string', ['attribute' => 'Address']),
 
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 }

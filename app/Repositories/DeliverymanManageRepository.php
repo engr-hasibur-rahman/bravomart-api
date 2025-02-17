@@ -13,7 +13,7 @@ use App\Models\VehicleType;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class DeliverymanManageRepository implements DeliverymanManageInterface
 {
@@ -73,160 +73,141 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     {
         DB::beginTransaction();
 
-        try {
-            // Create the deliveryman user record
-            $deliveryman = User::create([
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'] ?? null,
-                'slug' => username_slug_generator($data['first_name'], $data['last_name']),
-                'phone' => $data['phone'] ?? null,
-                'email' => $data['email'],
-                'activity_scope' => 'delivery_level',
-                'password' => $data['password'],
-                'store_owner' => 0,
-                'store_seller_id' => null,
-                'stores' => null,
-                'status' => $data['status'] ?? 0,
-            ]);
 
-            if (!$deliveryman) {
-                DB::rollBack();
-                return null;
-            }
-            $deliverymanExtra = DeliveryMan::create([
-                'user_id' => $deliveryman->id,
-                'store_id' => $data['store_id'] ?? null,
-                'vehicle_type_id' => $data['vehicle_type_id'],
-                'area_id' => $data['area_id'] ?? null,
-                'identification_type' => $data['identification_type'],
-                'identification_number' => $data['identification_number'],
-                'identification_photo_front' => $data['identification_photo_front'] ?? null,
-                'identification_photo_back' => $data['identification_photo_back'] ?? null,
-                'address' => $data['address'] ?? null,
-                'created_by' => auth('sanctum')->id(),
-            ]);
+        // Create the deliveryman user record
+        $deliveryman = User::create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'] ?? null,
+            'slug' => username_slug_generator($data['first_name'], $data['last_name']),
+            'phone' => $data['phone'] ?? null,
+            'email' => $data['email'],
+            'activity_scope' => 'delivery_level',
+            'password' => $data['password'],
+            'store_owner' => 0,
+            'store_seller_id' => null,
+            'stores' => null,
+            'status' => $data['status'] ?? 0,
+        ]);
 
-            if (!$deliverymanExtra) {
-                DB::rollBack();
-                return false;
-            }
-            DB::commit();
-            return $deliveryman->id;
-        } catch (\Exception $exception) {
+        if (!$deliveryman) {
             DB::rollBack();
             return null;
         }
+        $deliverymanExtra = DeliveryMan::create([
+            'user_id' => $deliveryman->id,
+            'store_id' => $data['store_id'] ?? null,
+            'vehicle_type_id' => $data['vehicle_type_id'],
+            'area_id' => $data['area_id'] ?? null,
+            'identification_type' => $data['identification_type'],
+            'identification_number' => $data['identification_number'],
+            'identification_photo_front' => $data['identification_photo_front'] ?? null,
+            'identification_photo_back' => $data['identification_photo_back'] ?? null,
+            'address' => $data['address'] ?? null,
+            'created_by' => auth('api')->user()->id,
+        ]);
+
+
+        if (!$deliverymanExtra) {
+            DB::rollBack();
+            return false;
+        }
+        DB::commit();
+        return $deliveryman->id;
+
     }
 
     public function update(array $data)
     {
         DB::beginTransaction();
-
-        try {
-            // Find the existing user record
-            $user = User::find($data['id']);
-            if (!$user) {
-                DB::rollBack();
-                return null;  // Return null if user does not exist
-            }
-
-            // Update the deliveryman user record
-            $user->update([
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'] ?? null,
-                'slug' => username_slug_generator($data['first_name'], $data['last_name']),
-                'phone' => $data['phone'] ?? null,
-                'email' => $data['email'],
-                'activity_scope' => 'delivery_level',
-                'password' => $data['password'] ?? $user->password,  // Keep old password if not provided
-                'store_owner' => 0,
-                'store_seller_id' => null,
-                'stores' => null,
-                'status' => $data['status'] ?? 0,
-            ]);
-
-            if (!$user->wasChanged()) {  // Check if anything was updated
-                DB::rollBack();
-                return false;
-            }
-
-            // Find and update the associated DeliveryMan record
-            $deliveryman = DeliveryMan::where('user_id', $data['id'])->first();
-            if (!$deliveryman) {
-                DB::rollBack();
-                return null;  // Return null if DeliveryMan does not exist
-            }
-
-            // Update the DeliveryMan extra details
-            $deliveryman->update([
-                'vehicle_type_id' => $data['vehicle_type_id'],
-                'store_id' => $data['store_id'] ?? null,
-                'area_id' => $data['area_id'] ?? null,
-                'identification_type' => $data['identification_type'],
-                'identification_number' => $data['identification_number'],
-                'identification_photo_front' => $data['identification_photo_front'] ?? null,
-                'identification_photo_back' => $data['identification_photo_back'] ?? null,
-                'address' => $data['address'] ?? null,
-                'updated_by' => auth('sanctum')->id(),
-            ]);
-            if (!$deliveryman->wasChanged()) {  // Check if anything was updated
-                DB::rollBack();
-                return false;
-            }
-            DB::commit();  // Commit transaction if all updates succeed
-            return $user->id;  // Return user ID on success
-        } catch (\Exception $exception) {
-            DB::rollBack();  // Rollback on exception
-            return null;
+        // Find the existing user record
+        $user = User::find($data['id']);
+        if (!$user) {
+            DB::rollBack();
+            return null;  // Return null if user does not exist
         }
+
+        // Update the deliveryman user record
+        $user->update([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'] ?? null,
+            'slug' => username_slug_generator($data['first_name'], $data['last_name']),
+            'phone' => $data['phone'] ?? null,
+            'email' => $data['email'],
+            'activity_scope' => 'delivery_level',
+            'password' => $data['password'] ?? $user->password,  // Keep old password if not provided
+            'store_owner' => 0,
+            'store_seller_id' => null,
+            'stores' => null,
+            'status' => $data['status'] ?? 0,
+        ]);
+
+        if (!$user->wasChanged()) {  // Check if anything was updated
+            DB::rollBack();
+            return false;
+        }
+
+        // Find and update the associated DeliveryMan record
+        $deliveryman = DeliveryMan::where('user_id', $data['id'])->first();
+        if (!$deliveryman) {
+            DB::rollBack();
+            return null;  // Return null if DeliveryMan does not exist
+        }
+
+        // Update the DeliveryMan extra details
+        $deliveryman->update([
+            'vehicle_type_id' => $data['vehicle_type_id'],
+            'store_id' => $data['store_id'] ?? null,
+            'area_id' => $data['area_id'] ?? null,
+            'identification_type' => $data['identification_type'],
+            'identification_number' => $data['identification_number'],
+            'identification_photo_front' => $data['identification_photo_front'] ?? null,
+            'identification_photo_back' => $data['identification_photo_back'] ?? null,
+            'address' => $data['address'] ?? null,
+            'updated_by' => auth('sanctum')->id(),
+        ]);
+        if (!$deliveryman->wasChanged()) {  // Check if anything was updated
+            DB::rollBack();
+            return false;
+        }
+        DB::commit();  // Commit transaction if all updates succeed
+        return $user->id;  // Return user ID on success
+
     }
 
     public function getDeliverymanById(int $id)
     {
-        try {
-            $deliveryman = DeliveryMan::with('deliveryman', 'vehicle_type', 'area', 'creator', 'updater')
-                ->findOrFail($id);
-            return $deliveryman;
-        } catch (\Exception $exception) {
+        $deliveryman = DeliveryMan::with('user', 'vehicle_type', 'area', 'creator', 'updater')
+            ->find($id);
+        if (!$deliveryman) {
             return false;
         }
+        return $deliveryman;
     }
 
     public function delete(int $userId)
     {
         DB::beginTransaction();
-
-        try {
-            // Find the user record
-            $user = User::find($userId);
-            if (!$user) {
-                DB::rollBack();
-                return false;  // Return false if user does not exist
-            }
-
-            // Find and delete the associated DeliveryMan record
-            $deliveryman = DeliveryMan::where('user_id', $userId)->first();
-            if ($deliveryman) {
-                // Delete the DeliveryMan record
-                $deliveryman->delete();
-            }
-
-            // Delete the User record
-            $user->delete();
-
-            DB::commit();  // Commit transaction if both deletions succeed
-            return true;  // Return true on success
-        } catch (\Exception $exception) {
-            DB::rollBack();  // Rollback on exception
-            return false;  // Return false if an error occurs
+        $user = User::find($userId);
+        if (!$user) {
+            DB::rollBack();
+            return false;
         }
+        $deliveryman = DeliveryMan::where('user_id', $userId)->first();
+        if ($deliveryman) {
+            $deliveryman->delete();
+        }
+        $user->delete();
+
+        DB::commit();
+        return true;
+
     }
 
     public function getDeliverymanRequests()
     {
         try {
             $deliverymen = DeliveryMan::with([
-                'deliveryman',
+                'user',
                 'vehicle_type',
                 'area',
                 'creator',
@@ -351,7 +332,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function addVehicle(array $data)
     {
-        $data['created_by'] = auth('sanctum')->id();
+        $data['created_by'] = auth('api')->user()->id;
         try {
             $data = Arr::except($data, ['translations']);
             $vehicle = VehicleType::create($data);
@@ -377,7 +358,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function getVehicleById(int $id)
     {
         try {
-            $vehicle = VehicleType::with(['creator', 'related_translations'])->findorfail($id);
+            $vehicle = VehicleType::with(['related_translations'])->find($id);
             if ($vehicle) {
                 return $vehicle;
             } else {
