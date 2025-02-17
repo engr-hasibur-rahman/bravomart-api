@@ -29,7 +29,6 @@ class AdminVehicleDetailsResource extends JsonResource
                 ? $translation->where('key', 'description')->first()?->value
                 : $this->description,
             "status" => $this->status,
-            "created_by" => $this->creator->first_name,
             "store" => $this->store->name ?? null,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,

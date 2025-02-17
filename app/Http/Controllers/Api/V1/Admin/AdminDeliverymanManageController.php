@@ -7,6 +7,7 @@ use App\Http\Requests\DeliverymanRequest;
 use App\Http\Requests\VehicleTypeRequest;
 use App\Http\Resources\Admin\AdminDeliverymanDetailsResource;
 use App\Http\Resources\Admin\AdminDeliverymanRequestResource;
+use App\Http\Resources\Admin\AdminDeliverymanResource;
 use App\Http\Resources\Admin\AdminVehicleDetailsResource;
 use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
@@ -33,12 +34,12 @@ class AdminDeliverymanManageController extends Controller
             'status' => $request->input('status', null),
             'identification_type' => $request->input('identification_type', null),
             'created_by' => $request->input('created_by', null),
-            'per_page' => $request->input('per_page', 10) // Default to 10 if not provided
+            'per_page' => $request->input('per_page')
         ];
         $deliverymen = $this->deliverymanRepo->getAllDeliveryman($filters);
         return response()->json([
-            'data' => '',
-            'meta' => ''
+            'data' => AdminDeliverymanResource::collection($deliverymen),
+            'meta' => new PaginationResource($deliverymen)
         ]);
     }
 
@@ -46,9 +47,13 @@ class AdminDeliverymanManageController extends Controller
     {
         $deliveryman = $this->deliverymanRepo->store($request->all());
         if ($deliveryman) {
-            return $this->success(__('messages.save_success', ['name' => 'Deliveryman']));
+            return response()->json([
+                'message' => __('messages.save_success', ['name' => 'Deliveryman'])
+            ], 200);
         } else {
-            return $this->failed(__('messages.save_failed', ['name' => 'Deliveryman']));
+            return response()->json([
+                'message' => __('messages.save_failed', ['name' => 'Deliveryman'])
+            ], 500);
         }
     }
 
@@ -65,7 +70,12 @@ class AdminDeliverymanManageController extends Controller
     public function show(Request $request)
     {
         $deliveryman = $this->deliverymanRepo->getDeliverymanById($request->id);
-        return response()->json(new AdminDeliverymanDetailsResource($deliveryman));
+        if ($deliveryman) {
+            return response()->json(new AdminDeliverymanDetailsResource($deliveryman));
+        } else {
+            return response()->json(['message' => __('messages.data_not_found')], 404);
+        }
+
     }
 
     public function destroy(int $id)
@@ -169,6 +179,7 @@ class AdminDeliverymanManageController extends Controller
 
     public function showVehicle(Request $request)
     {
+
         $vehicle = $this->deliverymanRepo->getVehicleById($request->id);
         if ($vehicle) {
             return response()->json(new AdminVehicleDetailsResource($vehicle));

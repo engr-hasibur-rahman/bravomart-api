@@ -83,7 +83,7 @@ class AddressManageRepository implements AddressManageInterface
             if (isset($status)) {
                 $query->where('status', $status);
             }
-            $addresses = $query->get();
+            $addresses = $query->latest()->get();
             return $addresses;
         } catch (\Exception $e) {
             return response()->json([
