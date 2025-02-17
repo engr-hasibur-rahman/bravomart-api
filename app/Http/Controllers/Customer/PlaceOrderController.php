@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\PlaceOrderRequest;
 use App\Http\Resources\Order\OrderMasterResource;
 use App\Http\Resources\Order\PlaceOrderDetailsResource;
+use App\Http\Resources\Order\PlaceOrderMasterResource;
 use App\Models\Order;
 use App\Models\OrderMaster;
 use App\Services\OrderService;
@@ -26,7 +27,6 @@ class PlaceOrderController extends Controller
     {
         $data = $request->validated();
         $orders = $this->orderService->createOrder($data);
-
         // if return false
         if($orders === false){
             return response()->json([
@@ -42,18 +42,23 @@ class PlaceOrderController extends Controller
         try {
             // Check if the order creation was successful
             if ($orders) {
-                return response()->json([
+                // If the orders are successfully placed, return the response
+                $response = [
                     'success' => true,
                     'message' => 'Order placed successfully.',
                     'orders' => PlaceOrderDetailsResource::collection($all_orders),
-                    'order_master' => new OrderMasterResource($order_master),
-                ]);
+                    'order_master' => new PlaceOrderMasterResource($order_master),
+                ];
+
+                // Check if customer info and token are set, and include them in the response
+                if (isset($orders['customer']) && isset($orders['token'])) {
+                    $response['customer'] = $orders['customer'];
+                    $response['token'] = $orders['token'];
+                    $response['message'] = 'Guest registered and logged in successfully.'; // Change the message if needed
+                }
+
+                return response()->json($response);
             }
-            // order wasn't created
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to place order. Please try again.',
-            ], 400);
 
         } catch (\Exception $e) {
             return response()->json([
