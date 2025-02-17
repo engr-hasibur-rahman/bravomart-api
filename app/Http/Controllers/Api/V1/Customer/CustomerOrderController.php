@@ -22,7 +22,7 @@ class CustomerOrderController extends Controller
         $customer_id = auth()->guard('api_customer')->user()->id;
         $order_id = $request->order_id;
         $order_master_ids = OrderMaster::where('customer_id', $customer_id)->pluck('id');
-        $ordersQuery = Order::with(['orderMaster', 'customer', 'deliveryman', 'store'])
+        $ordersQuery = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
             ->whereIn('order_master_id', $order_master_ids);
 
         if ($order_id) {

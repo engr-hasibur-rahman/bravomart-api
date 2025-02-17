@@ -24,6 +24,7 @@ class DeliveryChargeHelper
                 "*, ST_Distance_Sphere(point(center_longitude, center_latitude), point(?, ?)) as distance",
                 [$customerLng, $customerLat]
             )
+//                ->leftJoin('store_area_settings', 'store_area_settings.store_area_id', '=', 'store_areas.id')
                 ->whereNotNull('center_latitude')
                 ->whereNotNull('center_longitude')
                 ->where('status', 1)
@@ -32,7 +33,7 @@ class DeliveryChargeHelper
         }
 
         // if area wise settings not set
-        if (is_null($store_area->storeTypeSettings) || $store_area->storeTypeSettings->isEmpty()) {
+        if (!$store_area->storeTypeSettings) {
             return [
                 'status' => false,
                 'message' => 'Calculation failed',
