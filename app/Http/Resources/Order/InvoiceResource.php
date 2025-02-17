@@ -15,11 +15,24 @@ class InvoiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $subtotal = round($this->orderDetail->sum('line_total_price'), 2);
+        $coupon_discount = round($this->orderDetail->sum('coupon_discount_amount'), 2);
+        $total_tax_amount = round($this->orderDetail->sum('total_tax_amount'), 2);
+        $product_discount_amount = round($this->product_discount_amount, 2);
+        $shipping_charge = round($this->shipping_charge, 2);
+        $additional_charge = round(optional($this->orderMaster)->additional_charge, 2) ?? 0;
+
+        // Total Amount Calculation
+        $total_amount = ($subtotal - $coupon_discount - $product_discount_amount)
+            + $total_tax_amount
+            + $shipping_charge
+            + $additional_charge;
+
         return [
-            'customer' => $this->customer ? [
-                'name' => $this->customer->first_name . ' ' . $this->customer->last_name,
-                'email' => $this->customer->email,
-                'phone' => $this->customer->phone,
+            'customer' => $this->orderMaster->customer ? [
+                'name' => $this->orderMaster->customer->first_name . ' ' . $this->orderMaster->customer->last_name,
+                'email' => $this->orderMaster->customer->email,
+                'phone' => $this->orderMaster->customer->phone,
                 'shipping_address' => $this->orderMaster->shippingAddress ? [
                     'house' => $this->orderMaster->shippingAddress->house,
                     'road' => $this->orderMaster->shippingAddress->road,
@@ -32,8 +45,7 @@ class InvoiceResource extends JsonResource
             'invoice_number' => '#' . $this->invoice_number,
             'invoice_date' => $this->invoice_date ? Carbon::parse($this->invoice_date)->format('d-M-Y') : null,
             'payment_status' => $this->orderMaster->payment_status,
-            'order_amount' => round($this->orderDetails->sum('line_total_price'), 2),
-            'items' => $this->orderDetails->map(function ($item) {
+            'items' => $this->orderDetail->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'name' => $item->product->name,
@@ -45,11 +57,14 @@ class InvoiceResource extends JsonResource
                     'total_tax_amount' => $item->total_tax_amount,
                 ];
             }),
-            'subtotal' => round($this->orderDetails->sum('line_total_price'), 2),
-            'tax_rate_sum' => round($this->orderDetails->sum('tax_rate'), 2),
-            'tax_amount_sum' => round($this->orderDetails->sum('tax_amount'),2),
-            'total_tax_amount_sum' => round($this->orderDetails->sum('total_tax_amount'), 2),
-            'total' => round($this->orderDetails->sum('line_total_price') + $this->orderDetails->sum('total_tax_amount'), 2),
+            'subtotal' => $subtotal,
+            'coupon_discount' => $coupon_discount,
+            'tax_rate_sum' => round($this->orderDetail->sum('tax_rate'), 2),
+            'total_tax_amount' => $total_tax_amount,
+            'product_discount_amount' => $product_discount_amount,
+            'shipping_charge' => $shipping_charge,
+            'additional_charge' => $additional_charge,
+            'total_amount' => round($total_amount, 2), // Final total amount
         ];
     }
 }
