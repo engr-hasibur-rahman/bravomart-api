@@ -444,6 +444,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             //vehicle-types
             Route::prefix('vehicle-types/')->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value])->group(function () {
                 Route::get('list', [AdminDeliverymanManageController::class, 'indexVehicle']);
+                Route::get('list-dropdown', [AdminDeliverymanManageController::class, 'vehicleTypeDropdown']);
                 Route::get('request', [AdminDeliverymanManageController::class, 'vehicleRequest']);
                 Route::post('add', [AdminDeliverymanManageController::class, 'storeVehicle']);
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'showVehicle']);
