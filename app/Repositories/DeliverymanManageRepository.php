@@ -150,7 +150,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
         // Update the DeliveryMan extra details
         $deliveryman->update([
-            'vehicle_type_id' => $data['vehicle_type_id'],
+            'vehicle_type_id' => $data['vehicle_type_id']?? null,
             'store_id' => $data['store_id'] ?? null,
             'area_id' => $data['area_id'] ?? null,
             'identification_photo_front' => $data['identification_photo_front'] ?? null,
