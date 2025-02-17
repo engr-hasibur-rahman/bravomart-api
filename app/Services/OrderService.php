@@ -63,43 +63,41 @@ class OrderService
 
         // customer ID
         $customer_id = $customer->id;
-
-            // calculate  base price
-            $basePrice = 0;
-            foreach ($data['packages'] as $packageData) {
-
-                 // if type subscription
-                 $store = Store::find($packageData['store_id']);
-                // subscription check start
-                if ($store->subscription_type === 'subscription'){
-                    // check store subscription package
-                    $store_subscription = StoreSubscription::where('store_id', $store->id)
-                        ->whereDate('expire_date', '>=', now())
-                        ->first();
-                    // if expire subscription
-                    if (empty($store_subscription)){
-                        return false;
-                    }
-                    //  condition
-                    $total_store_order = Order::whereNotIn('status', ['pending', 'cancelled', 'on_hold'])->count();
-                    // check order limit
-                    if (!empty($store_subscription) && $store_subscription->order_limit <= $total_store_order) {
-                        return false;
-                     }
-                 } // subscription check end
+        $basePrice = 0;
+        // check package  | if store subscription system check | if store subscription expire or order limit end this store product not create order
+        foreach ($data['packages'] as $packageData) {
+             // if type subscription
+             $store = Store::find($packageData['store_id']);
+            // subscription check start
+            if ($store->subscription_type === 'subscription'){
+                // check store subscription package
+                $store_subscription = StoreSubscription::where('store_id', $store->id)
+                    ->whereDate('expire_date', '>=', now())
+                    ->first();
+                // if expire subscription
+                if (empty($store_subscription)){
+                    return false;
+                }
+                //  condition
+                $total_store_order = Order::whereNotIn('status', ['pending', 'cancelled', 'on_hold'])->count();
+                // check order limit
+                if (!empty($store_subscription) && $store_subscription->order_limit <= $total_store_order) {
+                    return false;
+                 }
+             } // subscription check end
 
 
-                foreach ($packageData['items'] as $itemData) {
-                    // find the product
-                    $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
-                    // Validate product variant
-                    $variant = ProductVariant::where('id', $itemData['variant_id'])->where('product_id', $product->id)->first();
-                    // Add to total order amount
-                    if (!empty($variant) && isset($variant->price)) {
-                        $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
-                    }
+            foreach ($packageData['items'] as $itemData) {
+                // find the product
+                $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
+                // Validate product variant
+                $variant = ProductVariant::where('id', $itemData['variant_id'])->where('product_id', $product->id)->first();
+                // Add to total order amount
+                if (!empty($variant) && isset($variant->price)) {
+                    $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
                 }
             }
+        }
 
 
         // calculate order coupon
