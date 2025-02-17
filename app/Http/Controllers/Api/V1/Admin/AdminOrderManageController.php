@@ -39,7 +39,7 @@ class AdminOrderManageController extends Controller
             return response()->json(
                 [
                     'order_data' => new AdminOrderResource($order),
-                    'order_summary' => new OrderSummaryResource($order->orderDetail),
+                    'order_summary' => new OrderSummaryResource($order),
                 ], 200
             );
         }
