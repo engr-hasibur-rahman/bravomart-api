@@ -8,7 +8,7 @@ use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SellerStoreOrderPackageResource extends JsonResource
+class StoreOrderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -43,7 +43,7 @@ class SellerStoreOrderPackageResource extends JsonResource
             'store_details' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
-            'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetails')),
+            'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetail')),
         ];
     }
 }

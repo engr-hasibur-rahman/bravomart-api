@@ -169,17 +169,28 @@ class AdminOrderManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        $success = $order->update([
-            'confirmed_by' => $request->delivery_man_id
-        ]);
-        if ($success) {
+        if ($order->confirmed_by !== null || $order->confirmed_at !== null) {
             return response()->json([
-                'message' => __('messages.deliveryman_assign_successful')
-            ], 200);
+                'message' => __('messages.deliveryman_order_already_taken')
+            ], 422);
+        }
+        if ($order->status === 'processing') {
+            $success = $order->update([
+                'confirmed_by' => $request->delivery_man_id
+            ]);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.deliveryman_assign_successful')
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.deliveryman_assign_failed')
+                ], 500);
+            }
         } else {
             return response()->json([
-                'message' => __('messages.deliveryman_assign_failed')
-            ], 500);
+                'message' => __('messages.deliveryman_can_not_be_assigned')
+            ], 422);
         }
     }
 
