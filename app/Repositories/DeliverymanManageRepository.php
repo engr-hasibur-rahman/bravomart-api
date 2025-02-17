@@ -276,8 +276,8 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
 
         // Filter by fuel type (multiple selections allowed)
-        if (isset($filters['fuel_types']) && is_array($filters['fuel_types'])) {
-            $query->whereIn('fuel_type', $filters['fuel_types']);
+        if (isset($filters['fuel_type'])) {
+            $query->where('fuel_type', $filters['fuel_type']);
         }
 
         // Filter by maximum distance (e.g., minimum and maximum distance)
