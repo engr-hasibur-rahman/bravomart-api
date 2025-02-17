@@ -19,7 +19,7 @@ class AdminOrderManageController extends Controller
         $order_id = $request->order_id;
 
         if ($order_id) {
-            $order = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
+            $order = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
                 ->where('id', $order_id)
                 ->first();
             if (!$order) {
@@ -43,7 +43,7 @@ class AdminOrderManageController extends Controller
                 ], 200
             );
         }
-        $ordersQuery = Order::with(['customer', 'orderMaster', 'orderDetail', 'store', 'deliveryman', 'orderMaster.shippingAddress']);
+        $ordersQuery = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress']);
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 
@@ -68,13 +68,9 @@ class AdminOrderManageController extends Controller
     public function invoice(Request $request)
     {
         $order_id = $request->order_id;
-        $order = Order::with(['orderMaster.customer', 'orderMaster', 'orderDetails.product', 'orderMaster.shippingAddress'])
+        $order = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
             ->where('id', $order_id)
             ->first();
-        if ($order->orderMaster) {
-            $order->customer = $order->orderMaster->customer;
-            $order->shipping_address = $order->orderMaster->shippingAddress;
-        }
         if (!$order) {
             return response()->json(['message' => __('messages.data_not_found')], 404);
         }

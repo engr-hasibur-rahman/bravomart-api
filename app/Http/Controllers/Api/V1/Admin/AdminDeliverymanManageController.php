@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Enums\FuelType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DeliverymanRequest;
 use App\Http\Requests\VehicleTypeRequest;
@@ -11,6 +12,7 @@ use App\Http\Resources\Admin\AdminDeliverymanResource;
 use App\Http\Resources\Admin\AdminVehicleDetailsResource;
 use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
+use App\Http\Resources\Admin\AdminVehicleTypeDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Deliveryman\DeliverymanDropdownResource;
 use App\Interfaces\DeliverymanManageInterface;
@@ -156,23 +158,24 @@ class AdminDeliverymanManageController extends Controller
 
     public function indexVehicle(Request $request)
     {
+
         $filters = [
-            'search' => $request->input('search', null),
-            'min_capacity' => $request->input('min_capacity', null),
-            'max_capacity' => $request->input('max_capacity', null),
-            'speed_range' => $request->input('speed_range', null),
-            'created_by' => $request->input('created_by', null),
-            'store_id' => $request->input('store_id', null),
-            'fuel_types' => $request->input('fuel_types', []),
-            'min_distance' => $request->input('min_distance', null),
-            'max_distance' => $request->input('max_distance', null),
-            'max_extra_charge' => $request->input('max_extra_charge', null),
-            'min_fuel_cost' => $request->input('min_fuel_cost', null),
-            'max_fuel_cost' => $request->input('max_fuel_cost', null),
-            'status' => $request->input('status', null),
-            'sort_by' => $request->input('sort_by', 'name'),
-            'sort_order' => $request->input('sort_order', 'asc'),
-            'per_page' => $request->input('per_page', 10),
+            'search' => $request->search,
+            'min_capacity' => $request->min_capacity,
+            'max_capacity' => $request->max_capacity,
+            'speed_range' => $request->speed_range,
+            'created_by' => $request->created_by,
+            'store_id' => $request->store_id,
+            'fuel_type' => $request->fuel_type,
+            'min_distance' => $request->min_distance,
+            'max_distance' => $request->max_distance,
+            'max_extra_charge' => $request->max_extra_charge,
+            'min_fuel_cost' => $request->min_fuel_cost,
+            'max_fuel_cost' => $request->max_fuel_cost,
+            'status' => $request->status,
+            'sort_by' => $request->sort_by ?? 'name',
+            'sort_order' => $request->sort_order ?? 'asc',
+            'per_page' => $request->per_page ?? 10,
         ];
         $vehicles = $this->deliverymanRepo->getAllVehicles($filters);
         return response()->json(
@@ -185,6 +188,7 @@ class AdminDeliverymanManageController extends Controller
 
     public function storeVehicle(VehicleTypeRequest $request)
     {
+
         $vehicle = $this->deliverymanRepo->addVehicle($request->all());
         $this->deliverymanRepo->storeTranslation($request, $vehicle, 'App\Models\VehicleType', $this->deliverymanRepo->translationKeys());
         if ($vehicle) {
@@ -216,6 +220,18 @@ class AdminDeliverymanManageController extends Controller
             return $this->success(__('messages.update_success', ['name' => 'Vehicle type']));
         } else {
             return $this->failed(__('messages.update_failed', ['name' => 'Vehicle type']));
+        }
+    }
+
+    public function vehicleTypeDropdown()
+    {
+        $vehicle_types = $this->deliverymanRepo->vehicleTypeDropdown();
+        if ($vehicle_types) {
+            return response()->json(AdminVehicleTypeDropdownResource::collection($vehicle_types),200);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
         }
     }
 
@@ -279,6 +295,7 @@ class AdminDeliverymanManageController extends Controller
             'search' => $request->search,
         ];
         $deliverymen = $this->deliverymanRepo->deliverymanListDropdown($filter);
+        dd($deliverymen);
         if ($deliverymen->isEmpty()) {
             return response()->json([
                 'message' => __('messages.data_not_found'),

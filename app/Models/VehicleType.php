@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\FuelType;
 use Illuminate\Database\Eloquent\Model;
 
 class VehicleType extends Model
@@ -17,7 +18,6 @@ class VehicleType extends Model
         'description',
         'status',
     ];
-
     public $translationKeys = [
         'name',
         'description',

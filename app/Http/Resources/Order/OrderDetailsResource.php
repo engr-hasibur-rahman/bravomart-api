@@ -21,6 +21,7 @@ class OrderDetailsResource extends JsonResource
             'store_id' => $this->store_id,
             'area_id' => $this->area_id,
             'product_id' => $this->product_id,
+            'product_name' => $this->product->name,
             'product_image_url' => ImageModifier::generateImageUrl($this->product_id),
             'behaviour' => $this->behaviour, // service, digital, consumable, combo
             'product_sku' => $this->product_sku,
