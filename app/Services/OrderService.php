@@ -206,7 +206,6 @@ class OrderService
             $customer_lng = $data['customer_longitude'] ?? null;
 
             foreach ($data['packages'] as $packageData) {
-
                 // find store wise area id
                 $store_info = Store::find($packageData['store_id']);
                 $store_area_id = $store_info->area_id;

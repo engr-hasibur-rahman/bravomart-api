@@ -473,6 +473,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 // withdraw settings
                 Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value], function () {
                     Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
+                    Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
                 });
                 // withdraw method
                 Route::prefix('method')->middleware(['permission:' . PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value])->group(function () {

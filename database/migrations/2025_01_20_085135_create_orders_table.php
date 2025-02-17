@@ -40,7 +40,7 @@ return new class extends Migration
             $table->timestamp('cancelled_at')->nullable();
             $table->timestamp('delivery_completed_at')->nullable();
             $table->string('refund_status')->nullable(); // requested, processing, refunded
-            $table->string('status')->default('pending')->comment('pending, active, processing , shipped, delivered, cancelled, on_hold');
+            $table->string('status')->default('pending')->comment('pending, confirmed, processing , shipped, delivered, cancelled, on_hold');
             $table->timestamps();
         });
     }

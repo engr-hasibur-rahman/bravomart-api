@@ -93,7 +93,7 @@ class AdminOrderManageController extends Controller
         }
         if ($order->status === 'pending') {
             $success = $order->update([
-                'status' => 'active'
+                'status' => 'confirmed'
             ]);
             if ($success) {
                 return response()->json([
