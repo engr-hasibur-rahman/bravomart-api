@@ -28,7 +28,7 @@ class AdminOrderManageController extends Controller
             }
             $deliveryman_id = $order->confirmed_by;
             $total_delivered = Order::where('confirmed_by', $deliveryman_id)->where('status', 'delivered')->count();
-            $last_delivered_location = Order::with('shippingAddress')
+            $last_delivered_location = Order::with('orderMaster.shippingAddress')
                 ->where('confirmed_by', $deliveryman_id)
                 ->where('status', 'delivered')
                 ->orderBy('delivery_completed_at', 'desc')
@@ -93,6 +93,7 @@ class AdminOrderManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
+
         if ($request->status === 'cancelled') {
             $success = $order->update([
                 'cancelled_by' => auth('api')->user()->id,
@@ -196,7 +197,7 @@ class AdminOrderManageController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        if ($order->status === 'pending') {
+        if ($order->status !== 'delivered') {
             $success = $order->update([
                 'cancelled_by' => auth('api')->user()->id,
                 'cancelled_at' => Carbon::now(),
