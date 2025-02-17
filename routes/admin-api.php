@@ -477,8 +477,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
 
             // withdrawals manage
             Route::group(['prefix' => 'withdraw/'], function () {
-                Route::get('/', [AdminWithdrawManageController::class, 'withdrawAllList']);
-                Route::get('details/{id?}', [AdminWithdrawManageController::class, 'withdrawDetails']);
+                // settings
+                Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value], function () {
+                    Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
+                    Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
+                });
                 // gateway manage
                 Route::get('gateway-list', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayList']);
                 Route::post('gateway-add', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayAdd']);
@@ -486,21 +489,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 Route::post('gateway-update', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayUpdate']);
                 Route::delete('gateway-delete/{id}', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayDelete']);
 
-                // withdraw request manage
-                Route::post('request-list', [AdminWithdrawRequestManageController::class, 'withdrawRequestList']);
-                Route::post('request-approve', [AdminWithdrawRequestManageController::class, 'withdrawRequestApprove']);
-                Route::post('request-reject', [AdminWithdrawRequestManageController::class, 'withdrawRequestReject']);
-
+                // all manage
                 Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY->value], function () {
-                    Route::get('history', [AdminWithdrawManageController::class, 'withdrawHistory']);
+                    Route::get('/', [AdminWithdrawManageController::class, 'withdrawAllList']);
                     Route::get('details/{id}', [AdminWithdrawManageController::class, 'withdrawDetails']);
                 });
+                // request manage
                 Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value], function () {
-                    Route::get('request', [AdminWithdrawManageController::class, 'withdrawRequest']);
-                });
-                Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value], function () {
-                    Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
-                    Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
+                    Route::post('request-list', [AdminWithdrawRequestManageController::class, 'withdrawRequestList']);
+                    Route::post('request-approve', [AdminWithdrawRequestManageController::class, 'withdrawRequestApprove']);
+                    Route::post('request-reject', [AdminWithdrawRequestManageController::class, 'withdrawRequestReject']);
                 });
                 // withdraw method
                 Route::prefix('method')->middleware(['permission:' . PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value])->group(function () {
