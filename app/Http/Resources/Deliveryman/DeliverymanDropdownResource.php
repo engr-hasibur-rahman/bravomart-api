@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Deliveryman;
 
+use App\Actions\ImageModifier;
+use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,7 +19,9 @@ class DeliverymanDropdownResource extends JsonResource
         return [
             'id' => $this->id,
             'value' => $this->id,
-            'label' => $this->first_name . ' ' . $this->last_name
+            'label' => $this->first_name . ' ' . $this->last_name,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
+            'area' => new ComAreaListForDropdownResource($this->deliveryman->area),
         ];
     }
 }

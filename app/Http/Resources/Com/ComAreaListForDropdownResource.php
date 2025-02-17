@@ -24,9 +24,12 @@ class ComAreaListForDropdownResource extends JsonResource
             'id' => $this->id,
             'value' => $this->id,
             'label' => $this->name,
+            'center_latitude' => $this->center_latitude,
+            'center_longitude' => $this->center_longitude,
             'coordinates' => $this->getCoordinates($this->coordinates),
         ];
     }
+
     public function getCoordinates($polygon): array
     {
 
