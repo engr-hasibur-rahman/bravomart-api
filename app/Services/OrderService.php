@@ -30,11 +30,8 @@ class OrderService
 
         DB::beginTransaction();
 
-//        try {
-
-
+        try {
         $customer = auth()->guard('api_customer')->user();
-
         // guest registration/login
         $token = null;
         if (!$customer && isset($data['guest_info']['guest_order']) && $data['guest_info']['guest_order'] === true) {
@@ -472,10 +469,10 @@ class OrderService
                 'customer' => $customer,
                 'token' => $token,
             ];
-//        } catch (\Exception $e) {
-//            DB::rollBack();
-//            throw $e; // Rethrow exception for proper error handling
-//        }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e; // Rethrow exception for proper error handling
+        }
     }
 
     public function updateOrderStatus($orderId, $status)
