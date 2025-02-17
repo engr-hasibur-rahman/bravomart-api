@@ -28,6 +28,11 @@ class OrderMaster extends Model
         'order_notes',
     ];
 
+    public function shippingAddress()
+    {
+        return $this->belongsTo(CustomerAddress::class, 'shipping_address_id', 'id');
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class, 'order_master_id', 'id');
@@ -52,11 +57,6 @@ class OrderMaster extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
-    }
-
-    public function shippingAddress()
-    {
-        return $this->belongsTo(CustomerAddress::class, 'shipping_address_id', 'id');
     }
 
 

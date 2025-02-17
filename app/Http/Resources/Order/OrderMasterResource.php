@@ -19,7 +19,7 @@ class OrderMasterResource extends JsonResource
             'id' => $this->id,
             'customer_id' => $this->customer_id,
             'shipping_address_id' => $this->shipping_address_id,
-            'shipping_address' => $this->shippingAddress,
+            'shipping_address' => $this->shippingAddress ?? null,
             'delivery_charge' => round($this->shipping_charge, 2) ?? 0,
             'product_discount_amount' => round($this->product_discount_amount, 2) ?? 0,
             'order_amount' => $this->order_amount,
