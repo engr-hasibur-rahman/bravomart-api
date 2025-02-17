@@ -73,10 +73,9 @@ class Order extends Model
     }
 
 
-    // Order -> OrderMaster -> OrderDetails (Nested Relationship)
-    public function orderDetails()
+    public function orderDetail()
     {
-        return $this->hasManyThrough(OrderDetail::class, Order::class, 'order_master_id', 'order_id', 'id', 'id');
+        return $this->hasMany(OrderDetail::class, 'order_id', 'id');
     }
 
 

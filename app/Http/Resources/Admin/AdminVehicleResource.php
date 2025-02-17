@@ -26,7 +26,6 @@ class AdminVehicleResource extends JsonResource
             "average_fuel_cost" => $this->average_fuel_cost,
             "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
             "status" => $this->status,
-            "created_by" => $this->creator->first_name,
             "store" => $this->store->name ?? null,
         ];
     }
