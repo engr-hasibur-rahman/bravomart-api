@@ -59,8 +59,8 @@ class PlaceOrderRequest extends FormRequest
             // packages
             'packages' => 'required|array',
             'packages.*.store_id' => 'required|exists:stores,id',
-            'packages.*.delivery_type' => 'required|in:home_delivery,parcel,takeaway',
-            'packages.*.delivery_option' => 'nullable|in:standard,express,freight',
+            'packages.*.delivery_option' => 'required|in:home_delivery,parcel,takeaway',
+            'packages.*.delivery_type' => 'nullable|in:standard,express,freight',
             'packages.*.delivery_time' => 'nullable',
             'packages.*.coupon_discount_amount_admin' => 'nullable|numeric',
             'packages.*.product_discount_amount' => 'nullable|numeric',
