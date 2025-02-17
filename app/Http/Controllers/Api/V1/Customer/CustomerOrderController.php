@@ -59,9 +59,11 @@ class CustomerOrderController extends Controller
     public function invoice(Request $request)
     {
         $order_id = $request->order_id;
-        $order = Order::with(['orderMaster.orderDetails.product', 'orderPayment', 'shippingAddress'])
+        $customer_id = auth()->guard('api_customer')->user()->id;
+        $order_master_ids = OrderMaster::where('customer_id', $customer_id)->pluck('id');
+        $order = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
             ->where('id', $order_id)
-            ->where('customer_id', auth('api_customer')->user()->id)
+            ->whereIn('order_master_id', $order_master_ids)
             ->first();
         if (!$order) {
             return response()->json(['message' => __('messages.data_not_found')], 404);
