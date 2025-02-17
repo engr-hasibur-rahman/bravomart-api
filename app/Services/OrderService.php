@@ -169,7 +169,6 @@ class OrderService
                         if (!empty($variant) && isset($variant->price)) {
                             $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
                         }
-
                         if (!empty($product) && !empty($variant)) {
                             // product flash sale info
                             $product_flash_sale_id = null;

@@ -71,7 +71,20 @@ class PlaceOrderRequest extends FormRequest
             'packages.*.items' => 'required|array',
             'packages.*.items.*.product_id' => 'required|exists:products,id',
             'packages.*.items.*.product_campaign_id' => 'nullable|numeric',
-            'packages.*.items.*.variant_id' => 'required|exists:product_variants,id',
+//            'packages.*.items.*.variant_id' => 'required|exists:product_variants,id',
+            'packages.*.items.*.variant_id' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) {
+                    $productId = request()->input(str_replace('.variant_id', '.product_id', $attribute));
+                    $variantExists = \App\Models\ProductVariant::where('id', $value)->where('product_id', $productId)->exists();
+
+                    if (!$variantExists) {
+                        $fail("The selected variant does not belong to the given product.");
+                    }
+                }
+            ],
+
             // discount store
             'packages.*.items.*.admin_discount_type' => 'nullable',
             'packages.*.items.*.admin_discount_rate' => 'nullable|numeric',
