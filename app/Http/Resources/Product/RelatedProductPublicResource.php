@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,6 +23,7 @@ class RelatedProductPublicResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'image' => $this->image,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
             'views' => $this->views,
             'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,

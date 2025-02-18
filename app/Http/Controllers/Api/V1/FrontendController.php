@@ -305,14 +305,14 @@ class FrontendController extends Controller
                     'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
                 ]);
             }
-            $query->select('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id') // Specify only necessary columns
+            $query->select('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id', 'products.image','products.description') // Specify only necessary columns
             ->selectRaw('MAX((product_variants.price - product_variants.special_price) / product_variants.price) AS max_discount_percentage')
                 ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
                 ->whereNotNull('product_variants.special_price')
                 ->whereColumn('product_variants.special_price', '<', 'product_variants.price')
                 ->whereNull('product_variants.deleted_at')
                 ->whereNull('products.deleted_at')
-                ->groupBy('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id');
+                ->groupBy('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id', 'products.image','products.description');
 
             if ($request->filled('category_id')) {
                 $query->where('category_id', $request->category_id);
@@ -575,6 +575,7 @@ class FrontendController extends Controller
             ], 404);
         }
     }
+
     public function flashDealProducts(Request $request)
     {
         $filters = [
