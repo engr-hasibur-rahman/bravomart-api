@@ -712,7 +712,7 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_ALL_TICKETS->value,
+                                    'PermissionName' => PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value,
                                     'PermissionTitle' => 'All Tickets',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',

@@ -65,7 +65,7 @@ class CustomerSupportTicketManageController extends Controller
             unauthorized_response();
         }
         try {
-            $request['user_id'] = auth('api_customer')->user()->id;
+            $request['customer_id'] = auth('api_customer')->user()->id;
             $ticket = $this->ticketRepo->createTicket($request->all());
             return response()->json([
                 'message' => __('messages.save_success', ['name' => 'Support Ticket']),

@@ -197,7 +197,7 @@ enum PermissionKey: string
     //              Support Tickets Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_TICKETS_DEPARTMENT = '/admin/ticket/department';
-    case ADMIN_ALL_TICKETS = '/admin/ticket/all-tickets';
+    case ADMIN_SUPPORT_TICKETS_MANAGE = '/admin/support-ticket/list';
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Dynamic Pages Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//

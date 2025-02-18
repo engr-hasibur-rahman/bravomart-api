@@ -7,7 +7,7 @@ use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PopularProductPublicResource extends JsonResource
+class  PopularProductPublicResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -23,7 +23,8 @@ class PopularProductPublicResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'image' => ImageModifier::generateImageUrl($this->image),
+            'image' => $this->image,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
             'views' => $this->views,
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
             'price' => optional($this->variants->first())->price,

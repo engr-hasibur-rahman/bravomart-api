@@ -79,8 +79,10 @@ class CustomerOrderController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        $customer_id = auth()->guard('api_customer')->user()->id;
+        $order_master_ids = OrderMaster::where('customer_id', $customer_id)->pluck('id');
         $order = Order::where('id', $request->order_id)
-            ->where('customer_id', auth('api_customer')->user()->id)
+            ->whereIn('order_master_id', $order_master_ids)
             ->first();
 
         if (!$order) {
@@ -88,35 +90,32 @@ class CustomerOrderController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        if ($order->cancelled_by !== null || $order->cancelled_at !== null || $order->status === 'cancelled') {
+        if ($order->status === 'cancelled') {
             return response()->json([
                 'message' => __('messages.order_already_cancelled')
             ], 422);
         }
+
         if ($order->status === 'delivered') {
             return response()->json([
                 'message' => __('messages.order_already_delivered')
             ], 422);
         }
-        if ($order->status === 'pending') {
-            $success = $order->update([
-                'cancelled_by' => auth('api_customer')->user()->id,
-                'cancelled_at' => Carbon::now(),
-                'status' => 'cancelled'
-            ]);
-            if ($success) {
-                return response()->json([
-                    'message' => __('messages.order_cancel_successful')
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => __('messages.order_cancel_failed')
-                ], 500);
-            }
+
+        $success = $order->update([
+            'cancelled_by' => auth('api_customer')->user()->id,
+            'cancelled_at' => Carbon::now(),
+            'status' => 'cancelled'
+        ]);
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.order_cancel_successful')
+            ], 200);
         } else {
             return response()->json([
-                'message' => __('messages.order_status_not_changeable')
-            ], 422);
+                'message' => __('messages.order_cancel_failed')
+            ], 500);
+
         }
 
     }

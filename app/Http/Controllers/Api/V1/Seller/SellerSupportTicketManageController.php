@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SupportTicketRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketMessageResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
 use App\Interfaces\SupportTicketManageInterface;
+use App\Models\Store;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -23,139 +25,152 @@ class SellerSupportTicketManageController extends Controller
     /* ----------------------------------------------------------- Support Ticket -------------------------------------------------- */
     public function index(Request $request)
     {
-        try {
-            $filters = $request->only([
-                'user_id',
-                'department_id',
-                'ticket_id',
-                'status',
-                'per_page',
-            ]);
-            $tickets = $this->ticketRepo->getTickets($filters);
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => SupportTicketResource::collection($tickets),
-                'pagination' => [
-                    'total' => $tickets->total(),
-                    'per_page' => $tickets->perPage(),
-                    'current_page' => $tickets->currentPage(),
-                    'last_page' => $tickets->lastPage(),
-                ],
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage()
-            ]);
+        $validator = Validator::make($request->all(), [
+            'store_id' => 'required|integer|exists:stores,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
-
+        $filters = $request->only([
+            'store_id',
+            'department_id',
+            'ticket_id',
+            'status',
+            'priority',
+            'per_page',
+        ]);
+        $tickets = $this->ticketRepo->getSellerStoreTickets($filters);
+        if ($tickets->count() > 0) {
+            return response()->json([
+                'data' => SupportTicketResource::collection($tickets),
+                'meta' => new PaginationResource($tickets),
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ], 204);
+        }
     }
 
     public function show(Request $request)
     {
-        try {
-            $ticketId = $request->input('id');
-            $ticket = $this->ticketRepo->getTicketById($ticketId);
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => new SupportTicketDetailsResource($ticket)
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage()
-            ]);
+        $ticketId = $request->id;
+        $seller = auth('api')->user();
+        $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
+        $ticket = $this->ticketRepo->getTicketById($ticketId);
+        if ($seller_stores->contains($ticket->store_id)) {
+            return response()->json(new SupportTicketDetailsResource($ticket), 200);
+        } else {
+            return response()->json(['message' => __('messages.data_not_found')], 404);
         }
     }
 
-    public function store(SupportTicketRequest $request)
+    public function store(Request $request)
     {
-        if (!auth('api_customer')->check()) {
+        if (!auth('api')->check()) {
             unauthorized_response();
         }
-        try {
-            $request['user_id'] = auth('api_customer')->user()->id;
-            $ticket = $this->ticketRepo->createTicket($request->all());
-            return response()->json([
-                'status' => true,
-                'status_code' => 201,
-                'message' => __('messages.save_success', ['name' => 'Support Ticket']),
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage()
-            ]);
+        $validator = Validator::make($request->all(), [
+            'store_id' => 'required|exists:stores,id',
+            'department_id' => 'nullable|exists:departments,id',
+            'title' => 'required|string|max:255',
+            'subject' => 'required|string|max:255',
+            'priority' => 'nullable|in:high,medium,low,urgent',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
+        $seller = auth('api')->user();
+        $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
+        if (!$seller_stores->contains($request->store_id)) {
+            return response()->json([
+                'message' => __('messages.store.doesnt.belongs.to.seller'),
+            ], 422);
+        }
+        $request['store_id'] = $request->store_id;
+
+        $ticket = $this->ticketRepo->createTicket($request->all());
+        return response()->json([
+            'status' => true,
+            'status_code' => 201,
+            'message' => __('messages.save_success', ['name' => 'Support Ticket']),
+        ], 201);
+
+
     }
 
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required',
+            'id' => 'required|integer|exists:tickets,id',
             'department_id' => 'nullable|exists:departments,id',
-            'title' => 'nullable|string|max:255',
-            'subject' => 'nullable|string|max:255',
+            'title' => 'required|string|max:255',
+            'subject' => 'required|string|max:255',
+            'priority' => 'nullable|in:high,medium,low,urgent',
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => $validator->errors()
-            ]);
+            return response()->json($validator->errors(), 422);
         }
-        $isClosed = Ticket::findorfail($request->input('id'))->pluck('status')->contains(0);
+        $ticket = Ticket::find($request->id);
+        $seller = auth('api')->user();
+        $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
+        $isClosed = $ticket->pluck('status')->contains(0);
         if ($isClosed) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => __('messages.ticket.closed')
-            ]);
+            ], 422);
         }
-        try {
-            $this->ticketRepo->updateTicket($request->only([
-                'id',
-                'department_id',
-                'title',
-                'subject'
-            ]));
+        if (!$seller_stores->contains($ticket->store_id)) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
+                'message' => __('messages.ticket_does_not_belongs_to_this_store'),
+            ], 422);
+        }
+        $success = $this->ticketRepo->updateTicket($request->only([
+            'id',
+            'department_id',
+            'title',
+            'subject',
+            'priority'
+        ]));
+        if ($success) {
+            return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Support Ticket']),
-            ]);
-        } catch (\Exception $e) {
+            ], 200);
+        } else {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage()
-            ]);
+                'message' => __('messages.update_failed', ['name' => 'Support Ticket']),
+            ], 500);
         }
+
+
     }
 
     public function resolve(Request $request)
     {
-        $ticketId = $request->input('ticket_id');
-        try {
-            $this->ticketRepo->resolveTicket($ticketId);
+        $validator = Validator::make($request->all(), [
+            'ticket_id' => 'required|integer|exists:tickets,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $ticketId = $request->ticket_id;
+        $seller = auth('api')->user();
+        $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
+        $ticket = Ticket::find($request->id);
+        if (!$seller_stores->contains($ticket->store_id)) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
+                'message' => __('messages.ticket_does_not_belongs_to_this_store'),
+            ], 422);
+        }
+        $success = $this->ticketRepo->resolveTicket($ticketId);
+        if ($success) {
+            return response()->json([
                 'message' => __('messages.ticket.resolved'),
-            ]);
-        } catch (\Exception $e) {
+            ], 200);
+        } else {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage()
-            ]);
+                'message' => __('messages.update_failed', ['name' => 'Support Ticket status']),
+            ], 200);
         }
     }
 
