@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Seller\SellerProductQueryResource;
 use App\Interfaces\ProductQueryManageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -28,7 +29,7 @@ class SellerProductQueryController extends Controller
         }
         if ($questions) {
             return response()->json([
-                'data' => $questions,
+                'data' => SellerProductQueryResource::collection($questions),
                 'meta' => new PaginationResource($questions)
             ], 200);
         } else {
