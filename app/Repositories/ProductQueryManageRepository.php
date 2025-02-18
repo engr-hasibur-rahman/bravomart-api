@@ -80,6 +80,7 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
     public function getAllQuestionsAndReplies(array $data)
     {
         return ProductQuery::query()
+            ->with(['product', 'customer', 'seller'])
             ->when(isset($data['search']), function ($query) use ($data) {
                 $searchTerm = $data['search'];
 
