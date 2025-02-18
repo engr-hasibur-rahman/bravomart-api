@@ -47,6 +47,11 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         ];
     }
 
+    public function getFullNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->last_name}");
+    }
+
     public function isActive(): bool
     {
         return $this->status === 1 && $this->deleted_at === null;
