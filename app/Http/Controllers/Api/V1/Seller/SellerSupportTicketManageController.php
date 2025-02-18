@@ -156,7 +156,7 @@ class SellerSupportTicketManageController extends Controller
         $ticketId = $request->ticket_id;
         $seller = auth('api')->user();
         $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
-        $ticket = Ticket::find($request->id);
+        $ticket = Ticket::find($ticketId);
         if (!$seller_stores->contains($ticket->store_id)) {
             return response()->json([
                 'message' => __('messages.ticket_does_not_belongs_to_this_store'),
@@ -175,6 +175,46 @@ class SellerSupportTicketManageController extends Controller
     }
 
     /* ----------------------------------------------------------- Support Ticket Messages -------------------------------------------------- */
+    public function addMessage(Request $request)
+    {
+        if (!auth('api')->check()) {
+            return unauthorized_response();
+        }
+
+        $seller = auth('api')->user();
+
+        $validatedData = $request->validate([
+            'ticket_id' => 'required|exists:tickets,id',
+            'message' => 'required|string',
+            'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048',
+        ]);
+
+        $filename = null;
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = 'seller/support-ticket/' . now()->timestamp . '_' . str_replace(['@', '.'], '_', $seller->email) . '_' . $file->getClientOriginalName();
+            Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
+        }
+
+        $messageDetails = [
+            'ticket_id' => $validatedData['ticket_id'],
+            'sender_id' => $seller->id,
+            'sender_role' => 'store_level',
+            'message' => $validatedData['message'],
+            'file' => $filename,
+        ];
+
+        $message = $this->ticketRepo->addMessage($messageDetails);
+
+        Ticket::where('id', $validatedData['ticket_id'])->update(['updated_at' => now()]);
+
+        return response()->json([
+            'message' => __('messages.support_ticket.message.sent'),
+            'data' => $message
+        ], 201);
+    }
+
 
     public function replyMessage(Request $request)
     {
