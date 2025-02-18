@@ -272,7 +272,7 @@ class CustomerManageRepository implements CustomerManageInterface
 
     protected function getSupportTickets($customer_id)
     {
-        $tickets = Ticket::where('user_id', $customer_id)->get();
+        $tickets = Ticket::where('customer_id', $customer_id)->get();
         if (empty($tickets)) {
             return null;
         } else {

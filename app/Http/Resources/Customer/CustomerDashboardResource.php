@@ -23,15 +23,21 @@ class CustomerDashboardResource extends JsonResource
             'on_hold_products' => $this['on_hold_products'],
             'total_support_ticket' => $this['total_support_ticket'],
             'wallet' => $this['wallet'],
-            'recent_orders' => collect($this['recent_orders'])->map(function ($orderDetail) {
-                return [
-                    'product_image' =>  ImageModifier::generateImageUrl($orderDetail['product']['image']), // Product image
-                    'product_name' => $orderDetail['product']['name'] ?? null, // Product name
-                    'order_id' => $orderDetail['order_id'],
-                    'purchased_at' => $orderDetail['order']['created_at'], // Order placement timestamp
-                    'status' => $orderDetail['order']['status'] ?? null, // Order status
-                ];
+            'recent_orders' => collect($this['recent_orders'])->flatMap(function ($order) {
+                return $order['orderDetail']->map(function ($orderDetail) {
+                    return [
+                        'product_image' => isset($orderDetail['product'])
+                            ? ImageModifier::generateImageUrl($orderDetail['product']['image'])
+                            : null, // Handle missing product
+                        'product_name' => $orderDetail['product']['name'] ?? null, // Product name
+                        'order_id' => $orderDetail['order_id'],
+                        'purchased_at' => $orderDetail['order']['created_at'] ?? null, // Handle missing order
+                        'status' => $orderDetail['order']['status'] ?? null, // Handle missing order
+                    ];
+                });
             }),
         ];
     }
+
+
 }
