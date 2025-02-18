@@ -14,7 +14,7 @@ class OrderSummaryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $subtotal = round($this->orderDetail->sum('line_total_price'), 2);
+        $subtotal = round($this->orderDetail->sum('line_total_excluding_tax'), 2);
         $coupon_discount = round($this->orderDetail->sum('coupon_discount_amount'), 2);
         $total_tax_amount = round($this->orderDetail->sum('total_tax_amount'), 2);
         $product_discount_amount = round(abs($this->product_discount_amount), 2);

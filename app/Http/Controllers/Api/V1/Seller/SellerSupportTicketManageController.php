@@ -154,7 +154,14 @@ class SellerSupportTicketManageController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $ticketId = $request->ticket_id;
-
+        $seller = auth('api')->user();
+        $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
+        $ticket = Ticket::find($request->id);
+        if (!$seller_stores->contains($ticket->store_id)) {
+            return response()->json([
+                'message' => __('messages.ticket_does_not_belongs_to_this_store'),
+            ], 422);
+        }
         $success = $this->ticketRepo->resolveTicket($ticketId);
         if ($success) {
             return response()->json([

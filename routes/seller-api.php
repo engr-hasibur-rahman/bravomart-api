@@ -47,6 +47,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             Route::get('details/{id?}', [SellerSupportTicketManageController::class, 'show']);
             Route::post('add', [SellerSupportTicketManageController::class, 'store']);
             Route::post('update', [SellerSupportTicketManageController::class, 'update']);
+            Route::post('resolve', [SellerSupportTicketManageController::class, 'resolve']);
             Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
         });
 
