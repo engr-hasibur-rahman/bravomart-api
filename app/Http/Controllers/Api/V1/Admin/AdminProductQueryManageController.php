@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminQueriesResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\ProductQueryManageInterface;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class AdminProductQueryManageController extends Controller
         }
         if ($queries) {
             return response()->json([
-                'data' => $queries,
+                'data' => AdminQueriesResource::collection($queries),
                 'meta' => new PaginationResource($queries),
             ], 200);
         } else {
