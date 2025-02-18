@@ -90,7 +90,7 @@ class CustomerOrderController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        if ($order->cancelled_by !== null || $order->cancelled_at !== null || $order->status === 'cancelled') {
+        if ($order->status === 'cancelled') {
             return response()->json([
                 'message' => __('messages.order_already_cancelled')
             ], 422);
