@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SupportTicketRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketMessageResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
@@ -23,35 +24,25 @@ class SellerSupportTicketManageController extends Controller
     /* ----------------------------------------------------------- Support Ticket -------------------------------------------------- */
     public function index(Request $request)
     {
-        try {
-            $filters = $request->only([
-                'user_id',
-                'department_id',
-                'ticket_id',
-                'status',
-                'per_page',
-            ]);
-            $tickets = $this->ticketRepo->getTickets($filters);
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => SupportTicketResource::collection($tickets),
-                'pagination' => [
-                    'total' => $tickets->total(),
-                    'per_page' => $tickets->perPage(),
-                    'current_page' => $tickets->currentPage(),
-                    'last_page' => $tickets->lastPage(),
-                ],
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage()
-            ]);
-        }
 
+        $filters = $request->only([
+            'user_id',
+            'department_id',
+            'ticket_id',
+            'status',
+            'per_page',
+        ]);
+        $tickets = $this->ticketRepo->getTickets($filters);
+        if ($tickets->count() > 0) {
+            return response()->json([
+                'data' => SupportTicketResource::collection($tickets),
+                'meta' => new PaginationResource($tickets),
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ], 204);
+        }
     }
 
     public function show(Request $request)
