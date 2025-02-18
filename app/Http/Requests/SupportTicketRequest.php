@@ -37,8 +37,6 @@ class SupportTicketRequest extends FormRequest
         return [
             'department_id.required' => __('validation.required', ['attribute' => 'Department']),
             'department_id.exists' => __('validation.exists', ['attribute' => 'Department']),
-            'user_id.required' => __('validation.required', ['attribute' => 'User']),
-            'user_id.exists' => __('validation.exists', ['attribute' => 'User']),
             'title.required' => __('validation.required', ['attribute' => 'Title']),
             'title.string' => __('validation.string', ['attribute' => 'Title']),
             'title.max' => __('validation.max.string', ['attribute' => 'Title']),

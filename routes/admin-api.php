@@ -463,9 +463,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             });
         });
         // FINANCIAL WITHDRAWALS management
-        Route::group(['prefix' => 'support-ticket/','middleware' => 'permission:' . PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value], function () {
+        Route::group(['prefix' => 'support-ticket/', 'middleware' => 'permission:' . PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value], function () {
             Route::get('list', [AdminSupportTicketManageController::class, 'index']);
-            Route::post('status/{id?}', [WalletManageAdminController::class, 'status']);
+            Route::get('details/{id?}', [AdminSupportTicketManageController::class, 'show']);
             Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
             Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_TRANSACTION->value]);
             Route::post('transactions-status/{id}', [WalletManageAdminController::class, 'transactionStatus']);

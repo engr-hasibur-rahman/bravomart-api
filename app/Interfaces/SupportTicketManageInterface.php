@@ -5,6 +5,8 @@ interface SupportTicketManageInterface
 {
     public function getTickets(array $filters = []);
 
+    public function getSellerStoreTickets(array $filters);
+
     public function getCustomerTickets(array $filters = []);
 
     public function createTicket(array $data);

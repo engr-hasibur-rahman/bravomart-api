@@ -17,11 +17,12 @@ class SupportTicketDetailsResource extends JsonResource
         return [
             'ticket_id' => $this->id,
             'department_id' => $this->department_id,
+            'department_name' => $this->department?->name,
             'status' => $this->status,
             'priority' => $this->priority,
             'title' => $this->title,
             'subject' => $this->subject,
-            'last_updated' => $this->updated_at->diffForHumans(),
+            'last_updated' => $this->updated_at?->diffForHumans(),
         ];
     }
 }
