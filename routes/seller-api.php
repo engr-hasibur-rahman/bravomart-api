@@ -43,6 +43,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
 
         // Support ticket manage
         Route::group(['prefix' => 'support-ticket/'], function () {
+            Route::get('list', [SellerSupportTicketManageController::class, 'index']);
+            Route::get('details/{id?}', [SellerSupportTicketManageController::class, 'show']);
+            Route::post('add', [SellerSupportTicketManageController::class, 'store']);
+            Route::post('update', [SellerSupportTicketManageController::class, 'update']);
             Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
         });
 

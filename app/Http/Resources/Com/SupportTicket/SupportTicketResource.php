@@ -19,8 +19,8 @@ class SupportTicketResource extends JsonResource
             'title' => $this->title,
             'priority' => $this->priority,
             'status' => $this->status,
-            'department' => $this->department->name,
-            'created_by' => $this->user->first_name,
+            'department' => $this->department?->name,
+            'store' => $this->store?->name,
         ];
     }
 }

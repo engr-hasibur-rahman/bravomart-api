@@ -11,7 +11,8 @@ class Ticket extends Model
 
     protected $fillable = [
         'department_id',
-        'user_id',
+        'store_id',
+        'customer_id',
         'title',
         'subject',
         'priority',
@@ -28,9 +29,13 @@ class Ticket extends Model
         return $this->belongsTo(Department::class);
     }
 
-    public function user()
+    public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
     }
 
     public function messages()

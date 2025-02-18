@@ -174,8 +174,6 @@ class CustomerManageRepository implements CustomerManageInterface
     }
 
 
-
-
     public function activateAccount()
     {
         $user = auth('api_customer')->user();
@@ -218,40 +216,39 @@ class CustomerManageRepository implements CustomerManageInterface
 
     protected function getTotalOrders($customer_id)
     {
-        return Order::where('customer_id', $customer_id)->count();
+        return Order::whereHas('orderMaster', function ($query) use ($customer_id) {
+            $query->where('customer_id', $customer_id);
+        })->count();
     }
 
     protected function getPendingOrders($customer_id)
     {
-        return Order::where('customer_id', $customer_id)
-            ->where('status', 'pending')
-            ->count();
+        return Order::whereHas('orderMaster', function ($query) use ($customer_id) {
+            $query->where('customer_id', $customer_id);
+        })->where('status', 'pending')->count();
     }
 
     protected function getCanceledOrders($customer_id)
     {
-        return Order::where('customer_id', $customer_id)
-            ->where('status', 'cancelled')
-            ->count();
+        return Order::whereHas('orderMaster', function ($query) use ($customer_id) {
+            $query->where('customer_id', $customer_id);
+        })->where('status', 'cancelled')->count();
     }
 
     protected function getOnHoldProducts($customer_id)
     {
-        return Order::where('customer_id', $customer_id)
-            ->where('status', 'on_hold')
-            ->count();
+        return Order::whereHas('orderMaster', function ($query) use ($customer_id) {
+            $query->where('customer_id', $customer_id);
+        })->where('status', 'on_hold')->count();
     }
 
     protected function getRecentOrders($customer_id)
     {
-        return OrderDetail::with([
-            'order',
-            'product',
-        ])
-            ->whereHas('order', function ($query) use ($customer_id) {
-                $query->where('customer_id', $customer_id)
-                    ->where('status', 'pending'); // status will be delivered
+        return Order::with('orderDetail.product')
+            ->whereHas('orderMaster', function ($query) use ($customer_id) {
+                $query->where('customer_id', $customer_id);
             })
+            ->where('status', 'delivered')
             ->latest()
             ->limit(10)
             ->get();

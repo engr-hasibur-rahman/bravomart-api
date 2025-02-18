@@ -19,14 +19,14 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         $query = $this->ticket->with(['department', 'user', 'messages.sender', 'messages.receiver']);
 
         // Apply filters using isset
-        if (isset($filters['user_id'])) {
-            $query->where('user_id', $filters['user_id']);
+        if (isset($filters['customer_id'])) {
+            $query->where('customer_id', $filters['customer_id']);
         }
         if (isset($filters['department_id'])) {
             $query->where('department_id', $filters['department_id']);
         }
         if (isset($filters['ticket_id'])) {
-            return $query->findOrFail($filters['ticket_id']);
+            $query->where('id', $filters['ticket_id']);
         }
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
@@ -34,6 +34,28 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         $tickets = $query->latest()
             ->paginate($filters['per_page'] ?? 10);
         // Sort and fetch results
+        return $tickets;
+    }
+
+    public function getSellerStoreTickets(array $filters)
+    {
+        $query = $this->ticket->with(['department', 'store'])
+            ->where('store_id', $filters['store_id']);
+
+        if (isset($filters['department_id'])) {
+            $query->where('department_id', $filters['department_id']);
+        }
+        if (isset($filters['ticket_id'])) {
+            $query->where('id', $filters['ticket_id']);
+        }
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        if (isset($filters['priority'])) {
+            $query->where('priority', $filters['priority']);
+        }
+        $tickets = $query->latest()
+            ->paginate($filters['per_page'] ?? 10);
         return $tickets;
     }
 
@@ -56,16 +78,24 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }
-        $tickets = $query->where('user_id',auth('api_customer')->user()->id)
+        $tickets = $query->where('customer_id', auth('api_customer')->user()->id)
             ->latest()
             ->paginate($filters['per_page'] ?? 10);
         // Sort and fetch results
         return $tickets;
     }
+
     public function getTicketById($ticketId)
     {
-        return $this->ticket->with(['department', 'user', 'messages.sender', 'messages.receiver'])->findOrFail($ticketId);
+
+        $ticket = $this->ticket->with(['department', 'store', 'customer', 'messages.sender', 'messages.receiver'])->find($ticketId);
+        if ($ticket->count() > 0) {
+            return $ticket;
+        } else {
+            return false;
+        }
     }
+
     public function createTicket(array $data)
     {
         try {
@@ -75,10 +105,12 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
             return false;
         }
     }
+
     public function addMessage(array $messageDetails)
     {
         return $this->ticketMessage->create($messageDetails);
     }
+
     public function replyMessage(array $messageDetails)
     {
         return $this->ticketMessage->create($messageDetails);
@@ -86,19 +118,27 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
 
     public function updateTicket(array $data)
     {
-        $ticket = $this->ticket->findOrFail($data['id']);
-        $ticket->update($data);
-        return $ticket;
+        $ticket = $this->ticket->find($data['id']);
+        if ($ticket->count() > 0) {
+            $ticket->update($data);
+            return $ticket;
+        } else {
+            return false;
+        }
     }
 
     public function resolveTicket($ticketId)
     {
-        $ticket = $this->ticket->findOrFail($ticketId);
-        $ticket->update([
-            'status' => 0,
-            'resolved_at' => Carbon::now()
-        ]);
-        return $ticket;
+        $ticket = $this->ticket->find($ticketId);
+        if ($ticket->count() > 0) {
+            $ticket->update([
+                'status' => 0,
+                'resolved_at' => Carbon::now()
+            ]);
+            return $ticket;
+        } else {
+            return false;
+        }
     }
 
     public function getTicketMessages(int $ticketId)
