@@ -376,7 +376,9 @@ class OrderService
                            }
                        }
 
-                       // create order details
+
+
+                       // create order details add
                         $orderDetails =  OrderDetail::create([
                            'order_id' => $package->id,
                            'store_id' => $product->store?->id,
