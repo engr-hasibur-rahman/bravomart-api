@@ -101,7 +101,7 @@ class ProductSeeder extends Seeder
                 'name' => "Product $i",
                 'slug' => "product-$i",
                 'description' => "Description for product $i",
-                'image' => "product$i.jpg",
+                'image' => "1",
                 'warranty' => json_encode([
                     ['warranty_period' => rand(1, 5), 'warranty_text' => 'Years Warranty']
                 ]),
