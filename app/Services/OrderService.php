@@ -308,6 +308,9 @@ class OrderService
                        // Calculate final price
                        $finalPrice = $basePrice - $flash_sale_admin_discount;
 
+                       // line total price with qty
+                       $line_total_price_with_qty = $finalPrice - $itemData['quantity'];
+
                        // after flash sale discount
                        $after_flash_sale_discount_final_price = $finalPrice;
 
@@ -402,7 +405,8 @@ class OrderService
                            'base_price' =>  $basePrice,
                            'price' => $after_any_discount_final_price,
                            'quantity' => $itemData['quantity'],
-                           'line_total_price_with_qty' => $after_discount_final_price_with_qty,
+//                           'line_total_price_with_qty' => $after_discount_final_price_with_qty,
+                           'line_total_price_with_qty' => $line_total_price_with_qty,
                            'line_total_excluding_tax' => $line_total_excluding_tax, // Total without tax
                            'tax_rate' => $store_tax_amount,
                            'tax_amount' => $taxAmount,
