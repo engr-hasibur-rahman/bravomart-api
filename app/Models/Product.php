@@ -12,7 +12,7 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $appends = ['wishlist', 'rating', 'review_count'];
+    protected $appends = ['wishlist', 'rating', 'review_count','reviews'];
     protected $dates = ['deleted_at'];
     protected $table = "products";
     protected $fillable = [
@@ -233,6 +233,13 @@ class Product extends Model
             ->where('reviewable_type', Product::class)
             ->where('status', 'approved')
             ->count();
+    }
+    public function getReviewsAttribute()
+    {
+        return $this->reviews()->with(['customer','reviewReactions'])
+            ->where('reviewable_type', Product::class)
+            ->where('status', 'approved')
+            ->get();
     }
 
 

@@ -146,9 +146,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
                 Route::get('details/{id?}', [SellerSupportTicketManageController::class, 'show']);
                 Route::post('add', [SellerSupportTicketManageController::class, 'store']);
                 Route::post('update', [SellerSupportTicketManageController::class, 'update']);
+                Route::post('change-priority-status', [SellerSupportTicketManageController::class, 'changePriorityStatus']);
                 Route::post('resolve', [SellerSupportTicketManageController::class, 'resolve']);
+                Route::get('get-ticket-messages', [SellerSupportTicketManageController::class, 'getTicketMessages']);
                 Route::post('message/add', [SellerSupportTicketManageController::class, 'addMessage']);
-                Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
             });
 
             // FINANCIAL WITHDRAWALS management

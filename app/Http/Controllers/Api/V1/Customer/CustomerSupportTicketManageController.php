@@ -24,23 +24,21 @@ class CustomerSupportTicketManageController extends Controller
     /* ----------------------------------------------------------- Support Ticket -------------------------------------------------- */
     public function index(Request $request)
     {
-        try {
-            $filters = $request->only([
-                'search',
-                'priority',
-                'department_id',
-                'status',
-                'per_page',
-            ]);
-            $tickets = $this->ticketRepo->getCustomerTickets($filters);
+        $filters = $request->only([
+            'search',
+            'priority',
+            'department_id',
+            'status',
+            'per_page',
+        ]);
+        $tickets = $this->ticketRepo->getCustomerTickets($filters);
+        if ($tickets->count() > 0) {
             return response()->json([
                 'data' => SupportTicketResource::collection($tickets),
                 'meta' => new PaginationResource($tickets)
             ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 500);
+        } else {
+            return [];
         }
     }
 
@@ -64,15 +62,15 @@ class CustomerSupportTicketManageController extends Controller
         if (!auth('api_customer')->check()) {
             unauthorized_response();
         }
-        try {
-            $request['customer_id'] = auth('api_customer')->user()->id;
-            $ticket = $this->ticketRepo->createTicket($request->all());
+        $request['customer_id'] = auth('api_customer')->user()->id;
+        $success = $this->ticketRepo->createTicket($request->all());
+        if ($success) {
             return response()->json([
                 'message' => __('messages.save_success', ['name' => 'Support Ticket']),
             ], 200);
-        } catch (\Exception $e) {
+        } else {
             return response()->json([
-                'message' => $e->getMessage()
+                'message' => __('messages.save_failed', ['name' => 'Support Ticket'])
             ], 500);
         }
     }
@@ -80,7 +78,7 @@ class CustomerSupportTicketManageController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required',
+            'id' => 'required|exists:tickets,id',
             'department_id' => 'nullable|exists:departments,id',
             'title' => 'nullable|string|max:255',
             'priority' => 'nullable|in:low,high,medium,urgent',
@@ -91,7 +89,8 @@ class CustomerSupportTicketManageController extends Controller
                 'message' => $validator->errors()
             ], 400);
         }
-        $isClosed = Ticket::findorfail($request->input('id'))->pluck('status')->contains(0);
+        $ticket = Ticket::find($request->id);
+        $isClosed = $ticket->status === 0;
         if ($isClosed) {
             return response()->json([
                 'message' => __('messages.ticket.closed')
