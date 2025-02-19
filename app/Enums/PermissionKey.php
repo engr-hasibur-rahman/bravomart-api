@@ -275,7 +275,9 @@ enum PermissionKey: string
     //====================== Product Authors (For Book Only)
     case SELLER_PRODUCT_AUTHORS_MANAGE = '/seller/product/author/list';
     //~~~~~~~~~~~~~~~~~Wallet Manage~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    //
+    //~~~~~~~~~~~~~~~~~Seller Support Ticket~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    case SELLER_STORE_SUPPORT_TICKETS_MANAGE = '/seller/store/support-ticket/list';
     // ######################## Seller PermissionKey End ###########################
 
 }

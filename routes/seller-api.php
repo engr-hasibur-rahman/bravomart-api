@@ -41,18 +41,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             Route::get('/', [SellerManageController::class, 'getProfile']);
         });
 
-        // Support ticket manage
-        Route::group(['prefix' => 'support-ticket/'], function () {
-            Route::get('list', [SellerSupportTicketManageController::class, 'index']);
-            Route::get('details/{id?}', [SellerSupportTicketManageController::class, 'show']);
-            Route::post('add', [SellerSupportTicketManageController::class, 'store']);
-            Route::post('update', [SellerSupportTicketManageController::class, 'update']);
-            Route::post('resolve', [SellerSupportTicketManageController::class, 'resolve']);
-            Route::post('message/add', [SellerSupportTicketManageController::class, 'addMessage']);
-            Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
-        });
-
-
         // profile manage
         Route::group(['prefix' => 'profile/'], function () {
             Route::get('/', [SellerManageController::class, 'getProfile']);
@@ -99,6 +87,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                     Route::post('change-status', [SellerDeliverymanManageController::class, 'changeVehicleStatus']);
                     Route::delete('remove/{id}', [SellerDeliverymanManageController::class, 'destroyVehicle']);
                 });
+            });
+            // Support ticket manage
+            Route::group(['prefix' => 'support-ticket/','middleware' => 'permission:' . PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value], function () {
+                Route::get('list', [SellerSupportTicketManageController::class, 'index']);
+                Route::get('details/{id?}', [SellerSupportTicketManageController::class, 'show']);
+                Route::post('add', [SellerSupportTicketManageController::class, 'store']);
+                Route::post('update', [SellerSupportTicketManageController::class, 'update']);
+                Route::post('resolve', [SellerSupportTicketManageController::class, 'resolve']);
+                Route::post('message/add', [SellerSupportTicketManageController::class, 'addMessage']);
+                Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
             });
             // seller product manage
             Route::group(['prefix' => 'orders/'], function () {
