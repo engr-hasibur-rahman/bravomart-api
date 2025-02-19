@@ -22,6 +22,9 @@ class Wallet extends Model
         'owner_id', // Foreign key for polymorphic relation
         'owner_type', // The type of the related model (User, Customer)
         'balance',
+        'earnings',
+        'withdrawn',
+        'refunds',
         'status',
     ];
 

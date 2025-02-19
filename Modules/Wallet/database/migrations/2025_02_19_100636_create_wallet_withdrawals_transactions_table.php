@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('withdrawal_records', function (Blueprint $table) {
+        Schema::create('wallet_withdrawals_transactions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->index();
-            $table->string('user_type')->nullable()->comment('store or deliveryman')->index();
+            $table->unsignedBigInteger('owner_id')->index();
+            $table->string('owner_type')->nullable()->comment('store or deliveryman or customer');
             $table->unsignedBigInteger('withdraw_gateway_id')->index();
-            $table->double('amount');
-            $table->double('fee')->default(0.00); // Fee applied to the withdrawal
+            $table->decimal('amount', 15, 2); // Use decimal
+            $table->decimal('fee', 15, 2)->default(0.00); // Fee applied to the withdrawal
             $table->json('gateways_options')->nullable();
-            $table->string('status')->default('pending')->comment('pending, approved, rejected');
             $table->longText('details')->nullable();
             $table->unsignedBigInteger('approved_by')->nullable()->index(); // Approved by reference
             $table->timestamp('approved_at')->nullable();
+            $table->string('status')->default('pending')->comment('pending, approved, rejected');
+            $table->index(['owner_id', 'owner_type', 'status']);
             $table->timestamps();
         });
     }
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('withdrawal_records');
+        Schema::dropIfExists('wallet_withdrawals_transactions');
     }
 };

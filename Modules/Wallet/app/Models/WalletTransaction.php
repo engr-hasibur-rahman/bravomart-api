@@ -21,9 +21,7 @@ class WalletTransaction extends Model
         'status',
     ];
 
-    /**
-     * Define the relationship to the Wallet.
-     */
+
     public function wallet()
     {
         return $this->belongsTo(Wallet::class);
