@@ -141,14 +141,18 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         }
     }
 
-    public function getTicketMessages(int $ticketId)
+    public function getTicketMessages(array $data)
     {
-        $query = $this->ticketMessage->with(['sender', 'receiver', 'ticket']);
-
-        return $this->ticketMessage->where('ticket_id', $ticketId)
+        $query = $this->ticketMessage
+            ->where('ticket_id', $data['ticket_id'])
+            ->where('sender_role', 'store_level')
+            ->when(!empty($data['store_ids']), function ($q) use ($data) {
+                $q->whereIn('sender_id', $data['store_ids']);
+            })
             ->with(['sender', 'receiver'])
-            ->orderBy('created_at', 'asc')
-            ->get();
+            ->orderBy('created_at', 'asc'); // Change to `desc` if you want latest messages first
+
+        return $query->get();
     }
 
     public function markMessageAsRead($messageId)

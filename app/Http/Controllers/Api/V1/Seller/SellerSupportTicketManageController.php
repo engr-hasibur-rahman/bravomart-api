@@ -293,9 +293,8 @@ class SellerSupportTicketManageController extends Controller
                 'message' => __('messages.ticket_does_not_belongs_to_this_store'),
             ], 422);
         }
-        $ticket_messages = TicketMessage::where($ticket->id)->where('')->get();
-
-        $ticketMessages = $this->ticketRepo->getTicketMessages($request->ticket_id);
+        $request['store_ids'] = $seller_stores;
+        $ticketMessages = $this->ticketRepo->getTicketMessages($request->all());
         return response()->json(SupportTicketMessageResource::collection($ticketMessages));
     }
 }

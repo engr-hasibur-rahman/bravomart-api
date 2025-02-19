@@ -19,7 +19,7 @@ interface SupportTicketManageInterface
 
     public function resolveTicket($ticketId);
 
-    public function getTicketMessages(int $ticketId);
+    public function getTicketMessages(array $data);
 
     public function markMessageAsRead($messageId);
 }
