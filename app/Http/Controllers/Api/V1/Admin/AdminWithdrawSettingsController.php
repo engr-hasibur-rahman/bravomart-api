@@ -3,14 +3,42 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\SettingOption;
 use App\Models\WithdrawGateway;
 use Illuminate\Http\Request;
 
 class AdminWithdrawSettingsController extends Controller
 {
-    /**
-     * Display a listing of the withdraw gateways.
-     */
+    public function withdrawSettings(Request $request)
+    {
+            if ($request->isMethod('POST')) {
+                $this->validate($request, [
+                    'minimum_withdrawal_limit' => 'nullable|numeric',
+                    'maximum_withdrawal_limit' => 'nullable|numeric',
+                ]);
+
+                $fields = [
+                    'minimum_withdrawal_limit',
+                    'maximum_withdrawal_limit',
+                   ];
+
+                foreach ($fields as $field) {
+                    $value = $request->input($field) ?? null;
+                    com_option_update($field, $value);
+                }
+                return $this->success(translate('messages.update_success', ['name' => 'Withdraw Settings']));
+            }else{
+
+                $minimum_withdrawal_limit = com_option_get('minimum_withdrawal_limit');
+                $maximum_withdrawal_limit = com_option_get('maximum_withdrawal_limit');
+
+                return $this->success([
+                    'minimum_withdrawal_limit' => $minimum_withdrawal_limit,
+                    'maximum_withdrawal_limit' => $maximum_withdrawal_limit
+                ]);
+            }
+        }
+
     public function index()
     {
         $methods = WithdrawGateway::all();
@@ -20,9 +48,6 @@ class AdminWithdrawSettingsController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created withdraw gateway.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -40,9 +65,6 @@ class AdminWithdrawSettingsController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified withdraw gateway.
-     */
     public function show($id)
     {
         $method = WithdrawGateway::find($id);
@@ -59,10 +81,6 @@ class AdminWithdrawSettingsController extends Controller
             'data' => $method,
         ]);
     }
-
-    /**
-     * Update the specified withdraw gateway.
-     */
     public function update(Request $request, $id)
     {
         $method = WithdrawGateway::find($id);
@@ -89,9 +107,6 @@ class AdminWithdrawSettingsController extends Controller
         ]);
     }
 
-    /**
-     * Toggle the status of the specified withdraw gateway.
-     */
     public function statusChange($id)
     {
         $method = WithdrawGateway::find($id);

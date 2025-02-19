@@ -55,6 +55,12 @@ class AdminWithdrawRequestManageController extends Controller
                 'approved_by' => auth('api')->id(),
                 'approved_at' => Carbon::now()
             ]);
+
+
+        // Proceed with the withdrawal (update the balance, record transaction, etc.)
+//        $balances->current_balance -= $request->amount;
+//        $balances->save();
+
         if ($success) {
             return response()->json([
                 'status' => true,
