@@ -40,4 +40,9 @@ class Review extends Model
         return $this->belongsTo(Store::class, 'store_id');
     }
 
+    public function reviewReactions()
+    {
+        return $this->hasMany(ReviewReaction::class, 'review_id');
+    }
+
 }

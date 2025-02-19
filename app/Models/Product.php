@@ -236,7 +236,7 @@ class Product extends Model
     }
     public function getReviewsAttribute()
     {
-        return $this->reviews()->with('customer')
+        return $this->reviews()->with(['customer','reviewReactions'])
             ->where('reviewable_type', Product::class)
             ->where('status', 'approved')
             ->get();
