@@ -34,6 +34,7 @@ class FlashSaleRequest extends FormRequest
             'purchase_limit' => 'nullable|integer',
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
+            'status' => 'nullable|in:0,1',
             'product_ids' => 'nullable|array|exists:products,id',
         ];
     }
