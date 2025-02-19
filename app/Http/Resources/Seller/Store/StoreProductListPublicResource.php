@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Seller\Store;
 
+use App\Actions\ImageModifier;
+use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,13 +18,22 @@ class StoreProductListPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'category' => $this->category->category_name ?? null,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
             'image' => $this->image,
-            'price' => $this->variants->isNotEmpty() ? $this->variants[0]->price : null,
-            'special_price' => $this->variants->isNotEmpty() ? $this->variants[0]->special_price : null,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
+            'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
+            'price' => optional($this->variants->first())->price,
+            'special_price' => optional($this->variants->first())->special_price,
+            'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
+            'discount_percentage' => $this->variants->isNotEmpty() && optional($this->variants->first())->price > 0
+                ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
+                : null,
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
+            'rating' => number_format((float) $this->rating, 2, '.', ''),
+            'review_count'=>$this->review_count,
         ];
     }
 }

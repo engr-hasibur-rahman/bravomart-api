@@ -11,6 +11,7 @@ use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
 use App\Interfaces\SupportTicketManageInterface;
 use App\Models\Store;
 use App\Models\Ticket;
+use App\Models\TicketMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -185,9 +186,19 @@ class SellerSupportTicketManageController extends Controller
 
         $validatedData = $request->validate([
             'ticket_id' => 'required|exists:tickets,id',
-            'message' => 'required|string',
+            'store_id' => 'required|exists:stores,id',
+            'message' => 'required|string|max:1500',
             'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048',
         ]);
+
+        $seller = auth('api')->user();
+        $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
+        $ticket = Ticket::find($request->ticket_id);
+        if (!$seller_stores->contains($ticket->store_id)) {
+            return response()->json([
+                'message' => __('messages.ticket_does_not_belongs_to_this_store'),
+            ], 422);
+        }
 
         $filename = null;
 
@@ -196,25 +207,20 @@ class SellerSupportTicketManageController extends Controller
             $filename = 'seller/support-ticket/' . now()->timestamp . '_' . str_replace(['@', '.'], '_', $seller->email) . '_' . $file->getClientOriginalName();
             Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
         }
-
         $messageDetails = [
             'ticket_id' => $validatedData['ticket_id'],
-            'sender_id' => $seller->id,
+            'sender_id' => $request->store_id,
             'sender_role' => 'store_level',
             'message' => $validatedData['message'],
             'file' => $filename,
         ];
-
         $message = $this->ticketRepo->addMessage($messageDetails);
-
         Ticket::where('id', $validatedData['ticket_id'])->update(['updated_at' => now()]);
-
         return response()->json([
             'message' => __('messages.support_ticket.message.sent'),
             'data' => $message
         ], 201);
     }
-
 
     public function replyMessage(Request $request)
     {
@@ -269,7 +275,8 @@ class SellerSupportTicketManageController extends Controller
     public function getTicketMessages(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ticket_id' => 'required|exists:tickets,id',
+            'store_id' => 'required|integer|exists:stores,id',
+            'ticket_id' => 'required|integer|exists:tickets,id',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -278,6 +285,16 @@ class SellerSupportTicketManageController extends Controller
                 'message' => $validator->errors()
             ]);
         }
+        $seller = auth('api')->user();
+        $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
+        $ticket = Ticket::find($request->ticket_id);
+        if (!$seller_stores->contains($ticket->store_id)) {
+            return response()->json([
+                'message' => __('messages.ticket_does_not_belongs_to_this_store'),
+            ], 422);
+        }
+        $ticket_messages = TicketMessage::where($ticket->id)->where('')->get();
+
         $ticketMessages = $this->ticketRepo->getTicketMessages($request->ticket_id);
         return response()->json(SupportTicketMessageResource::collection($ticketMessages));
     }

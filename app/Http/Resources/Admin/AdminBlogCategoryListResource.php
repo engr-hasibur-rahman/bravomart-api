@@ -15,7 +15,8 @@ class AdminBlogCategoryListResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'value' => $this->id,
+            'id' => $this->id,
+            'value' => (string)$this->id,
             'label' => $this->name
         ];
     }
