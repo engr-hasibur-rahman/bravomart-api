@@ -10,15 +10,15 @@ class ProductQuery extends Model
         "product_id",
         "customer_id",
         "question",
-        "seller_id",
+        "store_id",
         "reply",
         "replied_at",
         "status",
     ];
 
-    public function seller()
+    public function store()
     {
-        return $this->belongsTo(User::class, "seller_id");
+        return $this->belongsTo(Store::class, "store_id");
     }
 
     public function customer()

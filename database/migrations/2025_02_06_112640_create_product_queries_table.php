@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('product_id');
             $table->foreignId('customer_id');
             $table->text('question');
-            $table->unsignedBigInteger('seller_id');
+            $table->unsignedBigInteger('store_id');
             $table->text('reply')->nullable();
             $table->timestamp('replied_at')->nullable();
             $table->boolean('status')->default(1);
