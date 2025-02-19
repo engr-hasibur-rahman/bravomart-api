@@ -111,7 +111,7 @@ class SellerSupportTicketManageController extends Controller
         $ticket = Ticket::find($request->id);
         $seller = auth('api')->user();
         $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
-        $isClosed = $ticket->pluck('status')->contains(0);
+        $isClosed = $ticket->status === 0;
         if ($isClosed) {
             return response()->json([
                 'message' => __('messages.ticket.closed')
@@ -242,7 +242,7 @@ class SellerSupportTicketManageController extends Controller
 
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $filename = 'support-ticket/' . now()->timestamp . '_' . str_replace(['@', '.'], '_', $seller->email) . '_' . $file->getClientOriginalName();
+            $filename = 'uploads/support-ticket/' . now()->timestamp . '_' . str_replace(['@', '.'], '_', $seller->email) . '_' . $file->getClientOriginalName();
             Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
         }
         $messageDetails = [
