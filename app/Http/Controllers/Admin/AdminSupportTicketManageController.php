@@ -26,6 +26,7 @@ class AdminSupportTicketManageController extends Controller
             'store_id',
             'department_id',
             'status',
+            'priority',
             'per_page',
         ]);
         $tickets = $this->ticketRepo->getTickets($filters);
