@@ -80,7 +80,7 @@ class CustomerSupportTicketManageController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required',
+            'id' => 'required|exists:tickets,id',
             'department_id' => 'nullable|exists:departments,id',
             'title' => 'nullable|string|max:255',
             'priority' => 'nullable|in:low,high,medium,urgent',
@@ -91,7 +91,8 @@ class CustomerSupportTicketManageController extends Controller
                 'message' => $validator->errors()
             ], 400);
         }
-        $isClosed = Ticket::findorfail($request->input('id'))->pluck('status')->contains(0);
+        $ticket = Ticket::find($request->id);
+        $isClosed = $ticket->status === 0;
         if ($isClosed) {
             return response()->json([
                 'message' => __('messages.ticket.closed')
