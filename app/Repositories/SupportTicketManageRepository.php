@@ -36,6 +36,9 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         if (isset($filters['department_id'])) {
             $query->where('department_id', $filters['department_id']);
         }
+        if (isset($filters['priority'])) {
+            $query->where('priority', $filters['priority']);
+        }
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }
