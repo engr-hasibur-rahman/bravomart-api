@@ -17,7 +17,7 @@ class WithdrawListResource extends JsonResource
             "amount" => $this->amount,
             "fee" => $this->fee,
             "status" => $this->status,
-            "withdraw_gateway_name" => $this->withdrawGateway->name,
+            "gateways" => json_decode($this->gateways_options),
         ];
     }
 }

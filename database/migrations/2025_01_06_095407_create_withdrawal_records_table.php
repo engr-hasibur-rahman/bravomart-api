@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('withdrawal_records', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
+            $table->string('user_type')->nullable()->comment('store or deliveryman')->index();
             $table->unsignedBigInteger('withdraw_gateway_id')->index();
             $table->double('amount');
             $table->double('fee')->default(0.00); // Fee applied to the withdrawal

@@ -23,7 +23,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         });
         // withdraw history
         Route::group(['prefix' => 'withdraw/', 'middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
-            Route::get('/', [SellerAndDeliverymanWithdrawController::class, 'withdrawList']);
+            Route::get('/', [SellerAndDeliverymanWithdrawController::class, 'withdrawAllList']);
             Route::get('details/{id?}', [SellerAndDeliverymanWithdrawController::class, 'withdrawDetails']);
             Route::post('withdraw-request', [SellerAndDeliverymanWithdrawController::class, 'withdrawRequest']);
         });

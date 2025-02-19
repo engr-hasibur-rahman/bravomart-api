@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('store_finances', function (Blueprint $table) {
+        Schema::create('balances', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('user_type')->nullable()->comment('store or deliveryman');
             $table->decimal('current_balance', 15, 2)->default(0);
             $table->decimal('earnings', 15, 2)->default(0);
             $table->decimal('withdrawn', 15, 2)->default(0);
             $table->decimal('refunds', 15, 2)->default(0);
+            $table->index(['user_id', 'user_type', 'current_balance']);
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('store_finances');
+        Schema::dropIfExists('balances');
     }
 };

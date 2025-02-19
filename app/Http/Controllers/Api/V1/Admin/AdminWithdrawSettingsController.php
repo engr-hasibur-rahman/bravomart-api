@@ -26,7 +26,7 @@ class AdminWithdrawSettingsController extends Controller
                     $value = $request->input($field) ?? null;
                     com_option_update($field, $value);
                 }
-                return $this->success(translate('messages.update_success', ['name' => 'SEO Settings']));
+                return $this->success(translate('messages.update_success', ['name' => 'Withdraw Settings']));
             }else{
 
                 $minimum_withdrawal_limit = com_option_get('minimum_withdrawal_limit');

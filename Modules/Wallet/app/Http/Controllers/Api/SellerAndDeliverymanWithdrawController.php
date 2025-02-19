@@ -4,6 +4,7 @@ namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Models\Balance;
 use App\Models\WithdrawalRecord;
 use App\Models\WithdrawGateway;
 use Illuminate\Http\Request;
@@ -15,12 +16,11 @@ class SellerAndDeliverymanWithdrawController extends Controller
 {
     public function withdrawAllList(Request $request)
     {
-        if (auth('api')->user()->activity_scope !== 'system_level') {
+        if (!auth('api')->user()->activity_scope === 'store_level' || !auth('api')->user()->activity_scope === 'delivery_level') {
             return unauthorized_response();
         }
 
-        $query = WithdrawalRecord::with(['withdrawGateway'])
-            ->where('user_id', auth('api')->user()->id);
+        $query = WithdrawalRecord::with(['withdrawGateway'])->where('user_id', $request->store_id);
 
         if (isset($request->amount)) {
             $query->where('amount', $request->amount);
@@ -39,7 +39,6 @@ class SellerAndDeliverymanWithdrawController extends Controller
         if ($withdraws->isNotEmpty()) {
             return response()->json([
                 'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => WithdrawListResource::collection($withdraws),
                 'meta' => new PaginationResource($withdraws)
@@ -55,19 +54,19 @@ class SellerAndDeliverymanWithdrawController extends Controller
 
     public function withdrawDetails(Request $request)
     {
-        $withdraw = WithdrawalRecord::with('withdrawGateway')->find($request->id);
+        $withdraw = WithdrawalRecord::find($request->id);
         if (!empty($withdraw)) {
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => __('messages.data_found'),
+                'message' => 'messages.data_found',
                 'data' => new WithdrawDetailsResource($withdraw)
             ]);
         } else {
             return response()->json([
                 'status' => false,
                 'status_code' => 400,
-                'message' => __('messages.data_not_found'),
+                'message' => 'messages.data_not_found',
             ]);
         }
     }
@@ -87,30 +86,48 @@ class SellerAndDeliverymanWithdrawController extends Controller
         $withdraw_amount = $request->amount;
         $min_limit = com_option_get('minimum_withdrawal_limit');
         $max_limit = com_option_get('maximum_withdrawal_limit');
-
         if ($min_limit !== null || $max_limit !== null) {
             if ($withdraw_amount < intval($min_limit) || $withdraw_amount > intval($max_limit)) {
                 return response()->json([
-                    'msg' => __("Please enter a valid amount between " .
+                    'message' => "Please enter a valid amount between " .
                         $min_limit . ' - ' .
-                        $max_limit)
+                        $max_limit
                 ], 422);
             }
         }
 
+        // balance check
+        $balances = Balance::where('user_id', $request->store_id)->first();
 
+        if (empty($balances)){
+            return response()->json([
+               'message' => 'You have no balance.',
+            ],404);
+        }
 
-        $gateway_options = WithdrawGateway::where('id', $request->withdraw_gateway_id)->first();
-        $gateway_fields = json_decode($gateway_options->fields);
+        if (!empty($balances) && $balances->current_balance <= 0){
+            return response()->json([
+               'message' => 'You have insufficient balance.',
+            ]);
+        }
+
+        // Validate if store finances exist and current balance is sufficient
+        if ($balances->current_balance < $request->amount){
+            return response()->json([
+               'message' => 'You have insufficient balance.',
+            ]);
+        }
 
         $success = WithdrawalRecord::create([
-            'user_id' => auth('api')->id(),
+            'user_id' => $request->store_id,
+            'user_type' => 'store',
             'withdraw_gateway_id' => $request->withdraw_gateway_id,
             'amount' => $request->amount,
             'details' => $request->details ?? null,
             'fee' => 0.00,
-            'gateways_options' => json_encode($gateway_fields),
+            'gateways_options' => json_encode($request->gateways),
         ]);
+
         if ($success) {
             return response()->json([
                 'status' => true,

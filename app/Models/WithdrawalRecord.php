@@ -8,6 +8,7 @@ class WithdrawalRecord extends Model
 {
     protected $fillable = [
         "user_id",
+        "user_type",
         "withdraw_gateway_id",
         "amount",
         "fee",
