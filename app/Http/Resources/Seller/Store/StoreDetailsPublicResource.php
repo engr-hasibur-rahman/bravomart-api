@@ -35,6 +35,8 @@ class StoreDetailsPublicResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' => $this->logo,
+            'tax' => $this->tax,
+            'delivery_time' => $this->delivery_time,
             'logo_url' => ImageModifier::generateImageUrl($this->logo),
             'banner' => $this->banner,
             'banner_url' => ImageModifier::generateImageUrl($this->banner),
