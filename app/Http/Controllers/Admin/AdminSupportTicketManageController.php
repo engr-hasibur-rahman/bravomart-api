@@ -21,11 +21,10 @@ class AdminSupportTicketManageController extends Controller
 
     public function index(Request $request)
     {
-
         $filters = $request->only([
-            'customer_id',
+            'search',
+            'store_id',
             'department_id',
-            'ticket_id',
             'status',
             'per_page',
         ]);
@@ -36,9 +35,7 @@ class AdminSupportTicketManageController extends Controller
                 'meta' => new PaginationResource($tickets),
             ], 200);
         } else {
-            return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 204);
+            return [];
         }
     }
 

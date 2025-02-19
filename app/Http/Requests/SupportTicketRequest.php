@@ -28,7 +28,6 @@ class SupportTicketRequest extends FormRequest
             'title' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
             'priority' => 'nullable|in:low,high,medium,urgent',
-            'resolved_at' => 'nullable|datetime'
         ];
     }
 
@@ -44,10 +43,6 @@ class SupportTicketRequest extends FormRequest
             'subject.string' => __('validation.string', ['attribute' => 'Subject']),
             'subject.max' => __('validation.max.string', ['attribute' => 'Subject']),
             'priority.in' => __('validation.in', ['attribute' => 'Priority']),
-            'status.required' => __('validation.required', ['attribute' => 'Status']),
-            'status.integer' => __('validation.integer', ['attribute' => 'Status']),
-            'status.in' => __('validation.in', ['attribute' => 'Status']),
-            'resolved_at.date' => __('validation.date', ['attribute' => 'Resolved at']),
         ];
     }
 

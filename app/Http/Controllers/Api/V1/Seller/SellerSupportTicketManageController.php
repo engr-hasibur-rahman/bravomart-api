@@ -35,7 +35,6 @@ class SellerSupportTicketManageController extends Controller
         $filters = $request->only([
             'store_id',
             'department_id',
-            'ticket_id',
             'status',
             'priority',
             'per_page',
@@ -177,8 +176,6 @@ class SellerSupportTicketManageController extends Controller
                 'message' => __('messages.update_failed', ['name' => 'Support Ticket priority']),
             ], 500);
         }
-
-
     }
 
     public function resolve(Request $request)
