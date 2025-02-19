@@ -16,17 +16,25 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
 
     public function getTickets(array $filters = [])
     {
-        $query = $this->ticket->with(['department', 'user', 'messages.sender', 'messages.receiver']);
+        $query = $this->ticket->with(['department', 'customer', 'store', 'messages.sender', 'messages.receiver']);
 
-        // Apply filters using isset
-        if (isset($filters['customer_id'])) {
-            $query->where('customer_id', $filters['customer_id']);
+        if (!empty($filters['search'])) {
+            $searchTerm = '%' . $filters['search'] . '%';
+
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('title', 'like', $searchTerm)
+                    ->orWhere('subject', 'like', $searchTerm)
+                    ->orWhereHas('customer', function ($query) use ($searchTerm) {
+                        $query->where('first_name', 'like', $searchTerm)
+                            ->orWhere('last_name', 'like', $searchTerm);
+                    });
+            });
+        }
+        if (isset($filters['store_id'])) {
+            $query->where('store_id', $filters['store_id']);
         }
         if (isset($filters['department_id'])) {
             $query->where('department_id', $filters['department_id']);
-        }
-        if (isset($filters['ticket_id'])) {
-            $query->where('id', $filters['ticket_id']);
         }
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
@@ -44,9 +52,6 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
 
         if (isset($filters['department_id'])) {
             $query->where('department_id', $filters['department_id']);
-        }
-        if (isset($filters['ticket_id'])) {
-            $query->where('id', $filters['ticket_id']);
         }
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
