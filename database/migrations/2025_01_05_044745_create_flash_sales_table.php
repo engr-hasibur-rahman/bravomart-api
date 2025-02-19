@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->unsignedInteger('purchase_limit')->nullable();
             $table->timestamp('start_time')->nullable();
             $table->timestamp('end_time')->nullable();
-            $table->boolean('status')->default(0)->comment('1: active, 0: inactive');
+            $table->boolean('status')->default(1)->comment('1: active, 0: inactive');
             $table->timestamps();
         });
     }
