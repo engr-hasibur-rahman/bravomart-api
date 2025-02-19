@@ -154,7 +154,7 @@ class SellerSupportTicketManageController extends Controller
         $ticket = Ticket::find($request->ticket_id);
         $seller = auth('api')->user();
         $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
-        $isClosed = $ticket->pluck('status')->contains(0);
+        $isClosed = $ticket->status === 0;
         if ($isClosed) {
             return response()->json([
                 'message' => __('messages.ticket.closed')
