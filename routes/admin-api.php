@@ -56,7 +56,7 @@ use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawRequestManageController
 use Modules\Wallet\app\Http\Controllers\Api\WalletManageAdminController;
 
 
-Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code.input']], function () {
+Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], function () {
     /*--------------------- Com route start  ----------------------------*/
     Route::get('/logout', [UserController::class, 'logout']);
     // media manage

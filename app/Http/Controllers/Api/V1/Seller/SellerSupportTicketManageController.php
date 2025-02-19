@@ -47,9 +47,7 @@ class SellerSupportTicketManageController extends Controller
                 'meta' => new PaginationResource($tickets),
             ], 200);
         } else {
-            return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 204);
+            return [];
         }
     }
 
@@ -188,7 +186,7 @@ class SellerSupportTicketManageController extends Controller
             'ticket_id' => 'required|exists:tickets,id',
             'store_id' => 'required|exists:stores,id',
             'message' => 'required|string|max:1500',
-            'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048',
+            'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip,pdf|max:2048',
         ]);
 
         $seller = auth('api')->user();
