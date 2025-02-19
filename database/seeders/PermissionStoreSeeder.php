@@ -343,7 +343,7 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value,
                             'PermissionTitle' => 'All Support Tickets',
                             'activity_scope' => 'store_level',
                             'icon' => '',
