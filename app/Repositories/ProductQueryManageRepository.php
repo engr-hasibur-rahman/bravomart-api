@@ -39,7 +39,7 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
     public function getSellerQuestions(array $data)
     {
         return ProductQuery::query()
-            ->where('seller_id', auth('api')->id())
+            ->whereIn('store_id', $data['store_ids'])
             ->when(isset($data['date_filter']), function ($query) use ($data) {
                 switch ($data['date_filter']) {
                     case 'last_week':
