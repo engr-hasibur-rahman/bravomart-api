@@ -484,8 +484,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
             // withdrawals manage
             Route::group(['prefix' => 'withdraw/'], function () {
                 // settings
-                Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value], function () {
-                    Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
+                Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_SETTINGS->value], function () {
+                    Route::match(['get', 'post'], 'settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
                     Route::get('settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
                 });
                 // gateway manage

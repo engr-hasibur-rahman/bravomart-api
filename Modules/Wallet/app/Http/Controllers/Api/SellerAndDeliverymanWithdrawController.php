@@ -75,6 +75,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
     public function withdrawRequest(Request $request)
     {
         $validator = Validator::make(request()->all(), [
+            "store_id" => "required|exists:stores,id", // store exists
             "withdraw_gateway_id" => "required|integer|exists:withdraw_gateways,id",
             "amount" => "required",
             "details" => "nullable|string|max:255",
@@ -82,8 +83,26 @@ class SellerAndDeliverymanWithdrawController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
+
+        $withdraw_amount = $request->amount;
+        $min_limit = com_option_get('minimum_withdrawal_limit');
+        $max_limit = com_option_get('maximum_withdrawal_limit');
+
+        if ($min_limit !== null || $max_limit !== null) {
+            if ($withdraw_amount < intval($min_limit) || $withdraw_amount > intval($max_limit)) {
+                return response()->json([
+                    'msg' => __("Please enter a valid amount between " .
+                        $min_limit . ' - ' .
+                        $max_limit)
+                ], 422);
+            }
+        }
+
+
+
         $gateway_options = WithdrawGateway::where('id', $request->withdraw_gateway_id)->first();
         $gateway_fields = json_decode($gateway_options->fields);
+
         $success = WithdrawalRecord::create([
             'user_id' => auth('api')->id(),
             'withdraw_gateway_id' => $request->withdraw_gateway_id,
