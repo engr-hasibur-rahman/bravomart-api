@@ -88,16 +88,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                     Route::delete('remove/{id}', [SellerDeliverymanManageController::class, 'destroyVehicle']);
                 });
             });
-            // Support ticket manage
-            Route::group(['prefix' => 'support-ticket/','middleware' => 'permission:' . PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value], function () {
-                Route::get('list', [SellerSupportTicketManageController::class, 'index']);
-                Route::get('details/{id?}', [SellerSupportTicketManageController::class, 'show']);
-                Route::post('add', [SellerSupportTicketManageController::class, 'store']);
-                Route::post('update', [SellerSupportTicketManageController::class, 'update']);
-                Route::post('resolve', [SellerSupportTicketManageController::class, 'resolve']);
-                Route::post('message/add', [SellerSupportTicketManageController::class, 'addMessage']);
-                Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
-            });
             // seller product manage
             Route::group(['prefix' => 'orders/'], function () {
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_STORE_ORDER_MANAGE->value]], function () {
@@ -147,6 +137,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'no.code
                 Route::get('details', [StaffController::class, 'show']);
                 Route::post('update', [StaffController::class, 'update']);
                 Route::post('change-status', [StaffController::class, 'changeStatus']);
+            });
+
+
+            // Support ticket manage
+            Route::group(['prefix' => 'support-ticket/','middleware' => 'permission:' . PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value], function () {
+                Route::get('list', [SellerSupportTicketManageController::class, 'index']);
+                Route::get('details/{id?}', [SellerSupportTicketManageController::class, 'show']);
+                Route::post('add', [SellerSupportTicketManageController::class, 'store']);
+                Route::post('update', [SellerSupportTicketManageController::class, 'update']);
+                Route::post('resolve', [SellerSupportTicketManageController::class, 'resolve']);
+                Route::post('message/add', [SellerSupportTicketManageController::class, 'addMessage']);
+                Route::post('message/reply', [SellerSupportTicketManageController::class, 'replyMessage']);
             });
 
             // FINANCIAL WITHDRAWALS management

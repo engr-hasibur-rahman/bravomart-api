@@ -329,6 +329,33 @@ class PermissionStoreSeeder extends Seeder
                         ]
                     ]
                 ],
+
+                // Support ticket  Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Support Ticket Management',
+                    'activity_scope' => 'store_level',
+                    'icon' => '',
+                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                    'translations' => [
+                        'en' => 'Support Ticket Management',
+                        'ar' => 'تذكرة الدعم'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value,
+                            'PermissionTitle' => 'All Support Tickets',
+                            'activity_scope' => 'store_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'All Ticket',
+                                'ar' => 'السحوبات'
+                            ]
+                        ]
+                    ]
+                ],
+
                 // Financial Management
                 [
                     'PermissionName' => '',

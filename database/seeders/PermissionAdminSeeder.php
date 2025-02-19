@@ -678,54 +678,6 @@ class PermissionAdminSeeder extends Seeder
                     ]
                 ],
 
-                // Support Ticket Management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Support Ticket Management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view', 'insert', 'update', 'delete'],
-                    'translations' => [
-                        'en' => 'Support Ticket Management',
-                        'ar' => 'إدارة المدونة'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Tickets',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'Headphones',
-                            'translations' => [
-                                'en' => 'Tickets',
-                                'ar' => ' الموظفين'
-                            ],
-
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_TICKETS_DEPARTMENT->value,
-                                    'PermissionTitle' => 'Department',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Department',
-                                        'ar' => ' الموظفين'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value,
-                                    'PermissionTitle' => 'All Tickets',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'All Tickets',
-                                        'ar' => 'دعامات'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-
                 // dynamic pages manage
                 [
                     'PermissionName' => '',
@@ -980,6 +932,59 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
+
+                // Support Ticket Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Support Ticket Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view', 'insert', 'update', 'delete'],
+                    'translations' => [
+                        'en' => 'Support Ticket Management',
+                        'ar' => 'إدارة المدونة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Tickets',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Headphones',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Tickets',
+                                'ar' => 'التذاكر'
+                            ],
+
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_TICKETS_DEPARTMENT->value,
+                                    'PermissionTitle' => 'Department',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'Department',
+                                        'ar' => ' الموظفين'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value,
+                                    'PermissionTitle' => 'All Tickets',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'All Tickets',
+                                        'ar' => 'دعامات'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+
             ]
         ];
 
