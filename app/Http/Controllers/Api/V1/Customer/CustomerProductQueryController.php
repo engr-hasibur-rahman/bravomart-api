@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductQueryRequest;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Customer\CustomerProductQueryResource;
 use App\Interfaces\ProductQueryManageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -39,15 +40,18 @@ class CustomerProductQueryController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|integer|exists:products,id',
-            'search' => 'required|string'
+            'search' => 'nullable|string'
         ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
         $questions = $this->productQueryRepo->searchQuestion($request->all());
         if ($questions->isEmpty()) {
             return [];
         }
         if ($questions) {
             return response()->json([
-                'data' => $questions,
+                'data' => CustomerProductQueryResource::collection($questions),
                 'meta' => new PaginationResource($questions),
             ], 200);
         } else {

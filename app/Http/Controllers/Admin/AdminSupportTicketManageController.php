@@ -120,6 +120,7 @@ class AdminSupportTicketManageController extends Controller
             ], 500);
         }
     }
+
     public function resolve(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -147,47 +148,49 @@ class AdminSupportTicketManageController extends Controller
             unauthorized_response();
         }
         $authUser = auth('api')->user();
-        $validator = Validator::make($request->all(), [
-            'ticket_id' => 'required|exists:tickets,id',
-            'message' => 'required|string',
-            'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048'
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => $validator->errors()
+        if ($authUser->activity_scope === 'system_level') {
+            $validator = Validator::make($request->all(), [
+                'ticket_id' => 'required|exists:tickets,id',
+                'message' => 'required|string',
+                'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip,pdf|max:2048'
             ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
+            if ($request->hasFile('file')) {
+                // Retrieve the uploaded file
+                $file = $request->file('file');
+
+                // Generate a filename with a timestamp
+                $timestamp = now()->timestamp;
+                $email = str_replace(['@', '.'], '_', $authUser->email); // Replace '@' and '.' with underscores
+                $originalName = $file->getClientOriginalName(); // Get the original file name
+                $filename = 'uploads/support-ticket/' . $timestamp . '_' . $email . '_' . $originalName;
+
+                // Save the uploaded file to private storage
+                Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
+            }
+            $messageDetails = [
+                'ticket_id' => $request->ticket_id,
+                'receiver_id' => $authUser->id,
+                'sender_role' => $authUser->activity_scope,
+                'message' => $request->message,
+                'file' => $filename ?? null,
+            ];
+            $message = $this->ticketRepo->addMessage($messageDetails);
+            // Update the `updated_at` column of the ticket
+            $ticket = Ticket::findorfail($request->ticket_id); // Ensure your repository has this method
+            $ticket->touch(); // Update the `updated_at` timestamp
+
+            return response()->json([
+                'status' => 'success',
+                'message' => __('messages.support_ticket.message.sent'),
+                'data' => $message
+            ], 201);
+        } else {
+            return response()->json([
+                'messages' => __('messages.authorization_invalid')
+            ], 403);
         }
-        if ($request->hasFile('file')) {
-            // Retrieve the uploaded file
-            $file = $request->file('file');
-
-            // Generate a filename with a timestamp
-            $timestamp = now()->timestamp;
-            $email = str_replace(['@', '.'], '_', auth('api_customer')->user()->email); // Replace '@' and '.' with underscores
-            $originalName = $file->getClientOriginalName(); // Get the original file name
-            $filename = 'seller/support-ticket/' . $timestamp . '_' . $email . '_' . $originalName;
-
-            // Save the uploaded file to private storage
-            Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
-        }
-        $messageDetails = [
-            'ticket_id' => $request->ticket_id,
-            'receiver_id' => $authUser->id,
-            'sender_role' => $authUser->activity_scope,
-            'message' => $request->message,
-            'file' => $filename ?? null,
-        ];
-        $message = $this->ticketRepo->addMessage($messageDetails);
-        // Update the `updated_at` column of the ticket
-        $ticket = Ticket::findorfail($request->ticket_id); // Ensure your repository has this method
-        $ticket->touch(); // Update the `updated_at` timestamp
-
-        return response()->json([
-            'status' => 'success',
-            'message' => __('messages.support_ticket.message.sent'),
-            'data' => $message
-        ], 201);
     }
 }
