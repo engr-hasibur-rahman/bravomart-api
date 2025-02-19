@@ -587,6 +587,7 @@ class FrontendController extends Controller
             "per_page" => $request->per_page,
         ];
         $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($filters);
+//        dd($flashSaleProducts->toArray());
         if ($flashSaleProducts->count() > 0) {
             return response()->json([
                 'status' => true,

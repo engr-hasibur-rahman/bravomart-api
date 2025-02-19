@@ -311,6 +311,7 @@ class AdminFlashSaleManageController extends Controller
             ]);
         }
     }
+
     public function getProductsNotInFlashSale(Request $request)
     {
         $query = Product::with('store')->where('status', 'approved')
