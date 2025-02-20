@@ -21,9 +21,9 @@ class CustomerProductQueryResource extends JsonResource
             "question" => $this->question,
             "store" => $this->store?->name,
             "reply" => $this->reply,
-            "replied_at" => $this->replied_at?->diffForHumans(),
+            "replied_at" => $this->replied_at ? \Carbon\Carbon::parse($this->replied_at)->diffForHumans() : null,
             "status" => $this->status,
-            "created_at" => $this->created_at?->diffForHumans(),
+            "created_at" => $this->created_at ? \Carbon\Carbon::parse($this->replied_at)->diffForHumans() : null,
         ];
     }
 }
