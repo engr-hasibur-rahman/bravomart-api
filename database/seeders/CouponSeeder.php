@@ -37,7 +37,7 @@ class CouponSeeder extends Seeder
         foreach ($couponRecords as $coupon) {
             $couponLines[] = [
                 'coupon_id' => $coupon->id,
-                'customer_id' => rand(1, 10), // Assuming 10 customers exist
+                'customer_id' => null, // Assuming 10 customers exist
                 'coupon_code' => strtoupper(Str::random(8)),
                 'discount_type' => rand(0, 1) ? 'percentage' : 'amount',
                 'discount' => rand(5, 50),
