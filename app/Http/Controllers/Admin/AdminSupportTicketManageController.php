@@ -31,14 +31,11 @@ class AdminSupportTicketManageController extends Controller
             'per_page',
         ]);
         $tickets = $this->ticketRepo->getTickets($filters);
-        if ($tickets->count() > 0) {
-            return response()->json([
-                'data' => SupportTicketResource::collection($tickets),
-                'meta' => new PaginationResource($tickets),
-            ], 200);
-        } else {
-            return [];
-        }
+        return response()->json([
+            'data' => SupportTicketResource::collection($tickets),
+            'meta' => new PaginationResource($tickets),
+        ], 200);
+
     }
 
     public function show(Request $request)
