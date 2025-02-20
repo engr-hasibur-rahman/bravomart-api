@@ -14,7 +14,7 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
 
     }
 
-    public function getTickets(array $filters = [])
+    public function getTickets(array $filters)
     {
         $query = $this->ticket->with(['department', 'customer', 'store', 'messages.sender', 'messages.receiver']);
 
@@ -67,7 +67,7 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         return $tickets;
     }
 
-    public function getCustomerTickets(array $filters = [])
+    public function getCustomerTickets(array $filters)
     {
         $query = $this->ticket->with(['department', 'messages.sender', 'messages.receiver']);
         if (isset($filters['search']) && !empty($filters['search'])) {
@@ -160,6 +160,14 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
             ->with(['sender', 'receiver'])
             ->orderBy('created_at', 'asc'); // Change to `desc` if you want latest messages first
 
+        return $query->get();
+    }
+    public function getAdminTicketMessages(array $data)
+    {
+        $query = $this->ticketMessage
+            ->where('ticket_id', $data['ticket_id'])
+            ->with(['sender', 'receiver'])
+            ->orderBy('created_at', 'asc'); // Change to `desc` if you want latest messages first
         return $query->get();
     }
 

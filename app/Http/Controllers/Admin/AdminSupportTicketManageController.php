@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsResource;
+use App\Http\Resources\Com\SupportTicket\SupportTicketMessageResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
 use App\Interfaces\SupportTicketManageInterface;
 use App\Models\Store;
@@ -189,5 +190,27 @@ class AdminSupportTicketManageController extends Controller
                 'messages' => __('messages.authorization_invalid')
             ], 403);
         }
+    }
+    public function getTicketMessages(Request $request)
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+        $user = auth('api')->user();
+        if ($user->activity_scope === 'system_level') {
+            $validator = Validator::make($request->all(), [
+                'ticket_id' => 'required|integer|exists:tickets,id',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(),422);
+            }
+            $ticketMessages = $this->ticketRepo->getAdminTicketMessages($request->all());
+            return response()->json(SupportTicketMessageResource::collection($ticketMessages));
+        } else {
+            return response()->json([
+                'messages' => __('messages.authorization_invalid')
+            ], 403);
+        }
+
     }
 }
