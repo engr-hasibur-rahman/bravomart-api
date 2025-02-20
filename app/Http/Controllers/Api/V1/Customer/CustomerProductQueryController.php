@@ -40,7 +40,8 @@ class CustomerProductQueryController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|integer|exists:products,id',
-            'search' => 'nullable|string'
+            'search' => 'nullable|string',
+            'per_page' => 'nullable|integer'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
