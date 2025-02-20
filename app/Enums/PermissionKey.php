@@ -136,6 +136,7 @@ enum PermissionKey: string
     //              Financial Activity                                                          //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY = '/admin/financial/withdraw/history';
+    case ADMIN_FINANCIAL_WITHDRAW_MANAGE_SETTINGS = '/admin/financial/withdraw/settings';
     case ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST = '/admin/financial/withdraw/request';
     case ADMIN_WITHDRAW_METHOD_MANAGEMENT = '/admin/financial/withdraw/method/list';
     case ADMIN_FINANCIAL_STORE_DISBURSEMENT = '/admin/financial/store/disbursement';

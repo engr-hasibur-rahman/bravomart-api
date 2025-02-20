@@ -1004,6 +1004,16 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
+                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_SETTINGS->value,
+                            'PermissionTitle' => 'Withdrawal Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Withdrawal Settings',
+                                'ar' => 'طريقة السحب'
+                            ]
+                        ],
+                        [
                             'PermissionName' => PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value,
                             'PermissionTitle' => 'Withdrawal Method',
                             'activity_scope' => 'system_level',
@@ -1035,28 +1045,6 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_STORE_DISBURSEMENT->value,
-                            'PermissionTitle' => 'Store Disbursement',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'update', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Store Disbursement',
-                                'ar' => 'صرف المتجر'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_DISBURSEMENT->value,
-                            'PermissionTitle' => 'Delivery Man Disbursement',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'update', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Delivery Man Disbursement',
-                                'ar' => 'صرف رواتب موظف التوصيل'
-                            ]
-                        ],
-                        [
                             'PermissionName' => PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value,
                             'PermissionTitle' => 'Cash Collect',
                             'activity_scope' => 'system_level',
@@ -1065,17 +1053,6 @@ class PermissionAdminSeeder extends Seeder
                             'translations' => [
                                 'en' => 'Cash Collect',
                                 'ar' => 'جمع النقود'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_DELIVERY_MAN_PAYMENTS->value,
-                            'PermissionTitle' => 'Delivery Man Payments',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'update', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Delivery Man Payments',
-                                'ar' => 'مدفوعات توصيل الطلبات'
                             ]
                         ]
                     ]

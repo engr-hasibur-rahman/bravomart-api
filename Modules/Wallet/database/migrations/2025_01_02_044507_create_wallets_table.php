@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('owner_id');  // Polymorphic ID (User ID or Customer ID or Store ID)
-            $table->string('owner_type');  // Polymorphic type (User or Customer)
+            $table->unsignedBigInteger('owner_id');  // Polymorphic ID (Customer ID or Store ID or Deliveryman ID)
+            $table->string('owner_type')->comment('store or deliveryman or customer');
             $table->double('balance')->default(0);
+            $table->decimal('earnings', 15, 2)->default(0);
+            $table->decimal('withdrawn', 15, 2)->default(0);
+            $table->decimal('refunds', 15, 2)->default(0);
             $table->tinyInteger('status')->default(1)->comment('0=inactive, 1=active');
             $table->timestamps();
-            // Index for polymorphic columns for performance
             $table->index(['owner_id', 'owner_type']);
         });
     }
