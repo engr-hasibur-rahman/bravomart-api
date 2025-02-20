@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('owner_id')->index();
             $table->string('owner_type')->nullable()->comment('store or deliveryman or customer');
             $table->unsignedBigInteger('withdraw_gateway_id')->index();
+            $table->string('gateway_name')->nullable();
             $table->decimal('amount', 15, 2); // Use decimal
             $table->decimal('fee', 15, 2)->default(0.00); // Fee applied to the withdrawal
             $table->json('gateways_options')->nullable();

@@ -77,6 +77,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
         $validator = Validator::make(request()->all(), [
             "store_id" => "required|exists:stores,id", // store exists
             "withdraw_gateway_id" => "required|integer|exists:withdraw_gateways,id",
+            "gateway_name" => "required|string|max:50",
             "amount" => "required",
             "details" => "nullable|string|max:255",
         ]);
@@ -129,6 +130,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
             'owner_id' => $owner_id,
             'owner_type' => WalletOwnerType::STORE->value,
             'withdraw_gateway_id' => $request->withdraw_gateway_id,
+            'gateway_name' => $request->gateway_name,
             'amount' => $request->amount,
             'details' => $request->details ?? null,
             'fee' => 0.00,

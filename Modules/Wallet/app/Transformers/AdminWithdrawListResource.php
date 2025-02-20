@@ -2,6 +2,9 @@
 
 namespace Modules\Wallet\app\Transformers;
 
+use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
+use App\Http\Resources\Store\StoreShortDetailsResource;
+use App\Http\Resources\User\UserDetailsResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,7 +19,7 @@ class AdminWithdrawListResource extends JsonResource
             "id" => $this->id,
             "amount" => $this->amount,
             "fee" => $this->fee,
-            "withdraw_gateway_name" => $this->withdrawGateway->name,
+            "gateway_name" => $this->gateway_name,
             "gateways_options" => json_decode($this->gateways_options),
             "status" => $this->status,
             "details" => $this->details,
@@ -24,8 +27,9 @@ class AdminWithdrawListResource extends JsonResource
             "approved_at" => $this->approved_at,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
-            "user" => $this->user->first_name . '' . $this->user->last_name,
-
+            "owner" => isset($this->owner->store_seller_id) ?
+                new StoreShortDetailsResource($this->owner) :
+                new UserDetailsResource($this->owner)
         ];
     }
 }

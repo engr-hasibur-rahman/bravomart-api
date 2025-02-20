@@ -12,7 +12,7 @@ class WalletWithdrawalsTransaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'owner_id', 'owner_type', 'withdraw_gateway_id', 'amount',
+        'owner_id', 'owner_type', 'withdraw_gateway_id', 'gateway_name', 'amount',
         'fee', 'gateways_options', 'details', 'approved_by',
         'approved_at', 'status'
     ];

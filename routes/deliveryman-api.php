@@ -18,7 +18,5 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'delivery-man/'], function ()
             Route::post('handle-request', [DeliverymanOrderManageController::class, 'handleOrderRequest']);
             Route::get('delivery-history', [DeliverymanOrderManageController::class, 'orderDeliveryHistory']);
         });
-
     });
-
 });
