@@ -139,12 +139,7 @@ enum PermissionKey: string
     case ADMIN_FINANCIAL_WITHDRAW_MANAGE_SETTINGS = '/admin/financial/withdraw/settings';
     case ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST = '/admin/financial/withdraw/request';
     case ADMIN_WITHDRAW_METHOD_MANAGEMENT = '/admin/financial/withdraw/method/list';
-    case ADMIN_FINANCIAL_STORE_DISBURSEMENT = '/admin/financial/store/disbursement';
-    case ADMIN_FINANCIAL_DELIVERY_MAN_DISBURSEMENT = '/admin/financial/disbursement/delivery-man';
     case ADMIN_FINANCIAL_COLLECT_CASH = '/admin/financial/cash-collect';
-    case ADMIN_FINANCIAL_DELIVERY_MAN_PAYMENTS = '/admin/financial/delivery-man-payments';
-
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Report and analytics                                            //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -280,5 +275,8 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~Seller Support Ticket~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case SELLER_STORE_SUPPORT_TICKETS_MANAGE = '/seller/store/support-ticket/list';
     // ######################## Seller PermissionKey End ###########################
+
+    // deliveryman
+  case DELIVERYMAN_FINANCIAL_WITHDRAWALS = '/deliveryman/withdraw-manage';
 
 }

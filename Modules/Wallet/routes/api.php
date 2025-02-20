@@ -2,13 +2,8 @@
 
 use App\Enums\PermissionKey;
 use Illuminate\Support\Facades\Route;
-use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawGatewayManageController;
-use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawManageController;
-use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawRequestManageController;
 use Modules\Wallet\app\Http\Controllers\Api\SellerAndDeliverymanWithdrawController;
-use Modules\Wallet\app\Http\Controllers\Api\WalletManageAdminController;
 use Modules\Wallet\app\Http\Controllers\Api\WalletCommonController;
-
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // // admin wallet manage route in admin-api.php file included
@@ -30,10 +25,18 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     });
 
     // deliveryman wallet routes
-    Route::group(['prefix' => 'deliveryman/wallet'], function () {
-        Route::get('/', [WalletCommonController::class, 'myWallet']);
-        Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
-        Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
+    Route::group(['prefix' => 'deliveryman/'], function () {
+        Route::group(['prefix' => 'wallet/'], function () {
+            Route::get('/', [WalletCommonController::class, 'myWallet']);
+            Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
+            Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
+        });
+//        Route::group(['prefix' => 'withdraw/', 'middleware' => 'permission:' . PermissionKey::DELIVERYMAN_FINANCIAL_WITHDRAWALS->value], function () {
+        Route::group(['prefix' => 'withdraw/'], function () {
+            Route::get('/', [SellerAndDeliverymanWithdrawController::class, 'withdrawAllList']);
+            Route::get('details/{id?}', [SellerAndDeliverymanWithdrawController::class, 'withdrawDetails']);
+            Route::post('withdraw-request', [SellerAndDeliverymanWithdrawController::class, 'withdrawRequest']);
+        });
     });
 
     // Customer Wallet

@@ -14,6 +14,7 @@ class WithdrawDetailsResource extends JsonResource
     {
         return [
             "id" => $this->id,
+            "gateway_name" => $this->gateway_name,
             "amount" => $this->amount,
             "fee" => $this->fee,
             "status" => $this->status,
