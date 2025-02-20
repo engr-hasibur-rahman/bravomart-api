@@ -154,6 +154,7 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
         $query = $this->ticketMessage
             ->where('ticket_id', $data['ticket_id'])
             ->where('sender_role', 'store_level')
+            ->where('receiver_role', 'system_level')
             ->when(!empty($data['store_ids']), function ($q) use ($data) {
                 $q->whereIn('sender_id', $data['store_ids']);
             })
