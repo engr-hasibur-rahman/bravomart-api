@@ -18,7 +18,10 @@ class SupportTicketMessageResource extends JsonResource
         return [
             'id' => $this->id,
             'ticket_details' => new SupportTicketDetailsResource($this->ticket),
-            'sender_details' => new SenderDetailsResource($this->sender),
+            'sender_details' => new SenderDetailsResource(
+                $this->sender_role == 'store_level' ? ($this->store ?? null) :
+                    ($this->sender_role == 'customer_level' ? ($this->customer ?? null) : null)
+            ),
             'receiver_details' => new ReceiverDetailsResource($this->receiver),
             'message' => [
                 'from' => $this->sender ? $this->sender->getFullNameAttribute() : ($this->receiver ? $this->receiver->getFullNameAttribute() : 'not received yet!'),
