@@ -23,7 +23,13 @@ class SupportTicketMessageResource extends JsonResource
             'message' => [
                 'from' => $this->sender_role === 'customer_level'
                     ? $this->sender?->getFullNameAttribute()
-                    : ($this->sender_role === 'store_level' ? $this->sender?->name : 'Not received yet!'),
+                    : ($this->sender_role === 'store_level'
+                        ? $this->sender?->name
+                        : ($this->sender_role === 'system_level'
+                            ? $this->receiver?->getFullNameAttribute()
+                            : 'Not received yet!'
+                        )
+                    ),
                 'role' => $this->sender_role ?? $this->receiver_role,
                 'message' => $this->message,
                 'file' => $this->file ? asset('storage/' . $this->file) : null,
