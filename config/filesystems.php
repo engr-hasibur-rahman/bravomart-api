@@ -45,7 +45,7 @@ return [
         'import' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => 'http://192.168.88.225:8000' . '/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
         'support-ticket' => [

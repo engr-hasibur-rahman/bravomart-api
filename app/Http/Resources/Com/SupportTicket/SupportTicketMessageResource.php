@@ -24,7 +24,7 @@ class SupportTicketMessageResource extends JsonResource
                 'from' => $this->sender ? $this->sender->getFullNameAttribute() : ($this->receiver ? $this->receiver->getFullNameAttribute() : 'not received yet!'),
                 'role' => $this->sender_role ?? $this->receiver_role,
                 'message' => $this->message,
-                'file' => $this->file ? Storage::disk('import')->url($this->file) : null, // Generate file URL
+                'file' => $this->file ? asset('storage/' . $this->file) : null,
                 'timestamp' => $this->created_at->diffForHumans()
             ]
         ];
