@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Com\SupportTicket;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,7 +17,8 @@ class ReceiverDetailsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->first_name,
+            'name' => $this->getFullNameAttribute(),
+            'image_url' => ImageModifier::generateImageUrl($this->image)
         ];
     }
 }
