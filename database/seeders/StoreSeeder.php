@@ -22,7 +22,12 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Grocery',
+                'store_type' => StoreType::GROCERY->value,
+                'tax' => 5,
+                'tax_number' => 'VAT123457',
+                'subscription_type' => 'commission',
+                'admin_commission_type' => 'percent',
+                'admin_commission_amount' => 7.00,
                 'name' => 'Fresh Grocer',
                 'slug' => Str::slug('Fresh Grocer'),
                 'phone' => '1234567891',
@@ -30,14 +35,9 @@ class StoreSeeder extends Seeder
                 'logo' => 'fresh_grocer_logo.png',
                 'banner' => 'fresh_grocer_banner.png',
                 'address' => '456 Green Lane, City',
-                'tax' => 5,
-                'tax_number' => 'VAT123457',
                 'is_featured' => true,
                 'opening_time' => '07:00:00',
                 'closing_time' => '21:00:00',
-                'subscription_type' => 'commission',
-                'admin_commission_type' => 'percent',
-                'admin_commission_amount' => 7.00,
                 'delivery_charge' => 3.00,
                 'delivery_time' => '30-45 minutes',
                 'delivery_self_system' => true,
@@ -60,7 +60,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Bakery',
+                'store_type' => StoreType::BAKERY->value,
                 'name' => 'Sweet Treats Bakery',
                 'slug' => Str::slug('Sweet Treats Bakery'),
                 'phone' => '1234567892',
@@ -98,7 +98,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Medicine',
+                'store_type' => StoreType::MEDICINE->value,
                 'name' => 'Health First Pharmacy',
                 'slug' => Str::slug('Health First Pharmacy'),
                 'phone' => '1234567893',
@@ -136,7 +136,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Makeup',
+                'store_type' => StoreType::MAKEUP->value,
                 'name' => 'Glamour Beauty',
                 'slug' => Str::slug('Glamour Beauty'),
                 'phone' => '1234567894',
@@ -174,7 +174,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Bags',
+                'store_type' => StoreType::BAGS->value,
                 'name' => 'Bag World',
                 'slug' => Str::slug('Bag World'),
                 'phone' => '1234567895',
@@ -212,7 +212,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Clothing',
+                'store_type' => StoreType::CLOTHING->value,
                 'name' => 'Trendy Apparel',
                 'slug' => Str::slug('Trendy Apparel'),
                 'phone' => '1234567896',
@@ -250,7 +250,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Furniture',
+                'store_type' => StoreType::FURNITURE->value,
                 'name' => 'Comfort Living Furniture',
                 'slug' => Str::slug('Comfort Living Furniture'),
                 'phone' => '1234567897',
@@ -288,7 +288,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Books',
+                'store_type' => StoreType::BOOKS->value,
                 'name' => 'Readers Paradise',
                 'slug' => Str::slug('Readers Paradise'),
                 'phone' => '1234567898',
@@ -326,7 +326,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Gadgets',
+                'store_type' => StoreType::GADGET->value,
                 'name' => 'Tech Haven',
                 'slug' => Str::slug('Tech Haven'),
                 'phone' => '1234567899',
@@ -364,7 +364,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Animals & Pets',
+                'store_type' => StoreType::ANIMALS_PET->value,
                 'name' => 'Paws & Claws',
                 'slug' => Str::slug('Paws & Claws'),
                 'phone' => '1234567901',
@@ -402,7 +402,7 @@ class StoreSeeder extends Seeder
             [
                 'area_id' => 1,
                 'store_seller_id' => 1,
-                'store_type' => 'Fish',
+                'store_type' => StoreType::FISH->value,
                 'name' => 'The Fish Bowl',
                 'slug' => Str::slug('The Fish Bowl'),
                 'phone' => '1234567902',
