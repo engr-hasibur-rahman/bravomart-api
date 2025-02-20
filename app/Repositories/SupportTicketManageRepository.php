@@ -153,7 +153,7 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
     {
         $query = $this->ticketMessage
             ->where('ticket_id', $data['ticket_id'])
-            ->with(['sender', 'receiver'])
+            ->with(['customer','store', 'receiver'])
             ->orderBy('created_at', 'asc'); // Change to `desc` if you want latest messages first
 
         return $query->get();
@@ -162,7 +162,7 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
     {
         $query = $this->ticketMessage
             ->where('ticket_id', $ticket_id)
-            ->with(['sender', 'receiver'])
+            ->with(['customer','store', 'receiver'])
             ->orderBy('created_at', 'asc'); // Change to `desc` if you want latest messages first
         return $query->get();
     }
