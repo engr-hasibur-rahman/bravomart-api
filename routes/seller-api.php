@@ -148,7 +148,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
                 Route::post('update', [SellerSupportTicketManageController::class, 'update']);
                 Route::post('change-priority-status', [SellerSupportTicketManageController::class, 'changePriorityStatus']);
                 Route::post('resolve', [SellerSupportTicketManageController::class, 'resolve']);
-                Route::get('get-ticket-messages', [SellerSupportTicketManageController::class, 'getTicketMessages']);
+                Route::get('get-ticket-messages/{ticket_id}', [SellerSupportTicketManageController::class, 'getTicketMessages']);
                 Route::post('message/add', [SellerSupportTicketManageController::class, 'addMessage']);
             });
 

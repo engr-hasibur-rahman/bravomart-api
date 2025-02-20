@@ -257,18 +257,15 @@ class SellerSupportTicketManageController extends Controller
         ], 201);
     }
 
-    public function getTicketMessages(Request $request)
+    public function getTicketMessages(Request $request, $ticket_id)
     {
+        $request['ticket_id'] = $ticket_id;
         $validator = Validator::make($request->all(), [
             'store_id' => 'required|integer|exists:stores,id',
             'ticket_id' => 'required|integer|exists:tickets,id',
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => $validator->errors()
-            ]);
+            return response()->json($validator->errors(), 422);
         }
         $seller = auth('api')->user();
         $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
