@@ -32,7 +32,7 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
                     ->orWhere('reply', 'LIKE', '%' . $data['search'] . '%');
             });
         }
-        return $query->latest()->paginate(10);
+        return $query->latest()->paginate($data['per_page'] ?? 10);
     }
 
 
