@@ -143,11 +143,11 @@ class CustomerOrderController extends Controller
                 unauthorized_response();
             }
 
-            // Check if the authenticated customer ID matches the coupon's customer ID
-            if ($coupon->customer_id !== auth('api_customer')->user()->id) {
+            // Check if the coupon is assigned to a specific customer and ensure it matches the authenticated customer
+            if ($coupon->customer_id && $coupon->customer_id !== auth('api_customer')->id()) {
                 return response()->json([
                     'message' => __('messages.coupon_does_not_belong'),
-                ], 400);
+                ], 422);
             }
         }
 

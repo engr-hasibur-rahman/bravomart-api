@@ -137,7 +137,7 @@ class ProductAttributeController extends Controller
             ]);
         }
         try {
-            $attributes = ProductAttribute::with('attributeValues')
+            $attributes = ProductAttribute::with('attribute_values')
                 ->where('product_type', $request->type)
                 ->where('status', 1)
                 ->get();

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsResource;
+use App\Http\Resources\Com\SupportTicket\SupportTicketMessageResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
 use App\Interfaces\SupportTicketManageInterface;
+use App\Models\Store;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -26,17 +28,15 @@ class AdminSupportTicketManageController extends Controller
             'store_id',
             'department_id',
             'status',
+            'priority',
             'per_page',
         ]);
         $tickets = $this->ticketRepo->getTickets($filters);
-        if ($tickets->count() > 0) {
-            return response()->json([
-                'data' => SupportTicketResource::collection($tickets),
-                'meta' => new PaginationResource($tickets),
-            ], 200);
-        } else {
-            return [];
-        }
+        return response()->json([
+            'data' => SupportTicketResource::collection($tickets),
+            'meta' => new PaginationResource($tickets),
+        ], 200);
+
     }
 
     public function show(Request $request)
@@ -88,53 +88,130 @@ class AdminSupportTicketManageController extends Controller
         }
     }
 
+    public function changePriorityStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ticket_id' => 'required|integer|exists:tickets,id',
+            'priority' => 'required|in:high,medium,low,urgent',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $ticket = Ticket::find($request->ticket_id);
+
+        $isClosed = $ticket->status === 0;
+        if ($isClosed) {
+            return response()->json([
+                'message' => __('messages.ticket.closed')
+            ], 422);
+        }
+        $success = $ticket->update([
+            'priority' => $request->priority
+        ]);
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Support Ticket priority']),
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Support Ticket priority']),
+            ], 500);
+        }
+    }
+
+    public function resolve(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ticket_id' => 'required|integer|exists:tickets,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $ticketId = $request->ticket_id;
+        $success = $this->ticketRepo->resolveTicket($ticketId);
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.ticket.resolved'),
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Support Ticket status']),
+            ], 200);
+        }
+    }
+
     public function replyMessage(Request $request)
     {
         if (auth('api')->check()) {
             unauthorized_response();
         }
         $authUser = auth('api')->user();
-        $validator = Validator::make($request->all(), [
-            'ticket_id' => 'required|exists:tickets,id',
-            'message' => 'required|string',
-            'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048'
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => $validator->errors()
+        if ($authUser->activity_scope === 'system_level') {
+            $validator = Validator::make($request->all(), [
+                'ticket_id' => 'required|exists:tickets,id',
+                'message' => 'required|string',
+                'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip,pdf|max:2048'
             ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
+            if ($request->hasFile('file')) {
+                // Retrieve the uploaded file
+                $file = $request->file('file');
+
+                // Generate a filename with a timestamp
+                $timestamp = now()->timestamp;
+                $email = str_replace(['@', '.'], '_', $authUser->email); // Replace '@' and '.' with underscores
+                $originalName = $file->getClientOriginalName(); // Get the original file name
+                $filename = 'uploads/support-ticket/' . $timestamp . '_' . $email . '_' . $originalName;
+
+                // Save the uploaded file to private storage
+                Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
+            }
+            $messageDetails = [
+                'ticket_id' => $request->ticket_id,
+                'receiver_id' => $authUser->id,
+                'sender_role' => $authUser->activity_scope,
+                'message' => $request->message,
+                'file' => $filename ?? null,
+            ];
+            $message = $this->ticketRepo->addMessage($messageDetails);
+            // Update the `updated_at` column of the ticket
+            $ticket = Ticket::findorfail($request->ticket_id); // Ensure your repository has this method
+            $ticket->touch(); // Update the `updated_at` timestamp
+
+            return response()->json([
+                'status' => 'success',
+                'message' => __('messages.support_ticket.message.sent'),
+                'data' => $message
+            ], 201);
+        } else {
+            return response()->json([
+                'messages' => __('messages.authorization_invalid')
+            ], 403);
         }
-        if ($request->hasFile('file')) {
-            // Retrieve the uploaded file
-            $file = $request->file('file');
+    }
 
-            // Generate a filename with a timestamp
-            $timestamp = now()->timestamp;
-            $email = str_replace(['@', '.'], '_', auth('api_customer')->user()->email); // Replace '@' and '.' with underscores
-            $originalName = $file->getClientOriginalName(); // Get the original file name
-            $filename = 'seller/support-ticket/' . $timestamp . '_' . $email . '_' . $originalName;
-
-            // Save the uploaded file to private storage
-            Storage::disk('import')->put($filename, file_get_contents($file->getRealPath()));
+    public function getTicketMessages(Request $request,$ticket_id)
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
         }
-        $messageDetails = [
-            'ticket_id' => $request->ticket_id,
-            'receiver_id' => $authUser->id,
-            'sender_role' => $authUser->activity_scope,
-            'message' => $request->message,
-            'file' => $filename ?? null,
-        ];
-        $message = $this->ticketRepo->addMessage($messageDetails);
-        // Update the `updated_at` column of the ticket
-        $ticket = Ticket::findorfail($request->ticket_id); // Ensure your repository has this method
-        $ticket->touch(); // Update the `updated_at` timestamp
-
-        return response()->json([
-            'status' => 'success',
-            'message' => __('messages.support_ticket.message.sent'),
-            'data' => $message
-        ], 201);
+        $user = auth('api')->user();
+        if ($user->activity_scope === 'system_level') {
+            $validator = Validator::make(
+                ['ticket_id' => $ticket_id],
+                ['ticket_id' => 'required|integer|exists:tickets,id']
+            );
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
+            $ticketMessages = $this->ticketRepo->getAdminTicketMessages($ticket_id);
+            return response()->json(SupportTicketMessageResource::collection($ticketMessages));
+        } else {
+            return response()->json([
+                'messages' => __('messages.authorization_invalid')
+            ], 403);
+        }
     }
 }

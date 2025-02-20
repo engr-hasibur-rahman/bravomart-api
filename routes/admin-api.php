@@ -467,6 +467,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['prefix' => 'support-ticket/', 'middleware' => 'permission:' . PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value], function () {
             Route::get('list', [AdminSupportTicketManageController::class, 'index']);
             Route::get('details/{id?}', [AdminSupportTicketManageController::class, 'show']);
+            Route::post('change-priority-status', [AdminSupportTicketManageController::class, 'changePriorityStatus']);
+            Route::post('resolve', [AdminSupportTicketManageController::class, 'resolve']);
+            Route::post('message/reply', [AdminSupportTicketManageController::class, 'replyMessage']);
+            Route::get('get-ticket-messages/{ticket_id}', [AdminSupportTicketManageController::class, 'getTicketMessages']);
         });
 
         // FINANCIAL WITHDRAWALS management
