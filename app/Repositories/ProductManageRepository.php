@@ -183,7 +183,7 @@ class ProductManageRepository implements ProductManageInterface
             if (!empty($data['variants']) && is_array($data['variants'])) {
                 $variants = array_map(function ($variant) use ($product) {
                     // Generate the variant slug
-                    $variant['attributes'] = json_encode($variant['attributes']);
+                    $variant['attributes'] = !empty($variant['attributes']) ? json_encode($variant['attributes']) : null;
                     $variant['variant_slug'] = $variant['variant']; // Assign the generated slug
                     $variant['product_id'] = $product->id;
                     return $variant;
