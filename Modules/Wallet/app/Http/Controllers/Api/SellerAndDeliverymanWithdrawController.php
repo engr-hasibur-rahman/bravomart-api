@@ -17,11 +17,25 @@ class SellerAndDeliverymanWithdrawController extends Controller
 {
     public function withdrawAllList(Request $request)
     {
+        // Check if the user is authenticated
+        if (!auth('api')->check()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access, please log in.',
+            ], 401);
+        }
+
         if (!auth('api')->user()->activity_scope === 'store_level' || !auth('api')->user()->activity_scope === 'delivery_level') {
             return unauthorized_response();
         }
 
-        $query = WalletWithdrawalsTransaction::where('owner_id', $request->store_id);
+        // Query based on the user's activity scope
+        if (auth('api')->user()->activity_scope === 'store_level' && !empty($request->store_id)) {
+            $query = WalletWithdrawalsTransaction::where('owner_id', $request->store_id);
+        } elseif (auth('api')->user()->activity_scope === 'delivery_level' && !empty($request->deliveryman_id)) {
+            $query = WalletWithdrawalsTransaction::where('owner_id', $request->deliveryman_id);
+        }
+
 
         if (isset($request->amount)) {
             $query->where('amount', $request->amount);
@@ -55,7 +69,10 @@ class SellerAndDeliverymanWithdrawController extends Controller
 
     public function withdrawDetails(Request $request)
     {
-        $withdraw = WalletWithdrawalsTransaction::find($request->id);
+
+        $withdraw = WalletWithdrawalsTransaction::where('id', $request->id)
+            ->where('owner_id', auth('api')->user()->id)->first();
+
         if (!empty($withdraw)) {
             return response()->json([
                 'status' => true,
@@ -75,7 +92,8 @@ class SellerAndDeliverymanWithdrawController extends Controller
     public function withdrawRequest(Request $request)
     {
         $validator = Validator::make(request()->all(), [
-            "store_id" => "required|exists:stores,id", // store exists
+            "store_id" => "nullable|exists:stores,id", // store exists
+            "deliveryman_id" => "nullable|exists:users,id", // deliveryman exists
             "withdraw_gateway_id" => "required|integer|exists:withdraw_gateways,id",
             "gateway_name" => "required|string|max:50",
             "amount" => "required",
@@ -110,7 +128,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
         if (empty($wallet)){
             return response()->json([
                'message' => 'You have no balance.',
-            ],404);
+            ],204);
         }
 
         if (!empty($wallet) && $wallet->balance <= 0){

@@ -128,6 +128,10 @@ class BivaCommandAuto extends Command
         $role = Role::where('id',4)->first();
         $role->givePermissionTo([PermissionKey::SELLER_STAFF_LIST,PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS]);
 
+        // 6 Get Deliveryman Role And assign some default permission
+        $role = Role::where('id',6)->first();
+        $role->givePermissionTo([PermissionKey::DELIVERYMAN_FINANCIAL_WITHDRAWALS]);
+
         // Update View Option For All permission
         DB::table('role_has_permissions')->update(['view' => true]);
 

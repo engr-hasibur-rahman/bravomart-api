@@ -276,4 +276,7 @@ enum PermissionKey: string
     case SELLER_STORE_SUPPORT_TICKETS_MANAGE = '/seller/store/support-ticket/list';
     // ######################## Seller PermissionKey End ###########################
 
+    // deliveryman
+  case DELIVERYMAN_FINANCIAL_WITHDRAWALS = '/deliveryman/withdraw-manage';
+
 }
