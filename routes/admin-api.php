@@ -469,6 +469,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('details/{id?}', [AdminSupportTicketManageController::class, 'show']);
             Route::post('change-priority-status', [AdminSupportTicketManageController::class, 'changePriorityStatus']);
             Route::post('resolve', [AdminSupportTicketManageController::class, 'resolve']);
+            Route::post('reply', [AdminSupportTicketManageController::class, 'replyMessage']);
         });
 
         // FINANCIAL WITHDRAWALS management
