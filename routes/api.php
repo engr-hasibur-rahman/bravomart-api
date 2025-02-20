@@ -6,6 +6,7 @@ use App\Http\Controllers\APi\V1\Com\HeaderFooterController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\ContactManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
 use App\Http\Controllers\Api\V1\DeliveryChargeCalculateController;
 use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\OtherChargeInfoController;
@@ -107,6 +108,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/flash-deal-products', [FrontendController::class, 'flashDealProducts']);
     Route::get('/product-suggestion', [FrontendController::class, 'getSearchSuggestions']);
     Route::get('/keyword-suggestion', [FrontendController::class, 'getKeywordSuggestions']);
+    Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);
 
     // home page footer api route
     Route::get('/footer', [HeaderFooterController::class, 'siteFooterInfo']);

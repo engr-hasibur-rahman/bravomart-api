@@ -73,8 +73,6 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         });
         Route::group(['prefix' => 'product-query/'], function () {
             Route::post('ask-question', [CustomerProductQueryController::class, 'askQuestion']);
-            Route::get('search-question', [CustomerProductQueryController::class, 'searchQuestion']);
-            Route::post('reaction', [CustomerReviewManageController::class, 'react']);
         });
     });
 

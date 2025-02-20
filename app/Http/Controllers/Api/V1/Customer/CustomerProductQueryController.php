@@ -35,9 +35,6 @@ class CustomerProductQueryController extends Controller
 
     public function searchQuestion(Request $request)
     {
-        if (!auth('api_customer')->check()) {
-            unauthorized_response();
-        }
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|integer|exists:products,id',
             'search' => 'nullable|string',
