@@ -41,6 +41,7 @@ return [
     'ticket.resolved' => 'Ticket has been resolved!',
     'ticket.closed' => 'Ticket has been closed!',
     'ticket_does_not_belongs_to_this_store' => 'Ticket does not belongs to this store!',
+    'ticket_does_not_belongs_to_this_customer' => 'Ticket does not belongs to this customer!',
 
     'customer.not.found' => 'Customer not found!',
 

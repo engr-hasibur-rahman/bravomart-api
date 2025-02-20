@@ -191,26 +191,27 @@ class AdminSupportTicketManageController extends Controller
             ], 403);
         }
     }
-    public function getTicketMessages(Request $request)
+
+    public function getTicketMessages(Request $request,$ticket_id)
     {
         if (!auth('api')->check()) {
             unauthorized_response();
         }
         $user = auth('api')->user();
         if ($user->activity_scope === 'system_level') {
-            $validator = Validator::make($request->all(), [
-                'ticket_id' => 'required|integer|exists:tickets,id',
-            ]);
+            $validator = Validator::make(
+                ['ticket_id' => $ticket_id],
+                ['ticket_id' => 'required|integer|exists:tickets,id']
+            );
             if ($validator->fails()) {
-                return response()->json($validator->errors(),422);
+                return response()->json($validator->errors(), 422);
             }
-            $ticketMessages = $this->ticketRepo->getAdminTicketMessages($request->all());
+            $ticketMessages = $this->ticketRepo->getAdminTicketMessages($ticket_id);
             return response()->json(SupportTicketMessageResource::collection($ticketMessages));
         } else {
             return response()->json([
                 'messages' => __('messages.authorization_invalid')
             ], 403);
         }
-
     }
 }

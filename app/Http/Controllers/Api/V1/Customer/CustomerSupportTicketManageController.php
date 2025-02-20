@@ -44,16 +44,31 @@ class CustomerSupportTicketManageController extends Controller
 
     public function show(Request $request)
     {
-        try {
-            $ticketId = $request->input('id');
-            $ticket = $this->ticketRepo->getTicketById($ticketId);
+        if (!auth('api_customer')->check()) {
+            unauthorized_response();
+        }
+        $customer = auth('api_customer')->user();
+        $validator = Validator::make($request->all(), [
+            'ticket_id' => 'required|exists:tickets,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->fails(), 422);
+        }
+        $ticket = Ticket::find($request->id);
+        if ($ticket->customer_id == null || $ticket->customer_id !== $customer->id) {
+            return response()->json([
+                'message' => __('messages.ticket_does_not_belongs_to_this_customer')
+            ], 422);
+        }
+        $ticket = $this->ticketRepo->getTicketById($request->id);
+        if ($ticket) {
             return response()->json([
                 'data' => new SupportTicketDetailsResource($ticket)
             ], 200);
-        } catch (\Exception $e) {
+        } else {
             return response()->json([
-                'message' => $e->getMessage()
-            ], 500);
+                'message' => __('messages.data_not_found')
+            ], 404);
         }
     }
 
@@ -77,6 +92,10 @@ class CustomerSupportTicketManageController extends Controller
 
     public function update(Request $request)
     {
+        if (!auth('api_customer')->check()) {
+            unauthorized_response();
+        }
+        $customer = auth('api_customer')->user();
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:tickets,id',
             'department_id' => 'nullable|exists:departments,id',
@@ -87,10 +106,15 @@ class CustomerSupportTicketManageController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => $validator->errors()
-            ], 400);
+            ], 422);
         }
         $ticket = Ticket::find($request->id);
         $isClosed = $ticket->status === 0;
+        if ($ticket->customer_id == null || $ticket->customer_id !== $customer->id) {
+            return response()->json([
+                'message' => __('messages.ticket_does_not_belongs_to_this_customer')
+            ], 422);
+        }
         if ($isClosed) {
             return response()->json([
                 'message' => __('messages.ticket.closed')
