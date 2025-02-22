@@ -233,6 +233,23 @@ class OrderService
                     $delivery_time = $packageData['delivery_time'] ?? null;
                 }
 
+                 // Commission Rate on Delivery Charge (%)
+                $commission_type = $system_commission->commission_type;
+                $default_delivery_commission_charge = $system_commission->default_delivery_commission_charge;
+
+                // Calculate admin commission based on type
+                if ($commission_type === 'percent') {
+                    $delivery_charge_admin_commission = ($final_shipping_charge * $default_delivery_commission_charge) / 100;
+                } elseif ($commission_type === 'fixed') {
+                    $delivery_charge_admin_commission = $default_delivery_commission_charge;
+                } else {
+                    $delivery_charge_admin_commission = 0;
+                }
+                // the delivery charge commission
+                $delivery_charge_admin_commission = min($delivery_charge_admin_commission, $final_shipping_charge);
+               // Calculate Deliveryman's earning
+                $delivery_charge_delivery_man_commission = $final_shipping_charge - $delivery_charge_admin_commission;
+
                 // create order main order package wise
                 $package = Order::create([
                     'order_master_id' => $order_master->id,
@@ -247,6 +264,8 @@ class OrderService
                     'product_discount_amount' => 0,
                     'flash_discount_amount_admin' => 0,
                     'shipping_charge' => $final_shipping_charge,
+                    'delivery_charge_admin' => $delivery_charge_delivery_man_commission, // Full delivery charge
+                    'delivery_charge_admin_commission' => $delivery_charge_admin_commission, // Admin commission on delivery charge
                     'is_reviewed' => false,
                     'status' => 'pending',
                 ]);

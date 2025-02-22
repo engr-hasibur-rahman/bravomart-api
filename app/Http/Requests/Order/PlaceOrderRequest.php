@@ -78,7 +78,6 @@ class PlaceOrderRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $productId = request()->input(str_replace('.variant_id', '.product_id', $attribute));
                     $variantExists = \App\Models\ProductVariant::where('id', $value)->where('product_id', $productId)->exists();
-
                     if (!$variantExists) {
                         $fail("The selected variant does not belong to the given product.");
                     }
