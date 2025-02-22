@@ -4,7 +4,9 @@ namespace App\Repositories;
 
 use App\Enums\WalletOwnerType;
 use App\Interfaces\DeliverymanManageInterface;
+use App\Jobs\SendDynamicEmailJob;
 use App\Models\DeliveryMan;
+use App\Models\EmailTemplate;
 use App\Models\Order;
 use App\Models\OrderDeliveryHistory;
 use App\Models\SystemCommission;
@@ -527,8 +529,26 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 }
 
                 // send mail and notification
-
-                dd($order->customer?->email, $order->orderAddress?->email, $order->store?->email, com_option_get('com_site_email'));
+                $customer_email = $order->orderAddress?->email ?? $order->customer?->email;
+                $store_email = $order->store?->email;
+                $system_global_email = com_option_get('com_site_email');
+                // mail send
+                try {
+                    $emailTemplate = EmailTemplate::where('name', 'Delivery Earnings')->where('status', 'active')->first();
+                    $emailData = [
+                        'deliveryman_name' => $deliveryman->name ?? 'Deliveryman',
+                        'amount' => $order->delivery_charge_deliveryman_earning
+                    ];
+                    // Send Email Using Queue
+                    if ($emailTemplate) {
+                        dispatch(new SendDynamicEmailJob(
+                            $customer_email,
+                            $emailTemplate->subject,
+                            $emailTemplate->body,
+                            $emailData
+                        ));
+                    }
+                }catch (\Exception $th) { }
 
             }
     }
