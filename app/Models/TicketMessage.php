@@ -33,11 +33,19 @@ class TicketMessage extends Model
 
     public function sender()
     {
-        return $this->belongsTo(Customer::class, 'sender_id');
+        return $this->morphTo();
     }
 
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiver_id');
+    }
+    public function getSenderAttribute()
+    {
+        return match ($this->sender_role) {
+            'customer_level' => $this->belongsTo(Customer::class, 'sender_id')->first(),
+            'store_level' => $this->belongsTo(Store::class, 'sender_id')->first(),
+            default => null,
+        };
     }
 }

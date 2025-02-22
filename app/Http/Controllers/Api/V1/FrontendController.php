@@ -184,9 +184,8 @@ class FrontendController extends Controller
         $query = $request->input('query');
         if (!$query) {
             return response()->json([
-                'success' => false,
                 'message' => 'Query parameter is required.',
-            ], 400);
+            ], 422);
         }
 
         $maxSuggestions = 10; // Limit the number of suggestions
@@ -214,9 +213,8 @@ class FrontendController extends Controller
         $query = $request->input('query');
         if (!$query) {
             return response()->json([
-                'success' => false,
                 'message' => 'Query parameter is required.',
-            ], 400);
+            ], 200);
         }
 
 //        $maxSuggestions = 10;
@@ -237,343 +235,287 @@ class FrontendController extends Controller
 //            ->limit($maxSuggestions)
             ->get();
         return response()->json([
-            'success' => true,
             'data' => ProductSuggestionPublicResource::collection($productSuggestions),
-        ]);
+        ], 200);
     }
 
     public function getPopularProducts(Request $request)
     {
-        try {
-            $query = Product::query();
+        $query = Product::query();
 
-            // If an ID is provided, fetch the specific product
-            if (isset($request->id)) {
-                $product = $query
-                    ->with(['variants', 'store', 'related_translations'])
-                    ->findOrFail($request->id); // Throws 404 if product not found
+        // If an ID is provided, fetch the specific product
+        if (isset($request->id)) {
+            $product = $query
+                ->with(['variants', 'store', 'related_translations'])
+                ->findOrFail($request->id); // Throws 404 if product not found
 
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product),
-                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-                ]);
-            }
-            // Include optional filters for customization
-            if (isset($request->category_id)) {
-                $query->where('category_id', $request->category_id);
-            }
-            if (isset($request->brand_id)) {
-                $query->where('brand_id', $request->brand_id);
-            }
-            // Fetch popular products, sorting by views_count
-            $popularProducts = $query
-                ->with(['variants', 'store'])
-                ->where('status', 'approved')
-                ->where('deleted_at', null)
-                ->orderByDesc('views') // Sort by views count
-                ->paginate($request->per_page ?? 10);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => PopularProductPublicResource::collection($popularProducts),
-                'meta' => new PaginationResource($popularProducts)
+                'data' => new ProductDetailsPublicResource($product),
+                'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
             ]);
-        } catch (\Exception $e) {
-            return response()->json([]);
         }
+        // Include optional filters for customization
+        if (isset($request->category_id)) {
+            $query->where('category_id', $request->category_id);
+        }
+        if (isset($request->brand_id)) {
+            $query->where('brand_id', $request->brand_id);
+        }
+        // Fetch popular products, sorting by views_count
+        $popularProducts = $query
+            ->with(['variants', 'store'])
+            ->where('status', 'approved')
+            ->where('deleted_at', null)
+            ->orderByDesc('views') // Sort by views count
+            ->paginate($request->per_page ?? 10);
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => PopularProductPublicResource::collection($popularProducts),
+            'meta' => new PaginationResource($popularProducts)
+        ], 200);
+
     }
 
     public function getTopDeals(Request $request)
     {
-        try {
-            $query = Product::query();
-            // Apply filters
-            if ($request->filled('id')) {
-                $product = $query
-                    ->with(['variants', 'store'])
-                    ->findOrFail($request->id);
-
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product),
-                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-                ]);
-            }
-            $query->select('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id', 'products.image','products.description') // Specify only necessary columns
-            ->selectRaw('MAX((product_variants.price - product_variants.special_price) / product_variants.price) AS max_discount_percentage')
-                ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
-                ->whereNotNull('product_variants.special_price')
-                ->whereColumn('product_variants.special_price', '<', 'product_variants.price')
-                ->whereNull('product_variants.deleted_at')
-                ->whereNull('products.deleted_at')
-                ->groupBy('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id', 'products.image','products.description');
-
-            if ($request->filled('category_id')) {
-                $query->where('category_id', $request->category_id);
-            }
-
-            if ($request->filled(['min_price', 'max_price'])) {
-                $query->whereHas('variants', function ($q) use ($request) {
-                    $q->whereBetween('price', [$request->min_price, $request->max_price]);
-                });
-            }
-
-            if ($request->filled('brand_id')) {
-                $query->where('brand_id', $request->brand_id);
-            }
-
-            if ($request->filled('availability')) {
-                $availability = $request->availability;
-                $query->whereHas('variants', function ($q) use ($availability) {
-                    $q->where('stock_quantity', $availability ? '>' : '=', 0);
-                });
-            }
-
-            // Apply sorting
-            if ($request->filled('sort')) {
-                switch ($request->sort) {
-                    case 'price_low_high':
-                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'asc'));
-                        break;
-
-                    case 'price_high_low':
-                        $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'desc'));
-                        break;
-
-                    case 'newest':
-                        $query->orderBy('created_at', 'desc');
-                        break;
-
-                    default:
-                        $query->latest();
-                }
-            }
-
-            // Apply date filter
-            if ($request->filled('date_filter')) {
-                switch ($request->date_filter) {
-                    case 'today':
-                        $query->whereDate('created_at', today());
-                        break;
-
-                    case 'last_week':
-                        $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
-                        break;
-
-                    case 'last_month':
-                        $query->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()]);
-                        break;
-
-                    default:
-                        $query->latest();
-                }
-            }
-
-            // Pagination
-            $perPage = $request->get('per_page', 10);
-            $products = $query
-                ->with([
-                    'store',
-                    'brand',
-                    'variants' => function ($q) {
-                        $q->select(
-                            'id',
-                            'stock_quantity',
-                            'product_id',
-                            'special_price',
-                            'price',
-                            DB::raw('ROUND(((price - special_price) / price) * 100, 2) as discount_percentage')
-                        )
-                            ->whereNotNull('special_price')
-                            ->whereColumn('special_price', '<', 'price')
-                            ->orderByRaw('discount_percentage DESC');
-                    },
-                    'related_translations',
-                ])
-                ->orderBy('max_discount_percentage', 'desc')
-                ->paginate($perPage);
+        $query = Product::query();
+        // Apply filters
+        if ($request->filled('id')) {
+            $product = $query
+                ->with(['variants', 'store'])
+                ->findOrFail($request->id);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => TopDealsPublicResource::collection($products),
-                'meta' => new PaginationResource($products)
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage(),
-            ]);
+                'data' => new ProductDetailsPublicResource($product),
+                'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
+            ], 200);
         }
+        $query->select('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id', 'products.image', 'products.description') // Specify only necessary columns
+        ->selectRaw('MAX((product_variants.price - product_variants.special_price) / product_variants.price) AS max_discount_percentage')
+            ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+            ->whereNotNull('product_variants.special_price')
+            ->whereColumn('product_variants.special_price', '<', 'product_variants.price')
+            ->whereNull('product_variants.deleted_at')
+            ->whereNull('products.deleted_at')
+            ->groupBy('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id', 'products.image', 'products.description');
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled(['min_price', 'max_price'])) {
+            $query->whereHas('variants', function ($q) use ($request) {
+                $q->whereBetween('price', [$request->min_price, $request->max_price]);
+            });
+        }
+
+        if ($request->filled('brand_id')) {
+            $query->where('brand_id', $request->brand_id);
+        }
+
+        if ($request->filled('availability')) {
+            $availability = $request->availability;
+            $query->whereHas('variants', function ($q) use ($availability) {
+                $q->where('stock_quantity', $availability ? '>' : '=', 0);
+            });
+        }
+
+        // Apply sorting
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_low_high':
+                    $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'asc'));
+                    break;
+
+                case 'price_high_low':
+                    $query->orderByHas('variants', fn($q) => $q->orderBy('price', 'desc'));
+                    break;
+
+                case 'newest':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+
+                default:
+                    $query->latest();
+            }
+        }
+
+        // Apply date filter
+        if ($request->filled('date_filter')) {
+            switch ($request->date_filter) {
+                case 'today':
+                    $query->whereDate('created_at', today());
+                    break;
+
+                case 'last_week':
+                    $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                    break;
+
+                case 'last_month':
+                    $query->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()]);
+                    break;
+
+                default:
+                    $query->latest();
+            }
+        }
+
+        // Pagination
+        $perPage = $request->get('per_page', 10);
+        $products = $query
+            ->with([
+                'store',
+                'brand',
+                'variants' => function ($q) {
+                    $q->select(
+                        'id',
+                        'stock_quantity',
+                        'product_id',
+                        'special_price',
+                        'price',
+                        DB::raw('ROUND(((price - special_price) / price) * 100, 2) as discount_percentage')
+                    )
+                        ->whereNotNull('special_price')
+                        ->whereColumn('special_price', '<', 'price')
+                        ->orderByRaw('discount_percentage DESC');
+                },
+                'related_translations',
+            ])
+            ->orderBy('max_discount_percentage', 'desc')
+            ->paginate($perPage);
+
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => TopDealsPublicResource::collection($products),
+            'meta' => new PaginationResource($products)
+        ], 200);
+
     }
 
     public function getBestSellingProduct(Request $request)
     {
-        try {
-            $query = Product::query();
-            // If an ID is provided, fetch the specific product
-            if (isset($request->id)) {
-                $product = $query
-                    ->with(['variants', 'store'])
-                    ->findOrFail($request->id); // Throws 404 if product not found
 
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product),
-                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-                ]);
-            }
-            // Include filters for customization if needed
-            if (isset($request->category_id)) {
-                $query->where('category_id', $request->category_id);
-            }
-            if (isset($request->brand_id)) {
-                $query->where('brand_id', $request->brand_id);
-            }
-            // Sort by order count or rating (add rating logic later if needed)
-            $bestSellingProducts = $query
+        $query = Product::query();
+        // If an ID is provided, fetch the specific product
+        if (isset($request->id)) {
+            $product = $query
                 ->with(['variants', 'store'])
-                ->where('status', 'approved')
-                ->where('deleted_at', null)
-                ->orderByDesc('order_count')
-                ->paginate($request->per_page ?? 10);
+                ->findOrFail($request->id); // Throws 404 if product not found
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => BestSellingPublicResource::collection($bestSellingProducts),
-                'meta' => new PaginationResource($bestSellingProducts)
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage(),
-            ]);
+                'data' => new ProductDetailsPublicResource($product),
+                'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
+            ], 200);
         }
+        // Include filters for customization if needed
+        if (isset($request->category_id)) {
+            $query->where('category_id', $request->category_id);
+        }
+        if (isset($request->brand_id)) {
+            $query->where('brand_id', $request->brand_id);
+        }
+        // Sort by order count or rating (add rating logic later if needed)
+        $bestSellingProducts = $query
+            ->with(['variants', 'store'])
+            ->where('status', 'approved')
+            ->where('deleted_at', null)
+            ->orderByDesc('order_count')
+            ->paginate($request->per_page ?? 10);
+
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => BestSellingPublicResource::collection($bestSellingProducts),
+            'meta' => new PaginationResource($bestSellingProducts)
+        ], 200);
     }
 
     public function getTrendingProducts(Request $request)
     {
-        try {
-            $query = Product::query();
 
-            // If an ID is provided, fetch the specific product
-            if (isset($request->id)) {
-                $product = $query
-                    ->with(['variants', 'store'])
-                    ->findOrFail($request->id); // Throws 404 if product not found
+        $query = Product::query();
 
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product),
-                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-                ]);
-            }
-
-            // Fetch trending products with scores
-            $trendingProducts = $query
-                ->withTrendingScore() // Use the trending score scope
+        // If an ID is provided, fetch the specific product
+        if (isset($request->id)) {
+            $product = $query
                 ->with(['variants', 'store'])
-                ->where('status', 'approved')
-                ->whereNull('deleted_at')
-                ->orderByDesc('trending_score') // Sort by calculated trending score
-                ->paginate($request->per_page ?? 10);
+                ->findOrFail($request->id); // Throws 404 if product not found
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => TrendingProductPublicResource::collection($trendingProducts),
-                'meta' => new PaginationResource($trendingProducts)
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage(),
-            ]);
+                'data' => new ProductDetailsPublicResource($product),
+                'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
+            ], 200);
         }
+
+        // Fetch trending products with scores
+        $trendingProducts = $query
+            ->withTrendingScore() // Use the trending score scope
+            ->with(['variants', 'store'])
+            ->where('status', 'approved')
+            ->whereNull('deleted_at')
+            ->orderByDesc('trending_score') // Sort by calculated trending score
+            ->paginate($request->per_page ?? 10);
+
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => TrendingProductPublicResource::collection($trendingProducts),
+            'meta' => new PaginationResource($trendingProducts)
+        ], 200);
+
     }
 
 
     public function getWeekBestProducts(Request $request)
     {
-        try {
-            $query = Product::query();
-            // If an ID is provided, fetch the specific product
-            if (isset($request->id)) {
-                $product = $query
-                    ->with(['variants', 'store'])
-                    ->findOrFail($request->id); // Throws 404 if product not found
 
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product),
-                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-                ]);
-            }
-            // Filter products created or updated in the last week
-            $lastWeek = now()->subWeek();
-            // Fetch products with the highest order count or rating in the last week
-            $weekBestProducts = $query
+        $query = Product::query();
+        // If an ID is provided, fetch the specific product
+        if (isset($request->id)) {
+            $product = $query
                 ->with(['variants', 'store'])
-                ->where('status', 'approved')
-                ->where('deleted_at', null)
-                ->where(function ($query) use ($lastWeek) {
-                    $query->where('created_at', '>=', $lastWeek)
-                        ->orWhere('updated_at', '>=', $lastWeek);
-                })
-                ->orderByDesc('order_count') // Sort by order count (or rating if needed)
-                ->paginate($request->per_page ?? 10);
+                ->findOrFail($request->id); // Throws 404 if product not found
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => WeekBestProductPublicResource::collection($weekBestProducts),
-                'meta' => new PaginationResource($weekBestProducts)
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage(),
-            ]);
+                'data' => new ProductDetailsPublicResource($product),
+                'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
+            ], 200);
         }
+        // Filter products created or updated in the last week
+        $lastWeek = now()->subWeek();
+        // Fetch products with the highest order count or rating in the last week
+        $weekBestProducts = $query
+            ->with(['variants', 'store'])
+            ->where('status', 'approved')
+            ->where('deleted_at', null)
+            ->where(function ($query) use ($lastWeek) {
+                $query->where('created_at', '>=', $lastWeek)
+                    ->orWhere('updated_at', '>=', $lastWeek);
+            })
+            ->orderByDesc('order_count') // Sort by order count (or rating if needed)
+            ->paginate($request->per_page ?? 10);
+
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => WeekBestProductPublicResource::collection($weekBestProducts),
+            'meta' => new PaginationResource($weekBestProducts)
+        ], 200);
+
     }
 
     public function flashDeals()
     {
         $flashSaleProducts = $this->flashSaleService->getValidFlashSales();
-        if ($flashSaleProducts->count() > 0) {
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => FlashSaleWithProductPublicResource::collection($flashSaleProducts)
-            ]);
-        } else {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
-        }
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => FlashSaleWithProductPublicResource::collection($flashSaleProducts)
+        ], 200);
+
     }
 
     public function flashDealProducts(Request $request)
@@ -587,20 +529,12 @@ class FrontendController extends Controller
             "per_page" => $request->per_page,
         ];
         $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($filters);
-//        dd($flashSaleProducts->toArray());
-        if ($flashSaleProducts->count() > 0) {
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
-                'meta' => new PaginationResource($flashSaleProducts)
-            ]);
-        } else {
-            return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 404);
-        }
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
+            'meta' => new PaginationResource($flashSaleProducts)
+        ], 200);
+
 
     }
 
@@ -665,12 +599,10 @@ class FrontendController extends Controller
             ->paginate($perPage);
 
         return response()->json([
-            'status' => true,
-            'status_code' => 200,
             'messages' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
             'meta' => new PaginationResource($products)
-        ]);
+        ], 200);
     }
 
     public function productDetails($product_slug)
@@ -693,12 +625,10 @@ class FrontendController extends Controller
             ->where('slug', $product_slug)
             ->first();
         return response()->json([
-            'status' => true,
-            'status_code' => 200,
             'messages' => __('messages.data_found'),
             'data' => new ProductDetailsPublicResource($product),
             'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-        ]);
+        ], 200);
 
     }
 
@@ -708,22 +638,15 @@ class FrontendController extends Controller
         $query = Product::query();
 
         if ($request->has('id') && !empty($request->id)) {
-            try {
-                $product = $query->with(['variants', 'store'])->findOrFail($request->id);
 
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product),
-                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback()),
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => __('messages.data_not_found'),
-                ], 404);
-            }
+            $product = $query->with(['variants', 'store'])->findOrFail($request->id);
+
+            return response()->json([
+                'message' => __('messages.data_found'),
+                'data' => new ProductDetailsPublicResource($product),
+                'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback()),
+            ], 200);
+
         }
 
         if (!empty($request->category_id)) {
@@ -749,19 +672,12 @@ class FrontendController extends Controller
             ->latest()
             ->paginate($request->per_page ?? 10);
 
-        if ($products->count() > 0) {
-            return response()->json([
-                'status' => true,
-                'message' => __('messages.data_found'),
-                'data' => NewArrivalPublicResource::collection($products),
-                'meta' => new PaginationResource($products),
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => __('messages.data_not_found'),
-            ], 404);
-        }
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => NewArrivalPublicResource::collection($products),
+            'meta' => new PaginationResource($products),
+        ], 200);
+
     }
 
     public function getTopRatedProducts(Request $request)
@@ -769,22 +685,15 @@ class FrontendController extends Controller
         $query = Product::query();
 
         if ($request->has('id') && !empty($request->id)) {
-            try {
-                $product = $query->with(['variants', 'store'])->findOrFail($request->id);
 
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.data_found'),
-                    'data' => new ProductDetailsPublicResource($product),
-                    'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback()),
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => __('messages.data_not_found'),
-                ], 404);
-            }
+            $product = $query->with(['variants', 'store'])->findOrFail($request->id);
+
+            return response()->json([
+                'message' => __('messages.data_found'),
+                'data' => new ProductDetailsPublicResource($product),
+                'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback()),
+            ], 200);
+
         }
 
         // Apply filters
@@ -831,19 +740,12 @@ class FrontendController extends Controller
             ->orderByDesc('avg_rating')
             ->paginate($request->per_page ?? 10);
 
-        if ($products->count() > 0) {
-            return response()->json([
-                'status' => true,
-                'message' => __('messages.data_found'),
-                'data' => TopRatedProductPublicResource::collection($products),
-                'meta' => new PaginationResource($products),
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => __('messages.data_not_found'),
-            ], 404);
-        }
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => TopRatedProductPublicResource::collection($products),
+            'meta' => new PaginationResource($products),
+        ], 200);
+
     }
 
     /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
@@ -876,18 +778,14 @@ class FrontendController extends Controller
                 ->paginate($limit);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => ProductCategoryPublicResource::collection($categories),
                 'meta' => new PaginationResource($categories)
-            ]);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage(),
-            ]);
+            ], 500);
         }
     }
 
@@ -947,21 +845,16 @@ class FrontendController extends Controller
             $products = $query->with(['category', 'unit', 'tags', 'store', 'brand', 'variants', 'related_translations'])->paginate($perPage);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => 'Products fetched successfully',
                 'data' => ProductPublicResource::collection($products),
                 'meta' => new PaginationResource($products)
-            ]);
+            ], 200);
 
         } catch (\Exception $e) {
             // Return an error response
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => __('messages.error'),
                 'error' => $e->getMessage(),
-            ]);
+            ], 500);
         }
     }
 
@@ -973,14 +866,13 @@ class FrontendController extends Controller
         // Check if sliders exist
         if ($sliders->isEmpty()) {
             return response()->json([
-                'message' => 'No sliders found.',
-                'sliders' => [],
-            ]);
+                'message' => __('messages.data_not_found'),
+            ], 204);
         }
         return response()->json([
             'message' => 'Sliders fetched successfully.',
             'sliders' => SliderPublicResource::collection($sliders->items()),
-        ]);
+        ], 200);
     }
 
     /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
@@ -1104,13 +996,8 @@ class FrontendController extends Controller
     public function storeTypeList()
     {
         $storeTypes = StoreType::get();
-        if ($storeTypes) {
-            return response()->json(StoreTypeDropdownPublicResource::collection($storeTypes));
-        } else {
-            return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 404);
-        }
+        return response()->json(StoreTypeDropdownPublicResource::collection($storeTypes));
+
     }
 
     public function behaviourList()
@@ -1135,6 +1022,4 @@ class FrontendController extends Controller
         $customers = Customer::where('status', 1)->get();
         return response()->json(CustomerPublicResource::collection($customers));
     }
-
-
 }
