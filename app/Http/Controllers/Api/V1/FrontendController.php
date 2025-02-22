@@ -184,9 +184,8 @@ class FrontendController extends Controller
         $query = $request->input('query');
         if (!$query) {
             return response()->json([
-                'success' => false,
                 'message' => 'Query parameter is required.',
-            ], 400);
+            ], 422);
         }
 
         $maxSuggestions = 10; // Limit the number of suggestions
@@ -214,9 +213,8 @@ class FrontendController extends Controller
         $query = $request->input('query');
         if (!$query) {
             return response()->json([
-                'success' => false,
                 'message' => 'Query parameter is required.',
-            ], 400);
+            ], 200);
         }
 
 //        $maxSuggestions = 10;
@@ -237,9 +235,8 @@ class FrontendController extends Controller
 //            ->limit($maxSuggestions)
             ->get();
         return response()->json([
-            'success' => true,
             'data' => ProductSuggestionPublicResource::collection($productSuggestions),
-        ]);
+        ],200);
     }
 
     public function getPopularProducts(Request $request)
@@ -276,12 +273,10 @@ class FrontendController extends Controller
                 ->orderByDesc('views') // Sort by views count
                 ->paginate($request->per_page ?? 10);
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => PopularProductPublicResource::collection($popularProducts),
                 'meta' => new PaginationResource($popularProducts)
-            ]);
+            ],200);
         } catch (\Exception $e) {
             return response()->json([]);
         }
@@ -298,12 +293,10 @@ class FrontendController extends Controller
                     ->findOrFail($request->id);
 
                 return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
                     'message' => __('messages.data_found'),
                     'data' => new ProductDetailsPublicResource($product),
                     'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-                ]);
+                ],200);
             }
             $query->select('products.id', 'products.name', 'products.slug', 'products.store_id', 'products.category_id', 'products.image','products.description') // Specify only necessary columns
             ->selectRaw('MAX((product_variants.price - product_variants.special_price) / product_variants.price) AS max_discount_percentage')
@@ -400,19 +393,15 @@ class FrontendController extends Controller
                 ->paginate($perPage);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => TopDealsPublicResource::collection($products),
                 'meta' => new PaginationResource($products)
-            ]);
+            ],200);
 
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage(),
-            ]);
+            ],500);
         }
     }
 
@@ -427,12 +416,10 @@ class FrontendController extends Controller
                     ->findOrFail($request->id); // Throws 404 if product not found
 
                 return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
                     'message' => __('messages.data_found'),
                     'data' => new ProductDetailsPublicResource($product),
                     'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-                ]);
+                ],200);
             }
             // Include filters for customization if needed
             if (isset($request->category_id)) {
@@ -450,18 +437,14 @@ class FrontendController extends Controller
                 ->paginate($request->per_page ?? 10);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => BestSellingPublicResource::collection($bestSellingProducts),
                 'meta' => new PaginationResource($bestSellingProducts)
-            ]);
+            ],200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage(),
-            ]);
+            ],500);
         }
     }
 
@@ -477,12 +460,10 @@ class FrontendController extends Controller
                     ->findOrFail($request->id); // Throws 404 if product not found
 
                 return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
                     'message' => __('messages.data_found'),
                     'data' => new ProductDetailsPublicResource($product),
                     'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-                ]);
+                ],200);
             }
 
             // Fetch trending products with scores
@@ -495,18 +476,14 @@ class FrontendController extends Controller
                 ->paginate($request->per_page ?? 10);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => TrendingProductPublicResource::collection($trendingProducts),
                 'meta' => new PaginationResource($trendingProducts)
-            ]);
+            ],200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage(),
-            ]);
+            ],500);
         }
     }
 
@@ -522,12 +499,10 @@ class FrontendController extends Controller
                     ->findOrFail($request->id); // Throws 404 if product not found
 
                 return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
                     'message' => __('messages.data_found'),
                     'data' => new ProductDetailsPublicResource($product),
                     'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-                ]);
+                ],200);
             }
             // Filter products created or updated in the last week
             $lastWeek = now()->subWeek();
@@ -544,18 +519,14 @@ class FrontendController extends Controller
                 ->paginate($request->per_page ?? 10);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => WeekBestProductPublicResource::collection($weekBestProducts),
                 'meta' => new PaginationResource($weekBestProducts)
-            ]);
+            ],200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage(),
-            ]);
+            ],500);
         }
     }
 
@@ -564,15 +535,13 @@ class FrontendController extends Controller
         $flashSaleProducts = $this->flashSaleService->getValidFlashSales();
         if ($flashSaleProducts->count() > 0) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => FlashSaleWithProductPublicResource::collection($flashSaleProducts)
-            ]);
+            ],200);
         } else {
             return response()->json([
                 'message' => __('messages.data_not_found')
-            ], 404);
+            ], 204);
         }
     }
 
@@ -590,16 +559,14 @@ class FrontendController extends Controller
 //        dd($flashSaleProducts->toArray());
         if ($flashSaleProducts->count() > 0) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
                 'meta' => new PaginationResource($flashSaleProducts)
-            ]);
+            ],200);
         } else {
             return response()->json([
                 'message' => __('messages.data_not_found'),
-            ], 404);
+            ], 204);
         }
 
     }
@@ -665,12 +632,10 @@ class FrontendController extends Controller
             ->paginate($perPage);
 
         return response()->json([
-            'status' => true,
-            'status_code' => 200,
             'messages' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
             'meta' => new PaginationResource($products)
-        ]);
+        ],200);
     }
 
     public function productDetails($product_slug)
@@ -693,12 +658,10 @@ class FrontendController extends Controller
             ->where('slug', $product_slug)
             ->first();
         return response()->json([
-            'status' => true,
-            'status_code' => 200,
             'messages' => __('messages.data_found'),
             'data' => new ProductDetailsPublicResource($product),
             'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-        ]);
+        ],200);
 
     }
 
@@ -712,17 +675,14 @@ class FrontendController extends Controller
                 $product = $query->with(['variants', 'store'])->findOrFail($request->id);
 
                 return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
                     'message' => __('messages.data_found'),
                     'data' => new ProductDetailsPublicResource($product),
                     'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback()),
-                ]);
+                ],200);
             } catch (\Exception $e) {
                 return response()->json([
-                    'status' => false,
                     'message' => __('messages.data_not_found'),
-                ], 404);
+                ], 204);
             }
         }
 
@@ -751,16 +711,14 @@ class FrontendController extends Controller
 
         if ($products->count() > 0) {
             return response()->json([
-                'status' => true,
                 'message' => __('messages.data_found'),
                 'data' => NewArrivalPublicResource::collection($products),
                 'meta' => new PaginationResource($products),
-            ]);
+            ],200);
         } else {
             return response()->json([
-                'status' => false,
                 'message' => __('messages.data_not_found'),
-            ], 404);
+            ], 204);
         }
     }
 
@@ -773,17 +731,14 @@ class FrontendController extends Controller
                 $product = $query->with(['variants', 'store'])->findOrFail($request->id);
 
                 return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
                     'message' => __('messages.data_found'),
                     'data' => new ProductDetailsPublicResource($product),
                     'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback()),
-                ]);
+                ],200);
             } catch (\Exception $e) {
                 return response()->json([
-                    'status' => false,
                     'message' => __('messages.data_not_found'),
-                ], 404);
+                ], 204);
             }
         }
 
@@ -833,16 +788,15 @@ class FrontendController extends Controller
 
         if ($products->count() > 0) {
             return response()->json([
-                'status' => true,
                 'message' => __('messages.data_found'),
                 'data' => TopRatedProductPublicResource::collection($products),
                 'meta' => new PaginationResource($products),
-            ]);
+            ],200);
         } else {
             return response()->json([
                 'status' => false,
                 'message' => __('messages.data_not_found'),
-            ], 404);
+            ], 204);
         }
     }
 
@@ -876,18 +830,14 @@ class FrontendController extends Controller
                 ->paginate($limit);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.data_found'),
                 'data' => ProductCategoryPublicResource::collection($categories),
                 'meta' => new PaginationResource($categories)
-            ]);
+            ],200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage(),
-            ]);
+            ],500);
         }
     }
 
@@ -947,21 +897,16 @@ class FrontendController extends Controller
             $products = $query->with(['category', 'unit', 'tags', 'store', 'brand', 'variants', 'related_translations'])->paginate($perPage);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => 'Products fetched successfully',
                 'data' => ProductPublicResource::collection($products),
                 'meta' => new PaginationResource($products)
-            ]);
+            ],200);
 
         } catch (\Exception $e) {
             // Return an error response
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => __('messages.error'),
                 'error' => $e->getMessage(),
-            ]);
+            ],500);
         }
     }
 
@@ -973,14 +918,13 @@ class FrontendController extends Controller
         // Check if sliders exist
         if ($sliders->isEmpty()) {
             return response()->json([
-                'message' => 'No sliders found.',
-                'sliders' => [],
-            ]);
+                'message' => __('messages.data_not_found'),
+            ],204);
         }
         return response()->json([
             'message' => 'Sliders fetched successfully.',
             'sliders' => SliderPublicResource::collection($sliders->items()),
-        ]);
+        ],200);
     }
 
     /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
@@ -1109,7 +1053,7 @@ class FrontendController extends Controller
         } else {
             return response()->json([
                 'message' => __('messages.data_not_found'),
-            ], 404);
+            ], 204);
         }
     }
 
