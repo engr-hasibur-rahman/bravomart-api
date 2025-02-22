@@ -39,7 +39,7 @@ return new class extends Migration
             $table->unsignedBigInteger('cancelled_by')->nullable();
             $table->timestamp('cancelled_at')->nullable();
             $table->timestamp('delivery_completed_at')->nullable();
-            $table->string('refund_status')->nullable(); // requested, processing, refunded
+            $table->string('refund_status')->nullable()->comment('requested, processing, refunded, rejected');
             $table->string('status')->default('pending')->comment('pending, confirmed, processing , shipped, delivered, cancelled, on_hold');
             $table->timestamps();
         });

@@ -10,6 +10,7 @@ class CustomerAddress extends Model
         'customer_id',
         'title',
         'type',
+        'email',
         'contact_number',
         'address',
         'latitude',

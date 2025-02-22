@@ -11,10 +11,37 @@ use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletWithdrawalsTransaction;
 use Modules\Wallet\app\Transformers\WithdrawDetailsResource;
+use Modules\Wallet\app\Transformers\WithdrawGatewayListResource;
 use Modules\Wallet\app\Transformers\WithdrawListResource;
 
 class SellerAndDeliverymanWithdrawController extends Controller
 {
+    public function withdrawGatewayList(Request $request)
+    {
+        $search = request()->input('search');
+        $gateways = WithdrawGateway::where('status', 1)
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->take(20)
+            ->get();
+
+        if ($gateways->count() > 0) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => WithdrawGatewayListResource::collection($gateways),
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.data_not_found'),
+            ]);
+        }
+    }
+
     public function withdrawAllList(Request $request)
     {
         // Check if the user is authenticated
