@@ -104,6 +104,10 @@ return [
     'order_already_delivered' => 'Order has been already delivered!',
     'order_status_not_changeable' => 'This order status cannot be changed!',
     'order_does_not_belong_to_seller' => 'This order does not belong to this seller!',
+    'order_does_not_belong_to_customer' => 'This order does not belong to this customer!',
+    'order_refund_request_success' => 'Order refund requested successfully!',
+    'order_refund_request_failed' => 'Order refund request failed!',
+    'order_already_request_for_refund' => 'Order already requested for refund!',
 
 
 ];

@@ -6,6 +6,7 @@ use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
 use App\Models\Order;
 use App\Models\OrderDeliveryHistory;
+use App\Models\OrderRefundReason;
 use App\Models\SystemCommission;
 use App\Models\Translation;
 use App\Models\User;
@@ -360,11 +361,15 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function deleteVehicle(int $id)
     {
-        try {
-            $vehicle = VehicleType::findorfail($id);
+        $vehicle = VehicleType::find($id);
+        if ($vehicle) {
+            // Delete related translations
+            $this->translation->where('translatable_type', VehicleType::class)
+                ->where('translatable_id', $id)
+                ->delete();
             $vehicle->delete();
             return true;
-        } catch (\Throwable $th) {
+        } else {
             return false;
         }
     }
