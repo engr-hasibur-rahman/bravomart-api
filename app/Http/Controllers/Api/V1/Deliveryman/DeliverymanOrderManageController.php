@@ -116,6 +116,41 @@ class DeliverymanOrderManageController extends Controller
         }
     }
 
+    public function changeStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:orders,id',
+            'status' => 'required|in:delivered,cancelled',
+            'reason' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $deliveryman = auth('api')->user();
+
+        if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
+            unauthorized_response();
+        }
+
+        // update order delivery history
+        $success = $this->deliverymanRepo->orderChangeStatus($request->status,$request->id);
+
+        if ($success === 'delivered') {
+            return response()->json([
+                'message' => __('messages.deliveryman_order_request_accept_successful')
+            ], 200);
+        } elseif ($success === 'already delivered') {
+            return response()->json([
+                'message' => __('messages.deliveryman_order_already_taken')
+            ], 422);
+        } else {
+            return response()->json([
+                'message' => __('messages.something_went_wrong')
+            ], 500);
+        }
+    }
+
     public function orderDeliveryHistory()
     {
         $order_histories = $this->deliverymanRepo->deliverymanOrderHistory();
