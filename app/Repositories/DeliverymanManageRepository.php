@@ -501,26 +501,32 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     'status' => 'delivered',
                     'delivery_completed_at' => Carbon::now(),
                 ]);
+
                 OrderDeliveryHistory::create([
                     'order_id' => $order_id,
                     'deliveryman_id' => $deliveryman->id,
                     'status' => $status,
                 ]);
 
-
-                // delivery man wallet update
-               $wallet = Wallet::where('owner_id', $deliveryman->id)
+                // Deliveryman wallet update
+                $wallet = Wallet::where('owner_id', $deliveryman->id)
                     ->where('owner_type', WalletOwnerType::DELIVERYMAN->value)
                     ->first();
 
-               // create wallet history
-               WalletTransaction::create([
-                    'wallet_id' => $wallet->id,
-                    'amount' => $order->delivery_charge_admin, // Add only the deliveryman's earning
-                    'type' => 'credit',
-                    'purpose' => 'Delivery Earnings',
-                    'status' => 1,
-                ]);
+                if ($wallet) {
+                    // Update wallet balance
+                    $wallet->balance += $order->delivery_charge_deliveryman_earning; // Add earnings to the balance
+                    $wallet->save();
+
+                    // Create wallet transaction history
+                    WalletTransaction::create([
+                        'wallet_id' => $wallet->id,
+                        'amount' => $order->delivery_charge_deliveryman_earning,
+                        'type' => 'credit',
+                        'purpose' => 'Delivery Earnings',
+                        'status' => 1,
+                    ]);
+                }
 
                 // send mail and notification
 
