@@ -135,7 +135,7 @@ class AdminWithdrawGatewayManageController extends Controller
                 'status' => $gateway->status == 1 ? 0 : 1
             ]);
             return response()->json([
-                'status' => false,
+                'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.update_success', ['name' => 'Gateway Status']),
             ]);

@@ -27,6 +27,7 @@ class CustomerAddressRequest extends FormRequest
 
             'title' => 'nullable|string|max:255',
             'type' => 'required|in:home,office,others',
+            'email' => 'required|string|max:255|email',
             'contact_number' => 'required|string|max:20',
             'address' => 'required|string|max:255',
             //'latitude' => 'nullable|regex:/^-?\d{1,2}\.\d+$/',
@@ -48,6 +49,7 @@ class CustomerAddressRequest extends FormRequest
             'title.max' => __('validation.max.string', ['attribute' => 'Title']),
             'type.required' => __('validation.required', ['attribute' => 'Type']),
             'type.in' => __('validation.in', ['attribute' => 'Type']),
+            'email.required' => __('validation.required', ['attribute' => 'Email']),
             'contact_number.required' => __('validation.required', ['attribute' => 'Contact Number']),
             'contact_number.string' => __('validation.string', ['attribute' => 'Contact Number']),
             'contact_number.max' => __('validation.max.string', ['attribute' => 'Contact Number']),

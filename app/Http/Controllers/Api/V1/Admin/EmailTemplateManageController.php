@@ -126,10 +126,8 @@ class EmailTemplateManageController extends Controller
         if (!$emailTemplate) {
             return response()->json(['message' => 'Email template not found'], 404);
         }
-
         // Update the status
         $emailTemplate->status = $request->status;
-
         // Save the updated template
         $emailTemplate->save();
 

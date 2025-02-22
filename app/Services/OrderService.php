@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Helpers\DeliveryChargeHelper;
 use App\Models\Area;
+use App\Models\OrderAddress;
 use App\Models\Store;
 use App\Models\StoreArea;
 use App\Models\Coupon;
@@ -137,9 +138,25 @@ class OrderService
                 'order_notes' => $data['order_notes'] ?? null,
             ]);
 
+                // create order address
+                $customer_address = CustomerAddress::find($data['shipping_address_id']);
+                 OrderAddress::create([
+                    'order_master_id' => $order_master->id,
+                    'area_id' => 0, // main zone id
+                    'shipping_address_id' => $customer_address->id,
+                    'type' => $customer_address->type,
+                    'email' => $customer_address->email,
+                    'contact_number' => $customer_address->contact_number,
+                    'address' => $customer_address->address,
+                    'latitude' => $customer_address->latitude,
+                    'longitude' => $customer_address->longitude,
+                    'road' => $customer_address->road,
+                    'house' => $customer_address->house,
+                    'floor' => $customer_address->floor,
+                    'postal_code' => $customer_address->postal_code,
+                ]);
 
-
-               $calculate_total_order_amount_base_price = 0; // To accumulate the total price
+              $calculate_total_order_amount_base_price = 0; // To accumulate the total price
               $main_order_amount_after_discount = 0; // To accumulate the total price
                 // this calculations only for main order base price calculate
                 foreach ($data['packages'] as $packageData) {

@@ -28,6 +28,10 @@ class OrderMaster extends Model
         'order_notes',
     ];
 
+    public function orderAddress()
+    {
+        return $this->hasOne(OrderAddress::class, 'order_master_id', 'id');
+    }
     public function shippingAddress()
     {
         return $this->belongsTo(CustomerAddress::class, 'shipping_address_id', 'id');
