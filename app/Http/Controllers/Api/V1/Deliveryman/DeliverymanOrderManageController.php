@@ -134,11 +134,7 @@ class DeliverymanOrderManageController extends Controller
         }
 
         // update order delivery history
-        $success = $this->deliverymanRepo->updateOrderStatus(
-            $request->status,
-            $request->id,
-            $request->reason
-        );
+        $success = $this->deliverymanRepo->orderChangeStatus($request->status,$request->id);
 
         if ($success === 'delivered') {
             return response()->json([

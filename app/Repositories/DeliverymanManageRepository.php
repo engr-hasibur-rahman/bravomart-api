@@ -486,17 +486,15 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
     }
 
-    public function orderChangeStatus(string $status, int $order_id, string $reason)
+    public function orderChangeStatus(string $status, int $order_id)
     {
-        $deliveryman = auth('api')->user();
-        DB::beginTransaction();
-
-        try {
-            $order = Order::find($order_id);
+           $deliveryman = auth('api')->user();
+            $order = Order::with('orderMaster.customer', 'store')->find($order_id);
             if ($status === 'delivered') {
                 if ($order->status === 'delivered') {
                     return 'already delivered';
                 }
+
                 $order->update([
                     'status' => 'delivered',
                     'delivery_completed_at' => Carbon::now(),
@@ -530,26 +528,16 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
                 // send mail and notification
 
+                dd($order->customer?->email, $order->store?->email, com_option_get('com_site_email'));
+
             }
 
-            if ($status === 'cancelled') {
-                if (!$reason) {
-                    return 'reason is required';
-                }
-                OrderDeliveryHistory::create([
-                    'order_id' => $order_id,
-                    'deliveryman_id' => $deliveryman->id,
-                    'reason' => $reason,
-                    'status' => $status,
-                ]);
-            }
-
-            DB::commit();
-            return $status;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return false;
-        }
+//            DB::commit();
+//            return $status;
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//            return false;
+//        }
     }
 
     public function deliverymanOrderHistory()
