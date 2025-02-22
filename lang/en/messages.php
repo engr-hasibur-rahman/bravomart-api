@@ -105,9 +105,12 @@ return [
     'order_status_not_changeable' => 'This order status cannot be changed!',
     'order_does_not_belong_to_seller' => 'This order does not belong to this seller!',
     'order_does_not_belong_to_customer' => 'This order does not belong to this customer!',
+    'order_refund_success' => 'Order refunded successfully!',
+    'order_refund_failed' => 'Order refund failed!',
     'order_refund_request_success' => 'Order refund requested successfully!',
     'order_refund_request_failed' => 'Order refund request failed!',
     'order_already_request_for_refund' => 'Order already requested for refund!',
+    'order_is_not_delivered' => 'Order is not delivered yet!'
 
 
 ];

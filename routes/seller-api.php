@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\Seller\SellerStoreDashboardManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreNoticeController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreOrderController;
+use App\Http\Controllers\Api\V1\Seller\SellerStoreOrderRefundManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerSupportTicketManageController;
 use App\Http\Controllers\StaffController;
@@ -94,6 +95,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
                     Route::get('invoice', [SellerStoreOrderController::class, 'invoice']);
                     Route::post('change-order-status', [SellerStoreOrderController::class, 'changeOrderStatus']);
                     Route::post('cancel-order', [SellerStoreOrderController::class, 'cancelOrder']);
+                    Route::get('refund-request', [SellerStoreOrderRefundManageController::class, 'orderRefundRequest']);
+                    Route::post('refund-request/handle',[SellerStoreOrderRefundManageController::class,'handleRefundRequest']);
                     Route::get('{order_id?}', [SellerStoreOrderController::class, 'allOrders']);
                 });
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
@@ -141,7 +144,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
 
 
             // Support ticket manage
-            Route::group(['prefix' => 'support-ticket/','middleware' => 'permission:' . PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value], function () {
+            Route::group(['prefix' => 'support-ticket/', 'middleware' => 'permission:' . PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value], function () {
                 Route::get('list', [SellerSupportTicketManageController::class, 'index']);
                 Route::get('details/{id?}', [SellerSupportTicketManageController::class, 'show']);
                 Route::post('add', [SellerSupportTicketManageController::class, 'store']);
