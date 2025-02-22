@@ -16,8 +16,6 @@ class StoreSeeder extends Seeder
     public function run(): void
     {
 
-        $storeTypes = array_map(fn($enum) => $enum->value, StoreType::cases());
-
         DB::table('stores')->insert([
             [
                 'area_id' => 1,
@@ -32,8 +30,8 @@ class StoreSeeder extends Seeder
                 'slug' => Str::slug('Fresh Grocer'),
                 'phone' => '1234567891',
                 'email' => 'freshgrocer@example.com',
-                'logo' => 'fresh_grocer_logo.png',
-                'banner' => 'fresh_grocer_banner.png',
+                'logo' => '10',
+                'banner' => '11',
                 'address' => '456 Green Lane, City',
                 'is_featured' => true,
                 'opening_time' => '07:00:00',
@@ -65,8 +63,8 @@ class StoreSeeder extends Seeder
                 'slug' => Str::slug('Sweet Treats Bakery'),
                 'phone' => '1234567892',
                 'email' => 'sweettreats@example.com',
-                'logo' => 'sweet_treats_logo.png',
-                'banner' => 'sweet_treats_banner.png',
+                'logo' => '12',
+                'banner' => '13',
                 'address' => '789 Sugar Road, City',
                 'tax' => 5,
                 'tax_number' => 'VAT123458',
@@ -103,8 +101,8 @@ class StoreSeeder extends Seeder
                 'slug' => Str::slug('Health First Pharmacy'),
                 'phone' => '1234567893',
                 'email' => 'healthfirst@example.com',
-                'logo' => 'health_first_logo.png',
-                'banner' => 'health_first_banner.png',
+                'logo' => '14',
+                'banner' => '15',
                 'address' => '101 Wellness Drive, City',
                 'tax' => 5,
                 'tax_number' => 'VAT123459',
@@ -141,8 +139,8 @@ class StoreSeeder extends Seeder
                 'slug' => Str::slug('Glamour Beauty'),
                 'phone' => '1234567894',
                 'email' => 'glamourbeauty@example.com',
-                'logo' => 'glamour_beauty_logo.png',
-                'banner' => 'glamour_beauty_banner.png',
+                'logo' => '16',
+                'banner' => '17',
                 'address' => '202 Beauty Lane, City',
                 'tax' => 5,
                 'tax_number' => 'VAT123460',
@@ -179,8 +177,8 @@ class StoreSeeder extends Seeder
                 'slug' => Str::slug('Bag World'),
                 'phone' => '1234567895',
                 'email' => 'bagworld@example.com',
-                'logo' => 'bag_world_logo.png',
-                'banner' => 'bag_world_banner.png',
+                'logo' => '18',
+                'banner' => '19',
                 'address' => '303 Fashion Street, City',
                 'tax' => 5,
                 'tax_number' => 'VAT123461',
@@ -217,8 +215,8 @@ class StoreSeeder extends Seeder
                 'slug' => Str::slug('Trendy Apparel'),
                 'phone' => '1234567896',
                 'email' => 'trendyapparel@example.com',
-                'logo' => 'trendy_apparel_logo.png',
-                'banner' => 'trendy_apparel_banner.png',
+                'logo' => '20',
+                'banner' => '21',
                 'address' => '404 Fashion Avenue, City',
                 'tax' => 5,
                 'tax_number' => 'VAT123462',
@@ -255,8 +253,8 @@ class StoreSeeder extends Seeder
                 'slug' => Str::slug('Comfort Living Furniture'),
                 'phone' => '1234567897',
                 'email' => 'comfortliving@example.com',
-                'logo' => 'comfort_living_logo.png',
-                'banner' => 'comfort_living_banner.png',
+                'logo' => '22',
+                'banner' => '23',
                 'address' => '505 Home Street, City',
                 'tax' => 5,
                 'tax_number' => 'VAT123463',
@@ -437,7 +435,6 @@ class StoreSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
-                                                                                                           
         ]);
 
     }
