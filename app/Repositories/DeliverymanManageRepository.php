@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\WalletOwnerType;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
 use App\Models\Order;
@@ -15,6 +16,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Modules\Wallet\app\Models\Wallet;
+use Modules\Wallet\app\Models\WalletTransaction;
 
 class DeliverymanManageRepository implements DeliverymanManageInterface
 {
@@ -450,13 +453,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function updateOrderStatus(string $status, int $order_id, string $reason)
     {
         $deliveryman = auth('api')->user();
-
         DB::beginTransaction();
 
         try {
             $order = Order::find($order_id);
-
-
             if ($status === 'accepted') {
                 if ($order->confirmed_by !== null) {
                     return 'already confirmed';
@@ -483,6 +483,71 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 ]);
             }
 
+            DB::commit();
+            return $status;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    public function orderChangeStatus(string $status, int $order_id, string $reason)
+    {
+        $deliveryman = auth('api')->user();
+        DB::beginTransaction();
+
+        try {
+            $order = Order::find($order_id);
+            if ($status === 'delivered') {
+                if ($order->status === 'delivered') {
+                    return 'already delivered';
+                }
+                $order->update([
+                    'status' => 'delivered',
+                    'delivery_completed_at' => Carbon::now(),
+                ]);
+
+                OrderDeliveryHistory::create([
+                    'order_id' => $order_id,
+                    'deliveryman_id' => $deliveryman->id,
+                    'status' => $status,
+                ]);
+
+                // Deliveryman wallet update
+                $wallet = Wallet::where('owner_id', $deliveryman->id)
+                    ->where('owner_type', WalletOwnerType::DELIVERYMAN->value)
+                    ->first();
+
+                if ($wallet) {
+                    // Update wallet balance
+                    $wallet->balance += $order->delivery_charge_deliveryman_earning; // Add earnings to the balance
+                    $wallet->save();
+
+                    // Create wallet transaction history
+                    WalletTransaction::create([
+                        'wallet_id' => $wallet->id,
+                        'amount' => $order->delivery_charge_deliveryman_earning,
+                        'type' => 'credit',
+                        'purpose' => 'Delivery Earnings',
+                        'status' => 1,
+                    ]);
+                }
+
+                // send mail and notification
+
+            }
+
+            if ($status === 'cancelled') {
+                if (!$reason) {
+                    return 'reason is required';
+                }
+                OrderDeliveryHistory::create([
+                    'order_id' => $order_id,
+                    'deliveryman_id' => $deliveryman->id,
+                    'reason' => $reason,
+                    'status' => $status,
+                ]);
+            }
 
             DB::commit();
             return $status;

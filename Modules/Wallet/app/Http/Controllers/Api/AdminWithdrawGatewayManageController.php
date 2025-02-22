@@ -24,6 +24,7 @@ class AdminWithdrawGatewayManageController extends Controller
         }
         $request['fields'] = json_encode($request['fields']);
         $success = WithdrawGateway::create($request->all());
+
         if ($success) {
             return response()->json([
                 'status' => true,
@@ -42,7 +43,7 @@ class AdminWithdrawGatewayManageController extends Controller
     public function withdrawGatewayList(Request $request)
     {
         $gateways = WithdrawGateway::paginate($request->per_page ?? 10);
-        if (!empty($gateways)) {
+        if ($gateways->count() > 0) {
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -122,6 +123,27 @@ class AdminWithdrawGatewayManageController extends Controller
                 'status' => false,
                 'status_code' => 400,
                 'message' => __('messages.delete_failed', ['name' => 'Gateway']),
+            ]);
+        }
+    }
+
+    public function withdrawGatewayChangeStatus(Request $request)
+    {
+        $gateway = WithdrawGateway::findorfail($request->id);
+        if ($gateway) {
+            $gateway->update([
+                'status' => $gateway->status == 1 ? 0 : 1
+            ]);
+            return response()->json([
+                'status' => false,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Gateway Status']),
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.data_not_found'),
             ]);
         }
     }
