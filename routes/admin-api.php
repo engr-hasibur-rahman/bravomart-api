@@ -4,13 +4,12 @@ use App\Enums\PermissionKey;
 use App\Http\Controllers\Admin\AdminSupportTicketManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBannerManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminBlogManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
 use App\Http\Controllers\Api\v1\Admin\AdminCommissionManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminContactManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminDeliveryManPaymentController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminDisbursementManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminOrderManageController;
@@ -20,24 +19,22 @@ use App\Http\Controllers\Api\V1\Admin\AdminProductQueryManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminReportAnalyticsManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminStoreDisbursementController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreTypeManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
-use App\Http\Controllers\Api\V1\Admin\AdminBlogManageController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
+use App\Http\Controllers\Api\V1\Admin\EmailSettingsController;
+use App\Http\Controllers\Api\V1\Admin\EmailTemplateManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
-use App\Http\Controllers\Api\V1\Admin\WithdrawMethodManageController;
 use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
-use App\Http\Controllers\Api\V1\EmailSettingsController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
@@ -498,6 +495,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::get('gateway-details/{id?}', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayDetails']);
                     Route::post('gateway-update', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayUpdate']);
                     Route::delete('gateway-delete/{id}', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayDelete']);
+                    Route::post('gateway-change-status', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayChangeStatus']);
                 });
 
                 // all manage
@@ -564,6 +562,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['middleware' => ['permission:' . PermissionKey::SMTP_SETTINGS->value]], function () {
                 Route::match(['get', 'post'], '/email-settings/smtp', [EmailSettingsController::class, 'smtpSettings']);
                 Route::post('/email-settings/test-mail-send', [EmailSettingsController::class, 'testMailSend']);
+            });
+            // email settings
+            Route::group(['middleware' => ['permission:' . PermissionKey::EMAIL_TEMPLATES->value]], function () {
+                Route::group(['prefix' => 'email-template/'], function () {
+                    Route::get('/', [EmailTemplateManageController::class, 'allEmailTemplate']);
+                    Route::post('/add', [EmailTemplateManageController::class, 'addEmailTemplate']);
+                    Route::post('/edit', [EmailTemplateManageController::class, 'editEmailTemplate']);
+                    Route::post('/delete', [EmailTemplateManageController::class, 'deleteEmailTemplate']);
+                    Route::post('/change-status', [EmailTemplateManageController::class, 'changeStatus']);
+                });
             });
         });
 

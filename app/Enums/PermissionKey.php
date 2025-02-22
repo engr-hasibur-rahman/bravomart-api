@@ -170,7 +170,7 @@ enum PermissionKey: string
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';
     case MAINTENANCE_SETTINGS = '/admin/system-management/maintenance-settings';
     case SMTP_SETTINGS = '/admin/system-management/email-settings/smtp';
-    case EMAIL_TEMPLATES = '/admin/system-management/email-settings/templates';
+    case EMAIL_TEMPLATES = '/admin/system-management/email-template/manage';
 
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
     case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
