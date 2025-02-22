@@ -49,4 +49,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // wallet payment status update for common
     Route::post('wallet/payment-status-update', [WalletCommonController::class, 'paymentStatusUpdate']);
 
+    // withdraw all method lists
+    Route::get('withdraw/gateway-method-list', [SellerAndDeliverymanWithdrawController::class, 'withdrawGatewayList']);
+
 });

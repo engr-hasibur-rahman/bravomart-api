@@ -11,23 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer_addresses', function (Blueprint $table) {
+        Schema::create('order_addresses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('customer_id');
-            $table->string('title')->nullable();
+            $table->unsignedBigInteger('order_master_id')->nullable();
+            $table->unsignedBigInteger('area_id')->nullable();
             $table->string('type')->default('home')->comment('home, office, others'); // home, office, others.
             $table->string('email')->nullable();
             $table->string('contact_number');
             $table->string('address');
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->unsignedBigInteger('area_id')->nullable();
             $table->string('road')->nullable();
             $table->string('house')->nullable();
             $table->string('floor')->nullable();
             $table->string('postal_code')->nullable();
-            $table->boolean('is_default')->default(false);
-            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }
@@ -37,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customer_addresses');
+        Schema::dropIfExists('order_addresses');
     }
 };
