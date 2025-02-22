@@ -3,6 +3,7 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\Store;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class WalletCommonController extends Controller
 {
     public function myWallet(Request $request)
     {
-         // check which guard is being used
+        // check which guard is being used
         if (auth()->guard('api_customer')->check()) {
             $user = auth()->guard('api_customer')->user();
         } elseif (auth()->guard('api')->check()) {
@@ -30,8 +31,8 @@ class WalletCommonController extends Controller
         }
 
         //  wallets for the authenticated user
-        if ($user->activity_scope === 'store_level'){
-            $store =Store::find($request->store_id);
+        if ($user->activity_scope === 'store_level') {
+            $store = Store::find($request->store_id);
 
             if (!$store) {
                 return response()->json([
@@ -41,18 +42,18 @@ class WalletCommonController extends Controller
             }
 
             $wallets = Wallet::forOwner($store)->first();
-        }else{
+        } else {
             $wallets = Wallet::forOwner($user)->first();
         }
 
         if (!$wallets) {
             return response()->json([
-               'success' => false,
-               'message' => 'User Wallet not found'
-            ],404);
+                'success' => false,
+                'message' => 'User Wallet not found'
+            ], 404);
         }
 
-        $wallet_settings =  com_option_get('max_deposit_per_transaction');
+        $wallet_settings = com_option_get('max_deposit_per_transaction');
 
         return response()->json([
             'wallets' => new UserWalletDetailsResource($wallets),
@@ -63,8 +64,8 @@ class WalletCommonController extends Controller
     public function depositCreate(Request $request)
     {
 
-        $wallet_settings =  com_option_get('max_deposit_per_transaction');
-        if(is_null($wallet_settings)){
+        $wallet_settings = com_option_get('max_deposit_per_transaction');
+        if (is_null($wallet_settings)) {
             $wallet_settings = 50000;
         }
 
@@ -113,7 +114,7 @@ class WalletCommonController extends Controller
 
         try {
             // Create
-         $wallet_history = WalletTransaction::create([
+            $wallet_history = WalletTransaction::create([
                 'wallet_id' => $wallet->id,
                 'amount' => $validated['amount'],
                 'type' => 'credit',
@@ -141,10 +142,14 @@ class WalletCommonController extends Controller
 
     public function transactionRecords(Request $request)
     {
-
-        // Get the start and end date from the request
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $filters = [
+            "start_date" => $request->start_date,
+            "end_date" => $request->start_date,
+            "search" => $request->search,
+            "status" => $request->status,
+            "payment_status" => $request->payment_status,
+            "type" => $request->type
+        ];
 
         // auth user check
         if (auth()->guard('api_customer')->check()) {
@@ -159,8 +164,8 @@ class WalletCommonController extends Controller
         }
 
         // user's wallet
-        if ($user->activity_scope === 'store_level'){
-            $store =Store::find($request->store_id);
+        if ($user->activity_scope === 'store_level') {
+            $store = Store::find($request->store_id);
 
             if (!$store) {
                 return response()->json([
@@ -170,7 +175,7 @@ class WalletCommonController extends Controller
             }
 
             $wallet = Wallet::forOwner($store)->first();
-        }else{
+        } else {
             $wallet = Wallet::forOwner($user)->first();
         }
 
@@ -178,29 +183,40 @@ class WalletCommonController extends Controller
         if (!$wallet) {
             return response()->json(['message' => 'Wallet not found'], 404);
         }
+        $query = WalletTransaction::query();
 
-        // If both dates are provided, filter transactions by date range
-        if ($startDate && $endDate) {
-            $startDate = Carbon::parse($startDate)->startOfDay();
-            $endDate = Carbon::parse($endDate)->endOfDay();
-            $transactions = WalletTransaction::whereBetween('created_at', [$startDate, $endDate])
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
-        } else {
-            // all transactions
-            $transactions = WalletTransaction::orderBy('created_at', 'desc')->paginate(10);
+        if (!empty($filters['start_date']) || !empty($filters['end_date'])) {
+            if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+                // Filter by date range
+                $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+            } else {
+                // Filter by a single exact date
+                $date = $filters['start_date'] ?? $filters['end_date'];
+                $query->whereDate('created_at', $date);
+            }
         }
+
+        if (!empty($filters['search'])) {
+            $query->where('transaction_ref', 'LIKE', '%' . $filters['search'] . '%');
+        }
+
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (!empty($filters['payment_status'])) {
+            $query->where('payment_status', $filters['payment_status']);
+        }
+        if (!empty($filters['type'])) {
+            $query->where('type', $filters['type']);
+        }
+
+// Apply pagination if needed
+        $transactions = $query->paginate($filters['per_page'] ?? 10); // Change 10 to desired per-page limit
 
         return response()->json([
             'wallets' => WalletTransactionListResource::collection($transactions),
-            'pagination' => [
-                'total' => $transactions->total(),
-                'per_page' => $transactions->perPage(),
-                'current_page' => $transactions->currentPage(),
-                'last_page' => $transactions->lastPage(),
-                'from' => $transactions->firstItem(),
-                'to' => $transactions->lastItem(),
-            ],
+            'meta' => new PaginationResource($transactions),
         ]);
     }
 
@@ -251,7 +267,7 @@ class WalletCommonController extends Controller
         $wallet_history = WalletTransaction::where('id', $request->wallet_history_id)->first();
 
         // Check if the payment status is already marked as 'paid'
-        if($wallet_history->payment_status === 'paid') {
+        if ($wallet_history->payment_status === 'paid') {
             return response()->json([
                 'success' => false,
                 'message' => 'The payment gateway status is already marked as paid.'
