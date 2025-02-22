@@ -57,6 +57,7 @@ class EmailTemplateManageController extends Controller
         $body = strip_tags($request->body, '<p><a><strong><em><h1><h2><ul><ol><li><br>'); // Allow some tags
 
         EmailTemplate::create([
+            'type' => $request->type,
             'name' => $request->name,
             'subject' => $request->subject,
             'body' => $body,
@@ -74,6 +75,7 @@ class EmailTemplateManageController extends Controller
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:email_templates,id',
             'name' => 'required|string|unique:email_templates,name,' . $request->id,
+            'type' => 'type|required|string',
             'subject' => 'sometimes|required|string',
             'body' => 'sometimes|required|string',
         ]);

@@ -27,11 +27,10 @@ class DynamicEmail extends Mailable
     public function build()
     {
         $processedTemplate = $this->template;
-
+        // Replace placeholders with actual data
         foreach ($this->data as $key => $value) {
-            $processedTemplate = str_replace("{{ $key }}", e($value), $processedTemplate);
+            $processedTemplate = str_replace("@$key", e($value), $processedTemplate);
         }
-
         return $this->subject($this->subjectLine)
             ->html($processedTemplate);
     }
