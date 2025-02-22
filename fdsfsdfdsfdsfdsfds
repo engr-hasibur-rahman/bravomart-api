@@ -1,0 +1,123 @@
+[33mdfc12c3a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mhasib[m[33m, [m[1;31morigin/hasib[m[33m)[m HEAD@{0}: commit (merge): merge to develop
+[33me1b3d9e6[m HEAD@{1}: commit: dynamic email added
+[33m548bc130[m HEAD@{2}: commit: Modified: customer address table
+[33m35b80f83[m HEAD@{3}: commit: Added: gateway-method-list
+[33m896d84fd[m HEAD@{4}: commit (merge): merage to dveelop
+[33mc3c3bb93[m HEAD@{5}: commit: Added: WithdrawGateway status change
+[33m838c1b8a[m HEAD@{6}: commit: email template manage
+[33mb6b11176[m HEAD@{7}: commit: deliveryman Update wallet balance
+[33md61de020[m HEAD@{8}: commit: Added: delivery man order status change
+[33ma4b991d3[m HEAD@{9}: commit (merge): store seeder issue fixed
+[33m560c1251[m HEAD@{10}: commit: deliveryman withdraw Added
+[33m7f16d4c4[m HEAD@{11}: commit (amend): Add reject and approved functionality
+[33m275817c4[m HEAD@{12}: commit: withdraw history added
+[33m20253a25[m HEAD@{13}: commit (merge): merge to develop
+[33m7d09c42c[m HEAD@{14}: commit: store withdraw added
+[33m0923fb9e[m HEAD@{15}: commit: wallet modified
+[33m26599ede[m HEAD@{16}: commit: withdraw details added
+[33m81d94e99[m HEAD@{17}: commit (merge): merge to develop
+[33mc6864de9[m HEAD@{18}: commit: withwraw settings added
+[33m2a0f1296[m HEAD@{19}: commit: support ticket manage modified
+[33mf78191b0[m HEAD@{20}: pull origin develop: Fast-forward
+[33mce378577[m HEAD@{21}: commit: merge to develop
+[33mae8bd533[m HEAD@{22}: commit (merge): merge to develop
+[33m2439153f[m HEAD@{23}: commit: order modified
+[33m0a4d90be[m HEAD@{24}: commit (merge): merge to develop
+[33mb482ffaf[m HEAD@{25}: commit: seeder modified
+[33md8399a68[m HEAD@{26}: commit: order modified
+[33m62aa634c[m HEAD@{27}: pull origin develop: Fast-forward
+[33m61b1aa4e[m HEAD@{28}: commit (merge): seeder added
+[33m6e7c6a43[m HEAD@{29}: commit: seeder modified
+[33m5ee673af[m HEAD@{30}: commit (merge): withdraw setup
+[33m0f20421d[m HEAD@{31}: commit: withdraw manage
+[33m77dad31f[m HEAD@{32}: commit (merge): merge to development
+[33mc3f93048[m HEAD@{33}: commit (merge): route modified in admin panel
+[33m85e5c4e9[m HEAD@{34}: commit: order status change
+[33m86633eef[m HEAD@{35}: commit: modified: order type
+[33m44da3be0[m HEAD@{36}: commit (merge): remove area sql
+[33mbcd6eba0[m HEAD@{37}: commit (merge): remove area sql
+[33m33e0468f[m HEAD@{38}: commit (merge): delivery charge added
+[33ma8bb5549[m HEAD@{39}: commit: guest user order create added
+[33mc763f0f7[m HEAD@{40}: commit: guest user order create added
+[33m7e0f75b9[m HEAD@{41}: commit (merge): order manage update
+[33md2b8b05b[m HEAD@{42}: commit: order details issue fixed
+[33m9d722b26[m HEAD@{43}: commit: guest login added
+[33m56787785[m HEAD@{44}: commit (merge): order response issue fixed
+[33m49f37b9e[m HEAD@{45}: commit: delivery option added
+[33m02a1a98d[m HEAD@{46}: commit (merge): merge to develop
+[33mec156092[m HEAD@{47}: commit: order type change
+[33m4ff1c419[m HEAD@{48}: commit: subscription package check for order
+[33m7ac12367[m HEAD@{49}: commit (merge): order details page order id issue fixed
+[33mc20cab13[m HEAD@{50}: commit: order status added
+[33m4e959e74[m HEAD@{51}: pull origin develop: Fast-forward
+[33mbc89d328[m HEAD@{52}: commit (merge): Modified: order system
+[33mf4945edc[m HEAD@{53}: commit: Modified: order system
+[33m0d4d610b[m HEAD@{54}: commit (merge): last added address
+[33mf1222a92[m HEAD@{55}: commit: order last stop old system
+[33ma19007fa[m HEAD@{56}: commit: api post to get change
+[33m3fadc6f9[m HEAD@{57}: commit (merge): order other charge info added
+[33m177496b2[m HEAD@{58}: commit: order other charge info added
+[33m331cfdea[m HEAD@{59}: pull origin develop: Fast-forward
+[33m9f62e21f[m HEAD@{60}: commit: seller store order info added
+[33me41c0919[m HEAD@{61}: commit: Added:customer order info
+[33mb075dc79[m HEAD@{62}: commit: Added: orders manage in admin panel
+[33m30e6fe8b[m HEAD@{63}: commit: added: order payment resources
+[33ma10b9765[m HEAD@{64}: commit: order modified
+[33mf28f7ee8[m HEAD@{65}: commit (merge): merge to develop
+[33m5a7c28c2[m HEAD@{66}: commit: order place update
+[33m2631e142[m HEAD@{67}: commit (merge): merge to develop
+[33m0b6ec602[m HEAD@{68}: commit: area wise shipping charge issue fixed
+[33m5e9a8dc2[m HEAD@{69}: commit (merge): merge to develop
+[33m68db70d5[m HEAD@{70}: commit: admin commission added
+[33m5e5b99f1[m HEAD@{71}: commit (merge): order package modified
+[33mda70313e[m HEAD@{72}: commit: order package modified
+[33mf3aae599[m HEAD@{73}: commit: place order issue fixed
+[33mb203b98c[m HEAD@{74}: commit: place order issue fixed
+[33m9be5a873[m HEAD@{75}: commit: place order issue fixed
+[33mf66d3e9d[m HEAD@{76}: commit (merge): Merge branch 'develop' of 192.168.88.123:disystem/biva-mart into hasib
+[33m195d0763[m HEAD@{77}: commit (merge): place order issue fixed
+[33mc6ab5508[m HEAD@{78}: commit (merge): table name change
+[33m180bdc38[m HEAD@{79}: commit (merge): Merge branch 'develop' of 192.168.88.123:disystem/biva-mart into hasib
+[33m1a0cae28[m HEAD@{80}: commit: modified: store area
+[33m72bdaa82[m HEAD@{81}: commit (merge): Merge branch 'develop' of 192.168.88.123:disystem/biva-mart into hasib
+[33m575acf10[m HEAD@{82}: commit: area_range_charges calculate added
+[33mfe6e7f5b[m HEAD@{83}: commit: shipping charge added
+[33m63ce3659[m HEAD@{84}: commit (merge): store settings and store range seeder added
+[33m71f21672[m HEAD@{85}: commit: Fixed: shipping amount
+[33m6f2c997a[m HEAD@{86}: commit: Fixed: shipping amout
+[33mf2b0db59[m HEAD@{87}: commit: modified: store area
+[33m001c33e1[m HEAD@{88}: commit (merge): merge to develop
+[33mbb31ee35[m HEAD@{89}: commit (merge): shipping charge calculate
+[33mcd1b13a1[m HEAD@{90}: commit: Modified: store type settings table
+[33mb1c4cf8b[m HEAD@{91}: commit (merge): store settings relationship aeed
+[33m21b384de[m HEAD@{92}: commit: main order price calculate
+[33m84602656[m HEAD@{93}: commit (merge): order place modified
+[33m4ae374d3[m HEAD@{94}: commit: order place modified
+[33ma493d9af[m HEAD@{95}: commit: order place modified
+[33m5b651d6f[m HEAD@{96}: commit (merge): merge to develop
+[33mb6ba766a[m HEAD@{97}: commit (merge): new arrivals api issue fixed
+[33mbff958b9[m HEAD@{98}: commit: icons added
+[33maaff191b[m HEAD@{99}: commit: table name modified
+[33m67c25701[m HEAD@{100}: commit: seeder added
+[33mf19ce4dd[m HEAD@{101}: commit (merge): Merge branch 'develop' of 192.168.88.123:disystem/biva-mart into hasib
+[33mbf9828d3[m HEAD@{102}: commit: table name modified
+[33m70c219c5[m HEAD@{103}: commit: module settings added
+[33m8b341e6a[m HEAD@{104}: commit (merge): merge to develop
+[33m85bfd725[m HEAD@{105}: commit: com business module system added
+[33m5cf18766[m HEAD@{106}: commit: commission settings modified
+[33m31be4f23[m HEAD@{107}: commit (merge): Merge branch 'develop' of 192.168.88.123:disystem/biva-mart into hasib
+[33md0b23a5d[m HEAD@{108}: commit: commisson issue fixed
+[33mb3819ddd[m HEAD@{109}: commit (merge): merge to develop
+[33m891174d3[m HEAD@{110}: commit: Modified: order variant
+[33m388de6ee[m HEAD@{111}: commit: Added: Addtionl charge calculate
+[33mb8fd14bf[m HEAD@{112}: commit (merge): merge to develop
+[33m09b0e059[m HEAD@{113}: commit: shipping and addtional charge added
+[33m193dbebd[m HEAD@{114}: commit: order wise set type
+[33m6df76c92[m HEAD@{115}: commit: per order item wise coupon discount calculate
+[33mf31ae9af[m HEAD@{116}: commit (merge): merge to develop
+[33m91227fe4[m HEAD@{117}: commit: order place flash discount issue fixed
+[33m1278f3eb[m HEAD@{118}: commit (merge): order details calculate added
+[33ma506dd12[m HEAD@{119}: commit (merge): Merge branch 'develop' of 192.168.88.123:disystem/biva-mart into hasib
+[33m483fde05[m HEAD@{120}: commit: git issue fixed
+[33m2f7c59d1[m HEAD@{121}: checkout: moving from develop to hasib
+[33ma939e1f9[m[33m ([m[1;32mdevelop[m[33m)[m HEAD@{122}: clone: from 192.168.88.123:disystem/biva-mart.git

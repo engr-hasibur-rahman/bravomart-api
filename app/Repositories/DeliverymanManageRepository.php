@@ -485,7 +485,6 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 ]);
             }
 
-
             DB::commit();
             return $status;
         } catch (\Exception $e) {

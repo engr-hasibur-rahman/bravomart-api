@@ -126,4 +126,25 @@ class AdminWithdrawGatewayManageController extends Controller
             ]);
         }
     }
+
+    public function withdrawGatewayChangeStatus(Request $request)
+    {
+        $gateway = WithdrawGateway::findorfail($request->id);
+        if ($gateway) {
+            $gateway->update([
+                'status' => $gateway->status == 1 ? 0 : 1
+            ]);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Gateway Status']),
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => __('messages.data_not_found'),
+            ]);
+        }
+    }
 }
