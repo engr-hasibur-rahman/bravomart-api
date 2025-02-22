@@ -489,7 +489,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function orderChangeStatus(string $status, int $order_id)
     {
            $deliveryman = auth('api')->user();
-            $order = Order::with('orderMaster.customer', 'store')->find($order_id);
+            $order = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store')->find($order_id);
             if ($status === 'delivered') {
                 if ($order->status === 'delivered') {
                     return 'already delivered';
@@ -528,16 +528,9 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
                 // send mail and notification
 
-                dd($order->customer?->email, $order->store?->email, com_option_get('com_site_email'));
+                dd($order->customer?->email, $order->orderAddress?->email, $order->store?->email, com_option_get('com_site_email'));
 
             }
-
-//            DB::commit();
-//            return $status;
-//        } catch (\Exception $e) {
-//            DB::rollBack();
-//            return false;
-//        }
     }
 
     public function deliverymanOrderHistory()

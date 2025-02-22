@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->string('title')->nullable();
             $table->string('type')->default('home')->comment('home, office, others'); // home, office, others.
+            $table->string('email')->nullable();
             $table->string('contact_number');
             $table->string('address');
             $table->string('latitude')->nullable();

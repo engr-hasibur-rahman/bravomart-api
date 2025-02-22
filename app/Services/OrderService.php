@@ -145,6 +145,7 @@ class OrderService
                     'area_id' => 0, // main zone id
                     'shipping_address_id' => $customer_address->id,
                     'type' => $customer_address->type,
+                    'email' => $customer_address->email,
                     'contact_number' => $customer_address->contact_number,
                     'address' => $customer_address->address,
                     'latitude' => $customer_address->latitude,
