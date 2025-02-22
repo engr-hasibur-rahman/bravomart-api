@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderMaster;
 use App\Models\OrderRefund;
 use App\Models\OrderRefundReason;
+use App\Models\Store;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 
@@ -35,9 +36,34 @@ class OrderRefundRepository implements OrderRefundInterface
                     ->orWhere('last_name', 'like', '%' . $filters['search'] . '%');
             });
         }
-        if (isset($filters['search'])) {
-
+        if (isset($filters['order_refund_reason_id'])) {
+            $query->where('order_refund_reason_id', $filters['order_refund_reason_id']);
         }
+        if (isset($filters['store_id'])) {
+            $query->where('store_id', $filters['store_id']);
+        }
+        return $query->with(['store', 'customer', 'orderRefundReason'])->paginate($filters['per_page'] ?? 10);
+    }
+
+    public function get_seller_store_order_refund_request(int $store_id, array $filters)
+    {
+        $query = OrderRefund::query();
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        if (isset($filters['search'])) {
+            $query->whereHas('customer', function ($query) use ($filters) {
+                $query->where('first_name', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('last_name', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+        if (isset($filters['order_refund_reason_id'])) {
+            $query->where('order_refund_reason_id', $filters['order_refund_reason_id']);
+        }
+
+        return $query->where('store_id', $store_id)
+            ->with(['store', 'customer', 'orderRefundReason'])
+            ->paginate($filters['per_page'] ?? 10);
     }
 
     public function create_order_refund_request(int $order_id, array $data)
@@ -54,11 +80,8 @@ class OrderRefundRepository implements OrderRefundInterface
         if (!$order_belongs_to_customer) {
             return 'does_not_belong_to_customer';
         }
-        if ($order->status === 'delivered' || $order->delivery_completed_at !== null) {
-            return 'already_delivered';
-        }
-        if ($order->status === 'cancelled' || $order->cancelled_at !== null) {
-            return 'already_cancelled';
+        if ($order->status !== 'delivered' || $order->delivery_completed_at == null) {
+            return 'not_delivered';
         }
         $alreadyRequested = OrderRefund::where('order_id', $order_id)->exists();
         if ($alreadyRequested) {
@@ -83,9 +106,51 @@ class OrderRefundRepository implements OrderRefundInterface
         }
     }
 
+    public function approve_refund_request(int $id, string $status)
+    {
+        $request = OrderRefund::find($id);
+
+        if (!$request) {
+            return false;
+        }
+
+        $request->update(['status' => $status]);
+
+        return (bool)Order::where('id', $request->order_id)
+            ->update(['refund_status' => 'processing']);
+    }
+
+    public function reject_refund_request(int $id, string $status)
+    {
+        $request = OrderRefund::find($id);
+
+        if (!$request) {
+            return false;
+        }
+
+        $request->update(['status' => $status]);
+
+        return (bool)Order::where('id', $request->order_id)
+            ->update(['refund_status' => 'rejected']);
+    }
+
+    public function refunded_refund_request(int $id, string $status)
+    {
+        $request = OrderRefund::find($id);
+
+        if (!$request) {
+            return false;
+        }
+
+        $request->update(['status' => $status]);
+
+        return (bool)Order::where('id', $request->order_id)
+            ->update(['refund_status' => 'refunded']);
+    }
+
     /* -------------------------------------------------------->Refund Reason<--------------------------------------------------- */
 
-    public function order_refund_list(array $filters)
+    public function order_refund_reason_list(array $filters)
     {
         $query = OrderRefundReason::query();
         if (isset($filters['search'])) {

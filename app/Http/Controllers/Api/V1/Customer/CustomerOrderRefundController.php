@@ -53,14 +53,9 @@ class CustomerOrderRefundController extends Controller
                 'message' => __('messages.order_does_not_belong_to_customer')
             ], 422);
         }
-        if ($success === 'already_delivered') {
+        if ($success === 'not_delivered') {
             return response()->json([
-                'message' => __('messages.order_already_delivered')
-            ], 422);
-        }
-        if ($success === 'already_cancelled') {
-            return response()->json([
-                'message' => __('messages.order_already_cancelled')
+                'message' => __('messages.order_is_not_delivered')
             ], 422);
         }
         if ($success === 'already_requested_for_refund') {
