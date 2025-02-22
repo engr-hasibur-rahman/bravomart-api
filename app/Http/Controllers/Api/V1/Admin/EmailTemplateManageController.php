@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Mail\TestEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
-class EmailSettingsController extends Controller
+class EmailTemplateManageController extends Controller
 {
     public function smtpSettings(Request $request){
         if ($request->isMethod('POST')) {
