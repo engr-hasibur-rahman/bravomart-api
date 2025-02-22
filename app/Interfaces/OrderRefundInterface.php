@@ -6,7 +6,17 @@ use Illuminate\Http\Request;
 
 interface OrderRefundInterface
 {
-    public function order_refund_list(array $filters);
+    public function order_refund_reason_list(array $filters);
+
+    public function approve_refund_request(int $id, string $status);
+
+    public function reject_refund_request(int $id, string $status);
+
+    public function refunded_refund_request(int $id, string $status);
+
+    public function get_order_refund_request(array $filters);
+
+    public function get_seller_store_order_refund_request(int $store_id, array $filters);
 
     public function create_order_refund_reason(string $reason);
 

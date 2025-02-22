@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\OrderRefundReasonDetailsResource;
 use App\Http\Resources\Order\OrderRefundReasonResource;
+use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Interfaces\OrderRefundInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,72 @@ class AdminOrderRefundManageController extends Controller
     }
 
     /* -------------------------------------------------------->Order Refund<--------------------------------------------------- */
+    public function orderRefundRequest(Request $request)
+    {
+        $filters = [
+            "status" => $request->status,
+            "search" => $request->search,
+            "order_refund_reason_id" => $request->order_refund_reason_id,
+            "store_id" => $request->store_id,
+            "per_page" => $request->per_page,
+        ];
+        $requests = $this->orderRefundRepo->get_order_refund_request($filters);
+        return response()->json([
+            'data' => OrderRefundRequestResource::collection($requests),
+            'meta' => new PaginationResource($requests)
+        ], 200);
+    }
 
+    public function handleRefundRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer|exists:order_refunds,id',
+            'status' => 'required|in:approved,rejected,refunded',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        if ($request->status === 'approved') {
+            $success = $this->orderRefundRepo->approve_refund_request($request->id, $request->status);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.approve.success', ['name' => 'Order Refund Request']),
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.approve.failed', ['name' => 'Order Refund Request']),
+                ], 500);
+            }
+        }
+        if ($request->status === 'rejected') {
+            $success = $this->orderRefundRepo->reject_refund_request($request->id, $request->status);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.reject.success', ['name' => 'Order Refund Request']),
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.reject.failed', ['name' => 'Order Refund Request']),
+                ], 500);
+            }
+        }
+        if ($request->status === 'refunded') {
+            $success = $this->orderRefundRepo->refunded_refund_request($request->id, $request->status);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.order_refund_success'),
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.order_refund_failed'),
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Order Refund Request']),
+            ], 500);
+        }
+    }
 
     /* -------------------------------------------------------->Refund Reason<--------------------------------------------------- */
 
@@ -30,7 +96,7 @@ class AdminOrderRefundManageController extends Controller
             'per_page' => $request->per_page,
             'search' => $request->search,
         ];
-        $reasons = $this->orderRefundRepo->order_refund_list($filters);
+        $reasons = $this->orderRefundRepo->order_refund_reason_list($filters);
         return response()->json([
             'data' => OrderRefundReasonResource::collection($reasons),
             'meta' => new PaginationResource($reasons)
