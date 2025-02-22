@@ -5,6 +5,7 @@ namespace Modules\Wallet\app\Http\Controllers\Api;
 use App\Enums\WalletOwnerType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\WithdrawGatewayPublicListResource;
 use App\Models\WithdrawGateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -31,7 +32,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => WithdrawGatewayListResource::collection($gateways),
+                'data' => WithdrawGatewayPublicListResource::collection($gateways),
             ]);
         } else {
             return response()->json([
