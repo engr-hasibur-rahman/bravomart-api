@@ -8,5 +8,8 @@
 <h1>Hello {{ $deliveryman_name }}</h1>
 <p>You have received a new earning of ${{ $amount }}.</p>
 <p>Thank you for your hard work!</p>
+
 </body>
+
+
 </html>
