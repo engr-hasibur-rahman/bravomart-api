@@ -27,9 +27,9 @@ use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\EmailSettingsController;
+use App\Http\Controllers\Api\V1\Admin\EmailTemplateManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
-use App\Http\Controllers\Api\V1\Admin\WithdrawMethodManageController;
 use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
@@ -495,6 +495,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                     Route::get('gateway-details/{id?}', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayDetails']);
                     Route::post('gateway-update', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayUpdate']);
                     Route::delete('gateway-delete/{id}', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayDelete']);
+                    Route::post('gateway-change-status', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayChangeStatus']);
                 });
 
                 // all manage
@@ -565,10 +566,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // email settings
             Route::group(['middleware' => ['permission:' . PermissionKey::EMAIL_TEMPLATES->value]], function () {
                 Route::group(['prefix' => 'email-template/'], function () {
-                    Route::post('/add', [EmailSettingsController::class, 'addEmailTemplate']);
-                    Route::post('/edit', [EmailSettingsController::class, 'addEmailTemplate']);
-                    Route::post('/delete', [EmailSettingsController::class, 'addEmailTemplate']);
-                    Route::post('/change-status', [EmailSettingsController::class, 'addEmailTemplate']);
+                    Route::get('/', [EmailTemplateManageController::class, 'allEmailTemplate']);
+                    Route::post('/add', [EmailTemplateManageController::class, 'addEmailTemplate']);
+                    Route::post('/edit', [EmailTemplateManageController::class, 'editEmailTemplate']);
+                    Route::post('/delete', [EmailTemplateManageController::class, 'deleteEmailTemplate']);
+                    Route::post('/change-status', [EmailTemplateManageController::class, 'changeStatus']);
                 });
             });
         });

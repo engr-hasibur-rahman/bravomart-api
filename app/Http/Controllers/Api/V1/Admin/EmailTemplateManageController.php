@@ -4,95 +4,138 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Mail\TestEmail;
+use App\Models\EmailTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class EmailTemplateManageController extends Controller
 {
-    public function smtpSettings(Request $request){
-        if ($request->isMethod('POST')) {
 
-            $rules = [
-                'com_site_global_email' => 'nullable|string',
-                'com_site_smtp_mail_mailer' => 'nullable|string',
-                'com_site_smtp_mail_host' => 'nullable|string',
-                'com_site_smtp_mail_post' => 'nullable|string',
-                'com_site_smtp_mail_username' => 'nullable|string',
-                'com_site_smtp_mail_password' => 'nullable|string',
-                'com_site_smtp_mail_encryption' => 'nullable|string',
-            ];
+    public function allEmailTemplate(Request $request)
+    {
+        $query = EmailTemplate::query();
 
-            $fields = [
-                'com_site_global_email',
-                'com_site_smtp_mail_mailer',
-                'com_site_smtp_mail_host',
-                'com_site_smtp_mail_post',
-                'com_site_smtp_mail_username',
-                'com_site_smtp_mail_password',
-                'com_site_smtp_mail_encryption',
-            ];
+        if (!empty($request->status)) {
+            $query->where('status', $request->status);
+        }
 
-            foreach ($fields as $field) {
-                $value = $request->input($field) ?? null;
-                com_option_update($field, $value);
-            }
+        if (!empty($request->name)) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
 
-            updateEnvValues([
-                'MAIL_DRIVER' => $request->com_site_smtp_mail_mailer,
-                'MAIL_HOST' => $request->com_site_smtp_mail_host,
-                'MAIL_PORT' => $request->com_site_smtp_mail_post,
-                'MAIL_USERNAME' => $request->com_site_smtp_mail_username,
-                'MAIL_PASSWORD' => $request->com_site_smtp_mail_password,
-                'MAIL_ENCRYPTION' => $request->com_site_smtp_mail_encryption,
+        if (!empty($request->subject)) {
+            $query->where('subject', 'like', '%' . $request->subject . '%');
+        }
+        $emailTemplates = $query->get();
+
+        if ($emailTemplates->count() > 0){
+            return response()->json([
+                'data' => $emailTemplates
             ]);
-
-            return $this->success(translate('messages.update_success', ['name' => 'SMTP Settings']));
         }else{
-            $fields = [
-                'com_site_global_email',
-                'com_site_smtp_mail_mailer',
-                'com_site_smtp_mail_host',
-                'com_site_smtp_mail_post',
-                'com_site_smtp_mail_username',
-                'com_site_smtp_mail_password',
-                'com_site_smtp_mail_encryption',
-            ];
-
-            $data = [];
-
-            foreach ($fields as $field) {
-                $data[$field] = com_option_get($field);
-            }
-
-            return $this->success($data);
+            return response()->json([
+                'message' =>  'No email templates found',
+            ], 404);
         }
 
     }
 
-    public function testMailSend(Request $request){
-        $request->validate([
-            'test_email' => 'required|email',
+    public function addEmailTemplate(Request $request)
+    {
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|unique:email_templates,name',
+            'subject' => 'required|string',
+            'body' => 'required|string',
         ]);
 
-        $recipient = $request->input('test_email');
-
-        try {
-            Mail::to($recipient)->send(new TestEmail());
-            return response()->json([
-                'status' => 'success',
-                'message' => translate('messages.test_email_sent_success', ['name' => 'Test Mail']),
-                'data' => [
-                    'recipient' => $recipient
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => translate('messages.test_email_sent_failed', ['name' => 'Test Mail']),
-                'error' => $e->getMessage()
-            ], 500);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
         }
+
+        $body = strip_tags($request->body, '<p><a><strong><em><h1><h2><ul><ol><li><br>'); // Allow some tags
+
+        EmailTemplate::create([
+            'name' => $request->name,
+            'subject' => $request->subject,
+            'body' => $body,
+            'status' => $request->status,
+        ]);
+
+        return response()->json([
+            'message' => 'Email template added successfully',
+        ],201);
     }
 
+    public function editEmailTemplate(Request $request)
+    {
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:email_templates,id',
+            'name' => 'required|string|unique:email_templates,name,' . $request->id,
+            'subject' => 'sometimes|required|string',
+            'body' => 'sometimes|required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        // Find and update the email template
+        $emailTemplate = EmailTemplate::findOrFail($request->id);
+        $emailTemplate->update($request->only(['name', 'subject', 'body', 'status']));
+        return response()->json([
+            'message' => 'Email template updated successfully',
+        ],201);
+    }
+
+    public function deleteEmailTemplate(Request $request)
+    {
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:email_templates,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        // Find and delete the email template
+        $emailTemplate = EmailTemplate::findOrFail($request->id);
+        $emailTemplate->delete();
+
+        return response()->json(['message' => 'Email template deleted successfully'], 200);
+    }
+
+    // Change Status of Email Template
+    public function changeStatus(Request $request)
+    {
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:email_templates,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        // Find the email template by its ID
+        $emailTemplate = EmailTemplate::find($request->id);
+
+        if (!$emailTemplate) {
+            return response()->json(['message' => 'Email template not found'], 404);
+        }
+
+        // Update the status
+        $emailTemplate->status = $request->status;
+
+        // Save the updated template
+        $emailTemplate->save();
+
+        return response()->json([
+            'message' => 'Email template status updated successfully',
+        ], 200);
+    }
 
 }
