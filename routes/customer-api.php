@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerBlogController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerOrderController;
+use App\Http\Controllers\Api\V1\Customer\CustomerOrderRefundController;
 use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
 use App\Http\Controllers\Api\V1\Customer\CustomerReviewManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerSupportTicketManageController;
@@ -64,6 +65,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::get('invoice', [CustomerOrderController::class, 'invoice']);
             Route::post('cancel-order', [CustomerOrderController::class, 'cancelOrder']);
             Route::get('check-coupon', [CustomerOrderController::class, 'checkCoupon']);
+            Route::post('request-refund',[CustomerOrderRefundController::class,'orderRefundRequest']);
             Route::get('{order_id?}', [CustomerOrderController::class, 'myOrders']);
         });
         Route::group(['prefix' => 'review/'], function () {

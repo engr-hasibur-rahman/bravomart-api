@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\PermissionKey;
-use App\Http\Controllers\Admin\AdminSupportTicketManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBannerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBlogManageController;
@@ -13,6 +12,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminOrderManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminOrderRefundManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductQueryManageController;
@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreTypeManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
@@ -113,8 +114,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('change-payment-status', [AdminOrderManageController::class, 'changePaymentStatus']);
                 Route::post('assign-deliveryman', [AdminOrderManageController::class, 'assignDeliveryMan']);
                 Route::post('cancel-order', [AdminOrderManageController::class, 'cancelOrder']);
-                Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value]], function () {
-                    Route::get('/returned', [AdminOrderManageController::class, 'returned']);
+                Route::group(['prefix' => 'refund-reason/', 'middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value]], function () {
+                    Route::get('/', [AdminOrderRefundManageController::class, 'allOrderRefundReason']);
+                    Route::post('add', [AdminOrderRefundManageController::class, 'createOrderRefundReason']);
+                    Route::get('details/{id}', [AdminOrderRefundManageController::class, 'showOrderRefundReason']);
+                    Route::post('update', [AdminOrderRefundManageController::class, 'updateOrderRefundReason']);
+                    Route::delete('remove/{id}', [AdminOrderRefundManageController::class, 'deleteOrderRefundReason']);
                 });
                 // Dynamic route should be last
                 Route::get('{order_id?}', [AdminOrderManageController::class, 'allOrders']);

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Customer;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Order\CustomerOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,19 +24,7 @@ class CustomerDashboardResource extends JsonResource
             'on_hold_products' => $this['on_hold_products'],
             'total_support_ticket' => $this['total_support_ticket'],
             'wallet' => $this['wallet'],
-            'recent_orders' => collect($this['recent_orders'])->flatMap(function ($order) {
-                return $order['orderDetail']->map(function ($orderDetail) {
-                    return [
-                        'product_image' => isset($orderDetail['product'])
-                            ? ImageModifier::generateImageUrl($orderDetail['product']['image'])
-                            : null, // Handle missing product
-                        'product_name' => $orderDetail['product']['name'] ?? null, // Product name
-                        'order_id' => $orderDetail['order_id'],
-                        'purchased_at' => $orderDetail['order']['created_at'] ?? null, // Handle missing order
-                        'status' => $orderDetail['order']['status'] ?? null, // Handle missing order
-                    ];
-                });
-            }),
+            'recent_orders' => CustomerOrderResource::collection($this['recent_orders']),
         ];
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -8,7 +8,6 @@ use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketMessageResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
 use App\Interfaces\SupportTicketManageInterface;
-use App\Models\Store;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
