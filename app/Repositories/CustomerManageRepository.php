@@ -244,7 +244,7 @@ class CustomerManageRepository implements CustomerManageInterface
 
     protected function getRecentOrders($customer_id)
     {
-        return Order::with('orderDetail.product')
+        return Order::with('orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress')
             ->whereHas('orderMaster', function ($query) use ($customer_id) {
                 $query->where('customer_id', $customer_id);
             })
