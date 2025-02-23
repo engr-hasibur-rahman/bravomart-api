@@ -5,6 +5,7 @@ namespace Modules\Wallet\app\Http\Controllers\Api;
 use App\Enums\WalletOwnerType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\WithdrawGatewayPublicListResource;
 use App\Models\WithdrawGateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -31,7 +32,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => __('messages.data_found'),
-                'data' => WithdrawGatewayListResource::collection($gateways),
+                'data' => WithdrawGatewayPublicListResource::collection($gateways),
             ]);
         } else {
             return response()->json([
@@ -122,7 +123,6 @@ class SellerAndDeliverymanWithdrawController extends Controller
             "store_id" => "nullable|exists:stores,id", // store exists
             "deliveryman_id" => "nullable|exists:users,id", // deliveryman exists
             "withdraw_gateway_id" => "required|integer|exists:withdraw_gateways,id",
-            "gateway_name" => "required|string|max:50",
             "amount" => "required",
             "details" => "nullable|string|max:255",
         ]);
@@ -171,11 +171,12 @@ class SellerAndDeliverymanWithdrawController extends Controller
             ]);
         }
 
+        $method = WithdrawGateway::find($request->withdraw_gateway_id);
         $success = WalletWithdrawalsTransaction::create([
             'owner_id' => $owner_id,
             'owner_type' => WalletOwnerType::STORE->value,
-            'withdraw_gateway_id' => $request->withdraw_gateway_id,
-            'gateway_name' => $request->gateway_name,
+            'withdraw_gateway_id' => $method->id,
+            'gateway_name' => $method->name,
             'amount' => $request->amount,
             'details' => $request->details ?? null,
             'fee' => 0.00,

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('email_templates', function (Blueprint $table) {
             $table->id();
+            $table->string('type')->unique();
             $table->string('name')->unique();
             $table->string('subject')->nullable();
             $table->text('body')->nullable();

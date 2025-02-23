@@ -497,15 +497,15 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     {
            $deliveryman = auth('api')->user();
             $order = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store')->find($order_id);
-            if ($status === 'delivered') {
+            if ($status == 'delivered') {
                 if ($order->status === 'delivered') {
                     return 'already delivered';
                 }
 
-                $order->update([
-                    'status' => 'delivered',
-                    'delivery_completed_at' => Carbon::now(),
-                ]);
+//                $order->update([
+//                    'status' => 'delivered',
+//                    'delivery_completed_at' => Carbon::now(),
+//                ]);
 
                 OrderDeliveryHistory::create([
                     'order_id' => $order_id,
@@ -534,26 +534,30 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 }
 
                 // send mail and notification
-                $customer_email = $order->orderAddress?->email ?? $order->customer?->email;
+                $customer_email = $order->orderAddress?->email ?? $order->customer?->email ?? 'hasibur2060@gmail.com';
                 $store_email = $order->store?->email;
                 $system_global_email = com_option_get('com_site_email');
                 // mail send
                 try {
-                    $emailTemplate = EmailTemplate::where('name', 'Delivery Earnings')->where('status', 'active')->first();
+                    $emailTemplate = EmailTemplate::where('type', 'delivery-earning')->where('status', 1)->first();
                     $emailData = [
                         'deliveryman_name' => $deliveryman->name ?? 'Deliveryman',
+                        'order_id' => $order->id,
+                        'order_amount' => $order->order_amount,
                         'amount' => $order->delivery_charge_deliveryman_earning
                     ];
-                    // Send Email Using Queue
-                    if ($emailTemplate) {
-                        dispatch(new SendDynamicEmailJob(
-                            $customer_email,
-                            $emailTemplate->subject,
-                            $emailTemplate->body,
-                            $emailData
-                        ));
+                    // Check if template exists and email is valid and // Send the email using queued job
+                    if ($emailTemplate && filter_var($customer_email, FILTER_VALIDATE_EMAIL)) {
+                        // mail to deliveryman
+                        dispatch(new SendDynamicEmailJob( $customer_email, $emailTemplate->subject,$emailTemplate->body, $emailData));
+                        // mail to store
+                        dispatch(new SendDynamicEmailJob( $store_email, $emailTemplate->subject,  $emailTemplate->body,  $emailData));
+                        // mail to admin
+                        dispatch(new SendDynamicEmailJob( $system_global_email, $emailTemplate->subject, $emailTemplate->body, $emailData));
                     }
                 }catch (\Exception $th) { }
+
+                return 'delivered';
 
             }
     }

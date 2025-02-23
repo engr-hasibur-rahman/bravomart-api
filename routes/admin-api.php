@@ -542,7 +542,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('settings/update', [AdminAreaSetupManageController::class, 'updateStoreAreaSetting']);
                 Route::get('settings/details/{store_area_id}', [AdminAreaSetupManageController::class, 'storeAreaSettingsDetails']);
             });
-            // withdraw method
+            // commission Settings
             Route::prefix('commission')->middleware(['permission:' . PermissionKey::ADMIN_COMMISSION_SETTINGS->value])->group(function () {
                 Route::match(['get', 'post'], '/settings', [AdminCommissionManageController::class, 'commissionSettings']);
             });
