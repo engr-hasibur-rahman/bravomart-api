@@ -211,7 +211,6 @@ class WalletCommonController extends Controller
             $query->where('type', $filters['type']);
         }
 
-// Apply pagination if needed
         $transactions = $query->paginate($filters['per_page'] ?? 10); // Change 10 to desired per-page limit
 
         return response()->json([
