@@ -200,10 +200,9 @@ class WalletCommonController extends Controller
             $query->where('transaction_ref', 'LIKE', '%' . $filters['search'] . '%');
         }
 
-        if (!empty($filters['status'])) {
+        if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }
-
         if (!empty($filters['payment_status'])) {
             $query->where('payment_status', $filters['payment_status']);
         }
@@ -212,7 +211,6 @@ class WalletCommonController extends Controller
         }
 
         $transactions = $query->paginate($filters['per_page'] ?? 10); // Change 10 to desired per-page limit
-
         return response()->json([
             'wallets' => WalletTransactionListResource::collection($transactions),
             'meta' => new PaginationResource($transactions),
