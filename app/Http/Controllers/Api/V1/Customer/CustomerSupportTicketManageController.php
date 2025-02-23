@@ -205,19 +205,16 @@ class CustomerSupportTicketManageController extends Controller
         ], 201);
     }
 
-    public function getTicketMessages(Request $request)
+    public function getTicketMessages(Request $request,$ticket_id)
     {
+        $request['ticket_id'] = $ticket_id;
         $validator = Validator::make($request->all(), [
             'ticket_id' => 'required|exists:tickets,id',
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => $validator->errors()
-            ]);
+            return response()->json($validator->errors(), 422);
         }
-        $ticketMessages = $this->ticketRepo->getTicketMessages($request->ticket_id);
+        $ticketMessages = $this->ticketRepo->getTicketMessages($request->all());
         return response()->json([
             'status' => true,
             'status_code' => 200,
