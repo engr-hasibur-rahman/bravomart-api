@@ -53,7 +53,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
 
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
-            Route::get('dashboard', [SellerStoreDashboardManageController::class, 'dashboard']);
+            Route::group(['prefix' => 'dashboard'], function () {
+                Route::get('/{slug}', [SellerStoreDashboardManageController::class, 'summaryData']);
+                Route::get('sales-summary/{slug}', [SellerStoreDashboardManageController::class, 'salesSummaryData']);
+                Route::get('other-summary/{slug}', [SellerStoreDashboardManageController::class, 'otherSummaryData']);
+            });
             // POS Manage
             Route::group(['prefix' => 'pos/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_POS_SALES->value]], function () {
                 Route::get('', [SellerPosSalesController::class, 'index'])->name('seller.store.pos.index'); // Show POS dashboard for the store
@@ -96,7 +100,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
                     Route::post('change-order-status', [SellerStoreOrderController::class, 'changeOrderStatus']);
                     Route::post('cancel-order', [SellerStoreOrderController::class, 'cancelOrder']);
                     Route::get('refund-request', [SellerStoreOrderRefundManageController::class, 'orderRefundRequest']);
-                    Route::post('refund-request/handle',[SellerStoreOrderRefundManageController::class,'handleRefundRequest']);
+                    Route::post('refund-request/handle', [SellerStoreOrderRefundManageController::class, 'handleRefundRequest']);
                     Route::get('{order_id?}', [SellerStoreOrderController::class, 'allOrders']);
                 });
                 Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
