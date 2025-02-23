@@ -95,13 +95,7 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
 
     public function getTicketById($ticketId)
     {
-
-        $ticket = $this->ticket->with(['department', 'store', 'customer', 'messages.sender', 'messages.receiver'])->find($ticketId);
-        if ($ticket->count() > 0) {
-            return $ticket;
-        } else {
-            return false;
-        }
+        return $this->ticket->with(['department', 'store', 'customer', 'messages.sender', 'messages.receiver'])->find($ticketId);
     }
 
     public function createTicket(array $data)
@@ -158,6 +152,7 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
 
         return $query->get();
     }
+
     public function getAdminTicketMessages(int $ticket_id)
     {
         $query = $this->ticketMessage
