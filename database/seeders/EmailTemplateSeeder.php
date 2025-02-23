@@ -88,7 +88,7 @@ class EmailTemplateSeeder extends Seeder
                 "subject" => 'You Have a New Order!',
                 "body" => "<h1>Hello @customer_name,</h1>
                            <p>Your order (Order ID: @order_id) has been successfully placed.</p>
-                           <p>Order Amount: $@order_amount</p>
+                           <p>Order Amount: @order_amount</p>
                            <p>We will notify you once your order status changes.</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -101,7 +101,7 @@ class EmailTemplateSeeder extends Seeder
                 "subject" => 'You Have a New Order in Your Store!',
                 "body" => "<h1>Hello @store_owner_name,</h1>
                            <p>Your store <strong>@store_name</strong> has received a new order (Order ID: @order_id).</p>
-                           <p>Order Amount: $@order_amount</p>
+                           <p>Order Amount: @order_amount</p>
                            <p>Please process the order as soon as possible.</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -114,7 +114,7 @@ class EmailTemplateSeeder extends Seeder
                 "subject" => 'New Order Placed on the Platform!',
                 "body" => "<h1>Hello Admin,</h1>
                            <p>A new order (Order ID: @order_id) has been placed on the platform.</p>
-                           <p>Order Amount: $@order_amount</p>
+                           <p>Order Amount: @order_amount</p>
                            <p>Please review the order details and take necessary action.</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -199,7 +199,7 @@ class EmailTemplateSeeder extends Seeder
                 "subject" => 'Your Refund has Been Processed',
                 "body" => "<h1>Hello @customer_name,</h1>
                            <p>Your refund for Order ID: @order_id has been successfully processed.</p>
-                           <p>Refund Amount: $@refund_amount</p>
+                           <p>Refund Amount: @refund_amount</p>
                            <p>The amount will be credited back to your account shortly.</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -212,7 +212,7 @@ class EmailTemplateSeeder extends Seeder
                 "subject" => 'A Refund has Been Processed for an Order in Your Store',
                 "body" => "<h1>Hello @store_owner_name,</h1>
                            <p>A refund has been processed for an order in your store (Order ID: @order_id).</p>
-                           <p>Refund Amount: $@refund_amount</p>
+                           <p>Refund Amount: @refund_amount</p>
                            <p>Please ensure your account is updated accordingly.</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -225,7 +225,7 @@ class EmailTemplateSeeder extends Seeder
                 "subject" => 'Your Wallet Balance Has Been Updated',
                 "body" => "<h1>Hello @customer_name,</h1>
                            <p>Your wallet balance has been successfully updated.</p>
-                           <p>New Balance: $@balance</p>
+                           <p>New Balance: @balance</p>
                            <p>Thank you for using our service!</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -239,7 +239,7 @@ class EmailTemplateSeeder extends Seeder
                 "body" => "<h1>Hello @store_owner_name,</h1>
                            <p>Your store's wallet balance has been successfully updated.</p>
                            <p>Store: @store_name</p>
-                           <p>New Balance: $@balance</p>
+                           <p>New Balance: @balance</p>
                            <p>Thank you for being a part of our platform!</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -252,7 +252,7 @@ class EmailTemplateSeeder extends Seeder
                 "subject" => 'A Withdrawal Request Has Been Submitted',
                 "body" => "<h1>Hello Admin,</h1>
                            <p>A withdrawal request has been submitted by @store_owner_name for their store <strong>@store_name</strong>.</p>
-                           <p>Requested Amount: $@amount</p>
+                           <p>Requested Amount: @amount</p>
                            <p>Please review and take the necessary action.</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -265,7 +265,7 @@ class EmailTemplateSeeder extends Seeder
                 "subject" => 'Your Withdrawal Request Has Been Approved',
                 "body" => "<h1>Hello @store_owner_name,</h1>
                            <p>Your withdrawal request for your store <strong>@store_name</strong> has been approved.</p>
-                           <p>Amount: $@amount</p>
+                           <p>Amount: @amount</p>
                            <p>The amount will be transferred to your account shortly.</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -278,7 +278,7 @@ class EmailTemplateSeeder extends Seeder
                 "subject" => 'Your Withdrawal Request Has Been Declined',
                 "body" => "<h1>Hello @store_owner_name,</h1>
                            <p>Your withdrawal request for your store <strong>@store_name</strong> has been declined.</p>
-                           <p>Amount: $@amount</p>
+                           <p>Amount: @amount</p>
                            <p>If you have any questions, please contact the support team.</p>",
                 "status" => 1,
                 "created_at" => $now,
@@ -289,7 +289,7 @@ class EmailTemplateSeeder extends Seeder
                 "name" => 'Deliveryman Withdrawal Request',
                 "subject" => 'Your Withdrawal Request Has Been Received',
                 "body" => "<h1>Hello @deliveryman_name,</h1>
-                       <p>Your withdrawal request has been successfully submitted for the amount of $@amount.</p>
+                       <p>Your withdrawal request has been successfully submitted for the amount of @amount.</p>
                        <p>Your request is being reviewed by the admin. You will receive a confirmation email once your request has been processed.</p>
                        <p>Thank you for your hard work!</p>",
                 "status" => 1,
@@ -304,8 +304,8 @@ class EmailTemplateSeeder extends Seeder
                 "body" => "<h1>Hello, @deliveryman_name,</h1>
                             <p>You've received a new earning:</p>
                             <p><strong>Order ID:</strong> @order_id</p>
-                            <p><strong>Order Amount:</strong> $@order_amount</p>
-                            <p><strong>Earnings:</strong> $@amount</p>
+                            <p><strong>Order Amount:</strong> @order_amount</p>
+                            <p><strong>Earnings:</strong> @earnings_amount</p>
                             <p>Thank you for your hard work!</p>",
                 "status" => 1,
                 "created_at" => $now,
