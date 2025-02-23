@@ -145,6 +145,7 @@ class SupportTicketManageRepository implements SupportTicketManageInterface
 
     public function getTicketMessages(array $data)
     {
+
         $query = $this->ticketMessage
             ->where('ticket_id', $data['ticket_id'])
             ->with(['sender', 'receiver'])
