@@ -546,29 +546,14 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                         'order_amount' => $order->order_amount,
                         'amount' => $order->delivery_charge_deliveryman_earning
                     ];
-                    // Check if template exists and email is valid
+                    // Check if template exists and email is valid and // Send the email using queued job
                     if ($emailTemplate && filter_var($customer_email, FILTER_VALIDATE_EMAIL)) {
-                        // Send the email using queued job
-                        dispatch(new SendDynamicEmailJob(
-                            $customer_email,
-                            $emailTemplate->subject,
-                            $emailTemplate->body,
-                            $emailData
-                        ));
-
-                        dispatch(new SendDynamicEmailJob(
-                            $store_email,
-                            $emailTemplate->subject,
-                            $emailTemplate->body,
-                            $emailData
-                        ));
-
-                        dispatch(new SendDynamicEmailJob(
-                            $system_global_email,
-                            $emailTemplate->subject,
-                            $emailTemplate->body,
-                            $emailData
-                        ));
+                        // mail to deliveryman
+                        dispatch(new SendDynamicEmailJob( $customer_email, $emailTemplate->subject,$emailTemplate->body, $emailData));
+                        // mail to store
+                        dispatch(new SendDynamicEmailJob( $store_email, $emailTemplate->subject,  $emailTemplate->body,  $emailData));
+                        // mail to admin
+                        dispatch(new SendDynamicEmailJob( $system_global_email, $emailTemplate->subject, $emailTemplate->body, $emailData));
                     }
                 }catch (\Exception $th) { }
 
