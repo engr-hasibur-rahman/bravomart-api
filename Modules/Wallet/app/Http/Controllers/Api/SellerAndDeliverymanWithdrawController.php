@@ -123,7 +123,6 @@ class SellerAndDeliverymanWithdrawController extends Controller
             "store_id" => "nullable|exists:stores,id", // store exists
             "deliveryman_id" => "nullable|exists:users,id", // deliveryman exists
             "withdraw_gateway_id" => "required|integer|exists:withdraw_gateways,id",
-            "gateway_name" => "required|string|max:50",
             "amount" => "required",
             "details" => "nullable|string|max:255",
         ]);
@@ -172,11 +171,12 @@ class SellerAndDeliverymanWithdrawController extends Controller
             ]);
         }
 
+        $method = WithdrawGateway::find($request->withdraw_gateway_id);
         $success = WalletWithdrawalsTransaction::create([
             'owner_id' => $owner_id,
             'owner_type' => WalletOwnerType::STORE->value,
-            'withdraw_gateway_id' => $request->withdraw_gateway_id,
-            'gateway_name' => $request->gateway_name,
+            'withdraw_gateway_id' => $method->id,
+            'gateway_name' => $method->name,
             'amount' => $request->amount,
             'details' => $request->details ?? null,
             'fee' => 0.00,
