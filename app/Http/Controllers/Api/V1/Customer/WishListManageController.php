@@ -24,7 +24,7 @@ class WishListManageController extends Controller
         if ($exists) {
             return response()->json([
                 'message' => __('messages.exists', ['name' => 'Product'])
-            ], 401);
+            ], 422);
         }
         Wishlist::create(request()->all());
         return $this->success(translate('messages.save_success', ['name' => 'Wish List']));
