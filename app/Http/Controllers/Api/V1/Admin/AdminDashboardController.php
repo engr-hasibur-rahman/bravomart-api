@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Dashboard\AdminOtherSummaryResource;
-use App\Http\Resources\Dashboard\AdminSalesSummaryResource;
+use App\Http\Resources\Dashboard\SalesSummaryResource;
 use App\Http\Resources\Dashboard\SummaryResource;
 use App\Interfaces\AdminDashboardManageInterface;
 use Illuminate\Http\Request;
@@ -32,7 +32,7 @@ class AdminDashboardController extends Controller
             "end_date" => $request->end_date,
         ];
         $data = $this->adminRepo->getSalesSummaryData($filters);
-        return response()->json(new AdminSalesSummaryResource($data));
+        return response()->json(new SalesSummaryResource($data));
     }
 
     public function otherSummaryData()

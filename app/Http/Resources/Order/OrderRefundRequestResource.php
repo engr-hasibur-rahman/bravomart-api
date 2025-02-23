@@ -23,7 +23,7 @@ class OrderRefundRequestResource extends JsonResource
             "store" => $this->store?->name,
             "customer" => $this->customer?->getFullNameAttribute(),
             "order_refund_reason" => $this->orderRefundReason?->reason,
-            "file" => asset($this->file) ?? null
+            "file" => asset('storage/' . $this->file) ?? null
         ];
     }
 }
