@@ -103,7 +103,7 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value,
+                                    'PermissionName' => PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND_REQUEST->value,
                                     'PermissionTitle' => 'Returned or Refunded',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
