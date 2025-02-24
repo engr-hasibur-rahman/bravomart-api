@@ -8,6 +8,7 @@ use App\Jobs\SendDynamicEmailJob;
 use App\Models\DeliveryMan;
 use App\Models\EmailTemplate;
 use App\Models\Order;
+use App\Models\OrderActivity;
 use App\Models\OrderDeliveryHistory;
 use App\Models\OrderRefundReason;
 use App\Models\SystemCommission;
@@ -23,9 +24,11 @@ use Modules\Wallet\app\Models\WalletTransaction;
 
 class DeliverymanManageRepository implements DeliverymanManageInterface
 {
+    protected $deliveryman;
 
     public function __construct(protected VehicleType $vehicleType, protected Translation $translation)
     {
+        $this->deliveryman = auth('api')->user();
     }
 
     public function translationKeys(): mixed
@@ -663,11 +666,50 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function getDeliverymanDashboard()
     {
-
+        $total_completed_orders = $this->getTotalCompletedOrders();
+        $ongoing_orders = $this->getOngoingOrders();
+        $pending_orders = $this->getPendingOrders();
+        $cancelled_orders = $this->getCancelledOrders();
+        return [
+            'total_completed_orders' => $total_completed_orders,
+            'ongoing_orders' => $ongoing_orders,
+            'pending_orders' => $pending_orders,
+            'cancelled_orders' => $cancelled_orders,
+        ];
     }
 
     private function getTotalCompletedOrders()
     {
-        return Order::where('deliveryman_id', auth('api')->id());
+        return OrderDeliveryHistory::where('deliveryman_id', $this->deliveryman->id)
+            ->where('status', 'delivered')
+            ->count();
     }
+
+    private function getOngoingOrders()
+    {
+        return Order::where('confirmed_by', $this->deliveryman->id)
+            ->whereNull('delivery_completed_at')
+            ->where('status', '!=', 'delivered')
+            ->count();
+    }
+
+    private function getPendingOrders()
+    {
+        return Order::where('confirmed_by', $this->deliveryman->id)
+            ->count();
+    }
+
+    private function getCancelledOrders()
+    {
+        return OrderDeliveryHistory::where('deliveryman_id', $this->deliveryman->id)
+            ->where('status', 'cancelled')
+            ->count();
+    }
+    private function totalCashCollection()
+    {
+        return OrderActivity::where('ref_id', $deliverymanId)
+            ->where('activity_type', 'cash_collected')
+            ->sum('activity_value');
+    }
+
 }

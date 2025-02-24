@@ -45,11 +45,14 @@ interface DeliverymanManageInterface
     public function orderRequests();
 
     public function updateOrderStatus(string $status, int $order_id, string $reason);
+
     public function orderChangeStatus(string $status, int $order_id);
 
     public function deliverymanOrderHistory();
 
     public function deliverymanListDropdown(array $filter);
+
+    public function getDeliverymanDashboard();
 
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 
