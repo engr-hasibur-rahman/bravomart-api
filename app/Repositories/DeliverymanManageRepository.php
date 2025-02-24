@@ -4,18 +4,16 @@ namespace App\Repositories;
 
 use App\Enums\WalletOwnerType;
 use App\Interfaces\DeliverymanManageInterface;
-use App\Jobs\SendDynamicEmailJob;
-use App\Mail\BasicMail;
 use App\Mail\DynamicEmail;
 use App\Models\DeliveryMan;
 use App\Models\EmailTemplate;
 use App\Models\Order;
 use App\Models\OrderDeliveryHistory;
-use App\Models\OrderRefundReason;
 use App\Models\SystemCommission;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\VehicleType;
+use App\Services\Order\OrderManageNotificationService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -26,9 +24,11 @@ use Modules\Wallet\app\Models\WalletTransaction;
 
 class DeliverymanManageRepository implements DeliverymanManageInterface
 {
+    protected $orderManageNotificationService;
 
-    public function __construct(protected VehicleType $vehicleType, protected Translation $translation)
+    public function __construct(protected VehicleType $vehicleType, protected Translation $translation, OrderManageNotificationService $orderManageNotificationService)
     {
+        $this->orderManageNotificationService = $orderManageNotificationService;
     }
 
     public function translationKeys(): mixed
@@ -541,6 +541,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 $store_email = $order->store?->email;
                 $system_global_email = com_option_get('com_site_email');
                 $delivery_man = $order->deliveryman?->email;
+
+                // order notification
+                $this->orderManageNotificationService->createOrderNotification($order->id);
+
                 // mail send
                 try {
                     $email_template_deliveryman = EmailTemplate::where('type', 'deliveryman-earning')->where('status', 1)->first();

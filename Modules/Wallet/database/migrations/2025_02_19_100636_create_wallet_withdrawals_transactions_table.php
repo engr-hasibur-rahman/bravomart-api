@@ -24,6 +24,8 @@ return new class extends Migration
             $table->unsignedBigInteger('approved_by')->nullable()->index(); // Approved by reference
             $table->timestamp('approved_at')->nullable();
             $table->string('status')->default('pending')->comment('pending, approved, rejected');
+            $table->text('reject_reason')->nullable();
+            $table->string('attachment')->nullable();
             $table->index(['owner_id', 'owner_type', 'status']);
             $table->timestamps();
         });

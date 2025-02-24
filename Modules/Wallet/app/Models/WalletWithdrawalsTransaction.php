@@ -14,7 +14,7 @@ class WalletWithdrawalsTransaction extends Model
     protected $fillable = [
         'owner_id', 'owner_type', 'withdraw_gateway_id', 'gateway_name', 'amount',
         'fee', 'gateways_options', 'details', 'approved_by',
-        'approved_at', 'status'
+        'approved_at', 'status', 'reject_reason', 'attachment'
     ];
 
     protected $casts = [
