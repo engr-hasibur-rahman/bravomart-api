@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('wallet_withdrawals_transactions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('wallet_id')->index();
             $table->unsignedBigInteger('owner_id')->index();
             $table->string('owner_type')->nullable()->comment('store or deliveryman or customer');
             $table->unsignedBigInteger('withdraw_gateway_id')->index();

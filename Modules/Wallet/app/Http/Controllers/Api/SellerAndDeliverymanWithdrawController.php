@@ -126,6 +126,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
             "amount" => "required",
             "details" => "nullable|string|max:255",
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
@@ -176,6 +177,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
 
         $method = WithdrawGateway::find($request->withdraw_gateway_id);
         $success = WalletWithdrawalsTransaction::create([
+            'wallet_id' => $wallet->id,
             'owner_id' => $owner_id,
             'owner_type' => WalletOwnerType::STORE->value,
             'withdraw_gateway_id' => $method->id,
