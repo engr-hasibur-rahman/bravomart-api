@@ -13,7 +13,8 @@ class OrderManageNotificationService
     public function createOrderNotification($last_order_id)
     {
         // Order with relationship data get
-        $order_details = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store', 'deliveryman')->find($last_order_id);
+        $order_details = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store', 'deliveryman')
+            ->find($last_order_id);
 
         // if order not found
         if (!$order_details) {
