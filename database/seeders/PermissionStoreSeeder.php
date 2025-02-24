@@ -102,16 +102,6 @@ class PermissionStoreSeeder extends Seeder
                                         'ar' => 'تم إرجاعه أو استرداده'
                                     ]
                                 ],
-                                [
-                                    'PermissionName' => PermissionKey::SELLER_ORDERS_REVIEWS_MANAGE->value,
-                                    'PermissionTitle' => 'Reviews',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'translations' => [
-                                        'en' => 'Reviews',
-                                        'ar' => 'المراجعات'
-                                    ]
-                                ],
                             ]
                         ]
                     ]
