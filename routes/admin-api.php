@@ -119,7 +119,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('refund-request',[AdminOrderRefundManageController::class,'orderRefundRequest']);
                 Route::post('refund-request/handle',[AdminOrderRefundManageController::class,'handleRefundRequest']);
                 Route::group(['prefix' => 'refund-reason/', 'middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value]], function () {
-                    Route::get('/', [AdminOrderRefundManageController::class, 'allOrderRefundReason']);
+                    Route::get('list', [AdminOrderRefundManageController::class, 'allOrderRefundReason']);
                     Route::post('add', [AdminOrderRefundManageController::class, 'createOrderRefundReason']);
                     Route::get('details/{id}', [AdminOrderRefundManageController::class, 'showOrderRefundReason']);
                     Route::post('update', [AdminOrderRefundManageController::class, 'updateOrderRefundReason']);
