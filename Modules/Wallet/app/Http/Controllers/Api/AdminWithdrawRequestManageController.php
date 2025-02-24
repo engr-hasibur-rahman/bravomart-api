@@ -143,12 +143,8 @@ class AdminWithdrawRequestManageController extends Controller
         }
 
         // update wallet withdrawals
-        $updated = WalletWithdrawalsTransaction::whereIn('id', $request->id)
-            ->where('status', 'pending')
-            ->update([
-                'status' => 'rejected',
-                'reject_reason' => $request->reject_reason,
-            ]);
+        $updated = WalletWithdrawalsTransaction::where('id', $request->id)
+            ->where('status', 'pending')->first();
 
         // If no records were updated
         if (!$updated) {
@@ -157,6 +153,11 @@ class AdminWithdrawRequestManageController extends Controller
                 'message' => __('messages.reject.failed', ['name' => 'Withdrawal']),
             ], 404);
         }
+
+        $updated->update([
+                'status' => 'rejected',
+                'reject_reason' => $request->reject_reason,
+            ]);
 
         return response()->json([
             'status' => true,

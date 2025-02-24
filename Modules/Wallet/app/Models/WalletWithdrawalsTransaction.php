@@ -22,6 +22,10 @@ class WalletWithdrawalsTransaction extends Model
         'approved_at' => 'datetime',
     ];
 
+    public function wallet()
+    {
+        return $this->belongsTo(Wallet::class, 'wallet_id');
+    }
     public function owner()
     {
         return $this->morphTo();
