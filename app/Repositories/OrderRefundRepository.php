@@ -93,7 +93,7 @@ class OrderRefundRepository implements OrderRefundInterface
             'store_id' => $order->store_id,
             'order_refund_reason_id' => $data['order_refund_reason_id'],
             'customer_note' => $data['customer_note'],
-            'file' => $data['file'],
+            'file' => $data['file'] ?? null,
             'status' => 'pending',
             'amount' => $order->order_amount,
         ]);

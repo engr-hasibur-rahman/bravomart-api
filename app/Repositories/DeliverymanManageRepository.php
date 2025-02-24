@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\OrderActivityType;
 use App\Enums\WalletOwnerType;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Mail\DynamicEmail;
@@ -449,7 +450,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
         $deliveryman = auth('api')->user();
         $order_requests = Order::with('orderDeliveryHistory')
-            ->whereNull('confirmed_by')
+            ->where('confirmed_by', $deliveryman->id)
             ->whereDoesntHave('orderDeliveryHistory', function ($query) use ($deliveryman) {
                 $query->where('deliveryman_id', $deliveryman->id);
             })
@@ -458,7 +459,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         return $order_requests;
     }
 
-    public function updateOrderStatus(string $status, int $order_id, string $reason)
+    public function updateOrderStatus(string $status, int $order_id, string $reason = null)
     {
         $deliveryman = auth('api')->user();
         DB::beginTransaction();
@@ -466,11 +467,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         try {
             $order = Order::find($order_id);
             if ($status === 'accepted') {
-                if ($order->confirmed_by !== null) {
+                if ($order->confirmed_by !== $deliveryman->id) {
                     return 'already confirmed';
                 }
                 $order->update([
-                    'confirmed_by' => $deliveryman->id,
                     'confirmed_at' => Carbon::now(),
                 ]);
                 OrderDeliveryHistory::create([
@@ -483,6 +483,9 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 if (!$reason) {
                     return 'reason is required';
                 }
+                $order->update([
+                    'confirmed_by' => null,
+                ]);
                 OrderDeliveryHistory::create([
                     'order_id' => $order_id,
                     'deliveryman_id' => $deliveryman->id,
@@ -503,20 +506,38 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     {
         $deliveryman = auth('api')->user();
         $order = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store', 'deliveryman')->find($order_id);
+        $order_is_accepted = Order::with('orderDeliveryHistory')
+            ->whereHas('orderDeliveryHistory', function ($query) use ($deliveryman, $order_id) {
+                $query->where('deliveryman_id', $deliveryman->id)
+                    ->where('order_id', $order_id)
+                    ->where('status', 'accepted');
+            })
+            ->exists();
+
         if ($status == 'delivered') {
             if ($order->status === 'delivered') {
                 return 'already delivered';
             }
+            if (!$order_is_accepted) {
+                return 'order_is_not_accepted';
+            }
 
-//                $order->update([
-//                    'status' => 'delivered',
-//                    'delivery_completed_at' => Carbon::now(),
-//                ]);
+            $order->update([
+                'status' => 'delivered',
+                'delivery_completed_at' => Carbon::now(),
+            ]);
 
             OrderDeliveryHistory::create([
                 'order_id' => $order_id,
                 'deliveryman_id' => $deliveryman->id,
                 'status' => $status,
+            ]);
+            OrderActivity::create([
+                'order_id' => $order_id,
+                'activity_from' => 'deliveryman',
+                'activity_type' => OrderActivityType::CASH_COLLECTION->value,
+                'ref_id' => $deliveryman->id,
+                'activity_value' => $order->order_amount
             ]);
 
             // Deliveryman wallet update
@@ -761,15 +782,18 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     private function getOngoingOrders()
     {
-        return Order::where('confirmed_by', $this->deliveryman->id)
-            ->whereNull('delivery_completed_at')
-            ->where('status', '!=', 'delivered')
+        return Order::with(['orderMaster.orderAddress', 'store'])
+            ->whereHas('orderDeliveryHistory', function ($query) {
+                $query->where('deliveryman_id', $this->deliveryman->id)
+                    ->where('status', 'accepted');
+            })
             ->count();
     }
 
     private function getPendingOrders()
     {
         return Order::where('confirmed_by', $this->deliveryman->id)
+            ->whereNull('confirmed_at')
             ->count();
     }
 
@@ -783,23 +807,24 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     private function totalCashCollection()
     {
         return OrderActivity::where('ref_id', $this->deliveryman->id)
-            ->where('activity_type', 'cash_collected')
+            ->where('activity_type', OrderActivityType::CASH_COLLECTION->value)
             ->sum('activity_value');
     }
 
     private function totalCashDeposit()
     {
         return OrderActivity::where('ref_id', $this->deliveryman->id)
-            ->where('activity_type', 'cash_deposited')
+            ->where('activity_type', OrderActivityType::CASH_DEPOSIT->value)
             ->sum('activity_value');
     }
 
     private function getActiveOrders()
     {
         return Order::with(['orderMaster.orderAddress', 'store'])
-            ->where('confirmed_by', $this->deliveryman->id)
-            ->whereNull('delivery_completed_at')
-            ->whereNot('status', 'delivered')
+            ->whereHas('orderDeliveryHistory', function ($query) {
+                $query->where('deliveryman_id', $this->deliveryman->id)
+                    ->where('status', 'accepted');
+            })
             ->latest()
             ->first();
     }
