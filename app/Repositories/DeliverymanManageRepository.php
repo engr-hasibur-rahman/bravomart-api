@@ -501,12 +501,12 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function orderChangeStatus(string $status, int $order_id)
     {
-           $deliveryman = auth('api')->user();
-            $order = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store', 'deliveryman')->find($order_id);
-            if ($status == 'delivered') {
-                if ($order->status === 'delivered') {
-                    return 'already delivered';
-                }
+        $deliveryman = auth('api')->user();
+        $order = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store', 'deliveryman')->find($order_id);
+        if ($status == 'delivered') {
+            if ($order->status === 'delivered') {
+                return 'already delivered';
+            }
 
 //                $order->update([
 //                    'status' => 'delivered',
@@ -581,19 +581,20 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     // deliveryman
                     $deliveryman_subject = $email_template_deliveryman->subject;
                     $deliveryman_message = $email_template_deliveryman->body;
-                    $customer_message = str_replace(["@customer_name","@order_id","@order_amount"],[$order->orderMaster?->customer?->full_name,$order->id,$order->order_amount,$order->delivery_charge_deliveryman_earning],$customer_message);
-                    $store_message = str_replace(["@name","@order_id","@order_amount"],[$order->store?->name,$order->id,$order->order_amount,$order->delivery_charge_deliveryman_earning],$store_message);
-                    $admin_message = str_replace(["@order_id","@order_amount","@earnings_amount"],[$order->id,$order->order_amount,$order->delivery_charge_deliveryman_earning],$admin_message);
-                    $deliveryman_message = str_replace(["@name","@order_id","@order_amount","@earnings_amount"],[auth('api')->user()->full_name,$order->id,$order->order_amount,$order->delivery_charge_deliveryman_earning],$deliveryman_message);
+                    $customer_message = str_replace(["@customer_name", "@order_id", "@order_amount"], [$order->orderMaster?->customer?->full_name, $order->id, $order->order_amount, $order->delivery_charge_deliveryman_earning], $customer_message);
+                    $store_message = str_replace(["@name", "@order_id", "@order_amount"], [$order->store?->name, $order->id, $order->order_amount, $order->delivery_charge_deliveryman_earning], $store_message);
+                    $admin_message = str_replace(["@order_id", "@order_amount", "@earnings_amount"], [$order->id, $order->order_amount, $order->delivery_charge_deliveryman_earning], $admin_message);
+                    $deliveryman_message = str_replace(["@name", "@order_id", "@order_amount", "@earnings_amount"], [auth('api')->user()->full_name, $order->id, $order->order_amount, $order->delivery_charge_deliveryman_earning], $deliveryman_message);
                     // customer
-                    Mail::to($customer_email)->send(new DynamicEmail([ 'subject' => $customer_subject,'message' => $customer_message]));
+                    Mail::to($customer_email)->send(new DynamicEmail(['subject' => $customer_subject, 'message' => $customer_message]));
                     // store
-                    Mail::to($store_email)->send(new DynamicEmail([ 'subject' => $store_subject,'message' => $store_message]));
+                    Mail::to($store_email)->send(new DynamicEmail(['subject' => $store_subject, 'message' => $store_message]));
                     // admin
-                    Mail::to($system_global_email)->send(new DynamicEmail([ 'subject' => $admin_subject,'message' => $admin_message]));
+                    Mail::to($system_global_email)->send(new DynamicEmail(['subject' => $admin_subject, 'message' => $admin_message]));
                     // deliveryman
-                    Mail::to($delivery_man)->send(new DynamicEmail([ 'subject' => $deliveryman_subject,'message' => $deliveryman_message]));
-                }catch (\Exception $th) { }
+                    Mail::to($delivery_man)->send(new DynamicEmail(['subject' => $deliveryman_subject, 'message' => $deliveryman_message]));
+                } catch (\Exception $th) {
+                }
 
                 return 'delivered';
 
@@ -733,11 +734,21 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         $ongoing_orders = $this->getOngoingOrders();
         $pending_orders = $this->getPendingOrders();
         $cancelled_orders = $this->getCancelledOrders();
+        $totalCashCollection = $this->totalCashCollection();
+        $totalCashDeposit = $this->totalCashDeposit();
+        $inHand = $totalCashCollection - $totalCashDeposit;
+        $activeOrders = $this->getActiveOrders();
+        $wallet = $this->wallet();
         return [
             'total_completed_orders' => $total_completed_orders,
             'ongoing_orders' => $ongoing_orders,
             'pending_orders' => $pending_orders,
             'cancelled_orders' => $cancelled_orders,
+            'total_cash_collection' => $totalCashCollection,
+            'total_cash_deposit' => $totalCashDeposit,
+            'in_hand' => $inHand,
+            'active_orders' => $activeOrders,
+            'wallet' => $wallet,
         ];
     }
 
@@ -768,11 +779,37 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             ->where('status', 'cancelled')
             ->count();
     }
+
     private function totalCashCollection()
     {
-        return OrderActivity::where('ref_id', $deliverymanId)
+        return OrderActivity::where('ref_id', $this->deliveryman->id)
             ->where('activity_type', 'cash_collected')
             ->sum('activity_value');
+    }
+
+    private function totalCashDeposit()
+    {
+        return OrderActivity::where('ref_id', $this->deliveryman->id)
+            ->where('activity_type', 'cash_deposited')
+            ->sum('activity_value');
+    }
+
+    private function getActiveOrders()
+    {
+        return Order::with(['orderMaster.orderAddress', 'store'])
+            ->where('confirmed_by', $this->deliveryman->id)
+            ->whereNull('delivery_completed_at')
+            ->whereNot('status', 'delivered')
+            ->latest()
+            ->first();
+    }
+
+    private function wallet()
+    {
+        return Wallet::where('owner_type', User::class)
+            ->where('owner_id', $this->deliveryman->id)
+            ->where('status', 1)
+            ->first();
     }
 
 }

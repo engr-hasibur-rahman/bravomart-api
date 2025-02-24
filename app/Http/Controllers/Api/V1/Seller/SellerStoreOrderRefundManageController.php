@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Order\OrderRefundReasonResource;
 use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Interfaces\OrderRefundInterface;
 use App\Models\OrderRefund;
@@ -93,5 +94,17 @@ class SellerStoreOrderRefundManageController extends Controller
                 'message' => __('messages.update_failed', ['name' => 'Order Refund Request']),
             ], 500);
         }
+    }
+    public function allOrderRefundReason(Request $request)
+    {
+        $filters = [
+            'per_page' => $request->per_page,
+            'search' => $request->search,
+        ];
+        $reasons = $this->orderRefundRepo->order_refund_reason_list($filters);
+        return response()->json([
+            'data' => OrderRefundReasonResource::collection($reasons),
+            'meta' => new PaginationResource($reasons)
+        ], 200);
     }
 }

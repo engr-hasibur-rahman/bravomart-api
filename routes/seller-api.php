@@ -99,11 +99,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
                     Route::get('invoice', [SellerStoreOrderController::class, 'invoice']);
                     Route::post('change-order-status', [SellerStoreOrderController::class, 'changeOrderStatus']);
                     Route::post('cancel-order', [SellerStoreOrderController::class, 'cancelOrder']);
-                    Route::get('refund-request', [SellerStoreOrderRefundManageController::class, 'orderRefundRequest']);
-                    Route::post('refund-request/handle', [SellerStoreOrderRefundManageController::class, 'handleRefundRequest']);
+                    Route::get('refund-reason-list', [SellerStoreOrderRefundManageController::class, 'allOrderRefundReason']);
+                    Route::get('refund-request', [SellerStoreOrderRefundManageController::class, 'orderRefundRequest'])->middleware('permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND_REQUEST->value);
+                    Route::post('refund-request/handle', [SellerStoreOrderRefundManageController::class, 'handleRefundRequest'])->middleware('permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND_REQUEST->value);
                     Route::get('{order_id?}', [SellerStoreOrderController::class, 'allOrders']);
                 });
-                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value]], function () {
+                Route::group(['middleware' => ['permission:' . PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND_REQUEST->value]], function () {
                     Route::get('/returned', [SellerStoreOrderController::class, 'returnedOrders']);
                 });
             });
