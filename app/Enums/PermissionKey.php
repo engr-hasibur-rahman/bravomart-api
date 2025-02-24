@@ -27,7 +27,7 @@ enum PermissionKey: string
     //                                 Admin Order Permissions                                       //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_ORDERS_ALL = '/admin/orders';
-    case ADMIN_ORDERS_RETURNED_OR_REFUND = '/admin/orders/refund';
+    case ADMIN_ORDERS_RETURNED_OR_REFUND_REQUEST = '/admin/orders/refund-request';
     case ADMIN_ORDERS_RETURNED_OR_REFUND_REASON = '/admin/orders/refund-reason/list';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//

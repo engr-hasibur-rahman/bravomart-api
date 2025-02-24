@@ -109,6 +109,20 @@ class AdminOrderManageController extends Controller
                     'message' => __('messages.update_failed', ['name' => 'Order status'])
                 ], 500);
             }
+        }if ($request->status === 'delivered') {
+            $success = $order->update([
+                'delivery_completed_at' => Carbon::now(),
+                'status' => $request->status
+            ]);
+            if ($success) {
+                return response()->json([
+                    'message' => __('messages.update_success', ['name' => 'Order status'])
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => __('messages.update_failed', ['name' => 'Order status'])
+                ], 500);
+            }
         }
         $success = $order->update([
             'status' => $request->status
