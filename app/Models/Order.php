@@ -85,7 +85,6 @@ class Order extends Model
     }
 
 
-
     public function orderDeliveryHistory()
     {
         return $this->hasMany(OrderDeliveryHistory::class, 'order_id', 'id');
@@ -100,5 +99,6 @@ class Order extends Model
     {
         return $this->belongsTo(Store::class, 'store_id', 'id');
     }
+
 
 }

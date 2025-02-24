@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('vehicle_type_id')->nullable();
             $table->unsignedBigInteger('area_id')->nullable();
-            $table->enum('identification_type', ['nid', 'passport', 'driving_license'])->comment('Type of ID provided');
-            $table->string('identification_number')->unique()->comment('Unique identification number');
+            $table->enum('identification_type', ['nid', 'passport', 'driving_license'])->nullable()->comment('Type of ID provided');
+            $table->string('identification_number')->unique()->nullable()->comment('Unique identification number');
             $table->string('identification_photo_front')->nullable()->comment('Front image of ID');
             $table->string('identification_photo_back')->nullable()->comment('Back image of ID');
             $table->string('address')->nullable();
