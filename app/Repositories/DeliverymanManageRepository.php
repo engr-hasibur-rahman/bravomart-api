@@ -510,10 +510,29 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 //                    'delivery_completed_at' => Carbon::now(),
 //                ]);
 
-                OrderDeliveryHistory::create([
-                    'order_id' => $order_id,
-                    'deliveryman_id' => $deliveryman->id,
-                    'status' => $status,
+            OrderDeliveryHistory::create([
+                'order_id' => $order_id,
+                'deliveryman_id' => $deliveryman->id,
+                'status' => $status,
+            ]);
+
+            // Deliveryman wallet update
+            $wallet = Wallet::where('owner_id', $deliveryman->id)
+                ->where('owner_type', WalletOwnerType::DELIVERYMAN->value)
+                ->first();
+
+            if ($wallet) {
+                // Update wallet balance
+                $wallet->balance += $order->delivery_charge_deliveryman_earning; // Add earnings to the balance
+                $wallet->save();
+
+                // Create wallet transaction history
+                WalletTransaction::create([
+                    'wallet_id' => $wallet->id,
+                    'amount' => $order->delivery_charge_deliveryman_earning,
+                    'type' => 'credit',
+                    'purpose' => 'Delivery Earnings',
+                    'status' => 1,
                 ]);
 
                 // Deliveryman wallet update
@@ -576,6 +595,35 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 return 'delivered';
 
             }
+
+            // send mail and notification
+            $customer_email = $order->orderAddress?->email ?? $order->customer?->email ?? 'hasibur2060@gmail.com';
+            $store_email = $order->store?->email;
+            $system_global_email = com_option_get('com_site_email');
+            // mail send
+            try {
+                $emailTemplate = EmailTemplate::where('type', 'delivery-earning')->where('status', 1)->first();
+                $emailData = [
+                    'deliveryman_name' => $deliveryman->name ?? 'Deliveryman',
+                    'order_id' => $order->id,
+                    'order_amount' => $order->order_amount,
+                    'amount' => $order->delivery_charge_deliveryman_earning
+                ];
+                // Check if template exists and email is valid and // Send the email using queued job
+                if ($emailTemplate && filter_var($customer_email, FILTER_VALIDATE_EMAIL)) {
+                    // mail to deliveryman
+                    dispatch(new SendDynamicEmailJob($customer_email, $emailTemplate->subject, $emailTemplate->body, $emailData));
+                    // mail to store
+                    dispatch(new SendDynamicEmailJob($store_email, $emailTemplate->subject, $emailTemplate->body, $emailData));
+                    // mail to admin
+                    dispatch(new SendDynamicEmailJob($system_global_email, $emailTemplate->subject, $emailTemplate->body, $emailData));
+                }
+            } catch (\Exception $th) {
+            }
+
+            return 'delivered';
+
+        }
     }
 
     public function deliverymanOrderHistory()
@@ -674,5 +722,15 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             });
         }
         return $query->paginate(10);
+    }
+
+    public function getDeliverymanDashboard()
+    {
+
+    }
+
+    private function getTotalCompletedOrders()
+    {
+        return Order::where('deliveryman_id', auth('api')->id());
     }
 }

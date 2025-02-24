@@ -112,6 +112,17 @@ class PermissionAdminSeeder extends Seeder
                                         'en' => 'Returned or Refunded',
                                         'ar' => 'تم إرجاعه أو استرداده'
                                     ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND_REASON->value,
+                                    'PermissionTitle' => 'Refunded Reason',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Refund Reason',
+                                        'ar' => 'سبب استرداد الأموال'
+                                    ]
                                 ]
                             ]
                         ]

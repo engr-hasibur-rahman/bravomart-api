@@ -7,6 +7,7 @@ use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Interfaces\StoreManageInterface;
 use App\Models\Banner;
+use App\Models\Customer;
 use App\Models\Store;
 use App\Models\DeliveryMan;
 use App\Models\Order;
@@ -14,6 +15,8 @@ use App\Models\OrderActivity;
 use App\Models\OrderMaster;
 use App\Models\Product;
 use App\Models\Translation;
+use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
@@ -366,6 +369,118 @@ class StoreManageRepository implements StoreManageInterface
         }
     }
 
+    /*-------------------------------------------------------------------------------------------------------------------*/
+    public function getSummaryData(string $slug)
+    {
+        $store = Store::where('slug', $slug)->first();
+        $total_order = Order::where('store_id', $store->id)->count();
+        $total_product = Product::where('store_id', $store->id)->count();
+        $total_stuff = User::where('activity_scope', 'store_level')
+            ->where('store_owner', 0)
+            ->whereNull('store_seller_id')
+            ->whereJsonContains('stores', $store->id)
+            ->count();
+        $pending_orders = Order::where('status', 'pending')->where('store_id', $store->id)->count();
+        $completed_orders = Order::where('status', 'delivered')->where('store_id', $store->id)->count();
+        $cancelled_orders = Order::where('status', 'cancelled')->where('store_id', $store->id)->count();
+        $deliveryman_not_assigned_orders = Order::where('status', 'processing')->whereNull('confirmed_by')->where('store_id', $store->id)->count();
+        $refunded_orders = Order::where('refund_status', 'refunded')->where('store_id', $store->id)->count();
+        return [
+            'total_product' => $total_product,
+            'total_order' => $total_order,
+            'total_stuff' => $total_stuff,
+            'pending_orders' => $pending_orders,
+            'completed_orders' => $completed_orders,
+            'cancelled_orders' => $cancelled_orders,
+            'deliveryman_not_assigned_orders' => $deliveryman_not_assigned_orders,
+            'refunded_orders' => $refunded_orders
+        ];
+    }
+
+    public function getSalesSummaryData(string $slug, array $filters)
+    {
+        $store = Store::where('slug', $slug)->first();
+        $query = Order::where('store_id', $store->id);
+
+        if (!empty($filters['this_week'])) {
+            $startDate = Carbon::now()->startOfWeek();
+            $endDate = Carbon::now()->endOfWeek();
+        } elseif (!empty($filters['this_month'])) {
+            $startDate = Carbon::now()->startOfMonth();
+            $endDate = Carbon::now()->endOfMonth();
+        } elseif (!empty($filters['this_year'])) {
+            $startDate = Carbon::now()->startOfYear();
+            $endDate = Carbon::now()->endOfYear();
+        } elseif (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $startDate = Carbon::parse($filters['start_date'])->startOfDay();
+            $endDate = Carbon::parse($filters['end_date'])->endOfDay();
+        }
+
+        if (isset($startDate) && isset($endDate)) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        return $query
+            ->where('status', 'delivered')
+            ->selectRaw('DATE(created_at) as date, SUM(order_amount) as total_sales')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+    }
+    public function getOtherSummaryData(string $slug)
+    {
+        $topRatedProducts = $this->getTopRatedProducts($slug);
+        $recentCompletedOrders = $this->getRecentCompletedOrders($slug);
+
+        return [
+            'top_rated_products' => $topRatedProducts,
+            'recent_completed_orders' => $recentCompletedOrders,
+        ];
+    }
+    public function getTopRatedProducts($slug)
+    {
+        $store = Store::where('slug', $slug)->first();
+        return Product::with(['variants', 'store'])
+            ->where('products.store_id', $store->id) // Prefix 'store_id' with 'products'
+            ->where('products.status', 'approved')
+            ->whereNull('products.deleted_at')
+            ->leftJoin('reviews', function ($join) {
+                $join->on('products.id', '=', 'reviews.reviewable_id')
+                    ->where('reviews.reviewable_type', '=', Product::class)
+                    ->where('reviews.status', '=', 'approved');
+            })
+            ->select([
+                'products.id',
+                'products.name',
+                'products.slug',
+                'products.image',
+                'products.store_id',
+                'products.status',
+                DB::raw('COALESCE(AVG(reviews.rating), 0) as avg_rating')
+            ])
+            ->groupBy([
+                'products.id',
+                'products.name',
+                'products.slug',
+                'products.image',
+                'products.store_id',
+                'products.status'
+            ])
+            ->orderByDesc('avg_rating')
+            ->limit(5)
+            ->get();
+    }
+    public function getRecentCompletedOrders($slug)
+    {
+        $store = Store::where('slug', $slug)->first();
+        return Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
+            ->where('store_id', $store->id)
+            ->where('status', 'delivered')
+            ->orderByDesc('delivery_completed_at')
+            ->limit(5)
+            ->get();
+    }
+
     public function storeDashboard(string $slug)
     {
         $store = $this->checkStoreBelongsToSeller($slug);
@@ -374,7 +489,6 @@ class StoreManageRepository implements StoreManageInterface
         $store['orders'] = $this->getStoreWiseOrders($store->id);
         $store['recent_orders'] = $this->getStoreWiseRecentOrders($store->id);
         $store['best_selling'] = $this->getBestSellingProduct($store->id);
-        $store['deliverymen'] = $this->storeWiseDeliveryman($store->id);
         return $store;
     }
 
@@ -411,20 +525,19 @@ class StoreManageRepository implements StoreManageInterface
 
     private function getBestSellingProduct(int $storeId)
     {
-        $bestSellingProducts = Product::where('store_id', $storeId)
+        return Product::where('store_id', $storeId)
             ->where('status', 'approved')
             ->where('deleted_at', null)
             ->orderByDesc('order_count')
             ->limit(5)
             ->get();
-        return $bestSellingProducts;
     }
 
     private function getStoreWiseOrders(int $storeId)
     {
         if ($storeId) {
-            $totalOrders = OrderMaster::where('store_id', $storeId)->count();
-            $pendingOrders = OrderMaster::where('store_id', $storeId)->where('status', 'pending')->count();
+            $totalOrders = Order::where('store_id', $storeId)->count();
+            $pendingOrders = Order::where('store_id', $storeId)->where('status', 'pending')->count();
             return [
                 'totalOrders' => $totalOrders,
                 'pendingOrders' => $pendingOrders,
@@ -437,7 +550,7 @@ class StoreManageRepository implements StoreManageInterface
     private function getStoreWiseRecentOrders(int $storeId)
     {
         if ($storeId) {
-            $recentOrders = OrderMaster::where('store_id', $storeId)->latest()->take(5)->get();
+            $recentOrders = Order::where('store_id', $storeId)->latest()->take(5)->get();
             return $recentOrders;
         } else {
             return [];

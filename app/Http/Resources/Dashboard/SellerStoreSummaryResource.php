@@ -5,7 +5,7 @@ namespace App\Http\Resources\Dashboard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SummaryResource extends JsonResource
+class SellerStoreSummaryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,16 +16,6 @@ class SummaryResource extends JsonResource
     {
         return [
             'summary' => [
-                'store' => [
-                    'icon' => 'store-icon',
-                    'title' => 'Total Store',
-                    'count' => $this->total_store
-                ],
-                'store_owner' => [
-                    'icon' => 'user-icon',
-                    'title' => 'Total Seller',
-                    'count' => $this->total_seller
-                ],
                 'product' => [
                     'icon' => 'product-icon',
                     'title' => 'Total Product',
@@ -35,11 +25,6 @@ class SummaryResource extends JsonResource
                     'icon' => 'order-icon',
                     'title' => 'Total Order',
                     'count' => $this->total_order
-                ],
-                'customer' => [
-                    'icon' => 'customer-icon',
-                    'title' => 'Total Customer',
-                    'count' => $this->total_customer
                 ],
                 'staff' => [
                     'icon' => 'staff-icon',
