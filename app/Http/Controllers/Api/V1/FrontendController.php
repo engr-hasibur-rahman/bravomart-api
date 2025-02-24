@@ -22,6 +22,7 @@ use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
+use App\Http\Resources\Order\OrderRefundReasonResource;
 use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\FlashSaleAllProductPublicResource;
 use App\Http\Resources\Product\FlashSaleWithProductPublicResource;
@@ -43,6 +44,7 @@ use App\Interfaces\AreaManageInterface;
 use App\Interfaces\BannerManageInterface;
 use App\Interfaces\CityManageInterface;
 use App\Interfaces\CountryManageInterface;
+use App\Interfaces\OrderRefundInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
@@ -73,7 +75,8 @@ class FrontendController extends Controller
         protected AreaManageInterface    $areaRepo,
         protected BannerManageInterface  $bannerRepo,
         protected ProductManageInterface $productRepo,
-        protected FlashSaleService       $flashSaleService
+        protected FlashSaleService       $flashSaleService,
+        protected OrderRefundInterface   $orderRefundRepo
     )
     {
 
@@ -1021,5 +1024,18 @@ class FrontendController extends Controller
     {
         $customers = Customer::where('status', 1)->get();
         return response()->json(CustomerPublicResource::collection($customers));
+    }
+
+    public function allOrderRefundReason(Request $request)
+    {
+        $filters = [
+            'per_page' => $request->per_page,
+            'search' => $request->search,
+        ];
+        $reasons = $this->orderRefundRepo->order_refund_reason_list($filters);
+        return response()->json([
+            'data' => OrderRefundReasonResource::collection($reasons),
+            'meta' => new PaginationResource($reasons)
+        ], 200);
     }
 }

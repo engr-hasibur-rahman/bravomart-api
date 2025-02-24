@@ -95,16 +95,4 @@ class SellerStoreOrderRefundManageController extends Controller
             ], 500);
         }
     }
-    public function allOrderRefundReason(Request $request)
-    {
-        $filters = [
-            'per_page' => $request->per_page,
-            'search' => $request->search,
-        ];
-        $reasons = $this->orderRefundRepo->order_refund_reason_list($filters);
-        return response()->json([
-            'data' => OrderRefundReasonResource::collection($reasons),
-            'meta' => new PaginationResource($reasons)
-        ], 200);
-    }
 }
