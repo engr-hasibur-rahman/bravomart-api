@@ -92,10 +92,11 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND->value,
+                                    'PermissionName' => PermissionKey::SELLER_ORDERS_RETURNED_OR_REFUND_REQUEST->value,
                                     'PermissionTitle' => 'Returned or Refunded',
                                     'activity_scope' => 'store_level',
                                     'icon' => '',
+                                    'options' => ['view'],
                                     'translations' => [
                                         'en' => 'Returned or Refunded',
                                         'ar' => 'تم إرجاعه أو استرداده'

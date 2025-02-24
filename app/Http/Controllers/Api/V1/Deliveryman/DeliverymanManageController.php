@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Deliveryman;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\DeliverymanManageInterface;
+use App\Models\DeliveryMan;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -40,6 +41,10 @@ class DeliverymanManageController extends Controller
                 'activity_scope' => 'delivery_level',
                 'store_owner' => 0,
                 'status' => 1,
+            ]);
+            $user_details = Deliveryman::create([
+                'user_id' => $user->id,
+                'status' => 'approved',
             ]);
 
             // Assign roles to the user
@@ -131,17 +136,4 @@ class DeliverymanManageController extends Controller
             ], 500);
         }
     }
-
-    public function dashboard()
-    {
-        $totalOrders = 0;
-        $totalDelivered = 0;
-        return response()->json([
-            'totalOrders' => $totalOrders,
-            'totalDelivered' => $totalDelivered,
-        ]);
-    }
-
-
-
 }
