@@ -267,7 +267,7 @@ enum PermissionKey: string
 
     //=============== Seller Order Manger ====================
     case SELLER_STORE_ORDER_MANAGE = '/seller/store/orders';
-    case SELLER_ORDERS_RETURNED_OR_REFUND_REQUEST = '/seller/orders/refund-request';
+    case SELLER_ORDERS_RETURNED_OR_REFUND_REQUEST = '/seller/store/orders/refund-request';
     case SELLER_ORDERS_REVIEWS_MANAGE = '/seller/orders/reviews';
     //====================== Product Authors (For Book Only)
     case SELLER_PRODUCT_AUTHORS_MANAGE = '/seller/product/author/list';

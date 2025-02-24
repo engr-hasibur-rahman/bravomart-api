@@ -108,6 +108,8 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/flash-deal-products', [FrontendController::class, 'flashDealProducts']);
     Route::get('/product-suggestion', [FrontendController::class, 'getSearchSuggestions']);
     Route::get('/keyword-suggestion', [FrontendController::class, 'getKeywordSuggestions']);
+    Route::get('/orders/refund-reason-list', [FrontendController::class, 'allOrderRefundReason']);
+
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);
 
     // home page footer api route
