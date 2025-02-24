@@ -13,25 +13,15 @@ class DynamicEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subjectLine;
-    public $template;
     public $data;
 
-    public function __construct($subjectLine, $template, $data)
+    public function __construct($args)
     {
-        $this->subjectLine = $subjectLine;
-        $this->template = $template;
-        $this->data = $data;
+        $this->data = $args;
     }
 
     public function build()
     {
-        $processedTemplate = $this->template;
-        // Replace placeholders with actual data
-        foreach ($this->data as $key => $value) {
-            $processedTemplate = str_replace("@$key", e($value), $processedTemplate);
-        }
-        return $this->subject($this->subjectLine)
-            ->html($processedTemplate);
+        return $this->from(com_option_get('com_site_global_email'), com_option_get('com_site_title'))->subject($this->data['subject'])->markdown('emails.dynamic-template');
     }
 }
