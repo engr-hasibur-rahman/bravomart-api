@@ -4,28 +4,31 @@ namespace App\Repositories;
 
 use App\Enums\WalletOwnerType;
 use App\Interfaces\DeliverymanManageInterface;
-use App\Jobs\SendDynamicEmailJob;
+use App\Mail\DynamicEmail;
 use App\Models\DeliveryMan;
 use App\Models\EmailTemplate;
 use App\Models\Order;
 use App\Models\OrderDeliveryHistory;
-use App\Models\OrderRefundReason;
 use App\Models\SystemCommission;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\VehicleType;
+use App\Services\Order\OrderManageNotificationService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletTransaction;
 
 class DeliverymanManageRepository implements DeliverymanManageInterface
 {
+    protected $orderManageNotificationService;
 
-    public function __construct(protected VehicleType $vehicleType, protected Translation $translation)
+    public function __construct(protected VehicleType $vehicleType, protected Translation $translation, OrderManageNotificationService $orderManageNotificationService)
     {
+        $this->orderManageNotificationService = $orderManageNotificationService;
     }
 
     public function translationKeys(): mixed
@@ -495,12 +498,12 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function orderChangeStatus(string $status, int $order_id)
     {
-        $deliveryman = auth('api')->user();
-        $order = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store')->find($order_id);
-        if ($status == 'delivered') {
-            if ($order->status === 'delivered') {
-                return 'already delivered';
-            }
+           $deliveryman = auth('api')->user();
+            $order = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store', 'deliveryman')->find($order_id);
+            if ($status == 'delivered') {
+                if ($order->status === 'delivered') {
+                    return 'already delivered';
+                }
 
 //                $order->update([
 //                    'status' => 'delivered',
@@ -531,6 +534,66 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     'purpose' => 'Delivery Earnings',
                     'status' => 1,
                 ]);
+
+                // Deliveryman wallet update
+                $wallet = Wallet::where('owner_id', $deliveryman->id)
+                    ->where('owner_type', WalletOwnerType::DELIVERYMAN->value)
+                    ->first();
+
+                if ($wallet) {
+                    // Update wallet balance
+                    $wallet->balance += $order->delivery_charge_deliveryman_earning; // Add earnings to the balance
+                    $wallet->save();
+
+                    // Create wallet transaction history
+                    WalletTransaction::create([
+                        'wallet_id' => $wallet->id,
+                        'amount' => $order->delivery_charge_deliveryman_earning,
+                        'type' => 'credit',
+                        'purpose' => 'Delivery Earnings',
+                        'status' => 1,
+                    ]);
+                }
+
+                // send mail and notification
+                $customer_email = $order->orderAddress?->email ?? $order->orderMaster?->customer?->email;
+                $store_email = $order->store?->email;
+                $system_global_email = com_option_get('com_site_email');
+                $delivery_man = $order->deliveryman?->email;
+
+                // order notification
+                $this->orderManageNotificationService->createOrderNotification($order->id);
+
+                // mail send
+                try {
+                    $email_template_deliveryman = EmailTemplate::where('type', 'deliveryman-earning')->where('status', 1)->first();
+                    $email_template_order_delivered = EmailTemplate::where('type', 'order-status-delivered')->where('status', 1)->first();
+                    // customer, store and admin
+                    $customer_subject = $email_template_order_delivered->subject;
+                    $store_subject = $email_template_order_delivered->subject;
+                    $admin_subject = $email_template_order_delivered->subject;
+                    $customer_message = $email_template_order_delivered->body;
+                    $store_message = $email_template_order_delivered->body;
+                    $admin_message = $email_template_order_delivered->body;
+                    // deliveryman
+                    $deliveryman_subject = $email_template_deliveryman->subject;
+                    $deliveryman_message = $email_template_deliveryman->body;
+                    $customer_message = str_replace(["@customer_name","@order_id","@order_amount"],[$order->orderMaster?->customer?->full_name,$order->id,$order->order_amount,$order->delivery_charge_deliveryman_earning],$customer_message);
+                    $store_message = str_replace(["@name","@order_id","@order_amount"],[$order->store?->name,$order->id,$order->order_amount,$order->delivery_charge_deliveryman_earning],$store_message);
+                    $admin_message = str_replace(["@order_id","@order_amount","@earnings_amount"],[$order->id,$order->order_amount,$order->delivery_charge_deliveryman_earning],$admin_message);
+                    $deliveryman_message = str_replace(["@name","@order_id","@order_amount","@earnings_amount"],[auth('api')->user()->full_name,$order->id,$order->order_amount,$order->delivery_charge_deliveryman_earning],$deliveryman_message);
+                    // customer
+                    Mail::to($customer_email)->send(new DynamicEmail([ 'subject' => $customer_subject,'message' => $customer_message]));
+                    // store
+                    Mail::to($store_email)->send(new DynamicEmail([ 'subject' => $store_subject,'message' => $store_message]));
+                    // admin
+                    Mail::to($system_global_email)->send(new DynamicEmail([ 'subject' => $admin_subject,'message' => $admin_message]));
+                    // deliveryman
+                    Mail::to($delivery_man)->send(new DynamicEmail([ 'subject' => $deliveryman_subject,'message' => $deliveryman_message]));
+                }catch (\Exception $th) { }
+
+                return 'delivered';
+
             }
 
             // send mail and notification
