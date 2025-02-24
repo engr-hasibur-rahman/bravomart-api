@@ -52,7 +52,7 @@ class AdminWithdrawRequestManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|integer|exists:wallet_withdrawals_transactions,id',
-            'attachment' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
         ]);
 
         if ($validator->fails()) {
