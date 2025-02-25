@@ -12,4 +12,14 @@ class EmailTemplate extends Model
         'status' => 'string',
         'body' => 'string',
     ];
+    public $translationKeys = [
+        'name',
+        'subject',
+        'body',
+    ];
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 }
