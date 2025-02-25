@@ -532,14 +532,15 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 'deliveryman_id' => $deliveryman->id,
                 'status' => $status,
             ]);
-            OrderActivity::create([
-                'order_id' => $order_id,
-                'activity_from' => 'deliveryman',
-                'activity_type' => OrderActivityType::CASH_COLLECTION->value,
-                'ref_id' => $deliveryman->id,
-                'activity_value' => $order->order_amount
-            ]);
-
+            if ($order->orderMaster->payment_gateway === 'cash_on_delivery') {
+                OrderActivity::create([
+                    'order_id' => $order_id,
+                    'activity_from' => 'deliveryman',
+                    'activity_type' => OrderActivityType::CASH_COLLECTION->value,
+                    'ref_id' => $deliveryman->id,
+                    'activity_value' => $order->order_amount
+                ]);
+            }
             // Deliveryman wallet update
             $wallet = Wallet::where('owner_id', $deliveryman->id)
                 ->where('owner_type', WalletOwnerType::DELIVERYMAN->value)
