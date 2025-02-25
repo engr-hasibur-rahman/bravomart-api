@@ -3,7 +3,8 @@
 namespace App\Services\Order;
 
 use App\Models\Order;
-use App\Models\Service;
+use App\Models\UniversalNotification;
+use App\Models\User;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
@@ -13,7 +14,7 @@ class OrderManageNotificationService
     public function createOrderNotification($last_order_id)
     {
         // Order with relationship data get
-        $order_details = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store', 'deliveryman')
+        $order_details = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store.seller', 'deliveryman')
             ->find($last_order_id);
 
         // if order not found
@@ -21,95 +22,117 @@ class OrderManageNotificationService
             return;
         }
 
-        // admin for order notification
-        try {
-            admin_notification($last_order_id, $order_details->user_id, 'order', __('New Order Created'), 'unread');
-        }catch (\Exception $exception){}
+        // Notification Data
+        $title = 'New Order Update';
+        $message = 'You have a new update for Order #' . $order_details->id;
+        $data = ['order_id' => $order_details->id];
 
-        // Check the main order user's type and create a notification if the user type is 1
-        $main_user = $order_details->client;
-        if ($main_user && $main_user->type === 1) {
-            $client_firebase_token = $main_user->firebase_token;
+        // create notification for every one
+        $this->notifyAdmin($title, $message, $data);
+        $this->notifyStore($order_details, $title, $message, $data);
+        $this->notifyCustomer($order_details, $title, $message, $data);
+        $this->notifyDeliveryman($order_details, $title, $message, $data);
 
-            if (!empty($client_firebase_token) && !is_array($client_firebase_token)) {
-                $client_token = [$client_firebase_token];
-            }
+        // Customer notification
+        $this->sendOrderNotification(
+            $order_details->orderMaster?->customer,
+            'customer_id',
+            $order_details->orderMaster?->customer_id ?? 0,
+            $last_order_id,
+            __('Order Placed Successfully'),
+            __('Your order ID: # :id has been placed successfully.', ['id' => $last_order_id])
+        );
 
-            $client_title = __('New Order Created.');
-            $client_body = __('Your order ID: # :id has been placed successfully.', ['id' => $last_order_id]);
-            $this->sendUserNotification($last_order_id, $main_user->id, $client_body);
+        // Seller notification
+        $this->sendOrderNotification(
+            $order_details->store?->seller,
+            'seller_id',
+            $order_details->store?->store_seller_id ?? 0,
+            $last_order_id,
+            __('New Order Received'),
+            __('You have received a new order. Order ID: # :id.', ['id' => $last_order_id])
+        );
 
-            // Send notifications to all providers in one go
-            if (!empty($client_token)) {
-                $client_notification_data = [
-                    "title" => $client_title,
-                    "detailed_title" => "-",
-                    "identify" => $last_order_id, // identify
-                    "sub_order_id" => 0, // sub order id
-                    "user_id" => $main_user->id ?? 0, // client id
-                    "body" => $client_body,
-                    "description" => "-",
-                    "type" => "order",
-                    "sound" => "default",
-                    "screen" => "-"
-                ];
-                $this->sendFirebaseNotification($client_token, $client_title, $client_body, $client_notification_data);
-            }
+        // Deliveryman notification
+        $this->sendOrderNotification(
+            $order_details->deliveryman,
+            'deliveryman_id',
+            $order_details->deliveryman?->id ?? 0,
+            $last_order_id,
+            __('New Delivery Assigned'),
+            __('A new delivery has been assigned. Order ID: # :id.', ['id' => $last_order_id])
+        );
 
+    }
+
+    private function sendOrderNotification($recipient, $idKey, $idValue, $orderId, $title, $body)
+    {
+        if (empty($recipient)) {
+            return;
         }
+        $token = is_array($recipient->firebase_token) ? $recipient->firebase_token : [$recipient->firebase_token];
+        $notification_data = [
+            "title" => $title,
+            "detailed_title" => "-",
+            "order_id" => $orderId,
+            $idKey => $idValue,
+            "body" => $body,
+            "description" => "-",
+            "type" => "order",
+            "sound" => "default",
+            "screen" => "-"
+        ];
+        $this->sendFirebaseNotification($token, $title, $body, $notification_data);
+    }
 
 
-        // Create notifications for each provider associated with the sub-orders
-        foreach ($order_details->subOrders as $subOrder) {
-            // If the sub-order has an associated admin, send a notification to the admin
-            if (!empty($subOrder->admin_id) && !is_null($subOrder->admin_id)) {
-                admin_notification($last_order_id, $subOrder->user_id, 'admin-order',__('You have a new order.'), 'unread');
-            }else{
-                if($subOrder->provider){
-                    if ($subOrder->provider) {
-                        // Check if the provider's firebase token is set and is not empty
-                        if (!empty($subOrder->provider?->firebase_token)) {
-                            // Always treat firebase_token as a string
-                            $token = $subOrder->provider?->firebase_token;
-                            if (!empty($token) && !is_null($token)) {
-                                $provider_token = [$token];
-                                $provider_title = __('New Order Created');
-                                $provider_body = __('Your order ID: # :id has been created successfully.', ['id' => $subOrder->id]);
+    // Notify Admins
+    protected function notifyAdmin($title, $message, $data)
+    {
+        $admins = User::where('activity_scope', 'system_level')->get();
 
-                                $provider_notification_data = [
-                                    "title" => $provider_title,
-                                    "detailed_title" => "-",
-                                    "identify" => $subOrder->id, // identify
-                                    "sub_order_id" => 0, // sub order id
-                                    "user_id" => $subOrder->provider?->id ?? 0, // provider_id
-                                    "body" => $provider_body,
-                                    "description" => "-",
-                                    "type" => "order",
-                                    "sound" => "default",
-                                    "screen" => "-"
-                                ];
-
-                                $this->sendFirebaseNotification($provider_token, $provider_title, $provider_body, $provider_notification_data);
-                            }
-                        }
-                        // Notify the user for the provider
-                        $this->sendUserNotification($subOrder->id, $subOrder->provider_id, $provider_body);
-                    }
-                }
-
-            }
+        foreach ($admins as $admin) {
+            $this->sendNotification($admin->id, 'admin', $title, $message, $data);
         }
     }
-
-    private function sendUserNotification($order_id, $user_id, $message)
+    // Notify Store Owner
+    protected function notifyStore($order_details, $title, $message, $data)
     {
-        user_notification($order_id, $user_id, 'order', $message, 'unread');
+        if ($order_details->store) {
+            $this->sendNotification($order_details->store->owner_id, 'store', $title, $message, $data);
+        }
     }
 
-    private function sendAdminNotification($order_id, $admin_id, $message)
+    // Notify Customer
+    protected function notifyCustomer($order_details, $title, $message, $data)
     {
-        admin_notification($order_id, $admin_id, 'order', $message, 'unread');
+        if ($order_details->orderMaster && $order_details->orderMaster->customer) {
+            $this->sendNotification($order_details->orderMaster->customer->id, 'customer', $title, $message, $data);
+        }
     }
+
+    // Notify Deliveryman
+    protected function notifyDeliveryman($order_details, $title, $message, $data)
+    {
+        if ($order_details->deliveryman) {
+            $this->sendNotification($order_details->deliveryman->id, 'deliveryman', $title, $message, $data);
+        }
+    }
+
+    // Send and Store Notification
+    protected function sendNotification($user_id, $notifiable_type, $title, $message, $data)
+    {
+        // Store notification in database
+        UniversalNotification::create([
+            'user_id'        => $user_id,
+            'title'          => $title,
+            'message'        => $message,
+            'data'           => json_encode($data),
+            'notifiable_type' => $notifiable_type,
+            'status'         => 'unread',
+        ]);
+    }
+
 
     public function sendFirebaseNotification(array $firebaseTokens, $title, $body, $data)
     {
@@ -160,133 +183,4 @@ class OrderManageNotificationService
 
         }catch (\Exception $exception){}
     }
-
-    public function orderStatusChanceNotification($sub_order, $provider = null){
-        // Map status codes to title and body messages
-        $statusMessages = [
-            0 => [
-                'title' => __('Order ID #:order_id Pending', ['order_id' => $sub_order->order_id]),
-                'body' => __('Your order has been created successfully.')
-            ],
-            1 => [
-                'title' => __('Order ID #:order_id Active', ['order_id' => $sub_order->order_id]),
-                'body' => __('Your order has been activated successfully.')
-            ],
-            2 => [
-                'title' => __('Order ID #:order_id Completed', ['order_id' => $sub_order->order_id]),
-                'body' => __('Your order has been completed successfully.')
-            ],
-            3 => [
-                'title' => __('Order ID #:order_id Delivered', ['order_id' => $sub_order->order_id]),
-                'body' => __('Your order has been delivered successfully.')
-            ],
-            4 => [
-                'title' => __('Order ID #:order_id Cancelled', ['order_id' => $sub_order->order_id]),
-                'body' => __('Your order has been cancelled.')
-            ],
-            5 => [
-                'title' => __('Order ID #:order_id Declined', ['order_id' => $sub_order->order_id]),
-                'body' => __('Your order has been declined.')
-            ]
-        ];
-
-        // Check if the status is in the array
-        if (isset($statusMessages[$sub_order->status])) {
-            $title = $statusMessages[$sub_order->status]['title'];
-            $body = $statusMessages[$sub_order->status]['body'];
-        } else {
-            //in case status is not found
-            $title = __('Unknown Status');
-            $body = __('The status of your order is unknown.');
-        }
-
-
-        // Get client token
-        if (!empty($sub_order->client->firebase_token)) {
-            $client_token[] = $sub_order->client?->firebase_token;
-            // Prepare the dynamic data for notification
-            $client_notification_data = [
-                "title" => $title,
-                "detailed_title" => "-",
-                "identify" => $sub_order->order_id ?? 0, // identify
-                "sub_order_id" => $sub_order->id ?? 0, // identify
-                "user_id" => $sub_order->client?->id ?? 0, // user id
-                "body" => $body,
-                "description" => "-",
-                "type" => "order",
-                "sound" => "default",
-                "screen" => "-"
-            ];
-
-            // create user notification
-            user_notification($sub_order->order_id, $sub_order->client?->id, 'order', $body, 'unread');
-
-            // Check if the array has tokens and send notification
-            if (!empty($provider_token)) {
-                $this->sendFirebaseNotification($client_token, $title, $body, $client_notification_data);
-            }
-        }
-
-        // Get provider token (If a specific provider is passed, use their token)
-        if ($provider && !empty($provider->firebase_token)) {
-            $provider_token[] = $provider->firebase_token;
-
-            // Use sub_order ID in the title for the provider
-            $provider_title = __('Order ID #:sub_order_id Status Changed', ['sub_order_id' => $sub_order->id]);
-
-            // Prepare the dynamic data for notification
-            $provider_notification_data = [
-                "title" => $provider_title,
-                "detailed_title" => "-",
-                "identify" => $sub_order->id, // identify
-                "sub_order_id" => $sub_order->id ?? 0, // identify
-                "user_id" => $sub_order->client?->id ?? 0, // user id
-                "body" => $body,
-                "description" => "-",
-                "type" => "order",
-                "sound" => "default",
-                "screen" => "-"
-            ];
-
-            // create user notification
-            user_notification($sub_order->id, $provider->id ?? 0, 'order', $body, 'unread');
-
-            // Check if the array has tokens and send notification
-            if (!empty($provider_token)) {
-                $this->sendFirebaseNotification($provider_token, $provider_title, $body, $provider_notification_data);
-            }
-
-        } elseif (!empty($sub_order->provider?->firebase_token)) {
-
-            $provider_token[] = $sub_order->provider->firebase_token;
-
-            // Use sub_order ID in the title for the provider
-            $provider_title = __('Order ID #:sub_order_id Status Changed', ['sub_order_id' => $sub_order->id]);
-
-            // Prepare the dynamic data for notification
-            $provider_notification_data = [
-                "title" => $provider_title,
-                "detailed_title" => "-",
-                "identify" => $sub_order->id, // identify
-                "sub_order_id" => $sub_order->id ?? 0, // identify
-                "user_id" => $sub_order->client?->id ?? 0, // user id
-                "body" => $body,
-                "description" => "-",
-                "type" => "order",
-                "sound" => "default",
-                "screen" => "-"
-            ];
-
-            // create user notification
-            user_notification($sub_order->id, $sub_order->provider?->id, 'order', $body, 'unread');
-
-            // Check if the array has tokens and send notification
-            if (!empty($provider_token)) {
-                $this->sendFirebaseNotification($provider_token, $provider_title, $body, $provider_notification_data);
-            }
-        }
-
-
-    }
-
 }
