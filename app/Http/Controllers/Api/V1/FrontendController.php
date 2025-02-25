@@ -588,6 +588,9 @@ class FrontendController extends Controller
                 $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
             }
         }
+        if (isset($request->type)) {
+            $query->where('type', $request->type);
+        }
 
         // Apply sorting
         if (isset($request->sort)) {
