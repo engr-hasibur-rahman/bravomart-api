@@ -171,6 +171,8 @@ class ProductSeeder extends Seeder
             ]);
         }
 
+
+
             $products = Product::all();
             $units = Unit::all();
 

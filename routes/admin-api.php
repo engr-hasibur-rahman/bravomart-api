@@ -556,7 +556,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         /*--------------------- System management ----------------------------*/
-        Route::group(['prefix' => 'system-management'], function () {
+        Route::group(['prefix' => 'system-management/'], function () {
             Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings'])->middleware('permission:' . PermissionKey::GENERAL_SETTINGS->value);
             Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization'])->middleware('permission:' . PermissionKey::FOOTER_CUSTOMIZATION->value);
             Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings'])->middleware('permission:' . PermissionKey::MAINTENANCE_SETTINGS->value);
@@ -573,14 +573,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('/email-settings/test-mail-send', [EmailSettingsController::class, 'testMailSend']);
             });
             // email settings
-            Route::group(['middleware' => ['permission:' . PermissionKey::EMAIL_TEMPLATES->value]], function () {
-                Route::group(['prefix' => 'email-template/'], function () {
-                    Route::get('/', [EmailTemplateManageController::class, 'allEmailTemplate']);
-                    Route::post('/add', [EmailTemplateManageController::class, 'addEmailTemplate']);
-                    Route::post('/edit', [EmailTemplateManageController::class, 'editEmailTemplate']);
-                    Route::post('/delete', [EmailTemplateManageController::class, 'deleteEmailTemplate']);
-                    Route::post('/change-status', [EmailTemplateManageController::class, 'changeStatus']);
-                });
+
+            Route::group(['prefix' => 'email-settings/email-template/', 'middleware' => 'permission:' . PermissionKey::EMAIL_TEMPLATES->value], function () {
+                Route::get('list', [EmailTemplateManageController::class, 'allEmailTemplate']);
+                Route::post('add', [EmailTemplateManageController::class, 'addEmailTemplate']);
+                Route::post('edit', [EmailTemplateManageController::class, 'editEmailTemplate']);
+                Route::post('delete', [EmailTemplateManageController::class, 'deleteEmailTemplate']);
+                Route::post('change-status', [EmailTemplateManageController::class, 'changeStatus']);
             });
         });
 
