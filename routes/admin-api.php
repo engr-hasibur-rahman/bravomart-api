@@ -577,6 +577,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['prefix' => 'email-settings/email-template/', 'middleware' => 'permission:' . PermissionKey::EMAIL_TEMPLATES->value], function () {
                 Route::get('list', [EmailTemplateManageController::class, 'allEmailTemplate']);
                 Route::post('add', [EmailTemplateManageController::class, 'addEmailTemplate']);
+                Route::get('details/{id}', [EmailTemplateManageController::class, 'emailTemplateDetails']);
                 Route::post('edit', [EmailTemplateManageController::class, 'editEmailTemplate']);
                 Route::post('delete', [EmailTemplateManageController::class, 'deleteEmailTemplate']);
                 Route::post('change-status', [EmailTemplateManageController::class, 'changeStatus']);

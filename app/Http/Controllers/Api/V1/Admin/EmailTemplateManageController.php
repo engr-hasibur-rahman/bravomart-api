@@ -29,13 +29,13 @@ class EmailTemplateManageController extends Controller
         }
         $emailTemplates = $query->get();
 
-        if ($emailTemplates->count() > 0){
+        if ($emailTemplates->count() > 0) {
             return response()->json([
                 'data' => $emailTemplates
             ]);
-        }else{
+        } else {
             return response()->json([
-                'message' =>  'No email templates found',
+                'message' => 'No email templates found',
             ], 404);
         }
 
@@ -66,7 +66,25 @@ class EmailTemplateManageController extends Controller
 
         return response()->json([
             'message' => 'Email template added successfully',
-        ],201);
+        ], 201);
+    }
+
+    public function emailTemplateDetails(Request $request)
+    {
+        $validator = Validator::make(['id' => $request->id], [
+            'id' => 'required|integer|exists:email_templates,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+        $email_template = EmailTemplate::find($request->id);
+        if ($email_template) {
+            return response()->json($email_template, 200);
+        } else {
+            return response()->json([
+                'message' => __('data_not_found'),
+            ], 404);
+        }
     }
 
     public function editEmailTemplate(Request $request)
@@ -89,7 +107,7 @@ class EmailTemplateManageController extends Controller
         $emailTemplate->update($request->only(['name', 'subject', 'body', 'status']));
         return response()->json([
             'message' => 'Email template updated successfully',
-        ],201);
+        ], 201);
     }
 
     public function deleteEmailTemplate(Request $request)
