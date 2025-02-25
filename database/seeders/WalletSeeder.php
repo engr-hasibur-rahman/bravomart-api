@@ -55,5 +55,13 @@ class WalletSeeder extends Seeder
             "created_at" => Carbon::now(),
             "updated_at" => Carbon::now(),
         ]);
+        Wallet::create([
+            "owner_id" => 6,
+            "owner_type" => 'App\Models\User',
+            "balance" => 0.00,
+            "status" => 1,
+            "created_at" => Carbon::now(),
+            "updated_at" => Carbon::now(),
+        ]);
     }
 }
