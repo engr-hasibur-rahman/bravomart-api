@@ -449,7 +449,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             return false;
         }
         $deliveryman = auth('api')->user();
-        $order_requests = Order::with(['orderDeliveryHistory', 'orderMaster', 'store','orderDetail'])
+        $order_requests = Order::with(['orderDeliveryHistory', 'orderMaster', 'store', 'orderDetail'])
             ->where('confirmed_by', $deliveryman->id)
             ->whereDoesntHave('orderDeliveryHistory', function ($query) use ($deliveryman) {
                 $query->where('deliveryman_id', $deliveryman->id);
@@ -760,6 +760,9 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         $inHand = $totalCashCollection - $totalCashDeposit;
         $activeOrders = $this->getActiveOrders();
         $wallet = $this->wallet();
+        $weeklyEarnings = $this->earnings('this_week');
+        $monthlyEarnings = $this->earnings('this_month');
+        $yearlyEarnings = $this->earnings('this_year');
         return [
             'total_completed_orders' => $total_completed_orders,
             'ongoing_orders' => $ongoing_orders,
@@ -770,6 +773,9 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'in_hand' => $inHand,
             'active_orders' => $activeOrders,
             'wallet' => $wallet,
+            'weekly_earnings' => $weeklyEarnings,
+            'monthly_earnings' => $monthlyEarnings,
+            'yearly_earnings' => $yearlyEarnings,
         ];
     }
 
@@ -836,5 +842,29 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             ->where('status', 1)
             ->first();
     }
+
+    private function earnings($period = 'this_week')
+    {
+        $query = OrderDeliveryHistory::where('status', 'delivered')
+            ->where('deliveryman_id', $this->deliveryman->id)
+            ->whereHas('order', function ($query) {
+                $query->whereNotNull('delivery_charge_admin'); // Ensure admin charge exists
+            })
+            ->with('order');
+
+        // Apply date filtering based on the period
+        if ($period === 'this_week') {
+            $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+        } elseif ($period === 'this_month') {
+            $query->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+        } elseif ($period === 'this_year') {
+            $query->whereBetween('created_at', [now()->startOfYear(), now()->endOfYear()]);
+        }
+
+        return $query->get()->sum(function ($history) {
+            return $history->order->delivery_charge_admin ?? 0; // Sum admin delivery charge
+        });
+    }
+
 
 }
