@@ -119,6 +119,20 @@ class OrderManageNotificationService
         }
     }
 
+    // Send and Store Notification
+    protected function sendNotification($user_id, $notifiable_type, $title, $message, $data)
+    {
+        // Store notification in database
+        UniversalNotification::create([
+            'user_id'        => $user_id,
+            'title'          => $title,
+            'message'        => $message,
+            'data'           => json_encode($data),
+            'notifiable_type' => $notifiable_type,
+            'status'         => 'unread',
+        ]);
+    }
+
 
     public function sendFirebaseNotification(array $firebaseTokens, $title, $body, $data)
     {
