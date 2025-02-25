@@ -631,6 +631,215 @@ class ProductSeeder extends Seeder
             ]);
         }
 
+        $products = [];
+        $product_names = [
+            "Smartphone Pro Max", "Wireless Earbuds", "4K LED TV", "Smartwatch Series 5", "Bluetooth Speaker",
+            "Wireless Charger", "Action Camera", "Laptop Sleeve", "Noise Cancelling Headphones", "Portable Power Bank",
+            "Gaming Mouse", "Ergonomic Keyboard", "Smart Thermostat", "LED Desk Lamp", "Mini Projector",
+            "Fitness Tracker", "Electric Toothbrush", "Digital Camera", "Smart Home Hub", "Robot Vacuum Cleaner"
+        ];
+
+        $brands = ['Apple', 'Samsung', 'Sony', 'Bose', 'GoPro', 'LG', 'Fitbit', 'Canon', 'JBL', 'Dell'];
+        $categories = ['Smartphones', 'Audio', 'Wearables', 'Home Appliances', 'Gaming', 'Tech Accessories', 'Cameras'];
+        foreach ($categories as $category) {
+            $products[] = ProductCategory::create([
+                'category_name' => $category,
+                'category_slug' => Str::slug($category),
+                'category_name_paths' => $category,
+                'category_level' => 1,
+                'is_featured' => 1,
+                'meta_title' => $category . ' Meta Title',
+                'meta_description' => $category . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
+                'display_order' => 1,
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        $store_info = Store::select('id')->where('store_type', StoreType::GADGET->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', $categories[array_rand($categories)])->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'gadgets',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} offer the latest technology and superior performance for your daily needs.",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 3), 'warranty_text' => 'Years Warranty']
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days if unused and in original condition.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
+                'delivery_time_text' => 'Delivery may be delayed due to high demand during holidays.',
+                'max_cart_qty' => rand(1, 10),
+                'order_count' => rand(0, 1000),
+                'views' => rand(0, 5000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and enjoy the latest tech products delivered to your doorstep.",
+                'meta_keywords' => "gadgets, {$product_names[$i]}, tech, $i",
+                'meta_image' => "gadget-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(30),
+            ]);
+        }
+
+        $products = [];
+        $product_names = [
+            "Premium Dog Food", "Organic Cat Treats", "Fresh Pet Salmon", "Bird Seed Mix", "Cat Litter",
+            "Pet Shampoo", "Dog Collar", "Pet Carrier Bag", "Interactive Dog Toy", "Pet Water Fountain",
+            "Catnip Toy", "Bird Cage", "Pet Bed", "Pet Leash", "Chewable Dog Bone",
+            "Pet Sweater", "Pet Nail Clipper", "Fish Tank Gravel", "Pet Brush", "Pet Dental Chews"
+        ];
+
+        $brands = ['Nature\'s Best', 'Green Paws', 'Healthy Pet', 'Happy Tails', 'Fresh Choice', 'PetCo'];
+        $categories = ['Dog Supplies', 'Cat Supplies', 'Bird Supplies', 'Pet Grooming', 'Fish Supplies', 'Pet Accessories'];
+        foreach ($categories as $category) {
+            $products[] = ProductCategory::create([
+                'category_name' => $category,
+                'category_slug' => Str::slug($category),
+                'category_name_paths' => $category,
+                'category_level' => 1,
+                'is_featured' => 1,
+                'meta_title' => $category . ' Meta Title',
+                'meta_description' => $category . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
+                'display_order' => 1,
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        $store_info = Store::select('id')->where('store_type', StoreType::ANIMALS_PET->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', $categories[array_rand($categories)])->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'animals-pet',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} are of the highest quality, perfect for your pet's comfort and care.",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 3), 'warranty_text' => 'Years Warranty']
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days if unused and in original condition.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
+                'delivery_time_text' => 'Can be delayed during holidays.',
+                'max_cart_qty' => rand(1, 10),
+                'order_count' => rand(0, 100),
+                'views' => rand(0, 1000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and get the best products for your pets delivered to your door.",
+                'meta_keywords' => "pet supplies, {$product_names[$i]}, pets, $i",
+                'meta_image' => "pet-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(30),
+            ]);
+        }
+
+        $products = [];
+        $product_names = [
+            "Fresh Salmon Fillets", "Canned Sardines", "Frozen Shrimp", "Premium Tuna Steaks", "Caviar",
+            "Fish Oil Supplement", "Smoked Salmon", "Mahi Mahi Filets", "Frozen Trout", "Dried Anchovies",
+            "Salmon Roe", "Cod Fish Fillets", "Frozen Squid Rings", "Fish Food Pellets", "Sea Bass Fillets",
+            "Clams", "Tuna Salad Mix", "Frozen Fish Fingers", "Oysters", "Crab Meat"
+        ];
+
+        $brands = ['Ocean Fresh', 'Sea Delight', 'Tidal Wave', 'Fisherman\'s Catch', 'Blue Ocean', 'Marine Treats'];
+        $categories = ['Fresh Fish', 'Frozen Fish', 'Canned Fish', 'Seafood', 'Fish Supplements', 'Fish Accessories'];
+        foreach ($categories as $category) {
+            $products[] = ProductCategory::create([
+                'category_name' => $category,
+                'category_slug' => Str::slug($category),
+                'category_name_paths' => $category,
+                'category_level' => 1,
+                'is_featured' => 1,
+                'meta_title' => $category . ' Meta Title',
+                'meta_description' => $category . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
+                'display_order' => 1,
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        $store_info = Store::select('id')->where('store_type', StoreType::FISH->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', $categories[array_rand($categories)])->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'fish',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} are fresh and of premium quality, perfect for your daily seafood cravings.",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 3), 'warranty_text' => 'Years Warranty']
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days if unused and in original condition.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
+                'delivery_time_text' => 'Can be delayed during holidays.',
+                'max_cart_qty' => rand(1, 10),
+                'order_count' => rand(0, 100),
+                'views' => rand(0, 1000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and get the freshest fish and seafood delivered to your door.",
+                'meta_keywords' => "fish, seafood, {$product_names[$i]}, fresh, $i",
+                'meta_image' => "fish-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(30),
+            ]);
+        }
 
 
 
