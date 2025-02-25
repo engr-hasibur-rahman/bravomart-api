@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Deliveryman\DeliverymanMyOrdersResource;
 use App\Interfaces\DeliverymanManageInterface;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -46,16 +47,6 @@ class DeliverymanOrderManageController extends Controller
             unauthorized_response();
         }
         $order_requests = $this->deliverymanRepo->orderRequests();
-        if (!$order_requests) {
-            return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 404);
-        }
-        if ($order_requests->isEmpty()) {
-            return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 404);
-        }
         if ($order_requests) {
             return response()->json([
                 'message' => __('messages.data_found'),
@@ -132,13 +123,28 @@ class DeliverymanOrderManageController extends Controller
         if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
             unauthorized_response();
         }
-
+        $already_cancelled_or_ignored_or_delivered = Order::with('orderDeliveryHistory')
+            ->whereHas('orderDeliveryHistory', function ($query) use ($deliveryman, $request) {
+                $query->where('deliveryman_id', $deliveryman->id)
+                    ->where('order_id', $request->id)
+                    ->where('status', '!=', 'accepted'); // Ensures status is NOT 'accepted'
+            })
+            ->exists();
+        if ($already_cancelled_or_ignored_or_delivered) {
+            return response()->json([
+                'message' => __('messages.order_already_cancelled_or_ignored_or_delivered')
+            ], 422);
+        }
         // update order delivery history
-        $success = $this->deliverymanRepo->orderChangeStatus($request->status,$request->id);
-
+        $success = $this->deliverymanRepo->orderChangeStatus($request->status, $request->id);
+        if ($success === 'order_is_not_accepted') {
+            return response()->json([
+                'message' => __('messages.order_is_not_accepted')
+            ],200);
+        }
         if ($success === 'delivered') {
             return response()->json([
-                'message' => __('messages.deliveryman_order_request_accept_successful')
+                'message' => __('messages.order_delivered_success')
             ], 200);
         } elseif ($success === 'already delivered') {
             return response()->json([

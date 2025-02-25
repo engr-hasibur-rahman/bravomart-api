@@ -86,7 +86,7 @@ return [
 
     'settings_not_created_yet' => 'Settings not created yet!',
 
-    'deliveryman_order_request_success' => 'Order request accepted successfully!',
+    'deliveryman_order_request_accept_successful' => 'Order request accepted successfully!',
     'deliveryman_order_request_ignore_successful' => 'Order request ignored successfully!',
     'deliveryman_order_already_taken' => 'This order has been already confirmed by other deliveryman!',
     'deliveryman_assign_successful' => 'Deliveryman assigned successfully!',
@@ -110,7 +110,10 @@ return [
     'order_refund_request_success' => 'Order refund requested successfully!',
     'order_refund_request_failed' => 'Order refund request failed!',
     'order_already_request_for_refund' => 'Order already requested for refund!',
-    'order_is_not_delivered' => 'Order is not delivered yet!'
+    'order_is_not_delivered' => 'Order is not delivered yet!',
+    'order_delivered_success' => 'Order delivered successfully!',
+    'order_already_cancelled_or_ignored_or_delivered' => 'This order is already either cancelled or ignored or delivered!',
+    'order_is_not_accepted' => 'This order is not accepted yet!',
 
 
 ];
