@@ -93,15 +93,15 @@ class ProductSeeder extends Seeder
 
         $products = [];
         $product_names = [
-            "Fresh Apples", "Organic Bananas", "Whole Wheat Bread", "Almond Milk", "Organic Eggs", 
+            "Fresh Apples", "Organic Bananas", "Whole Wheat Bread", "Almond Milk", "Organic Eggs",
             "Fresh Carrots", "Tomato Sauce", "Instant Oatmeal", "Coconut Oil", "Frozen Chicken Breasts",
             "Rice Basmati", "Granola Bars", "Grape Juice", "Canned Tuna", "Cheddar Cheese",
             "Greek Yogurt", "Sweet Potatoes", "Frozen Broccoli", "Brown Sugar", "Pasta Spaghetti",
             "Whole Grain Crackers", "Peanut Butter", "Coconut Water", "Milk Chocolate", "Spinach Leaves",
             "Coffee Beans", "Frozen Pizza", "Vegetable Oil", "Mozzarella Cheese", "Honey",
-            "Frozen French Fries", "Canned Corn", "Organic Almonds", "Mangoes", "Lemonade", 
+            "Frozen French Fries", "Canned Corn", "Organic Almonds", "Mangoes", "Lemonade",
             "Bottled Water", "Green Tea", "Frozen Strawberries", "Bag of Potatoes", "Hummus",
-            "Flour", "Baking Powder", "Butter", "Tortilla Chips", "Canned Tomatoes", 
+            "Flour", "Baking Powder", "Butter", "Tortilla Chips", "Canned Tomatoes",
             "Balsamic Vinegar", "Ice Cream", "Wheat Flour", "Cereal", "Peach Jam"
         ];
         $brands = ['Nature\'s Best', 'Organic Valley', 'Great Harvest', 'Green Earth', 'Fresh Choice', 'Sunshine Farms'];
@@ -109,112 +109,210 @@ class ProductSeeder extends Seeder
 
         foreach ($categories as $category) {
             $products[] = ProductCategory::create([
-                'category_name' => $category,  
-                'category_slug' => Str::slug($category),  
-                'category_name_paths' =>  $category,  
-                'category_level' => 1,  
-                'is_featured' => 1,  
-                'meta_title' => $category.' Meta Title',
-                'meta_description' => $category.' Meta Description',  
-                'status' => 1,  
+                'category_name' => $category,
+                'category_slug' => Str::slug($category),
+                'category_name_paths' => $category,
+                'category_level' => 1,
+                'is_featured' => 1,
+                'meta_title' => $category . ' Meta Title',
+                'meta_description' => $category . ' Meta Description',
+                'status' => 1,
             ]);
         }
         foreach ($brands as $brand) {
             $products[] = ProductBrand::create([
-                'brand_name' => $brand,  
-                'brand_slug' => Str::slug($brand),  
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
                 'display_order' => 1,
-                'meta_title' => $brand.' Meta Title',
-                'meta_description' => $brand.' Meta Description',  
-                'status' => 1,  
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
             ]);
         }
         //dd($stores[array_rand($stores)]);
         $store_info = Store::select('id')->where('store_type', StoreType::GROCERY->value)->first();
         for ($i = 0; $i < 50; $i++) {
             $products[] = Product::create([
-              // 'store_id' => $stores[array_rand($stores)],  
-                'store_id' => $store_info->id,  
+                // 'store_id' => $stores[array_rand($stores)],
+                'store_id' => $store_info->id,
                 //'store_id' => Store::where('id', 1)->select('id')->first()->value,  
                 //Store::where('id', $request->store_id)->->first(),
                 'category_id' => ProductCategory::where('category_name', $categories[array_rand($categories)])->select('id')->first()->value,
                 //'brand_id' => $brands[array_rand($brands)],
                 'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
-                'unit_id' => 1,  
-                'type' => 'grocery',  
+                'unit_id' => 1,
+                'type' => 'grocery',
                 'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
-                'name' => $product_names[$i],  
-                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),  
-                'description' => "{$product_names[$i]} are fresh and of premium quality, perfect for your daily needs. Stock up and enjoy every bite!", 
-                'image' => "1",  
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} are fresh and of premium quality, perfect for your daily needs. Stock up and enjoy every bite!",
+                'image' => "1",
                 'warranty' => json_encode([
                     ['warranty_period' => rand(1, 5), 'warranty_text' => 'Years Warranty']
                 ]),
-                'class' => 'default',  
-                'return_in_days' => rand(7, 30),  
-                'return_text' => 'Return within the specified days.',  
-                'allow_change_in_mind' => 'Yes',  
-                'cash_on_delivery' => rand(0, 1) * 100,  
-                'delivery_time_min' => rand(1, 2),  
-                'delivery_time_max' => rand(3, 7),  
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
                 'delivery_time_text' => 'Can be delayed during holidays.',
-                'max_cart_qty' => rand(1, 10),  
-                'order_count' => rand(0, 100),  
-                'views' => rand(0, 1000),  
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,  
-                'meta_title' => "Buy {$product_names[$i]} online",  
+                'max_cart_qty' => rand(1, 10),
+                'order_count' => rand(0, 100),
+                'views' => rand(0, 1000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
                 'meta_description' => "Order {$product_names[$i]} online and get fresh groceries delivered to your door.",
                 'meta_keywords' => "grocery, {$product_names[$i]}, fresh, $i",
-                'meta_image' => "grocery-product$i-meta.jpg",  
-                'available_time_starts' => now(),  
-                'available_time_ends' => now()->addDays(30),  
+                'meta_image' => "grocery-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(30),
+            ]);
+        }
+
+        $products = [];
+        $product_names = [
+            "Sourdough Bread", "French Baguette", "Multigrain Loaf", "Ciabatta Bread", "Rye Bread",
+            "Croissants", "Butter Rolls", "Cinnamon Buns", "Chocolate Muffins", "Blueberry Scones",
+            "Apple Turnovers", "Almond Danish", "Pumpkin Bread", "Banana Bread", "Whole Wheat Bagels",
+            "Garlic Breadsticks", "Glazed Donuts", "Vanilla Pound Cake", "Red Velvet Cupcakes", "Carrot Cake"
+        ];
+
+        $brands = ['Nature\'s Best', 'Organic Valley', 'Great Harvest', 'Green Earth', 'Fresh Choice', 'Sunshine Farms'];
+        $categories = ['Bakery'];
+
+        $store_info = Store::select('id')->where('store_type', StoreType::GROCERY->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', 'Bakery')->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'bakery',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} is freshly baked and of premium quality, perfect for your daily needs. Stock up and enjoy every bite!",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 5), 'warranty_text' => 'Days Warranty']
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(1, 7),
+                'return_text' => 'Return within the specified days.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
+                'delivery_time_text' => 'Can be delayed during holidays.',
+                'max_cart_qty' => rand(1, 10),
+                'order_count' => rand(0, 100),
+                'views' => rand(0, 1000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and get freshly baked goods delivered to your door.",
+                'meta_keywords' => "bakery, {$product_names[$i]}, fresh, $i",
+                'meta_image' => "bakery-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(30),
+            ]);
+        }
+
+        $products = [];
+        $product_names = [
+            "Paracetamol Tablets", "Ibuprofen Capsules", "Aspirin 500mg", "Cetirizine Antihistamine", "Omeprazole 20mg",
+            "Amoxicillin Antibiotic", "Cough Syrup", "Vitamin C Tablets", "Multivitamin Capsules", "Calcium Supplements",
+            "Iron Tonic", "Antiseptic Cream", "Pain Relief Balm", "Loratadine Allergy Relief", "Dextromethorphan Syrup",
+            "Throat Lozenges", "Antacid Chewable Tablets", "Antifungal Cream", "Digestive Enzyme Capsules", "Zinc Supplements"
+        ];
+
+        $brands = ['MediCare', 'PharmaLife', 'HealthGuard', 'Wellness Plus', 'PureMed', 'LifeSaver'];
+        $categories = ['Medicine'];
+
+        $store_info = Store::select('id')->where('store_type', StoreType::MEDICINE->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', 'Medicine')->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'medicine',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} is a high-quality pharmaceutical product designed for effective treatment and relief.",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 2), 'warranty_text' => 'Months Warranty']
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(1, 14),  // Shorter return period for medicines
+                'return_text' => 'Return within the specified days if the packaging is unopened.',
+                'allow_change_in_mind' => 'No',  // Medicines typically cannot be returned after purchase
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 5),
+                'delivery_time_text' => 'Delivery time may vary based on location and availability.',
+                'max_cart_qty' => rand(1, 5),  // Limiting quantity for medicine purchases
+                'order_count' => rand(0, 100),
+                'views' => rand(0, 1000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and get quality medicines delivered safely to your home.",
+                'meta_keywords' => "medicine, {$product_names[$i]}, healthcare, pharmacy, $i",
+                'meta_image' => "medicine-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(60),
             ]);
         }
 
 
 
-            $products = Product::all();
-            $units = Unit::all();
+        $products = Product::all();
+        $units = Unit::all();
 
-            // Create 3 product variants for each product
-            for ($j = 1; $j <= 3; $j++) {
+        // Create 3 product variants for each product
+        for ($j = 1; $j <= 3; $j++) {
 
-                $product = $products->random();
-                $unit = $units->random();
+            $product = $products->random();
+            $unit = $units->random();
 
-                // Get the product type
-                $product_type = $product->type;
+            // Get the product type
+            $product_type = $product->type;
 
-                // Get the appropriate attributes set based on product type
-                $attributes = $attributes_sets[$product_type] ?? [];
+            // Get the appropriate attributes set based on product type
+            $attributes = $attributes_sets[$product_type] ?? [];
 
-                // Randomly select attributes
-                $random_attributes = [];
-                foreach ($attributes as $attribute => $options) {
-                    $random_attributes[$attribute] = $options[array_rand($options)];
-                }
-
-                ProductVariant::create([
-                    'product_id' => $product->id,
-                    'variant_slug' => "product-$i-variant-$j",
-                    'sku' => "SKU-{$i}-{$j}",
-                    'pack_quantity' => rand(1, 10),
-                    'weight_major' => rand(100, 500),
-                    'weight_gross' => rand(500, 1000),
-                    'weight_net' => rand(400, 900),
-                    'attributes' => json_encode($random_attributes), // Store as JSON
-                    'price' => rand(100, 1000),
-                    'special_price' => rand(50, 500),
-                    'stock_quantity' => rand(10, 100),
-                    'unit_id' => $unit->id,
-                    'length' => rand(10, 50),
-                    'width' => rand(10, 50),
-                    'height' => rand(10, 50),
-                    'image' => '2',
-                    'order_count' => rand(0, 100),
-                    'status' => rand(0, 1), // Random active/inactive
-                ]);
+            // Randomly select attributes
+            $random_attributes = [];
+            foreach ($attributes as $attribute => $options) {
+                $random_attributes[$attribute] = $options[array_rand($options)];
             }
+
+            ProductVariant::create([
+                'product_id' => $product->id,
+                'variant_slug' => "product-$i-variant-$j",
+                'sku' => "SKU-{$i}-{$j}",
+                'pack_quantity' => rand(1, 10),
+                'weight_major' => rand(100, 500),
+                'weight_gross' => rand(500, 1000),
+                'weight_net' => rand(400, 900),
+                'attributes' => json_encode($random_attributes), // Store as JSON
+                'price' => rand(100, 1000),
+                'special_price' => rand(50, 500),
+                'stock_quantity' => rand(10, 100),
+                'unit_id' => $unit->id,
+                'length' => rand(10, 50),
+                'width' => rand(10, 50),
+                'height' => rand(10, 50),
+                'image' => '2',
+                'order_count' => rand(0, 100),
+                'status' => rand(0, 1), // Random active/inactive
+            ]);
+        }
 
     }
 
