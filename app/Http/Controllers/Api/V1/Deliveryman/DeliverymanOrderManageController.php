@@ -47,13 +47,18 @@ class DeliverymanOrderManageController extends Controller
             unauthorized_response();
         }
         $order_requests = $this->deliverymanRepo->orderRequests();
-
-        return response()->json([
-            'message' => __('messages.data_found'),
-            'data' => DeliverymanMyOrdersResource::collection($order_requests),
-            'meta' => new PaginationResource($order_requests)
-        ], 200);
-
+        if ($order_requests) {
+            return response()->json([
+                'message' => __('messages.data_found'),
+                'data' => DeliverymanMyOrdersResource::collection($order_requests),
+                'meta' => new PaginationResource($order_requests)
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+                'data' => [],
+            ], 200);
+        }
     }
 
     public function handleOrderRequest(Request $request)
