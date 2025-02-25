@@ -14,6 +14,23 @@ class AdminEmailResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
+        return [
+            "id" => $this->id,
+            "type" => $this->type,
+            "name" => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
+                : $this->name, // If language is empty or not provided attribute
+            "subject" => !empty($translation) && $translation->where('key', 'subject')->first()
+                ? $translation->where('key', 'subject')->first()->value
+                : $this->subject, // If language is empty or not provided attribute
+            "body" => !empty($translation) && $translation->where('key', 'body')->first()
+                ? $translation->where('key', 'body')->first()->value
+                : $this->body, // If language is empty or not provided attribute
+            "status" => $this->id,
+        ];
     }
 }

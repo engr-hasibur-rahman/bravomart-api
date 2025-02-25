@@ -173,7 +173,7 @@ class EmailTemplateManageController extends Controller
     public function deleteEmailTemplate(Request $request)
     {
         // Validate the incoming request
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(['id' => $request->id], [
             'id' => 'required|exists:email_templates,id',
         ]);
 
