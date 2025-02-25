@@ -845,11 +845,13 @@ class ProductSeeder extends Seeder
 
         $products = Product::all();
         $units = Unit::all();
-
-        // Create 3 product variants for each product
-        for ($j = 1; $j <= 3; $j++) {
-
-            $product = $products->random();
+        foreach ($products as $product) {
+            $this->createProductVariants($product, $units, $attributes_sets, 10);
+        }
+    }
+    private function createProductVariants(Product $product, $units, $attributes_sets, $numberOfVariants = 10): void
+    {
+        for ($j = 1; $j <= $numberOfVariants; $j++) {
             $unit = $units->random();
 
             // Get the product type
@@ -866,8 +868,8 @@ class ProductSeeder extends Seeder
 
             ProductVariant::create([
                 'product_id' => $product->id,
-                'variant_slug' => "product-$i-variant-$j",
-                'sku' => "SKU-{$i}-{$j}",
+                'variant_slug' => "product-{$product->id}-variant-{$j}",
+                'sku' => "SKU-{$product->id}-{$j}",
                 'pack_quantity' => rand(1, 10),
                 'weight_major' => rand(100, 500),
                 'weight_gross' => rand(500, 1000),
@@ -882,10 +884,9 @@ class ProductSeeder extends Seeder
                 'height' => rand(10, 50),
                 'image' => '2',
                 'order_count' => rand(0, 100),
-                'status' => rand(0, 1), // Random active/inactive
+                'status' => 1, // Random active/inactive
             ]);
         }
-
     }
 
 
