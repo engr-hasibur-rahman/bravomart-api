@@ -383,4 +383,16 @@ if (!function_exists('translate')) {
         return $storeShare;
     }
 
+    function notificationCreateForAdmin($title, $message, $data = null)
+    {
+        UniversalNotification::create([
+            'title' => $title,
+            'message' => $message,
+            'notifiable_type' => 'Admin', // You can use enums or constants for better clarity
+            'notifiable_id' => 1, // Assuming Admin ID is 1 or pass it dynamically
+            'data' => $data, // Optional additional data, can be an array or JSON
+            'is_read' => false, // Default unread status
+        ]);
+    }
+
 }

@@ -27,6 +27,7 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         'verify_method',
         'marketing_email',
         'marketing_sms',
+        'firebase_token',
         'status',
         'def_lang',
         'password_changed_at',
