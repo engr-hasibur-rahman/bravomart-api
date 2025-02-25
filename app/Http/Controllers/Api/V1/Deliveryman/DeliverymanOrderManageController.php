@@ -23,11 +23,6 @@ class DeliverymanOrderManageController extends Controller
             unauthorized_response();
         }
         $orders = $this->deliverymanRepo->deliverymanOrders();
-        if ($orders->isEmpty()) {
-            return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 404);
-        }
         if ($orders) {
             return response()->json([
                 'message' => __('messages.data_found'),
