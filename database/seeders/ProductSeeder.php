@@ -12,6 +12,7 @@ use App\Models\ProductCategory;
 use App\Models\ProductVariant;
 use App\Models\Unit;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
 {
@@ -89,43 +90,89 @@ class ProductSeeder extends Seeder
             ],
         ];
 
-        // Loop to create 100 products
-        for ($i = 1; $i <= 100; $i++) {
-            Product::create([
-                'store_id' => $stores[array_rand($stores)],  // Randomly select a store ID
-                'category_id' => $categories[array_rand($categories)],
-                'brand_id' => $brands[array_rand($brands)],
-                'unit_id' => 1,  // Now works with an array
-                'type' => $randomType,  // Use the valid enum value
+
+        $products = [];
+        $product_names = [
+            "Fresh Apples", "Organic Bananas", "Whole Wheat Bread", "Almond Milk", "Organic Eggs", 
+            "Fresh Carrots", "Tomato Sauce", "Instant Oatmeal", "Coconut Oil", "Frozen Chicken Breasts",
+            "Rice Basmati", "Granola Bars", "Grape Juice", "Canned Tuna", "Cheddar Cheese",
+            "Greek Yogurt", "Sweet Potatoes", "Frozen Broccoli", "Brown Sugar", "Pasta Spaghetti",
+            "Whole Grain Crackers", "Peanut Butter", "Coconut Water", "Milk Chocolate", "Spinach Leaves",
+            "Coffee Beans", "Frozen Pizza", "Vegetable Oil", "Mozzarella Cheese", "Honey",
+            "Frozen French Fries", "Canned Corn", "Organic Almonds", "Mangoes", "Lemonade", 
+            "Bottled Water", "Green Tea", "Frozen Strawberries", "Bag of Potatoes", "Hummus",
+            "Flour", "Baking Powder", "Butter", "Tortilla Chips", "Canned Tomatoes", 
+            "Balsamic Vinegar", "Ice Cream", "Wheat Flour", "Cereal", "Peach Jam"
+        ];
+        $brands = ['Nature\'s Best', 'Organic Valley', 'Great Harvest', 'Green Earth', 'Fresh Choice', 'Sunshine Farms'];
+        $categories = ['Fresh Produce', 'Dairy', 'Snacks', 'Beverages', 'Frozen Food', 'Canned Goods', 'Bakery', 'Spices'];
+
+        foreach ($categories as $category) {
+            $products[] = ProductCategory::create([
+                'category_name' => $category,  
+                'category_slug' => Str::slug($category),  
+                'category_name_paths' =>  $category,  
+                'category_level' => 1,  
+                'is_featured' => 1,  
+                'meta_title' => $category.' Meta Title',
+                'meta_description' => $category.' Meta Description',  
+                'status' => 1,  
+            ]);
+        }
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,  
+                'brand_slug' => Str::slug($brand),  
+                'display_order' => 1,
+                'meta_title' => $brand.' Meta Title',
+                'meta_description' => $brand.' Meta Description',  
+                'status' => 1,  
+            ]);
+        }
+        //dd($stores[array_rand($stores)]);
+        $store_info = Store::select('id')->where('store_type', StoreType::GROCERY->value)->first();
+        for ($i = 0; $i < 50; $i++) {
+            $products[] = Product::create([
+              // 'store_id' => $stores[array_rand($stores)],  
+                'store_id' => $store_info->id,  
+                //'store_id' => Store::where('id', 1)->select('id')->first()->value,  
+                //Store::where('id', $request->store_id)->->first(),
+                'category_id' => ProductCategory::where('category_name', $categories[array_rand($categories)])->select('id')->first()->value,
+                //'brand_id' => $brands[array_rand($brands)],
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,  
+                'type' => 'grocery',  
                 'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
-                'name' => "Product $i",
-                'slug' => "product-$i",
-                'description' => "Description for product $i",
-                'image' => "1",
+                'name' => $product_names[$i],  
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),  
+                'description' => "{$product_names[$i]} are fresh and of premium quality, perfect for your daily needs. Stock up and enjoy every bite!", 
+                'image' => "1",  
                 'warranty' => json_encode([
                     ['warranty_period' => rand(1, 5), 'warranty_text' => 'Years Warranty']
                 ]),
-                'class' => 'default',
-                'return_in_days' => rand(7, 30),
-                'return_text' => 'Return within the specified days.',
-                'allow_change_in_mind' => 'Yes',
-                'cash_on_delivery' => rand(0, 1) * 100, // Random COD availability
-                'delivery_time_min' => rand(1, 2),
-                'delivery_time_max' => rand(3, 7),
+                'class' => 'default',  
+                'return_in_days' => rand(7, 30),  
+                'return_text' => 'Return within the specified days.',  
+                'allow_change_in_mind' => 'Yes',  
+                'cash_on_delivery' => rand(0, 1) * 100,  
+                'delivery_time_min' => rand(1, 2),  
+                'delivery_time_max' => rand(3, 7),  
                 'delivery_time_text' => 'Can be delayed during holidays.',
-                'max_cart_qty' => rand(1, 10),
-                'order_count' => rand(0, 100),
-                'views' => rand(0, 1000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value, // Random status
-                'meta_title' => "Meta Title for Product $i",
-                'meta_description' => "Meta Description for Product $i",
-                'meta_keywords' => "product, example, $i",
-                'meta_image' => "product$i-meta.jpg",
-                'available_time_starts' => now(),
-                'available_time_ends' => now()->addDays(30),
+                'max_cart_qty' => rand(1, 10),  
+                'order_count' => rand(0, 100),  
+                'views' => rand(0, 1000),  
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,  
+                'meta_title' => "Buy {$product_names[$i]} online",  
+                'meta_description' => "Order {$product_names[$i]} online and get fresh groceries delivered to your door.",
+                'meta_keywords' => "grocery, {$product_names[$i]}, fresh, $i",
+                'meta_image' => "grocery-product$i-meta.jpg",  
+                'available_time_starts' => now(),  
+                'available_time_ends' => now()->addDays(30),  
             ]);
+        }
 
-            // Fetch all products and units
+
+
             $products = Product::all();
             $units = Unit::all();
 
@@ -168,8 +215,6 @@ class ProductSeeder extends Seeder
                     'status' => rand(0, 1), // Random active/inactive
                 ]);
             }
-        }
-
 
     }
 
