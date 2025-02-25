@@ -27,7 +27,8 @@ enum PermissionKey: string
     //                                 Admin Order Permissions                                       //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_ORDERS_ALL = '/admin/orders';
-    case ADMIN_ORDERS_RETURNED_OR_REFUND = '/admin/orders/refund';
+    case ADMIN_ORDERS_RETURNED_OR_REFUND_REQUEST = '/admin/orders/refund-request';
+    case ADMIN_ORDERS_RETURNED_OR_REFUND_REASON = '/admin/orders/refund-reason/list';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  Admin Product Permissions                                     //
@@ -170,7 +171,7 @@ enum PermissionKey: string
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';
     case MAINTENANCE_SETTINGS = '/admin/system-management/maintenance-settings';
     case SMTP_SETTINGS = '/admin/system-management/email-settings/smtp';
-    case EMAIL_TEMPLATES = '/admin/system-management/email-template/manage';
+    case EMAIL_TEMPLATES = '/admin/system-management/email-settings/email-template/list';
 
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
     case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
@@ -266,7 +267,7 @@ enum PermissionKey: string
 
     //=============== Seller Order Manger ====================
     case SELLER_STORE_ORDER_MANAGE = '/seller/store/orders';
-    case SELLER_ORDERS_RETURNED_OR_REFUND = '/seller/orders/returned';
+    case SELLER_ORDERS_RETURNED_OR_REFUND_REQUEST = '/seller/store/orders/refund-request';
     case SELLER_ORDERS_REVIEWS_MANAGE = '/seller/orders/reviews';
     //====================== Product Authors (For Book Only)
     case SELLER_PRODUCT_AUTHORS_MANAGE = '/seller/product/author/list';

@@ -32,6 +32,12 @@ interface StoreManageInterface
 
     public function getOwnerStores();
 
+    public function getSummaryData(string $slug);
+
+    public function getSalesSummaryData(string $slug, array $filters);
+
+    public function getOtherSummaryData(string $slug);
+
     public function storeDashboard(string $slug);
 
     public function getSellerWiseStores(?int $SellerId);

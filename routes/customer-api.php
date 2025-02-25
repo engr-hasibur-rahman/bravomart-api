@@ -50,10 +50,10 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::get('list', [CustomerSupportTicketManageController::class, 'index']);
             Route::post('store', [CustomerSupportTicketManageController::class, 'store']);
             Route::post('update', [CustomerSupportTicketManageController::class, 'update']);
-            Route::get('details', [CustomerSupportTicketManageController::class, 'show']);
+            Route::get('details/{ticket_id}', [CustomerSupportTicketManageController::class, 'show']);
             Route::get('resolve', [CustomerSupportTicketManageController::class, 'resolve']);
             Route::post('add-message', [CustomerSupportTicketManageController::class, 'addMessage']);
-            Route::get('messages', [CustomerSupportTicketManageController::class, 'getTicketMessages']);
+            Route::get('messages/{ticket_id}', [CustomerSupportTicketManageController::class, 'getTicketMessages']);
         });
         Route::group(['prefix' => 'wish-list'], function () {
             Route::get('list', [WishListManageController::class, 'getWishlist']);

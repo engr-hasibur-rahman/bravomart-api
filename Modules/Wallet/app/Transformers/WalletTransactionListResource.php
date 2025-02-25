@@ -20,7 +20,7 @@ class WalletTransactionListResource extends JsonResource
             'amount' => $this->amount,
             'type' => $this->type,
             'purpose' => $this->purpose,
-            'status' => $this->status == 1 ? 'success' : 'pending',
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

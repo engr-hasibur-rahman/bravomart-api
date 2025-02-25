@@ -8,6 +8,7 @@ use App\Models\WithdrawalRecord;
 use Illuminate\Http\Request;
 use Modules\Wallet\app\Models\WalletWithdrawalsTransaction;
 use Modules\Wallet\app\Transformers\AdminWithdrawListResource;
+use Modules\Wallet\app\Transformers\WalletWithdrawActivityResource;
 
 class AdminWithdrawManageController extends Controller
 {
@@ -45,11 +46,12 @@ class AdminWithdrawManageController extends Controller
 
     public function withdrawDetails(Request $request)
     {
-        $WithdrawalRecord = WalletWithdrawalsTransaction::find($request->id);
+        $WithdrawalRecord = WalletWithdrawalsTransaction::with('owner', 'wallet')->find($request->id);
         if ($WithdrawalRecord) {
             return response([
                 'status' => true,
                 'data' => new AdminWithdrawListResource($WithdrawalRecord),
+                'activity' => new WalletWithdrawActivityResource($WithdrawalRecord),
             ]);
         } else {
             return response([

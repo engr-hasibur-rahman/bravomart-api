@@ -7,6 +7,7 @@ use App\Http\Resources\Store\StoreShortDetailsResource;
 use App\Http\Resources\User\UserDetailsResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class AdminWithdrawListResource extends JsonResource
 {
@@ -23,10 +24,12 @@ class AdminWithdrawListResource extends JsonResource
             "gateways_options" => json_decode($this->gateways_options),
             "status" => $this->status,
             "details" => $this->details,
+            "reject_reason" => $this->reject_reason,
+            "attachment" => $this->attachment ? asset("storage/uploads/withdraw/" . basename($this->attachment)) : null,
             "approved_by" => $this->approved_by,
             "approved_at" => $this->approved_at,
             "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at,
+            "wallet" => $this->wallet ? new WalletBalanceInfoResource($this->wallet) : null,
             "owner" => isset($this->owner->store_seller_id) ?
                 new StoreShortDetailsResource($this->owner) :
                 new UserDetailsResource($this->owner)

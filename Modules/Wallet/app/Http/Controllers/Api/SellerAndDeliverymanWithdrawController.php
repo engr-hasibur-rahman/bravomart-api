@@ -123,10 +123,10 @@ class SellerAndDeliverymanWithdrawController extends Controller
             "store_id" => "nullable|exists:stores,id", // store exists
             "deliveryman_id" => "nullable|exists:users,id", // deliveryman exists
             "withdraw_gateway_id" => "required|integer|exists:withdraw_gateways,id",
-            "gateway_name" => "required|string|max:50",
             "amount" => "required",
             "details" => "nullable|string|max:255",
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
@@ -155,28 +155,33 @@ class SellerAndDeliverymanWithdrawController extends Controller
 
         if (empty($wallet)){
             return response()->json([
-               'message' => 'You have no balance.',
-            ],204);
+                'status' => false,
+                'message' => 'You have no wallet.',
+            ],402);
         }
 
         if (!empty($wallet) && $wallet->balance <= 0){
             return response()->json([
+                'status' => false,
                'message' => 'You have insufficient balance.',
-            ]);
+            ], 402);
         }
 
         // Validate if store finances exist and current balance is sufficient
         if ($wallet->balance < $request->amount){
             return response()->json([
+                'status' => false,
                'message' => 'You have insufficient balance.',
-            ]);
+            ],402);
         }
 
+        $method = WithdrawGateway::find($request->withdraw_gateway_id);
         $success = WalletWithdrawalsTransaction::create([
+            'wallet_id' => $wallet->id,
             'owner_id' => $owner_id,
             'owner_type' => WalletOwnerType::STORE->value,
-            'withdraw_gateway_id' => $request->withdraw_gateway_id,
-            'gateway_name' => $request->gateway_name,
+            'withdraw_gateway_id' => $method->id,
+            'gateway_name' => $method->name,
             'amount' => $request->amount,
             'details' => $request->details ?? null,
             'fee' => 0.00,

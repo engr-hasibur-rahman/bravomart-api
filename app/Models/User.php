@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Modules\Wallet\app\Models\Wallet;
 use Spatie\Permission\Contracts\Role as RoleContract;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -16,7 +17,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    protected $appends = ['rating','review_count'];
+    protected $appends = ['rating', 'review_count'];
     protected $fillable = [
         'first_name',
         'last_name',
@@ -45,6 +46,11 @@ class User extends Authenticatable
         'password' => 'hashed',
         'stores' => 'array',
     ];
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
 
     public function scopeIsSeller($query)
     {
@@ -99,8 +105,9 @@ class User extends Authenticatable
 
     public function reviews()
     {
-        return $this->morphMany(Review::class,'reviewable');
+        return $this->morphMany(Review::class, 'reviewable');
     }
+
     public function getRatingAttribute()
     {
         $averageRating = $this->reviews()
@@ -109,6 +116,7 @@ class User extends Authenticatable
             ->avg('rating');
         return $averageRating;
     }
+
     public function getReviewCountAttribute()
     {
         return $this->reviews()

@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Admin\EmailTemplateManageController;
@@ -35,7 +36,6 @@ use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
-use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
@@ -81,7 +81,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     Route::group(['prefix' => 'admin/'], function () {
         // Dashboard manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_POS_SALES->value]], function () {
-            Route::get('dashboard', [DashboardController::class, 'dashboardData']);
+            Route::get('dashboard', [AdminDashboardController::class, 'summaryData']);
+            Route::get('sales-summary', [AdminDashboardController::class, 'salesSummaryData']);
+            Route::get('other-summary', [AdminDashboardController::class, 'otherSummaryData']);
         });
         // POS Manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_POS_SALES->value]], function () {
@@ -114,10 +116,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('change-payment-status', [AdminOrderManageController::class, 'changePaymentStatus']);
                 Route::post('assign-deliveryman', [AdminOrderManageController::class, 'assignDeliveryMan']);
                 Route::post('cancel-order', [AdminOrderManageController::class, 'cancelOrder']);
-                Route::get('refund-request',[AdminOrderRefundManageController::class,'orderRefundRequest']);
-                Route::post('refund-request/handle',[AdminOrderRefundManageController::class,'handleRefundRequest']);
-                Route::group(['prefix' => 'refund-reason/', 'middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND->value]], function () {
-                    Route::get('/', [AdminOrderRefundManageController::class, 'allOrderRefundReason']);
+                Route::get('refund-request', [AdminOrderRefundManageController::class, 'orderRefundRequest'])->middleware('permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND_REQUEST->value);
+                Route::post('refund-request/handle', [AdminOrderRefundManageController::class, 'handleRefundRequest'])->middleware('permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND_REQUEST->value);
+                Route::group(['prefix' => 'refund-reason/', 'middleware' => ['permission:' . PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND_REASON->value]], function () {
+                    Route::get('list', [AdminOrderRefundManageController::class, 'allOrderRefundReason']);
                     Route::post('add', [AdminOrderRefundManageController::class, 'createOrderRefundReason']);
                     Route::get('details/{id}', [AdminOrderRefundManageController::class, 'showOrderRefundReason']);
                     Route::post('update', [AdminOrderRefundManageController::class, 'updateOrderRefundReason']);

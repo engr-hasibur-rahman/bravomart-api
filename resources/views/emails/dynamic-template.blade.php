@@ -1,93 +1,138 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $subjectLine }}</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{com_option_get('com_site_title').' '. __('Mail')}}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        *{
+            font-family: 'Open Sans', sans-serif;
+        }
+        .mail-container {
+            max-width: 650px;
+            margin: 0 auto;
+            text-align: center;
+            background-color: #f2f2f2;
+            padding: 40px 0;
+        }
+        .inner-wrap {
+            background-color: #fff;
+            margin: 40px;
+            padding: 30px 20px;
+            text-align: left;
+            box-shadow: 0 0 20px 0 rgba(0,0,0,0.01);
+        }
+        .inner-wrap p {
+            font-size: 16px;
+            line-height: 26px;
+            color: #656565;
             margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
         }
-        .email-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .message-wrap {
+            background-color: #f2f2f2;
+            padding: 30px;
+            margin-top: 40px;
         }
-        .email-header {
-            text-align: center;
-            padding-bottom: 20px;
-        }
-        .email-header h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .email-header p {
-            font-size: 16px;
-            color: #777;
-            margin-bottom: 0;
-        }
-        .email-content {
-            font-size: 16px;
-            color: #333;
-            line-height: 1.5;
-        }
-        .email-footer {
-            text-align: center;
-            padding-top: 20px;
+
+        .message-wrap p {
             font-size: 14px;
-            color: #777;
+            line-height: 26px;
         }
-        .email-footer a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .highlight {
-            font-weight: bold;
-            color: #ff6347;
-        }
-        .cta-button {
-            background-color: #007bff;
-            color: #ffffff;
-            padding: 12px 20px;
-            text-decoration: none;
-            font-weight: bold;
+        .btn-wrap {
             text-align: center;
-            border-radius: 4px;
+        }
+
+        .btn-wrap .anchor-btn {
+            background-color: #005ec6;
+            color: #fff;
+            font-size: 14px;
+            line-height: 26px;
+            font-weight: 500;
+            text-transform: capitalize;
+            text-decoration: none;
+            padding: 8px 20px;
             display: inline-block;
-            margin-top: 20px;
+            margin-top: 40px;
+            border-radius: 5px;
+            transition: all 300ms;
         }
-        .cta-button:hover {
-            background-color: #0056b3;
+
+        .btn-wrap .anchor-btn:hover {
+            opacity: .8;
         }
+        .verify-code{
+            background-color:#f2f2f2;
+            color:#333;
+            padding: 10px 15px;
+            border-radius: 3px;
+            display: inline-block;
+            margin: 20px;
+        }
+        table {
+            margin: 0 auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table td, table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        table tr:nth-child(even){background-color: #f2f2f2;}
+
+        table tr:hover {background-color: #ddd;}
+
+        table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #111d5c;
+            color: white;
+        }
+        .logo-wrapper img{
+            max-width: 200px;
+        }
+
+        [dir="rtl"] .earning-wrapper {
+            text-align: right !important;
+        }
+        [dir="rtl"] .earning-wrapper .earning-title {
+            text-align: right !important;
+        }
+        [dir="rtl"] .wrap-para {
+            text-align: right !important;
+        }
+        [dir="rtl"] .inner-wrap-contents p {
+            text-align: right !important;
+        }
+        [dir="rtl"] .inner-wrap-contents .earning-order-title {
+            text-align: right !important;
+        }
+        [dir="rtl"] .earning-title {
+            text-align: right !important;
+        }
+
     </style>
 </head>
 <body>
-<div class="email-container">
-    <div class="email-header">
-        <h5>Hello {{ $deliveryman_name }}</h5>
-        <p>We have an important update for you.</p>
+<div class="mail-container">
+    <div class="logo-wrapper">
+        <a href="{{url('/')}}">
+            {!! com_option_get_id_wise_url(com_option_get('com_site_logo')) !!}
+        </a>
     </div>
-
-    <div class="email-content">
-        <p>We are happy to inform you that you have received a new earning of <span class="highlight">${{ $amount }}</span>.</p>
-        <p>Order ID: <span class="highlight">{{ $order_id }}</span></p>
-        <p>Order Amount: <span class="highlight">${{ $order_amount }}</span></p>
-        <p>Your new order has arrived, and we are grateful for your hard work!</p>
-        <a href="#" class="cta-button">View Order Details</a>
+    <div class="inner-wrap wrap-para">
+        {!! $data['message'] !!}
     </div>
-
-    <div class="email-footer">
-        <p>Thank you for being a valuable member of our team!</p>
-        <p>If you have any questions, please contact us at <a href="mailto:support@example.com">support@example.com</a>.</p>
-    </div>
+    <footer>
+        {!! com_get_footer_copyright() !!}
+    </footer>
 </div>
 </body>
 </html>

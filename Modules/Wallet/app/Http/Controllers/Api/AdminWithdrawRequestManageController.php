@@ -7,6 +7,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\WithdrawalRecord;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletWithdrawalsTransaction;
@@ -50,8 +51,8 @@ class AdminWithdrawRequestManageController extends Controller
     public function withdrawRequestApprove(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ids' => 'required|array',
-            'ids.*' => 'required|integer|exists:wallet_withdrawals_transactions,id',
+            'id' => 'required|integer|exists:wallet_withdrawals_transactions,id',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -61,12 +62,25 @@ class AdminWithdrawRequestManageController extends Controller
             ], 422);
         }
 
-        // Fetch the pending withdrawal transactions
-        $withdrawals = WalletWithdrawalsTransaction::whereIn('id', $request->ids)
-            ->where('status', 'pending')
-            ->get();
+        // Ensure the folder exists, if not, create it
+        $withdrawFolder = 'uploads/withdraw';
+        if (!Storage::disk('public')->exists($withdrawFolder)) {
+            Storage::disk('public')->makeDirectory($withdrawFolder, 0755, true);
+        }
 
-        if ($withdrawals->isEmpty()) {
+        // Handle file upload
+        $filePath = null;
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $filePath = $file->store($withdrawFolder, 'public');
+        }
+
+        // Fetch the pending withdrawal transactions
+        $withdraw = WalletWithdrawalsTransaction::where('id', $request->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$withdraw) {
             return response()->json([
                 'status' => false,
                 'message' => 'No valid pending withdrawal requests found.',
@@ -74,38 +88,38 @@ class AdminWithdrawRequestManageController extends Controller
         }
 
         // Process each withdrawal request
-        foreach ($withdrawals as $withdraw) {
-            $wallet = Wallet::where([
-                'owner_id' => $withdraw->owner_id,
-                'owner_type' => $withdraw->owner_type,
-            ])->first();
+        $wallet = Wallet::where([
+            'id' => $withdraw->wallet_id,
+            'owner_id' => $withdraw->owner_id,
+            'owner_type' => $withdraw->owner_type,
+        ])->first();
 
-            if (!$wallet) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Wallet not found for owner ID: ' . $withdraw->owner_id,
-                ], 404);
-            }
-
-            if ($wallet->balance < $withdraw->amount) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Insufficient balance in wallet for withdrawal ID: ' . $withdraw->id,
-                ], 400);
-            }
-
-            // Deduct the withdrawal amount from the wallet balance
-            $wallet->balance -= $withdraw->amount;
-            $wallet->withdrawn += $withdraw->amount;
-            $wallet->save();
-
-            // Approve the withdrawal
-            $withdraw->update([
-                'status' => 'approved',
-                'approved_by' => auth('api')->id(),
-                'approved_at' => now(),
-            ]);
+        if (!$wallet) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Wallet not found for owner ID: ' . $withdraw->owner_id,
+            ], 404);
         }
+
+        if ($wallet->balance < $withdraw->amount) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Insufficient balance in wallet for withdrawal ID: ' . $withdraw->id,
+            ], 400);
+        }
+
+        // Deduct the withdrawal amount from the wallet balance
+        $wallet->balance -= $withdraw->amount;
+        $wallet->withdrawn += $withdraw->amount;
+        $wallet->save();
+
+        // Approve the withdrawal
+        $withdraw->update([
+            'status' => 'approved',
+            'approved_by' => auth('api')->id(),
+            'approved_at' => now(),
+            'attachment' => $filePath,
+        ]);
 
         return response()->json([
             'status' => true,
@@ -117,8 +131,8 @@ class AdminWithdrawRequestManageController extends Controller
     public function withdrawRequestReject(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ids' => 'required|array',
-            'ids.*' => 'required|integer|exists:wallet_withdrawals_transactions,id',
+            'id' => 'required|integer|exists:wallet_withdrawals_transactions,id',
+            'reject_reason' => 'required|string:2000',
         ]);
 
         if ($validator->fails()) {
@@ -128,31 +142,26 @@ class AdminWithdrawRequestManageController extends Controller
             ], 422);
         }
 
-        $ids = collect($request->ids);
-        $chunkSize = 10000;
-        $totalUpdated = 0;
-
-        // Process in chunks
-        $ids->chunk($chunkSize)->each(function ($chunk) use (&$totalUpdated) {
-            $updated = WalletWithdrawalsTransaction::whereIn('id', $chunk)
-                ->where('status', 'pending')
-                ->update(['status' => 'rejected']);
-
-            $totalUpdated += $updated;
-        });
+        // update wallet withdrawals
+        $updated = WalletWithdrawalsTransaction::where('id', $request->id)
+            ->where('status', 'pending')->first();
 
         // If no records were updated
-        if ($totalUpdated === 0) {
+        if (!$updated) {
             return response()->json([
                 'status' => false,
                 'message' => __('messages.reject.failed', ['name' => 'Withdrawal']),
             ], 404);
         }
 
+        $updated->update([
+                'status' => 'rejected',
+                'reject_reason' => $request->reject_reason,
+            ]);
+
         return response()->json([
             'status' => true,
             'message' => __('messages.reject.success', ['name' => 'Withdrawal']),
-            'total_rejected' => $totalUpdated,
         ]);
     }
 
