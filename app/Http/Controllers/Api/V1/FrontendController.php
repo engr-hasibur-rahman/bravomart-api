@@ -380,6 +380,20 @@ class FrontendController extends Controller
                         'product_id',
                         'special_price',
                         'price',
+                        'variant_slug',
+                        'sku',
+                        'pack_quantity',
+                        'weight_major',
+                        'weight_gross',
+                        'weight_net',
+                        'attributes',
+                        'unit_id',
+                        'length',
+                        'width',
+                        'height',
+                        'image',
+                        'order_count',
+                        'status',
                         DB::raw('ROUND(((price - special_price) / price) * 100, 2) as discount_percentage')
                     )
                         ->whereNotNull('special_price')
