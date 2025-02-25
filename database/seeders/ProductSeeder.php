@@ -230,6 +230,28 @@ class ProductSeeder extends Seeder
 
         $brands = ['MediCare', 'PharmaLife', 'HealthGuard', 'Wellness Plus', 'PureMed', 'LifeSaver'];
         $categories = ['Medicine'];
+        foreach ($categories as $category) {
+            $products[] = ProductCategory::create([
+                'category_name' => $category,
+                'category_slug' => Str::slug($category),
+                'category_name_paths' => $category,
+                'category_level' => 1,
+                'is_featured' => 1,
+                'meta_title' => $category . ' Meta Title',
+                'meta_description' => $category . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
+                'display_order' => 1,
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
 
         $store_info = Store::select('id')->where('store_type', StoreType::MEDICINE->value)->first();
 
@@ -268,6 +290,347 @@ class ProductSeeder extends Seeder
                 'available_time_ends' => now()->addDays(60),
             ]);
         }
+
+        $products = [];
+        $product_names = [
+            "Liquid Foundation", "Matte Lipstick", "Waterproof Mascara", "Eyebrow Pomade", "Blush Palette",
+            "Highlighter Stick", "BB Cream", "CC Cream", "Setting Spray", "Translucent Powder",
+            "Eyeshadow Palette", "Gel Eyeliner", "Lip Gloss", "Compact Powder", "Makeup Primer",
+            "Contour Kit", "Makeup Setting Powder", "Nude Lipstick", "Kajal Pencil", "Concealer Stick"
+        ];
+
+        $brands = ['GlamBeauty', 'RadiantGlow', 'PureCosmetics', 'VelvetTouch', 'LuxeMakeup', 'GlowEssentials'];
+        $categories = ['Makeup'];
+        foreach ($categories as $category) {
+            $products[] = ProductCategory::create([
+                'category_name' => $category,
+                'category_slug' => Str::slug($category),
+                'category_name_paths' => $category,
+                'category_level' => 1,
+                'is_featured' => 1,
+                'meta_title' => $category . ' Meta Title',
+                'meta_description' => $category . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
+                'display_order' => 1,
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+
+        $store_info = Store::select('id')->where('store_type', StoreType::MAKEUP->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', 'Makeup')->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'makeup',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} enhances your beauty with a flawless finish, designed for long-lasting wear.",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 2), 'warranty_text' => 'Months Warranty']
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days if unopened and unused.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
+                'delivery_time_text' => 'Can be delayed during holidays.',
+                'max_cart_qty' => rand(1, 5),  // Limited purchase for makeup items
+                'order_count' => rand(0, 100),
+                'views' => rand(0, 1000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and get premium beauty products delivered to your doorstep.",
+                'meta_keywords' => "makeup, {$product_names[$i]}, beauty, cosmetics, $i",
+                'meta_image' => "makeup-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(60),
+            ]);
+        }
+        $products = [];
+        $product_names = [
+            "Leather Messenger Bag", "Canvas Tote Bag", "Vintage Backpack", "Luxury Handbag", "Casual Sling Bag",
+            "Crossbody Purse", "Travel Duffel Bag", "Gym Sports Bag", "Laptop Backpack", "Mini Shoulder Bag",
+            "Rolling Suitcase", "Clutch Evening Bag", "Business Briefcase", "Hiking Rucksack", "Designer Satchel",
+            "Drawstring Bag", "Eco-friendly Shopping Bag", "Convertible Backpack", "Belt Bag", "Waterproof Dry Bag"
+        ];
+
+        $brands = ['UrbanStyle', 'LuxuryLeather', 'NomadGear', 'ClassicCarry', 'EcoTote', 'TravelMate'];
+        $categories = ['Bags'];
+        foreach ($categories as $category) {
+            $products[] = ProductCategory::create([
+                'category_name' => $category,
+                'category_slug' => Str::slug($category),
+                'category_name_paths' => $category,
+                'category_level' => 1,
+                'is_featured' => 1,
+                'meta_title' => $category . ' Meta Title',
+                'meta_description' => $category . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
+                'display_order' => 1,
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+
+        $store_info = Store::select('id')->where('store_type', StoreType::BAGS->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', 'Bags')->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'bags',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} is stylish, durable, and perfect for your everyday needs.",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 5), 'warranty_text' => 'Years Warranty']
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days if unused.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
+                'delivery_time_text' => 'Can be delayed during holidays.',
+                'max_cart_qty' => rand(1, 5),  // Bags are usually purchased in limited quantities
+                'order_count' => rand(0, 100),
+                'views' => rand(0, 1000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and get high-quality bags delivered to your doorstep.",
+                'meta_keywords' => "bags, {$product_names[$i]}, travel, fashion, accessories, $i",
+                'meta_image' => "bag-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(60),
+            ]);
+        }
+
+        $products = [];
+        $product_names = [
+            "Classic White T-Shirt", "Slim Fit Jeans", "Cotton Polo Shirt", "Hooded Sweatshirt", "Casual Chino Pants",
+            "Denim Jacket", "Athletic Joggers", "Formal Dress Shirt", "Wool Blend Coat", "Basic Crew Neck Sweater",
+            "High-Waisted Leggings", "Summer Floral Dress", "Men's Cargo Shorts", "Winter Puffer Jacket", "Linen Button-Up Shirt",
+            "Stretch Skinny Jeans", "V-Neck Sweater", "Waterproof Windbreaker", "Casual Blazer", "Lightweight Cardigan"
+        ];
+
+        $brands = ['UrbanWear', 'ClassicStyle', 'TrendyFit', 'LuxuryThreads', 'EcoFashion', 'StreetVogue'];
+        $categories = ['Men', 'Women', 'Unisex', 'Formal', 'Casual', 'Sportswear', 'Outerwear'];
+        foreach ($categories as $category) {
+            $products[] = ProductCategory::create([
+                'category_name' => $category,
+                'category_slug' => Str::slug($category),
+                'category_name_paths' => $category,
+                'category_level' => 1,
+                'is_featured' => 1,
+                'meta_title' => $category . ' Meta Title',
+                'meta_description' => $category . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
+                'display_order' => 1,
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        $store_info = Store::select('id')->where('store_type', StoreType::CLOTHING->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', $categories[array_rand($categories)])->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'clothing',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} is stylish, comfortable, and perfect for your wardrobe.",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 2), 'warranty_text' => 'Months Warranty'] // Clothing usually has a shorter warranty
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days if unworn.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
+                'delivery_time_text' => 'Delivery may take longer during peak seasons.',
+                'max_cart_qty' => rand(1, 5),
+                'order_count' => rand(0, 500),
+                'views' => rand(0, 5000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and update your wardrobe with the latest fashion trends.",
+                'meta_keywords' => "clothing, fashion, {$product_names[$i]}, apparel, $i",
+                'meta_image' => "clothing-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(60),
+            ]);
+        }
+
+        $products = [];
+        $product_names = [
+            "Modern Wooden Dining Table", "Luxury Leather Sofa", "Classic Oak Wardrobe", "Adjustable Office Chair", "Minimalist Coffee Table",
+            "Rustic TV Stand", "Velvet Accent Chair", "Glass Top Work Desk", "Queen Size Bed Frame", "Storage Ottoman Bench",
+            "L-Shaped Sectional Sofa", "Mid-Century Bookshelf", "Convertible Sofa Bed", "Compact Shoe Rack", "Floating Wall Shelves",
+            "Recliner Armchair", "Foldable Computer Desk", "Wooden Kitchen Cabinet", "Ergonomic Gaming Chair", "Bathroom Vanity Set"
+        ];
+
+        $brands = ['HomeElegance', 'ModernSpace', 'LuxuryLiving', 'CozyNest', 'UrbanFurnish', 'RusticCharm'];
+        $categories = ['Furniture'];
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
+                'display_order' => 1,
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        $store_info = Store::select('id')->where('store_type', StoreType::FURNITURE->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', $categories[array_rand($categories)])->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'furniture',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} is crafted with high-quality materials, offering durability and style for your space.",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 10), 'warranty_text' => 'Years Warranty'] // Longer warranty for furniture
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days if unused and in original packaging.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(3, 5),
+                'delivery_time_max' => rand(7, 14),
+                'delivery_time_text' => 'Delivery may take longer due to size and handling.',
+                'max_cart_qty' => rand(1, 3),
+                'order_count' => rand(0, 500),
+                'views' => rand(0, 5000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and upgrade your home with premium furniture.",
+                'meta_keywords' => "furniture, home decor, {$product_names[$i]}, interior design, $i",
+                'meta_image' => "furniture-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(90),
+            ]);
+        }
+
+
+        $products = [];
+        $product_names = [
+            "The Art of War", "To Kill a Mockingbird", "1984", "Pride and Prejudice", "The Great Gatsby",
+            "Moby Dick", "War and Peace", "Crime and Punishment", "The Catcher in the Rye", "The Hobbit",
+            "The Odyssey", "Brave New World", "The Brothers Karamazov", "The Divine Comedy", "Ulysses",
+            "One Hundred Years of Solitude", "The Picture of Dorian Gray", "The Jungle Book", "The Grapes of Wrath", "The Lord of the Rings"
+        ];
+
+        $brands = ['Penguin Classics', 'HarperCollins', 'Oxford University Press', 'Random House', 'Macmillan'];
+        $categories = ['Fiction', 'Non-Fiction', 'Literature', 'Classics', 'Science Fiction', 'Fantasy', 'Biography', 'History'];
+        foreach ($categories as $category) {
+            $products[] = ProductCategory::create([
+                'category_name' => $category,
+                'category_slug' => Str::slug($category),
+                'category_name_paths' => $category,
+                'category_level' => 1,
+                'is_featured' => 1,
+                'meta_title' => $category . ' Meta Title',
+                'meta_description' => $category . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        foreach ($brands as $brand) {
+            $products[] = ProductBrand::create([
+                'brand_name' => $brand,
+                'brand_slug' => Str::slug($brand),
+                'display_order' => 1,
+                'meta_title' => $brand . ' Meta Title',
+                'meta_description' => $brand . ' Meta Description',
+                'status' => 1,
+            ]);
+        }
+        $store_info = Store::select('id')->where('store_type', StoreType::BOOKS->value)->first();
+
+        for ($i = 0; $i < count($product_names); $i++) {
+            $products[] = Product::create([
+                'store_id' => $store_info->id,
+                'category_id' => ProductCategory::where('category_name', $categories[array_rand($categories)])->select('id')->first()->value,
+                'brand_id' => ProductBrand::where('brand_name', $brands[array_rand($brands)])->select('id')->first()->value,
+                'unit_id' => 1,
+                'type' => 'books',
+                'behaviour' => $behaviours[array_rand($behaviours)]->value, // Random valid behaviour
+                'name' => $product_names[$i],
+                'slug' => strtolower(str_replace(' ', '-', $product_names[$i])),
+                'description' => "{$product_names[$i]} is a timeless classic, offering valuable insights and stories from the past.",
+                'image' => "1",
+                'warranty' => json_encode([
+                    ['warranty_period' => rand(1, 3), 'warranty_text' => 'Years Warranty'] // Books typically have a shorter warranty
+                ]),
+                'class' => 'default',
+                'return_in_days' => rand(7, 30),
+                'return_text' => 'Return within the specified days if unused and in original condition.',
+                'allow_change_in_mind' => 'Yes',
+                'cash_on_delivery' => rand(0, 1) * 100,
+                'delivery_time_min' => rand(1, 2),
+                'delivery_time_max' => rand(3, 7),
+                'delivery_time_text' => 'Delivery may be delayed due to high demand during holidays.',
+                'max_cart_qty' => rand(1, 10),
+                'order_count' => rand(0, 1000),
+                'views' => rand(0, 5000),
+                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'meta_title' => "Buy {$product_names[$i]} online",
+                'meta_description' => "Order {$product_names[$i]} online and enjoy the world of literature delivered to your doorstep.",
+                'meta_keywords' => "book, {$product_names[$i]}, classic, literature, $i",
+                'meta_image' => "book-product$i-meta.jpg",
+                'available_time_starts' => now(),
+                'available_time_ends' => now()->addDays(30),
+            ]);
+        }
+
 
 
 

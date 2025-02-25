@@ -773,3 +773,4 @@ INSERT INTO `product_category` (`id`, `category_name`, `category_slug`, `categor
 (772, 'Stuffed Toys', 'stuffed-toys', 'Toys & Games', '757', 757, 2, 1, 18.57, NULL, NULL, 'Stuffed Toys', 'Stuffed Toys', NULL, NULL, NULL, 1, NULL, NULL),
 (773, 'Remote Control & Play Vehicles', 'remote-control-play-vehicles', 'Toys & Games', '757', 757, 2, 1, 9.52, NULL, NULL, 'Remote Control & Play Vehicles', 'Remote Control & Play Vehicles', NULL, NULL, NULL, 1, NULL, NULL),
 (774, 'Traditional Games', 'traditional-games', 'Toys & Games', '757', 757, 2, 1, 9.52, NULL, NULL, 'Traditional Games', 'Traditional Games', NULL, NULL, NULL, 1, NULL, NULL);
+
