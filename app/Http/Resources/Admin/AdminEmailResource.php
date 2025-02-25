@@ -30,7 +30,7 @@ class AdminEmailResource extends JsonResource
             "body" => !empty($translation) && $translation->where('key', 'body')->first()
                 ? $translation->where('key', 'body')->first()->value
                 : $this->body, // If language is empty or not provided attribute
-            "status" => $this->status,
+            "status" => (int)$this->status,
         ];
     }
 }
