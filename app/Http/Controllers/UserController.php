@@ -8,7 +8,7 @@ use App\Helpers\ComHelper;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\User\UserDetailsResource;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\UserDetailsResource;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\StoreSeller;
@@ -234,7 +234,7 @@ class UserController extends Controller
 
     public function me(Request $request)
     {
-        return new UserResource(auth()->guard('api')->user());
+        return new UserDetailsResource(auth()->guard('api')->user());
     }
 
     public function logout(Request $request)
