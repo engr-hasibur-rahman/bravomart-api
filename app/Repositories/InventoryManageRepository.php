@@ -44,7 +44,7 @@ class InventoryManageRepository implements InventoryManageInterface
         if (isset($filters['store_id'])) {
             $inventories->where('store_id', $filters['store_id']);
         }
-        return $inventories->with(['category', 'brand', 'variants', 'store'])->paginate($filters['per_page'] ?? 10);
+        return $inventories->with(['category', 'brand', 'variants', 'store.related_translations','related_translations'])->paginate($filters['per_page'] ?? 10);
     }
 
     public function updateVariant(array $data)

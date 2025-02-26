@@ -14,10 +14,19 @@ class InventoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
+        $store_translation = $this->store->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            'product_name' => $this->name, // Assuming the Product relation exists
-            'store_name' => $this->store->name,
+            'product_name' => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
+                : $this->name,
+            'store_name' => !empty($store_translation) && $store_translation->where('key', 'reason')->first()
+                ? $store_translation->where('key', 'name')->first()->value
+                : $this->store->name,
             'type' => $this->type,
             'order_count' => $this->order_count,
             'slug' => $this->slug,
