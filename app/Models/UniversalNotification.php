@@ -8,7 +8,7 @@ class UniversalNotification extends Model
 {
 
     protected $fillable = [
-        'user_id', 'title', 'message', 'data', 'notifiable_type', 'status'
+        'notifiable_id', 'title', 'message', 'data', 'notifiable_type', 'status'
     ];
 
     protected $casts = [

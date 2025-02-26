@@ -123,6 +123,8 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::post('/checkout-info', [OtherChargeInfoController::class, 'getCheckoutInfo']);
 
     // customer place order
-    Route::post('orders/checkout', [PlaceOrderController::class, 'placeOrder']);
+    Route::group(['namespace' => 'Api\V1','middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
+        Route::post('orders/checkout', [PlaceOrderController::class, 'placeOrder']);
+    });
 
 });
