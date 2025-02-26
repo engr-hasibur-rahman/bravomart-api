@@ -8,7 +8,6 @@ use App\Helpers\ComHelper;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\User\UserDetailsResource;
-use App\Http\Resources\UserDetailsResource;
 use App\Models\Translation;
 use App\Models\User;
 use App\Models\StoreSeller;
