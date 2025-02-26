@@ -23,11 +23,6 @@ class DeliverymanOrderManageController extends Controller
             unauthorized_response();
         }
         $orders = $this->deliverymanRepo->deliverymanOrders();
-        if ($orders->isEmpty()) {
-            return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 404);
-        }
         if ($orders) {
             return response()->json([
                 'message' => __('messages.data_found'),
@@ -47,16 +42,18 @@ class DeliverymanOrderManageController extends Controller
             unauthorized_response();
         }
         $order_requests = $this->deliverymanRepo->orderRequests();
-        if ($order_requests) {
+        if (!$order_requests) {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+                'data' => [],
+            ], 200);
+        } else {
             return response()->json([
                 'message' => __('messages.data_found'),
                 'data' => DeliverymanMyOrdersResource::collection($order_requests),
                 'meta' => new PaginationResource($order_requests)
             ], 200);
-        } else {
-            return response()->json([
-                'message' => __('messages.something_went_wrong')
-            ], 500);
+
         }
     }
 
@@ -130,6 +127,16 @@ class DeliverymanOrderManageController extends Controller
                     ->where('status', '!=', 'accepted'); // Ensures status is NOT 'accepted'
             })
             ->exists();
+//        $is_cash_on_delivery = Order::where('id', $request->id)
+//            ->whereHas('orderMaster', function ($query) {
+//                $query->where('payment_gateway', 'cash_on_delivery');
+//            })
+//            ->exists();
+//        if (!$is_cash_on_delivery){
+//            return response()->json([
+//                'message' => __('messages.order_is_not_cash_on_delivery')
+//            ], 422);
+//        }
         if ($already_cancelled_or_ignored_or_delivered) {
             return response()->json([
                 'message' => __('messages.order_already_cancelled_or_ignored_or_delivered')
@@ -140,7 +147,7 @@ class DeliverymanOrderManageController extends Controller
         if ($success === 'order_is_not_accepted') {
             return response()->json([
                 'message' => __('messages.order_is_not_accepted')
-            ],200);
+            ], 200);
         }
         if ($success === 'delivered') {
             return response()->json([
