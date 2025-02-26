@@ -11,57 +11,65 @@ use Kreait\Firebase\Messaging\Notification;
 
 class OrderManageNotificationService
 {
-    public function createOrderNotification($last_order_id)
+    public function createOrderNotification($last_order_ids)
     {
-        // Order with relationship data get
-        $order_details = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store.seller', 'deliveryman')
-            ->find($last_order_id);
-
-        // if order not found
-        if (!$order_details) {
+        if (empty($last_order_ids)) {
             return;
         }
 
-        // Notification Data
-        $title = 'New Order Update';
-        $message = 'You have a new update for Order #' . $order_details->id;
-        $data = ['order_id' => $order_details->id];
+        // Order with relationship data get
+        $orders = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store.seller', 'deliveryman')
+            ->whereIn('id' ,$last_order_ids)->get();
 
-        // create notification for every one
-        $this->notifyAdmin($title, $message, $data);
-        $this->notifyStore($order_details, $title, $message, $data);
-        $this->notifyCustomer($order_details, $title, $message, $data);
-        $this->notifyDeliveryman($order_details, $title, $message, $data);
+        // if order not found
+        if ($orders->count() === 0) {
+            return;
+        }
 
-        // Customer notification
-        $this->sendOrderNotification(
-            $order_details->orderMaster?->customer,
-            'customer_id',
-            $order_details->orderMaster?->customer_id ?? 0,
-            $last_order_id,
-            __('Order Placed Successfully'),
-            __('Your order ID: # :id has been placed successfully.', ['id' => $last_order_id])
-        );
+        foreach ($orders as $order_details) {
+            $last_order_id =$order_details->id;
+            // Notification Data
+            $title = 'New Order Update';
+            $message = 'You have a new update for Order #' . $order_details->id;
+            $data = ['order_id' => $order_details->id];
 
-        // Seller notification
-        $this->sendOrderNotification(
-            $order_details->store?->seller,
-            'seller_id',
-            $order_details->store?->store_seller_id ?? 0,
-            $last_order_id,
-            __('New Order Received'),
-            __('You have received a new order. Order ID: # :id.', ['id' => $last_order_id])
-        );
+            // create notification for every one
+            $this->notifyAdmin($title, $message, $data);
+            $this->notifyStore($order_details, $title, $message, $data);
+            $this->notifyCustomer($order_details, $title, $message, $data);
+            $this->notifyDeliveryman($order_details, $title, $message, $data);
 
-        // Deliveryman notification
-        $this->sendOrderNotification(
-            $order_details->deliveryman,
-            'deliveryman_id',
-            $order_details->deliveryman?->id ?? 0,
-            $last_order_id,
-            __('New Delivery Assigned'),
-            __('A new delivery has been assigned. Order ID: # :id.', ['id' => $last_order_id])
-        );
+            // Customer notification
+            $this->sendOrderNotification(
+                $order_details->orderMaster?->customer,
+                'customer_id',
+                $order_details->orderMaster?->customer_id ?? 0,
+                $last_order_id,
+                __('Order Placed Successfully'),
+                __('Your order ID: # :id has been placed successfully.', ['id' => $last_order_id])
+            );
+
+            // Seller notification
+            $this->sendOrderNotification(
+                $order_details->store?->seller,
+                'seller_id',
+                $order_details->store?->store_seller_id ?? 0,
+                $last_order_id,
+                __('New Order Received'),
+                __('You have received a new order. Order ID: # :id.', ['id' => $last_order_id])
+            );
+
+            // Deliveryman notification
+            $this->sendOrderNotification(
+                $order_details->deliveryman,
+                'deliveryman_id',
+                $order_details->deliveryman?->id ?? 0,
+                $last_order_id,
+                __('New Delivery Assigned'),
+                __('A new delivery has been assigned. Order ID: # :id.', ['id' => $last_order_id])
+            );
+        }
+
 
     }
 
@@ -71,27 +79,37 @@ class OrderManageNotificationService
             return;
         }
         $token = is_array($recipient->firebase_token) ? $recipient->firebase_token : [$recipient->firebase_token];
-        $notification_data = [
-            "title" => $title,
-            "detailed_title" => "-",
-            "order_id" => $orderId,
-            $idKey => $idValue,
-            "body" => $body,
-            "description" => "-",
-            "type" => "order",
-            "sound" => "default",
-            "screen" => "-"
-        ];
-        $this->sendFirebaseNotification($token, $title, $body, $notification_data);
+
+        // empty check
+        $token = array_filter($token);
+        if (!empty($token)) {
+            $notification_data = [
+                "title" => $title,
+                "detailed_title" => "-",
+                "order_id" => $orderId,
+                $idKey => $idValue,
+                "body" => $body,
+                "description" => "-",
+                "type" => "order",
+                "sound" => "default",
+                "screen" => "-"
+            ];
+
+            // Send notification
+            $this->sendFirebaseNotification($token, $title, $body, $notification_data);
+            
+        }
     }
 
 
     // Notify Admins
     protected function notifyAdmin($title, $message, $data)
     {
-        $admins = User::where('activity_scope', 'system_level')->get();
+        $admin = User::whereHas('roles', function ($query) {
+            $query->where('name', 'Super Admin');
+        })->first();
 
-        foreach ($admins as $admin) {
+        if ($admin) {
             $this->sendNotification($admin->id, 'admin', $title, $message, $data);
         }
     }
@@ -99,7 +117,7 @@ class OrderManageNotificationService
     protected function notifyStore($order_details, $title, $message, $data)
     {
         if ($order_details->store) {
-            $this->sendNotification($order_details->store->owner_id, 'store', $title, $message, $data);
+            $this->sendNotification($order_details->store?->seller?->id, 'store', $title, $message, $data);
         }
     }
 
@@ -114,7 +132,7 @@ class OrderManageNotificationService
     // Notify Deliveryman
     protected function notifyDeliveryman($order_details, $title, $message, $data)
     {
-        if ($order_details->deliveryman) {
+        if ($order_details->deliveryman &&!empty($order_details->deliveryman)) {
             $this->sendNotification($order_details->deliveryman->id, 'deliveryman', $title, $message, $data);
         }
     }
@@ -124,7 +142,7 @@ class OrderManageNotificationService
     {
         // Store notification in database
         UniversalNotification::create([
-            'user_id'        => $user_id,
+            'notifiable_id'  => $user_id,
             'title'          => $title,
             'message'        => $message,
             'data'           => json_encode($data),
@@ -141,7 +159,7 @@ class OrderManageNotificationService
             // Check if the third parameter (image URL) is being passed as an array.
             $imageUrl = isset($data['imageUrl']) && is_string($data['imageUrl']) ? $data['imageUrl'] : null;
             // Path to the Firebase credentials JSON file
-            $credentialsPath = storage_path('app/firebase/firebase_credentials.json');
+            $credentialsPath = storage_path('app/firebase/firebase.json');
             // Load the credentials from the JSON file
             $jsonCredentials = file_get_contents($credentialsPath);
             $credentials = json_decode($jsonCredentials, true);
@@ -183,4 +201,5 @@ class OrderManageNotificationService
 
         }catch (\Exception $exception){}
     }
+
 }
