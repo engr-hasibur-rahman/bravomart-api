@@ -16,7 +16,7 @@ class RoleRequest extends FormRequest
             'role_name' => 'required|string|max:255',
             'permissions' => 'array',
             'available_for' => 'nullable|string|max:255',
-            //'permissions.*' => 'string|exists:permissions,name',
+            'permissions.*' => 'string|exists:permissions,name',
         ];
     }
 }
