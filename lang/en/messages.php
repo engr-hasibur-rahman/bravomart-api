@@ -48,6 +48,8 @@ return [
     'support_ticket.message.sent' => 'Support ticket has been sent!',
 
     'store.doesnt.belongs.to.seller' => 'Store doesn\'t belongs to this seller!',
+    'staff_doesnt_belongs_to_seller' => 'Staff doesn\'t belongs to this seller!',
+    'staff_not_assign_to_stores' => 'Staff is not assigned to any store yet!',
 
     'default.address' => 'Default address can\'t be deleted!',
     'invalid.address' => 'Invalid address!',

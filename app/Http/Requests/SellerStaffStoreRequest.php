@@ -11,39 +11,32 @@ use Illuminate\Validation\Rule;
 
 class SellerStaffStoreRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
 
         return [
             'first_name' => 'required|string|max:255',
-            'last_name'  => 'required|string|max:255',
-            'email'      => [
+            'last_name' => 'required|string|max:255',
+            'email' => [
                 'required',
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->ignore($this->id), // Use $this->id to ignore the current user's email
+                Rule::unique('users', 'email')->ignore($this->id),
             ],
-            'password'   => 'nullable|string|min:8|max:12', // Password is optional (nullable) and enforces length if provided
-            'phone'      => 'nullable|string|max:15', // Optional phone field
-            'image'      => 'nullable|string', // Optional phone field
+            'password' => 'nullable|string|min:8|max:12',
+            'phone' => 'nullable|string|max:15',
+            'image' => 'nullable|string',
             'stores' => 'nullable|array',
-            'stores.*'    => ['nullable', 'integer', new ValidSellerStore],  // Use the custom validation rule here
+            'stores.*' => ['nullable', 'integer', new ValidSellerStore],
             'roles' => 'nullable|array',
-            'roles.*.value' => 'required|string|exists:roles,name', // Assuming roles are validated against a 'roles' table
+            'roles.*.value' => 'required|string|exists:roles,name',
         ];
     }
 

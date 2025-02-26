@@ -13,24 +13,17 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $limit = $request->limit ?? 10;
+        $per_page = $request->per_page ?? 10;
         $roles = QueryBuilder::for(Role::class)
             ->with(['permissions'])
             ->when($request->filled('available_for'), function ($query) use ($request) {
                 $query->where('available_for', $request->available_for);
             })
-            ->paginate($limit);
+            ->paginate($per_page);
         return RoleResource::collection($roles);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(RoleRequest $request)
     {
 
@@ -61,12 +54,10 @@ class RoleController extends Controller
             $role->permissions()->sync($syncData);
         }
 
-        return response()->json('roles added');
+        return response()->json([
+            "message" => __('messages.save_success', ['name' => 'Role'])
+        ], 201);
     }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $role = CustomRole::with([
@@ -76,7 +67,7 @@ class RoleController extends Controller
         ])->findOrFail($id);
 
         // Load all permissions
-        $allPermissions = CustomPermission::with('childrenRecursive')->where('available_for',$role->available_for)
+        $allPermissions = CustomPermission::with('childrenRecursive')->where('available_for', $role->available_for)
             ->whereNull('parent_id') // Adjust condition based on your hierarchy
             ->get();
 
@@ -92,13 +83,9 @@ class RoleController extends Controller
             "available_for" => $role->available_for,
             "name" => $role->name,
             "guard_name" => $role->guard_name,
-            "permissions" => ComHelper::buildMenuTree([$role->id],$allPermissions)
+            "permissions" => ComHelper::buildMenuTree([$role->id], $allPermissions)
         ];
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(RoleRequest $request, string $id)
     {
         $role = Role::findOrFail($id);
@@ -110,15 +97,10 @@ class RoleController extends Controller
 
         return $role;
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $role = Role::findOrFail($id);
         $role->delete();
-
         return response()->json('Role deleted');
     }
 
