@@ -295,7 +295,7 @@ class FlashSaleService
 
     public function getAllFlashSaleProducts(array $filters)
     {
-        $query = FlashSaleProduct::query()->with(['product', 'store', 'flashSale']);
+        $query = FlashSaleProduct::query()->with(['product.related_translations', 'store.related_translations', 'flashSale.related_translations']);
 
         $query->when(isset($filters['store_id']), fn($q) => $q->where('store_id', $filters['store_id']));
         $query->when(isset($filters['flash_sale_id']), fn($q) => $q->where('flash_sale_id', $filters['flash_sale_id']));

@@ -17,9 +17,16 @@ class AdminOrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
+        $store_translation = $this->store->related_translations->where('language', $language);
         return [
             'order_id' => $this->id,
-            'store' => $this->store->name ?? null,
+            'store' => !empty($store_translation) && $store_translation->where('key', 'name')->first()
+                ? $store_translation->where('key', 'name')->first()->value
+                : $this->store->name ?? null, // If language is empty or not provided attribute
             'customer_name' => $this->orderMaster->customer->first_name . ' ' . $this->orderMaster->customer->last_name ?? null,
             'invoice_number' => $this->invoice_number,
             'order_date' => $this->created_at,
