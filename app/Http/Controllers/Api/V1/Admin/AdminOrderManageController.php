@@ -46,7 +46,7 @@ class AdminOrderManageController extends Controller
                 ], 200
             );
         }
-        $ordersQuery = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress']);
+        $ordersQuery = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store.related_translations', 'deliveryman', 'orderMaster.shippingAddress']);
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 
