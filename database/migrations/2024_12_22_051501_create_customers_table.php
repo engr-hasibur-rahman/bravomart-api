@@ -30,6 +30,7 @@ return new class extends Migration {
             $table->boolean('activity_notification')->default(1);
             $table->boolean('marketing_email')->default(0);
             $table->boolean('marketing_sms')->default(0);
+            $table->string('firebase_token')->nullable();
             $table->integer('status')->default(1)->comment('1: active, 0: inactive, 2: suspended');
             $table->timestamp('deactivated_at')->nullable();
             $table->softDeletes();

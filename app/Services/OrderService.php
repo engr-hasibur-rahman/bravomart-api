@@ -18,6 +18,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\SystemCommission;
 use App\Models\User;
+use App\Services\Order\OrderManageNotificationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -26,6 +27,13 @@ use Modules\Subscription\app\Models\StoreSubscription;
 
 class OrderService
 {
+    protected $orderManageNotificationService;
+
+    public function __construct(OrderManageNotificationService $orderManageNotificationService)
+    {
+        $this->orderManageNotificationService = $orderManageNotificationService;
+    }
+
     public function createOrder($data)
     {
 
@@ -500,6 +508,10 @@ class OrderService
             // return all order id
             $all_orders = Order::where('order_master_id', $order_master->id)->get();
             $order_master = OrderMaster::find($order_master->id);
+
+            // order notification
+            $all_orders_ids = Order::where('order_master_id', $order_master->id)->pluck('id')->toArray();
+            $this->orderManageNotificationService->createOrderNotification($all_orders_ids);
 
             return [
                 $all_orders,
