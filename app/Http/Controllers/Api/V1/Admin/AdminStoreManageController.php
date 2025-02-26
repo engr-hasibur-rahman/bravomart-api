@@ -26,7 +26,7 @@ class AdminStoreManageController extends Controller
     public function index(Request $request)
     {
         $stores = $this->storeRepo->getAllStores(
-            $request->limit ?? 10,
+            $request->per_page ?? 10,
             $request->page ?? 1,
             $request->language ?? DEFAULT_LANGUAGE,
             $request->search ?? "",

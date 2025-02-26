@@ -24,9 +24,9 @@ class StoreListResource extends JsonResource
             'area' => $this->area->name ?? null,
             'seller' => $this->seller ? $this->seller->first_name . '' . $this->seller->last_name : null,
             'store_type' => $this->store_type,
-            'name' => $translation->isNotEmpty()
-                ? $translation->where('key', 'name')->first()?->value
-                : $this->name,
+            'name' => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
+                : $this->name, // If language is empty or not provided attribute
             'slug' => $this->slug,
             'phone' => $this->phone,
             'email' => $this->email,
@@ -34,9 +34,9 @@ class StoreListResource extends JsonResource
             'logo_url' => ImageModifier::generateImageUrl($this->logo),
             'banner' => $this->banner,
             'banner_url' => ImageModifier::generateImageUrl($this->banner),
-            'address' => $translation->isNotEmpty()
-                ? $translation->where('key', 'address')->first()?->value
-                : $this->address,
+            'address' => !empty($translation) && $translation->where('key', 'address')->first()
+                ? $translation->where('key', 'address')->first()->value
+                : $this->address, // If language is empty or not provided attribute
             'tax' => $this->tax,
             'tax_number' => $this->tax_number,
             'is_featured' => $this->is_featured,
@@ -53,12 +53,12 @@ class StoreListResource extends JsonResource
             'veg_status' => $this->veg_status,
             'off_day' => $this->off_day,
             'enable_saling' => $this->enable_saling,
-            'meta_title' => $translation->isNotEmpty()
-                ? $translation->where('key', 'meta_title')->first()?->value
-                : $this->meta_title,
-            'meta_description' => $translation->isNotEmpty()
-                ? $translation->where('key', 'meta_description')->first()?->value
-                : $this->meta_description,
+            'meta_title' => !empty($translation) && $translation->where('key', 'meta_title')->first()
+                ? $translation->where('key', 'meta_title')->first()->value
+                : $this->meta_title, // If language is empty or not provided attribute
+            'meta_description' => !empty($translation) && $translation->where('key', 'meta_description')->first()
+                ? $translation->where('key', 'meta_description')->first()->value
+                : $this->meta_description, // If language is empty or not provided attribute
             'meta_image' => ImageModifier::generateImageUrl($this->meta_image),
             'status' => $this->status,
             'created_by' => $this->created_by,

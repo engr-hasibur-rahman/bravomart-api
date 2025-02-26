@@ -20,7 +20,7 @@ class ProductCategoryController extends Controller
     public function index(Request $request)
     {
 
-        $limit = $request->limit ?? 10;
+        $per_page = $request->per_page ?? 10;
         $language = $request->language ?? DEFAULT_LANGUAGE;
         $search = $request->search;
 
@@ -50,7 +50,7 @@ class ProductCategoryController extends Controller
 
         }else {
             $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
-            ->paginate($limit);
+            ->paginate($per_page);
         }
         // Return a collection of ProductBrandResource (including the image)
         return ProductCategoryResource::collection($categories);
