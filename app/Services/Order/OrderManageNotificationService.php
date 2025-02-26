@@ -79,18 +79,26 @@ class OrderManageNotificationService
             return;
         }
         $token = is_array($recipient->firebase_token) ? $recipient->firebase_token : [$recipient->firebase_token];
-        $notification_data = [
-            "title" => $title,
-            "detailed_title" => "-",
-            "order_id" => $orderId,
-            $idKey => $idValue,
-            "body" => $body,
-            "description" => "-",
-            "type" => "order",
-            "sound" => "default",
-            "screen" => "-"
-        ];
-        $this->sendFirebaseNotification($token, $title, $body, $notification_data);
+
+        // empty check
+        $token = array_filter($token);
+        if (!empty($token)) {
+            $notification_data = [
+                "title" => $title,
+                "detailed_title" => "-",
+                "order_id" => $orderId,
+                $idKey => $idValue,
+                "body" => $body,
+                "description" => "-",
+                "type" => "order",
+                "sound" => "default",
+                "screen" => "-"
+            ];
+
+            // Send notification
+            $this->sendFirebaseNotification($token, $title, $body, $notification_data);
+            
+        }
     }
 
 
@@ -151,7 +159,7 @@ class OrderManageNotificationService
             // Check if the third parameter (image URL) is being passed as an array.
             $imageUrl = isset($data['imageUrl']) && is_string($data['imageUrl']) ? $data['imageUrl'] : null;
             // Path to the Firebase credentials JSON file
-            $credentialsPath = storage_path('app/firebase/firebase_credentials.json');
+            $credentialsPath = storage_path('app/firebase/firebase.json');
             // Load the credentials from the JSON file
             $jsonCredentials = file_get_contents($credentialsPath);
             $credentials = json_decode($jsonCredentials, true);
@@ -193,4 +201,5 @@ class OrderManageNotificationService
 
         }catch (\Exception $exception){}
     }
+
 }
