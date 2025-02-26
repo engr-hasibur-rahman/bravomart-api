@@ -24,7 +24,7 @@ class InventoryResource extends JsonResource
             'product_name' => !empty($translation) && $translation->where('key', 'name')->first()
                 ? $translation->where('key', 'name')->first()->value
                 : $this->name,
-            'store_name' => !empty($store_translation) && $store_translation->where('key', 'reason')->first()
+            'store_name' => !empty($store_translation) && $store_translation->where('key', 'name')->first()
                 ? $store_translation->where('key', 'name')->first()->value
                 : $this->store->name,
             'type' => $this->type,
