@@ -173,6 +173,10 @@ class BivaCommandAuto extends Command
         $get_sql_files_path = (new Filesystem)->files(public_path('sql'));
         foreach($get_sql_files_path as $key => $path){
             $file_sql = file_get_contents($path);
+            if (empty($file_sql)) {
+                info('Skipping empty SQL file: ' . $path);
+                continue;
+            }
             DB::statement($file_sql);
         }
 
