@@ -152,6 +152,19 @@ class BivaCommandAuto extends Command
         // Backup product data
         info('Backing up product data...');
         $media = DB::table('media')->get();
+        $store_types = DB::table('store_types')->get();
+        $sliders = DB::table('sliders')->get();
+        $banners = DB::table('banners')->get();
+        $blogs = DB::table('blogs')->get();
+        $blog_categories = DB::table('blog_categories')->get();
+        $stores = DB::table('stores')->get();
+        $store_sellers = DB::table('store_sellers')->get();
+        $store_areas = DB::table('store_areas')->get();
+        $store_area_settings = DB::table('store_area_settings')->get();
+        $store_area_setting_range_charges = DB::table('store_area_setting_range_charges')->get();
+        $store_area_setting_store_types = DB::table('store_area_setting_store_types')->get();
+        $store_subscriptions = DB::table('store_subscriptions')->get();
+        $setting_options = DB::table('setting_options')->get();
 
 
         info('Dropping all tables started...');
@@ -163,6 +176,57 @@ class BivaCommandAuto extends Command
             info('Restoring product data...');
             foreach ($media as $img) {
                 DB::table('media')->insert((array) $img);
+            }
+            foreach ($store_types as $type) {
+                DB::table('store_types')->insert((array) $type);
+            }
+
+//            foreach ($sliders as $slider) {
+//                DB::table('sliders')->updateOrInsert(
+//                    ['order' => $slider->order], // 🔑 Match on unique column
+//                    (array) $slider // 📝 Insert or update data
+//                );
+//            }
+
+            foreach ($banners as $banner) {
+                DB::table('banners')->insert((array) $banner);
+            }
+            foreach ($blogs as $blog) {
+                DB::table('blogs')->insert((array) $blog);
+            }
+            foreach ($blog_categories as $blog_cat) {
+                DB::table('blog_categories')->insert((array) $blog_cat);
+            }
+
+        DB::table('stores')->delete(); // Deletes all rows, but keeps auto-increment
+
+
+
+
+//        foreach ($stores as $store) {
+//            DB::table('stores')->insert((array) $store);
+//        }
+
+            foreach ($store_areas as $store_area) {
+                DB::table('store_areas')->insert((array) $store_area);
+            }
+            foreach ($store_area_settings as $store_area_setting) {
+                DB::table('store_area_settings')->insert((array) $store_area_setting);
+            }
+            foreach ($store_area_setting_range_charges as $store_area_setting_range_charge) {
+                DB::table('store_area_setting_range_charges')->insert((array) $store_area_setting_range_charge);
+            }
+            foreach ($store_area_setting_store_types as $store_area_setting_store_type) {
+                DB::table('store_area_setting_store_types')->insert((array) $store_area_setting_store_type);
+            }
+            foreach ($store_sellers as $store_seller) {
+                DB::table('store_sellers')->insert((array) $store_seller);
+            }
+            foreach ($store_subscriptions as $store_subscription) {
+                DB::table('store_subscriptions')->insert((array) $store_subscription);
+            }
+            foreach ($setting_options as $setting_option) {
+                DB::table('setting_options')->insert((array) $setting_option);
             }
 
             info('Database seeding started...');
