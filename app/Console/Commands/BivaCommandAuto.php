@@ -149,9 +149,21 @@ class BivaCommandAuto extends Command
         info('And seeding all data from sql files.');
         //if (confirm('Are you sure! ')) {
 
-            info('Dropping all tables started...');
+        // Backup product data
+        info('Backing up product data...');
+        $media = DB::table('media')->get();
+
+
+        info('Dropping all tables started...');
             $this->call('migrate:fresh');
             info('Dropping all tables ended...');
+
+
+            // Restore product data
+            info('Restoring product data...');
+            foreach ($media as $img) {
+                DB::table('media')->insert((array) $img);
+            }
 
             info('Database seeding started...');
             $this->seedDemoData();
@@ -173,6 +185,10 @@ class BivaCommandAuto extends Command
         $get_sql_files_path = (new Filesystem)->files(public_path('sql'));
         foreach($get_sql_files_path as $key => $path){
             $file_sql = file_get_contents($path);
+            if (empty($file_sql)) {
+                info('Skipping empty SQL file: ' . $path);
+                continue;
+            }
             DB::statement($file_sql);
         }
 
