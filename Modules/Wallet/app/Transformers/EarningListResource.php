@@ -16,6 +16,7 @@ class EarningListResource extends JsonResource
             "id" => $this->id,
             "amount" => $this->amount,
             "type" => $this->type,
+            "purpose" => $this->purpose,
             "status" => $this->status ? 'success' : 'pending',
             "created_at" => $this->created_at->format('F d, Y \a\t h:i A')
         ];
