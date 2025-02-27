@@ -31,6 +31,7 @@ class AdminSliderResource extends JsonResource
             "description" => !empty($translation) && $translation->where('key', 'description')->first()
                 ? $translation->where('key', 'description')->first()->value
                 : $this->description ?? null, // If language is empty or not provided attribute
+            "image" => $this->image,
             "image_url" => ImageModifier::generateImageUrl($this->image),
             "button_text" => !empty($translation) && $translation->where('key', 'button_text')->first()
                 ? $translation->where('key', 'button_text')->first()->value
