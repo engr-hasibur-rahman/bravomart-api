@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\AdminOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
+use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Http\Resources\Order\OrderSummaryResource;
 use App\Models\Order;
 use App\Models\OrderActivity;
@@ -22,7 +23,7 @@ class AdminOrderManageController extends Controller
         $order_id = $request->order_id;
 
         if ($order_id) {
-            $order = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
+            $order = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress', 'refund'])
                 ->where('id', $order_id)
                 ->first();
             if (!$order) {
@@ -43,6 +44,7 @@ class AdminOrderManageController extends Controller
                 [
                     'order_data' => new AdminOrderResource($order),
                     'order_summary' => new OrderSummaryResource($order),
+                    'refund' => new OrderRefundRequestResource($order->refund),
                 ], 200
             );
         }
