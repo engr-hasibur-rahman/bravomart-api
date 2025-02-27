@@ -10,6 +10,7 @@ use App\Models\WithdrawGateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
+use Modules\Wallet\app\Models\WalletTransaction;
 use Modules\Wallet\app\Models\WalletWithdrawalsTransaction;
 use Modules\Wallet\app\Transformers\WithdrawDetailsResource;
 use Modules\Wallet\app\Transformers\WithdrawGatewayListResource;
@@ -117,34 +118,13 @@ class SellerAndDeliverymanWithdrawController extends Controller
             ]);
         }
     }
-    public function earningDetails(Request $request)
-    {
-
-        $withdraw = WalletWithdrawalsTransaction::where('id', $request->id)
-            ->where('owner_id', auth('api')->user()->id)->first();
-
-        if (!empty($withdraw)) {
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'messages.data_found',
-                'data' => new WithdrawDetailsResource($withdraw)
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'status_code' => 404,
-                'message' => 'messages.data_not_found',
-                'data' => []
-            ]);
-        }
-    }
 
     public function withdrawRequest(Request $request)
     {
         $validator = Validator::make(request()->all(), [
             "store_id" => "nullable|exists:stores,id", // store exists
             "deliveryman_id" => "nullable|exists:users,id", // deliveryman exists
+            "customer_id" => "nullable|exists:customers,id",
             "withdraw_gateway_id" => "required|integer|exists:withdraw_gateways,id",
             "amount" => "required",
             "details" => "nullable|string|max:255",
@@ -153,8 +133,13 @@ class SellerAndDeliverymanWithdrawController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
-
-        $owner_id = $request->store_id;
+        if (isset($request->store_id)) {
+            $owner_id = $request->store_id;
+        } else if (isset($request->deliveryman_id)) {
+            $owner_id = $request->deliveryman_id;
+        } else if (isset($request->customer_id)) {
+            $owner_id = $request->customer_id;
+        }
         $withdraw_amount = $request->amount;
 
         $min_limit = com_option_get('minimum_withdrawal_limit');
@@ -170,39 +155,45 @@ class SellerAndDeliverymanWithdrawController extends Controller
         }
 
         // balance check
-        $ownerType = WalletOwnerType::STORE->value;
+        if (isset($request->store_id)) {
+            $ownerType = WalletOwnerType::STORE->value;
+        } else if (isset($request->deliveryman_id)) {
+            $ownerType = WalletOwnerType::DELIVERYMAN->value;
+        } else if (isset($request->customer_id)) {
+            $ownerType = WalletOwnerType::CUSTOMER->value;
+        }
 
         $wallet = Wallet::where('owner_id', $owner_id)
             ->where('owner_type', $ownerType)
             ->first();
 
-        if (empty($wallet)){
+        if (empty($wallet)) {
             return response()->json([
                 'status' => false,
                 'message' => 'You have no wallet.',
-            ],402);
+            ], 402);
         }
 
-        if (!empty($wallet) && $wallet->balance <= 0){
+        if (!empty($wallet) && $wallet->balance <= 0) {
             return response()->json([
                 'status' => false,
-               'message' => 'You have insufficient balance.',
+                'message' => 'You have insufficient balance.',
             ], 402);
         }
 
         // Validate if store finances exist and current balance is sufficient
-        if ($wallet->balance < $request->amount){
+        if ($wallet->balance < $request->amount) {
             return response()->json([
                 'status' => false,
-               'message' => 'You have insufficient balance.',
-            ],402);
+                'message' => 'You have insufficient balance.',
+            ], 402);
         }
 
         $method = WithdrawGateway::find($request->withdraw_gateway_id);
         $success = WalletWithdrawalsTransaction::create([
             'wallet_id' => $wallet->id,
             'owner_id' => $owner_id,
-            'owner_type' => WalletOwnerType::STORE->value,
+            'owner_type' => $ownerType,
             'withdraw_gateway_id' => $method->id,
             'gateway_name' => $method->name,
             'amount' => $request->amount,

@@ -100,5 +100,10 @@ class Order extends Model
         return $this->belongsTo(Store::class, 'store_id', 'id');
     }
 
+    public function refund()
+    {
+        return $this->hasOne(OrderRefund::class, 'order_id', 'id');
+    }
+
 
 }

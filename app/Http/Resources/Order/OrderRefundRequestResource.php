@@ -25,12 +25,12 @@ class OrderRefundRequestResource extends JsonResource
             "customer_note" => $this->customer_note,
             "status" => $this->status,
             "amount" => $this->amount,
-            "store" => !empty($translation) && $translation->where('key', 'name')->first()
-                ? $translation->where('key', 'name')->first()->value
+            "store" => !empty($store_translation) && $store_translation->where('key', 'name')->first()
+                ? $store_translation->where('key', 'name')->first()->value
                 : $this->store?->name,
             "customer" => $this->customer?->getFullNameAttribute(),
-            "order_refund_reason" => !empty($translation) && $translation->where('key', 'reason')->first()
-                ? $translation->where('key', 'reason')->first()->value
+            "order_refund_reason" => !empty($refund_reason_translation) && $refund_reason_translation->where('key', 'reason')->first()
+                ? $refund_reason_translation->where('key', 'reason')->first()->value
                 : $this->orderRefundReason?->reason,
             "file" => asset('storage/' . $this->file) ?? null
         ];

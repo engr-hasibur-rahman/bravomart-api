@@ -301,7 +301,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
         });
         // Slider manage
-        Route::group(['prefix' => 'slider/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
+        Route::group(['prefix' => 'slider/', 'middleware' => ['permission:' . PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value]], function () {
             Route::get('list', [SliderManageController::class, 'index']);
             Route::post('add', [SliderManageController::class, 'store']);
             Route::get('details', [SliderManageController::class, 'show']);

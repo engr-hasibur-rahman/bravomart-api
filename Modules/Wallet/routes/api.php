@@ -30,6 +30,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
             Route::get('/', [WalletCommonController::class, 'myWallet']);
             Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
             Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
+            Route::get('wallet-history', [WalletCommonController::class, 'walletHistory']);
         });
 //        Route::group(['prefix' => 'withdraw/', 'middleware' => 'permission:' . PermissionKey::DELIVERYMAN_FINANCIAL_WITHDRAWALS->value], function () {
         Route::group(['prefix' => 'withdraw/'], function () {
