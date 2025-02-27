@@ -644,7 +644,7 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::ADMIN_FEEDBACK_REviewS->value,
+                            'PermissionName' => PermissionKey::ADMIN_FEEDBACK_REVIEWS->value,
                             'PermissionTitle' => 'Reviews',
                             'activity_scope' => 'system_level',
                             'icon' => 'Star',
