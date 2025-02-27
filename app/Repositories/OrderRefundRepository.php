@@ -120,7 +120,7 @@ class OrderRefundRepository implements OrderRefundInterface
             ->update(['refund_status' => 'processing']);
     }
 
-    public function reject_refund_request(int $id, string $status)
+    public function reject_refund_request(int $id, string $status, string $reason)
     {
         $request = OrderRefund::find($id);
 
@@ -128,7 +128,10 @@ class OrderRefundRepository implements OrderRefundInterface
             return false;
         }
 
-        $request->update(['status' => $status]);
+        $request->update([
+            'status' => $status,
+            'reject_reason' => $reason
+        ]);
 
         return (bool)Order::where('id', $request->order_id)
             ->update(['refund_status' => 'rejected']);

@@ -65,7 +65,7 @@ class AdminOrderRefundManageController extends Controller
                     'message' => __('validation.required', ['attribute' => 'Reason']),
                 ],422);
             }
-            $success = $this->orderRefundRepo->reject_refund_request($request->id, $request->status);
+            $success = $this->orderRefundRepo->reject_refund_request($request->id, $request->status,$request->reject_reason);
             if ($success) {
                 return response()->json([
                     'message' => __('messages.reject.success', ['name' => 'Order Refund Request']),

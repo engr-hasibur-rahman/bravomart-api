@@ -15,6 +15,7 @@ class OrderRefund extends Model
         "file",
         "status",
         "amount",
+        "reject_reason"
     ];
 
     public function order()
