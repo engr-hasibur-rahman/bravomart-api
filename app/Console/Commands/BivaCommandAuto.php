@@ -200,6 +200,9 @@ class BivaCommandAuto extends Command
 
         DB::table('stores')->delete(); // Deletes all rows, but keeps auto-increment
 
+
+
+
 //        foreach ($stores as $store) {
 //            DB::table('stores')->insert((array) $store);
 //        }
