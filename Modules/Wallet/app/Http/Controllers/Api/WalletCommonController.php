@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletTransaction;
+use Modules\Wallet\app\Models\WalletWithdrawalsTransaction;
 use Modules\Wallet\app\Transformers\UserWalletDetailsResource;
+use Modules\Wallet\app\Transformers\WalletHistoryResource;
 use Modules\Wallet\app\Transformers\WalletTransactionListResource;
 
 class WalletCommonController extends Controller
@@ -297,6 +299,48 @@ class WalletCommonController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Payment status updated successfully',
+        ]);
+    }
+    public function walletHistory(Request $request)
+    {
+        // Check authentication
+        if (!auth('api')->check()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access, please log in.',
+            ], 401);
+        }
+
+        $user = auth('api')->user();
+
+        // Validate activity scope
+        if (!in_array($user->activity_scope, ['store_level', 'delivery_level'])) {
+            return unauthorized_response();
+        }
+
+        // Fetch wallet data
+        $user_wallet = Wallet::where('owner_id', $user->id)->first();
+        if (!$user_wallet) {
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.data_not_found'),
+            ], 404);
+        }
+
+        // Fetch earning history
+        $earningHistory = WalletTransaction::where('wallet_id', $user_wallet->id)
+            ->where('type', 'credit')
+            ->where('status', 1)
+            ->latest()
+            ->get();
+
+        // Fetch latest withdrawal history
+        $withdrawHistory = WalletWithdrawalsTransaction::latest()->paginate(10);
+
+        return response()->json([
+            'status' => true,
+            'message' => __('messages.data_found'),
+            'data' => new WalletHistoryResource($earningHistory, $withdrawHistory),
         ]);
     }
 
