@@ -516,6 +516,36 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+                
+                
+               //  slider management start
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Promotional control',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Slider Management',
+                        'ar' => 'إدارة المدونة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Flash Sale',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Star',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Slider',
+                                'ar' => ' قوائم الصفحات'
+                            ]
+                        ],
+                    ]
+                ], //  slider management end
+                
+                                 
+                
 
                 // Promotional control
                 [
@@ -614,7 +644,7 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::ADMIN_FEEDBACK_REVIEWS->value,
+                            'PermissionName' => PermissionKey::ADMIN_FEEDBACK_REviewS->value,
                             'PermissionTitle' => 'Reviews',
                             'activity_scope' => 'system_level',
                             'icon' => 'Star',
