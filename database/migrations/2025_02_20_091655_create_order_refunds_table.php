@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('file')->nullable(); //file type like: jpg,png,jpeg, webp, zip
             $table->enum('status', ['pending', 'approved', 'rejected', 'refunded'])->default('pending');
             $table->decimal('amount', 10, 2); // Refund amount
+            $table->text('reject_reason')->nullable();
             $table->timestamps();
         });
     }

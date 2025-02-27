@@ -42,6 +42,7 @@ class AdminOrderRefundManageController extends Controller
         $validator = Validator::make($request->all(), [
             'id' => 'required|integer|exists:order_refunds,id',
             'status' => 'required|in:approved,rejected,refunded',
+            'reject_reason' =>'nullable|string|max:500'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -59,6 +60,11 @@ class AdminOrderRefundManageController extends Controller
             }
         }
         if ($request->status === 'rejected') {
+            if (!isset($request->reject_reason) || empty($request->reject_reason)) {
+                return response()->json([
+                    'message' => __('validation.required', ['attribute' => 'Reason']),
+                ],422);
+            }
             $success = $this->orderRefundRepo->reject_refund_request($request->id, $request->status);
             if ($success) {
                 return response()->json([
