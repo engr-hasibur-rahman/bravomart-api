@@ -44,7 +44,7 @@ class AdminOrderManageController extends Controller
                 [
                     'order_data' => new AdminOrderResource($order),
                     'order_summary' => new OrderSummaryResource($order),
-                    'refund' => new OrderRefundRequestResource($order->refund),
+                    'refund' => $order->refund ? new OrderRefundRequestResource($order->refund) : null,
                 ], 200
             );
         }
