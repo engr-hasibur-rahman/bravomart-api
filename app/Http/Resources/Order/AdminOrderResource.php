@@ -20,7 +20,6 @@ class AdminOrderResource extends JsonResource
         // Get the requested language from the query parameter
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
-        $translation = $this->related_translations->where('language', $language);
         $store_translation = $this->store->related_translations->where('language', $language);
         return [
             'order_id' => $this->id,
