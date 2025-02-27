@@ -5,7 +5,7 @@ namespace Modules\Wallet\app\Transformers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class WithdrawListResource extends JsonResource
+class EarningListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,11 +15,9 @@ class WithdrawListResource extends JsonResource
         return [
             "id" => $this->id,
             "amount" => $this->amount,
-            "fee" => $this->fee,
-            "status" => $this->status,
-            "payment_method" => $this->gateway_name,
-            "gateways" => json_decode($this->gateways_options),
-            "created_at" => $this->created_at->format('F d, Y \a\t h:i A'),
+            "type" => $this->type,
+            "status" => $this->status ? 'success' : 'pending',
+            "created_at" => $this->created_at->format('F d, Y \a\t h:i A')
         ];
     }
 }
