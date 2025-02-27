@@ -124,6 +124,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
         $validator = Validator::make(request()->all(), [
             "store_id" => "nullable|exists:stores,id", // store exists
             "deliveryman_id" => "nullable|exists:users,id", // deliveryman exists
+            "customer_id" => "nullable|exists:customers,id",
             "withdraw_gateway_id" => "required|integer|exists:withdraw_gateways,id",
             "amount" => "required",
             "details" => "nullable|string|max:255",
@@ -136,6 +137,8 @@ class SellerAndDeliverymanWithdrawController extends Controller
             $owner_id = $request->store_id;
         } else if (isset($request->deliveryman_id)) {
             $owner_id = $request->deliveryman_id;
+        } else if (isset($request->customer_id)) {
+            $owner_id = $request->customer_id;
         }
         $withdraw_amount = $request->amount;
 
@@ -156,6 +159,8 @@ class SellerAndDeliverymanWithdrawController extends Controller
             $ownerType = WalletOwnerType::STORE->value;
         } else if (isset($request->deliveryman_id)) {
             $ownerType = WalletOwnerType::DELIVERYMAN->value;
+        } else if (isset($request->customer_id)) {
+            $ownerType = WalletOwnerType::CUSTOMER->value;
         }
 
         $wallet = Wallet::where('owner_id', $owner_id)
@@ -188,7 +193,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
         $success = WalletWithdrawalsTransaction::create([
             'wallet_id' => $wallet->id,
             'owner_id' => $owner_id,
-            'owner_type' => WalletOwnerType::STORE->value,
+            'owner_type' => $ownerType,
             'withdraw_gateway_id' => $method->id,
             'gateway_name' => $method->name,
             'amount' => $request->amount,
