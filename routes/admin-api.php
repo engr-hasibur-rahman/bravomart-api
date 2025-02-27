@@ -306,7 +306,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('add', [SliderManageController::class, 'store']);
             Route::get('details/{id}', [SliderManageController::class, 'show']);
             Route::post('update', [SliderManageController::class, 'update']);
-            Route::post('update', [SliderManageController::class, 'update']);
+            Route::post('change-status', [SliderManageController::class, 'changeStatus']);
             Route::delete('remove/{id}', [SliderManageController::class, 'destroy']);
         });
         // Product Brand Routing
