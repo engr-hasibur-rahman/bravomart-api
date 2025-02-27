@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PermissionKey;
 use App\Enums\Role as UserRole;
-use App\Helpers\ComHelper;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
-use App\Models\Translation;
-use App\Models\User;
 use App\Models\StoreSeller;
+use App\Models\User;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Exception;
@@ -21,10 +18,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role as ModelsRole;
 use Laravel\Socialite\Facades\Socialite;
 use Spatie\Permission\Models\Role;
-use Laravel\Socialite\Two\GoogleProvider;
 
 
 class UserController extends Controller

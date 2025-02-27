@@ -24,7 +24,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['view', 'insert', 'update', 'delete'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Dashboard',
                         'ar' => 'قائمة المناطق'
@@ -803,17 +803,6 @@ class PermissionAdminSeeder extends Seeder
                                 'ar' => 'قائمة رجال التوصيل'
                             ]
                         ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_DELIVERYMAN_MANAGE_REVIEW->value,
-                            'PermissionTitle' => 'Reviews',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'insert', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Reviews',
-                                'ar' => 'المراجعات'
-                            ]
-                        ]
                     ]
                 ],
 

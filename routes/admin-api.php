@@ -520,7 +520,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
             // Collect Cash (for cash collection)
-            Route::get('cash-collect', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
+            Route::get('cash-collection', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
         });
 
 
@@ -588,9 +588,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('permissions', [PermissionController::class, 'index']);
         Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
         Route::get('module-wise-permissions', [PermissionController::class, 'moduleWisePermissions']);
-        Route::get('roles', [RoleController::class, 'index']);
-        Route::post('roles', [RoleController::class, 'store']);
-        Route::get('roles/{id}', [RoleController::class, 'show']);
-        Route::post('roles-status-update', [RoleController::class, 'roleForStoreOwner']);
+        Route::group(['prefix' =>'roles/'], function () {
+            Route::get('list', [RoleController::class, 'index']);
+            Route::post('add', [RoleController::class, 'store']);
+            Route::get('details/{id}', [RoleController::class, 'show']);
+            Route::post('update', [RoleController::class, 'update']);
+            Route::post('change-status', [RoleController::class, 'changeStatus']);
+        });
     });
 });

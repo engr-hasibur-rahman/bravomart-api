@@ -89,9 +89,6 @@ class AdminFlashSaleManageController extends Controller
             'per_page' => $request->per_page,
         ];
         $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($filters);
-        if ($flashSaleProducts->isEmpty()) {
-            return [];
-        }
         if ($flashSaleProducts) {
             return response()->json([
                 'data' => AdminFlashSaleProductResource::collection($flashSaleProducts),
