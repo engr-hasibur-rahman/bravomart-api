@@ -32,7 +32,8 @@ class OrderRefundRequestResource extends JsonResource
             "order_refund_reason" => !empty($refund_reason_translation) && $refund_reason_translation->where('key', 'reason')->first()
                 ? $refund_reason_translation->where('key', 'reason')->first()->value
                 : $this->orderRefundReason?->reason,
-            "file" => asset('storage/' . $this->file) ?? null
+            "file" => asset('storage/' . $this->file) ?? null,
+            "reject_reason" => $this->reject_reason
         ];
     }
 }
