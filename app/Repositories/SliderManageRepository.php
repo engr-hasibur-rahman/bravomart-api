@@ -20,7 +20,7 @@ class SliderManageRepository implements SliderManageInterface
         return $this->slider->translationKeys;
     }
 
-    public function getPaginatedSlider(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedSlider(int|string $limit, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $slider = Slider::leftJoin('translations as title_translations', function ($join) use ($language) {
             $join->on('sliders.id', '=', 'title_translations.translatable_id')
@@ -157,6 +157,22 @@ class SliderManageRepository implements SliderManageInterface
             return true;
         } catch (\Throwable $th) {
             throw $th;
+        }
+    }
+
+    public function changeStatus(int $id)
+    {
+        $slider = Slider::find($id);
+        if ($slider) {
+            $slider->status = !$slider->status;
+            $slider->save();
+            return response()->json([
+                'message' => __('messages.update_success',['name' => 'Slider'])
+            ],200);
+        } else {
+            return response()->json([
+                'message' => __('messages.update_failed',['name' => 'Slider'])
+            ],200);
         }
     }
 

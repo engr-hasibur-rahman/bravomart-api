@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SliderRequest;
+use App\Http\Resources\Admin\AdminSliderResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\SliderManageInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,17 +18,21 @@ class SliderManageController extends Controller
 
     public function index(Request $request)
     {
-        return $this->sliderRepo->getPaginatedSlider(
-            $request->limit ?? 10,
-            $request->page ?? 1,
-            $request->language ?? DEFAULT_LANGUAGE,
+        $sliders = $this->sliderRepo->getPaginatedSlider(
+            $request->per_page ?? 10,
+            $request->language ?? 'en',
             $request->search ?? "",
             $request->sortField ?? 'id',
             $request->sort ?? 'asc',
             []
         );
+        return response()->json([
+            'data' => AdminSliderResource::collection($sliders),
+            'meta' => new PaginationResource($sliders)
+        ]);
     }
-    public function store(SliderRequest $request): JsonResponse
+
+    public function store(SliderRequest $request)
     {
         $slider = $this->sliderRepo->store($request->all());
         $this->sliderRepo->storeTranslation($request, $slider, 'App\Models\Slider', $this->sliderRepo->translationKeys());
@@ -51,6 +57,11 @@ class SliderManageController extends Controller
     public function show(Request $request)
     {
         return $this->sliderRepo->getSliderById($request->id);
+    }
+
+    public function changeStatus(Request $request)
+    {
+        return $this->sliderRepo->changeStatus($request->id);
     }
 
     public function destroy($id)

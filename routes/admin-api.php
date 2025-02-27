@@ -304,7 +304,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['prefix' => 'slider/', 'middleware' => ['permission:' . PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value]], function () {
             Route::get('list', [SliderManageController::class, 'index']);
             Route::post('add', [SliderManageController::class, 'store']);
-            Route::get('details', [SliderManageController::class, 'show']);
+            Route::get('details/{id}', [SliderManageController::class, 'show']);
+            Route::post('update', [SliderManageController::class, 'update']);
             Route::post('update', [SliderManageController::class, 'update']);
             Route::delete('remove/{id}', [SliderManageController::class, 'destroy']);
         });
