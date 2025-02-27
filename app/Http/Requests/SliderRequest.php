@@ -28,10 +28,10 @@ class SliderRequest extends FormRequest
             'sub_title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'button_text' => 'nullable|string|max:50',
-            'button_url' => 'nullable|url',
-            'redirect_url' => 'nullable|url',
+            'button_url' => 'nullable|string|max:255',
+            'redirect_url' => 'nullable|string|max:255',
             'order' => 'nullable|integer|min:1|unique:sliders,order,' . $this->id,
-            'status' => 'integer|in:0,1',
+            'status' => 'nullable|integer|in:0,1',
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,19 +17,19 @@ class AdminSliderResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "title" => $this->id,
-            "sub_title" => $this->id,
-            "description" => $this->id,
-            "image" => $this->id,
-            "button_text" => $this->id,
-            "button_url" => $this->id,
-            "redirect_url" => $this->id,
-            "order" => $this->id,
-            "status" => $this->id,
-            "created_by" => $this->id,
-            "updated_by" => $this->id,
-            "created_at" => $this->id,
-            "updated_at" => $this->id,
+            "title" => $this->title,
+            "sub_title" => $this->sub_title,
+            "description" => $this->description,
+            "image_url" => ImageModifier::generateImageUrl($this->image),
+            "button_text" => $this->button_text,
+            "button_url" => $this->button_url,
+            "redirect_url" => $this->redirect_url,
+            "order" => $this->order,
+            "status" => $this->status,
+            "created_by" => $this->created_by,
+            "updated_by" => $this->updated_by,
+            "created_at" => $this->created_at,
+            "updated_at" => $this->updated_at,
         ];
     }
 }
