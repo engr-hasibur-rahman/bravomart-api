@@ -93,8 +93,18 @@ class RoleController extends Controller
             $role->name = $request->role_name;
             $role->available_for = $request->available_for;
             $role->save();
-            if (isset($request->permissions)) {
-                $role->syncPermissions($request->permissions);
+            if ($request->permissions) {
+                $syncData = [];
+                foreach ($request->permissions as $item) {
+                    $syncData[$item['id']] = [
+                        'view' => $item['view'] ?? null, // Handle the `view` column if applicable
+                        'insert' => $item['insert'] ?? null, // Handle the `insert` column if applicable
+                        'update' => $item['update'] ?? null, // Handle the `update` column if applicable
+                        'delete' => $item['delete'] ?? null, // Handle the `delete` column if applicable
+                        'others' => $item['others'] ?? null, // Handle the `others` column if applicable
+                    ];
+                }
+                $role->permissions()->sync($syncData);
             }
             return $role;
         } else {
@@ -102,7 +112,6 @@ class RoleController extends Controller
                 "message" => __('messages.data_not_found')
             ],404);
         }
-
     }
     public function destroy(string $id)
     {
