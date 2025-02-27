@@ -10,7 +10,7 @@ interface OrderRefundInterface
 
     public function approve_refund_request(int $id, string $status);
 
-    public function reject_refund_request(int $id, string $status);
+    public function reject_refund_request(int $id, string $status,string $reason);
 
     public function refunded_refund_request(int $id, string $status);
 
