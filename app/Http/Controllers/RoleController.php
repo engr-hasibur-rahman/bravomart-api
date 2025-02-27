@@ -86,16 +86,23 @@ class RoleController extends Controller
             "permissions" => ComHelper::buildMenuTree([$role->id], $allPermissions)
         ];
     }
-    public function update(RoleRequest $request, string $id)
+    public function update(RoleRequest $request)
     {
-        $role = Role::findOrFail($id);
-        $role->name = $request->name;
-        $role->save();
-        if (isset($request->permissions)) {
-            $role->syncPermissions($request->permissions);
+        $role = Role::find($request->role_id);
+        if ($role){
+            $role->name = $request->role_name;
+            $role->available_for = $request->available_for;
+            $role->save();
+            if (isset($request->permissions)) {
+                $role->syncPermissions($request->permissions);
+            }
+            return $role;
+        } else {
+            return response()->json([
+                "message" => __('messages.data_not_found')
+            ],404);
         }
 
-        return $role;
     }
     public function destroy(string $id)
     {
