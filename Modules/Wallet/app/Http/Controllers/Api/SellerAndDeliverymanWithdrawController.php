@@ -111,8 +111,31 @@ class SellerAndDeliverymanWithdrawController extends Controller
         } else {
             return response()->json([
                 'status' => false,
-                'status_code' => 400,
+                'status_code' => 404,
                 'message' => 'messages.data_not_found',
+                'data' => []
+            ]);
+        }
+    }
+    public function earningDetails(Request $request)
+    {
+
+        $withdraw = WalletWithdrawalsTransaction::where('id', $request->id)
+            ->where('owner_id', auth('api')->user()->id)->first();
+
+        if (!empty($withdraw)) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'messages.data_found',
+                'data' => new WithdrawDetailsResource($withdraw)
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'messages.data_not_found',
+                'data' => []
             ]);
         }
     }

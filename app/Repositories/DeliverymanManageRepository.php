@@ -866,6 +866,4 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             return $history->order->delivery_charge_admin ?? 0; // Sum admin delivery charge
         });
     }
-
-
 }
