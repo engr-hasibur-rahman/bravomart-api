@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Seller\Store\Product;
 
 use App\Actions\ImageModifier;
+use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Admin\SellerListForDropdownResource;
 use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class ProductDetailsResource extends JsonResource
             "slug" => $this->slug,
             "description" => $this->description,
             "image" => ImageModifier::generateImageUrl($this->image),
-            "gallery_images" => ImageModifier::generateImageUrl($this->gallery_images),
+            "gallery_images" => MultipleImageModifier::multipleImageModifier($this->gallery_images),
             "warranty" => $this->warranty,
             "class" => $this->class,
             "return_in_days" => $this->return_in_days,
