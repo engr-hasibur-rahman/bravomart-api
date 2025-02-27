@@ -523,7 +523,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Promotional control',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['View'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Promotional control',
                         'ar' => 'الرقابة الترويجية'
@@ -534,7 +534,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Flash Sale',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Flash Sale',
                                 'ar' => 'بيع سريع'
@@ -568,7 +568,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Banner',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['View'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Banner',
                                 'ar' => 'راية'
