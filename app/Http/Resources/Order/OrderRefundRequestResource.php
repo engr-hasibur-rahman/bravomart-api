@@ -17,8 +17,8 @@ class OrderRefundRequestResource extends JsonResource
         // Get the requested language from the query parameter
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
-        $store_translation = $this->store?->related_translations->where('language', $language);
-        $refund_reason_translation = $this->orderRefundReason?->related_translations->where('language', $language);
+        $store_translation = $this->store->related_translations->where('language', $language);
+        $refund_reason_translation = $this->orderRefundReason->related_translations->where('language', $language);
         return [
             "id" => $this->id,
             "order_id" => $this->order_id,

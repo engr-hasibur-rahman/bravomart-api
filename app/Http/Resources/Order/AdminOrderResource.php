@@ -26,7 +26,7 @@ class AdminOrderResource extends JsonResource
             'store' => !empty($store_translation) && $store_translation->where('key', 'name')->first()
                 ? $store_translation->where('key', 'name')->first()->value
                 : $this->store->name ?? null, // If language is empty or not provided attribute
-            'customer_name' => $this->orderMaster->customer->first_name . ' ' . $this->orderMaster->customer->last_name ?? null,
+            'customer_name' => $this->orderMaster?->customer->first_name . ' ' . $this->orderMaster?->customer->last_name ?? null,
             'invoice_number' => $this->invoice_number,
             'order_date' => $this->created_at,
             'invoice_date' => $this->invoice_date,
@@ -43,7 +43,7 @@ class AdminOrderResource extends JsonResource
             'cancel_request_at' => $this->cancel_request_at,
             'cancelled_at' => $this->cancelled_at,
             'delivery_completed_at' => $this->delivery_completed_at,
-            'payment_status' => $this->orderMaster->payment_status,
+            'payment_status' => $this->orderMaster?->payment_status,
             'status' => $this->status,
             'refund_status' => $this->refund_status,
             'store_details' => new StoreDetailsForOrderResource($this->whenLoaded('store')),

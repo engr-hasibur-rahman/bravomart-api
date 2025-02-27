@@ -521,7 +521,7 @@ class PermissionAdminSeeder extends Seeder
                //  slider management start
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Slider Management',
+                    'PermissionTitle' => 'Promotional control',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
@@ -531,8 +531,8 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value,
-                            'PermissionTitle' => 'Slider',
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Flash Sale',
                             'activity_scope' => 'system_level',
                             'icon' => 'Star',
                             'options' => ['view', 'insert', 'update', 'delete'],
