@@ -14,6 +14,21 @@ class AdminSliderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this->id,
+            "title" => $this->id,
+            "sub_title" => $this->id,
+            "description" => $this->id,
+            "image" => $this->id,
+            "button_text" => $this->id,
+            "button_url" => $this->id,
+            "redirect_url" => $this->id,
+            "order" => $this->id,
+            "status" => $this->id,
+            "created_by" => $this->id,
+            "updated_by" => $this->id,
+            "created_at" => $this->id,
+            "updated_at" => $this->id,
+        ];
     }
 }

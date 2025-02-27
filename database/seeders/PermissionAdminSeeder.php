@@ -516,12 +516,12 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
-                
-                
-               //  slider management start
+
+
+                //  slider management start
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Promotional control',
+                    'PermissionTitle' => 'Slider Management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
@@ -531,8 +531,8 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Flash Sale',
+                            'PermissionName' => PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value,
+                            'PermissionTitle' => 'Slider',
                             'activity_scope' => 'system_level',
                             'icon' => 'Star',
                             'options' => ['view', 'insert', 'update', 'delete'],
@@ -543,9 +543,10 @@ class PermissionAdminSeeder extends Seeder
                         ],
                     ]
                 ], //  slider management end
-                
-                                 
-                
+
+
+
+
 
                 // Promotional control
                 [
