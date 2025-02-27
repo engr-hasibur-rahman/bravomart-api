@@ -20,6 +20,7 @@ class StoreTypeDropdownPublicResource extends JsonResource
             'id' => $this->id,
             'value' => $this->type,
             'label' => $this->type,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
         ];
     }
 }
