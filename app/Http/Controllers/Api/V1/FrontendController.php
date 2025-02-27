@@ -611,6 +611,11 @@ class FrontendController extends Controller
                     $query->latest();
             }
         }
+        if (!empty($request->search)) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%');
+        }
+
         // Pagination
         $perPage = $request->per_page ?? 10;
         $products = $query->with(['category', 'unit', 'tags', 'store', 'brand', 'variants', 'related_translations'])
