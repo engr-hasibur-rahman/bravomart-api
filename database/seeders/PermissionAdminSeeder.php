@@ -520,38 +520,83 @@ class PermissionAdminSeeder extends Seeder
                 // Promotional control
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Slider Management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['View'],
-                    'translations' => [
-                        'en' => 'Slider Management',
-                        'ar' => 'الرقابة الترويجية'
-                    ],
-                ],
-
-                // Slider Manage
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Slider Management',
+                    'PermissionTitle' => 'Promotional control',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Slider Management',
+                        'en' => 'Promotional control',
                         'ar' => 'الرقابة الترويجية'
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value,
-                            'PermissionTitle' => 'Slider',
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Flash Sale',
                             'activity_scope' => 'system_level',
                             'icon' => '',
-                            'options' => ['view', 'update', 'delete', 'others'],
+                            'options' => ['view'],
                             'translations' => [
-                                'en' => 'Slider',
+                                'en' => 'Flash Sale',
                                 'ar' => 'بيع سريع'
                             ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_FLASH_SALE_MANAGE->value,
+                                    'PermissionTitle' => 'All Campaigns',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'List',
+                                        'ar' => 'منتجاتي في العروض'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value,
+                                    'PermissionTitle' => 'Join Campaign Requests',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'delete', 'update', 'others'],
+                                    'translations' => [
+                                        'en' => 'Join Deals',
+                                        'ar' => 'اطلب التسجيل'
+                                    ]
+                                ]
+                            ]
+                        ], [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Banner',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Banner',
+                                'ar' => 'راية'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_BANNER_LIST->value,
+                                    'PermissionTitle' => 'List',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'List',
+                                        'ar' => 'قائمة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_BANNER_MANAGE->value,
+                                    'PermissionTitle' => 'Add Banner',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'delete', 'update', 'others'],
+                                    'translations' => [
+                                        'en' => 'Add Banner',
+                                        'ar' => 'إضافة لافتة'
+                                    ]
+                                ]
+                            ]
                         ]
                     ]
                 ],
