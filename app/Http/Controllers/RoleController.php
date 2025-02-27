@@ -104,15 +104,21 @@ class RoleController extends Controller
         return response()->json('Role deleted');
     }
 
-    public function roleForStoreOwner(Request $request)
+    public function changeStatus(Request $request)
     {
-        $role = Role::findOrFail($request->id);
-        $role->status = !$role->status;
-        $role->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'Role Status changed successfully',
-            'status' => $role
-        ]);
+        $role = Role::find($request->id);
+        if ($role){
+            $role->status = !$role->status;
+            $role->save();
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Role']),
+
+            ],200);
+        } else {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Role'])
+            ],500);
+        }
+
     }
 }

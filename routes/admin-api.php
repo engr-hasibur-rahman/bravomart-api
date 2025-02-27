@@ -591,6 +591,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('roles', [RoleController::class, 'index']);
         Route::post('roles', [RoleController::class, 'store']);
         Route::get('roles/{id}', [RoleController::class, 'show']);
-        Route::post('roles-status-update', [RoleController::class, 'roleForStoreOwner']);
+        Route::post('roles/change-status', [RoleController::class, 'changeStatus']);
     });
 });
