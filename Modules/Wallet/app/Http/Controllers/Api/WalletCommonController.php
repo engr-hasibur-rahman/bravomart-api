@@ -335,7 +335,7 @@ class WalletCommonController extends Controller
             ->get();
 
         // Fetch latest withdrawal history
-        $withdrawHistory = WalletWithdrawalsTransaction::latest()->paginate(10);
+        $withdrawHistory = WalletWithdrawalsTransaction::where('wallet_id',$user_wallet->id)->latest()->get();
 
         return response()->json([
             'status' => true,
