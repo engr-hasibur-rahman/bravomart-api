@@ -40,7 +40,6 @@ class ProductCategoryRepository extends BaseRepository
         // Prepare data for category
         $data = [
             'category_name' => $request['category_name'],
-            'category_slug' => MultilangSlug::makeSlug(ProductCategory::class, $request['category_name'], 'category_slug'),
             'category_name_paths' => $request['category_name_paths'],
             'parent_path' => $request['parent_path'],
             'parent_id' => $request['parent_id'],
@@ -54,11 +53,12 @@ class ProductCategoryRepository extends BaseRepository
         ];
 
         if ($categoryId) {
-            // Update existing category
+            // Update existing category (excluding `category_slug`)
             $category = ProductCategory::findOrFail($categoryId);
             $category->update($data);
         } else {
-            // Create new category
+            // Create new category (include `category_slug`)
+            $data['category_slug'] = MultilangSlug::makeSlug(ProductCategory::class, $request['category_name'], 'category_slug');
             $category = $this->create($data);
         }
 
