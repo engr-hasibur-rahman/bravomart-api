@@ -450,7 +450,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             return false;
         }
         $deliveryman = auth('api')->user();
-        $order_requests = Order::with(['orderDeliveryHistory', 'orderMaster', 'store', 'orderDetail'])
+        $order_requests = Order::with(['orderDeliveryHistory', 'orderMaster.orderAddress', 'store', 'orderDetail'])
             ->where('confirmed_by', $deliveryman->id)
             ->whereDoesntHave('orderDeliveryHistory', function ($query) use ($deliveryman) {
                 $query->where('deliveryman_id', $deliveryman->id);

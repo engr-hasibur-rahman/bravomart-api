@@ -14,6 +14,14 @@ class DeliverymanMyOrdersResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $orderAddress = $this->orderMaster?->orderAddress;
+        $formattedAddress = sprintf(
+            '%s%s%s%s',
+            $orderAddress['postal_code'] ?? '',
+            isset($orderAddress['house']) ? ' House: ' . $orderAddress['house'] : '',
+            isset($orderAddress['road']) ? ', Road: ' . $orderAddress['road'] : '',
+            isset($orderAddress['address']) ? ', ' . $orderAddress['address'] : ''
+        );
         return [
             "id" => $this->id,
             "payment_method" => $this->orderMaster?->payment_gateway,
@@ -27,6 +35,7 @@ class DeliverymanMyOrdersResource extends JsonResource
             "delivery_type" => $this->delivery_type,
             "order_amount" => $this->order_amount,
             "status" => $this->status,
+            "address" => $formattedAddress,
             "created_at" => $this->created_at->diffForHumans(),
         ];
     }
