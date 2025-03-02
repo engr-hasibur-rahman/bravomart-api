@@ -431,7 +431,7 @@ class PermissionStoreSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::SELLER_STAFF_LIST->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
                             'PermissionTitle' => 'Staff List',
                             'activity_scope' => 'store_level',
                             'icon' => '',
