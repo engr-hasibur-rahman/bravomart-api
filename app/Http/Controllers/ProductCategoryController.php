@@ -72,11 +72,12 @@ class ProductCategoryController extends Controller
         try {
             $this->repository->storeProductCategory($request);
             return response()->json([
-                'success' => 'Success'
+                'message' => __('messages.save_success',['name'=>'Product Category']),
             ]);
         } catch (\Exception $e) {
-            throw new \RuntimeException('Could not create the product Category.'.$e);
-            //return $e;
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
