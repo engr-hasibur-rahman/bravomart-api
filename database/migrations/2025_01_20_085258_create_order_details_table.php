@@ -20,26 +20,29 @@ return new class extends Migration {
             $table->string('product_sku')->nullable();
             $table->json('variant_details')->nullable(); // product variants
             $table->unsignedBigInteger('product_campaign_id')->nullable();
-            $table->decimal('base_price')->nullable(); // Original price of the product.
+
+            // Define precision and scale for decimal columns
+            $table->decimal('base_price', 15, 2)->nullable(); // Original price of the product.
             $table->string('admin_discount_type')->nullable(); // percent/ fixed
-            $table->decimal('admin_discount_rate')->nullable(); // 2% or 100-USD
-            $table->decimal('admin_discount_amount')->nullable(); // 100
-            $table->decimal('price')->nullable(); // after any discounts
-            $table->decimal('quantity')->nullable();
-            $table->decimal('line_total_price_with_qty')->nullable();
-            $table->decimal('coupon_discount_amount', 10, 2)->default(0);
-            $table->decimal('line_total_excluding_tax')->nullable();
-            $table->decimal('tax_rate')->nullable();
-            $table->decimal('tax_amount')->nullable();
-            $table->decimal('total_tax_amount')->nullable(); // Total tax amount based on quantity
-            $table->decimal('line_total_price')->nullable();
-            // admin commission amount and type
+            $table->decimal('admin_discount_rate', 15, 2)->nullable(); // 2% or 100-USD
+            $table->decimal('admin_discount_amount', 15, 2)->nullable(); // 100
+            $table->decimal('price', 15, 2)->nullable(); // after any discounts
+            $table->decimal('quantity', 15, 2)->nullable();
+            $table->decimal('line_total_price_with_qty', 15, 2)->nullable();
+            $table->decimal('coupon_discount_amount', 15, 2)->default(0);
+            $table->decimal('line_total_excluding_tax', 15, 2)->nullable();
+            $table->decimal('tax_rate', 15, 2)->nullable();
+            $table->decimal('tax_amount', 15, 2)->nullable();
+            $table->decimal('total_tax_amount', 15, 2)->nullable(); // Total tax amount based on quantity
+            $table->decimal('line_total_price', 15, 2)->nullable();
+
+            // Admin commission amount and type
             $table->string('admin_commission_type')->nullable();
-            $table->decimal('admin_commission_rate', 8, 2)->default(0.00);
-            $table->decimal('admin_commission_amount', 8, 2)->default(0.00);
+            $table->decimal('admin_commission_rate', 15, 2)->default(0.00);
+            $table->decimal('admin_commission_amount', 15, 2)->default(0.00);
+
             $table->timestamps();
         });
-
     }
 
     /**
