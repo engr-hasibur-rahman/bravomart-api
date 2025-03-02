@@ -65,6 +65,7 @@ class BlogManageRepository implements BlogManageInterface
         // Apply sorting and pagination
         // Return the result
         return $blogCategory
+            ->with('related_translations')
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }

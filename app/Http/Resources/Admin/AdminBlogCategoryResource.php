@@ -14,6 +14,21 @@ class AdminBlogCategoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
+        return [
+            "id" => $this->id,
+            "title" => !empty($translation) && $translation->where('key', 'title')->first()
+                ? $translation->where('key', 'title')->first()->value
+                : $this->title,
+            "meta_title" => !empty($translation) && $translation->where('key', 'meta_title')->first()
+                ? $translation->where('key', 'meta_title')->first()->value
+                : $this->meta_title,
+            "meta_description" => !empty($translation) && $translation->where('key', 'meta_description')->first()
+                ? $translation->where('key', 'meta_description')->first()->value
+                : $this->meta_description,
+        ];
     }
 }
