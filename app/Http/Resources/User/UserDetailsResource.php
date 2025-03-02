@@ -26,6 +26,7 @@ class UserDetailsResource extends JsonResource
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'status' => $this->status,
             'email_verified' => $this->email_verified,
+            'started_at' => $this->created_at->format('F d, Y'),
         ];
     }
 

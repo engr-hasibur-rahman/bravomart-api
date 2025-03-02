@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\ImageModifier;
 use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
@@ -107,11 +108,11 @@ class UserController extends Controller
                 ->where('activity_scope', 'system_level') // Uncomment if needed
                 ->where('status', 1)
                 ->first();
-            if (!$user){
+            if (!$user) {
                 return response()->json([
                     'status' => false,
                     'status_code' => 422,
-                    'message'=> 'User is not an admin!'
+                    'message' => 'User is not an admin!'
                 ]);
             }
 
@@ -452,7 +453,7 @@ class UserController extends Controller
             $userId = auth('api')->id();
             $user = User::findOrFail($userId);
 
-            return new UserDetailsResource($user);
+            return response()->json(new UserDetailsResource($user));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'status' => false,
