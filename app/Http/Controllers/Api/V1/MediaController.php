@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Services\MediaService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MediaController extends Controller
 {
@@ -18,9 +19,22 @@ class MediaController extends Controller
 
     public function mediaUpload(Request $request)
     {
+
         if (empty($request->all())) {
             return response()->json([
                 'error' => 'No data provided in the request.',
+            ], 400);
+        }
+
+        $rules = [
+            'file' => 'required|file|mimes:jpeg,png,jpg,gif,webp|max:10240', // max size 10MB
+        ];
+        $validator = Validator::make($request->all(), $rules);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors(),
             ], 400);
         }
 

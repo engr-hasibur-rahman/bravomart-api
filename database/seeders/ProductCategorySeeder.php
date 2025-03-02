@@ -14,17 +14,17 @@ class ProductCategorySeeder extends Seeder
     {
         // Store types
         $storeTypes = [
-            'GROCERY' => ['Fruits', 'Dairy', 'Beverages', 'Snacks', 'Frozen', 'Meat & Seafood', 'Canned', 'Spices', 'Personal Care', 'Baking'],
-            'BAKERY' => ['Bread', 'Pastries', 'Cakes', 'Cookies', 'Muffins', 'Buns', 'Tarts', 'Pies', 'Bagels', 'Crostini'],
-            'MEDICINE' => ['Pain Relief', 'Cold & Cough', 'Vitamins', 'First Aid', 'Digestive', 'Allergy', 'Care', 'Skin Care', 'Eye Care', 'Devices'],
-            'MAKEUP' => ['Foundations', 'Lipsticks', 'Eyeshadows', 'Mascaras', 'Blushes', 'Highlighters', 'Primers', 'Concealers', 'Eyeliners', 'Nail Polishes'],
-            'BAGS' => ['Handbags', 'Totes', 'Backpacks', 'Laptop Bags', 'Wallets', 'Clutches', 'Crossbody', 'Duffels', 'Shoulder Bags', 'Briefcases'],
+            'GROCERY' => ['Fruits', 'Dairy', 'Beverages', 'Snacks','Meat & Seafood', 'Canned', 'Spices', 'Personal Care', 'Cleaning Supplies'],
+            'BAKERY' => ['Bread', 'Pastries', 'Cakes', 'Cookies', 'Muffins', 'Buns','Pies', 'Bagels'],
+            'MEDICINE' => ['Pain Relief', 'Cold & Cough', 'Vitamins','Digestive','BP & Heart Disease', 'Skin Care', 'Eye Care', 'Herbal'],
+            'MAKEUP' => ['Foundations', 'Lipsticks', 'Eyeshadows', 'Mascaras', 'Blushes','Eyeliners', 'Nail Polishes'],
+            'BAGS' => ['Handbags', 'Totes', 'Backpacks','Wallets', 'Clutches', 'Crossbody', 'Duffels', 'Shoulder Bags', 'Briefcases'],
             'CLOTHING' => ['Men', 'Women'],
             'FURNITURE' => ['Sofas', 'Chairs', 'Beds', 'Tables', 'Dressers', 'Bookshelves', 'Desks', 'Cabinets', 'Lamps', 'Coffee Tables'],
-            'BOOKS' => ['Fiction', 'Non-Fiction', 'Sci-Fi', 'Fantasy', 'Romance', 'Biography', 'Cookbooks', 'History', 'Kids', 'Self-Help'],
-            'GADGET' => ['Phones', 'Tablets', 'Headphones', 'Smart Watches', 'Laptops', 'Cameras', 'Drones', 'Speakers', 'Chargers', 'Accessories'],
-            'ANIMALS_PET' => ['Dog Food', 'Cat Food', 'Pet Toys', 'Grooming', 'Accessories', 'Leashes', 'Pet Beds', 'Aquarium', 'Pet Supplements', 'Healthcare'],
-            'FISH' => ['Freshwater', 'Saltwater', 'Aquarium Plants', 'Aquarium Decor', 'Fish Food', 'Water Care', 'Filters', 'Tanks', 'Lighting', 'Heaters'],
+            'BOOKS' => ['Fiction', 'Non-Fiction', 'Sci-Fi', 'Fantasy', 'Biography'],
+            'GADGET' => ['Phones', 'Tablets', 'Headphones', 'Smart Watches', 'Laptops', 'Cameras', 'Drones', 'Speakers', 'Chargers'],
+            'ANIMALS_PET' => ['Dogs', 'Cats', 'Pet Toys', 'Grooming', 'Pet Food'],
+            'FISH' => ['Freshwater', 'Saltwater', 'Aquarium Plants', 'Fish Food', 'Water Care', 'Tanks']
         ];
 
         // Loop through each store type and insert categories
