@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
         $this->call(WalletSeeder::class);
         // others
         $this->call(DepartmentSeeder::class);
-        $this->call(SliderSeeder::class);
+//        $this->call(SliderSeeder::class);
         $this->call(BannerSeeder::class);
         $this->call(RolesSeeder::class);
         $this->call(CouponSeeder::class);

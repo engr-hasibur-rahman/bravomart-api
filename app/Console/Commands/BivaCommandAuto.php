@@ -181,12 +181,9 @@ class BivaCommandAuto extends Command
                 DB::table('store_types')->insert((array) $type);
             }
 
-//            foreach ($sliders as $slider) {
-//                DB::table('sliders')->updateOrInsert(
-//                    ['order' => $slider->order], // 🔑 Match on unique column
-//                    (array) $slider // 📝 Insert or update data
-//                );
-//            }
+            foreach ($sliders as $slide) {
+                DB::table('sliders')->insert((array) $slide);
+            }
 
             foreach ($banners as $banner) {
                 DB::table('banners')->insert((array) $banner);
@@ -197,15 +194,6 @@ class BivaCommandAuto extends Command
             foreach ($blog_categories as $blog_cat) {
                 DB::table('blog_categories')->insert((array) $blog_cat);
             }
-
-        DB::table('stores')->delete(); // Deletes all rows, but keeps auto-increment
-
-
-
-
-//        foreach ($stores as $store) {
-//            DB::table('stores')->insert((array) $store);
-//        }
 
             foreach ($store_areas as $store_area) {
                 DB::table('store_areas')->insert((array) $store_area);
