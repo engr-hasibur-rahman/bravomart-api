@@ -604,16 +604,44 @@ class SystemManagementController extends Controller
 
     public function databaseUpdateControl(Request $request)
     {
+        try {
+            // Store original environment
+            $originalEnv = env('APP_ENV');
 
-//        $originalEnv = env('APP_ENV');
-//        updateEnvValues(['APP_ENV' => 'local']);
-        Artisan::call('migrate', ['--force' => true]);
-        Artisan::call('db:seed', ['--force' => true]);
-        Artisan::call('cache:clear');
-//        updateEnvValues(['APP_ENV' => $originalEnv]);
-        return $this->success([
-            'Database and cache operations completed successfully!',
-        ]);
+            // Set environment to local
+            if (!updateEnvValues(['APP_ENV' => 'local'])) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Failed to update environment to local.',
+                ], 500);
+            }
+
+            Artisan::call('config:clear');
+            // Run database migrations and seeding
+            Artisan::call('migrate', ['--force' => true]);
+            Artisan::call('db:seed', ['--force' => true]);
+            // Clear cache
+            Artisan::call('cache:clear');
+            // Restore original environment
+            if (!updateEnvValues(['APP_ENV' => $originalEnv])) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Failed to restore original environment.',
+                ], 500);
+            }
+            Artisan::call('config:clear');
+            return response()->json([
+                'status' => true,
+                'message' => 'Database and cache operations completed successfully!',
+            ]);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Database update failed!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
 
