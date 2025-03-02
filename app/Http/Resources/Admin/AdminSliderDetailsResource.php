@@ -7,7 +7,7 @@ use App\Http\Resources\Translation\SliderTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AdminSliderResource extends JsonResource
+class AdminSliderDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

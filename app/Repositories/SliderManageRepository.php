@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Admin\AdminSliderDetailsResource;
 use App\Http\Resources\Admin\AdminSliderResource;
 use App\Http\Resources\AdminAdminSliderDetailsResource;
 use App\Interfaces\SliderManageInterface;
@@ -93,7 +94,7 @@ class SliderManageRepository implements SliderManageInterface
         try {
             $slider = $this->slider->with('related_translations')->find($id);
             if ($slider) {
-                return response()->json(new AdminAdminSliderDetailsResource($slider), 200);
+                return response()->json(new AdminSliderDetailsResource($slider), 200);
             } else {
                 return response()->json([
                     "massage" => "Data was not found"
