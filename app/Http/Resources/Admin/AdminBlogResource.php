@@ -14,14 +14,17 @@ class AdminBlogResource extends JsonResource
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
-    {
+    {// Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
+        $category_translation = $this->category->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "admin_id" => $this->admin_id,
-            "category_id" => $this->category_id,
-            "title" => $this->title,
+            "title" => !empty($translation) && $translation->where('key', 'title')->first()
+                ? $translation->where('key', 'title')->first()->value
+                : $this->title, // If language is empty or not provided attribute
             "slug" => $this->slug,
-            "description" => $this->description,
             "image_url" => ImageModifier::generateImageUrl($this->image),
             "views" => $this->views,
             "visibility" => $this->visibility,
@@ -29,7 +32,9 @@ class AdminBlogResource extends JsonResource
             "schedule_date" => $this->schedule_date,
             "tag_name" => $this->tag_name,
             "author" => $this->author,
-            "category" => $this->category->name ?? null,
+            "category" => !empty($category_translation) && $category_translation->where('key', 'name')->first()
+                ? $category_translation->where('key', 'name')->first()->value
+                : $this->category?->name, // If language is empty or not provided attribute
             "admin" => $this->admin ? $this->admin->first_name . ' ' . $this->admin->last_name : null,
         ];
     }

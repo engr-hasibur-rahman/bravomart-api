@@ -134,9 +134,6 @@ class AdminBlogManageController extends Controller
             $request->sort ?? 'asc',
             []
         );
-        if ($blogs->isEmpty()) {
-            return [];
-        }
         return response()->json([
             'data' => AdminBlogResource::collection($blogs),
             'meta' => new PaginationResource($blogs)
