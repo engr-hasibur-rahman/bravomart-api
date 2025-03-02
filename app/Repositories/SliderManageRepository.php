@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Admin\AdminSliderResource;
 use App\Interfaces\SliderManageInterface;
 use App\Models\Slider;
 use App\Models\Translation;
@@ -66,6 +67,7 @@ class SliderManageRepository implements SliderManageInterface
         // Apply sorting and pagination
         // Return the result
         return $slider
+            ->with('related_translations')
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
@@ -88,24 +90,9 @@ class SliderManageRepository implements SliderManageInterface
     public function getSliderById(int|string $id)
     {
         try {
-            $slider = $this->slider->find($id);
-            $translations = $slider->translations()->get()->groupBy('language');
-            // Initialize an array to hold the transformed data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->slider->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
+            $slider = $this->slider->with('related_translations')->find($id);
             if ($slider) {
-                return response()->json([
-                    "data" => $slider->toArray(),
-                    'translations' => $transformedData,
-                    "massage" => "Data was found"
-                ], 201);
+                return response()->json(new AdminSliderResource($slider), 200);
             } else {
                 return response()->json([
                     "massage" => "Data was not found"
@@ -167,12 +154,12 @@ class SliderManageRepository implements SliderManageInterface
             $slider->status = !$slider->status;
             $slider->save();
             return response()->json([
-                'message' => __('messages.update_success',['name' => 'Slider'])
-            ],200);
+                'message' => __('messages.update_success', ['name' => 'Slider'])
+            ], 200);
         } else {
             return response()->json([
-                'message' => __('messages.update_failed',['name' => 'Slider'])
-            ],200);
+                'message' => __('messages.update_failed', ['name' => 'Slider'])
+            ], 200);
         }
     }
 

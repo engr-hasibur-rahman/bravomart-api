@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Translation\SliderTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,13 +16,32 @@ class AdminSliderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "title" => $this->title,
-            "sub_title" => $this->sub_title,
-            "description" => $this->description,
+            "title" => !empty($translation) && $translation->where('key', 'title')->first()
+                ? $translation->where('key', 'title')->first()->value
+                : $this->title ?? null, // If language is empty or not provided attribute
+            "title_color" => $this->title_color,
+            "sub_title" => !empty($translation) && $translation->where('key', 'sub_title')->first()
+                ? $translation->where('key', 'sub_title')->first()->value
+                : $this->sub_title ?? null, // If language is empty or not provided attribute
+            "sub_title_color" => $this->sub_title_color,
+            "description" => !empty($translation) && $translation->where('key', 'description')->first()
+                ? $translation->where('key', 'description')->first()->value
+                : $this->description ?? null, // If language is empty or not provided attribute
+            "description_color" => $this->description_color,
+            "image" => $this->image,
             "image_url" => ImageModifier::generateImageUrl($this->image),
-            "button_text" => $this->button_text,
+            "button_text" => !empty($translation) && $translation->where('key', 'button_text')->first()
+                ? $translation->where('key', 'button_text')->first()->value
+                : $this->button_text ?? null, // If language is empty or not provided attribute
+            "button_text_color" => $this->button_text_color,
+            "button_bg_color" => $this->button_bg_color,
+            "button_hover_color" => $this->button_hover_color,
             "button_url" => $this->button_url,
             "redirect_url" => $this->redirect_url,
             "order" => $this->order,
@@ -30,6 +50,7 @@ class AdminSliderResource extends JsonResource
             "updated_by" => $this->updated_by,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
+            "translations" => SliderTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
 }

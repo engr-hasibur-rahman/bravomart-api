@@ -17,6 +17,7 @@ class OrderRefundReason extends Model
     {
         return $this->hasMany(OrderRefund::class);
     }
+
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')

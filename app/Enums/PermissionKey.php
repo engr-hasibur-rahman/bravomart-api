@@ -250,7 +250,7 @@ enum PermissionKey: string
     case SELLER_STORE_PRODUCT_INVENTORY = '/seller/store/product/inventory';
 
     //-----------Seller Staff Manage----------
-    case SELLER_STAFF_LIST = '/seller/staff/list';
+    case SELLER_STORE_STAFF_MANAGE = '/seller/store/staff/list';
     case SELLER_STAFF_BAN = '/seller/staff/ban';
     case SELLER_STAFF_ACTIVE = '/seller/staff/active';
     case SELLER_STAFF_ROLES_STORE = '/seller/staff/role-stores';

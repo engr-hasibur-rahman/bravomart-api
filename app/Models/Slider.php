@@ -14,6 +14,12 @@ class Slider extends Model
         'button_text',
         'button_url',
         'redirect_url',
+        'title_color',
+        'sub_title_color',
+        'description_color',
+        'button_text_color',
+        'button_bg_color',
+        'button_hover_color',
         'order',
         'status',
         'created_by',
@@ -29,5 +35,11 @@ class Slider extends Model
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
+    }
+
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
     }
 }

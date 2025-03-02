@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Enums\OrderActivityType;
 use App\Enums\WalletOwnerType;
 use App\Interfaces\DeliverymanManageInterface;
+use App\Jobs\SendDynamicEmailJob;
 use App\Mail\DynamicEmail;
 use App\Models\DeliveryMan;
 use App\Models\EmailTemplate;
