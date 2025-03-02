@@ -29,6 +29,7 @@ class AdminBlogCategoryResource extends JsonResource
             "meta_description" => !empty($translation) && $translation->where('key', 'meta_description')->first()
                 ? $translation->where('key', 'meta_description')->first()->value
                 : $this->meta_description,
+            "status"=>$this->status
         ];
     }
 }
