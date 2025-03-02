@@ -20,9 +20,9 @@ class AdminBlogCategoryResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "title" => !empty($translation) && $translation->where('key', 'title')->first()
-                ? $translation->where('key', 'title')->first()->value
-                : $this->title,
+            "name" => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
+                : $this->name,
             "meta_title" => !empty($translation) && $translation->where('key', 'meta_title')->first()
                 ? $translation->where('key', 'meta_title')->first()->value
                 : $this->meta_title,
