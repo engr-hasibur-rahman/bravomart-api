@@ -16,17 +16,17 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('area_id')->nullable();
             $table->string('shipping_address_id')->nullable();
-            $table->decimal('order_amount')->nullable();
+            $table->decimal('order_amount', 15, 2)->nullable(); // Updated precision and scale
             $table->string('coupon_code')->nullable();
             $table->string('coupon_title')->nullable();
-            $table->decimal('coupon_discount_amount_admin')->nullable(); // admin set coupon discount amount
-            $table->decimal('product_discount_amount')->nullable();
-            $table->decimal('flash_discount_amount_admin')->nullable(); // admin set product for offer sell dis.
-            $table->decimal('shipping_charge')->nullable(); // total order wise shipping charge
+            $table->decimal('coupon_discount_amount_admin', 15, 2)->nullable(); // Updated precision and scale
+            $table->decimal('product_discount_amount', 15, 2)->nullable(); // Updated precision and scale
+            $table->decimal('flash_discount_amount_admin', 15, 2)->nullable(); // Updated precision and scale
+            $table->decimal('shipping_charge', 15, 2)->nullable(); // Updated precision and scale
             $table->string('additional_charge_name')->nullable();
-            $table->decimal('additional_charge_amount')->nullable();
-            $table->decimal('additional_charge_commission')->nullable();
-            $table->decimal('paid_amount')->nullable();
+            $table->decimal('additional_charge_amount', 15, 2)->nullable(); // Updated precision and scale
+            $table->decimal('additional_charge_commission', 15, 2)->nullable(); // Updated precision and scale
+            $table->decimal('paid_amount', 15, 2)->nullable(); // Updated precision and scale
             $table->string('payment_gateway')->nullable();
             $table->string('payment_status')->nullable()->comment('pending , paid, failed');
             $table->string('transaction_ref')->nullable();
