@@ -25,14 +25,24 @@ class SliderRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
+            'title_color' => 'nullable|string|max:7', // Assuming HEX color code
             'sub_title' => 'nullable|string|max:255',
+            'sub_title_color' => 'nullable|string|max:7', // Assuming HEX color code
             'description' => 'nullable|string',
+            'description_color' => 'nullable|string|max:7', // Assuming HEX color code
+            'image' => 'nullable', // Validating image upload
             'button_text' => 'nullable|string|max:50',
-            'button_url' => 'nullable|string|max:255',
-            'redirect_url' => 'nullable|string|max:255',
+            'button_text_color' => 'nullable|string|max:7', // Assuming HEX color code
+            'button_bg_color' => 'nullable|string|max:7', // Assuming HEX color code
+            'button_hover_color' => 'nullable|string|max:7', // Assuming HEX color code
+            'button_url' => 'nullable|url|max:255',
+            'redirect_url' => 'nullable|url|max:255',
             'order' => 'nullable|integer|min:1|unique:sliders,order,' . $this->id,
             'status' => 'nullable|integer|in:0,1',
+            'created_by' => 'nullable|string|max:255',
+            'updated_by' => 'nullable|string|max:255',
         ];
+
     }
 
     public function messages(): array
@@ -42,24 +52,54 @@ class SliderRequest extends FormRequest
             'title.string' => __('validation.string'),
             'title.max' => __('validation.max.string'),
 
+            'title_color.string' => __('validation.string'),
+            'title_color.max' => __('validation.max.string'),
+
             'sub_title.string' => __('validation.string'),
             'sub_title.max' => __('validation.max.string'),
 
+            'sub_title_color.string' => __('validation.string'),
+            'sub_title_color.max' => __('validation.max.string'),
+
             'description.string' => __('validation.string'),
+
+            'description_color.string' => __('validation.string'),
+            'description_color.max' => __('validation.max.string'),
+
+            'image.image' => __('validation.image'),
+            'image.mimes' => __('validation.mimes'),
+            'image.max' => __('validation.max.file'),
 
             'button_text.string' => __('validation.string'),
             'button_text.max' => __('validation.max.string'),
 
+            'button_text_color.string' => __('validation.string'),
+            'button_text_color.max' => __('validation.max.string'),
+
+            'button_bg_color.string' => __('validation.string'),
+            'button_bg_color.max' => __('validation.max.string'),
+
+            'button_hover_color.string' => __('validation.string'),
+            'button_hover_color.max' => __('validation.max.string'),
+
             'button_url.url' => __('validation.url'),
+            'button_url.max' => __('validation.max.string'),
 
             'redirect_url.url' => __('validation.url'),
+            'redirect_url.max' => __('validation.max.string'),
 
             'order.integer' => __('validation.integer'),
-            'order.min' => __('validation.integer'),
+            'order.min' => __('validation.min.numeric'),
             'order.unique' => __('validation.unique'),
 
             'status.integer' => __('validation.integer'),
             'status.in' => __('validation.in'),
+
+            'created_by.string' => __('validation.string'),
+            'created_by.max' => __('validation.max.string'),
+
+            'updated_by.string' => __('validation.string'),
+            'updated_by.max' => __('validation.max.string'),
         ];
     }
 
