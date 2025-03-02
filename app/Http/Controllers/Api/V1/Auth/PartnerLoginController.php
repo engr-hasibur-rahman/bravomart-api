@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use App\Actions\ImageModifier;
 use App\Helpers\ComHelper;
 use App\Models\Store;
 use App\Models\CustomPermission;
@@ -89,6 +90,7 @@ class PartnerLoginController extends Controller
             'last_name' => $user->last_name,
             'email' => $user->email,
             'phone' => $user->phone,
+            'image_url' => ImageModifier::generateImageUrl($user->image),
             "email_verified" => $email_verified,
             "store_owner" => $user->store_owner,
             "store_seller_id" => $user->store_seller_id,
