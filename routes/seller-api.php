@@ -138,7 +138,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
                 });
             });
             // Staff manage
-            Route::group(['prefix' => 'staff/', 'middleware' => ['permission:' . PermissionKey::SELLER_STAFF_LIST->value]], function () {
+            Route::group(['prefix' => 'staff/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_STAFF_MANAGE->value]], function () {
                 Route::get('list', [StaffController::class, 'index']);
                 Route::post('add', [StaffController::class, 'store']);
                 Route::get('details/{id}', [StaffController::class, 'show']);

@@ -126,7 +126,7 @@ class BivaCommandAuto extends Command
         $role->givePermissionTo([PermissionKey::SELLER_STORE_MY_SHOP,PermissionKey::SELLER_STORE_STORE_NOTICE]);
         // 4 Get Store Officer Role And assign some default permission
         $role = Role::where('id',4)->first();
-        $role->givePermissionTo([PermissionKey::SELLER_STAFF_LIST,PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS]);
+        $role->givePermissionTo([PermissionKey::SELLER_STORE_STAFF_MANAGE,PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS]);
 
         // 6 Get Deliveryman Role And assign some default permission
         $role = Role::where('id',6)->first();
