@@ -23,7 +23,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => 'dashboard',
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'system_level',
-                    'icon' => 'layout-dashboard',
+                    'icon' => 'LayoutDashboard',
                     'options' => ['view'],
                     'translations' => [
                         'en' => 'Dashboard',
@@ -58,7 +58,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_ORDERS_ALL->value,
                                     'PermissionTitle' => 'All Orders',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'list-ordered',
+                                    'icon' => 'ListOrdered',
                                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'All Orders',
@@ -69,7 +69,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND_REQUEST->value,
                                     'PermissionTitle' => 'Returned or Refunded',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'rotate-ccw',
+                                    'icon' => 'RotateCcw',
                                     'options' => ['view', 'update', 'others'],
                                     'translations' => [
                                         'en' => 'Returned or Refunded',
@@ -78,7 +78,7 @@ class PermissionAdminSeeder extends Seeder
                                 ],
                                 [
                                     'PermissionName' => PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND_REASON->value,
-                                    'PermissionTitle' => 'shield-question',
+                                    'PermissionTitle' => 'ShieldQuestion',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
@@ -119,7 +119,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCTS_MANAGE->value,
                                     'PermissionTitle' => 'All Products',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'package-search',
+                                    'icon' => 'PackageSearch',
                                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Manage Products',
@@ -130,7 +130,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_PRODUCT_APPROVAL_REQ->value,
                                     'PermissionTitle' => 'Product Approval Request',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'signature',
+                                    'icon' => 'Signature',
                                     'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Product Approval Request',
@@ -141,7 +141,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_STOCK_REPORT->value,
                                     'PermissionTitle' => 'Product Low & Out Stock',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'layers',
+                                    'icon' => 'Layers',
                                     'options' => ['view'],
                                     'translations' => [
                                         'en' => 'Product Low & Out Stock',
@@ -152,7 +152,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_TEMPLATE->value,
                                     'PermissionTitle' => 'Product Template',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'layout-panel-top',
+                                    'icon' => 'LayoutPanelTop',
                                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Product Template',
@@ -163,7 +163,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_PRODUCT_BULK_IMPORT->value,
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'file-up',
+                                    'icon' => 'FileUp',
                                     'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Bulk Import',
@@ -174,7 +174,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_PRODUCT_BULK_EXPORT->value,
                                     'PermissionTitle' => 'Bulk Export',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'download',
+                                    'icon' => 'Download',
                                     'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Bulk Export',
@@ -189,7 +189,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_PRODUCT_INVENTORY->value,
                             'PermissionTitle' => 'Product Inventory',
                             'activity_scope' => 'system_level',
-                            'icon' => 'square-chart-gantt',
+                            'icon' => 'SquareChartGantt',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Product Inventory',
@@ -202,7 +202,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Category',
                             'activity_scope' => 'system_level',
-                            'icon' => 'list',
+                            'icon' => 'List',
                             'translations' => [
                                 'en' => 'Category',
                                 'ar' => 'قائمة الفئات'
@@ -259,7 +259,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Units',
                             'activity_scope' => 'system_level',
-                            'icon' => 'boxes',
+                            'icon' => 'Boxes',
                             'translations' => [
                                 'en' => 'Units',
                                 'ar' => 'قائمة السمات'
@@ -269,7 +269,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value,
                                     'PermissionTitle' => 'Unit List',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'ungroup',
+                                    'icon' => 'Ungroup',
                                     'translations' => [
                                         'en' => 'Attribute List',
                                         'ar' => 'قائمة السمات'
@@ -305,7 +305,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Tags Management',
                             'activity_scope' => 'system_level',
-                            'icon' => 'tags',
+                            'icon' => 'Tags',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Tag List',
@@ -316,7 +316,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_TAG_LIST->value,
                                     'PermissionTitle' => 'Tag List',
                                     'activity_scope' => 'system_level',
-                                    'icon' => 'align-left',
+                                    'icon' => 'Align-Left',
                                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'Tag List',
@@ -352,7 +352,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Coupon Management',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'SquarePercent',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Coupon Management',
@@ -393,7 +393,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Store management',
                     'activity_scope' => 'system_level',
-                    'icon' => 'Layers3',
+                    'icon' => '',
                     'options' => ['view'],
                     'translations' => [
                         'en' => 'Store management',
@@ -401,50 +401,62 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                            'PermissionName' => PermissionKey::ADMIN_STORE_LIST->value,
-                            'PermissionTitle' => 'Store List',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view'],
-                            'translations' => [
-                                'en' => 'Store List',
-                                'ar' => 'قائمة المتاجر'
-                            ]
+                        'PermissionName' => '',
+                        'PermissionTitle' => 'Store',
+                        'activity_scope' => 'system_level',
+                        'icon' => 'Store',
+                        'translations' => [
+                            'en' => 'Blogs',
+                            'ar' => ' الموظفين'
                         ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_STORE_ADD->value,
-                            'PermissionTitle' => 'Store Add',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'insert', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Store Add',
-                                'ar' => 'إضافة متجر'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_STORE_APPROVAL->value,
-                            'PermissionTitle' => 'Store Approval Request',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Store Approval Request',
-                                'ar' => 'في انتظار الموافقة/الرفض'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_STORE_RECOMMENDED->value,
-                            'PermissionTitle' => 'Recommended Store',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'update'],
-                            'translations' => [
-                                'en' => 'Recommended Store',
-                                'ar' => 'المتجر الموصى به'
+                        'submenu' => [
+                            [
+                                'PermissionName' => PermissionKey::ADMIN_STORE_LIST->value,
+                                'PermissionTitle' => 'Store List',
+                                'activity_scope' => 'system_level',
+                                'icon' => 'Store',
+                                'options' => ['view'],
+                                'translations' => [
+                                    'en' => 'Store List',
+                                    'ar' => 'قائمة المتاجر'
+                                ]
+                            ],
+                            [
+                                'PermissionName' => PermissionKey::ADMIN_STORE_ADD->value,
+                                'PermissionTitle' => 'Store Add',
+                                'activity_scope' => 'system_level',
+                                'icon' => '',
+                                'options' => ['view', 'insert', 'update', 'delete'],
+                                'translations' => [
+                                    'en' => 'Store Add',
+                                    'ar' => 'إضافة متجر'
+                                ]
+                            ],
+                            [
+                                'PermissionName' => PermissionKey::ADMIN_STORE_APPROVAL->value,
+                                'PermissionTitle' => 'Store Approval Request',
+                                'activity_scope' => 'system_level',
+                                'icon' => '',
+                                'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                'translations' => [
+                                    'en' => 'Store Approval Request',
+                                    'ar' => 'في انتظار الموافقة/الرفض'
+                                ]
+                            ],
+                            [
+                                'PermissionName' => PermissionKey::ADMIN_STORE_RECOMMENDED->value,
+                                'PermissionTitle' => 'Recommended Store',
+                                'activity_scope' => 'system_level',
+                                'icon' => '',
+                                'options' => ['view', 'update'],
+                                'translations' => [
+                                    'en' => 'Recommended Store',
+                                    'ar' => 'المتجر الموصى به'
+                                ]
                             ]
                         ]
                     ]
+                   ]
                 ],
 
 
@@ -453,7 +465,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Slider Management',
                     'activity_scope' => 'system_level',
-                    'icon' => '',
+                    'icon' => 'SlidersHorizontal',
                     'options' => ['view'],
                     'translations' => [
                         'en' => 'Slider Management',
@@ -483,7 +495,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Promotional control',
                     'activity_scope' => 'system_level',
-                    'icon' => '',
+                    'icon' => 'Proportions',
                     'options' => ['view'],
                     'translations' => [
                         'en' => 'Promotional control',
@@ -494,7 +506,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Flash Sale',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Zap',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Flash Sale',
@@ -528,7 +540,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Banner',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'AlignJustify',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Banner',
@@ -567,7 +579,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Feedback Management',
                     'activity_scope' => 'system_level',
-                    'icon' => '',
+                    'icon' => 'MessageSquareReply',
                     'options' => ['view', 'insert', 'update', 'delete'],
                     'translations' => [
                         'en' => 'Feedback Management',
@@ -605,7 +617,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Blog Management',
                     'activity_scope' => 'system_level',
-                    'icon' => 'File',
+                    'icon' => '',
                     'options' => ['view', 'insert', 'update', 'delete'],
                     'translations' => [
                         'en' => 'Blog Management',
@@ -616,7 +628,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Blogs',
                             'activity_scope' => 'system_level',
-                            'icon' => 'PenTool',
+                            'icon' => 'Rss',
                             'translations' => [
                                 'en' => 'Blogs',
                                 'ar' => ' الموظفين'
@@ -735,7 +747,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Deliveryman management',
                     'activity_scope' => 'system_level',
-                    'icon' => '',
+                    'icon' => 'UserRoundPen',
                     'options' => ['view'],
                     'translations' => [
                         'en' => 'Deliveryman management',
@@ -746,7 +758,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value,
                             'PermissionTitle' => 'Vehicle Types',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Car',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Vehicle Types',
@@ -757,7 +769,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value,
                             'PermissionTitle' => 'Deliveryman List',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'UserRoundPen',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Deliveryman List',
@@ -779,39 +791,52 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'إدارة العملاء'
                     ],
                     'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value,
-                            'PermissionTitle' => 'Customers',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'insert', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Customers',
-                                'ar' => 'عملاء'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST->value,
-                            'PermissionTitle' => 'Subscriber List',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Subscriber List',
-                                'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_CUSTOMER_CONTACT_MESSAGES->value,
-                            'PermissionTitle' => 'Contact Messages',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Contact Messages',
-                                'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
-                            ]
-                        ]
+                      [
+                          'PermissionName' => '',
+                          'PermissionTitle' => 'All Customers',
+                          'activity_scope' => 'system_level',
+                          'icon' => '',
+                          'options' => ['view'],
+                          'translations' => [
+                              'en' => 'All Customers',
+                              'ar' => 'إدارة العملاء'
+                          ],
+                          'submenu' => [
+                              [
+                                  'PermissionName' => PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value,
+                                  'PermissionTitle' => 'Customers',
+                                  'activity_scope' => 'system_level',
+                                  'icon' => '',
+                                  'options' => ['view', 'insert', 'update', 'delete'],
+                                  'translations' => [
+                                      'en' => 'Customers',
+                                      'ar' => 'عملاء'
+                                  ]
+                              ],
+                              [
+                                  'PermissionName' => PermissionKey::ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST->value,
+                                  'PermissionTitle' => 'Subscriber List',
+                                  'activity_scope' => 'system_level',
+                                  'icon' => '',
+                                  'options' => ['view', 'delete', 'others'],
+                                  'translations' => [
+                                      'en' => 'Subscriber List',
+                                      'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
+                                  ]
+                              ],
+                              [
+                                  'PermissionName' => PermissionKey::ADMIN_CUSTOMER_CONTACT_MESSAGES->value,
+                                  'PermissionTitle' => 'Contact Messages',
+                                  'activity_scope' => 'system_level',
+                                  'icon' => '',
+                                  'options' => ['view', 'delete', 'others'],
+                                  'translations' => [
+                                      'en' => 'Contact Messages',
+                                      'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
+                                  ]
+                              ]
+                          ]
+                      ]
                     ]
                 ],
 
@@ -831,7 +856,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Staff Roles',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'LockKeyholeOpen',
                             'translations' => [
                                 'en' => 'Staff Roles',
                                 'ar' => 'أدوار الموظفين'
@@ -863,7 +888,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'My Staff',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Users',
                             'translations' => [
                                 'en' => 'My Staff',
                                 'ar' => 'طاقمي'
@@ -964,58 +989,71 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'النشاط المالي'
                     ],
                     'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_SETTINGS->value,
-                            'PermissionTitle' => 'Withdrawal Settings',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Withdrawal Settings',
-                                'ar' => 'طريقة السحب'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value,
-                            'PermissionTitle' => 'Withdrawal Method',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Withdrawal Method',
-                                'ar' => 'طريقة السحب'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY->value,
-                            'PermissionTitle' => 'Withdraw History',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Withdraw History',
-                                'ar' => 'طلبات السحب'
-                            ]
-                        ], [
-                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value,
-                            'PermissionTitle' => 'Withdraw Requests',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'update', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Withdraw Requests',
-                                'ar' => 'طلبات السحب'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value,
-                            'PermissionTitle' => 'Cash Collect',
-                            'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view', 'update', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Cash Collect',
-                                'ar' => 'جمع النقود'
-                            ]
-                        ]
+                       [
+                           'PermissionName' => '',
+                           'PermissionTitle' => 'Financial',
+                           'activity_scope' => 'system_level',
+                           'icon' => 'BadgeDollarSign',
+                           'translations' => [
+                               'en' => 'Financial',
+                               'ar' => ' الموظفين'
+                           ],
+                           'submenu' => [
+                               [
+                                   'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_SETTINGS->value,
+                                   'PermissionTitle' => 'Withdrawal Settings',
+                                   'activity_scope' => 'system_level',
+                                   'icon' => '',
+                                   'translations' => [
+                                       'en' => 'Withdrawal Settings',
+                                       'ar' => 'طريقة السحب'
+                                   ]
+                               ],
+                               [
+                                   'PermissionName' => PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value,
+                                   'PermissionTitle' => 'Withdrawal Method',
+                                   'activity_scope' => 'system_level',
+                                   'icon' => '',
+                                   'translations' => [
+                                       'en' => 'Withdrawal Method',
+                                       'ar' => 'طريقة السحب'
+                                   ]
+                               ],
+                               [
+                                   'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY->value,
+                                   'PermissionTitle' => 'Withdraw History',
+                                   'activity_scope' => 'system_level',
+                                   'icon' => '',
+                                   'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                   'translations' => [
+                                       'en' => 'Withdraw History',
+                                       'ar' => 'طلبات السحب'
+                                   ]
+                               ],
+                               [
+                                   'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value,
+                                   'PermissionTitle' => 'Withdraw Requests',
+                                   'activity_scope' => 'system_level',
+                                   'icon' => '',
+                                   'options' => ['view', 'update', 'delete', 'others'],
+                                   'translations' => [
+                                       'en' => 'Withdraw Requests',
+                                       'ar' => 'طلبات السحب'
+                                   ]
+                               ],
+                               [
+                                   'PermissionName' => PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value,
+                                   'PermissionTitle' => 'Cash Collect',
+                                   'activity_scope' => 'system_level',
+                                   'icon' => '',
+                                   'options' => ['view', 'update', 'delete', 'others'],
+                                   'translations' => [
+                                       'en' => 'Cash Collect',
+                                       'ar' => 'جمع النقود'
+                                   ]
+                               ]
+                           ]
+                       ]
                     ]
                 ],
 
@@ -1024,7 +1062,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Report and analytics',
                     'activity_scope' => 'system_level',
-                    'icon' => '',
+                    'icon' => 'ChartNetwork',
                     'options' => ['view'],
                     'translations' => [
                         'en' => 'Report and analytics',
@@ -1094,7 +1132,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_STORE_TYPE_MANAGE->value,
                             'PermissionTitle' => 'Store Type',
                             'activity_scope' => 'system_level',
-                            'icon' => 'Locate',
+                            'icon' => 'Store',
                             'options' => ['view', 'insert', 'update', 'delete', 'others'],
                             'translations' => [
                                 'en' => 'Store Type',
@@ -1220,7 +1258,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::GENERAL_SETTINGS->value,
                             'PermissionTitle' => 'General Settings',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Settings',
                             'translations' => [
                                 'en' => 'General Settings',
                                 'ar' => 'الإعدادات العامة'
@@ -1230,7 +1268,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::APPEARANCE_SETTINGS->value,
                             'PermissionTitle' => 'Appearance Settings',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'MonitorCog',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Appearance Settings',
@@ -1265,7 +1303,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Email Settings',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Mails',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Email Settings',
@@ -1300,7 +1338,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::SEO_SETTINGS->value,
                             'PermissionTitle' => 'SEO Settings',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'SearchCheck',
                             'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'SEO Settings',
@@ -1311,7 +1349,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Third-Party Integrations',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Blocks',
                             'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Third-Party Integrations',
@@ -1356,7 +1394,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::CACHE_MANAGEMENT->value,
                             'PermissionTitle' => 'Cache Management',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'DatabaseZap',
                             'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Cache Management',
@@ -1367,7 +1405,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::DATABASE_UPDATE_CONTROLS->value,
                             'PermissionTitle' => 'Database Update Controls',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Database',
                             'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'Database Update Controls',
@@ -1378,7 +1416,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::APP_SETTINGS->value,
                             'PermissionTitle' => 'App settings',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Smartphone',
                             'options' => ['view', 'update'],
                             'translations' => [
                                 'en' => 'App settings',
