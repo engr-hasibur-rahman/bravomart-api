@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Deliveryman;
 
+use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,7 +26,7 @@ class DeliverymanOrderRequestResource extends JsonResource
         return [
             "id" => $this->id,
             "payment_method" => $this->orderMaster?->payment_gateway,
-            "store" => $this->store?->name,
+            "store" => new StoreDetailsForOrderResource($this->store),
             "items" => $this->orderDetail->count(),
             "area_id" => $this->area_id,
             "invoice_number" => $this->invoice_number,

@@ -437,7 +437,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function deliverymanOrders()
     {
         $deliveryman = auth('api')->user();
-        $orders = OrderDeliveryHistory::with(['order.orderMaster.orderAddress', 'order.orderDetail', 'order.store','order.orderMaster.customer'])
+        $orders = OrderDeliveryHistory::with(['order.orderMaster.orderAddress', 'order.orderDetail', 'order.store', 'order.orderMaster.customer'])
             ->where('deliveryman_id', $deliveryman->id)
             ->where('status', 'accepted')
             ->latest()
@@ -473,6 +473,13 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 if ($order->confirmed_by !== $deliveryman->id) {
                     return 'already confirmed';
                 }
+                $already_accepted = OrderDeliveryHistory::where('order_id', $order_id)
+                    ->where('deliveryman_id', $deliveryman->id)
+                    ->where('status', 'accepted')
+                    ->exists();
+                if ($already_accepted) {
+                    return 'already accepted';
+                }
                 $order->update([
                     'confirmed_at' => Carbon::now(),
                 ]);
@@ -485,6 +492,13 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             if ($status === 'ignored') {
                 if (!$reason) {
                     return 'reason is required';
+                }
+                $already_ignored = OrderDeliveryHistory::where('order_id', $order_id)
+                    ->where('deliveryman_id', $deliveryman->id)
+                    ->where('status','ignored')
+                    ->exists();
+                if ($already_ignored) {
+                    return 'already ignored';
                 }
                 $order->update([
                     'confirmed_by' => null,

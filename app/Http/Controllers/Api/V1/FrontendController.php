@@ -48,6 +48,7 @@ use App\Interfaces\OrderRefundInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
+use App\Models\Blog;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -1059,5 +1060,20 @@ class FrontendController extends Controller
             'data' => OrderRefundReasonResource::collection($reasons),
             'meta' => new PaginationResource($reasons)
         ], 200);
+    }
+
+    /* ----------------------------------------------------------> Blog <------------------------------------------------------ */
+    public function blogs(Request $request)
+    {
+        $filters = [
+            "most_viewed" => $request->most_viewed,
+            "search" => $request->search
+        ];
+        $blogs = Blog::with('category')
+            ->where('status', 1)
+            ->whereDate('schedule_date', '<=', now())  // Only blogs with a schedule date <= today's date
+            ->latest()
+            ->paginate(10);
+        return response()->json();
     }
 }

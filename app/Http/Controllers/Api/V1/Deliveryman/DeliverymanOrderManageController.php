@@ -90,10 +90,18 @@ class DeliverymanOrderManageController extends Controller
             return response()->json([
                 'message' => __('messages.deliveryman_order_already_taken')
             ], 422);
+        } elseif ($success === 'already accepted') {
+            return response()->json([
+                'message' => __('messages.deliveryman_order_already_accepted')
+            ], 422);
         } elseif ($success === 'ignored') {
             return response()->json([
                 'message' => __('messages.deliveryman_order_request_ignore_successful')
             ], 200);
+        } elseif ($success === 'already ignored') {
+            return response()->json([
+                'message' => __('messages.deliveryman_order_already_ignored')
+            ], 422);
         } elseif ($success === 'reason is required') {
             return response()->json([
                 'message' => __('validation.required', ["attribute" => "Reason"])
