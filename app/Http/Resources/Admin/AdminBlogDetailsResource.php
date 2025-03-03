@@ -35,7 +35,6 @@ class AdminBlogDetailsResource extends JsonResource
             "meta_keywords" => $this->meta_keywords,
             "meta_image" => $this->meta_image,
             "meta_image_url" => ImageModifier::generateImageUrl($this->meta_image),
-            "author" => $this->author,
             "translations" => BlogTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }

@@ -39,7 +39,6 @@ class BlogRequest extends FormRequest
             'meta_description' => 'nullable',
             'meta_keywords' => 'nullable',
             'meta_image' => 'nullable',
-            'author' => 'nullable|string|max:255',
         ];
     }
     public function messages()
@@ -64,8 +63,6 @@ class BlogRequest extends FormRequest
             'schedule_date.date' => __('validation.date'),
             'schedule_date.after_or_equal' => __('validation.after_or_equal'),
             'schedule_date.date_format' => __('validation.date_format'),
-            'author.string' => __('validation.string'),
-            'author.max' => __('validation.max.string'),
         ];
     }
     public function failedValidation(Validator $validator)

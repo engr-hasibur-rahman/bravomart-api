@@ -91,6 +91,8 @@ return [
     'deliveryman_order_request_accept_successful' => 'Order request accepted successfully!',
     'deliveryman_order_request_ignore_successful' => 'Order request ignored successfully!',
     'deliveryman_order_already_taken' => 'This order has been already confirmed by other deliveryman!',
+    'deliveryman_order_already_accepted' => 'This order has been already accepted by you!',
+    'deliveryman_order_already_ignored' => 'This order has been already ignored by you!',
     'deliveryman_assign_successful' => 'Deliveryman assigned successfully!',
     'deliveryman_assign_failed' => 'Deliveryman assign failed!',
     'deliveryman_can_not_be_assigned' => 'Deliveryman can\'t be assigned!',
