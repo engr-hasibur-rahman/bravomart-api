@@ -29,6 +29,7 @@ class AdminSliderDetailsResource extends JsonResource
             "button_text" =>$this->button_text,
             "button_text_color" => $this->button_text_color,
             "button_bg_color" => $this->button_bg_color,
+            "bg_color" => $this->bg_color,
             "button_hover_color" => $this->button_hover_color,
             "button_url" => $this->button_url,
             "redirect_url" => $this->redirect_url,
