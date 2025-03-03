@@ -31,7 +31,6 @@ class AdminBlogResource extends JsonResource
             "status" => $this->status,
             "schedule_date" => $this->schedule_date,
             "tag_name" => $this->tag_name,
-            "author" => $this->author,
             "category" => !empty($category_translation) && $category_translation->where('key', 'name')->first()
                 ? $category_translation->where('key', 'name')->first()->value
                 : $this->category?->name, // If language is empty or not provided attribute
