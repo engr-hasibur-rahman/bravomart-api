@@ -23,6 +23,15 @@ class ProductPublicResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Filter variants by price range in the resource
+        $filteredVariants = $this->variants->filter(function ($variant) use ($request) {
+            // Apply the price range filter
+            return (!$request->min_price || $variant->price >= $request->min_price) &&
+                (!$request->max_price || $variant->price <= $request->max_price);
+        });
+
+        // Get the first filtered variant, or null if no variants match the price range
+        $firstVariant = $filteredVariants->first();
         return [
             'id' => $this->id,
             'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
@@ -36,12 +45,18 @@ class ProductPublicResource extends JsonResource
             'rating' => number_format((float) $this->rating, 2, '.', ''),
             'review_count' => $this->review_count,
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
-            'price' => optional($this->variants->first())->price,
-            'special_price' => optional($this->variants->first())->special_price,
-            'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
-            'discount_percentage' => $this->variants->isNotEmpty() && optional($this->variants->first())->price > 0
-                ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
+            'price' => optional($firstVariant)->price,
+            'special_price' => optional($firstVariant)->special_price,
+            'singleVariant' => $filteredVariants->count() === 1 ? [$firstVariant] : [],
+            'discount_percentage' => $firstVariant && $firstVariant->price > 0
+                ? round((($firstVariant->price - $firstVariant->special_price) / $firstVariant->price) * 100, 2)
                 : null,
+//            'price' => optional($this->variants->first())->price,
+//            'special_price' => optional($this->variants->first())->special_price,
+//            'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
+//            'discount_percentage' => $this->variants->isNotEmpty() && optional($this->variants->first())->price > 0
+//                ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
+//                : null,
         ];
     }
 }
