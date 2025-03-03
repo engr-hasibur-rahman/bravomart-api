@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
 use App\Http\Controllers\Api\V1\DeliveryChargeCalculateController;
 use App\Http\Controllers\Api\V1\FrontendController;
+use App\Http\Controllers\Api\V1\MigrationController;
 use App\Http\Controllers\Api\V1\OtherChargeInfoController;
 use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\TaxInfoController;
@@ -44,7 +45,8 @@ Route::post('contact-us', [ContactManageController::class, 'store']);
 
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['prefix' => 'v1/'], function () {
-
+    // For refreshing single table
+    Route::post('migrate-refresh',[MigrationController::class, 'migrateRefresh']);
     // For customer register and login
     Route::group(['prefix' => 'customer/'], function () {
         Route::post('registration', [CustomerManageController::class, 'register']);

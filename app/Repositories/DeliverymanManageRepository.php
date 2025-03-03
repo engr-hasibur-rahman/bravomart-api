@@ -437,9 +437,11 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function deliverymanOrders()
     {
         $deliveryman = auth('api')->user();
-        $orders = Order::where('confirmed_by', $deliveryman->id)
+        $orders = OrderDeliveryHistory::with(['order.orderMaster.orderAddress', 'order.orderDetail', 'order.store','order.orderMaster.customer'])
+            ->where('deliveryman_id', $deliveryman->id)
+            ->where('status', 'accepted')
             ->latest()
-            ->paginate(5);
+            ->paginate(10);
         return $orders;
     }
 

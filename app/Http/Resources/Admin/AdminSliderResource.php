@@ -41,6 +41,7 @@ class AdminSliderResource extends JsonResource
                 : $this->button_text ?? null, // If language is empty or not provided attribute
             "button_text_color" => $this->button_text_color,
             "button_bg_color" => $this->button_bg_color,
+            "bg_color" => $this->bg_color,
             "button_hover_color" => $this->button_hover_color,
             "button_url" => $this->button_url,
             "redirect_url" => $this->redirect_url,

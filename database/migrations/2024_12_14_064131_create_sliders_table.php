@@ -20,6 +20,7 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->string('description_color')->nullable();
             $table->string('image')->nullable();
+            $table->string('bg_color')->nullable();
             $table->string('button_text')->nullable();
             $table->string('button_text_color')->nullable();
             $table->string('button_bg_color')->nullable();
