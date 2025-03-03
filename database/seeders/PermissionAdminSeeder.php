@@ -977,15 +977,15 @@ class PermissionAdminSeeder extends Seeder
 
         $admin_transaction_related_menu = [
             [
-                // Financial Activity
+                // Financial Management
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Financial Activity',
+                    'PermissionTitle' => 'Financial Management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Financial Activity',
+                        'en' => 'Financial Management',
                         'ar' => 'النشاط المالي'
                     ],
                     'submenu' => [
