@@ -1065,6 +1065,10 @@ class FrontendController extends Controller
     /* ----------------------------------------------------------> Blog <------------------------------------------------------ */
     public function blogs(Request $request)
     {
+        $filters = [
+            "most_viewed" => $request->most_viewed,
+            "search" => $request->search
+        ];
         $blogs = Blog::with('category')
             ->where('status', 1)
             ->whereDate('schedule_date', '<=', now())  // Only blogs with a schedule date <= today's date
