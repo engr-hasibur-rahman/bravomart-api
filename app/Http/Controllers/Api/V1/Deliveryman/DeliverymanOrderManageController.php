@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Deliveryman;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Deliveryman\DeliverymanMyOrdersResource;
+use App\Http\Resources\Deliveryman\DeliverymanOrderRequestResource;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -50,7 +51,7 @@ class DeliverymanOrderManageController extends Controller
         } else {
             return response()->json([
                 'message' => __('messages.data_found'),
-                'data' => DeliverymanMyOrdersResource::collection($order_requests),
+                'data' => DeliverymanOrderRequestResource::collection($order_requests),
                 'meta' => new PaginationResource($order_requests)
             ], 200);
 
