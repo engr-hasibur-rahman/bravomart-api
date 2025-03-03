@@ -11,6 +11,7 @@ class Slider extends Model
         'sub_title',
         'description',
         'image',
+        'bg_color',
         'button_text',
         'button_url',
         'redirect_url',

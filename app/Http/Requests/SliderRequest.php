@@ -32,7 +32,7 @@ class SliderRequest extends FormRequest
             'description_color' => 'nullable|string|max:7', // Assuming HEX color code
             'image' => 'nullable', // Validating image upload
             'button_text' => 'nullable|string|max:50',
-            'button_text_color' => 'nullable|string|max:7', // Assuming HEX color code
+            'bg_color' => 'nullable|string|max:7', // Assuming HEX color code
             'button_bg_color' => 'nullable|string|max:7', // Assuming HEX color code
             'button_hover_color' => 'nullable|string|max:7', // Assuming HEX color code
             'button_url' => 'nullable|url|max:255',
@@ -78,6 +78,9 @@ class SliderRequest extends FormRequest
 
             'button_bg_color.string' => __('validation.string'),
             'button_bg_color.max' => __('validation.max.string'),
+
+            'bg_color.string' => __('validation.string'),
+            'bg_color.max' => __('validation.max.string'),
 
             'button_hover_color.string' => __('validation.string'),
             'button_hover_color.max' => __('validation.max.string'),
