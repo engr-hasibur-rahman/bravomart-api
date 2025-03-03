@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Behaviour;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\Blog\BlogPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use App\Http\Resources\Com\Department\DepartmentListForDropdown;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -1065,15 +1066,36 @@ class FrontendController extends Controller
     /* ----------------------------------------------------------> Blog <------------------------------------------------------ */
     public function blogs(Request $request)
     {
-        $filters = [
-            "most_viewed" => $request->most_viewed,
-            "search" => $request->search
-        ];
-        $blogs = Blog::with('category')
+        $blogsQuery = Blog::with('category')
             ->where('status', 1)
-            ->whereDate('schedule_date', '<=', now())  // Only blogs with a schedule date <= today's date
-            ->latest()
-            ->paginate(10);
-        return response()->json();
+            ->whereDate('schedule_date', '<=', now());  // Only blogs with a schedule date <= today's date
+
+        // Check for "most_viewed" filter
+        if ($request->has('most_viewed') && $request->most_viewed) {
+            $blogsQuery->orderBy('views', 'desc');  // Assuming you have a 'views' column
+        }
+
+        // Check for search filter
+        if ($request->has('search') && $request->search) {
+            $blogsQuery->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('content', 'like', '%' . $request->search . '%');  // Searching in title and content
+        }
+
+        // Check for sort filter (sort by created_at only)
+        if ($request->has('sort') && $request->sort) {
+            // Ensure the sort direction is either 'asc' or 'desc'
+            $sortDirection = strtolower($request->sort) === 'asc' ? 'asc' : 'desc'; // Default to 'desc' if not 'asc'
+            $blogsQuery->orderBy('created_at', $sortDirection);  // Sort only by 'created_at'
+        }
+
+        // Pagination
+        $perPage = $request->has('per_page') ? $request->per_page : 10;  // Default to 10 if not provided
+        $blogs = $blogsQuery->paginate($perPage);
+
+        return response()->json([
+            'data' => BlogPublicResource::collection($blogs),
+            'meta' => new PaginationResource($blogs)
+        ], 200);
     }
+
 }
