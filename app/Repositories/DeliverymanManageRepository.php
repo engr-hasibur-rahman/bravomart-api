@@ -551,13 +551,13 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
             if ($wallet) {
                 // Update wallet balance
-                $wallet->balance += $order->delivery_charge_deliveryman_earning; // Add earnings to the balance
+                $wallet->balance += $order->delivery_charge_admin; // Add earnings to the balance
                 $wallet->save();
 
                 // Create wallet transaction history
                 WalletTransaction::create([
                     'wallet_id' => $wallet->id,
-                    'amount' => $order->delivery_charge_deliveryman_earning,
+                    'amount' => $order->delivery_charge_admin,
                     'type' => 'credit',
                     'purpose' => 'Delivery Earnings',
                     'status' => 1,
@@ -570,13 +570,13 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
                 if ($wallet) {
                     // Update wallet balance
-                    $wallet->balance += $order->delivery_charge_deliveryman_earning; // Add earnings to the balance
+                    $wallet->balance += $order->delivery_charge_admin; // Add earnings to the balance
                     $wallet->save();
 
                     // Create wallet transaction history
                     WalletTransaction::create([
                         'wallet_id' => $wallet->id,
-                        'amount' => $order->delivery_charge_deliveryman_earning,
+                        'amount' => $order->delivery_charge_admin,
                         'type' => 'credit',
                         'purpose' => 'Delivery Earnings',
                         'status' => 1,
@@ -606,10 +606,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     // deliveryman
                     $deliveryman_subject = $email_template_deliveryman->subject;
                     $deliveryman_message = $email_template_deliveryman->body;
-                    $customer_message = str_replace(["@customer_name", "@order_id", "@order_amount"], [$order->orderMaster?->customer?->full_name, $order->id, $order->order_amount, $order->delivery_charge_deliveryman_earning], $customer_message);
-                    $store_message = str_replace(["@name", "@order_id", "@order_amount"], [$order->store?->name, $order->id, $order->order_amount, $order->delivery_charge_deliveryman_earning], $store_message);
-                    $admin_message = str_replace(["@order_id", "@order_amount", "@earnings_amount"], [$order->id, $order->order_amount, $order->delivery_charge_deliveryman_earning], $admin_message);
-                    $deliveryman_message = str_replace(["@name", "@order_id", "@order_amount", "@earnings_amount"], [auth('api')->user()->full_name, $order->id, $order->order_amount, $order->delivery_charge_deliveryman_earning], $deliveryman_message);
+                    $customer_message = str_replace(["@customer_name", "@order_id", "@order_amount"], [$order->orderMaster?->customer?->full_name, $order->id, $order->order_amount, $order->delivery_charge_admin], $customer_message);
+                    $store_message = str_replace(["@name", "@order_id", "@order_amount"], [$order->store?->name, $order->id, $order->order_amount, $order->delivery_charge_admin], $store_message);
+                    $admin_message = str_replace(["@order_id", "@order_amount", "@earnings_amount"], [$order->id, $order->order_amount, $order->delivery_charge_admin], $admin_message);
+                    $deliveryman_message = str_replace(["@name", "@order_id", "@order_amount", "@earnings_amount"], [auth('api')->user()->full_name, $order->id, $order->order_amount, $order->delivery_charge_admin], $deliveryman_message);
                     // customer
                     Mail::to($customer_email)->send(new DynamicEmail(['subject' => $customer_subject, 'message' => $customer_message]));
                     // store
@@ -636,7 +636,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     'deliveryman_name' => $deliveryman->name ?? 'Deliveryman',
                     'order_id' => $order->id,
                     'order_amount' => $order->order_amount,
-                    'amount' => $order->delivery_charge_deliveryman_earning
+                    'amount' => $order->delivery_charge_admin
                 ];
                 // Check if template exists and email is valid and // Send the email using queued job
                 if ($emailTemplate && filter_var($customer_email, FILTER_VALIDATE_EMAIL)) {
