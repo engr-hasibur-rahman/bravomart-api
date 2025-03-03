@@ -21,7 +21,7 @@ class DeliverymanMyOrdersResource extends JsonResource
             "order_id" => $this->order->id,
             "payment_method" => $this->order?->orderMaster?->payment_gateway,
             "store" => new StoreDetailsForOrderResource($this->order?->store),
-            "customer" => new CustomerDetailsResource($this->order?->customer),
+            "customer" => new CustomerDetailsResource($this->order?->orderMaster?->customer),
             "order_address" => $this->order?->orderMaster?->orderAddress->address,
             "items" => $this->order?->orderDetail->count(),
             "invoice_number" => $this->order?->invoice_number,
@@ -31,7 +31,7 @@ class DeliverymanMyOrdersResource extends JsonResource
             "delivery_type" => $this->order?->delivery_type,
             "order_amount" => $this->order?->order_amount,
             "status" => $this->order?->status,
-            "created_at" => $this->order?->created_at->diffForHumans()
+            "created_at" => optional($this->order->created_at)->format('h:i A, F j, Y'), // Example: "8:00 AM, May 29, 2025"
         ];
     }
 }
