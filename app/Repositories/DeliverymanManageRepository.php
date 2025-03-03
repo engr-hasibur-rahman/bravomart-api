@@ -603,11 +603,14 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 $system_global_email = com_option_get('com_site_email');
                 $delivery_man = $order->deliveryman?->email;
 
-                // order notification
                 $this->orderManageNotificationService->createOrderNotification($order->id);
+
 
                 // mail send
                 try {
+                    // order notification
+
+
                     $email_template_deliveryman = EmailTemplate::where('type', 'deliveryman-earning')->where('status', 1)->first();
                     $email_template_order_delivered = EmailTemplate::where('type', 'order-status-delivered')->where('status', 1)->first();
                     // customer, store and admin

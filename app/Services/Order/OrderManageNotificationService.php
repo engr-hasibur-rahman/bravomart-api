@@ -18,14 +18,21 @@ class OrderManageNotificationService
         }
 
         // Order with relationship data get
-        $orders = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store.seller', 'deliveryman')
-            ->whereIn('id' ,$last_order_ids)->get();
-
-        // if order not found
-        if ($orders->isEmpty()) {
-            return;
+        if (!is_array($last_order_ids)) {
+            $order_ids_convert_to_array = collect($last_order_ids)->toArray();
+        } else {
+            $order_ids_convert_to_array = $last_order_ids;
         }
 
+        $orders = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store.seller', 'deliveryman')
+            ->whereIn('id' ,$order_ids_convert_to_array)
+            ->get();
+
+
+        // if order not found
+        if ($orders->count() === 0) {
+            return;
+        }
         foreach ($orders as $order_details) {
             $last_order_id =$order_details->id;
             // Notification Data
