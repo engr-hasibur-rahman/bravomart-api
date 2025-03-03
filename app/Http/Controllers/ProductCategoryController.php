@@ -58,9 +58,9 @@ class ProductCategoryController extends Controller
     }
 
 
-    public function show($id)
+    public function show(Request $request)
     {
-        $category = $this->repository->with(['translations'])->findOrFail($id);
+        $category = $this->repository->with(['translations'])->findOrFail($request->id);
         if ($category) {
             return new ProductCategoryByIdResource($category);
         }
