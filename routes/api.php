@@ -111,6 +111,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/product-suggestion', [FrontendController::class, 'getSearchSuggestions']);
     Route::get('/keyword-suggestion', [FrontendController::class, 'getKeywordSuggestions']);
     Route::get('/orders/refund-reason-list', [FrontendController::class, 'allOrderRefundReason']);
+    Route::get('/blogs', [FrontendController::class, 'blogs']);
 
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);
 

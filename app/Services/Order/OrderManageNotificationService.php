@@ -22,7 +22,7 @@ class OrderManageNotificationService
             ->whereIn('id' ,$last_order_ids)->get();
 
         // if order not found
-        if ($orders->count() === 0) {
+        if ($orders->isEmpty()) {
             return;
         }
 

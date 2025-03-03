@@ -1071,7 +1071,8 @@ class FrontendController extends Controller
     {
         $blogsQuery = Blog::with('category')
             ->where('status', 1)
-            ->whereDate('schedule_date', '<=', now());  // Only blogs with a schedule date <= today's date
+            ->whereDate('schedule_date', '<=', now())// Only blogs with a schedule date <= today's date
+            ->orWhereNull('schedule_date');
 
         // Check for "most_viewed" filter
         if ($request->has('most_viewed') && $request->most_viewed) {
@@ -1081,7 +1082,7 @@ class FrontendController extends Controller
         // Check for search filter
         if ($request->has('search') && $request->search) {
             $blogsQuery->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('content', 'like', '%' . $request->search . '%');  // Searching in title and content
+                ->orWhere('description', 'like', '%' . $request->search . '%');
         }
 
         // Check for sort filter (sort by created_at only)
@@ -1100,5 +1101,4 @@ class FrontendController extends Controller
             'meta' => new PaginationResource($blogs)
         ], 200);
     }
-
 }
