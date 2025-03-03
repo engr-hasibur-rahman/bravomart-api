@@ -24,37 +24,11 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => 'dashboard',
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'store_level',
-                    'icon' => '',
+                    'icon' => 'LayoutDashboard',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Dashboard',
                         'ar' => 'قائمة المناطق'
-                    ]
-                ],
-
-                // Pos management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'POS Management',
-                    'activity_scope' => 'store_level',
-                    'icon' => '',
-                    'options' => ['View'],
-                    'translations' => [
-                        'en' => 'POS Management',
-                        'ar' => 'قائمة المناطق'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::SELLER_STORE_POS_SALES->value,
-                            'PermissionTitle' => 'POS Manager',
-                            'activity_scope' => 'store_level',
-                            'icon' => 'BringToFront',
-                            'options' => ['View', 'insert', 'update', 'Delete', 'others'],
-                            'translations' => [
-                                'en' => 'Orders',
-                                'ar' => 'قائمة المناطق'
-                            ]
-                        ]
                     ]
                 ],
 
@@ -201,25 +175,13 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value,
                             'PermissionTitle' => 'Author List',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'BookText',
                             'options' => ['View', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Author List',
                                 'ar' => 'قائمة المؤلفين'
                             ]
                         ],
-
-                        // for food product
-                        [
-                            'PermissionName' => PermissionKey::PRODUCT_ADDONS_ADD->value,
-                            'PermissionTitle' => 'Addons',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Addons',
-                                'ar' => 'إدارة التركيبات'
-                            ]
-                        ]
                     ]
                 ],
 
@@ -228,7 +190,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Inventory Management',
                     'activity_scope' => 'store_level',
-                    'icon' => '',
+                    'icon' => 'SquareChartGantt',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Inventory Management',
@@ -254,7 +216,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Promotional control',
                     'activity_scope' => 'store_level',
-                    'icon' => '',
+                    'icon' => 'Proportions',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Promotional control',
@@ -311,7 +273,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value,
                             'PermissionTitle' => 'Banners',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'AlignJustify',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Banners',
@@ -326,7 +288,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Support Ticket Management',
                     'activity_scope' => 'store_level',
-                    'icon' => '',
+                    'icon' => 'Headphones',
                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
                     'translations' => [
                         'en' => 'Support Ticket Management',
@@ -335,17 +297,53 @@ class PermissionStoreSeeder extends Seeder
                     'submenu' => [
                         [
                             'PermissionName' => PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value,
-                            'PermissionTitle' => 'All Support Tickets',
+                            'PermissionTitle' => 'Support Tickets',
                             'activity_scope' => 'store_level',
                             'icon' => '',
                             'options' => ['view', 'insert', 'update', 'delete', 'others'],
                             'translations' => [
-                                'en' => 'All Ticket',
+                                'en' => 'Support Ticket',
                                 'ar' => 'السحوبات'
                             ]
                         ]
                     ]
                 ],
+
+                //Feedback control
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Feedback control',
+                    'activity_scope' => 'store_level',
+                    'icon' => 'MessageSquareReply',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Feedback control',
+                        'ar' => 'التحكم في ردود الفعل'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::SELLER_STORE_FEEDBACK_CONTROL_REVIEWS->value,
+                            'PermissionTitle' => 'Reviews',
+                            'activity_scope' => 'store_level',
+                            'icon' => 'Star',
+                            'translations' => [
+                                'en' => 'Reviews',
+                                'ar' => '/الدردشة'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::SELLER_STORE_FEEDBACK_CONTROL_QUESTIONS->value,
+                            'PermissionTitle' => 'Questions',
+                            'activity_scope' => 'store_level',
+                            'icon' => 'CircleHelp',
+                            'translations' => [
+                                'en' => 'Questions',
+                                'ar' => 'الأسئلة/الدردشة'
+                            ]
+                        ]
+                    ]
+                ],
+
 
                 // Financial Management
                 [
@@ -363,7 +361,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value,
                             'PermissionTitle' => 'Withdrawals',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'BadgeDollarSign',
                             'options' => ['view', 'insert'],
                             'translations' => [
                                 'en' => 'Withdrawals',
@@ -372,47 +370,12 @@ class PermissionStoreSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value,
-                            'PermissionTitle' => 'My Wallet',
+                            'PermissionTitle' => 'Store Wallet',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'Wallet',
                             'translations' => [
-                                'en' => 'My Wallet',
+                                'en' => 'Store Wallet',
                                 'ar' => 'محفظتي'
-                            ]
-                        ]
-                    ]
-                ],
-
-                //Feedback control
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Feedback control',
-                    'activity_scope' => 'store_level',
-                    'icon' => '',
-                    'options' => ['View'],
-                    'translations' => [
-                        'en' => 'Feedback control',
-                        'ar' => 'التحكم في ردود الفعل'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::SELLER_STORE_FEEDBACK_CONTROL_REVIEWS->value,
-                            'PermissionTitle' => 'Reviews',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Reviews',
-                                'ar' => '/الدردشة'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::SELLER_STORE_FEEDBACK_CONTROL_QUESTIONS->value,
-                            'PermissionTitle' => 'Questions',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Questions',
-                                'ar' => 'الأسئلة/الدردشة'
                             ]
                         ]
                     ]
@@ -423,7 +386,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Staff control',
                     'activity_scope' => 'store_level',
-                    'icon' => '',
+                    'icon' => 'UserRoundPen',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Staff control',
@@ -434,7 +397,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
                             'PermissionTitle' => 'Staff List',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'Users',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Staff List',
@@ -445,7 +408,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => PermissionKey::SELLER_STAFF_ROLES_STORE->value,
                             'PermissionTitle' => 'Staff Roles',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'LockKeyholeOpen',
                             'translations' => [
                                 'en' => 'Staff Roles',
                                 'ar' => 'أدوار الموظفين'
@@ -460,7 +423,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Message',
                     'activity_scope' => 'store_level',
-                    'icon' => '',
+                    'icon' => 'MessageCircleMore',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Message',
@@ -485,7 +448,7 @@ class PermissionStoreSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Store Settings',
                     'activity_scope' => 'store_level',
-                    'icon' => '',
+                    'icon' => 'Store',
                     'options' => ['View'],
                     'translations' => [
                         'en' => 'Store Settings',
@@ -496,7 +459,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => PermissionKey::SELLER_STORE_BUSINESS_PLAN->value,
                             'PermissionTitle' => 'Business Plan',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'BriefcaseBusiness',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Business Plan',
@@ -505,9 +468,9 @@ class PermissionStoreSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => PermissionKey::SELLER_STORE_STORE_NOTICE->value,
-                            'PermissionTitle' => 'Store Notice',
+                            'PermissionTitle' => 'Notice',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'BadgeAlert',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Store Notice',
@@ -515,36 +478,14 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::SELLER_STORE_STORE_CONFIG->value,
-                            'PermissionTitle' => 'Store Config',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'options' => ['view', 'update'],
-                            'translations' => [
-                                'en' => 'Store Config',
-                                'ar' => 'تكوين المتجر'
-                            ]
-                        ],
-                        [
                             'PermissionName' => PermissionKey::SELLER_STORE_MY_SHOP->value,
                             'PermissionTitle' => 'My Stores',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'Store',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'My Stores',
                                 'ar' => 'متاجري'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::SELLER_STORE_POS_CONFIG->value,
-                            'PermissionTitle' => 'POS Configuration',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'options' => ['view', 'update'],
-                            'translations' => [
-                                'en' => 'POS Configuration',
-                                'ar' => 'تكوين نقاط البيع'
                             ]
                         ]
                     ]
