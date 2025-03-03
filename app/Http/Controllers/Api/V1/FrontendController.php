@@ -560,9 +560,13 @@ class FrontendController extends Controller
     public function productList(Request $request)
     {
         $query = Product::query();
-        // Apply category filter
-        if (isset($request->category_id)) {
-            $query->where('category_id', $request->category_id);
+        // Apply category filter (multiple categories)
+        if (!empty($request->category_id) && is_array($request->category_id)) {
+            $query->whereIn('category_id', $request->category_id);
+        }
+
+        if (!empty($request->brand_id) && is_array($request->brand_id)) {
+            $query->whereIn('brand_id', $request->brand_id);
         }
 
         // Apply price range filter
@@ -573,11 +577,6 @@ class FrontendController extends Controller
             $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
                 $q->whereBetween('price', [$minPrice, $maxPrice]);
             });
-        }
-
-        // Apply brand filter
-        if (isset($request->brand_id)) {
-            $query->where('brand_id', $request->brand_id);
         }
 
         // Apply availability filter
