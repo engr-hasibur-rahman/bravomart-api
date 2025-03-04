@@ -26,6 +26,7 @@ return new class extends Migration
             $table->timestamp('password_changed_at')->nullable();
             $table->string('image')->nullable();
             $table->string('def_lang')->nullable();
+            $table->boolean('activity_notification')->default(1);
             $table->string('firebase_token')->nullable();
             $table->string('google_id')->nullable();
             $table->string('facebook_id')->nullable();

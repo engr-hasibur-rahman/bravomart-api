@@ -25,9 +25,8 @@ class AdminBannerResource extends JsonResource
             "title" => $translation->isNotEmpty()
                 ? $translation->where('key', 'title')->first()?->value
                 : $this->title,
-            "description" => $translation->isNotEmpty()
-                ? $translation->where('key', 'description')->first()?->value
-                : $this->description,
+            "background_image_url" => ImageModifier::generateImageUrl($this->background_image),
+            "thumbnail_image_url" => ImageModifier::generateImageUrl($this->thumbnail_image_url),
             "button_text" => $translation->isNotEmpty()
                 ? $translation->where('key', 'button_text')->first()?->value
                 : $this->button_text,

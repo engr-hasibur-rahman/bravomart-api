@@ -67,7 +67,7 @@ return [
     'account_deactivate_successful' => 'Your account has been deactivated!',
     'account_activate_successful' => 'Your account has been activated!',
     'account_deactivate_failed' => 'Something went wrong while deactivating your account!',
-    'account_already_activated' => 'Your account is already deactivated!',
+    'account_already_activated' => 'Your account is already activated!',
     'account_already_deactivated' => 'Your account has been already deactivated!',
 
     'account_delete_successful' => 'Your account has been deleted!',
