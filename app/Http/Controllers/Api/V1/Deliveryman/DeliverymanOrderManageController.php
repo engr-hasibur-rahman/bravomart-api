@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Deliveryman\DeliverymanMyOrdersResource;
 use App\Http\Resources\Deliveryman\DeliverymanOrderRequestResource;
+use App\Http\Resources\Order\AdminOrderResource;
+use App\Http\Resources\Order\OrderRefundRequestResource;
+use App\Http\Resources\Order\OrderSummaryResource;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -18,10 +21,20 @@ class DeliverymanOrderManageController extends Controller
 
     }
 
-    public function getMyOrders()
+    public function getMyOrders(Request $request)
     {
+        $order_id = $request->order_id;
         if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
             unauthorized_response();
+        }
+        if ($order_id) {
+            $order = $this->deliverymanRepo->deliverymanOrderDetails($order_id);
+            return response()->json(
+                [
+                    'order_data' => new AdminOrderResource($order),
+                    'order_summary' => new OrderSummaryResource($order),
+                ], 200
+            );
         }
         $orders = $this->deliverymanRepo->deliverymanOrders();
         if ($orders) {
@@ -141,7 +154,7 @@ class DeliverymanOrderManageController extends Controller
                 $query->where('payment_gateway', 'cash_on_delivery');
             })
             ->exists();
-        if (!$is_cash_on_delivery){
+        if (!$is_cash_on_delivery) {
             return response()->json([
                 'message' => __('messages.order_is_not_cash_on_delivery')
             ], 422);
