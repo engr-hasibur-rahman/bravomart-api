@@ -495,7 +495,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 }
                 $already_ignored = OrderDeliveryHistory::where('order_id', $order_id)
                     ->where('deliveryman_id', $deliveryman->id)
-                    ->where('status','ignored')
+                    ->where('status', 'ignored')
                     ->exists();
                 if ($already_ignored) {
                     return 'already ignored';
