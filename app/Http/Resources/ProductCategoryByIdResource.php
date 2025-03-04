@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Translation\CategoryTranslationResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 
@@ -17,20 +18,6 @@ class ProductCategoryByIdResource extends JsonResource
 
     public function toArray($request)
     {
-        $translations = $this->translations->groupBy('language');
-
-        // Initialize an array to hold the transformed data
-        $transformedData = [];
-
-        foreach ($translations as $language => $items) {
-            $itemData = [
-                'language' => $language,
-                'category_name' => $items->where('key', 'category_name')->first()->value ?? null,
-                'meta_title' => $items->where('key', 'meta_title')->first()->value ?? null,
-                'meta_description' => $items->where('key', 'meta_description')->first()->value ?? null,
-            ];
-            $transformedData[] = $itemData;
-        }
         return [
             'id' => $this->id,
             'category_name' => $this->category_name,
@@ -45,7 +32,7 @@ class ProductCategoryByIdResource extends JsonResource
             'category_name_paths' => $this->category_name_paths,
             'parent_path' => $this->parent_path,
             'is_featured' => $this->is_featured,
-            'translations' => $transformedData,
+            'translations' => CategoryTranslationResource::collection($this->related_translations->groupBy('language'))
         ];
     }
 }

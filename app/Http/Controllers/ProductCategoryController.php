@@ -15,7 +15,9 @@ class ProductCategoryController extends Controller
 
     public function __construct(
         public ProductCategoryRepository $repository,
-    ) {}
+    )
+    {
+    }
 
     public function index(Request $request)
     {
@@ -44,13 +46,13 @@ class ProductCategoryController extends Controller
         }
 
         // Apply sorting and pagination
-        if($request->pagination == "false"){
+        if ($request->pagination == "false") {
             $categories = $categories->whereNull('parent_id')->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
-            ->get();
+                ->get();
 
-        }else {
+        } else {
             $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
-            ->paginate($per_page);
+                ->paginate($per_page);
         }
         // Return a collection of ProductBrandResource (including the image)
         return ProductCategoryResource::collection($categories);
@@ -60,11 +62,12 @@ class ProductCategoryController extends Controller
 
     public function show(Request $request)
     {
-        $category = $this->repository->with(['translations'])->findOrFail($request->id);
+        $category = $this->repository->with(['related_translations'])->findOrFail($request->id);
         if ($category) {
-            return new ProductCategoryByIdResource($category);
+            return response()->json(new ProductCategoryByIdResource($category));
+        } else {
+            return response()->json(['message' => __('messages.data_not_found')], 404);
         }
-        return response()->json(['error' => 'Product Brand not found'], 404);
     }
 
     public function store(StoreProductCategoryRequest $request)
@@ -72,7 +75,7 @@ class ProductCategoryController extends Controller
         try {
             $this->repository->storeProductCategory($request);
             return response()->json([
-                'message' => __('messages.save_success',['name'=>'Product Category']),
+                'message' => __('messages.save_success', ['name' => 'Product Category']),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -83,13 +86,18 @@ class ProductCategoryController extends Controller
 
     public function productCategoryStatus(Request $request)
     {
-        $productCategory = ProductCategory::findOrFail($request->id);
-        $productCategory->status = !$productCategory->status;
-        $productCategory->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'Product brand status updated successfully',
-            'status' => $productCategory->status
-        ]);
+        $productCategory = ProductCategory::find($request->id);
+        if ($productCategory) {
+            $productCategory->status = !$productCategory->status;
+            $productCategory->save();
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Product category status']),
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+
     }
 }

@@ -50,6 +50,7 @@ use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
 use App\Models\Blog;
+use App\Models\BlogCategory;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -1100,5 +1101,57 @@ class FrontendController extends Controller
             'data' => BlogPublicResource::collection($blogs),
             'meta' => new PaginationResource($blogs)
         ], 200);
+    }
+
+    public function blogDetails(Request $request)
+    {
+        $blog = Blog::with('category')
+            ->where('slug', $request->slug)
+            ->first();
+        $all_blog_categories = BlogCategory::where('status', 1)
+            ->limit(15)
+            ->latest()
+            ->get();
+        $popular_posts = Blog::with('category')
+            ->orderBy('views', 'desc')
+            ->where('status', 1)
+            ->whereDate('schedule_date', '<=', now())// Only blogs with a schedule date <= today's date
+            ->orWhereNull('schedule_date')
+            ->limit(5)
+            ->get();
+//        $blogs = Blog::with('category')
+//            ->where('status', 1)
+//            ->whereDate('schedule_date', '<=', now())
+//            ->orWhereNull('schedule_date');
+
+        $related_posts = $blog->relatedBlogs()->get();
+        // If no related posts found, fetch fallback blogs
+        if ($related_posts->isEmpty()) {
+            $related_posts = Blog::where('status', 1)
+                ->whereDate('schedule_date', '<=', now())
+                ->orWhereNull('schedule_date')
+                ->orderBy('created_at', 'desc')
+                ->limit(5)
+                ->get();
+        }
+        if ($related_posts->isEmpty()) {
+            // Try fetching most viewed posts if no related ones are found
+            $related_posts = Blog::where('status', 1)
+                ->orWhereNull('schedule_date')
+                ->orderBy('created_at', 'desc')
+                ->orderBy('views', 'desc')
+                ->limit(5)
+                ->get();
+        }
+
+        // If still empty, get random blogs
+        if ($related_posts->isEmpty()) {
+            $related_posts = Blog::where('status', 1)
+                ->orWhereNull('schedule_date')
+                ->orderBy('created_at', 'desc')
+                ->inRandomOrder()
+                ->limit(5)
+                ->get();
+        }
     }
 }
