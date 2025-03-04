@@ -1198,7 +1198,7 @@ class FrontendController extends Controller
         }
         return response()->json([
             'blog_details' => new BlogDetailsPublicResource($blog),
-            '$all_blog_categories' => BlogCategoryPublicResource::collection($all_blog_categories),
+            'all_blog_categories' => BlogCategoryPublicResource::collection($all_blog_categories),
             'popular_posts' => BlogPublicResource::collection($popular_posts),
             'related_posts' => BlogPublicResource::collection($related_posts),
         ], 200);

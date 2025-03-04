@@ -29,12 +29,17 @@ class DeliverymanOrderManageController extends Controller
         }
         if ($order_id) {
             $order = $this->deliverymanRepo->deliverymanOrderDetails($order_id);
-            return response()->json(
-                [
-                    'order_data' => new AdminOrderResource($order),
-                    'order_summary' => new OrderSummaryResource($order),
-                ], 200
-            );
+            if ($order) {
+                return response()->json(
+                    [
+                        'order_data' => new AdminOrderResource($order),
+                        'order_summary' => new OrderSummaryResource($order),
+                    ], 200
+                );
+            } else {
+                return response()->json(['message' => __('messages.data_not_found')], 404);
+            }
+
         }
         $orders = $this->deliverymanRepo->deliverymanOrders();
         if ($orders) {
