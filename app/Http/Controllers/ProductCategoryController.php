@@ -98,6 +98,26 @@ class ProductCategoryController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
+    }
 
+    public function destroy(Request $request)
+    {
+        $category = ProductCategory::find($request->id);
+
+        if (!$category) {
+            return response()->json([
+                'message' => __('messages.not_found', ['name' => 'Product category'])
+            ], 404);
+        }
+
+        // Delete all children categories in a single query
+        ProductCategory::where('parent_id', $category->id)->delete();
+
+        // Delete the main category
+        $category->delete();
+
+        return response()->json([
+            'message' => __('messages.delete_success', ['name' => 'Product category'])
+        ], 200);
     }
 }
