@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Behaviour;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\Blog\BlogDetailsPublicResource;
 use App\Http\Resources\Com\Blog\BlogPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use App\Http\Resources\Com\Department\DepartmentListForDropdown;
@@ -1108,10 +1109,14 @@ class FrontendController extends Controller
         $blog = Blog::with('category')
             ->where('slug', $request->slug)
             ->first();
+
+        // Blog categories
         $all_blog_categories = BlogCategory::where('status', 1)
             ->limit(15)
             ->latest()
             ->get();
+
+        // popular posts
         $popular_posts = Blog::with('category')
             ->orderBy('views', 'desc')
             ->where('status', 1)
@@ -1119,12 +1124,10 @@ class FrontendController extends Controller
             ->orWhereNull('schedule_date')
             ->limit(5)
             ->get();
-//        $blogs = Blog::with('category')
-//            ->where('status', 1)
-//            ->whereDate('schedule_date', '<=', now())
-//            ->orWhereNull('schedule_date');
 
+        // related posts
         $related_posts = $blog->relatedBlogs()->get();
+
         // If no related posts found, fetch fallback blogs
         if ($related_posts->isEmpty()) {
             $related_posts = Blog::where('status', 1)
@@ -1153,5 +1156,14 @@ class FrontendController extends Controller
                 ->limit(5)
                 ->get();
         }
+        $blog_details = [
+            'blog' => $blog,
+            'all_blog_categories' => $all_blog_categories,
+            'popular_posts' => $popular_posts,
+            'related_posts' => $related_posts,
+        ];
+        return response()->json([
+            new BlogDetailsPublicResource($blog_details),
+        ],200);
     }
 }
