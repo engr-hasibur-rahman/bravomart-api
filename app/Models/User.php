@@ -34,7 +34,8 @@ class User extends Authenticatable
         'google_id',
         'facebook_id',
         'apple_id',
-        'def_lang'
+        'def_lang',
+        'deactivated_at'
     ];
     protected $guard_name = 'api';
     protected $hidden = [
