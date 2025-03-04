@@ -336,7 +336,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('product-categories/add', [ProductCategoryController::class, 'store']);
             Route::get('product-categories/details/{id}', [ProductCategoryController::class, 'show']);
             Route::post('product-categories/update', [ProductCategoryController::class, 'store']);
-            Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);
+            Route::post('product-categories/change-status', [ProductCategoryController::class, 'productCategoryStatus']);
         });
         // User Management
         Route::group(['middleware' => [getPermissionMiddleware('ban-user')]], function () {

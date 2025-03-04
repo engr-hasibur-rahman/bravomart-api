@@ -27,7 +27,7 @@ class BlogPublicResource extends JsonResource
             "meta_description" => $this->meta_description,
             "meta_keywords" => $this->meta_keywords,
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
-            'created_at' => $this->created_at->format('F d, Y')
+            "created_at" => $this->created_at->format('F d, Y')
         ];
     }
 }

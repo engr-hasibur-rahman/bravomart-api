@@ -49,6 +49,21 @@ class Blog extends Model
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
+    public function relatedBlogs()
+    {
+        $query = Blog::where('id', '!=', $this->id)
+            ->where('status', 1)
+            ->where(function ($q) {
+                $q->where('category_id', $this->category_id);
+                foreach (explode(',', $this->tag_name) as $tag) {
+                    $q->orWhere('tag_name', 'LIKE', "%$tag%");
+                }
+            })
+            ->limit(5);
+
+        return $query;
+    }
+
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')
