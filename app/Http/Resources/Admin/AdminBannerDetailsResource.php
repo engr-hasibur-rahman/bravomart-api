@@ -28,15 +28,20 @@ class AdminBannerDetailsResource extends JsonResource
             "title" => $translation->isNotEmpty()
                 ? $translation->where('key', 'title')->first()?->value
                 : $this->title,
+            "title_color" => $this->title_color,
             "description" => $translation->isNotEmpty()
                 ? $translation->where('key', 'description')->first()?->value
                 : $this->description,
+            "description_color" => $this->description_color,
             "button_text" => $translation->isNotEmpty()
                 ? $translation->where('key', 'button_text')->first()?->value
                 : $this->button_text,
             "background_image" => ImageModifier::generateImageUrl($this->background_image),
+            "background_color" => $this->background_color,
             "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "button_color" => $this->button_color,
+            "button_text_color" => $this->button_text_color,
+            "button_hover_color" => $this->button_hover_color,
             "redirect_url" => $this->redirect_url,
             "location" => $this->location,
             "type" => $this->type,
