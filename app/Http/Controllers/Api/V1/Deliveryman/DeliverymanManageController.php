@@ -115,6 +115,7 @@ class DeliverymanManageController extends Controller
                 "status_code" => 200,
                 "message" => __('messages.login_success', ['name' => 'Deliveryman']),
                 "token" => $user->createToken('auth_token')->plainTextToken,
+                "deliveryman_id" => $user->id,
                 "email_verified" => $email_verified,
                 "role" => $user->getRoleNames()->first(),
             ], 200);
