@@ -12,9 +12,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class ProductCategory extends Model implements HasMedia
+class ProductCategory extends Model
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
 
     protected $table = 'product_category';
 

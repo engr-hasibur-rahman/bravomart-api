@@ -337,6 +337,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('product-categories/details/{id}', [ProductCategoryController::class, 'show']);
             Route::post('product-categories/update', [ProductCategoryController::class, 'store']);
             Route::post('product-categories/change-status', [ProductCategoryController::class, 'productCategoryStatus']);
+            Route::delete('product-categories/remove/{id}', [ProductCategoryController::class, 'destroy']);
         });
         // User Management
         Route::group(['middleware' => [getPermissionMiddleware('ban-user')]], function () {
