@@ -53,6 +53,7 @@ use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Models\BlogView;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -1072,7 +1073,7 @@ class FrontendController extends Controller
     /* ----------------------------------------------------------> Blog <------------------------------------------------------ */
     public function blogs(Request $request)
     {
-        $blogsQuery = Blog::with(['category','related_translations'])
+        $blogsQuery = Blog::with(['category', 'related_translations'])
             ->where('status', 1)
             ->whereDate('schedule_date', '<=', now())// Only blogs with a schedule date <= today's date
             ->orWhereNull('schedule_date');
@@ -1110,6 +1111,44 @@ class FrontendController extends Controller
         $blog = Blog::with('category')
             ->where('slug', $request->slug)
             ->first();
+        if (!$blog) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+        // Track unique user views
+        if (auth('api_customer')->check()) { // If user is logged in
+            $user = auth('api_customer')->user();
+            // Check if user has already viewed this blog
+            $viewExists = BlogView::where('blog_id', $blog->id)
+                ->where('user_id', $user->id)
+                ->exists();
+            if (!$viewExists) {
+                // Increment view count for this blog
+                $blog->increment('views');
+                // Store the view record in the `blog_views` table
+                BlogView::create([
+                    'blog_id' => $blog->id,
+                    'user_id' => $user->id,
+                ]);
+            }
+        } else {
+            // For guests, you can track by IP address
+            $ipAddress = $request->ip();
+            $viewExists = BlogView::where('blog_id', $blog->id)
+                ->where('ip_address', $ipAddress)
+                ->exists();
+            if (!$viewExists) {
+                // Increment view count for this blog
+                $blog->increment('views');
+                // Store the view record with the IP address
+                BlogView::create([
+                    'blog_id' => $blog->id,
+                    'ip_address' => $ipAddress,
+                ]);
+            }
+        }
+
 
         // Blog categories
         $all_blog_categories = BlogCategory::where('status', 1)
