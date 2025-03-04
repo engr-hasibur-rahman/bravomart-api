@@ -26,6 +26,7 @@ class BlogDetailsPublicResource extends JsonResource
                 ? $translation->where('key', 'description')->first()->value
                 : $this->description,
             "image_url" => ImageModifier::generateImageUrl($this->image),
+            "views" => $this->views,
             "tag_name" => $this->tag_name,
             "meta_title" => !empty($translation) && $translation->where('key', 'meta_title')->first()
                 ? $translation->where('key', 'meta_title')->first()->value
