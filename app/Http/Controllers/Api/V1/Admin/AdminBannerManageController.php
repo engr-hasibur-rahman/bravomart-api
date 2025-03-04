@@ -56,6 +56,20 @@ class AdminBannerManageController extends Controller
         }
     }
 
+    public function changeStatus(Request $request)
+    {
+        $success = $this->bannerRepo->changeStatus($request->id);
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Banner status']),
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Banner status']),
+            ], 500);
+        }
+    }
+
     public function show(Request $request)
     {
         $banner = $this->bannerRepo->getBannerById($request->id);

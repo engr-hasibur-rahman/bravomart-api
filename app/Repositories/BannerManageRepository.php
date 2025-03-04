@@ -47,7 +47,7 @@ class BannerManageRepository implements BannerManageInterface
         }
         if (auth('api')->user()->store_owner == 1) {
             return $banner
-                ->where('store_id',auth('api')->user()->stores)
+                ->where('store_id', auth('api')->user()->stores)
                 ->where('location', 'store_page')
                 ->paginate($per_page);
         } else {
@@ -120,6 +120,20 @@ class BannerManageRepository implements BannerManageInterface
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    public function changeStatus(int $id)
+    {
+        $banner = Banner::find($id);
+        if ($banner) {
+            $banner->update([
+                'status' => !$banner->status
+            ]);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     public function delete(int|string $id)
