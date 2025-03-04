@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Behaviour;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\Blog\BlogCategoryPublicResource;
 use App\Http\Resources\Com\Blog\BlogDetailsPublicResource;
 use App\Http\Resources\Com\Blog\BlogPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
@@ -1071,7 +1072,7 @@ class FrontendController extends Controller
     /* ----------------------------------------------------------> Blog <------------------------------------------------------ */
     public function blogs(Request $request)
     {
-        $blogsQuery = Blog::with('category')
+        $blogsQuery = Blog::with(['category','related_translations'])
             ->where('status', 1)
             ->whereDate('schedule_date', '<=', now())// Only blogs with a schedule date <= today's date
             ->orWhereNull('schedule_date');
@@ -1156,14 +1157,11 @@ class FrontendController extends Controller
                 ->limit(5)
                 ->get();
         }
-        $blog_details = [
-            'blog' => $blog,
-            'all_blog_categories' => $all_blog_categories,
-            'popular_posts' => $popular_posts,
-            'related_posts' => $related_posts,
-        ];
         return response()->json([
-            new BlogDetailsPublicResource($blog_details),
-        ],200);
+            'blog_details' => new BlogDetailsPublicResource($blog),
+            '$all_blog_categories' => BlogCategoryPublicResource::collection($all_blog_categories),
+            'popular_posts' => BlogPublicResource::collection($popular_posts),
+            'related_posts' => BlogPublicResource::collection($related_posts),
+        ], 200);
     }
 }
