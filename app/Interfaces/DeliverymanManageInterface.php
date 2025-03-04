@@ -42,6 +42,8 @@ interface DeliverymanManageInterface
 
     public function deliverymanOrders();
 
+    public function deliverymanOrderDetails(int $order_id);
+
     public function orderRequests();
 
     public function updateOrderStatus(string $status, int $order_id, string $reason);

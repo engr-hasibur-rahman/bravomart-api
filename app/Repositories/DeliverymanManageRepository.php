@@ -445,6 +445,14 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         return $orders;
     }
 
+    public function deliverymanOrderDetails(int $order_id)
+    {
+        return Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress', 'refund.store', 'refund.orderRefundReason'])
+            ->where('id', $order_id)
+            ->where('confirmed_by', $this->deliveryman->id)
+            ->first();
+    }
+
     public function orderRequests()
     {
         $system_commission = SystemCommission::first();
