@@ -17,25 +17,15 @@ class AdminBannerDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // Get the requested language from the query parameter
-        $language = $request->input('language', 'en');
-        // Get the translation for the requested language
-        $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
             "creator" => $this->creator->first_name . '' . $this->creator->last_name,
             "store_id" => $this->store ? $this->store->name : null,
-            "title" => $translation->isNotEmpty()
-                ? $translation->where('key', 'title')->first()?->value
-                : $this->title,
+            "title" => $this->title,
             "title_color" => $this->title_color,
-            "description" => $translation->isNotEmpty()
-                ? $translation->where('key', 'description')->first()?->value
-                : $this->description,
+            "description" => $this->description,
             "description_color" => $this->description_color,
-            "button_text" => $translation->isNotEmpty()
-                ? $translation->where('key', 'button_text')->first()?->value
-                : $this->button_text,
+            "button_text" => $this->button_text,
             "background_image" => $this->background_image,
             "background_image_url" => ImageModifier::generateImageUrl($this->background_image),
             "background_color" => $this->background_color,

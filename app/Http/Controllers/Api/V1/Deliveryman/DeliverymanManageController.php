@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1\Deliveryman;
 use App\Http\Controllers\Controller;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
+use App\Models\OrderActivity;
+use App\Models\OrderDeliveryHistory;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -154,6 +156,7 @@ class DeliverymanManageController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $deliveryman = auth('api')->user();
+        $existing_orders = OrderDeliveryHistory::where('deliveryman_id',$deliveryman->id);
         if ($request->type == 'deactivate') {
             $alreadyDeactivated = $deliveryman->deactivated_at;
             if ($alreadyDeactivated) {
