@@ -28,6 +28,8 @@ class User extends Authenticatable
         'image',
         'activity_scope',
         'password',
+        'password_changed_at',
+        'email_verify_token',
         'store_owner',
         'store_seller_id',
         'stores',

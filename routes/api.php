@@ -63,11 +63,11 @@ Route::group(['prefix' => 'v1/'], function () {
         Route::post('reset-password', [SellerManageController::class, 'resetPassword']);
     });
 
-    Route::group(['prefix' => 'auth'], function () {
+    Route::group(['prefix' => 'auth/'], function () {
         Route::get('google', [UserController::class, 'redirectToGoogle']);
         Route::get('google/callback', [UserController::class, 'handleGoogleCallback']);
         Route::post('forget-password', [UserController::class, 'forgetPassword']);
-        Route::post('verify-token', [UserController::class, 'verifyForgetPasswordToken']);
+        Route::post('verify-token', [UserController::class, 'verifyToken']);
         Route::post('reset-password', [UserController::class, 'resetPassword']);
     });
     // Product Category

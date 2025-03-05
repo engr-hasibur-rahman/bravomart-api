@@ -8,6 +8,7 @@ use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
+use App\Mail\EmailVerificationMail;
 use App\Models\StoreSeller;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -17,6 +18,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -356,67 +358,165 @@ class UserController extends Controller
     /* <---- Forget password proccess start ----> */
     public function forgetPassword(Request $request)
     {
-        $user = $this->repository->findByField('email', $request->email);
-        if (count($user) < 1) {
-            return ['message' => NOT_FOUND, 'success' => false];
-        }
-        $tokenData = DB::table('password_reset_tokens')
-            ->where('email', $request->email)->first();
-        if (!$tokenData) {
-            DB::table('password_reset_tokens')->insert([
-                'email' => $request->email,
-                'token' => rand(100000, 999999), // Generate OTP
-                'created_at' => Carbon::now()
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $validator->errors()
             ]);
-            $tokenData = DB::table('password_reset_tokens')
-                ->where('email', $request->email)->first();
         }
-        if ($this->repository->sendResetEmail($request->email, $tokenData->token)) {
-            return ['message' => __('passwords.sent'), 'success' => true];
-        } else {
-            return ['message' => __('passwords.error'), 'success' => false];
+        try {
+            $result = $this->sendVerificationEmail($request->email);
+
+            if (!$result) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 500,
+                    'message' => __('messages.data_not_found')
+                ], 404);
+            }
+            return response()->json(['status' => true, 'message' => 'Verification email sent.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ]);
         }
-        // if ($this->repository->sendResetEmail($request->email, $tokenData->token)) {
-        //     return ['message' => CHECK_INBOX_FOR_PASSWORD_RESET_EMAIL, 'success' => true];
-        // } else {
-        //     return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
-        // }
     }
 
-    public function verifyForgetPasswordToken(Request $request)
+    private function sendVerificationEmail(string $email)
     {
-        $tokenData = DB::table('password_reset_tokens')->where('token', $request->token)->first();
-        if (!$tokenData) {
-            return ['message' => __('passwords.token.invalid'), 'success' => false];
-            // return ['message' => INVALID_TOKEN, 'success' => false];
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return false;
         }
-        $user = $this->repository->findByField('email', $request->email);
-        if (count($user) < 1) {
-            return ['message' => __('passwords.user'), 'success' => false];
-            // return ['message' => NOT_FOUND, 'success' => false];
+
+        try {
+            $token = rand(100000, 999999);
+            $user->email_verify_token = $token;
+            $user->save();
+            // Send email verification
+            Mail::to($user->email)->send(new EmailVerificationMail($user));
+
+            return true;
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $e->getMessage()
+            ]);
         }
-        return ['message' => __('passwords.token.valid'), 'success' => true];
-        // return ['message' => TOKEN_IS_VALID, 'success' => true];
+    }
+
+    public function verifyToken(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+            'token' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $validator->errors()
+            ]);
+        }
+
+        $result = $this->verify_token($request->all());
+
+        if (!$result) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.token.invalid')
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.token.verified')
+        ]);
+    }
+
+    private function verify_token(array $data)
+    {
+        $user = User::where('email', $data['email'])
+            ->where('email_verify_token', $data['token'])
+            ->first();
+
+        if (!$user) {
+            return false;
+        }
+
+        try {
+            return true;
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $e->getMessage()
+            ]);
+        }
     }
 
     public function resetPassword(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8|max:15|confirmed',
+            'token' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "errors" => $validator->errors()
+            ], 422);
+        }
+
+        $result = $this->reset_password($request->all());
+
+        if (!$result) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.token.invalid')
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.password_update_successful')
+        ]);
+    }
+
+    private function reset_password(array $data)
+    {
+        $user = User::where('email', $data['email'])
+            ->where('email_verify_token', $data['token'])
+            ->first();
+        if (!$user) {
+            return false;
+        }
+
         try {
-            $request->validate([
-                'password' => 'required|string',
-                'confirm_password' => 'required|string|same:password',
-                'email' => 'email|required',
-                'token' => 'required|string'
+            $user->update([
+                'password' => Hash::make($data['password']),
+                'password_changed_at' => now(),
+                'email_verify_token' => null
             ]);
-            $user = $this->repository->where('email', $request->email)->first();
-            $user->password = Hash::make($request->password);
-            $user->save();
-            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
-            return ['message' => __('passwords.reset'), 'success' => true];
-            // return ['message' => PASSWORD_RESET_SUCCESSFUL, 'success' => true];
-        } catch (Exception $th) {
-            return ['message' => __('passwords.error'), 'success' => false];
-            // return ['message' => SOMETHING_WENT_WRONG, 'success' => false];
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('Password reset error: ' . $e->getMessage()); // Log error for debugging
+            return false;
         }
     }
     /* <---- Forget password proccess end ----> */
