@@ -23,7 +23,7 @@ class AdminOrderManageController extends Controller
         $order_id = $request->order_id;
 
         if ($order_id) {
-            $order = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress', 'refund.store','refund.orderRefundReason'])
+            $order = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress', 'refund.store', 'refund.orderRefundReason'])
                 ->where('id', $order_id)
                 ->first();
             if (!$order) {
@@ -152,14 +152,14 @@ class AdminOrderManageController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $order = Order::find($request->order_id);
+        $order = Order::with('orderMaster')->find($request->order_id);
         if (!$order) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
         }
 
-        $success = $order->update([
+        $success = $order->orderMaster->update([
             'payment_status' => $request->status
         ]);
         if ($success) {
