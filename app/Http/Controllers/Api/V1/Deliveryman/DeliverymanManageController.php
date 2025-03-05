@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Deliveryman;
 use App\Http\Controllers\Controller;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
+use App\Models\DeliverymanDeactivationReason;
 use App\Models\Order;
 use App\Models\OrderActivity;
 use App\Models\OrderDeliveryHistory;
@@ -180,7 +181,18 @@ class DeliverymanManageController extends Controller
                     'message' => __('messages.deliveryman_active_order_exists')
                 ], 422);
             }
-
+            $validator = Validator::make($request->all(), [
+                'reason' => 'required|string|255',
+                'description' => 'required|string|1000',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
+            DeliverymanDeactivationReason::create([
+                'deliveryman_id' => $deliveryman->id,
+                'reason' => $request->reason,
+                'description' => $request->description
+            ]);
             $deliveryman->update([
                 'deactivated_at' => now(),
                 'status' => 0,
@@ -217,10 +229,17 @@ class DeliverymanManageController extends Controller
         }
     }
 
-    public function deleteAccount()
+    public function deleteAccount(Request $request)
     {
         if (!auth('api')->check()) {
             unauthorized_response();
+        }
+        $validator = Validator::make($request->all(), [
+            'reason' => 'required|string|255',
+            'description' => 'required|string|1000',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
         $deliveryman = auth('api')->user();
         $existing_orders = Order::where('confirmed_by', $deliveryman->id)
@@ -233,6 +252,11 @@ class DeliverymanManageController extends Controller
             ], 422);
         }
         try {
+            DeliverymanDeactivationReason::create([
+                'deliveryman_id' => $deliveryman->id,
+                'reason' => $request->reason,
+                'description' => $request->description
+            ]);
             $deliveryman->delete(); // Soft delete
             $deliveryman->currentAccessToken()->delete();
             return response()->json([
@@ -256,5 +280,63 @@ class DeliverymanManageController extends Controller
             'message' => __('messages.account_activity_notification_update_success'),
             'status' => $deliveryman->activity_notification
         ], 200);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required|string|min:8|max:15',
+            'new_password' => 'required|string|min:8|max:15|confirmed'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "message" => $validator->errors()
+            ], 422);
+        }
+
+        $result = $this->change_password($request->only(['old_password', 'new_password']));
+
+        if ($result === 'incorrect_old_password') {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'Incorrect password!'
+            ], 400);
+        }
+
+        if (!$result) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.password_update_failed')
+            ], 500);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.password_update_successful')
+        ]);
+    }
+    private function change_password(array $data)
+    {
+        $deliveryman = User::where('email', auth('api')->user()->email)->first();
+
+        if (!$deliveryman || !Hash::check($data['old_password'], $deliveryman->password)) {
+            return 'incorrect_old_password';
+        }
+
+        try {
+            $deliveryman->password = Hash::make($data['new_password']);
+            $deliveryman->password_changed_at = now();
+            $deliveryman->save();
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
