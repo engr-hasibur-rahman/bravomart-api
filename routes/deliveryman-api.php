@@ -19,6 +19,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'delivery-man/'], function ()
             Route::post('activity-notification', [DeliverymanManageController::class, 'activityNotificationToggle']);
             Route::post('activate-deactivate', [DeliverymanManageController::class, 'activeDeactiveAccount']);
             Route::post('delete-account', [DeliverymanManageController::class, 'deleteAccount']);
+            Route::post('change-password', [DeliverymanManageController::class, 'changePassword']);
+
         });
         Route::group(['prefix' => 'order/'], function () {
             Route::get('my-orders/{order_id?}', [DeliverymanOrderManageController::class, 'getMyOrders']);
