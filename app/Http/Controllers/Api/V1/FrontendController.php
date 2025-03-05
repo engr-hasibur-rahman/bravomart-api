@@ -6,6 +6,7 @@ use App\Enums\Behaviour;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\Blog\BlogCategoryPublicResource;
+use App\Http\Resources\Com\Blog\BlogCommentResource;
 use App\Http\Resources\Com\Blog\BlogDetailsPublicResource;
 use App\Http\Resources\Com\Blog\BlogPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
@@ -53,6 +54,7 @@ use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Models\BlogComment;
 use App\Models\BlogView;
 use App\Models\CouponLine;
 use App\Models\Customer;
@@ -1196,11 +1198,15 @@ class FrontendController extends Controller
                 ->limit(5)
                 ->get();
         }
+        $blog_comments = BlogComment::with('user')->orderByLikeDislikeRatio()->get();
         return response()->json([
             'blog_details' => new BlogDetailsPublicResource($blog),
             'all_blog_categories' => BlogCategoryPublicResource::collection($all_blog_categories),
             'popular_posts' => BlogPublicResource::collection($popular_posts),
             'related_posts' => BlogPublicResource::collection($related_posts),
+            'blog_comments' => BlogCommentResource::collection($blog_comments),
+            'total_comments' => $blog_comments->count()
         ], 200);
     }
+
 }

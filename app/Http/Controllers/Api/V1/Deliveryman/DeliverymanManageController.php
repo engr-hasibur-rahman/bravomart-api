@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Deliveryman;
 use App\Http\Controllers\Controller;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\DeliveryMan;
+use App\Models\Order;
 use App\Models\OrderActivity;
 use App\Models\OrderDeliveryHistory;
 use App\Models\User;
@@ -156,12 +157,20 @@ class DeliverymanManageController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $deliveryman = auth('api')->user();
-        $existing_orders = OrderDeliveryHistory::where('deliveryman_id',$deliveryman->id);
+        $existing_orders = Order::where('confirmed_by', $deliveryman->id)
+            ->where('status', '!=', 'delivered')
+            ->orWhere('status', '!=', 'cancelled')
+            ->exists();
         if ($request->type == 'deactivate') {
             $alreadyDeactivated = $deliveryman->deactivated_at;
             if ($alreadyDeactivated) {
                 return response()->json([
                     'message' => __('messages.account_already_deactivated')
+                ], 422);
+            }
+            if ($existing_orders) {
+                return response()->json([
+                    'message' => __('messages.deliveryman_active_order_exists')
                 ], 422);
             }
 
@@ -195,6 +204,36 @@ class DeliverymanManageController extends Controller
                 ], 500);
             }
         } else {
+            return response()->json([
+                'message' => __('messages.something_went_wrong')
+            ], 500);
+        }
+    }
+
+    public function deleteAccount()
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+        $deliveryman = auth('api')->user();
+        $existing_orders = Order::where('confirmed_by', $deliveryman->id)
+            ->where('status', '!=', 'delivered')
+            ->orWhere('status', '!=', 'cancelled')
+            ->exists();
+        if ($existing_orders) {
+            return response()->json([
+                'message' => __('messages.deliveryman_active_order_exists')
+            ], 422);
+        }
+        try {
+            $deliveryman->delete(); // Soft delete
+            $deliveryman->currentAccessToken()->delete();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.account_delete_successful')
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => __('messages.something_went_wrong')
             ], 500);
