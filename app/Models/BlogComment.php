@@ -29,4 +29,9 @@ class BlogComment extends Model
         return $query->orderByRaw('like_count / (dislike_count + 1) DESC');
     }
 
+    public function blogCommentReactions()
+    {
+        return $this->hasMany(BlogCommentReaction::class, 'blog_comment_id');
+    }
+
 }
