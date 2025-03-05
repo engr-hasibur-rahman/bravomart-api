@@ -365,7 +365,7 @@ class UserController extends Controller
         if (!$tokenData) {
             DB::table('password_reset_tokens')->insert([
                 'email' => $request->email,
-                'token' => Str::random(16),
+                'token' => rand(100000, 999999), // Generate OTP
                 'created_at' => Carbon::now()
             ]);
             $tokenData = DB::table('password_reset_tokens')

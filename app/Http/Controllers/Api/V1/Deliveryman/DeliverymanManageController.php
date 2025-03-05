@@ -25,6 +25,12 @@ class DeliverymanManageController extends Controller
 
     public function registration(Request $request)
     {
+        if (User::where('email', $request->email)->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Email already exists'
+            ], 422);
+        }
 
         try {
             // By default role ---->
@@ -245,7 +251,6 @@ class DeliverymanManageController extends Controller
         $deliveryman = auth('api')->user();
         $deliveryman->activity_notification = !$deliveryman->activity_notification;
         $deliveryman->save();
-
         return response()->json([
             'message' => __('messages.account_activity_notification_update_success'),
             'status' => $deliveryman->activity_notification
