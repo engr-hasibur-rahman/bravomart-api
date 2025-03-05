@@ -1198,7 +1198,7 @@ class FrontendController extends Controller
                 ->limit(5)
                 ->get();
         }
-        $blog_comments = BlogComment::with('user')->orderByLikeDislikeRatio()->get();
+        $blog_comments = BlogComment::with(['user','blogCommentReactions'])->orderByLikeDislikeRatio()->get();
         return response()->json([
             'blog_details' => new BlogDetailsPublicResource($blog),
             'all_blog_categories' => BlogCategoryPublicResource::collection($all_blog_categories),
