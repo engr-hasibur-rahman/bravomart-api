@@ -21,13 +21,13 @@ return Application::configure(basePath: dirname(__DIR__))
         },        
     )
     ->withMiddleware(function (Middleware $middleware) {
-
-        // $middleware->web(append:[
-        //     \App\Http\Middleware\LocaleMiddleware::class,
-        // ]);
-        $middleware->append(\App\Http\Middleware\LocaleMiddleware::class);
+        $middleware->append([
+            \App\Http\Middleware\ApiAuthMiddleware::class,
+            \App\Http\Middleware\LocaleMiddleware::class,
+        ]);
 
         $middleware->alias([
+            'auth:sanctum' => \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,

@@ -6,7 +6,8 @@ enum Behaviour: string
 {
     case CONSUMABLE = 'consumable';
     case SERVICE = 'service';
-    case PRODUCT = 'digital';
+    case DIGITAL = 'digital';
     case COMBO = 'combo';
+    case PHYSICAL = 'physical';
 
 }
