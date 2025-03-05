@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Deliveryman;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\DeliverymanManageInterface;
+use App\Mail\EmailVerificationMail;
 use App\Models\DeliveryMan;
 use App\Models\DeliverymanDeactivationReason;
 use App\Models\Order;
@@ -14,6 +15,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
@@ -340,9 +342,43 @@ class DeliverymanManageController extends Controller
             return false;
         }
     }
+    public function sendVerificationEmail(Request $request)
+    {
+        if (!auth('api')->check()) {
+            return unauthorized_response();
+        }
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        $user = auth('api')->user();
+
+        try {
+            $token = rand(100000, 999999);
+            $user->email_verify_token = $token;
+            $user->save();
+            // Send email verification
+            Mail::to($user->email)->send(new EmailVerificationMail($user));
+
+            return response()->json(['status' => true, 'message' => 'Verification email sent.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
 
     public function updateEmail(Request $request)
     {
+        if (!auth('api')->check()) {
+            return unauthorized_response();
+        }
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
             'token' => 'required|string'
@@ -353,23 +389,24 @@ class DeliverymanManageController extends Controller
             ], 422);
         }
         try {
-            if (!auth('api')->check()) {
-                return unauthorized_response();
-            }
+
             $userId = auth('api')->id();
-            $user = User::findOrFail($userId);
-            if ($user && !$user->email_verify_token) {
-                $user->update($request->only('email'));
+            $user = User::find($userId);
+            if ($user && $user->email_verify_token == $request->token) {
+                $user->update([
+                    'email' => $request->email,
+                    'email_verify_token' => null,
+                ]);
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
-                    'message' => __('messages.update_success', ['name' => 'Customer']),
+                    'message' => __('messages.update_success', ['name' => 'Deliveryman email']),
                 ]);
             } else {
                 return response()->json([
                     'status' => true,
                     'status_code' => 500,
-                    'message' => __('messages.update_failed', ['name' => 'Customer']),
+                    'message' => __('messages.update_failed', ['name' => 'Deliveryman email']),
                 ]);
             }
         } catch (\Exception $e) {

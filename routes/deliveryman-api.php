@@ -20,6 +20,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'delivery-man/'], function ()
             Route::post('activate-deactivate', [DeliverymanManageController::class, 'activeDeactiveAccount']);
             Route::post('delete-account', [DeliverymanManageController::class, 'deleteAccount']);
             Route::post('change-password', [DeliverymanManageController::class, 'changePassword']);
+            Route::post('change-email', [DeliverymanManageController::class, 'updateEmail']);
+            Route::post('send-verification-email', [DeliverymanManageController::class, 'sendVerificationEmail']);
 
         });
         Route::group(['prefix' => 'order/'], function () {
