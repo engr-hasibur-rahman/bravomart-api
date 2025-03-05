@@ -416,6 +416,7 @@ class UserController extends Controller
     public function verifyToken(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
             'token' => 'required',
         ]);
         if ($validator->fails()) {
@@ -426,7 +427,7 @@ class UserController extends Controller
             ]);
         }
 
-        $result = $this->verify_token($request->token);
+        $result = $this->verify_token($request->all());
 
         if (!$result) {
             return response()->json([
@@ -443,54 +444,7 @@ class UserController extends Controller
         ]);
     }
 
-    private function verify_token(string $token)
-    {
-        $user = User::where('email_verify_token', $token)->first();
-
-        if (!$user) {
-            return false;
-        }
-
-        try {
-            return true;
-        } catch (\Exception $e) {
-            return response()->json([
-                "status" => false,
-                "status_code" => 500,
-                "message" => $e->getMessage()
-            ]);
-        }
-    }
-    public function resetPassword(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8|max:15|confirmed',
-            'token' => 'required|string'
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                "status" => false,
-                "status_code" => 500,
-                "message" => $validator->errors()
-            ]);
-        }
-        $result = $this->reset_password($request->all());
-
-        if (!$result) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => __('messages.token.invalid')
-            ], 400);
-        }
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => __('messages.password_update_successful')
-        ]);
-    }
-    private function reset_password(array $data)
+    private function verify_token(array $data)
     {
         $user = User::where('email', $data['email'])
             ->where('email_verify_token', $data['token'])
@@ -501,11 +455,6 @@ class UserController extends Controller
         }
 
         try {
-            $user->password = Hash::make($data['password']);
-            $user->password_changed_at = now();
-            $user->email_verify_token = null;
-            $user->save();
-
             return true;
         } catch (\Exception $e) {
             return response()->json([
@@ -513,6 +462,61 @@ class UserController extends Controller
                 "status_code" => 500,
                 "message" => $e->getMessage()
             ]);
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8|max:15|confirmed',
+            'token' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 422,
+                "errors" => $validator->errors()
+            ], 422);
+        }
+
+        $result = $this->reset_password($request->all());
+
+        if (!$result) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => __('messages.token.invalid')
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.password_update_successful')
+        ]);
+    }
+
+    private function reset_password(array $data)
+    {
+        $user = User::where('email', $data['email'])
+            ->where('email_verify_token', $data['token'])
+            ->first();
+        if (!$user) {
+            return false;
+        }
+
+        try {
+            $user->update([
+                'password' => Hash::make($data['password']),
+                'password_changed_at' => now(),
+                'email_verify_token' => null
+            ]);
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('Password reset error: ' . $e->getMessage()); // Log error for debugging
+            return false;
         }
     }
     /* <---- Forget password proccess end ----> */
