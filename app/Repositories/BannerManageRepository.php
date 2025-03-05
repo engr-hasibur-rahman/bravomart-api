@@ -21,18 +21,28 @@ class BannerManageRepository implements BannerManageInterface
         return $this->banner->translationKeys;
     }
 
-    public function getPaginatedBanner(int|string $per_page, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedBanner(
+        int|string $per_page,
+        int        $page,
+        string     $language,
+        string     $search,
+        string     $sortField,
+        string     $sort,
+        array      $filters
+    )
     {
-        // Define the base query for the Banner model
-        $banner = Banner::query()->with(['related_translations' => function ($query) use ($language) {
-            $query->where('language', $language)
-                ->whereIn('key', ['title', 'description', 'button_text']);
-        }]);
+        $query = Banner::query()
+            ->with([
+                'related_translations' => function ($q) use ($language) {
+                    $q->where('language', $language)
+                        ->whereIn('key', ['title', 'description', 'button_text']);
+                }
+            ]);
 
         // Apply search filter if search parameter exists
-        if ($search) {
-            $banner->where(function ($query) use ($search, $language) {
-                $query->whereHas('related_translations', function ($subQuery) use ($search, $language) {
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search, $language) {
+                $q->whereHas('related_translations', function ($subQuery) use ($search, $language) {
                     $subQuery->where('language', $language)
                         ->where('value', 'like', "%{$search}%");
                 })
@@ -42,20 +52,14 @@ class BannerManageRepository implements BannerManageInterface
         }
 
         // Apply sorting
-        if ($sortField && $sort) {
-            $banner->orderBy($sortField, $sort);
+        if (!empty($sortField) && !empty($sort)) {
+            $query->orderBy($sortField, $sort);
         }
-        if (auth('api')->user()->store_owner == 1) {
-            return $banner
-                ->where('store_id',auth('api')->user()->stores)
-                ->where('location', 'store_page')
-                ->paginate($per_page);
-        } else {
-            return $banner->paginate($per_page);
-        }
-        // Apply pagination and return the result
 
+        // Paginate the results
+        return $query->paginate($per_page ?? 10);
     }
+
 
     public function store(array $data)
     {
@@ -65,13 +69,18 @@ class BannerManageRepository implements BannerManageInterface
                 'user_id' => auth('api')->id(),
                 'store_id' => $data['store_id'] ?? null,
                 'title' => $data['title'],
+                'title_color' => $data['title_color'] ?? null,
                 'description' => $data['description'] ?? null,
+                'description_color' => $data['description_color'] ?? null,
                 'background_image' => $data['background_image'] ?? null,
+                'background_color' => $data['background_color'] ?? null,
                 'thumbnail_image' => $data['thumbnail_image'] ?? null,
                 'button_text' => $data['button_text'] ?? null,
+                'button_text_color' => $data['button_text_color'] ?? null,
+                'button_hover_color' => $data['button_hover_color'] ?? null,
                 'button_color' => $data['button_color'] ?? null,
                 'redirect_url' => $data['redirect_url'] ?? null,
-                'location' => auth('api')->user()->store_owner == 1 ? 'store_page' : $data['location'],
+                'location' => 'home_page',
                 'type' => $data['type'] ?? null,
                 'status' => 1,
             ]);
@@ -105,13 +114,18 @@ class BannerManageRepository implements BannerManageInterface
                 'user_id' => auth('api')->id(),
                 'store_id' => $data['store_id'] ?? null,
                 'title' => $data['title'],
+                'title_color' => $data['title_color'] ?? null,
                 'description' => $data['description'] ?? null,
+                'description_color' => $data['description_color'] ?? null,
                 'background_image' => $data['background_image'] ?? null,
+                'background_color' => $data['background_color'] ?? null,
                 'thumbnail_image' => $data['thumbnail_image'] ?? null,
                 'button_text' => $data['button_text'] ?? null,
+                'button_text_color' => $data['button_text_color'] ?? null,
+                'button_hover_color' => $data['button_hover_color'] ?? null,
                 'button_color' => $data['button_color'] ?? null,
                 'redirect_url' => $data['redirect_url'] ?? null,
-                'location' => auth('api')->user()->store_owner == 1 ? 'store_page' : $data['location'],
+                'location' => 'home_page',
                 'type' => $data['type'] ?? null,
                 'status' => $data['status'] ?? $banner->status,
             ]);
@@ -120,6 +134,20 @@ class BannerManageRepository implements BannerManageInterface
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    public function changeStatus(int $id)
+    {
+        $banner = Banner::find($id);
+        if ($banner) {
+            $banner->update([
+                'status' => !$banner->status
+            ]);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     public function delete(int|string $id)

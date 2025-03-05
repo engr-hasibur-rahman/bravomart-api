@@ -15,8 +15,13 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'delivery-man/'], function ()
     Route::group(['middleware' => ['auth:sanctum', ApiAuthMiddleware::class], 'no.code.input'], function () {
         Route::get('dashboard', [DeliverymanDashboardController::class, 'dashboard']);
         Route::get('review', [DeliverymanReviewController::class, 'index']);
+        Route::group(['prefix' => 'profile/'], function () {
+            Route::post('activity-notification', [DeliverymanManageController::class, 'activityNotificationToggle']);
+            Route::post('activate-deactivate', [DeliverymanManageController::class, 'activeDeactiveAccount']);
+            Route::post('delete-account', [DeliverymanManageController::class, 'deleteAccount']);
+        });
         Route::group(['prefix' => 'order/'], function () {
-            Route::get('my-orders', [DeliverymanOrderManageController::class, 'getMyOrders']);
+            Route::get('my-orders/{order_id?}', [DeliverymanOrderManageController::class, 'getMyOrders']);
             Route::get('request', [DeliverymanOrderManageController::class, 'getOrderRequest']);
             Route::post('handle-request', [DeliverymanOrderManageController::class, 'handleOrderRequest']);
             Route::post('change-status', [DeliverymanOrderManageController::class, 'changeStatus']);

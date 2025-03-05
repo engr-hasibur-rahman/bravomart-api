@@ -19,6 +19,11 @@ class Banner extends Model
         'location',
         'type',
         'status',
+        'title_color',
+        'description_color',
+        'background_color',
+        'button_text_color',
+        'button_hover_color',
     ];
     public $translationKeys = [
         'title',
@@ -35,9 +40,12 @@ class Banner extends Model
     {
         return $this->belongsTo(Store::class, 'store_id');
     }
-    public function creator(){
+
+    public function creator()
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
+
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')

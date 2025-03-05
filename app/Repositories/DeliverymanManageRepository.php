@@ -445,6 +445,14 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         return $orders;
     }
 
+    public function deliverymanOrderDetails(int $order_id)
+    {
+        return Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress', 'refund.store', 'refund.orderRefundReason'])
+            ->where('id', $order_id)
+            ->where('confirmed_by', $this->deliveryman->id)
+            ->first();
+    }
+
     public function orderRequests()
     {
         $system_commission = SystemCommission::first();
@@ -495,7 +503,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 }
                 $already_ignored = OrderDeliveryHistory::where('order_id', $order_id)
                     ->where('deliveryman_id', $deliveryman->id)
-                    ->where('status','ignored')
+                    ->where('status', 'ignored')
                     ->exists();
                 if ($already_ignored) {
                     return 'already ignored';
@@ -603,11 +611,14 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 $system_global_email = com_option_get('com_site_email');
                 $delivery_man = $order->deliveryman?->email;
 
-                // order notification
                 $this->orderManageNotificationService->createOrderNotification($order->id);
+
 
                 // mail send
                 try {
+                    // order notification
+
+
                     $email_template_deliveryman = EmailTemplate::where('type', 'deliveryman-earning')->where('status', 1)->first();
                     $email_template_order_delivered = EmailTemplate::where('type', 'order-status-delivered')->where('status', 1)->first();
                     // customer, store and admin

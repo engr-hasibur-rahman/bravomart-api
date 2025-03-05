@@ -6,13 +6,9 @@ use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BlogPublicResource extends JsonResource
+class BlogDetailsPublicResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
+
     public function toArray(Request $request): array
     {
         // Get the requested language from the query parameter
@@ -30,6 +26,7 @@ class BlogPublicResource extends JsonResource
                 ? $translation->where('key', 'description')->first()->value
                 : $this->description,
             "image_url" => ImageModifier::generateImageUrl($this->image),
+            "views" => $this->views,
             "tag_name" => $this->tag_name,
             "meta_title" => !empty($translation) && $translation->where('key', 'meta_title')->first()
                 ? $translation->where('key', 'meta_title')->first()->value

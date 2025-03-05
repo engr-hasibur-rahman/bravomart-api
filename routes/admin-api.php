@@ -212,6 +212,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('add', [AdminBannerManageController::class, 'store']);
                 Route::get('details/{id}', [AdminBannerManageController::class, 'show']);
                 Route::post('update', [AdminBannerManageController::class, 'update']);
+                Route::post('change-status', [AdminBannerManageController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [AdminBannerManageController::class, 'destroy']);
             });
         });
@@ -336,7 +337,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('product-categories/add', [ProductCategoryController::class, 'store']);
             Route::get('product-categories/details/{id}', [ProductCategoryController::class, 'show']);
             Route::post('product-categories/update', [ProductCategoryController::class, 'store']);
-            Route::post('product-categories/status', [ProductCategoryController::class, 'productCategoryStatus']);
+            Route::post('product-categories/change-status', [ProductCategoryController::class, 'productCategoryStatus']);
+            Route::delete('product-categories/remove/{id}', [ProductCategoryController::class, 'destroy']);
         });
         // User Management
         Route::group(['middleware' => [getPermissionMiddleware('ban-user')]], function () {
@@ -590,7 +592,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('permissions', [PermissionController::class, 'index']);
         Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
         Route::get('module-wise-permissions', [PermissionController::class, 'moduleWisePermissions']);
-        Route::group(['prefix' =>'roles/'], function () {
+        Route::group(['prefix' => 'roles/'], function () {
             Route::get('list', [RoleController::class, 'index']);
             Route::post('add', [RoleController::class, 'store']);
             Route::get('details/{id}', [RoleController::class, 'show']);

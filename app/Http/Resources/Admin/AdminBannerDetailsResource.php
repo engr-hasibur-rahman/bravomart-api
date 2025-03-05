@@ -17,26 +17,23 @@ class AdminBannerDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // Get the requested language from the query parameter
-        $language = $request->input('language', 'en');
-        // Get the translation for the requested language
-        $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
             "creator" => $this->creator->first_name . '' . $this->creator->last_name,
             "store_id" => $this->store ? $this->store->name : null,
-            "title" => $translation->isNotEmpty()
-                ? $translation->where('key', 'title')->first()?->value
-                : $this->title,
-            "description" => $translation->isNotEmpty()
-                ? $translation->where('key', 'description')->first()?->value
-                : $this->description,
-            "button_text" => $translation->isNotEmpty()
-                ? $translation->where('key', 'button_text')->first()?->value
-                : $this->button_text,
-            "background_image" => ImageModifier::generateImageUrl($this->background_image),
-            "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
+            "title" => $this->title,
+            "title_color" => $this->title_color,
+            "description" => $this->description,
+            "description_color" => $this->description_color,
+            "button_text" => $this->button_text,
+            "background_image" => $this->background_image,
+            "background_image_url" => ImageModifier::generateImageUrl($this->background_image),
+            "background_color" => $this->background_color,
+            "thumbnail_image" => $this->thumbnail_image,
+            "thumbnail_image_url" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "button_color" => $this->button_color,
+            "button_text_color" => $this->button_text_color,
+            "button_hover_color" => $this->button_hover_color,
             "redirect_url" => $this->redirect_url,
             "location" => $this->location,
             "type" => $this->type,

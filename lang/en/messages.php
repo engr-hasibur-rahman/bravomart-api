@@ -67,7 +67,7 @@ return [
     'account_deactivate_successful' => 'Your account has been deactivated!',
     'account_activate_successful' => 'Your account has been activated!',
     'account_deactivate_failed' => 'Something went wrong while deactivating your account!',
-    'account_already_activated' => 'Your account is already deactivated!',
+    'account_already_activated' => 'Your account is already activated!',
     'account_already_deactivated' => 'Your account has been already deactivated!',
 
     'account_delete_successful' => 'Your account has been deleted!',
@@ -95,6 +95,7 @@ return [
     'deliveryman_order_already_ignored' => 'This order has been already ignored by you!',
     'deliveryman_assign_successful' => 'Deliveryman assigned successfully!',
     'deliveryman_assign_failed' => 'Deliveryman assign failed!',
+    'deliveryman_active_order_exists' => 'You have active orders! Can\'t deactivate or delete your account',
     'deliveryman_can_not_be_assigned' => 'Deliveryman can\'t be assigned!',
 
     'customer_product_query_submitted_successful' => 'Your query has been submitted successfully!',

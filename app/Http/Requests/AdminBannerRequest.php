@@ -27,13 +27,20 @@ class AdminBannerRequest extends FormRequest
             'store_id' => 'nullable|exists:stores,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'background_image' => 'nullable|string',
-            'thumbnail_image' => 'nullable|string',
+            'background_image' => 'nullable',
+            'thumbnail_image' => 'nullable',
             'button_text' => 'nullable|string|max:50',
-            'button_color' => 'nullable|string|max:15',
+            'button_color' => 'nullable|string|max:7',
             'redirect_url' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:50',
             'type' => 'nullable|string|max:50',
+
+            // New fields
+            'title_color' => 'nullable|string|max:7',
+            'description_color' => 'nullable|string|max:7',
+            'background_color' => 'nullable|string|max:7',
+            'button_text_color' => 'nullable|string|max:7',
+            'button_hover_color' => 'nullable|string|max:7',
         ];
     }
 
@@ -66,6 +73,22 @@ class AdminBannerRequest extends FormRequest
 
             'type.string' => __('validation.string', ['attribute' => 'Type']),
             'type.max' => __('validation.max', ['attribute' => 'Type']),
+
+            // New fields validation messages
+            'title_color.string' => __('validation.string', ['attribute' => 'Title Color']),
+            'title_color.max' => __('validation.max', ['attribute' => 'Title Color']),
+
+            'description_color.string' => __('validation.string', ['attribute' => 'Description Color']),
+            'description_color.max' => __('validation.max', ['attribute' => 'Description Color']),
+
+            'background_color.string' => __('validation.string', ['attribute' => 'Background Color']),
+            'background_color.max' => __('validation.max', ['attribute' => 'Background Color']),
+
+            'button_text_color.string' => __('validation.string', ['attribute' => 'Button Text Color']),
+            'button_text_color.max' => __('validation.max', ['attribute' => 'Button Text Color']),
+
+            'button_hover_color.string' => __('validation.string', ['attribute' => 'Button Hover Color']),
+            'button_hover_color.max' => __('validation.max', ['attribute' => 'Button Hover Color']),
         ];
     }
 

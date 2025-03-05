@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Behaviour;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\Blog\BlogCategoryPublicResource;
+use App\Http\Resources\Com\Blog\BlogCommentResource;
+use App\Http\Resources\Com\Blog\BlogDetailsPublicResource;
 use App\Http\Resources\Com\Blog\BlogPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use App\Http\Resources\Com\Department\DepartmentListForDropdown;
@@ -50,6 +53,9 @@ use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
 use App\Models\Blog;
+use App\Models\BlogCategory;
+use App\Models\BlogComment;
+use App\Models\BlogView;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -589,8 +595,12 @@ class FrontendController extends Controller
                 $query->whereHas('variants', fn($q) => $q->where('stock_quantity', '=', 0));
             }
         }
-        if (isset($request->type)) {
-            $query->where('type', $request->type);
+        if (!empty($request->type)) {
+            if (is_array($request->type)) {
+                $query->whereIn('type', $request->type);
+            } else {
+                $query->where('type', $request->type);
+            }
         }
 
         // Apply sorting
@@ -1065,9 +1075,10 @@ class FrontendController extends Controller
     /* ----------------------------------------------------------> Blog <------------------------------------------------------ */
     public function blogs(Request $request)
     {
-        $blogsQuery = Blog::with('category')
+        $blogsQuery = Blog::with(['category', 'related_translations'])
             ->where('status', 1)
-            ->whereDate('schedule_date', '<=', now());  // Only blogs with a schedule date <= today's date
+            ->whereDate('schedule_date', '<=', now())// Only blogs with a schedule date <= today's date
+            ->orWhereNull('schedule_date');
 
         // Check for "most_viewed" filter
         if ($request->has('most_viewed') && $request->most_viewed) {
@@ -1077,7 +1088,7 @@ class FrontendController extends Controller
         // Check for search filter
         if ($request->has('search') && $request->search) {
             $blogsQuery->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('content', 'like', '%' . $request->search . '%');  // Searching in title and content
+                ->orWhere('description', 'like', '%' . $request->search . '%');
         }
 
         // Check for sort filter (sort by created_at only)
@@ -1094,6 +1105,107 @@ class FrontendController extends Controller
         return response()->json([
             'data' => BlogPublicResource::collection($blogs),
             'meta' => new PaginationResource($blogs)
+        ], 200);
+    }
+
+    public function blogDetails(Request $request)
+    {
+        $blog = Blog::with('category')
+            ->where('slug', $request->slug)
+            ->first();
+        if (!$blog) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+        // Track unique user views
+        if (auth('api_customer')->check()) { // If user is logged in
+            $user = auth('api_customer')->user();
+            // Check if user has already viewed this blog
+            $viewExists = BlogView::where('blog_id', $blog->id)
+                ->where('user_id', $user->id)
+                ->exists();
+            if (!$viewExists) {
+                // Increment view count for this blog
+                $blog->increment('views');
+                // Store the view record in the `blog_views` table
+                BlogView::create([
+                    'blog_id' => $blog->id,
+                    'user_id' => $user->id,
+                ]);
+            }
+        } else {
+            // For guests, you can track by IP address
+            $ipAddress = $request->ip();
+            $viewExists = BlogView::where('blog_id', $blog->id)
+                ->where('ip_address', $ipAddress)
+                ->exists();
+            if (!$viewExists) {
+                // Increment view count for this blog
+                $blog->increment('views');
+                // Store the view record with the IP address
+                BlogView::create([
+                    'blog_id' => $blog->id,
+                    'ip_address' => $ipAddress,
+                ]);
+            }
+        }
+
+
+        // Blog categories
+        $all_blog_categories = BlogCategory::where('status', 1)
+            ->limit(15)
+            ->latest()
+            ->get();
+
+        // popular posts
+        $popular_posts = Blog::with('category')
+            ->orderBy('views', 'desc')
+            ->where('status', 1)
+            ->whereDate('schedule_date', '<=', now())// Only blogs with a schedule date <= today's date
+            ->orWhereNull('schedule_date')
+            ->limit(5)
+            ->get();
+
+        // related posts
+        $related_posts = $blog->relatedBlogs()->get();
+
+        // If no related posts found, fetch fallback blogs
+        if ($related_posts->isEmpty()) {
+            $related_posts = Blog::where('status', 1)
+                ->whereDate('schedule_date', '<=', now())
+                ->orWhereNull('schedule_date')
+                ->orderBy('created_at', 'desc')
+                ->limit(5)
+                ->get();
+        }
+        if ($related_posts->isEmpty()) {
+            // Try fetching most viewed posts if no related ones are found
+            $related_posts = Blog::where('status', 1)
+                ->orWhereNull('schedule_date')
+                ->orderBy('created_at', 'desc')
+                ->orderBy('views', 'desc')
+                ->limit(5)
+                ->get();
+        }
+
+        // If still empty, get random blogs
+        if ($related_posts->isEmpty()) {
+            $related_posts = Blog::where('status', 1)
+                ->orWhereNull('schedule_date')
+                ->orderBy('created_at', 'desc')
+                ->inRandomOrder()
+                ->limit(5)
+                ->get();
+        }
+        $blog_comments = BlogComment::with('user')->orderByLikeDislikeRatio()->get();
+        return response()->json([
+            'blog_details' => new BlogDetailsPublicResource($blog),
+            'all_blog_categories' => BlogCategoryPublicResource::collection($all_blog_categories),
+            'popular_posts' => BlogPublicResource::collection($popular_posts),
+            'related_posts' => BlogPublicResource::collection($related_posts),
+            'blog_comments' => BlogCommentResource::collection($blog_comments),
+            'total_comments' => $blog_comments->count()
         ], 200);
     }
 

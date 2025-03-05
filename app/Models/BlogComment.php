@@ -10,5 +10,23 @@ class BlogComment extends Model
         'blog_id',
         'user_id',
         'comment',
+        'like_count',
+        'dislike_count',
     ];
+
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(Customer::class, 'user_id');
+    }
+
+    public function scopeOrderByLikeDislikeRatio($query)
+    {
+        return $query->orderByRaw('like_count / (dislike_count + 1) DESC');
+    }
+
 }
