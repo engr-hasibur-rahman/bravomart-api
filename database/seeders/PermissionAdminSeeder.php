@@ -282,7 +282,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Brand Management',
                             'activity_scope' => 'system_level',
-                            'icon' => 'VectorIcon',
+                            'icon' => 'LayoutList',
                             'translations' => [
                                 'en' => 'Brand Management',
                                 'ar' => 'المنشورات'
@@ -465,7 +465,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Slider Management',
                     'activity_scope' => 'system_level',
-                    'icon' => 'SlidersHorizontal',
+                    'icon' => '',
                     'options' => ['view'],
                     'translations' => [
                         'en' => 'Slider Management',
@@ -476,7 +476,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value,
                             'PermissionTitle' => 'Slider',
                             'activity_scope' => 'system_level',
-                            'icon' => 'Star',
+                            'icon' => 'SlidersHorizontal',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Slider',

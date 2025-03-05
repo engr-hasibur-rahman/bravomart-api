@@ -17,14 +17,14 @@ class ProductCategorySeeder extends Seeder
             'GROCERY' => ['Fruits', 'Dairy', 'Beverages', 'Snacks','Meat & Seafood', 'Canned', 'Spices', 'Personal Care', 'Cleaning Supplies'],
             'BAKERY' => ['Bread', 'Pastries', 'Cakes', 'Cookies', 'Muffins', 'Buns','Pies', 'Bagels'],
             'MEDICINE' => ['Pain Relief', 'Cold & Cough', 'Vitamins','Digestive','BP & Heart Disease', 'Skin Care', 'Eye Care', 'Herbal'],
-            'MAKEUP' => ['Foundations', 'Lipsticks', 'Eyeshadows', 'Mascaras', 'Blushes','Eyeliners', 'Nail Polishes'],
-            'BAGS' => ['Handbags', 'Totes', 'Backpacks','Wallets', 'Clutches', 'Crossbody', 'Duffels', 'Shoulder Bags', 'Briefcases'],
+            'MAKEUP' => ['Foundations', 'Lipsticks', 'Eyeshadows', 'Mascaras', 'Blushes'],
+            'BAGS' => ['Handbags', 'Totes', 'Backpacks','Wallets', 'Clutches', 'Crossbody'],
             'CLOTHING' => ['Men', 'Women'],
-            'FURNITURE' => ['Sofas', 'Chairs', 'Beds', 'Tables', 'Dressers', 'Bookshelves', 'Desks', 'Cabinets', 'Lamps', 'Coffee Tables'],
+            'FURNITURE' => ['Sofas', 'Chairs', 'Beds', 'Tables', 'Dressers', 'Bookshelves', 'Desks'],
             'BOOKS' => ['Fiction', 'Non-Fiction', 'Sci-Fi', 'Fantasy', 'Biography'],
-            'GADGET' => ['Phones', 'Tablets', 'Headphones', 'Smart Watches', 'Laptops', 'Cameras', 'Drones', 'Speakers', 'Chargers'],
+            'GADGET' => ['Phones', 'Tablets', 'Headphones', 'Smart Watches', 'Laptops', 'Cameras'],
             'ANIMALS_PET' => ['Dogs', 'Cats', 'Pet Toys', 'Grooming', 'Pet Food'],
-            'FISH' => ['Freshwater', 'Saltwater', 'Aquarium Plants', 'Fish Food', 'Water Care', 'Tanks']
+            'FISH' => ['Freshwater', 'Saltwater', 'Aquarium Plants', 'Fish Food', 'Water Care']
         ];
 
         // Loop through each store type and insert categories
@@ -41,6 +41,7 @@ class ProductCategorySeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
             // Insert subcategories
             foreach ($categories as $category) {
                 DB::table('product_category')->insert([

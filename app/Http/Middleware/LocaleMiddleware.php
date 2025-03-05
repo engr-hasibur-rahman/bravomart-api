@@ -16,12 +16,11 @@ class LocaleMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        //$locale = Session::get('locale') ?? 'en';
-        $locale = $request->header('X-localization') ?? 'en';
-        //$defaultLocale = 'en';
-        //$locale = ($request->hasHeader('X-localization')) ? $request->header('X-localization') : $defaultLocale;
-
+        // Get the locale from the request header or default to 'en'
+        $locale = $request->header('X-localization', 'en');
+        // Set the application's locale
         App::setLocale($locale);
+
         return $next($request);
     }
 }
