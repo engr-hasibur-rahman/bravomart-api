@@ -4,20 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('blog_comments', function (Blueprint $table) {
+        Schema::create('blog_comment_reactions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('blog_id');
+            $table->unsignedBigInteger('blog_comment_id');
             $table->unsignedBigInteger('user_id');
-            $table->longText('comment');
-            $table->integer('like_count')->default(0);
-            $table->integer('dislike_count')->default(0);
+            $table->enum('reaction_type', ['like', 'dislike']);
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blog_comments');
+        Schema::dropIfExists('blog_comment_reactions');
     }
 };

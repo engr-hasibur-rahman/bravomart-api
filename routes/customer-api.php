@@ -37,6 +37,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         });
         Route::group(['prefix' => 'blog/'], function () {
             Route::post('comment', [CustomerBlogController::class, 'comment']);
+            Route::post('comment-reaction', [CustomerBlogController::class, 'react']);
         });
         Route::group(['prefix' => 'address/'], function () {
             Route::post('add', [CustomerAddressManageController::class, 'store']);
