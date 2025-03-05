@@ -321,6 +321,7 @@ class DeliverymanManageController extends Controller
             'message' => __('messages.password_update_successful')
         ]);
     }
+
     private function change_password(array $data)
     {
         $deliveryman = User::where('email', auth('api')->user()->email)->first();
@@ -337,6 +338,47 @@ class DeliverymanManageController extends Controller
             return true;
         } catch (\Exception $e) {
             return false;
+        }
+    }
+
+    public function updateEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email',
+            'token' => 'required|string'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        try {
+            if (!auth('api')->check()) {
+                return unauthorized_response();
+            }
+            $userId = auth('api')->id();
+            $user = User::findOrFail($userId);
+            if ($user && !$user->email_verify_token) {
+                $user->update($request->only('email'));
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.update_success', ['name' => 'Customer']),
+                ]);
+            } else {
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 500,
+                    'message' => __('messages.update_failed', ['name' => 'Customer']),
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.something_went_wrong'),
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 }

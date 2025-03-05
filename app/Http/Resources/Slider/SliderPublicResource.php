@@ -35,6 +35,7 @@ class SliderPublicResource extends JsonResource
             "description_color" => $this->description_color,
             "image" => $this->image,
             "image_url" => ImageModifier::generateImageUrl($this->image),
+            "bg_color" => $this->bg_color,
             "button_text" => !empty($translation) && $translation->where('key', 'button_text')->first()
                 ? $translation->where('key', 'button_text')->first()->value
                 : $this->button_text ?? null, // If language is empty or not provided attribute
