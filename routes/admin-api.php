@@ -562,6 +562,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         /*--------------------- System management ----------------------------*/
         Route::group(['prefix' => 'system-management/'], function () {
             Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings'])->middleware('permission:' . PermissionKey::GENERAL_SETTINGS->value);
+           // all pages settings
+            Route::group(['prefix' => 'page-settings/', 'middleware' => 'permission:' . PermissionKey::PAGE_SETTINGS->value], function () {
+                Route::match(['get', 'post'], 'register', [SystemManagementController::class, 'registerSettings'])->middleware('permission:' . PermissionKey::REGISTER_PAGE_SETTINGS->value);
+                Route::match(['get', 'post'], 'login', [SystemManagementController::class, 'loginSettings'])->middleware('permission:' . PermissionKey::LOGIN_PAGE_SETTINGS->value);
+                Route::match(['get', 'post'], 'product-details', [SystemManagementController::class, 'ProductDetailsSettings'])->middleware('permission:' . PermissionKey::PRODUCT_DETAILS_PAGE_SETTINGS->value);
+                Route::match(['get', 'post'], 'blog', [SystemManagementController::class, 'blogSettings'])->middleware('permission:' . PermissionKey::BLOG_PAGE_SETTINGS->value);
+                Route::match(['get', 'post'], 'about', [SystemManagementController::class, 'aboutSettings'])->middleware('permission:' . PermissionKey::ABOUT_PAGE_SETTINGS->value);
+                Route::match(['get', 'post'], 'contact', [SystemManagementController::class, 'contactSettings'])->middleware('permission:' . PermissionKey::CONTACT_PAGE_SETTINGS->value);
+            });
             Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization'])->middleware('permission:' . PermissionKey::FOOTER_CUSTOMIZATION->value);
             Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings'])->middleware('permission:' . PermissionKey::MAINTENANCE_SETTINGS->value);
             Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings'])->middleware('permission:' . PermissionKey::SEO_SETTINGS->value);

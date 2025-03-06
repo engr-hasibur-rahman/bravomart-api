@@ -1265,6 +1265,85 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' => PermissionKey::PAGE_SETTINGS->value,
+                            'PermissionTitle' => 'Page Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'FileSliders',
+                            'translations' => [
+                                'en' => 'Page Settings',
+                                'ar' => 'الإعدادات العامة'
+                            ],
+                             'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::REGISTER_PAGE_SETTINGS->value,
+                                    'PermissionTitle' => 'Register Page',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Register Page',
+                                        'ar' => 'تخصيص التذييل'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::LOGIN_PAGE_SETTINGS->value,
+                                    'PermissionTitle' => 'Login Page',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Login Settings',
+                                        'ar' => 'إعدادات الصيانة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::PRODUCT_DETAILS_PAGE_SETTINGS->value,
+                                    'PermissionTitle' => 'Product Details Page',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Product Details Page',
+                                        'ar' => 'إعدادات الصيانة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::BLOG_PAGE_SETTINGS->value,
+                                    'PermissionTitle' => 'Blog Page',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Blog Page',
+                                        'ar' => 'إعدادات الصيانة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ABOUT_PAGE_SETTINGS->value,
+                                    'PermissionTitle' => 'About Page',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'About Page',
+                                        'ar' => 'إعدادات الصيانة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::CONTACT_PAGE_SETTINGS->value,
+                                    'PermissionTitle' => 'Contact Page',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Contact Page',
+                                        'ar' => 'إعدادات الصيانة'
+                                    ]
+                                ]
+                            ]
+                        ],
+
+                        [
                             'PermissionName' => PermissionKey::APPEARANCE_SETTINGS->value,
                             'PermissionTitle' => 'Appearance Settings',
                             'activity_scope' => 'system_level',
