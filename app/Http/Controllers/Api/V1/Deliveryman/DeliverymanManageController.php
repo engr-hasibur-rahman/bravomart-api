@@ -183,17 +183,17 @@ class DeliverymanManageController extends Controller
 //                    'message' => __('messages.deliveryman_active_order_exists')
 //                ], 422);
 //            }
-            $validator = Validator::make($request->all(), [
-                'reason' => 'required|string|255',
-                'description' => 'required|string|1000',
-            ]);
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
+//            $validator = Validator::make($request->all(), [
+//                'reason' => 'required|string|255',
+//                'description' => 'required|string|1000',
+//            ]);
+//            if ($validator->fails()) {
+//                return response()->json($validator->errors(), 422);
+//            }
             DeliverymanDeactivationReason::create([
                 'deliveryman_id' => $deliveryman->id,
-                'reason' => $request->reason,
-                'description' => $request->description
+                'reason' => $request->reason ?? '',
+                'description' => $request->description ?? ''
             ]);
             $deliveryman->update([
                 'deactivated_at' => now(),
@@ -342,6 +342,7 @@ class DeliverymanManageController extends Controller
             return false;
         }
     }
+
     public function sendVerificationEmail(Request $request)
     {
         if (!auth('api')->check()) {
