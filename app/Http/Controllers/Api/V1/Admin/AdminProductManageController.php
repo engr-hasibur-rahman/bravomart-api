@@ -227,19 +227,19 @@ class AdminProductManageController extends Controller
     public function lowOrOutOfStockProducts(Request $request)
     {
         if ($request->stock_type == 'low_stock') {
-            $lowStockProducts = Product::lowStock()->with('store')->paginate(10);
+            $lowStockProducts = Product::lowStock()->with(['store.related_translations','related_translations'])->paginate(10);
             return response()->json([
                 'data' => LowStockProductResource::collection($lowStockProducts),
                 'meta' => new PaginationResource($lowStockProducts),
             ]);
         } elseif ($request->stock_type == 'out_of_stock') {
-            $outOfStockProducts = Product::outOfStock()->with('store')->paginate(10);
+            $outOfStockProducts = Product::outOfStock()->with(['store.related_translations','related_translations'])->paginate(10);
             return response()->json([
                 'data' => OutOfStockProductResource::collection($outOfStockProducts),
                 'meta' => new PaginationResource($outOfStockProducts),
             ]);
         } else {
-            $lowStockProducts = Product::lowStock()->with('store')->paginate(10);
+            $lowStockProducts = Product::lowStock()->with(['store.related_translations','related_translations'])->paginate(10);
             return response()->json([
                 'data' => LowStockProductResource::collection($lowStockProducts),
                 'meta' => new PaginationResource($lowStockProducts),

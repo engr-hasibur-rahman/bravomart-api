@@ -381,7 +381,7 @@ class ProductManageRepository implements ProductManageInterface
         try {
             $products = Product::where('deleted_at', '=', null)
                 ->where('status', 'pending')
-                ->with('store')
+                ->with(['store.related_translations','related_translations'])
                 ->latest()
                 ->paginate(10);
             return $products;
