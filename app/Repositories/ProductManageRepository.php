@@ -189,18 +189,22 @@ class ProductManageRepository implements ProductManageInterface
                     return $variant;
                 }, $data['variants']);
 
+                ProductVariant::where('product_id', $product->id)->delete();
+
                 // Update existing variants or create new ones
                 foreach ($variants as $variant) {
-                    if (!empty($variant['id'])) {
-                        // Check if variant ID exists in the database
-                        $existingVariant = ProductVariant::find($variant['id']);
-                        if ($existingVariant) {
-                            // Update the existing variant
-                            $existingVariant->update($variant);
-                            continue;
-                        }
-                    }
-                    // Create a new variant if no valid ID is found
+//                    if (!empty($variant['id'])) {
+//                        // Check if variant ID exists in the database
+//                        $existingVariant = ProductVariant::find($variant['id']);
+//                        if ($existingVariant) {
+//                            // Update the existing variant
+//                            ProductVariant::where('product_id', $product->id)->delete();
+//                            $existingVariant->update($variant);
+//                            continue;
+//                        }
+//                    }
+//                    // Create a new variant if no valid ID is found
+                    $variant['product_id'] = $product->id; // Ensure product_id is set
                     ProductVariant::create($variant);
                 }
             }
@@ -384,7 +388,7 @@ class ProductManageRepository implements ProductManageInterface
         try {
             $products = Product::where('deleted_at', '=', null)
                 ->where('status', 'pending')
-                ->with(['store.related_translations','related_translations'])
+                ->with(['store.related_translations', 'related_translations'])
                 ->latest()
                 ->paginate(10);
             return $products;
