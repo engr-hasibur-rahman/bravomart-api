@@ -20,7 +20,7 @@ use App\Http\Resources\Com\Store\BehaviourPublicResource;
 use App\Http\Resources\Com\Store\StorePublicDropdownResource;
 use App\Http\Resources\Com\Store\StorePublicListResource;
 use App\Http\Resources\Com\Store\StoreTypeDropdownPublicResource;
-use App\Http\Resources\Com\Store\StoreTypePublicResource;
+use App\Http\Resources\Coupon\CouponPublicResource;
 use App\Http\Resources\Customer\CustomerPublicResource;
 use App\Http\Resources\Location\AreaPublicResource;
 use App\Http\Resources\Location\CityPublicResource;
@@ -72,7 +72,6 @@ use App\Models\Unit;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class FrontendController extends Controller
 {
@@ -1198,7 +1197,7 @@ class FrontendController extends Controller
                 ->limit(5)
                 ->get();
         }
-        $blog_comments = BlogComment::with(['user','blogCommentReactions'])->orderByLikeDislikeRatio()->get();
+        $blog_comments = BlogComment::with(['user', 'blogCommentReactions'])->orderByLikeDislikeRatio()->get();
         return response()->json([
             'blog_details' => new BlogDetailsPublicResource($blog),
             'all_blog_categories' => BlogCategoryPublicResource::collection($all_blog_categories),
@@ -1206,6 +1205,66 @@ class FrontendController extends Controller
             'related_posts' => BlogPublicResource::collection($related_posts),
             'blog_comments' => BlogCommentResource::collection($blog_comments),
             'total_comments' => $blog_comments->count()
+        ], 200);
+    }
+
+    public function couponList(Request $request)
+    {
+        $query = CouponLine::query();
+
+        // Filter by discount type
+        if ($request->filled('discount_type')) {
+            $query->where('discount_type', $request->discount_type);
+        }
+
+        // Sorting by discount (highest to lowest)
+        if ($request->filled('sort_by_discount') && $request->sort_by_discount) {
+            $query->orderBy('discount', 'desc');
+        }
+
+        // Filter by date range (start_date & end_date)
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('start_date', [$request->start_date, $request->end_date]);
+        } elseif ($request->filled('start_date')) {
+            $query->whereDate('start_date', '>=', $request->start_date);
+        } elseif ($request->filled('end_date')) {
+            $query->whereDate('end_date', '<=', $request->end_date);
+        }
+
+        // Filter for coupons expiring soon (default: within 2 days)
+        if ($request->filled('expire_soon') && $request->expire_soon) {
+            $days = $request->input('expire_soon_days', 2); // Default to 2 days
+            $query->whereBetween('end_date', [now(), now()->addDays($days)]);
+        }
+
+        // Search by coupon title & description
+        if ($request->filled('search')) {
+            $searchTerm = '%' . $request->search . '%';
+            $query->whereHas('coupon', function ($q) use ($searchTerm) {
+                $q->where('title', 'like', $searchTerm)
+                    ->orWhere('description', 'like', $searchTerm);
+            });
+        }
+
+        // Sorting by newest (default: descending)
+        if ($request->filled('newest') && $request->newest) {
+            $query->orderBy('created_at', 'desc');
+        } else {
+            $query->orderBy('created_at', 'asc');
+        }
+
+        // Pagination
+        $perPage = $request->input('per_page', 10); // Default to 10 items per page
+        $coupon = $query->with('coupon.related_translations')
+            ->whereHas('coupon', function ($q) {
+                $q->where('status', 1);
+            })
+            ->where('status', 1)
+            ->paginate($perPage);
+
+        return response()->json([
+            'data' => CouponPublicResource::collection($coupon),
+            'meta' => new PaginationResource($coupon)
         ], 200);
     }
 
