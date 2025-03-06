@@ -191,14 +191,17 @@ class ProductManageRepository implements ProductManageInterface
 
                 // Update existing variants or create new ones
                 foreach ($variants as $variant) {
-                    $existingVariant = ProductVariant::find($variant['id']);
-                    if ($existingVariant) {
-                        // Update the existing variant
-                        $existingVariant->update($variant);
-                    } else {
-                        // Create a new variant
-                        ProductVariant::create($variant);
+                    if (!empty($variant['id'])) {
+                        // Check if variant ID exists in the database
+                        $existingVariant = ProductVariant::find($variant['id']);
+                        if ($existingVariant) {
+                            // Update the existing variant
+                            $existingVariant->update($variant);
+                            continue;
+                        }
                     }
+                    // Create a new variant if no valid ID is found
+                    ProductVariant::create($variant);
                 }
             }
             // Update product tags
