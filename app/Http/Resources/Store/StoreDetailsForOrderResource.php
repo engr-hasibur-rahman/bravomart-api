@@ -25,7 +25,9 @@ class StoreDetailsForOrderResource extends JsonResource
             "logo" => ImageModifier::generateImageUrl($this->logo),
             "tax" => $this->tax,
             "delivery_time" => $this->delivery_time,
-            "address" => $this->address
+            "address" => $this->address,
+            "latitude" => $this->area?->center_latitude,
+            "longitude" => $this->area?->center_longitude,
         ];
     }
 }
