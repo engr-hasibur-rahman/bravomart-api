@@ -167,10 +167,9 @@ class DeliverymanManageController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $deliveryman = auth('api')->user();
-//        $existing_orders = Order::where('confirmed_by', $deliveryman->id)
-//            ->where('status', '!=', 'delivered')
-//            ->orWhere('status', '!=', 'cancelled')
-//            ->exists();
+        $existing_orders = Order::where('confirmed_by', $deliveryman->id)
+            ->whereNotIn('status', ['delivered', 'cancelled']) // Avoiding the OR issue
+            ->exists();
         if ($request->type == 'deactivate') {
             $alreadyDeactivated = $deliveryman->deactivated_at;
             if ($alreadyDeactivated) {
@@ -178,18 +177,18 @@ class DeliverymanManageController extends Controller
                     'message' => __('messages.account_already_deactivated')
                 ], 422);
             }
-//            if ($existing_orders) {
-//                return response()->json([
-//                    'message' => __('messages.deliveryman_active_order_exists')
-//                ], 422);
-//            }
-//            $validator = Validator::make($request->all(), [
-//                'reason' => 'required|string|255',
-//                'description' => 'required|string|1000',
-//            ]);
-//            if ($validator->fails()) {
-//                return response()->json($validator->errors(), 422);
-//            }
+            if ($existing_orders) {
+                return response()->json([
+                    'message' => __('messages.deliveryman_active_order_exists')
+                ], 422);
+            }
+            $validator = Validator::make($request->all(), [
+                'reason' => 'required|string|max:255',
+                'description' => 'required|string|max:1000',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
             DeliverymanDeactivationReason::create([
                 'deliveryman_id' => $deliveryman->id,
                 'reason' => $request->reason ?? '',
