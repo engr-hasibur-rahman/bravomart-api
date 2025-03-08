@@ -26,7 +26,8 @@ class ProductDetailsResource extends JsonResource
             "behaviour" => $this->behaviour,
             "slug" => $this->slug,
             "description" => $this->description,
-            "image" => ImageModifier::generateImageUrl($this->image),
+            "image" => (int)$this->image,
+            "image_url" => ImageModifier::generateImageUrl($this->image),
             "gallery_images" => MultipleImageModifier::multipleImageModifier($this->gallery_images),
             "warranty" => $this->warranty,
             "class" => $this->class,
@@ -49,7 +50,7 @@ class ProductDetailsResource extends JsonResource
                 ? implode(',', $decodedKeywords)
                 : $this->meta_keywords,
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
-            "variants" => $this->variants,
+            "variants" => VariantDetailsResource::collection($this->variants),
             "store" => $this->store,
             "seller" => new SellerListForDropdownResource($this->store->seller),
             "category" => $this->category && $this->category->id

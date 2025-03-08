@@ -221,9 +221,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
             });
 
             // Seller  Product Author manage
-            Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value]], function () {
+            Route::group(['prefix' => 'product/author/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_PRODUCT_AUTHORS_MANAGE->value]], function () {
                 Route::get('list', [ProductAuthorController::class, 'sellerAuthors']);
                 Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
+                Route::post('update', [ProductAuthorController::class, 'update']);
                 Route::get('details/{id}', [ProductAuthorController::class, 'show']);
                 Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
             });

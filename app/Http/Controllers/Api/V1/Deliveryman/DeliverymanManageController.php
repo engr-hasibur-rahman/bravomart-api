@@ -168,8 +168,7 @@ class DeliverymanManageController extends Controller
         }
         $deliveryman = auth('api')->user();
         $existing_orders = Order::where('confirmed_by', $deliveryman->id)
-            ->where('status', '!=', 'delivered')
-            ->orWhere('status', '!=', 'cancelled')
+            ->whereIn('status', ['processing', 'shipped'])
             ->exists();
         if ($request->type == 'deactivate') {
             $alreadyDeactivated = $deliveryman->deactivated_at;
@@ -184,16 +183,16 @@ class DeliverymanManageController extends Controller
                 ], 422);
             }
             $validator = Validator::make($request->all(), [
-                'reason' => 'required|string|255',
-                'description' => 'required|string|1000',
+                'reason' => 'required|string|max:255',
+                'description' => 'nullable|string|max:1000',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 422);
             }
             DeliverymanDeactivationReason::create([
                 'deliveryman_id' => $deliveryman->id,
-                'reason' => $request->reason,
-                'description' => $request->description
+                'reason' => $request->reason ?? '',
+                'description' => $request->description ?? ''
             ]);
             $deliveryman->update([
                 'deactivated_at' => now(),
@@ -237,16 +236,15 @@ class DeliverymanManageController extends Controller
             unauthorized_response();
         }
         $validator = Validator::make($request->all(), [
-            'reason' => 'required|string|255',
-            'description' => 'required|string|1000',
+            'reason' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
         $deliveryman = auth('api')->user();
         $existing_orders = Order::where('confirmed_by', $deliveryman->id)
-            ->where('status', '!=', 'delivered')
-            ->orWhere('status', '!=', 'cancelled')
+            ->whereIn('status', ['processing', 'shipped'])
             ->exists();
         if ($existing_orders) {
             return response()->json([
@@ -342,6 +340,7 @@ class DeliverymanManageController extends Controller
             return false;
         }
     }
+
     public function sendVerificationEmail(Request $request)
     {
         if (!auth('api')->check()) {

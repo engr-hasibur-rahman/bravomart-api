@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\TaxInfoController;
 use App\Http\Controllers\Customer\PlaceOrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\ApiAuthMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /* Admin Login */
@@ -28,7 +29,7 @@ Route::post('/store/ownerreg', [UserController::class, 'StoreOwnerRegistration']
 /* Partner (Shop Owner/Shop Staff/Delivery-Man/FitterMan Login) Login */
 Route::post('partner/login', [PartnerLoginController::class, 'login']);
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum', ApiAuthMiddleware::class]], function () {
     Route::get('/getpermissions', [PermissionController::class, 'getpermissions']);
     Route::get('/get-roles', [PermissionController::class, 'getRoles']);
     Route::post('/logout', [UserController::class, 'logout']);
@@ -45,8 +46,7 @@ Route::post('contact-us', [ContactManageController::class, 'store']);
 
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['prefix' => 'v1/'], function () {
-    // For refreshing single table
-    Route::post('migrate-refresh',[MigrationController::class, 'migrateRefresh']);
+
     // For customer register and login
     Route::group(['prefix' => 'customer/'], function () {
         Route::post('registration', [CustomerManageController::class, 'register']);
@@ -77,6 +77,7 @@ Route::group(['prefix' => 'v1/'], function () {
     });
 
     // public routes for frontend
+    Route::post('migrate-refresh',[MigrationController::class, 'migrateRefresh']);
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     Route::get('/product-list', [FrontendController::class, 'productList']);
     Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);

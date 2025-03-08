@@ -172,7 +172,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::SELLER_PRODUCT_AUTHORS_MANAGE->value,
+                            'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_AUTHORS_MANAGE->value,
                             'PermissionTitle' => 'Author List',
                             'activity_scope' => 'store_level',
                             'icon' => 'BookText',
