@@ -168,7 +168,7 @@ class DeliverymanManageController extends Controller
         }
         $deliveryman = auth('api')->user();
         $existing_orders = Order::where('confirmed_by', $deliveryman->id)
-            ->whereNotIn('status', ['delivered', 'cancelled']) // Avoiding the OR issue
+            ->whereIn('status', ['processing', 'shipped'])
             ->exists();
         if ($request->type == 'deactivate') {
             $alreadyDeactivated = $deliveryman->deactivated_at;
@@ -184,7 +184,7 @@ class DeliverymanManageController extends Controller
             }
             $validator = Validator::make($request->all(), [
                 'reason' => 'required|string|max:255',
-                'description' => 'required|string|max:1000',
+                'description' => 'nullable|string|max:1000',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 422);
@@ -236,16 +236,15 @@ class DeliverymanManageController extends Controller
             unauthorized_response();
         }
         $validator = Validator::make($request->all(), [
-            'reason' => 'required|string|255',
-            'description' => 'required|string|1000',
+            'reason' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
         $deliveryman = auth('api')->user();
         $existing_orders = Order::where('confirmed_by', $deliveryman->id)
-            ->where('status', '!=', 'delivered')
-            ->orWhere('status', '!=', 'cancelled')
+            ->whereIn('status', ['processing', 'shipped'])
             ->exists();
         if ($existing_orders) {
             return response()->json([
