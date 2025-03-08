@@ -78,7 +78,6 @@ Route::group(['prefix' => 'v1/'], function () {
 
     // public routes for frontend
     Route::post('migrate-refresh',[MigrationController::class, 'migrateRefresh']);
-
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     Route::get('/product-list', [FrontendController::class, 'productList']);
     Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);
