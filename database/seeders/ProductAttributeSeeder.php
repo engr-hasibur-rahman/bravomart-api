@@ -24,7 +24,7 @@ class ProductAttributeSeeder extends Seeder
                 'Type' => ['Fresh', 'Frozen', 'Dried','Smoked', 'Marinated','Liquid', 'Powder', 'Spray', 'Wipes'],
                 'Flavor' => ['Spicy', 'Sweet', 'Salty', 'Cheesy','Honey', 'Chocolate', 'Vanilla', 'Fruits'],
                 'Packaging' => ['Single Pack', 'Multi-Pack','Loose', 'Packed', 'Resealable Bag','Bottle', 'Carton', 'Plastic Tub','Box', 'Bag'],
-                'Packaging Size' => ['Small', 'Medium', 'Large','500ml', '1L', '5L'],
+                'Packaging Size' => ['Small', 'Medium', 'Large','500ml', '1L', '5L', '1 Piece','2 Pieces','4 Pieces','6 Pieces','12 Pieces'],
                 'Expiry Date' => [ '2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30','2030-12-31',],
             ],
             'bakery' => [
