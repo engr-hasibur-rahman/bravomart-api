@@ -11,100 +11,93 @@ use Illuminate\Contracts\Validation\Validator;
 
 class ProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
-    {       
-
-
+    {
         $rules = [
-            "store_id" => "required",
-            "category_id" => "required",
-            "brand_id" => "required",
-            "unit_id" => "required",
-            "type" => "required|in:" . implode(',', array_column(StoreType::cases(), 'value')),
-            "name" => "required",
-            "description" => "required",
-            "image" => "nullable",
-            "gallery_images" => "nullable",
-            "warranty" => "nullable",
-            "return_in_days" => "nullable",
-            "cash_on_delivery" => "nullable",
-            "behaviour" => "required|in:" . implode(',', array_column(Behaviour::cases(), 'value')),
-            "delivery_time_min" => "nullable",
-            "delivery_time_max" => "nullable",
-            "delivery_time_text" => "nullable",
+            "store_id" => "required|exists:stores,id",
+            "category_id" => "nullable|exists:product_category,id",
+            "brand_id" => "nullable|exists:product_brand,id",
+            "unit_id" => "nullable|exists:units,id",
+            "type" => "nullable|in:" . implode(',', array_column(StoreType::cases(), 'value')),
+            "behaviour" => "nullable|in:" . implode(',', array_column(Behaviour::cases(), 'value')),
+            "name" => "required|string|max:255",
+            "slug" => "required|string|max:255|unique:products,slug," . ($this->route('product') ?? 0) . ",id",
+            "description" => "nullable|string",
+            "image" => "nullable|string|max:255",
+            "gallery_images" => "nullable|array",
+            "gallery_images.*" => "string|max:255",
+            "class" => "nullable|string|max:255",
+            "warranty" => "nullable|array",
+            "warranty.*.warranty_period" => "required_with:warranty|integer|min:1",
+            "warranty.*.warranty_text" => "required_with:warranty|string|max:255",
+            "return_in_days" => "nullable|integer|min:0",
+            "return_text" => "nullable|string|max:255",
+            "allow_change_in_mind" => "nullable|string|max:255",
+            "cash_on_delivery" => "nullable|integer|min:0|max:100",
+            "delivery_time_min" => "nullable|integer|min:0",
+            "delivery_time_max" => "nullable|integer|min:0|gte:delivery_time_min",
+            "delivery_time_text" => "nullable|string|max:255",
+            "max_cart_qty" => "nullable|integer|min:1",
+            "order_count" => "nullable|integer|min:0",
+            "views" => "nullable|integer|min:0",
             "status" => "required|in:" . implode(',', array_column(StatusType::cases(), 'value')),
-            "tag_ids" => "array|nullable",
+            "meta_title" => "nullable|string|max:255",
+            "meta_description" => "nullable|string",
+            "meta_keywords" => "nullable|string",
+            "meta_image" => "nullable|string|max:255",
+            "available_time_starts" => "nullable|date",
+            "available_time_ends" => "nullable|date|after_or_equal:available_time_starts",
+
+            "variants" => "required|array|min:1",
+            "variants.*.variant_slug" => "nullable|string|max:255|unique:product_variants,variant_slug," . ($this->route('product') ?? 0) . ",id",
+            "variants.*.sku" => "nullable|string|max:255|unique:product_variants,sku," . ($this->route('product') ?? 0) . ",id",
+            "variants.*.pack_quantity" => "nullable|numeric|min:0",
+            "variants.*.weight_major" => "nullable|numeric|min:0",
+            "variants.*.weight_gross" => "nullable|numeric|min:0",
+            "variants.*.weight_net" => "nullable|numeric|min:0",
+            "variants.*.attributes" => "nullable|array",
+            "variants.*.price" => "nullable|numeric|min:0",
+            "variants.*.special_price" => "nullable|numeric|min:0|lte:variants.*.price",
+            "variants.*.stock_quantity" => "required|integer|min:0",
+            "variants.*.unit_id" => "nullable|exists:units,id",
+            "variants.*.length" => "nullable|numeric|min:0",
+            "variants.*.width" => "nullable|numeric|min:0",
+            "variants.*.height" => "nullable|numeric|min:0",
+            "variants.*.image" => "nullable|string|max:255",
+            "variants.*.order_count" => "nullable|integer|min:0",
+            "variants.*.status" => "nullable|integer|in:0,1",
         ];
 
-        // Conditional validation for variants
-        //     if ($this->has('variants') && is_array($this->input('variants')) && count($this->input('variants')) > 0) {
-        //     $rules['variants'] = 'required|array';
-        //     $rules['variants.*.variant_slug'] = 'nullable|string|max:255|unique:product_variants,variant_slug';
-        //     $rules['variants.*.sku'] = 'nullable|string|max:255|unique:product_variants,sku';
-        //     $rules['variants.*.pack_quantity'] = 'nullable|numeric|min:0';
-        //     $rules['variants.*.price'] = 'nullable|numeric|min:0';
-        //     $rules['variants.*.stock_quantity'] = 'required|integer|min:0';
-        //     $rules['variants.*.special_price'] = 'nullable|numeric|min:0|lte:variants.*.price';
-        //     $rules['variants.*.color'] = 'nullable|string|max:255';
-        //     $rules['variants.*.size'] = 'nullable|string|max:255';
-        // }
-
-         // Conditional validation for variants
-    if ($this->has('variants') && is_array($this->input('variants')) && count($this->input('variants')) > 0) {
-        $rules['variants'] = 'required|array';
-        $rules['variants.*.variant_slug'] = 'nullable|string|max:255|unique:product_variants,variant_slug,' . ($this->route('product') ?? 0) . ',id'; // Ignore the unique validation for the current record when updating
-        $rules['variants.*.sku'] = 'nullable|string|max:255|unique:product_variants,sku,' . ($this->route('product') ?? 0) . ',id'; // Ignore the unique validation for the current record when updating
-        $rules['variants.*.pack_quantity'] = 'nullable|numeric|min:0';
-        $rules['variants.*.price'] = 'nullable|numeric|min:0';
-        $rules['variants.*.stock_quantity'] = 'required|integer|min:0';
-        $rules['variants.*.special_price'] = 'nullable|numeric|min:0|lte:variants.*.price'; // You might need custom logic for dynamic comparison
-        $rules['variants.*.color'] = 'nullable|string|max:255';
-        $rules['variants.*.size'] = 'nullable|string|max:255';
-    }
-
         return $rules;
-
     }
+
     public function messages()
     {
-
         return [
             "store_id.required" => "The shop ID is required.",
-            "category_id.required" => "The category ID is required.",
-            "brand_id.required" => "The brand ID is required.",
-            "unit_id.required" => "The unit ID is required.",
-            "type.required" => "The type is required.",
-            "type.in" => "The selected type is invalid.",
+            "store_id.exists" => "The selected store does not exist.",
+            "category_id.exists" => "The selected category does not exist.",
+            "brand_id.exists" => "The selected brand does not exist.",
+            "unit_id.exists" => "The selected unit does not exist.",
             "name.required" => "The product name is required.",
-            "description.required" => "The product description is required.",
-            "behaviour.required" => "The behaviour is required.",
-            "behaviour.in" => "The selected behaviour is invalid.",
+            "slug.required" => "The product slug is required.",
+            "slug.unique" => "The product slug must be unique.",
             "status.required" => "The status is required.",
-            "status.in" => "The selected status is invalid.",
-            "variants.required" => "Variants are required when included.",
+            "type.in" => "The selected type is invalid.",
+            "behaviour.in" => "The selected behaviour is invalid.",
+            "delivery_time_max.gte" => "The max delivery time must be greater than or equal to min delivery time.",
             "variants.*.variant_slug.unique" => "Each variant slug must be unique.",
             "variants.*.sku.unique" => "Each SKU must be unique.",
             "variants.*.stock_quantity.required" => "Stock quantity is required for each variant.",
             "variants.*.special_price.lte" => "Special price must be less than or equal to the price.",
         ];
     }
-    private function getEnumValues(string $enumClass): string
-    {
-        return implode(', ', array_map(fn($case) => $case->value, $enumClass::cases()));
-    }
+
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));

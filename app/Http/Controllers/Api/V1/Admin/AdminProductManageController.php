@@ -7,6 +7,7 @@ use App\Exports\ProductExport;
 use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportRequest;
+use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Admin\ProductRequestResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\LowStockProductResource;
@@ -34,9 +35,9 @@ class AdminProductManageController extends Controller
     public function index(Request $request)
     {
         $storeId = $request->store_id ?? '';
-        $limit = $request->limit ?? 10;
+        $limit = $request->per_page ?? 10;
         $page = $request->page ?? 1;
-        $locale = app()->getLocale() ?? DEFAULT_LANGUAGE;
+        $locale = $request->language ?? 'en';
         $search = $request->search ?? '';
         $sortField = $request->sortField ?? 'id';
         $sortOrder = $request->sort ?? 'asc';
@@ -53,10 +54,13 @@ class AdminProductManageController extends Controller
             $filters
         );
 
-        return ProductListResource::collection($products);
+        return response()->json([
+            'data' => ProductListResource::collection($products),
+            'meta' => new PaginationResource($products)
+        ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(ProductRequest $request): JsonResponse
     {
         $slug = MultilangSlug::makeSlug(Product::class, $request->name, 'slug');
         $request['slug'] = $slug;
@@ -77,7 +81,7 @@ class AdminProductManageController extends Controller
         return $this->productRepo->getProductBySlug($slug);
     }
 
-    public function update(Request $request)
+    public function update(ProductRequest $request)
     {
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $request['warranty'] = json_encode($request['warranty']);
@@ -227,19 +231,19 @@ class AdminProductManageController extends Controller
     public function lowOrOutOfStockProducts(Request $request)
     {
         if ($request->stock_type == 'low_stock') {
-            $lowStockProducts = Product::lowStock()->with(['store.related_translations','related_translations'])->paginate(10);
+            $lowStockProducts = Product::lowStock()->with(['store.related_translations', 'related_translations'])->paginate(10);
             return response()->json([
                 'data' => LowStockProductResource::collection($lowStockProducts),
                 'meta' => new PaginationResource($lowStockProducts),
             ]);
         } elseif ($request->stock_type == 'out_of_stock') {
-            $outOfStockProducts = Product::outOfStock()->with(['store.related_translations','related_translations'])->paginate(10);
+            $outOfStockProducts = Product::outOfStock()->with(['store.related_translations', 'related_translations'])->paginate(10);
             return response()->json([
                 'data' => OutOfStockProductResource::collection($outOfStockProducts),
                 'meta' => new PaginationResource($outOfStockProducts),
             ]);
         } else {
-            $lowStockProducts = Product::lowStock()->with(['store.related_translations','related_translations'])->paginate(10);
+            $lowStockProducts = Product::lowStock()->with(['store.related_translations', 'related_translations'])->paginate(10);
             return response()->json([
                 'data' => LowStockProductResource::collection($lowStockProducts),
                 'meta' => new PaginationResource($lowStockProducts),
