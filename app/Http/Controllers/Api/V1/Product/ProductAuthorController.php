@@ -100,7 +100,22 @@ class ProductAuthorController extends Controller
 
     public function update(ProductAuthorRequest $request)
     {
-        $author = $this->authorRepo->update($request->all());
+        $data = $request->all();
+        $author = ProductAuthor::find($data['id']);
+        if (!$author) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+        if ($author->created_by !== auth('api')->id()) {
+            return response()->json([
+                'message' => __('messages.update_failed', ['name' => 'Author'])
+            ],500);
+        }
+        if (auth('api')->user()->activity_scope == 'store_level') {
+            unset($data['status']); // Remove 'status' if user is store_level
+        }
+        $author = $this->authorRepo->update($data);
         $this->authorRepo->updateTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
         if ($author) {
             return $this->success(translate('messages.update_success', ['name' => 'Author']));
@@ -150,21 +165,21 @@ class ProductAuthorController extends Controller
         if (!$author) {
             return response()->json([
                 'message' => __('messages.data_not_found')
-            ],404);
+            ], 404);
         }
         if (auth('api')->user()->activity_scope == 'store_level' && $author->status == 0) {
             return response()->json([
                 'message' => __('messages.delete_failed', ['name' => 'Author'])
-            ],500);
+            ], 500);
         }
         if ($author->created_by !== auth('api')->id()) {
             return response()->json([
                 'message' => __('messages.delete_failed', ['name' => 'Author'])
-            ],500);
+            ], 500);
         }
         $this->authorRepo->delete($id);
         return response()->json([
             'message' => __('messages.delete_success', ['name' => 'Author'])
-        ],200);
+        ], 200);
     }
 }
