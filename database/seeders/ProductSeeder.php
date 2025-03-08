@@ -283,7 +283,10 @@ class ProductSeeder extends Seeder
                 'updated_by' => 1,
                 'status' => 1,
             ]);
-            $brand_ids[] = $brand->id;
+            // Ensure the brand ID is added
+            if ($brand) {
+                $brand_ids[] = $brand->id;
+            }
         }
 
         $store_info = Store::select('id')->where('store_type', StoreType::GROCERY->value)->first();
@@ -293,11 +296,16 @@ class ProductSeeder extends Seeder
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
 
             // Randomly select a brand_id from the brand_ids array
-            $brand_id = $brand_ids[array_rand($brand_ids)];
+            if (!empty($brand_ids)) {
+                $brand_id = $brand_ids[array_rand($brand_ids)];
+            } else {
+                // Handle case where no brand exists (optional)
+                $brand_id = null;
+            }
 
             $products[] = Product::create([
                 'store_id' => $store_info->id,
-                'category_id' => ProductCategory::where('category_name', 'Bakery')->select('id')->first()->value,
+                'category_id' => null,
                 'brand_id' => $brand_id,
                 'unit_id' => 1,
                 'type' => 'bakery',
