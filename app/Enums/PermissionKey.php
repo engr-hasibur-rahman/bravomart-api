@@ -172,6 +172,16 @@ enum PermissionKey: string
     //              System-management Settings                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case GENERAL_SETTINGS = '/admin/system-management/general-settings';
+
+    case PAGE_SETTINGS = '/admin/system-management/page-settings';
+    case REGISTER_PAGE_SETTINGS = '/admin/system-management/register-page-settings';
+    case LOGIN_PAGE_SETTINGS = '/admin/system-management/login-page-settings';
+    case PRODUCT_DETAILS_PAGE_SETTINGS = '/admin/system-management/product-details-page-settings';
+    case BLOG_PAGE_SETTINGS = '/admin/system-management/blog-page-settings';
+    case ABOUT_PAGE_SETTINGS = '/admin/system-management/about-page-settings';
+    case CONTACT_PAGE_SETTINGS = '/admin/system-management/contact-page-settings';
+    case BECOME_SELLER_PAGE_SETTINGS = '/admin/system-management/become-seller-page-Settings';
+
     case APPEARANCE_SETTINGS = 'appearance_settings';
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';
     case MAINTENANCE_SETTINGS = '/admin/system-management/maintenance-settings';

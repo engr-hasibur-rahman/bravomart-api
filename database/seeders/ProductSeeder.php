@@ -34,39 +34,78 @@ class ProductSeeder extends Seeder
         // Example attribute sets for different types
         $attributes_sets = [
             'grocery' => [
-                'brand' => ['Brand A', 'Brand B', 'Brand C'],
-                'expiry_date' => ['2025-12-31', '2026-06-30', '2027-01-01'],
-                'packaging_size' => ['Small', 'Medium', 'Large']
+                'weight' => ['50g','100g', '150g','250g', '500g', '1kg', '1.5kg', '2kg','3kg', '4kg', '5kg'],
+                'type' => ['Fresh', 'Frozen', 'Dried','Smoked', 'Marinated','Liquid', 'Powder', 'Spray', 'Wipes'],
+                'flavor' => ['Spicy', 'Sweet', 'Salty', 'Cheesy','Honey', 'Chocolate', 'Vanilla', 'Fruits'],
+                'dietary_preference' => ['Gluten-Free', 'Low-Calorie', 'Vegan'],
+                'packaging' => ['Single Pack', 'Multi-Pack','Loose', 'Packed', 'Resealable Bag','Bottle', 'Carton', 'Plastic Tub','Box', 'Bag'],
+                'packaging_size' => ['Small', 'Medium', 'Large','500ml', '1L', '5L'],
+                'expiry_date' => [ '2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30','2030-12-31',],
             ],
             'bakery' => [
                 'flavor' => ['Vanilla', 'Chocolate', 'Strawberry'],
                 'weight' => ['500g', '1kg', '2kg'],
-                'packaging_type' => ['Box', 'Bag', 'Plastic']
+                'packaging_type' => ['Box', 'Bag', 'Plastic'],
+                'expiry_date' => [ '2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30','2030-12-31',],
             ],
             'medicine' => [
                 'dosage' => ['50mg', '100mg', '200mg'],
                 'manufacturer' => ['Company A', 'Company B'],
-                'expiry_date' => ['2025-12-31', '2026-06-30']
+                'type' => ['Tablet', 'Capsule', 'Syrup', 'Injection'],
+                'expiry_date' => [ '2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30','2030-12-31',],
             ],
             'makeup' => [
-                'shade' => ['Light', 'Medium', 'Dark'],
-                'volume' => ['30ml', '50ml', '100ml'],
-                'skin_type' => ['Oily', 'Dry', 'Combination']
+                'shade' => ['Light', 'Medium', 'Dark', 'Fair', 'Tan', 'Deep'],
+                'volume' => ['15ml', '30ml', '50ml', '100ml'],
+                'skin_type' => ['Oily', 'Dry', 'Combination', 'Sensitive', 'Normal'],
+                'product_type' => ['Foundation', 'Concealer', 'Lipstick', 'Mascara', 'Eyeliner', 'Blush', 'Highlighter'],
+                'packaging' => ['Tube', 'Bottle', 'Compact', 'Palette'],
+                'expiry_date' => [ '2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30','2030-12-31',],
             ],
             'clothing' => [
-                'color' => ['Red', 'Blue', 'Green', 'Black', 'White'],
-                'size' => ['S', 'M', 'L', 'XL', 'XXL'],
-                'material' => ['Cotton', 'Leather', 'Polyester']
+                'color' => [
+                    'Red', 'Blue', 'Green', 'Black', 'White', 'Yellow', 'Pink', 'Purple', 'Orange', 'Gray', 'Brown', 'Beige', 'Navy', 'Turquoise', 'Indigo'
+                ],
+                'size' => [
+                    'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXS', 'One Size'
+                ],
+                'material' => [
+                    'Cotton', 'Leather', 'Polyester', 'Linen', 'Silk', 'Wool', 'Nylon', 'Denim', 'Spandex', 'Rayon', 'Velvet', 'Fleece', 'Chiffon', 'Acrylic'
+                ],
             ],
             'bags' => [
-                'material' => ['Leather', 'Canvas', 'Nylon'],
-                'size' => ['Small', 'Medium', 'Large'],
-                'color' => ['Red', 'Blue', 'Black', 'Brown']
+                'material' => [
+                    'Leather', 'Canvas', 'Nylon', 'Suede', 'Polyester', 'Jute', 'Vegan Leather', 'PVC', 'Wool', 'Satin', 'Cordura'
+                ],
+                'size' => [
+                    'Small', 'Medium', 'Large', 'Extra Large', 'Mini', 'One Size'
+                ],
+                'color' => [
+                    'Red', 'Blue', 'Black', 'Brown', 'White', 'Pink', 'Purple', 'Beige', 'Green', 'Yellow', 'Orange', 'Gray', 'Navy', 'Tan'
+                ],
+                'style' => [
+                    'Tote', 'Backpack', 'Crossbody', 'Clutch', 'Satchel', 'Messenger', 'Duffel', 'Shoulder', 'Hobo', 'Briefcase'
+                ],
+                'closure_type' => [
+                    'Zipper', 'Button', 'Magnetic', 'Drawstring', 'Snap', 'Buckle'
+                ],
             ],
             'furniture' => [
-                'material' => ['Wood', 'Metal', 'Plastic'],
-                'dimensions' => ['100x50x30', '150x75x50', '200x100x75'],
-                'weight_capacity' => ['50kg', '100kg', '200kg']
+                'material' => [
+                    'Wood', 'Metal', 'Plastic', 'Glass', 'Leather', 'Fabric', 'Marble', 'Stone', 'Concrete', 'Rattan', 'Bamboo', 'Mirrored', 'Polyurethane', 'Velvet'
+                ],
+                'dimensions' => [
+                    '100x50x30', '150x75x50', '200x100x75', '120x60x40', '180x90x60', '250x150x100', '90x45x30', '60x30x20'
+                ],
+                'weight_capacity' => [
+                    '50kg', '100kg', '200kg', '300kg', '500kg', '1000kg'
+                ],
+                'style' => [
+                    'Modern', 'Contemporary', 'Traditional', 'Vintage', 'Rustic', 'Industrial', 'Scandinavian', 'Minimalist', 'Bohemian'
+                ],
+                'color' => [
+                    'Red', 'Blue', 'Green', 'Black', 'White', 'Gray', 'Brown', 'Beige', 'Tan', 'Navy', 'Olive', 'Gold', 'Silver', 'Cream', 'Wooden Finish'
+                ],
             ],
             'books' => [
                 'author' => ['Author A', 'Author B', 'Author C'],
@@ -74,19 +113,56 @@ class ProductSeeder extends Seeder
                 'language' => ['English', 'Spanish', 'French']
             ],
             'gadgets' => [
-                'brand' => ['Brand A', 'Brand B', 'Brand C'],
-                'model' => ['Model X', 'Model Y', 'Model Z'],
-                'specifications' => ['Spec 1', 'Spec 2', 'Spec 3']
+                'model' => ['Model X', 'Model Y', 'Model Z', 'ProMax', 'UltraX', 'ElitePlus', 'SmartOne', 'Vision'],
+                'specifications' => [
+                    'Spec 1', 'Spec 2', 'Spec 3', '4GB RAM', '8GB RAM', '16GB RAM', '64GB Storage', '128GB Storage', '256GB Storage', 'Full HD Display', '4K Display', 'Bluetooth 5.0', 'Wi-Fi 6', '5000mAh Battery', 'Fast Charging', 'Water Resistant', 'GPS Enabled', 'NFC Support', 'Wireless Charging', 'Fingerprint Scanner', 'Face Recognition'
+                ],
+                'color' => [
+                    'Black', 'White', 'Silver', 'Gold', 'Blue', 'Red', 'Green', 'Pink', 'Purple', 'Gray', 'Rose Gold', 'Copper'
+                ],
+                'size' => [
+                    'Small', 'Medium', 'Large', 'Compact', 'Slim', 'Standard'
+                ],
             ],
             'animals-pet' => [
-                'breed' => ['Breed A', 'Breed B', 'Breed C'],
-                'age' => ['Puppy', 'Kitten', 'Adult'],
-                'size' => ['Small', 'Medium', 'Large']
+                'breed' => [
+                    'Breed A', 'Breed B', 'Breed C', 'Labrador', 'Golden Retriever', 'Siamese', 'Persian', 'Maine Coon', 'Bulldog', 'Beagle', 'Shih Tzu', 'Tabby', 'Rottweiler', 'Chihuahua', 'Husky', 'Cocker Spaniel'
+                ],
+                'age' => [
+                    'Puppy', 'Kitten', 'Adult', 'Senior', 'Newborn'
+                ],
+                'size' => [
+                    'Small', 'Medium', 'Large', 'Extra Large', 'Tiny', 'Miniature'
+                ],
+                'weight' => [
+                    'Under 5kg', '5kg - 10kg', '10kg - 20kg', '20kg - 40kg', '40kg and above'
+                ],
+                'color' => [
+                    'Black', 'White', 'Brown', 'Golden', 'Gray', 'Spotted', 'Tan', 'Multi-Color', 'Cream', 'Red', 'Blue', 'Striped', 'Spotted'
+                ],
+                'special_needs' => [
+                    'No', 'Yes - Allergy-Friendly', 'Yes - Medical Assistance', 'Yes - Dietary Restrictions', 'Yes - Wheelchair'
+                ],
             ],
             'fish' => [
-                'fish_name' => ['Salmon', 'Trout', 'Bass'],
-                'fish_size' => ['Small', 'Medium', 'Large'],
-                'fish_location' => ['Atlantic', 'Pacific', 'Indian Ocean']
+                'weight' => [
+                    'Under 1kg', '1kg - 2kg', '2kg - 5kg', '5kg - 10kg', 'Above 10kg'
+                ],
+                'fish_size' => [
+                    'Small', 'Medium', 'Large', 'Extra Large', 'Miniature', 'Jumbo'
+                ],
+                'fish_location' => [
+                    'Atlantic', 'Pacific', 'Indian Ocean', 'Arctic Ocean', 'Mediterranean Sea', 'Caribbean Sea', 'South China Sea', 'Gulf of Mexico', 'Great Barrier Reef'
+                ],
+                'fish_color' => [
+                    'Silver', 'Red', 'Pink', 'Brown', 'Golden', 'Green', 'Blue', 'White', 'Black', 'Spotted'
+                ],
+                'packaging' => [
+                    'Whole Fish', 'Fillet', 'Steak', 'Sliced', 'Minced', 'Canned', 'Frozen', 'Smoked'
+                ],
+                'storage_method' => [
+                    'Refrigerate', 'Freeze', 'Cool Storage'
+                ]
             ],
         ];
 
@@ -572,13 +648,13 @@ class ProductSeeder extends Seeder
         // furniture
         $products = [];
         $product_names = [
-            'Sofas' => ["Luxury Leather Sofa", "Velvet Accent Chair"],
-            'Chairs' => ["Adjustable Office Chair", "Velvet Accent Chair"],
-            'Beds' => ["Queen Size Bed Frame", "Storage Ottoman Bench"],
+            'Sofas' => ["Luxury Leather Sofa", "Victorian Elegance Sofa"],
+            'Chairs' => ["Adjustable Office Chair", "Wingback Chair"],
+            'Beds' => ["Queen Bed Frame", "Adjustable Bed"],
             'Tables' => ["Modern Wooden Dining Table", "Minimalist Coffee Table"],
-            'Dressers' => ["Classic Oak Wardrobe", "Storage Ottoman Bench"],
-            'Bookshelves' => ["Rustic TV Stand", "Glass Top Work Desk"],
-            'Desks' => ["Glass Top Work Desk", "Adjustable Office Chair"],
+            'Dressers' => ["Classic Oak Wardrobe", "Vintage Style Dresser"],
+            'Bookshelves' => ["Minimalist Open Shelf", "Floating Zigzag Shelf"],
+            'Desks' => ["Glass Top Work Desk", "Minimalist Wooden Desk"],
         ];
 
         $flattened_product_names = array_merge(...array_values($product_names)); // Flatten array
