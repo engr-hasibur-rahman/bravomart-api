@@ -147,7 +147,7 @@ class ProductAuthorController extends Controller
     public function destroy($id)
     {
         $author = ProductAuthor::find($id);
-        if (auth('api')->user->activity_level == 'store_level' && $author->status == 0) {
+        if (auth('api')->user()->activity_level == 'store_level' && $author->status == 0) {
             return $this->failed(__('messages.delete_failed', ['name' => 'Author']));
         }
         $this->authorRepo->delete($id);
