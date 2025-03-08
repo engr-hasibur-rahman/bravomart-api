@@ -66,11 +66,23 @@ class SellerStoreOrderController extends Controller
                 ], 404);
             }
 
-            // get store wise order info
+            // Get store-wise order info
             $orders = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
-                ->where('store_id', $request->store_id)
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->where('store_id', $request->store_id);
+
+            // Apply status filter
+            if (isset($request->status)) {
+                $orders->where('status', $request->status);
+            }
+
+            // Apply payment_status filter
+            if (isset($request->payment_status)) {
+                $orders->whereHas('orderMaster', function ($query) use ($request) {
+                    $query->where('payment_status',$request->payment_status);
+                });
+            }
+
+            $orders = $orders->orderBy('created_at', 'desc')->paginate(10);
 
             return response()->json([
                 'order_masters' => StoreOrderResource::collection($orders),
