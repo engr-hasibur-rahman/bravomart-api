@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('deliveryman_id');
             $table->string('reason');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
