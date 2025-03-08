@@ -81,7 +81,7 @@ class AdminProductManageController extends Controller
         return $this->productRepo->getProductBySlug($slug);
     }
 
-    public function update(Request $request)
+    public function update(ProductRequest $request)
     {
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $request['warranty'] = json_encode($request['warranty']);

@@ -165,6 +165,7 @@ class BivaCommandAuto extends Command
         $store_area_setting_store_types = DB::table('store_area_setting_store_types')->get();
         $store_subscriptions = DB::table('store_subscriptions')->get();
         $setting_options = DB::table('setting_options')->get();
+        $pages = DB::table('pages')->get();
 
 
         info('Dropping all tables started...');
@@ -215,6 +216,9 @@ class BivaCommandAuto extends Command
             }
             foreach ($setting_options as $setting_option) {
                 DB::table('setting_options')->insert((array) $setting_option);
+            }
+            foreach ($pages as $page) {
+                DB::table('pages')->insert((array) $page);
             }
 
             info('Database seeding started...');

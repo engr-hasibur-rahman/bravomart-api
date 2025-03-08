@@ -14,17 +14,17 @@ class ProductCategorySeeder extends Seeder
     {
         // Store types
         $storeTypes = [
-            'GROCERY' => ['Fruits', 'Dairy', 'Beverages', 'Snacks','Meat & Seafood', 'Canned', 'Spices', 'Personal Care', 'Cleaning Supplies'],
-            'BAKERY' => ['Bread', 'Pastries', 'Cakes', 'Cookies', 'Muffins', 'Buns','Pies', 'Bagels'],
-            'MEDICINE' => ['Pain Relief', 'Cold & Cough', 'Vitamins','Digestive','BP & Heart Disease', 'Skin Care', 'Eye Care', 'Herbal'],
-            'MAKEUP' => ['Foundations', 'Lipsticks', 'Eyeshadows', 'Mascaras', 'Blushes'],
-            'BAGS' => ['Handbags', 'Totes', 'Backpacks','Wallets', 'Clutches', 'Crossbody'],
-            'CLOTHING' => ['Men', 'Women'],
-            'FURNITURE' => ['Sofas', 'Chairs', 'Beds', 'Tables', 'Dressers', 'Bookshelves', 'Desks'],
-            'BOOKS' => ['Fiction', 'Non-Fiction', 'Sci-Fi', 'Fantasy', 'Biography'],
-            'GADGET' => ['Phones', 'Tablets', 'Headphones', 'Smart Watches', 'Laptops', 'Cameras'],
-            'ANIMALS_PET' => ['Dogs', 'Cats', 'Pet Toys', 'Grooming', 'Pet Food'],
-            'FISH' => ['Freshwater', 'Saltwater', 'Aquarium Plants', 'Fish Food', 'Water Care']
+            'Daily Needs' => ['Fruits', 'Dairy', 'Beverages', 'Snacks','Meat & Seafood', 'Canned', 'Spices', 'Personal Care', 'Cleaning Supplies'],
+            'Fresh Bakery' => ['Bread', 'Pastries', 'Cakes', 'Cookies', 'Muffins', 'Buns','Pies', 'Bagels'],
+            'Pharmacy Essentials' => ['Pain Relief', 'Cold & Cough', 'Vitamins','Digestive','BP & Heart Disease', 'Skin Care', 'Eye Care', 'Herbal'],
+            'Beauty & Cosmetics' => ['Foundations', 'Lipsticks', 'Eyeshadows', 'Mascaras', 'Blushes'],
+            'Bag Collections' => ['Handbags', 'Totes', 'Backpacks','Wallets', 'Clutches', 'Crossbody'],
+            'Clothing & Style' => ['Men', 'Women'],
+            'Furniture & Decor' => ['Sofas', 'Chairs', 'Beds', 'Tables', 'Dressers', 'Bookshelves', 'Desks'],
+            'Book Collection' => ['Fiction', 'Non-Fiction', 'Sci-Fi', 'Fantasy', 'Biography'],
+            'Tech & Gadgets' => ['Phones', 'Tablets', 'Headphones', 'Smart Watches', 'Laptops', 'Cameras'],
+            'Pets & Animals Essentials' => ['Dogs', 'Cats', 'Pet Toys', 'Grooming', 'Pet Food'],
+            'Fresh Fish' => ['Freshwater', 'Saltwater', 'Aquarium Plants', 'Fish Food', 'Water Care']
         ];
 
         // Loop through each store type and insert categories
