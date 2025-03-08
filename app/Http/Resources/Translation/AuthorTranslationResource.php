@@ -17,6 +17,7 @@ class AuthorTranslationResource extends JsonResource
         return [
             "language_code" => $this->first()->language,
             "name" => $this->where('key', 'name')->first()?->value,
+            "bio" => $this->where('key', 'bio')->first()?->value,
         ];
     }
 }
