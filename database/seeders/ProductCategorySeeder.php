@@ -12,34 +12,23 @@ class ProductCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        // Main store categories with their subcategories
+        // Store types
         $storeTypes = [
-            'Food' => [
-                'Fruits & Vegetables' => ['Fresh', 'Organic', 'Frozen'],
-                'Dairy' => ['Milk', 'Cheese', 'Yogurt', 'Butter'],
-                'Beverages' => ['Juice', 'Soda', 'Water', 'Energy Drinks'],
-                'Snacks' => ['Chips', 'Cookies', 'Candy', 'Nuts'],
-                'Meat & Seafood' => ['Chicken', 'Beef', 'Salmon', 'Shrimp'],
-            ],
-
-            'Cleaning & Household' => [
-                'Dishwashing Supplies',
-                'Laundry',
-                'Toilet Cleaners',
-                'Napkins & Paper Products',
-                'Pest Control',
-                'Floor & Glass Cleaners',
-                'Trash Bin & Basket'
-            ],
-
-            'Personal Care' => [
-                'Toothpaste', 'Shampoo', 'Soap', 'Body Wash', 'Hair Oil', 'Deodorant'
-            ],
+            'Daily Needs' => ['Fruits', 'Dairy', 'Beverages', 'Snacks','Meat & Seafood', 'Canned', 'Spices', 'Personal Care', 'Cleaning Supplies'],
+            'Fresh Bakery' => ['Bread', 'Pastries', 'Cakes', 'Cookies', 'Muffins', 'Buns','Pies', 'Bagels'],
+            'Pharmacy Essentials' => ['Pain Relief', 'Cold & Cough', 'Vitamins','Digestive','BP & Heart Disease', 'Skin Care', 'Eye Care', 'Herbal'],
+            'Beauty & Cosmetics' => ['Foundations', 'Lipsticks', 'Eyeshadows', 'Mascaras', 'Blushes'],
+            'Bag Collections' => ['Handbags', 'Totes', 'Backpacks','Wallets', 'Clutches', 'Crossbody'],
+            'Clothing & Style' => ['Men', 'Women'],
+            'Furniture & Decor' => ['Sofas', 'Chairs', 'Beds', 'Tables', 'Dressers', 'Bookshelves', 'Desks'],
+            'Book Collection' => ['Fiction', 'Non-Fiction', 'Sci-Fi', 'Fantasy', 'Biography'],
+            'Tech & Gadgets' => ['Phones', 'Tablets', 'Headphones', 'Smart Watches', 'Laptops', 'Cameras'],
+            'Pets & Animals Essentials' => ['Dogs', 'Cats', 'Pet Toys', 'Grooming', 'Pet Food'],
+            'Fresh Fish' => ['Freshwater', 'Saltwater', 'Aquarium Plants', 'Fish Food', 'Water Care']
         ];
 
         // Loop through each store type and insert categories
-        foreach ($storeTypes as $storeType => $subcategories) {
-            // Insert the main category (store type)
+        foreach ($storeTypes as $storeType => $categories) {
             $parent_id = DB::table('product_category')->insertGetId([
                 'category_name' => ucfirst(strtolower($storeType)),
                 'category_slug' => strtolower($storeType),
@@ -53,41 +42,25 @@ class ProductCategorySeeder extends Seeder
                 'updated_at' => now(),
             ]);
 
-            // Insert subcategories (level 2)
-            foreach ($subcategories as $subcategory => $subSubcategories) {
-                $subcategory_id = DB::table('product_category')->insertGetId([
-                    'category_name' => ucfirst(strtolower($subcategory)),
-                    'category_slug' => strtolower(str_replace(' ', '-', $subcategory)),
+            // Insert subcategories
+            foreach ($categories as $category) {
+                DB::table('product_category')->insert([
+                    'category_name' => $category,
+                    'category_slug' => strtolower(str_replace(' ', '-', $category)),
+                    'category_name_paths' => ucfirst(strtolower($storeType)),
+                    'parent_path' => strtolower($storeType),
                     'parent_id' => $parent_id,
                     'category_level' => 2,
                     'is_featured' => 1,
                     'admin_commission_rate' => 10,
-                    'meta_title' => ucfirst(strtolower($subcategory)),
-                    'meta_description' => ucfirst(strtolower($subcategory)),
+                    'meta_title' => $category,
+                    'meta_description' => $category,
                     'status' => 1,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-
-                // Insert sub-subcategories (level 3) if they exist
-                if (is_array($subSubcategories)) {
-                    foreach ($subSubcategories as $subSubcategory) {
-                        DB::table('product_category')->insert([
-                            'category_name' => ucfirst(strtolower($subSubcategory)),
-                            'category_slug' => strtolower(str_replace(' ', '-', $subSubcategory)),
-                            'parent_id' => $subcategory_id,
-                            'category_level' => 3,
-                            'is_featured' => 1,
-                            'admin_commission_rate' => 10,
-                            'meta_title' => ucfirst(strtolower($subSubcategory)),
-                            'meta_description' => ucfirst(strtolower($subSubcategory)),
-                            'status' => 1,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
-                    }
-                }
             }
         }
     }
+
 }
