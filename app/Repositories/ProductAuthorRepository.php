@@ -85,7 +85,6 @@ class ProductAuthorRepository implements ProductAuthorInterface
         // Return the result
         return $author
             ->where('created_by', auth('api')->id())
-            ->where('status', 1)
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
