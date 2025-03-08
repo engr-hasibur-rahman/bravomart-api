@@ -167,11 +167,6 @@ class ProductAuthorController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        if (auth('api')->user()->activity_scope == 'store_level' && $author->status == 0) {
-            return response()->json([
-                'message' => __('messages.delete_failed', ['name' => 'Author'])
-            ], 500);
-        }
         if ($author->created_by !== auth('api')->id()) {
             return response()->json([
                 'message' => __('messages.delete_failed', ['name' => 'Author'])
