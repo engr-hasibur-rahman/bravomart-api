@@ -22,7 +22,8 @@ class ProductAuthor extends Model
         "created_by"
     ];
     public $translationKeys = [
-        'name'
+        'name',
+        'bio'
     ];
 
     public function translations()
