@@ -180,6 +180,7 @@ enum PermissionKey: string
     case BLOG_PAGE_SETTINGS = '/admin/system-management/blog-page-settings';
     case ABOUT_PAGE_SETTINGS = '/admin/system-management/about-page-settings';
     case CONTACT_PAGE_SETTINGS = '/admin/system-management/contact-page-settings';
+    case BECOME_SELLER_PAGE_SETTINGS = '/admin/system-management/become-seller-page-Settings';
 
     case APPEARANCE_SETTINGS = 'appearance_settings';
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';

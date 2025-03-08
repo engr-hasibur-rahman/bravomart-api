@@ -1339,6 +1339,17 @@ class PermissionAdminSeeder extends Seeder
                                         'en' => 'Contact Page',
                                         'ar' => 'إعدادات الصيانة'
                                     ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::BECOME_SELLER_PAGE_SETTINGS->value,
+                                    'PermissionTitle' => 'Contact Page',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Contact Page',
+                                        'ar' => 'إعدادات الصيانة'
+                                    ]
                                 ]
                             ]
                         ],
