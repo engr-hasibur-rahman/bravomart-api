@@ -77,7 +77,9 @@ class SellerStoreOrderController extends Controller
 
             // Apply payment_status filter
             if (isset($request->payment_status)) {
-                $orders->where('payment_status', $request->payment_status);
+                $orders->whereHas('orderMaster', function ($query) use ($request) {
+                    $query->where('payment_status',$request->payment_status);
+                });
             }
 
             $orders = $orders->orderBy('created_at', 'desc')->paginate(10);
