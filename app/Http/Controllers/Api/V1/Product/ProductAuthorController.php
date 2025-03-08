@@ -147,10 +147,24 @@ class ProductAuthorController extends Controller
     public function destroy($id)
     {
         $author = ProductAuthor::find($id);
-        if (auth('api')->user()->activity_level == 'store_level' && $author->status == 0) {
-            return $this->failed(__('messages.delete_failed', ['name' => 'Author']));
+        if (!$author) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ],404);
+        }
+        if (auth('api')->user()->activity_scope == 'store_level' && $author->status == 0) {
+            return response()->json([
+                'message' => __('messages.delete_failed', ['name' => 'Author'])
+            ],500);
+        }
+        if ($author->created_by !== auth('api')->id()) {
+            return response()->json([
+                'message' => __('messages.delete_failed', ['name' => 'Author'])
+            ],500);
         }
         $this->authorRepo->delete($id);
-        return $this->success(translate('messages.delete_success', ['name' => 'Author']));
+        return response()->json([
+            'message' => __('messages.delete_success', ['name' => 'Author'])
+        ],200);
     }
 }
