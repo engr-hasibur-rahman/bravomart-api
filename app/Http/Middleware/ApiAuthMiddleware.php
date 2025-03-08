@@ -19,7 +19,7 @@ class ApiAuthMiddleware
         // Check if the request is for login (POST) or any other non-authenticated routes
         $req_url = $request->path();
         // List of prefixes where authentication is required
-        $authRequiredPrefixes = ['api/v1/customer', 'api/v1/seller', 'api/v1/admin', 'api/v1/delivery-man'];
+        $authRequiredPrefixes = ['api/v1/customer', 'api/v1/seller', 'api/v1/admin', 'api/v1/delivery-man','api/'];
 
         // Check if the request path starts with one of the required prefixes
         foreach ($authRequiredPrefixes as $prefix) {

@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\TaxInfoController;
 use App\Http\Controllers\Customer\PlaceOrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\ApiAuthMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /* Admin Login */
@@ -28,7 +29,7 @@ Route::post('/store/ownerreg', [UserController::class, 'StoreOwnerRegistration']
 /* Partner (Shop Owner/Shop Staff/Delivery-Man/FitterMan Login) Login */
 Route::post('partner/login', [PartnerLoginController::class, 'login']);
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum', ApiAuthMiddleware::class]], function () {
     Route::get('/getpermissions', [PermissionController::class, 'getpermissions']);
     Route::get('/get-roles', [PermissionController::class, 'getRoles']);
     Route::post('/logout', [UserController::class, 'logout']);
