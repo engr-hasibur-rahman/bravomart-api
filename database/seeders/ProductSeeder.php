@@ -34,24 +34,24 @@ class ProductSeeder extends Seeder
         // Example attribute sets for different types
         $attributes_sets = [
             'grocery' => [
-                'Weight' => ['50g','100g', '150g','250g', '500g', '1kg', '1.5kg', '2kg','3kg', '4kg', '5kg'],
-                'Type' => ['Fresh', 'Frozen', 'Dried','Smoked', 'Marinated','Liquid', 'Powder', 'Spray', 'Wipes'],
-                'Flavor' => ['Spicy', 'Sweet', 'Salty', 'Cheesy','Honey', 'Chocolate', 'Vanilla', 'Fruits'],
-                'Packaging' => ['Single Pack', 'Multi-Pack','Loose', 'Packed', 'Resealable Bag','Bottle', 'Carton', 'Plastic Tub','Box', 'Bag'],
-                'Packaging Size' => ['Small', 'Medium', 'Large','500ml', '1L', '5L'],
-                'Expiry Date' => [ '2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30','2030-12-31',],
+                'Weight' => ['50g', '100g', '150g', '250g', '500g', '1kg', '1.5kg', '2kg', '3kg', '4kg', '5kg'],
+                'Type' => ['Fresh', 'Frozen', 'Dried', 'Smoked', 'Marinated', 'Liquid', 'Powder', 'Spray', 'Wipes'],
+                'Flavor' => ['Spicy', 'Sweet', 'Salty', 'Cheesy', 'Honey', 'Chocolate', 'Vanilla', 'Fruits'],
+                'Packaging' => ['Single Pack', 'Multi-Pack', 'Loose', 'Packed', 'Resealable Bag', 'Bottle', 'Carton', 'Plastic Tub', 'Box', 'Bag'],
+                'Packaging Size' => ['Small', 'Medium', 'Large', '500ml', '1L', '5L'],
+                'Expiry Date' => ['2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30', '2030-12-31',],
             ],
             'bakery' => [
                 'Flavor' => ['Vanilla', 'Chocolate', 'Strawberry'],
                 'Weight' => ['500g', '1kg', '2kg'],
                 'Packaging Type' => ['Box', 'Bag', 'Plastic'],
-                'Expiry Date' => [ '2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30','2030-12-31',],
+                'Expiry Date' => ['2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30', '2030-12-31',],
             ],
             'medicine' => [
                 'Dosage' => ['50mg', '100mg', '200mg'],
                 'Manufacturer' => ['Company A', 'Company B'],
                 'Type' => ['Tablet', 'Capsule', 'Syrup', 'Injection'],
-                'Expiry Date' => [ '2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30','2030-12-31',],
+                'Expiry Date' => ['2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30', '2030-12-31',],
             ],
             'makeup' => [
                 'Shade' => ['Light', 'Medium', 'Dark', 'Fair', 'Tan', 'Deep'],
@@ -59,7 +59,7 @@ class ProductSeeder extends Seeder
                 'Skin Type' => ['Oily', 'Dry', 'Combination', 'Sensitive', 'Normal'],
                 'Product Type' => ['Foundation', 'Concealer', 'Lipstick', 'Mascara', 'Eyeliner', 'Blush', 'Highlighter'],
                 'Packaging' => ['Tube', 'Bottle', 'Compact', 'Palette'],
-                'Expiry Date' => [ '2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30','2030-12-31',],
+                'Expiry Date' => ['2025-12-31', '2026-06-30', '2027-01-01', '2027-12-31', '2028-06-30', '2028-12-31', '2029-01-15', '2029-06-30', '2029-12-31', '2030-06-30', '2030-12-31',],
             ],
             'clothing' => [
                 'Color' => [
@@ -159,8 +159,8 @@ class ProductSeeder extends Seeder
         // grocery
         $products = [];
         $product_names = [
-            "Fruits" => ["Fresh Apples", "Organic Bananas", "Mangoes", "Strawberries", "Blueberries","Pineapple"],
-            "Dairy" => ["Cheddar Cheese", "Greek Yogurt","Whole Milk", "Butter", "Cream Cheese", "Cottage Cheese"],
+            "Fruits" => ["Fresh Apples", "Organic Bananas", "Mangoes", "Strawberries", "Blueberries", "Pineapple"],
+            "Dairy" => ["Cheddar Cheese", "Greek Yogurt", "Whole Milk", "Butter", "Cream Cheese", "Cottage Cheese"],
             "Beverages" => ["Grape Juice", "Lemonade", "Green Tea"],
             "Snacks" => ["Granola Bars", "Whole Grain Crackers", "Tortilla Chips"],
             "Meat & Seafood" => ["Frozen Chicken Breasts", "Frozen Shrimp"],
@@ -206,7 +206,7 @@ class ProductSeeder extends Seeder
             $products[] = Product::create([
                 'store_id' => $store_info->id,
                 'category_id' => null,
-                'brand_id' =>  $brand_id,
+                'brand_id' => $brand_id,
                 'unit_id' => 1,
                 'type' => 'grocery',
                 'behaviour' => Behaviour::CONSUMABLE->value, // valid behaviour
@@ -228,7 +228,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 10),
                 'order_count' => rand(0, 100),
                 'views' => rand(0, 1000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and get fresh groceries delivered to your door.",
                 'meta_keywords' => "grocery, {$product_name}, fresh, $i",
@@ -317,7 +318,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 10),
                 'order_count' => rand(0, 100),
                 'views' => rand(0, 1000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and get freshly baked goods delivered to your door.",
                 'meta_keywords' => "bakery, {$product_name}, fresh, $i",
@@ -398,7 +400,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 5),  // Limiting quantity for medicine purchases
                 'order_count' => rand(0, 100),
                 'views' => rand(0, 1000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and get quality medicines delivered safely to your home.",
                 'meta_keywords' => "medicine, {$product_name}, healthcare, pharmacy, $i",
@@ -454,7 +457,7 @@ class ProductSeeder extends Seeder
             $products[] = Product::create([
                 'store_id' => $store_info->id,
                 'category_id' => null,
-                'brand_id' =>  $brand_id,
+                'brand_id' => $brand_id,
                 'unit_id' => 1,
                 'type' => 'makeup',
                 'behaviour' => Behaviour::PHYSICAL->value, // valid behaviour
@@ -476,7 +479,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 5),  // Limited purchase for makeup items
                 'order_count' => rand(0, 100),
                 'views' => rand(0, 1000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and get premium beauty products delivered to your doorstep.",
                 'meta_keywords' => "makeup, {$product_name}, beauty, cosmetics, $i",
@@ -534,7 +538,7 @@ class ProductSeeder extends Seeder
             $products[] = Product::create([
                 'store_id' => $store_info->id,
                 'category_id' => null,
-                'brand_id' =>  $brand_id,
+                'brand_id' => $brand_id,
                 'unit_id' => 1,
                 'type' => 'bags',
                 'behaviour' => Behaviour::PHYSICAL->value, // valid behaviour
@@ -556,7 +560,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 5),  // Bags are usually purchased in limited quantities
                 'order_count' => rand(0, 100),
                 'views' => rand(0, 1000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and get high-quality bags delivered to your doorstep.",
                 'meta_keywords' => "bags, {$product_name}, travel, fashion, accessories, $i",
@@ -570,8 +575,8 @@ class ProductSeeder extends Seeder
         // clothing
         $products = [];
         $product_names = [
-            'Men' => [ "Classic White T-Shirt",  "Slim Fit Jeans",  "Cotton Polo Shirt",  "Hooded Sweatshirt","Denim Jacket"],
-            'Women' => [ "Casual Chino Pants", "Athletic Joggers",  "Formal Dress Shirt","Wool Blend Coat", "Basic Crew Neck Sweater"],
+            'Men' => ["Classic White T-Shirt", "Slim Fit Jeans", "Cotton Polo Shirt", "Hooded Sweatshirt", "Denim Jacket"],
+            'Women' => ["Casual Chino Pants", "Athletic Joggers", "Formal Dress Shirt", "Wool Blend Coat", "Basic Crew Neck Sweater"],
         ];
         $flattened_product_names = array_merge(...array_values($product_names)); // Flatten array
 
@@ -632,7 +637,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 5),
                 'order_count' => rand(0, 500),
                 'views' => rand(0, 5000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and update your wardrobe with the latest fashion trends.",
                 'meta_keywords' => "clothing, fashion, {$product_name}, apparel, $i",
@@ -713,7 +719,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 3),
                 'order_count' => rand(0, 500),
                 'views' => rand(0, 5000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and upgrade your home with premium furniture.",
                 'meta_keywords' => "furniture, home decor, {$product_name}, interior design, $i",
@@ -723,7 +730,7 @@ class ProductSeeder extends Seeder
             ]);
         }
 
-       // books
+        // books
         $products = [];
         $product_names = [
             'Fiction' => ["To Kill a Mockingbird", "Pride and Prejudice"],
@@ -791,7 +798,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 10),
                 'order_count' => rand(0, 1000),
                 'views' => rand(0, 5000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and enjoy the world of literature delivered to your doorstep.",
                 'meta_keywords' => "book, {$product_name}, classic, literature, $i",
@@ -867,7 +875,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 10),
                 'order_count' => rand(0, 1000),
                 'views' => rand(0, 5000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and enjoy the latest tech products delivered to your doorstep.",
                 'meta_keywords' => "gadgets, {$product_name}, tech, $i",
@@ -945,7 +954,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 10),
                 'order_count' => rand(0, 100),
                 'views' => rand(0, 1000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and get the best products for your pets delivered to your door.",
                 'meta_keywords' => "pet supplies, {$product_name}, pets, $i",
@@ -967,7 +977,7 @@ class ProductSeeder extends Seeder
         $flattened_product_names = array_merge(...array_values($product_names)); // Flatten array
 
         $brands = [
-            'FISH' =>['SeaPak', 'Wild Planet', 'Gorton’s'],
+            'FISH' => ['SeaPak', 'Wild Planet', 'Gorton’s'],
         ];
         $brand_ids = [];
 
@@ -1024,7 +1034,8 @@ class ProductSeeder extends Seeder
                 'max_cart_qty' => rand(1, 10),
                 'order_count' => rand(0, 100),
                 'views' => rand(0, 1000),
-                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+//                'status' => StatusType::cases()[array_rand(StatusType::cases())]->value,
+                'status' => 'approved',
                 'meta_title' => "Buy {$product_name} online",
                 'meta_description' => "Order {$product_name} online and get the freshest fish and seafood delivered to your door.",
                 'meta_keywords' => "fish, seafood, {$product_name}, fresh, $i",
@@ -1041,6 +1052,7 @@ class ProductSeeder extends Seeder
             $this->createProductVariants($product, $units, $attributes_sets, 3);
         }
     }
+
     private function createProductVariants(Product $product, $units, $attributes_sets, $numberOfVariants = 3): void
     {
         for ($j = 1; $j <= $numberOfVariants; $j++) {
