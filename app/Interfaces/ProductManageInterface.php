@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface ProductManageInterface
 {
-    public function getPaginatedProduct(int|string $store_id, int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters);
+    public function getPaginatedProduct(int|string $store_id, int|string $limit, int $page, string $language,string $type, string $search, string $sortField, string $sort, array $filters);
 
     public function store(array $data);
 
