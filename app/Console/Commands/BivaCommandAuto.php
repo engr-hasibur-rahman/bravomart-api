@@ -167,6 +167,14 @@ class BivaCommandAuto extends Command
         $setting_options = DB::table('setting_options')->get();
         $pages = DB::table('pages')->get();
 
+        $product_category = DB::table('product_category')->get();
+        $product_attributes = DB::table('product_attributes')->get();
+        $product_attribute_values = DB::table('product_attribute_values')->get();
+        $product_authors = DB::table('product_authors')->get();
+        $product_brand = DB::table('product_brand')->get();
+        $product_tags = DB::table('product_tags')->get();
+        $products = DB::table('products')->get();
+        $product_variants = DB::table('product_variants')->get();
 
         info('Dropping all tables started...');
             $this->call('migrate:fresh');
@@ -220,6 +228,32 @@ class BivaCommandAuto extends Command
             foreach ($pages as $page) {
                 DB::table('pages')->insert((array) $page);
             }
+            foreach ($product_category as $product_cat) {
+                DB::table('product_category')->insert((array) $product_cat);
+            }
+
+        foreach ($product_attributes as $product_attribute) {
+            DB::table('product_attributes')->insert((array) $product_attribute);
+        }
+        foreach ($product_attribute_values as $product_attribute_value) {
+            DB::table('product_attribute_values')->insert((array) $product_attribute_value);
+        }
+        foreach ($product_authors as $product_author) {
+            DB::table('product_authors')->insert((array) $product_author);
+        }
+        foreach ($product_brand as $product_br) {
+            DB::table('product_brand')->insert((array) $product_br);
+        }
+        foreach ($product_tags as $product_tag) {
+            DB::table('product_tags')->insert((array) $product_tag);
+        }
+        foreach ($products as $product) {
+            DB::table('products')->insert((array) $product);
+        }
+        foreach ($product_variants as $product_variant) {
+            DB::table('product_variants')->insert((array) $product_variant);
+        }
+
 
             info('Database seeding started...');
             $this->seedDemoData();
