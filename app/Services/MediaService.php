@@ -83,7 +83,6 @@ class MediaService
 
 
         $all_image_files = [];
-
         foreach ($all_images as $image){
             // Generate the public URL directly
             $image_url = asset("storage/{$image->path}");
@@ -94,6 +93,8 @@ class MediaService
             if ($grid_image_url) {
                 $image_url = $grid_image_url;
             }
+
+
 
             $all_image_files[] = [
                 'image_id' => $image->id,
