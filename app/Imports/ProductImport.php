@@ -95,12 +95,12 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
     {
         return [
             "store_id" => 'required|exists:stores,id',
-            "category_id" => "required",
-            "brand_id" => "required",
-            "unit_id" => "required",
+            "category_id" => "nullable",
+            "brand_id" => "nullable",
+            "unit_id" => "nullable",
             "type" => "required|in:" . implode(',', array_column(StoreType::cases(), 'value')),
             "name" => "required",
-            "behaviour" => "required|in:" . implode(',', array_column(Behaviour::cases(), 'value')),
+            "behaviour" => "nullable|in:" . implode(',', array_column(Behaviour::cases(), 'value')),
             "status" => "required|in:" . implode(',', array_column(StatusType::cases(), 'value')),
         ];
     }
@@ -112,11 +112,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation, Wit
     {
         return [
             "store_id.required" => "The shop ID is required.",
-            "category_id.required" => "The category ID is required.",
-            "brand_id.required" => "The brand ID is required.",
-            "unit_id.required" => "The unit ID is required.",
             "type.required" => "The type is required.",
-            "behaviour.required" => "The behaviour is required.",
             "status.required" => "The status is required.",
         ];
     }
