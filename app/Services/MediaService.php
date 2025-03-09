@@ -78,7 +78,7 @@ class MediaService
         $all_images = $image_query
             ->orderBy('id', 'ASC')
             ->skip($offset)
-            ->take(20)
+            ->take(50)
             ->get();
 
 
