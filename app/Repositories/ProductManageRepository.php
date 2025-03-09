@@ -240,23 +240,39 @@ class ProductManageRepository implements ProductManageInterface
 
             // Update or create variants
             if (!empty($data['variants']) && is_array($data['variants'])) {
-                // Prepare variants and their attributes
-                $variants = array_map(function ($variant) use ($product) {
-                    // Generate the variant slug and handle attributes
+                $variantIds = []; // Track updated & newly created variant IDs
+
+                foreach ($data['variants'] as $variant) {
+                    // Convert attributes to JSON if provided
                     $variant['attributes'] = !empty($variant['attributes']) ? json_encode($variant['attributes']) : null;
                     $variant['variant_slug'] = $variant['variant']; // Assign the generated slug
                     $variant['product_id'] = $product->id;
-                    return $variant;
-                }, $data['variants']);
 
-                // Delete all existing variants for the given product
-                ProductVariant::where('product_id', $product->id)->forceDelete();
-
-                // Insert new variants
-                foreach ($variants as $variant) {
-                    // Create new variant
-                    ProductVariant::create($variant);
+                    if (!empty($variant['id'])) {
+                        // Check if the variant exists
+                        $existingVariant = ProductVariant::where('id', $variant['id'])->where('product_id', $product->id)->first();
+                        if ($existingVariant) {
+                            // Generate SKU if null
+                            if (empty($variant['sku'])) {
+                                $variant['sku'] = generateUniqueSku();
+                            }
+                            $existingVariant->update($variant);
+                            $variantIds[] = $existingVariant->id;
+                        }
+                    } else {
+                        // Generate SKU if null
+                        if (empty($variant['sku'])) {
+                            $variant['sku'] = generateUniqueSku();
+                        }
+                        $newVariant = ProductVariant::create($variant);
+                        $variantIds[] = $newVariant->id;
+                    }
                 }
+
+                // Delete variants not present in the request
+                ProductVariant::where('product_id', $product->id)
+                    ->whereNotIn('id', $variantIds)
+                    ->forceDelete();
             }
 
             // Update product tags
