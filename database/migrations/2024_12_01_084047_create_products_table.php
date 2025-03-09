@@ -39,7 +39,7 @@ return new class extends Migration
             $table->integer('max_cart_qty')->nullable();
             $table->integer('order_count')->nullable();
             $table->integer('views')->default(0);
-            $table->enum('status', array_map(fn($enum) => $enum->value, StatusType::cases()))->nullable(); //pending, approved, inactive, suspended
+            $table->enum('status', array_map(fn($enum) => $enum->value, StatusType::cases()))->default('pending'); //pending, approved, inactive, suspended
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->text('meta_keywords')->nullable();
