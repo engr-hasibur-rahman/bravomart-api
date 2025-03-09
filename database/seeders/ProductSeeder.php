@@ -580,7 +580,7 @@ class ProductSeeder extends Seeder
         ];
         $flattened_product_names = array_merge(...array_values($product_names)); // Flatten array
 
-        // Create brands for GROCERY
+        // Create brands for
         $brands = [
             'CLOTHING' => ['Levi’s', 'Nike', 'H&M'],
         ];
@@ -812,8 +812,8 @@ class ProductSeeder extends Seeder
         // gadgets
         $products = [];
         $product_names = [
-            'Phones' => ["Smartphone Pro Max", "Wireless Charger"],
-            'Tablets' => ["Smartwatch Series 5", "Gaming Mouse"],
+            'Phones' => ["iPhone 16 Pro Max", "Samsung Galaxy S25", "Wireless Charger"],
+            'Tablets' => ["iPad Air M2", "Galaxy Tab S9"],
             'Headphones' => ["Wireless Earbuds", "Noise Cancelling Headphones"],
             'Smart Watches' => ["Smartwatch Series 5", "Bluetooth Speaker"],
             'Laptops' => ["Laptop Sleeve", "Gaming Mouse"],
@@ -968,8 +968,8 @@ class ProductSeeder extends Seeder
         // fish
         $products = [];
         $product_names = [
-            'Freshwater' => ["Fresh Salmon Fillets", "Frozen Trout"],
-            'Saltwater' => ["Premium Tuna Steaks", "Mahi Mahi Filets"],
+            'Freshwater' => ["Fresh Salmon Fillets", "Frozen Trout", "Frozen Shrimp"],
+            'Saltwater' => ["Premium Tuna", "Mahi Mahi Fish"],
             'Aquarium Plants' => ["Caviar", "Fish Oil Supplement"],
             'Fish Food' => ["Canned Sardines", "Dried Anchovies"],
             'Water Care' => ["Smoked Salmon", "Frozen Shrimp"],
