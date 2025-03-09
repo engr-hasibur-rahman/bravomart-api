@@ -32,11 +32,14 @@ class ProductManageRepository implements ProductManageInterface
     }
 
     // Fetch all products with parameters
-    public function getPaginatedProduct(int|string $store_id, int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedProduct(int|string $store_id, int|string $limit, int $page, string $language, string $type, string $search, string $sortField, string $sort, array $filters)
     {
         $product = Product::query();
         if ($store_id) {
             $product->where('store_id', $store_id);
+        }
+        if ($type) {
+            $product->where('type', $type);
         }
         $product->leftJoin('translations as name_translations', function ($join) use ($language) {
             $join->on('products.id', '=', 'name_translations.translatable_id')

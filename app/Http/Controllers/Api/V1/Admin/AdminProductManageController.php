@@ -38,6 +38,7 @@ class AdminProductManageController extends Controller
         $limit = $request->per_page ?? 10;
         $page = $request->page ?? 1;
         $locale = $request->language ?? 'en';
+        $type = $request->type ?? '';
         $search = $request->search ?? '';
         $sortField = $request->sortField ?? 'id';
         $sortOrder = $request->sort ?? 'asc';
@@ -48,6 +49,7 @@ class AdminProductManageController extends Controller
             $limit,
             $page,
             $locale,
+            $type,
             $search,
             $sortField,
             $sortOrder,
@@ -67,6 +69,7 @@ class AdminProductManageController extends Controller
         $request['type'] = Store::where('id', $request['store_id'])->first()->store_type;
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $request['warranty'] = json_encode($request['warranty']);
+        $request['status'] = 'approved';
         $product = $this->productRepo->store($request->all());
         $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
