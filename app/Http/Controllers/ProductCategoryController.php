@@ -46,19 +46,21 @@ class ProductCategoryController extends Controller
         }
 
         // Apply sorting and pagination
-        if ($request->pagination == "false") {
-            $categories = $categories->whereNull('parent_id')->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
-                ->get();
+        $sortField = $request->sortField ?? 'display_order';
+        $sortOrder = $request->sort ?? 'asc';
 
+        if ($request->pagination == "false") {
+            $categories = $categories->whereNull('parent_id')
+                ->orderBy($sortField, $sortOrder)
+                ->get();
         } else {
-            $categories = $categories->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+            $categories = $categories
+                ->orderBy($sortField, $sortOrder)
                 ->paginate($per_page);
         }
         // Return a collection of ProductBrandResource (including the image)
         return ProductCategoryResource::collection($categories);
-        //return $categories;
     }
-
 
     public function show(Request $request)
     {
