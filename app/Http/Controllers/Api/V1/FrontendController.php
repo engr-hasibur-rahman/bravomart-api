@@ -680,7 +680,7 @@ class FrontendController extends Controller
             } else {
                 // For guests, you can track by IP address
                 $ipAddress = $request->ip();
-                $viewExists = ProductView::where('blog_id', $product->id)
+                $viewExists = ProductView::where('product_id', $product->id)
                     ->where('ip_address', $ipAddress)
                     ->exists();
                 if (!$viewExists) {
