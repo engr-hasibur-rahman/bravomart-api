@@ -114,8 +114,10 @@ class BannerManageRepository implements BannerManageInterface
             $banner = Banner::findOrFail($data['id']);
             $data = Arr::except($data, ['translations']);
             $existing_banner = Banner::where('type', $data['type'])->get();
-            if (count($existing_banner) > 0) {
-                Banner::where('type', $data['type'])->update(['status' => 0]);
+            if ($existing_banner->count() > 0) {
+                Banner::where('type', $data['type'])
+                    ->where('id', '!=', $data['id']) // Exclude the current banner
+                    ->update(['status' => 0]);
             }
             $banner->update([
                 'user_id' => auth('api')->id(),
