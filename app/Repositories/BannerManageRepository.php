@@ -65,6 +65,10 @@ class BannerManageRepository implements BannerManageInterface
     {
         try {
             $data = Arr::except($data, ['translations']);
+            $existing_banner = Banner::where('type', $data['type'])->get();
+            if (count($existing_banner) > 0) {
+                Banner::where('type', $data['type'])->update(['status' => 0]);
+            }
             $banner = Banner::create([
                 'user_id' => auth('api')->id(),
                 'store_id' => $data['store_id'] ?? null,
@@ -109,7 +113,10 @@ class BannerManageRepository implements BannerManageInterface
         try {
             $banner = Banner::findOrFail($data['id']);
             $data = Arr::except($data, ['translations']);
-
+            $existing_banner = Banner::where('type', $data['type'])->get();
+            if (count($existing_banner) > 0) {
+                Banner::where('type', $data['type'])->update(['status' => 0]);
+            }
             $banner->update([
                 'user_id' => auth('api')->id(),
                 'store_id' => $data['store_id'] ?? null,
@@ -139,15 +146,21 @@ class BannerManageRepository implements BannerManageInterface
     public function changeStatus(int $id)
     {
         $banner = Banner::find($id);
+
         if ($banner) {
-            $banner->update([
-                'status' => !$banner->status
-            ]);
+            // First, deactivate other banners of the same type
+            Banner::where('type', $banner->type)
+                ->where('status', 1) // Only deactivate active banners
+                ->where('id', '!=', $id) // Exclude the current banner
+                ->update(['status' => 0]);
+
+            // Now, toggle the status of the selected banner
+            $banner->update(['status' => !$banner->status]);
+
             return true;
-        } else {
-            return false;
         }
 
+        return false;
     }
 
     public function delete(int|string $id)
