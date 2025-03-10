@@ -27,21 +27,13 @@ class SellerAndDeliverymanWithdrawController extends Controller
             })
             ->take(20)
             ->get();
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.data_found'),
+            'data' => WithdrawGatewayPublicListResource::collection($gateways),
+        ]);
 
-        if ($gateways->count() > 0) {
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => WithdrawGatewayPublicListResource::collection($gateways),
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => __('messages.data_not_found'),
-            ]);
-        }
     }
 
     public function withdrawAllList(Request $request)

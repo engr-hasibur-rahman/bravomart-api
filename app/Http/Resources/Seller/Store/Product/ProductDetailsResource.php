@@ -33,7 +33,7 @@ class ProductDetailsResource extends JsonResource
             "class" => $this->class,
             "return_in_days" => $this->return_in_days,
             "return_text" => $this->return_text,
-            "allow_change_in_mind" => $this->allow_change_in_mind,
+            "allow_change_in_mind" => (int)$this->allow_change_in_mind,
             "cash_on_delivery" => $this->cash_on_delivery,
             "delivery_time_min" => $this->delivery_time_min,
             "delivery_time_max" => $this->delivery_time_max,
