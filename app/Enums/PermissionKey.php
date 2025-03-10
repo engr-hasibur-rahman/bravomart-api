@@ -274,9 +274,9 @@ enum PermissionKey: string
     case SELLER_STORE_FEEDBACK_CONTROL_QUESTIONS = '/seller/store/feedback-control/questions';
 
     //----------- Promotional control ----------
-    case SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS = '/seller/store/promotional/flash/active-deals';
-    case SELLER_STORE_PROMOTIONAL_FLASH_SALE_MY_DEALS = '/seller/store/promotional/flash/my-deals';
-    case SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS = '/seller/store/promotional/flash/join-deals';
+    case SELLER_STORE_PROMOTIONAL_FLASH_SALE_ACTIVE_DEALS = '/seller/store/promotional/flash-deals/active-deals';
+    case SELLER_STORE_PROMOTIONAL_FLASH_SALE_MY_DEALS = '/seller/store/promotional/flash-deals/my-deals';
+    case SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS = '/seller/store/promotional/flash-deals/join-deals';
     case SELLER_STORE_PROMOTIONAL_BANNER_MANAGE = '/seller/store/promotional/banner';
 
     //=============== Seller Order Manger ====================
