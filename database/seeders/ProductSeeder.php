@@ -199,6 +199,8 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
+            $slug = substr($slug, 0, 255);
+
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
             $products[] = Product::create([
@@ -283,7 +285,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
-
+            $slug = substr($slug, 0, 255);
             // Randomly select a brand_id from the brand_ids array
             if (!empty($brand_ids)) {
                 $brand_id = $brand_ids[array_rand($brand_ids)];
@@ -370,7 +372,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
-
+            $slug = substr($slug, 0, 255);
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
 
@@ -449,6 +451,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
+            $slug = substr($slug, 0, 255);
 
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
@@ -530,6 +533,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
+            $slug = substr($slug, 0, 255);
 
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
@@ -607,6 +611,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
+            $slug = substr($slug, 0, 255);
 
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
@@ -689,6 +694,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
+            $slug = substr($slug, 0, 255);
 
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
@@ -768,6 +774,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
+            $slug = substr($slug, 0, 255);
 
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
@@ -845,6 +852,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
+            $slug = substr($slug, 0, 255);
 
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
@@ -924,6 +932,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
+            $slug = substr($slug, 0, 255);
 
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
@@ -1004,6 +1013,7 @@ class ProductSeeder extends Seeder
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
+            $slug = substr($slug, 0, 255);
 
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
