@@ -63,6 +63,7 @@ use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
+use App\Models\ProductView;
 use App\Models\Slider;
 use App\Models\Store;
 use App\Models\StoreArea;
@@ -640,7 +641,7 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    public function productDetails($product_slug)
+    public function productDetails(Request $request,$product_slug)
     {
         $product = Product::with([
             'store' => function ($query) {
@@ -659,6 +660,40 @@ class FrontendController extends Controller
         ])
             ->where('slug', $product_slug)
             ->first();
+        if ($product){
+            // Track unique user views
+            if (auth('api_customer')->check()) { // If user is logged in
+                $user = auth('api_customer')->user();
+                // Check if user has already viewed this blog
+                $viewExists = ProductView::where('product_id', $product->id)
+                    ->where('user_id', $user->id)
+                    ->exists();
+                if (!$viewExists) {
+                    // Increment view count for this blog
+                    $product->increment('views');
+                    // Store the view record in the `blog_views` table
+                    ProductView::create([
+                        'product_id' => $product->id,
+                        'user_id' => $user->id,
+                    ]);
+                }
+            } else {
+                // For guests, you can track by IP address
+                $ipAddress = $request->ip();
+                $viewExists = ProductView::where('blog_id', $product->id)
+                    ->where('ip_address', $ipAddress)
+                    ->exists();
+                if (!$viewExists) {
+                    // Increment view count for this blog
+                    $product->increment('views');
+                    // Store the view record with the IP address
+                    ProductView::create([
+                        'product_id' => $product->id,
+                        'ip_address' => $ipAddress,
+                    ]);
+                }
+            }
+        }
         return response()->json([
             'messages' => __('messages.data_found'),
             'data' => new ProductDetailsPublicResource($product),
