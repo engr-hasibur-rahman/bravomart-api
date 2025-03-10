@@ -241,7 +241,7 @@ class FrontendController extends Controller
                             ->orWhere('attributes', 'like', "%{$query}%");
                     });
             })
-            ->with(['variants:id,product_id,sku,price,stock_quantity,special_price'])
+            ->with(['variants:id,product_id,sku,price,stock_quantity,special_price','store'])
 //            ->limit($maxSuggestions)
             ->get();
         return response()->json([
