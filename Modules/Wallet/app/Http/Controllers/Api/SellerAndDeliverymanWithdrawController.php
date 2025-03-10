@@ -111,14 +111,14 @@ class SellerAndDeliverymanWithdrawController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'messages.data_found',
+                'message' => __('messages.data_found'),
                 'data' => new WithdrawDetailsResource($withdraw)
             ]);
         } else {
             return response()->json([
                 'status' => false,
                 'status_code' => 404,
-                'message' => 'messages.data_not_found',
+                'message' => __('messages.data_not_found'),
                 'data' => []
             ]);
         }
