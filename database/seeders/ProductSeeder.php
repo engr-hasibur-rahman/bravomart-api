@@ -193,16 +193,14 @@ class ProductSeeder extends Seeder
             ]);
             $brand_ids[] = $brand->id;
         }
-
         $store_info = Store::select('id')->where('store_type', StoreType::GROCERY->value)->first();
-        for ($i = 0; $i < 30; $i++) {
+
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
-
             // Randomly select a brand_id from the brand_ids array
             $brand_id = $brand_ids[array_rand($brand_ids)];
-
             $products[] = Product::create([
                 'store_id' => $store_info->id,
                 'category_id' => null,
@@ -279,8 +277,9 @@ class ProductSeeder extends Seeder
             }
         }
 
-        $store_info = Store::select('id')->where('store_type', StoreType::GROCERY->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        $store_info = Store::select('id')->where('store_type', StoreType::BAKERY->value)->first();
+
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
@@ -367,7 +366,7 @@ class ProductSeeder extends Seeder
         }
 
         $store_info = Store::select('id')->where('store_type', StoreType::MEDICINE->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
@@ -446,7 +445,7 @@ class ProductSeeder extends Seeder
         }
 
         $store_info = Store::select('id')->where('store_type', StoreType::MAKEUP->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
@@ -527,7 +526,7 @@ class ProductSeeder extends Seeder
 
 
         $store_info = Store::select('id')->where('store_type', StoreType::BAGS->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
@@ -604,7 +603,7 @@ class ProductSeeder extends Seeder
         }
 
         $store_info = Store::select('id')->where('store_type', StoreType::CLOTHING->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
@@ -686,7 +685,7 @@ class ProductSeeder extends Seeder
         }
 
         $store_info = Store::select('id')->where('store_type', StoreType::FURNITURE->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
@@ -765,7 +764,7 @@ class ProductSeeder extends Seeder
         }
 
         $store_info = Store::select('id')->where('store_type', StoreType::BOOKS->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
@@ -842,7 +841,7 @@ class ProductSeeder extends Seeder
         }
 
         $store_info = Store::select('id')->where('store_type', StoreType::GADGET->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
@@ -921,7 +920,7 @@ class ProductSeeder extends Seeder
         }
 
         $store_info = Store::select('id')->where('store_type', StoreType::ANIMALS_PET->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;
@@ -1001,7 +1000,7 @@ class ProductSeeder extends Seeder
 
 
         $store_info = Store::select('id')->where('store_type', StoreType::FISH->value)->first();
-        for ($i = 0; $i < count($product_names); $i++) {
+        for ($i = 0; $i < count($flattened_product_names); $i++) {
             $product_name = $flattened_product_names[$i % count($flattened_product_names)];
             $unique_suffix = $i + 1; // Ensuring uniqueness in slug
             $slug = strtolower(str_replace(' ', '-', $product_name)) . '-' . $unique_suffix;

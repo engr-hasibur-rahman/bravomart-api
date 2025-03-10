@@ -94,8 +94,6 @@ class MediaService
                 $image_url = $grid_image_url;
             }
 
-
-
             $all_image_files[] = [
                 'image_id' => $image->id,
                 'name' => $image->name,
