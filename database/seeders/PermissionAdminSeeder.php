@@ -34,7 +34,7 @@ class PermissionAdminSeeder extends Seeder
                 // Orders & Reviews
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Orders & Reviews',
+                    'PermissionTitle' => 'Orders & Refunds',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
@@ -401,62 +401,62 @@ class PermissionAdminSeeder extends Seeder
                     ],
                     'submenu' => [
                         [
-                        'PermissionName' => '',
-                        'PermissionTitle' => 'Store',
-                        'activity_scope' => 'system_level',
-                        'icon' => 'Store',
-                        'translations' => [
-                            'en' => 'Blogs',
-                            'ar' => ' الموظفين'
-                        ],
-                        'submenu' => [
-                            [
-                                'PermissionName' => PermissionKey::ADMIN_STORE_LIST->value,
-                                'PermissionTitle' => 'Store List',
-                                'activity_scope' => 'system_level',
-                                'icon' => 'Store',
-                                'options' => ['view'],
-                                'translations' => [
-                                    'en' => 'Store List',
-                                    'ar' => 'قائمة المتاجر'
-                                ]
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Store',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Store',
+                            'translations' => [
+                                'en' => 'Blogs',
+                                'ar' => ' الموظفين'
                             ],
-                            [
-                                'PermissionName' => PermissionKey::ADMIN_STORE_ADD->value,
-                                'PermissionTitle' => 'Store Add',
-                                'activity_scope' => 'system_level',
-                                'icon' => '',
-                                'options' => ['view', 'insert', 'update', 'delete'],
-                                'translations' => [
-                                    'en' => 'Store Add',
-                                    'ar' => 'إضافة متجر'
-                                ]
-                            ],
-                            [
-                                'PermissionName' => PermissionKey::ADMIN_STORE_APPROVAL->value,
-                                'PermissionTitle' => 'Store Approval Request',
-                                'activity_scope' => 'system_level',
-                                'icon' => '',
-                                'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                'translations' => [
-                                    'en' => 'Store Approval Request',
-                                    'ar' => 'في انتظار الموافقة/الرفض'
-                                ]
-                            ],
-                            [
-                                'PermissionName' => PermissionKey::ADMIN_STORE_RECOMMENDED->value,
-                                'PermissionTitle' => 'Recommended Store',
-                                'activity_scope' => 'system_level',
-                                'icon' => '',
-                                'options' => ['view', 'update'],
-                                'translations' => [
-                                    'en' => 'Recommended Store',
-                                    'ar' => 'المتجر الموصى به'
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_STORE_LIST->value,
+                                    'PermissionTitle' => 'Store List',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => 'Store',
+                                    'options' => ['view'],
+                                    'translations' => [
+                                        'en' => 'Store List',
+                                        'ar' => 'قائمة المتاجر'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_STORE_ADD->value,
+                                    'PermissionTitle' => 'Store Add',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'Store Add',
+                                        'ar' => 'إضافة متجر'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_STORE_APPROVAL->value,
+                                    'PermissionTitle' => 'Store Approval Request',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Store Approval Request',
+                                        'ar' => 'في انتظار الموافقة/الرفض'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_STORE_RECOMMENDED->value,
+                                    'PermissionTitle' => 'Recommended Store',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Recommended Store',
+                                        'ar' => 'المتجر الموصى به'
+                                    ]
                                 ]
                             ]
                         ]
                     ]
-                   ]
                 ],
 
 
@@ -485,9 +485,6 @@ class PermissionAdminSeeder extends Seeder
                         ],
                     ]
                 ], //  slider management end
-
-
-
 
 
                 // Promotional control
@@ -548,27 +545,17 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_BANNER_LIST->value,
+                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_BANNER_MANAGE->value,
                                     'PermissionTitle' => 'List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
-                                    'options' => ['view', 'update', 'delete', 'others'],
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
                                         'en' => 'List',
                                         'ar' => 'قائمة'
                                     ]
                                 ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_BANNER_MANAGE->value,
-                                    'PermissionTitle' => 'Add Banner',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'delete', 'update', 'others'],
-                                    'translations' => [
-                                        'en' => 'Add Banner',
-                                        'ar' => 'إضافة لافتة'
-                                    ]
-                                ]
+
                             ]
                         ]
                     ]
@@ -791,52 +778,52 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'إدارة العملاء'
                     ],
                     'submenu' => [
-                      [
-                          'PermissionName' => '',
-                          'PermissionTitle' => 'All Customers',
-                          'activity_scope' => 'system_level',
-                          'icon' => '',
-                          'options' => ['view'],
-                          'translations' => [
-                              'en' => 'All Customers',
-                              'ar' => 'إدارة العملاء'
-                          ],
-                          'submenu' => [
-                              [
-                                  'PermissionName' => PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value,
-                                  'PermissionTitle' => 'Customers',
-                                  'activity_scope' => 'system_level',
-                                  'icon' => '',
-                                  'options' => ['view', 'insert', 'update', 'delete'],
-                                  'translations' => [
-                                      'en' => 'Customers',
-                                      'ar' => 'عملاء'
-                                  ]
-                              ],
-                              [
-                                  'PermissionName' => PermissionKey::ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST->value,
-                                  'PermissionTitle' => 'Subscriber List',
-                                  'activity_scope' => 'system_level',
-                                  'icon' => '',
-                                  'options' => ['view', 'delete', 'others'],
-                                  'translations' => [
-                                      'en' => 'Subscriber List',
-                                      'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
-                                  ]
-                              ],
-                              [
-                                  'PermissionName' => PermissionKey::ADMIN_CUSTOMER_CONTACT_MESSAGES->value,
-                                  'PermissionTitle' => 'Contact Messages',
-                                  'activity_scope' => 'system_level',
-                                  'icon' => '',
-                                  'options' => ['view', 'delete', 'others'],
-                                  'translations' => [
-                                      'en' => 'Contact Messages',
-                                      'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
-                                  ]
-                              ]
-                          ]
-                      ]
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'All Customers',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'All Customers',
+                                'ar' => 'إدارة العملاء'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value,
+                                    'PermissionTitle' => 'Customers',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'Customers',
+                                        'ar' => 'عملاء'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST->value,
+                                    'PermissionTitle' => 'Subscriber List',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Subscriber List',
+                                        'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_CUSTOMER_CONTACT_MESSAGES->value,
+                                    'PermissionTitle' => 'Contact Messages',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Contact Messages',
+                                        'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
+                                    ]
+                                ]
+                            ]
+                        ]
                     ]
                 ],
 
@@ -989,71 +976,71 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'النشاط المالي'
                     ],
                     'submenu' => [
-                       [
-                           'PermissionName' => '',
-                           'PermissionTitle' => 'Financial',
-                           'activity_scope' => 'system_level',
-                           'icon' => 'BadgeDollarSign',
-                           'translations' => [
-                               'en' => 'Financial',
-                               'ar' => ' الموظفين'
-                           ],
-                           'submenu' => [
-                               [
-                                   'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_SETTINGS->value,
-                                   'PermissionTitle' => 'Withdrawal Settings',
-                                   'activity_scope' => 'system_level',
-                                   'icon' => '',
-                                   'translations' => [
-                                       'en' => 'Withdrawal Settings',
-                                       'ar' => 'طريقة السحب'
-                                   ]
-                               ],
-                               [
-                                   'PermissionName' => PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value,
-                                   'PermissionTitle' => 'Withdrawal Method',
-                                   'activity_scope' => 'system_level',
-                                   'icon' => '',
-                                   'translations' => [
-                                       'en' => 'Withdrawal Method',
-                                       'ar' => 'طريقة السحب'
-                                   ]
-                               ],
-                               [
-                                   'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY->value,
-                                   'PermissionTitle' => 'Withdraw History',
-                                   'activity_scope' => 'system_level',
-                                   'icon' => '',
-                                   'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                   'translations' => [
-                                       'en' => 'Withdraw History',
-                                       'ar' => 'طلبات السحب'
-                                   ]
-                               ],
-                               [
-                                   'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value,
-                                   'PermissionTitle' => 'Withdraw Requests',
-                                   'activity_scope' => 'system_level',
-                                   'icon' => '',
-                                   'options' => ['view', 'update', 'delete', 'others'],
-                                   'translations' => [
-                                       'en' => 'Withdraw Requests',
-                                       'ar' => 'طلبات السحب'
-                                   ]
-                               ],
-                               [
-                                   'PermissionName' => PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value,
-                                   'PermissionTitle' => 'Cash Collect',
-                                   'activity_scope' => 'system_level',
-                                   'icon' => '',
-                                   'options' => ['view', 'update', 'delete', 'others'],
-                                   'translations' => [
-                                       'en' => 'Cash Collect',
-                                       'ar' => 'جمع النقود'
-                                   ]
-                               ]
-                           ]
-                       ]
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Financial',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'BadgeDollarSign',
+                            'translations' => [
+                                'en' => 'Financial',
+                                'ar' => ' الموظفين'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_SETTINGS->value,
+                                    'PermissionTitle' => 'Withdrawal Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Withdrawal Settings',
+                                        'ar' => 'طريقة السحب'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value,
+                                    'PermissionTitle' => 'Withdrawal Method',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'translations' => [
+                                        'en' => 'Withdrawal Method',
+                                        'ar' => 'طريقة السحب'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_HISTORY->value,
+                                    'PermissionTitle' => 'Withdraw History',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Withdraw History',
+                                        'ar' => 'طلبات السحب'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_REQUEST->value,
+                                    'PermissionTitle' => 'Withdraw Requests',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Withdraw Requests',
+                                        'ar' => 'طلبات السحب'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value,
+                                    'PermissionTitle' => 'Cash Collect',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Cash Collect',
+                                        'ar' => 'جمع النقود'
+                                    ]
+                                ]
+                            ]
+                        ]
                     ]
                 ],
 
@@ -1273,7 +1260,7 @@ class PermissionAdminSeeder extends Seeder
                                 'en' => 'Page Settings',
                                 'ar' => 'الإعدادات العامة'
                             ],
-                             'submenu' => [
+                            'submenu' => [
                                 [
                                     'PermissionName' => PermissionKey::REGISTER_PAGE_SETTINGS->value,
                                     'PermissionTitle' => 'Register Page',

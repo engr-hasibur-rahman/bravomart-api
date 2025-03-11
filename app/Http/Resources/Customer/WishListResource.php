@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Customer;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,7 +18,8 @@ class WishListResource extends JsonResource
     {
         return [
             'id' => $this->product->id,
-            'store' => $this->product->store->name ?? null,
+            'store' => new StoreDetailsForOrderResource($this->product->store),
+            'store_id' => $this->product->store->id ?? null,
             'name' => $this->product->name,
             'slug' => $this->product->slug,
             'description' => $this->product->description,
@@ -30,6 +32,8 @@ class WishListResource extends JsonResource
                 ? round(((optional($this->product->variants->first())->price - optional($this->product->variants->first())->special_price) / optional($this->product->variants->first())->price) * 100, 2)
                 : null,
             'wishlist' => auth('api_customer')->check() ? $this->product->wishlist : false, // Check if the customer is logged in,
+            'rating' => number_format((float)$this->product->rating, 2, '.', ''),
+            'review_count' => $this->product->review_count,
         ];
     }
 }

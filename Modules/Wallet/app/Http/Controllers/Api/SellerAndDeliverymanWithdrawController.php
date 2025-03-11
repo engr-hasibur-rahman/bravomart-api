@@ -27,21 +27,13 @@ class SellerAndDeliverymanWithdrawController extends Controller
             })
             ->take(20)
             ->get();
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.data_found'),
+            'data' => WithdrawGatewayPublicListResource::collection($gateways),
+        ]);
 
-        if ($gateways->count() > 0) {
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => WithdrawGatewayPublicListResource::collection($gateways),
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'status_code' => 400,
-                'message' => __('messages.data_not_found'),
-            ]);
-        }
     }
 
     public function withdrawAllList(Request $request)
@@ -54,47 +46,52 @@ class SellerAndDeliverymanWithdrawController extends Controller
             ], 401);
         }
 
-        if (!auth('api')->user()->activity_scope === 'store_level' || !auth('api')->user()->activity_scope === 'delivery_level') {
+        $user = auth('api')->user();
+
+        // Check if the user has the correct activity scope
+        if (!in_array($user->activity_scope, ['store_level', 'delivery_level'])) {
             return unauthorized_response();
         }
 
-        // Query based on the user's activity scope
-        if (auth('api')->user()->activity_scope === 'store_level' && !empty($request->store_id)) {
-            $query = WalletWithdrawalsTransaction::where('owner_id', $request->store_id);
-        } elseif (auth('api')->user()->activity_scope === 'delivery_level' && !empty($request->deliveryman_id)) {
-            $query = WalletWithdrawalsTransaction::where('owner_id', $request->deliveryman_id);
-        }
+        // Initialize query
+        $query = WalletWithdrawalsTransaction::query();
 
-
-        if (isset($request->amount)) {
-            $query->where('amount', $request->amount);
-        }
-
-        if (isset($request->status)) {
-            $query->where('status', $request->status);
-        }
-
-        if (isset($request->start_date) && isset($request->end_date)) {
-            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
-        }
-
-        $withdraws = $query->latest()->paginate(10);
-
-        if ($withdraws->isNotEmpty()) {
-            return response()->json([
-                'status' => true,
-                'message' => __('messages.data_found'),
-                'data' => WithdrawListResource::collection($withdraws),
-                'meta' => new PaginationResource($withdraws)
-            ]);
+        // Apply filters based on activity scope
+        if ($user->activity_scope === 'store_level' && $request->filled('store_id')) {
+            $query->where('owner_id', $request->store_id);
+        } elseif ($user->activity_scope === 'delivery_level' && $request->filled('deliveryman_id')) {
+            $query->where('owner_id', $request->deliveryman_id);
         } else {
             return response()->json([
                 'status' => false,
-                'status_code' => 404,
-                'message' => __('messages.data_not_found'),
-            ]);
+                'message' => 'Invalid request. Please provide a valid store_id or deliveryman_id.',
+            ], 400);
         }
+
+        // Apply additional filters
+        if ($request->filled('amount')) {
+            $query->where('amount', $request->amount);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        // Paginate results
+        $withdraws = $query->latest()->paginate(10);
+
+        return response()->json([
+            'status' => true,
+            'message' => __('messages.data_found'),
+            'data' => WithdrawListResource::collection($withdraws),
+            'meta' => new PaginationResource($withdraws),
+        ]);
     }
+
 
     public function withdrawDetails(Request $request)
     {
@@ -106,14 +103,14 @@ class SellerAndDeliverymanWithdrawController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'messages.data_found',
+                'message' => __('messages.data_found'),
                 'data' => new WithdrawDetailsResource($withdraw)
             ]);
         } else {
             return response()->json([
                 'status' => false,
                 'status_code' => 404,
-                'message' => 'messages.data_not_found',
+                'message' => __('messages.data_not_found'),
                 'data' => []
             ]);
         }
