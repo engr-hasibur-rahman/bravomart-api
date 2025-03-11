@@ -79,7 +79,7 @@ class MediaService
         $all_images = $image_query->orderBy('created_at', 'DESC')
             ->skip($offset)
             ->latest()
-            ->take(5)
+            ->take(30)
             ->get();
 
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
 use App\Http\Controllers\Api\V1\Com\ComSiteGeneralController;
+use App\Http\Controllers\Api\V1\Com\FrontendPageSettingsController;
 use App\Http\Controllers\APi\V1\Com\HeaderFooterController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\ContactManageController;
@@ -122,6 +123,14 @@ Route::group(['prefix' => 'v1/'], function () {
     // home page footer api route
     Route::get('/footer', [HeaderFooterController::class, 'siteFooterInfo']);
     Route::get('/site-general-info', [ComSiteGeneralController::class, 'siteGeneralInfo']);
+
+    // pages settings routes
+    Route::get('/about-page-settings', [FrontendPageSettingsController::class, 'AboutPageSettings']);
+    Route::get('/contact-page-settings', [FrontendPageSettingsController::class, 'ContactPageSettings']);
+    Route::get('/register-page-settings', [FrontendPageSettingsController::class, 'RegisterPageSettings']);
+    Route::get('/login-page-settings', [FrontendPageSettingsController::class, 'LoginPageSettings']);
+    Route::get('/blog-page-settings', [FrontendPageSettingsController::class, 'BlogPageSettings']);
+    Route::get('/product-details-page-settings', [FrontendPageSettingsController::class, 'productDetailsPageSettings']);
 
     // delivery charge calculate
     Route::post('/calculate-delivery-charge', [DeliveryChargeCalculateController::class, 'calculateDeliveryCharge']);
