@@ -13,4 +13,13 @@ class BecomeSellerSetting extends Model
     protected $casts = [
         'content' => 'array',
     ];
+    public $translationKeys = [
+        'content',
+    ];
+
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 }
