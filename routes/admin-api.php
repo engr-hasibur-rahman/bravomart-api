@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminStoreTypeManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
+use App\Http\Controllers\Api\V1\Admin\BecomeSellerSettingsController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
@@ -571,7 +572,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::match(['get', 'post'], 'blog', [PageSettingsManageController::class, 'blogSettings'])->middleware('permission:' . PermissionKey::BLOG_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'about', [PageSettingsManageController::class, 'aboutSettings'])->middleware('permission:' . PermissionKey::ABOUT_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'contact', [PageSettingsManageController::class, 'contactSettings'])->middleware('permission:' . PermissionKey::CONTACT_PAGE_SETTINGS->value);
-                Route::match(['get', 'post'], 'become-seller', [PageSettingsManageController::class, 'becomeSellerSettings'])->middleware('permission:' . PermissionKey::BECOME_SELLER_PAGE_SETTINGS->value);
+                Route::match(['get', 'post'], 'become-seller', [BecomeSellerSettingsController::class, 'becomeSellerSettings'])->middleware('permission:' . PermissionKey::BECOME_SELLER_PAGE_SETTINGS->value);
             });
             Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization'])->middleware('permission:' . PermissionKey::FOOTER_CUSTOMIZATION->value);
             Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings'])->middleware('permission:' . PermissionKey::MAINTENANCE_SETTINGS->value);
