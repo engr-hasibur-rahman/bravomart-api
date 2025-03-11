@@ -1205,12 +1205,12 @@ class PermissionAdminSeeder extends Seeder
                 //Payment settings management
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Payment Gateways management',
+                    'PermissionTitle' => 'Payment Gateways',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Payment Gateways management',
+                        'en' => 'Payment Gateways',
                         'ar' => 'إدارة بوابات الدفع'
                     ],
                     'submenu' => [

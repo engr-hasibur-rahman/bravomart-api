@@ -569,7 +569,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::match(['get', 'post'], 'register', [PageSettingsManageController::class, 'registerSettings'])->middleware('permission:' . PermissionKey::REGISTER_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'login', [PageSettingsManageController::class, 'loginSettings'])->middleware('permission:' . PermissionKey::LOGIN_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'product-details', [PageSettingsManageController::class, 'ProductDetailsSettings'])->middleware('permission:' . PermissionKey::PRODUCT_DETAILS_PAGE_SETTINGS->value);
-                Route::match(['get', 'post'], 'blog', [PageSettingsManageController::class, 'blogSettings'])->middleware('permission:' . PermissionKey::BLOG_PAGE_SETTINGS->value);
+                Route::match(['get', 'post'], 'blog-details', [PageSettingsManageController::class, 'blogSettings'])->middleware('permission:' . PermissionKey::BLOG_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'about', [PageSettingsManageController::class, 'aboutSettings'])->middleware('permission:' . PermissionKey::ABOUT_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'contact', [PageSettingsManageController::class, 'contactSettings'])->middleware('permission:' . PermissionKey::CONTACT_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'become-seller', [BecomeSellerSettingsController::class, 'becomeSellerSettings'])->middleware('permission:' . PermissionKey::BECOME_SELLER_PAGE_SETTINGS->value);
