@@ -180,18 +180,24 @@ class PageSettingsManageController extends Controller
     public function ProductDetailsSettings(Request $request){
         if ($request->isMethod('POST')) {
             $this->validate($request, [
-                'com_login_page_title' => 'nullable|string',
-                'com_login_page_subtitle' => 'nullable|string',
-                'com_login_page_image' => 'nullable|string',
-                'com_login_page_social_enable_disable' => 'nullable|string',
+                // fee delivery
+                'com_product_details_page_delivery_title' => 'nullable|string',
+                'com_product_details_page_delivery_subtitle' => 'nullable|string',
+                'com_product_details_page_delivery_url' => 'nullable|string',
+                'com_product_details_page_delivery_status' => 'nullable|string',
+                // return and refund
+                'com_product_details_page_return_refund_title' => 'nullable|string',
+                'com_product_details_page_delivery_subtitle' => 'nullable|string',
+                'com_product_details_page_delivery_url' => 'nullable|string',
+                'com_product_details_page_delivery_status' => 'nullable|string',
             ]);
 
             // set options
             $fields = [
-                'com_login_page_title',
-                'com_login_page_subtitle',
-                'com_login_page_image',
-                'com_login_page_social_enable_disable',
+                'com_product_details_page_delivery_title',
+                'com_product_details_page_delivery_subtitle',
+                'com_product_details_page_delivery_url',
+                'com_product_details_page_delivery_status',
             ];
 
             // update options
