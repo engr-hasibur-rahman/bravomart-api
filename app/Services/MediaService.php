@@ -76,7 +76,7 @@ class MediaService
         $image_query->where('user_id', auth('sanctum')->id());
         $offset = $request->get('offset') ?? 0;
         $all_images = $image_query
-            ->orderBy('id', 'ASC')
+            ->orderBy('id', 'DESC')
             ->skip($offset)
             ->take(50)
             ->get();
