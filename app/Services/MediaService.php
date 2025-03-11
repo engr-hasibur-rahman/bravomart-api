@@ -79,7 +79,7 @@ class MediaService
         $all_images = $image_query->orderBy('updated_at', 'DESC')
             ->skip($offset)
             ->latest()
-            ->take(50)
+            ->take(150)
             ->get();
 
 
