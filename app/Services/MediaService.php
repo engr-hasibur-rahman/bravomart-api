@@ -75,11 +75,13 @@ class MediaService
         $image_query = Media::query();
         $image_query->where('user_id', auth('sanctum')->id());
         $offset = $request->get('offset') ?? 0;
-        $all_images = $image_query
-            ->orderBy('id', 'DESC')
+
+        $all_images = $image_query->orderBy('updated_at', 'DESC')
             ->skip($offset)
+            ->latest()
             ->take(50)
             ->get();
+
 
 
         $all_image_files = [];
