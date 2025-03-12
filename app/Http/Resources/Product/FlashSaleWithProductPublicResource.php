@@ -23,8 +23,12 @@ class FlashSaleWithProductPublicResource extends JsonResource
         return [
             "id" => $this->id,
             'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
-            "title" => $translation ? $translation->where('key', 'title')->first()?->value : $this->title,
-            "description" => $translation ? $translation->where('key', 'description')->first()?->value : $this->description,
+            "title" => !empty($translation) && $translation->where('key', 'title')->first()
+                ? $translation->where('key', 'title')->first()->value
+                : $this->title, // If language is empty or not provided attribute
+            "description" => !empty($translation) && $translation->where('key', 'description')->first()
+                ? $translation->where('key', 'description')->first()->value
+                : $this->description, // If language is empty or not provided attribute
             "thumbnail_image" => $this->thumbnail_image,
             "thumbnail_image_url" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "cover_image" => $this->cover_image,
