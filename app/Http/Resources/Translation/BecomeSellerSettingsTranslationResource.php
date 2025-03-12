@@ -14,9 +14,10 @@ class BecomeSellerSettingsTranslationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $content = jsonImageModifierFormatter(json_decode($this->where('key', 'content')->first()?->value, true));
         return [
             "language_code" => $this->first()->language,
-            "content" => json_decode($this->where('key', 'content')->first()?->value),
+            "content" => $content,
         ];
     }
 }

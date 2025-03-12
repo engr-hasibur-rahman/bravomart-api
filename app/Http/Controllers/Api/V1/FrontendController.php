@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Behaviour;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\BecomeSellerPublicResource;
 use App\Http\Resources\Com\Blog\BlogCategoryPublicResource;
 use App\Http\Resources\Com\Blog\BlogCommentResource;
 use App\Http\Resources\Com\Blog\BlogDetailsPublicResource;
@@ -52,6 +53,7 @@ use App\Interfaces\OrderRefundInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
+use App\Models\BecomeSellerSetting;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\BlogComment;
@@ -242,7 +244,7 @@ class FrontendController extends Controller
                             ->orWhere('attributes', 'like', "%{$query}%");
                     });
             })
-            ->with(['variants:id,product_id,sku,price,stock_quantity,special_price','store'])
+            ->with(['variants:id,product_id,sku,price,stock_quantity,special_price', 'store'])
 //            ->limit($maxSuggestions)
             ->get();
         return response()->json([
@@ -603,6 +605,15 @@ class FrontendController extends Controller
             }
         }
 
+        if (isset($request->min_rating)) {
+            $query->whereHas('reviews', function ($q) {
+                $q->where('status', 'approved')
+                    ->where('reviewable_type', Product::class);
+            })
+                ->withAvg('reviews', 'rating') // Calculate average rating
+                ->having('reviews_avg_rating', '>=', $request->min_rating); // Filter by average rating
+        }
+
         // Apply sorting
         if (isset($request->sort)) {
             switch ($request->sort) {
@@ -641,7 +652,7 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    public function productDetails(Request $request,$product_slug)
+    public function productDetails(Request $request, $product_slug)
     {
         $product = Product::with([
             'store' => function ($query) {
@@ -660,7 +671,7 @@ class FrontendController extends Controller
         ])
             ->where('slug', $product_slug)
             ->first();
-        if ($product){
+        if ($product) {
             // Track unique user views
             if (auth('api_customer')->check()) { // If user is logged in
                 $user = auth('api_customer')->user();
@@ -1067,7 +1078,6 @@ class FrontendController extends Controller
     {
         $storeTypes = StoreType::get();
         return response()->json(StoreTypeDropdownPublicResource::collection($storeTypes));
-
     }
 
     public function behaviourList()
@@ -1301,6 +1311,16 @@ class FrontendController extends Controller
             'data' => CouponPublicResource::collection($coupon),
             'meta' => new PaginationResource($coupon)
         ], 200);
+    }
+
+    public function becomeSeller(Request $request)
+    {
+        $setting = BecomeSellerSetting::with('related_translations')
+            ->where('status', 1)
+            ->first();
+        $content = jsonImageModifierFormatter($setting->content);
+        $setting->content = $content;
+        return response()->json(new BecomeSellerPublicResource($setting));
     }
 
 }

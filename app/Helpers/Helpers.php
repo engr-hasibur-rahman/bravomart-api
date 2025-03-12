@@ -24,38 +24,32 @@ if (!function_exists('translate')) {
     function translate($key, $replace = [])
     {
         $local = app()->getLocale();
-        //return $local;
-
-        //if(strpos($key, 'validation.') === 0 || strpos($key, 'passwords.') === 0 || strpos($key, 'pagination.') === 0 || strpos($key, 'order_texts.') === 0) {
         return trans($key, $replace);
-        //return __($key, $replace);
 
-        //}
-
-
-        // $key = strpos($key, 'messages.') === 0?substr($key,9):$key;
-        // try {
-        //     $lang_array = include(base_path('resources/lang/' . $local . '/PublicMessages.php'));
-        //     //$processed_key = ucfirst(str_replace('_', ' ', remove_invalid_charcaters($key)));
-        //     $processed_key = $key;
-
-        //     if (!array_key_exists($key, $lang_array)) {
-        //         $lang_array[$key] = $processed_key;
-        //         $str = "<?php return " . var_export($lang_array, true) . ";";
-        //         file_put_contents(base_path('resources/lang/' . $local . '/PublicMessages.php'), $str);
-        //         $result = $processed_key;
-        //     } else {
-        //         $result = trans('messages.' . $key, $replace);
-        //     }
-        // } catch (\Exception $exception) {
-        //     info($exception->getMessage());
-        //     $result = trans('messages.' . $key, $replace).$exception;
-        // }
-
-        //return $result;
     }
 
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
+    if (!function_exists('jsonImageModifierFormatter')) {
+        function jsonImageModifierFormatter(array $data)
+        {
+            foreach ($data as $key => $value) {
+                if (is_array($value)) {
+                    // If the value is an array, recursively process it
+                    $data[$key] = jsonImageModifierFormatter($value);
+                } elseif (isImageKey($key)) {
+                    // If it's an image field, apply ImageModifier
+                    $data[$key] = \App\Actions\ImageModifier::generateImageUrl($value);
+                }
+            }
+            return $data;
+        }
+    }
+    function isImageKey(string $key): bool
+    {
+        $imageKeys = ['image', 'background_image']; // declare the fields that needed to be formatted
+        return in_array($key, $imageKeys);
+    }
+
     if (!function_exists('calculateCenterPoint')) {
         function calculateCenterPoint(array $coordinates)
         {
@@ -308,20 +302,22 @@ if (!function_exists('translate')) {
         return true;
     }
 
-    function moduleExists($name){
-        $module_status = json_decode(file_get_contents(__DIR__.'/../../modules_statuses.json'));
-        $folderPath = base_path('./Modules'.DIRECTORY_SEPARATOR .$name);
-        if(file_exists($folderPath) && is_dir($folderPath)){
-            return property_exists($module_status,$name) ? $module_status->$name : false;
+    function moduleExists($name)
+    {
+        $module_status = json_decode(file_get_contents(__DIR__ . '/../../modules_statuses.json'));
+        $folderPath = base_path('./Modules' . DIRECTORY_SEPARATOR . $name);
+        if (file_exists($folderPath) && is_dir($folderPath)) {
+            return property_exists($module_status, $name) ? $module_status->$name : false;
         }
         return false;
     }
 
-    function moduleExistsAndStatus($name){
-        $module_status = json_decode(file_get_contents(__DIR__.'/../../modules_statuses.json'));
-        $folderPath = base_path('./Modules'.DIRECTORY_SEPARATOR .$name);
-        if(file_exists($folderPath) && is_dir($folderPath)){
-            return property_exists($module_status,$name) ? $module_status->$name : false;
+    function moduleExistsAndStatus($name)
+    {
+        $module_status = json_decode(file_get_contents(__DIR__ . '/../../modules_statuses.json'));
+        $folderPath = base_path('./Modules' . DIRECTORY_SEPARATOR . $name);
+        if (file_exists($folderPath) && is_dir($folderPath)) {
+            return property_exists($module_status, $name) ? $module_status->$name : false;
         }
         return false;
     }
