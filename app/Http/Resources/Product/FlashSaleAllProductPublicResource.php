@@ -23,12 +23,12 @@ class FlashSaleAllProductPublicResource extends JsonResource
             'price' => optional($this->product->variants->first())->price,
             'special_price' => optional($this->product->variants->first())->special_price,
             'singleVariant' => $this->product->variants->count() === 1 ? [$this->product->variants->first()] : [],
-            'discount_percentage' => $this->product->variants->isNotEmpty() && optional($this->product->variants->first())->price > 0
+            'discount_percentage' => $this->product->variants->isNotEmpty() && optional($this->product->variants->first())->price > 0 && optional($this->product->variants->first())->special_price > 0
                 ? round(((optional($this->product->variants->first())->price - optional($this->product->variants->first())->special_price) / optional($this->product->variants->first())->price) * 100, 2)
-                : null,
+                : 0,
             'wishlist' => auth('api_customer')->check() ? $this->product->wishlist : false, // Check if the customer is logged in,
-            'rating' => number_format((float) $this->product->rating, 2, '.', ''),
-            'review_count'=>$this->product->review_count,
+            'rating' => number_format((float)$this->product->rating, 2, '.', ''),
+            'review_count' => $this->product->review_count,
         ];
     }
 }
