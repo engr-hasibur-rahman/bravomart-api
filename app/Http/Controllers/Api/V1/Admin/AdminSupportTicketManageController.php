@@ -148,11 +148,17 @@ class AdminSupportTicketManageController extends Controller
         if ($authUser->activity_scope === 'system_level') {
             $validator = Validator::make($request->all(), [
                 'ticket_id' => 'required|exists:tickets,id',
-                'message' => 'required|string',
+                'message' => 'nullable|string',
                 'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip,pdf|max:2048'
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 422);
+            }
+            if (!$request->file('file') && (is_null($request->message) || trim($request->message) === '')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Both file and message cannot be empty'
+                ]);
             }
             if ($request->hasFile('file')) {
                 // Retrieve the uploaded file

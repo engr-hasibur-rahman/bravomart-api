@@ -166,10 +166,7 @@ class CustomerSupportTicketManageController extends Controller
             'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048'
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validator->errors()
-            ]);
+            return response()->json($validator->errors(), 422);
         }
         if (!$request->file('file') && (is_null($request->message) || trim($request->message) === '')) {
             return response()->json([
