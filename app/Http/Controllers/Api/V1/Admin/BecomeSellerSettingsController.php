@@ -23,9 +23,11 @@ class BecomeSellerSettingsController extends Controller
     public function becomeSellerSettings(Request $request)
     {
         if ($request->isMethod('GET')) {
-            $settings = BecomeSellerSetting::with('related_translations')->get();
+            $settings = BecomeSellerSetting::with('related_translations')->where('status', 1)->first();
+            $content = jsonImageModifierFormatter($settings->content);
+            $settings->content = $content;
             return response()->json([
-                'data' => AdminBecomeSellerResource::collection($settings),
+                'data' => new AdminBecomeSellerResource($settings),
             ]);
         }
         $validatedData = $request->validate([
@@ -85,7 +87,6 @@ class BecomeSellerSettingsController extends Controller
                 }
             }
         }
-
         // Insert new translations if any
         if (!empty($translations)) {
             $this->translation->insert($translations);
