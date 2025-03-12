@@ -115,6 +115,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/blogs', [FrontendController::class, 'blogs']);
     Route::get('/blog/{slug}', [FrontendController::class, 'blogDetails']);
     Route::get('/coupons', [FrontendController::class, 'couponList']);
+    Route::get('/become-a-seller', [FrontendController::class, 'becomeSeller']);
 
 
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);
