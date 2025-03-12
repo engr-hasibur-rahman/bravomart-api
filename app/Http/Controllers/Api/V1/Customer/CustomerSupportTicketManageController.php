@@ -162,14 +162,19 @@ class CustomerSupportTicketManageController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'ticket_id' => 'required|exists:tickets,id',
-            'message' => 'required|string',
+            'message' => 'nullable|string',
             'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048'
         ]);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'status_code' => 400,
                 'message' => $validator->errors()
+            ]);
+        }
+        if (!$request->file('file') && (is_null($request->message) || trim($request->message) === '')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Both file and message cannot be empty'
             ]);
         }
         if ($request->hasFile('file')) {
@@ -205,7 +210,7 @@ class CustomerSupportTicketManageController extends Controller
         ], 201);
     }
 
-    public function getTicketMessages(Request $request,$ticket_id)
+    public function getTicketMessages(Request $request, $ticket_id)
     {
         $request['ticket_id'] = $ticket_id;
         $validator = Validator::make($request->all(), [
