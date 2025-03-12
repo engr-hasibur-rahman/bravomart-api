@@ -18,7 +18,7 @@ class StoreTypeDropdownPublicResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'value' => ucfirst(strtolower($this->type)),
+            'value' => $this->type,
             'label' => ucfirst(strtolower($this->type)),
             'image_url' => ImageModifier::generateImageUrl($this->image),
         ];
