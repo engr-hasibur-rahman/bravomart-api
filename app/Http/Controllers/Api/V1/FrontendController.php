@@ -605,14 +605,6 @@ class FrontendController extends Controller
             }
         }
 
-        if (isset($request->min_rating)) {
-            $query->whereHas('reviews', function ($q) {
-                $q->where('status', 'approved')
-                    ->where('reviewable_type', Product::class);
-            })
-                ->withAvg('reviews', 'rating') // Calculate average rating
-                ->having('reviews_avg_rating', '>=', $request->min_rating); // Filter by average rating
-        }
 
         // Apply sorting
         if (isset($request->sort)) {
