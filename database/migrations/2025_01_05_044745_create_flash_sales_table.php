@@ -13,8 +13,17 @@ return new class extends Migration {
         Schema::create('flash_sales', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('title_color')->nullable();
             $table->text('description')->nullable();
-            $table->string('thumbnail_image')->nullable();
+            $table->string('description_color')->nullable();
+            $table->string('button_text')->nullable();
+            $table->string('button_text_color')->nullable();
+            $table->string('button_hover_color')->nullable();
+            $table->string('button_bg_color')->nullable();
+            $table->string('button_url')->nullable();
+            $table->string('timer_bg_color')->nullable();
+            $table->string('timer_text_color')->nullable();
+            $table->string('image')->nullable();
             $table->string('cover_image')->nullable();
             $table->string('discount_type')->nullable()->comment('percentage or amount');
             $table->decimal('discount_amount', 10, 2)->nullable();
