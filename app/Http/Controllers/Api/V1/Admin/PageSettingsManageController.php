@@ -184,12 +184,14 @@ class PageSettingsManageController extends Controller
                 'com_product_details_page_delivery_title' => 'nullable|string',
                 'com_product_details_page_delivery_subtitle' => 'nullable|string',
                 'com_product_details_page_delivery_url' => 'nullable|string',
-                'com_product_details_page_delivery_status' => 'nullable|string',
+                'com_product_details_page_delivery_enable_disable' => 'nullable|string',
                 // return and refund
                 'com_product_details_page_return_refund_title' => 'nullable|string',
-                'com_product_details_page_delivery_subtitle' => 'nullable|string',
-                'com_product_details_page_delivery_url' => 'nullable|string',
-                'com_product_details_page_delivery_status' => 'nullable|string',
+                'com_product_details_page_return_refund_subtitle' => 'nullable|string',
+                'com_product_details_page_return_refund_url' => 'nullable|string',
+                'com_product_details_page_return_refund_enable_disable' => 'nullable|string',
+                // other
+                'com_product_details_page_related_title' => 'nullable|string',
             ]);
 
             // set options
@@ -197,7 +199,12 @@ class PageSettingsManageController extends Controller
                 'com_product_details_page_delivery_title',
                 'com_product_details_page_delivery_subtitle',
                 'com_product_details_page_delivery_url',
-                'com_product_details_page_delivery_status',
+                'com_product_details_page_delivery_enable_disable',
+                'com_product_details_page_return_refund_title',
+                'com_product_details_page_return_refund_subtitle',
+                'com_product_details_page_return_refund_url',
+                'com_product_details_page_return_refund_enable_disable',
+                'com_product_details_page_related_title',
             ];
 
             // update options
@@ -208,8 +215,10 @@ class PageSettingsManageController extends Controller
 
             // Define the fields that need to be translated
             $fields = [
-                'com_login_page_title',
-                'com_login_page_subtitle'
+                'com_product_details_page_delivery_title',
+                'com_product_details_page_delivery_subtitle',
+                'com_product_details_page_return_refund_title',
+                'com_product_details_page_return_refund_subtitle',
             ];
             $setting_options = SettingOption::whereIn('option_name', $fields)->get();
 
@@ -219,11 +228,13 @@ class PageSettingsManageController extends Controller
             return $this->success(translate('messages.update_success', ['name' => 'Product Details Page Settings']));
 
         }else{
-            // ImageModifier
-            $imageModifier = new ImageModifier();
             $ComOptionGet = SettingOption::with('translations')
-                ->whereIn('option_name', ['com_login_page_title', 'com_login_page_subtitle'])
-                ->get(['id']);
+                ->whereIn('option_name', [
+                    'com_product_details_page_delivery_title',
+                    'com_product_details_page_delivery_subtitle',
+                    'com_product_details_page_return_refund_title',
+                    'com_product_details_page_return_refund_subtitle',
+                ])->get(['id']);
 
             // transformed data
             $transformedData = [];
@@ -240,10 +251,15 @@ class PageSettingsManageController extends Controller
             }
 
             $fields = [
-                'com_login_page_title' => com_option_get('com_login_page_title'),
-                'com_login_page_subtitle' => com_option_get('com_login_page_subtitle'),
-                'com_login_page_image' => $imageModifier->generateImageUrl(com_option_get('com_login_page_image')),
-                'com_login_page_social_enable_disable' => com_option_get('com_login_page_social_enable_disable'),
+                'com_product_details_page_delivery_title' => com_option_get('com_product_details_page_delivery_title'),
+                'com_product_details_page_delivery_subtitle' => com_option_get('com_product_details_page_delivery_subtitle'),
+                'com_product_details_page_delivery_url' => com_option_get('com_product_details_page_delivery_url'),
+                'com_product_details_page_delivery_enable_disable' => com_option_get('com_product_details_page_delivery_enable_disable'),
+                'com_product_details_page_return_refund_title' => com_option_get('com_product_details_page_return_refund_title'),
+                'com_product_details_page_return_refund_subtitle' => com_option_get('com_product_details_page_return_refund_subtitle'),
+                'com_product_details_page_return_refund_url' => com_option_get('com_product_details_page_return_refund_url'),
+                'com_product_details_page_return_refund_enable_disable' => com_option_get('com_product_details_page_return_refund_enable_disable'),
+                'com_product_details_page_related_title' => com_option_get('com_product_details_page_related_title'),
                 'translations' => $transformedData,
             ];
 

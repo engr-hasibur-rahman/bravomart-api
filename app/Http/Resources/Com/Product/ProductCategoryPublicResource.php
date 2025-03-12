@@ -30,16 +30,9 @@ class ProductCategoryPublicResource extends JsonResource
             'category_banner_url' => ImageModifier::generateImageUrl($this->category_banner),
             'category_thumb' => '', $this->category_thumb,
             'category_thumb_url' => ImageModifier::generateImageUrl($this->category_thumb),
-            'meta_title' => $locales['meta_title']['value'] ?? $this->meta_title,
-            'meta_description' => $locales['meta_description']['value'] ?? $this->meta_description,
             'category_name_paths' => $this->category_name_paths,
             'parent_path' => $this->parent_path,
             'display_order' => $this->display_order,
-            'created_by' => $this->created_by,
-            'updated_by' => $this->updated_by,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 

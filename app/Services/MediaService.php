@@ -76,10 +76,10 @@ class MediaService
         $image_query->where('user_id', auth('sanctum')->id());
         $offset = $request->get('offset') ?? 0;
 
-        $all_images = $image_query->orderBy('updated_at', 'DESC')
+        $all_images = $image_query->orderBy('created_at', 'DESC')
             ->skip($offset)
             ->latest()
-            ->take(150)
+            ->take(30)
             ->get();
 
 
