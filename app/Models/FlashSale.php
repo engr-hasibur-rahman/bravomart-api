@@ -34,6 +34,7 @@ class FlashSale extends Model
     public $translationKeys = [
         'title',
         'description',
+        'button_text'
     ];
 
     public function approvedProducts()
