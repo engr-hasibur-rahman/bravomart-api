@@ -31,6 +31,7 @@ class FlashSaleWithProductPublicResource extends JsonResource
                 ? $translation->where('key', 'description')->first()->value
                 : $this->description,
             "description_color" => $this->description_color,
+            "background_color" => $this->background_color,
             "image" => $this->thumbnail_image,
             "image_url" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "cover_image" => $this->cover_image,

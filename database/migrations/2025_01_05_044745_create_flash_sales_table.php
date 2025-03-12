@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('title_color')->nullable();
             $table->text('description')->nullable();
             $table->string('description_color')->nullable();
+            $table->string('background_color')->nullable();
             $table->string('button_text')->nullable();
             $table->string('button_text_color')->nullable();
             $table->string('button_hover_color')->nullable();

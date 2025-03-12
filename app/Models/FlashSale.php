@@ -14,6 +14,7 @@ class FlashSale extends Model
         'title_color',
         'description',
         'description_color',
+        'background_color',
         'button_text',
         'button_text_color',
         'button_hover_color',
