@@ -25,18 +25,18 @@ class FlashSaleRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'title_color' => 'nullable|string|max:255', // Added title_color
+            'title_color' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'description_color' => 'nullable|string|max:255', // Added description_color
-            'button_text' => 'nullable|string|max:255', // Added button_text
-            'button_text_color' => 'nullable|string|max:255', // Added button_text_color
-            'button_hover_color' => 'nullable|string|max:255', // Added button_hover_color
-            'button_bg_color' => 'nullable|string|max:255', // Added button_bg_color
-            'button_url' => 'nullable|url|max:255', // Added button_url
-            'timer_bg_color' => 'nullable|string|max:255', // Added timer_bg_color
-            'timer_text_color' => 'nullable|string|max:255', // Added timer_text_color
-            'image' => 'nullable|image|max:255', // Added image validation (optional, max size)
-            'cover_image' => 'nullable|image|max:255', // Added cover_image validation (optional, max size)
+            'description_color' => 'nullable|string|max:255',
+            'button_text' => 'nullable|string|max:255',
+            'button_text_color' => 'nullable|string|max:255',
+            'button_hover_color' => 'nullable|string|max:255',
+            'button_bg_color' => 'nullable|string|max:255',
+            'button_url' => 'nullable|url|max:255',
+            'timer_bg_color' => 'nullable|string|max:255',
+            'timer_text_color' => 'nullable|string|max:255',
+            'image' => 'nullable',
+            'cover_image' => 'nullable',
             'discount_type' => 'nullable|in:percentage,amount',
             'discount_amount' => 'nullable|numeric',
             'special_price' => 'nullable|numeric',
@@ -44,7 +44,7 @@ class FlashSaleRequest extends FormRequest
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
             'status' => 'nullable|in:0,1',
-            'product_ids' => 'nullable|array|exists:products,id', // Assuming `product_ids` needs to be validated as array
+            'product_ids' => 'nullable|array|exists:products,id',
         ];
     }
 

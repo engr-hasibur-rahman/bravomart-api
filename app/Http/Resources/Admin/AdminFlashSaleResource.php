@@ -24,8 +24,8 @@ class AdminFlashSaleResource extends JsonResource
             "title" => !empty($translation) && $translation->where('key', 'title')->first()
                 ? $translation->where('key', 'title')->first()->value
                 : $this->title, // If language is empty or not provided attribute
+            "image" => ImageModifier::generateImageUrl($this->image),
             "cover_image" => ImageModifier::generateImageUrl($this->cover_image),
-            "thumbnail_image" => ImageModifier::generateImageUrl($this->thumbnail_image),
             "discount_type" => $this->discount_type,
             "discount_amount" => $this->discount_amount,
             "special_price" => $this->special_price,

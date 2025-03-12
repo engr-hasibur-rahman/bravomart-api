@@ -18,6 +18,7 @@ class FlashSaleTranslationResource extends JsonResource
             "language_code" => $this->first()->language,
             "title" => $this->where('key', 'title')->first()?->value,
             "description" => $this->where('key', 'description')->first()?->value,
+            "button_text" => $this->where('key', 'button_text')->first()?->value,
         ];
     }
 }
