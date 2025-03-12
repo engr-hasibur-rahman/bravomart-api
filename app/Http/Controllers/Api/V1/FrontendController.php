@@ -570,7 +570,29 @@ class FrontendController extends Controller
         $query = Product::query();
         // Apply category filter (multiple categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
-            $query->whereIn('category_id', $request->category_id);
+            // Fetch all child categories for the given category IDs
+            $allCategoryIds = [];
+
+            foreach ($request->category_id as $categoryId) {
+                // Check if the category is a parent category
+                $category = ProductCategory::where('id', $categoryId)->first();
+
+                if ($category) {
+                    if ($category->parent_id === null) {
+                        // Fetch all child category IDs of this parent category
+                        $childCategoryIds = ProductCategory::where('parent_id', $category->id)->pluck('id')->toArray();
+                        $allCategoryIds = array_merge($allCategoryIds, $childCategoryIds);
+                    }
+
+                    // Add the original category ID
+                    $allCategoryIds[] = $category->id;
+                }
+            }
+
+            // Apply the category filter
+            if (!empty($allCategoryIds)) {
+                $query->whereIn('category_id', $allCategoryIds);
+            }
         }
 
         if (!empty($request->brand_id) && is_array($request->brand_id)) {
