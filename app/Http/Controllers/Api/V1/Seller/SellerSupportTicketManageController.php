@@ -219,11 +219,17 @@ class SellerSupportTicketManageController extends Controller
         $validator = Validator::make($request->all(), ([
             'ticket_id' => 'required|exists:tickets,id',
             'store_id' => 'required|exists:stores,id',
-            'message' => 'required|string|max:1500',
+            'message' => 'nullable|string|max:1500',
             'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip,pdf|max:2048',
         ]));
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
+        }
+        if (!$request->file('file') && (is_null($request->message) || trim($request->message) === '')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Both file and message cannot be empty'
+            ]);
         }
 
         $seller = auth('api')->user();
