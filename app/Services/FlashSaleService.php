@@ -319,7 +319,7 @@ class FlashSaleService
             ->where('start_time', '<=', now()) // Valid only after the start time
             ->where('end_time', '>=', now()) // Valid only before the end time
             ->orderBy('start_time', 'asc') // Order by the start time
-            ->get();
+            ->paginate(10);
     }
 
     public function toggleStatus(int $id): FlashSale
