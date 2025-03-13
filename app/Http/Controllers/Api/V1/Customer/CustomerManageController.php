@@ -49,6 +49,7 @@ class CustomerManageController extends Controller
             'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8|max:15',
         ]);
+
         if ($validator->fails()) {
             return response()->json([
                 "status" => false,
@@ -56,8 +57,10 @@ class CustomerManageController extends Controller
                 "message" => $validator->errors()
             ]);
         }
+
         $customer = Customer::where('email', $request->email)
             ->first();
+
         if (!$customer) {
             return response()->json([
                 "status" => false,
@@ -65,6 +68,12 @@ class CustomerManageController extends Controller
                 "message" => __('messages.customer.not.found'),
             ], 404);
         }
+
+        // update firebase device token
+        $customer->update([
+            'firebase_token' => $request->firebase_device_token,
+        ]);
+
         // Check if the user's account is deleted
         if ($customer->deleted_at !== null) {
             return response()->json([

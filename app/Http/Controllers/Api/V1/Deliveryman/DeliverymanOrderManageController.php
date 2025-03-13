@@ -154,6 +154,7 @@ class DeliverymanOrderManageController extends Controller
                     ->where('status', '!=', 'accepted'); // Ensures status is NOT 'accepted'
             })
             ->exists();
+
         $is_cash_on_delivery = Order::where('id', $request->id)
             ->whereHas('orderMaster', function ($query) {
                 $query->where('payment_gateway', 'cash_on_delivery');

@@ -231,11 +231,13 @@ enum PermissionKey: string
     case ADMIN_WALLET_TRANSACTION = '/admin/wallet/transactions';
     case ADMIN_WALLET_SETTINGS = '/admin/wallet/settings';
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    //              Notice Management                                                        //
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //  admin notifications
+    case ADMIN_NOTIFICATION_MANAGEMENT = '/admin/notifications';
+    //  Notice Management
     case ADMIN_NOTICE_MANAGEMENT = '/admin/store-notices';
 
     // ############################## Admin PermissionKey End ################################
+
 
 
     // ############################## Seller PermissionKey Start ################################

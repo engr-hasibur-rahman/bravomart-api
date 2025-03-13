@@ -4,7 +4,10 @@ namespace App\Services;
 
 
 use App\Helpers\DeliveryChargeHelper;
+use App\Jobs\DispatchOrderEmails;
+use App\Mail\DynamicEmail;
 use App\Models\Area;
+use App\Models\EmailTemplate;
 use App\Models\OrderAddress;
 use App\Models\Store;
 use App\Models\StoreArea;
@@ -22,6 +25,7 @@ use App\Services\Order\OrderManageNotificationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Modules\Subscription\app\Models\StoreSubscription;
 
@@ -100,7 +104,9 @@ class OrderService
                 // find the product
                 $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                 // Validate product variant
-                $variant = ProductVariant::where('id', $itemData['variant_id'])->where('product_id', $product->id)->first();
+                $variant = ProductVariant::where('id', $itemData['variant_id'])
+                    ->where('product_id', $product->id)
+                    ->first();
                 // Add to total order amount
                 if (!empty($variant) && isset($variant->price)) {
                     $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
@@ -506,12 +512,15 @@ class OrderService
             DB::commit();
 
             // return all order id
-            $all_orders = Order::where('order_master_id', $order_master->id)->get();
-            $order_master = OrderMaster::find($order_master->id);
+            $all_orders = Order::with('store.seller')->where('order_master_id', $order_master->id)->get();
+            $order_master = OrderMaster::with('orderAddress','customer')->find($order_master->id);
 
             // order notification
             $all_orders_ids = Order::where('order_master_id', $order_master->id)->pluck('id')->toArray();
             $this->orderManageNotificationService->createOrderNotification($all_orders_ids);
+
+            // Dispatch the email job asynchronously
+            dispatch(new DispatchOrderEmails($order_master->id));
 
             return [
                 $all_orders,
