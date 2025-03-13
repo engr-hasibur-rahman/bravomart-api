@@ -52,23 +52,13 @@ class PlaceOrderController extends Controller
         $order_master = $orders[1];
 
         try {
-            // Check if the order creation was successful
             if ($orders) {
-                // If the orders are successfully placed, return the response
                 $response = [
                     'success' => true,
                     'message' => 'Order placed successfully.',
                     'orders' => PlaceOrderDetailsResource::collection($all_orders),
                     'order_master' => new PlaceOrderMasterResource($order_master),
                 ];
-
-                // Check if customer info and token are set, and include them in the response
-                if (isset($orders['customer']) && isset($orders['token'])) {
-//                    $response['customer'] = $orders['customer'];
-                    $response['token'] = $orders['token'];
-//                    $response['message'] = 'Guest registered and logged in successfully.'; // Change the message if needed
-                }
-
                 return response()->json($response);
             }
 

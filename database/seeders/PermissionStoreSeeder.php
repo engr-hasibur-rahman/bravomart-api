@@ -443,6 +443,31 @@ class PermissionStoreSeeder extends Seeder
                     ]
                 ],
 
+                // Notifications Settings
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Notifications',
+                    'activity_scope' => 'store_level',
+                    'icon' => 'MessageCircleMore',
+                    'options' => ['View'],
+                    'translations' => [
+                        'en' => 'Notifications',
+                        'ar' => 'إعدادات المتجر'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::SELLER_NOTIFICATION_MANAGEMENT->value,
+                            'PermissionTitle' => 'Notifications',
+                            'activity_scope' => 'store_level',
+                            'icon' => '',
+                            'translations' => [
+                                'en' => 'Notifications',
+                                'ar' => 'رسالة'
+                            ]
+                        ]
+                    ]
+                ],
+
                 // Store Settings
                 [
                     'PermissionName' => '',

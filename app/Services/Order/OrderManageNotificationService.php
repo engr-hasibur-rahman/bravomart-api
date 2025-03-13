@@ -33,6 +33,7 @@ class OrderManageNotificationService
         if ($orders->count() === 0) {
             return;
         }
+
         foreach ($orders as $order_details) {
             $last_order_id =$order_details->id;
             // Notification Data
@@ -85,7 +86,9 @@ class OrderManageNotificationService
         if (empty($recipient)) {
             return;
         }
+
         $token = is_array($recipient->firebase_token) ? $recipient->firebase_token : [$recipient->firebase_token];
+        $token = ['eVpGQEQwSaKsP6Pi1SoJ-I:APA91bF4TbvmI5CsFP2cuztDIe0-na7ryFkaSganZ9iod1PJdUdsPY1G7S9Z6wm_tsB76mzYTVqRv4FXL1qcbq49w0ZPYGDYIvd8uwY5L52gwDMz4yBTzN4'];
 
         // empty check
         $token = array_filter($token);
