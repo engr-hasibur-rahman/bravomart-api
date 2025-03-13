@@ -285,6 +285,8 @@ enum PermissionKey: string
     case SELLER_ORDERS_RETURNED_OR_REFUND_REQUEST = '/seller/store/orders/refund-request';
     case SELLER_ORDERS_REVIEWS_MANAGE = '/seller/orders/reviews';
     //====================== Product Authors (For Book Only)
+    // notifications manage
+    case SELLER_NOTIFICATION_MANAGEMENT = '/seller/notifications';
     case SELLER_STORE_PRODUCT_AUTHORS_MANAGE = '/seller/store/product/author/list';
     //~~~~~~~~~~~~~~~~~Wallet Manage~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
