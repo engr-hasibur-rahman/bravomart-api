@@ -1332,6 +1332,11 @@ class FrontendController extends Controller
         $setting = BecomeSellerSetting::with('related_translations')
             ->where('status', 1)
             ->first();
+        if (!$setting) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ],404);
+        }
         $content = jsonImageModifierFormatter($setting->content);
         $setting->content = $content;
         return response()->json(new BecomeSellerPublicResource($setting));
