@@ -7,11 +7,11 @@ use App\Http\Controllers\Api\V1\Admin\AdminBlogManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
 use App\Http\Controllers\Api\v1\Admin\AdminCommissionManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminContactManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminNotificationController;
 use App\Http\Controllers\Api\V1\Admin\AdminOrderManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminOrderRefundManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
@@ -28,13 +28,13 @@ use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\BecomeSellerSettingsController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Admin\EmailTemplateManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PageSettingsManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
+use App\Http\Controllers\Api\V1\NotificationManageController;
 use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
@@ -42,7 +42,6 @@ use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
-use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
 use App\Http\Controllers\Api\V1\SliderManageController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
@@ -423,10 +422,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         // Notifications manage
-        Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value])->group(function () {
-            Route::get('/', [AdminNotificationController::class, 'index']);
-            Route::get('/read/{id}', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
-            Route::delete('remove/{id}', [AdminNotificationController::class, 'destroy']);
+        Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::SELLER_NOTIFICATION_MANAGEMENT->value])->group(function () {
+            Route::get('/', [NotificationManageController::class, 'index']);
+            Route::get('/read/{id}', [NotificationManageController::class, 'markAsRead']);
+            Route::delete('remove/{id}', [NotificationManageController::class, 'destroy']);
         });
 
         // Store Notice manage

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Customer\CustomerReviewManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\NotificationManageController;
 use App\Http\Controllers\Customer\OrderPaymentController;
 use App\Http\Controllers\Customer\PlaceOrderController;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,13 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
             Route::post('add-message', [CustomerSupportTicketManageController::class, 'addMessage']);
             Route::get('messages/{ticket_id}', [CustomerSupportTicketManageController::class, 'getTicketMessages']);
         });
+
+        // Notifications manage
+       Route::group(['prefix' => 'notifications'], function () {
+            Route::get('/', [NotificationManageController::class, 'index']);
+            Route::get('/read/{id}', [NotificationManageController::class, 'markAsRead']);
+        });
+
         Route::group(['prefix' => 'wish-list'], function () {
             Route::get('list', [WishListManageController::class, 'getWishlist']);
             Route::post('store', [WishListManageController::class, 'addToWishlist']);

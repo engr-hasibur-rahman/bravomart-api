@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\PermissionKey;
+use App\Http\Controllers\Api\V1\NotificationManageController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\Product\ProductVariantController;
@@ -179,6 +180,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
                 });
             });
 
+            // Notifications manage
+            Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value])->group(function () {
+                Route::get('/', [NotificationManageController::class, 'index']);
+                Route::get('/read/{id}', [NotificationManageController::class, 'markAsRead']);
+            });
+
             // store settings
             Route::group(['prefix' => 'settings/'], function () {
                 // business settings
@@ -232,7 +239,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
                 Route::get('details/{id}', [ProductAuthorController::class, 'show']);
                 Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
             });
-        });  // END STORE ROUTE
+        });
+        // ********END STORE ROUTE
+
+
         // Product variant manage
         Route::group(['prefix' => 'product/variant/', 'middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
             Route::get('list', [ProductVariantController::class, 'index']);
@@ -243,6 +253,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
             Route::delete('remove/{id}', [ProductVariantController::class, 'destroy']);
             Route::get('deleted/records', [ProductVariantController::class, 'deleted_records']);
         });
+
         // Store Notice manage
         Route::group(['prefix' => 'store-notices/'], function () {
             Route::get('list', [SellerStoreNoticeController::class, 'index']); // Get all notices

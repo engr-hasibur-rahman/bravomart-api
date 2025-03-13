@@ -1,32 +1,67 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Admin;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Notifications\OrderNotificationForAdmin;
+use App\Models\Customer;
 use App\Models\UniversalNotification;
-use Illuminate\Http\Request;
 
-class AdminNotificationController extends Controller
+class NotificationManageController extends Controller
 {
     /**
      * Display a listing of the notifications.
      */
     public function index()
     {
-        $notifications = UniversalNotification::latest()->paginate(50);
+        // Check if the user is authenticated as an API user or customer
+        $user = auth('api')->user();
+        $customer = auth('api_customer')->user();
 
-        if (count($notifications) == 0) {
+        // If neither user nor customer is authenticated
+        if (!$user && !$customer) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not authenticated',
+            ], 401); // 401 Unauthorized
+        }
+
+        // Determine the notifiable_type based on user type
+        if ($customer) {
+            $notifiableType = 'customer';
+        } elseif ($user) {
+            $notifiableTypes = [
+                'system_level' => null,
+                'store_level' => 'store',
+                'delivery_level' => 'deliveryman',
+            ];
+            $notifiableType = $notifiableTypes[$user->activity_scope] ?? 'customer';
+        }
+
+        // Build the query based on notifiable type
+        $query = UniversalNotification::latest();
+        if ($notifiableType) {
+            $query->where('notifiable_type', $notifiableType);
+        }
+
+        // Paginate results
+        $notifications = $query->paginate(10);
+
+        // Return response
+        if ($notifications->isEmpty()) {
             return response()->json([
                 'success' => true,
                 'message' => 'No notifications found',
-                'data' => []
-            ]);
+                'data' => [],
+            ], 404);
         }
+
         return response()->json([
             'success' => true,
             'message' => 'List all notifications',
-            'data' => OrderNotificationForAdmin::collection($notifications)
+            'data' => OrderNotificationForAdmin::collection($notifications),
+            'meta' => new PaginationResource($notifications)
         ]);
     }
 
