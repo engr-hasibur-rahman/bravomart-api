@@ -79,7 +79,10 @@ class SellerFlashSaleProductManageController extends Controller
     public function getFlashSaleProducts()
     {
         $flashSaleProducts = $this->flashSaleService->getSellerFlashSaleProducts();
-        return response()->json(FlashSaleProductResource::collection($flashSaleProducts));
+        return response()->json([
+            'data' => FlashSaleProductResource::collection($flashSaleProducts),
+            'meta' => new PaginationResource($flashSaleProducts)
+        ]);
     }
 
     public function getValidFlashSales()

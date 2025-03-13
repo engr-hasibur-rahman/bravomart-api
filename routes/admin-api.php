@@ -143,7 +143,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCTS_MANAGE->value]], function () {
                 Route::get('list', [AdminProductManageController::class, 'index']);
-                Route::get('store-wise-products', [AdminProductManageController::class, 'getStoreWiseProducts']);
                 Route::post('add', [AdminProductManageController::class, 'store']);
                 Route::get('details/{slug}', [AdminProductManageController::class, 'show']);
                 Route::post('update', [AdminProductManageController::class, 'update']);
