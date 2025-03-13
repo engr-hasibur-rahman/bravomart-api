@@ -91,7 +91,6 @@ class DeliverymanManageController extends Controller
 
     public function login(Request $request)
     {
-
         try {
             // Validate the incoming request
             $request->validate([
@@ -123,6 +122,11 @@ class DeliverymanManageController extends Controller
                 ->whereNull('parent_id')
                 ->with('childrenRecursive')
                 ->get();
+
+            // update firebase device token
+            $user->update([
+                'firebase_token' => $request->firebase_device_token,
+            ]);
 
             // Build and return the response
             return response()->json([

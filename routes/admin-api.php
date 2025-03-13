@@ -426,18 +426,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Notifications manage
         Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value])->group(function () {
             Route::get('/', [AdminNotificationController::class, 'index']);
-            Route::patch('/read/{id}', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
+            Route::get('/read/{id}', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
             Route::delete('remove/{id}', [AdminNotificationController::class, 'destroy']);
         });
 
         // Store Notice manage
         Route::prefix('store-notices/')->middleware(['permission:' . PermissionKey::ADMIN_NOTICE_MANAGEMENT->value])->group(function () {
-            Route::get('list', [AdminStoreNoticeController::class, 'index']); // Get all notices
-            Route::post('add', [AdminStoreNoticeController::class, 'store']); // Create a new notice
-            Route::get('details/{id}', [AdminStoreNoticeController::class, 'show']); // View a specific notice
-            Route::post('update', [AdminStoreNoticeController::class, 'update']); // Update a specific notice
-            Route::post('change-status', [AdminStoreNoticeController::class, 'changeStatus']); // Change notice status
-            Route::delete('remove/{id}', [AdminStoreNoticeController::class, 'destroy']); // Delete a specific notice
+            Route::get('list', [AdminStoreNoticeController::class, 'index']);
+            Route::post('add', [AdminStoreNoticeController::class, 'store']);
+            Route::get('details/{id}', [AdminStoreNoticeController::class, 'show']);
+            Route::post('update', [AdminStoreNoticeController::class, 'update']);
+            Route::post('change-status', [AdminStoreNoticeController::class, 'changeStatus']);
+            Route::delete('remove/{id}', [AdminStoreNoticeController::class, 'destroy']);
         });
 
         Route::group(['prefix' => 'feedback-control/'], function () {

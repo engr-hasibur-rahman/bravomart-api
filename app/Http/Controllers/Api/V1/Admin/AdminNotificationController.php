@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Notifications\OrderNotificationForAdmin;
 use App\Models\UniversalNotification;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,7 @@ class AdminNotificationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'List all notifications',
-            'data' => $notifications
+            'data' => OrderNotificationForAdmin::collection($notifications)
         ]);
     }
 
@@ -35,10 +36,25 @@ class AdminNotificationController extends Controller
      */
     public function markAsRead($id)
     {
-        $notification = UniversalNotification::findOrFail($id);
-        $notification->update(['read_at' => now()]);
+        try {
+            // Attempt to find the notification
+            $notification = UniversalNotification::findOrFail($id);
 
-        return response()->json(['message' => 'Notification marked as read']);
+            // If notification hasn't been read, mark it as read
+            if (!$notification->read_at) {
+                $notification->update(['read_at' => now()]);
+                return response()->json(['message' => 'Notification marked as read']);
+            }
+
+            return response()->json(['message' => 'Notification is already marked as read']);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Handle case where notification is not found
+            return response()->json([
+                'success' => false,
+                'message' => 'Notification not found',
+            ], 404);
+        }
     }
 
     /**
@@ -48,7 +64,6 @@ class AdminNotificationController extends Controller
     {
         $notification = UniversalNotification::findOrFail($id);
         $notification->delete();
-
         return response()->json(['message' => 'Notification deleted successfully']);
     }
 
