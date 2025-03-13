@@ -38,7 +38,8 @@ if (!function_exists('translate')) {
                     $data[$key] = jsonImageModifierFormatter($value);
                 } elseif (isImageKey($key)) {
                     // If it's an image field, apply ImageModifier
-                    $data[$key] = \App\Actions\ImageModifier::generateImageUrl($value);
+                    $data[$key] = $value;
+                    $data[$key . '_url'] = \App\Actions\ImageModifier::generateImageUrl($value);
                 }
             }
             return $data;

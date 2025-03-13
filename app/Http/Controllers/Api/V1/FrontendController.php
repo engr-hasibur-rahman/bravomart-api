@@ -626,8 +626,28 @@ class FrontendController extends Controller
                 $query->where('type', $request->type);
             }
         }
+        if (isset($request->min_rating)) {
+            $minRating = $request->min_rating;
 
+            // Subquery to calculate the average rating for each product
+            $averageRatingSubquery = DB::table('reviews')
+                ->select('reviewable_id', DB::raw('AVG(rating) as average_rating'))
+                ->where('reviewable_type', Product::class)
+                ->where('status', 'approved')
+                ->groupBy('reviewable_id');
 
+            // Debugging: Log the subquery SQL
+            \Log::info('Subquery SQL:', [$averageRatingSubquery->toSql()]);
+
+            // Join the subquery with the products table
+            $query->joinSub($averageRatingSubquery, 'product_ratings', function ($join) {
+                $join->on('products.id', '=', 'product_ratings.reviewable_id');
+            })
+                ->where('product_ratings.average_rating', '>=', $minRating);
+
+            // Debugging: Log the final SQL query
+            \Log::info($query->toSql());
+        }
         // Apply sorting
         if (isset($request->sort)) {
             switch ($request->sort) {
@@ -1335,7 +1355,7 @@ class FrontendController extends Controller
         if (!$setting) {
             return response()->json([
                 'message' => __('messages.data_not_found')
-            ],404);
+            ], 404);
         }
         $content = jsonImageModifierFormatter($setting->content);
         $setting->content = $content;
