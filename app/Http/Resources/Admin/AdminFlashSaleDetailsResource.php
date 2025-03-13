@@ -17,11 +17,6 @@ class AdminFlashSaleDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-//        return parent::toArray($request);
-        // Get the requested language from the query parameter
-        $language = $request->input('language', 'en');
-        // Get the translation for the requested language
-        $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
             "products" => $this->products->map(function ($flashSaleProduct) {
@@ -34,8 +29,10 @@ class AdminFlashSaleDetailsResource extends JsonResource
             }),
             "title" => $this->title,
             "description" => $this->description,
-            "thumbnail_image" => $this->thumbnail_image,
-            "thumbnail_image_url" => ImageModifier::generateImageUrl($this->thumbnail_image),
+            "title_color" => $this->title_color,
+            "description_color" => $this->description_color,
+            "image" => $this->image,
+            "image_url" => ImageModifier::generateImageUrl($this->image),
             "cover_image" => $this->cover_image,
             "cover_image_url" => ImageModifier::generateImageUrl($this->cover_image),
             "discount_type" => $this->discount_type,
@@ -45,6 +42,13 @@ class AdminFlashSaleDetailsResource extends JsonResource
             "start_time" => $this->start_time,
             "end_time" => $this->end_time,
             "status" => $this->status,
+            "button_text" => $this->button_text,
+            "button_text_color" => $this->button_text_color,
+            "button_hover_color" => $this->button_hover_color,
+            "button_bg_color" => $this->button_bg_color,
+            "button_url" => $this->button_url,
+            "timer_bg_color" => $this->timer_bg_color,
+            "timer_text_color" => $this->timer_text_color,
             "related_translations" => FlashSaleTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }

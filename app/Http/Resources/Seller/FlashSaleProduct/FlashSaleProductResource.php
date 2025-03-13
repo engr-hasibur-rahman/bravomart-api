@@ -17,10 +17,10 @@ class FlashSaleProductResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "flash_sale" => $this->flashSale->title,
-            "product" => $this->product->name,
-            "product_image" => ImageModifier::generateImageUrl($this->product->image),
-            "store" => $this->store->name,
+            "flash_sale" => $this->flashSale?->title,
+            "product" => $this->product?->name,
+            "product_image" => ImageModifier::generateImageUrl($this->product?->image),
+            "store" => $this->store?->name,
         ];
     }
 }

@@ -298,27 +298,6 @@ class AdminProductManageController extends Controller
         }
     }
 
-    public function getStoreWiseProducts(Request $request)
-    {
-        $query = Product::where('status', 'approved')
-            ->whereNull('deleted_at'); // Only fetch non-deleted products
 
-        // Apply search filter
-        if ($request->has('search') && !empty($request->search)) {
-            $query->where('name', 'LIKE', '%' . $request->search . '%');
-        }
-        if ($request->has('store_id') && !empty($request->store_id)) {
-            $query->where('store_id', $request->store_id);
-        }
-
-        // Paginate results dynamically
-        $products = $query->select('id', 'name')->paginate(20);
-
-        return response()->json([
-            'status' => true,
-            'data' => StoreWiseProductDropdownResource::collection($products),
-            'meta' => new PaginationResource($products),
-        ]);
-    }
 
 }

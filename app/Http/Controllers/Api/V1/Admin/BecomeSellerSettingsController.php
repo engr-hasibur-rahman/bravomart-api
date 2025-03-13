@@ -24,6 +24,11 @@ class BecomeSellerSettingsController extends Controller
     {
         if ($request->isMethod('GET')) {
             $settings = BecomeSellerSetting::with('related_translations')->where('status', 1)->first();
+            if (!$settings) {
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ],404);
+            }
             $content = jsonImageModifierFormatter($settings->content);
             $settings->content = $content;
             return response()->json([

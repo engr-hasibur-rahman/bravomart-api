@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FlashDealProductRequest;
 use App\Http\Resources\Admin\AdminFlashSaleResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
@@ -78,13 +79,19 @@ class SellerFlashSaleProductManageController extends Controller
     public function getFlashSaleProducts()
     {
         $flashSaleProducts = $this->flashSaleService->getSellerFlashSaleProducts();
-        return response()->json(FlashSaleProductResource::collection($flashSaleProducts));
+        return response()->json([
+            'data' => FlashSaleProductResource::collection($flashSaleProducts),
+            'meta' => new PaginationResource($flashSaleProducts)
+        ]);
     }
 
     public function getValidFlashSales()
     {
         $flashSales = $this->flashSaleService->getValidFlashSales();
-        return response()->json(AdminFlashSaleResource::collection($flashSales));
+        return response()->json([
+            'data' => AdminFlashSaleResource::collection($flashSales),
+            'meta' => new PaginationResource($flashSales)
+        ]);
     }
 
 }

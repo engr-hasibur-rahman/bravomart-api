@@ -248,7 +248,6 @@ class CustomerManageRepository implements CustomerManageInterface
             ->whereHas('orderMaster', function ($query) use ($customer_id) {
                 $query->where('customer_id', $customer_id);
             })
-            ->where('status', 'delivered')
             ->latest()
             ->limit(10)
             ->get();

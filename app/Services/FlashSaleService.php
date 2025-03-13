@@ -290,7 +290,7 @@ class FlashSaleService
     {
         return FlashSaleProduct::with(['product', 'flashSale'])
             ->where('created_by', auth('api')->id())
-            ->get();
+            ->paginate(10);
     }
 
     public function getAllFlashSaleProducts(array $filters)
@@ -314,12 +314,12 @@ class FlashSaleService
 
     public function getValidFlashSales()
     {
-        return FlashSale::with(['approvedProducts.product','approvedProducts.product.store', 'related_translations'])
+        return FlashSale::with(['approvedProducts.product', 'approvedProducts.product.store', 'related_translations'])
             ->where('status', true) // Ensure the flash sale is active
             ->where('start_time', '<=', now()) // Valid only after the start time
             ->where('end_time', '>=', now()) // Valid only before the end time
             ->orderBy('start_time', 'asc') // Order by the start time
-            ->get();
+            ->paginate(10);
     }
 
     public function toggleStatus(int $id): FlashSale

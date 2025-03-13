@@ -11,8 +11,18 @@ class FlashSale extends Model
 
     protected $fillable = [
         'title',
+        'title_color',
         'description',
-        'thumbnail_image',
+        'description_color',
+        'background_color',
+        'button_text',
+        'button_text_color',
+        'button_hover_color',
+        'button_bg_color',
+        'button_url',
+        'timer_bg_color',
+        'timer_text_color',
+        'image',
         'cover_image',
         'discount_type',
         'discount_amount',
@@ -25,6 +35,7 @@ class FlashSale extends Model
     public $translationKeys = [
         'title',
         'description',
+        'button_text'
     ];
 
     public function approvedProducts()

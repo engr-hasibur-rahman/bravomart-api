@@ -25,10 +25,20 @@ class FlashSaleRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
+            'title_color' => 'nullable|string|max:255',
             'description' => 'nullable|string',
+            'description_color' => 'nullable|string|max:255',
+            'background_color' => 'nullable|string|max:255',
+            'button_text' => 'nullable|string|max:255',
+            'button_text_color' => 'nullable|string|max:255',
+            'button_hover_color' => 'nullable|string|max:255',
+            'button_bg_color' => 'nullable|string|max:255',
+            'button_url' => 'nullable|url|max:255',
+            'timer_bg_color' => 'nullable|string|max:255',
+            'timer_text_color' => 'nullable|string|max:255',
+            'image' => 'nullable',
+            'cover_image' => 'nullable',
             'discount_type' => 'nullable|in:percentage,amount',
-            'cover_image' => 'nullable|max:255',
-            'thumbnail_image' => 'nullable|max:255',
             'discount_amount' => 'nullable|numeric',
             'special_price' => 'nullable|numeric',
             'purchase_limit' => 'nullable|integer',
@@ -39,6 +49,9 @@ class FlashSaleRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get custom error messages for validation.
+     */
     public function messages()
     {
         return [
@@ -46,6 +59,8 @@ class FlashSaleRequest extends FormRequest
             'title.string' => __('validation.string', ['attribute' => 'Title']),
             'title.max' => __('validation.max.string', ['attribute' => 'Title', 'max' => 255]),
             'description.string' => __('validation.string', ['attribute' => 'Description']),
+            'description_color.string' => __('validation.string', ['attribute' => 'Description Color']),
+            'background_color.string' => __('validation.string', ['attribute' => 'Description Color']),
             'discount_type.in' => __('validation.in', ['attribute' => 'Discount Type', 'enum' => 'percentage or amount']),
             'discount_amount.numeric' => __('validation.numeric', ['attribute' => 'Discount Amount']),
             'special_price.numeric' => __('validation.numeric', ['attribute' => 'Special Price']),
@@ -55,9 +70,14 @@ class FlashSaleRequest extends FormRequest
             'end_time.required' => __('validation.required', ['attribute' => 'End Time']),
             'end_time.date' => __('validation.date', ['attribute' => 'End Time']),
             'end_time.after' => __('validation.after', ['attribute' => 'End Time']),
+            'product_ids.array' => __('validation.array', ['attribute' => 'Product IDs']),
+            'product_ids.exists' => __('validation.exists', ['attribute' => 'Product IDs']),
         ];
     }
 
+    /**
+     * Handle a failed validation attempt.
+     */
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));

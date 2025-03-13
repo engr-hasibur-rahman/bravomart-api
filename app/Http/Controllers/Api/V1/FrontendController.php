@@ -38,6 +38,7 @@ use App\Http\Resources\Product\ProductKeywordSuggestionPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\ProductSuggestionPublicResource;
 use App\Http\Resources\Product\RelatedProductPublicResource;
+use App\Http\Resources\Product\StoreWiseProductDropdownResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
 use App\Http\Resources\Product\TopRatedProductPublicResource;
 use App\Http\Resources\Product\TrendingProductPublicResource;
@@ -570,7 +571,29 @@ class FrontendController extends Controller
         $query = Product::query();
         // Apply category filter (multiple categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
-            $query->whereIn('category_id', $request->category_id);
+            // Fetch all child categories for the given category IDs
+            $allCategoryIds = [];
+
+            foreach ($request->category_id as $categoryId) {
+                // Check if the category is a parent category
+                $category = ProductCategory::where('id', $categoryId)->first();
+
+                if ($category) {
+                    if ($category->parent_id === null) {
+                        // Fetch all child category IDs of this parent category
+                        $childCategoryIds = ProductCategory::where('parent_id', $category->id)->pluck('id')->toArray();
+                        $allCategoryIds = array_merge($allCategoryIds, $childCategoryIds);
+                    }
+
+                    // Add the original category ID
+                    $allCategoryIds[] = $category->id;
+                }
+            }
+
+            // Apply the category filter
+            if (!empty($allCategoryIds)) {
+                $query->whereIn('category_id', $allCategoryIds);
+            }
         }
 
         if (!empty($request->brand_id) && is_array($request->brand_id)) {
@@ -604,16 +627,22 @@ class FrontendController extends Controller
                 $query->where('type', $request->type);
             }
         }
-
         if (isset($request->min_rating)) {
-            $query->whereHas('reviews', function ($q) {
-                $q->where('status', 'approved')
-                    ->where('reviewable_type', Product::class);
-            })
-                ->withAvg('reviews', 'rating') // Calculate average rating
-                ->having('reviews_avg_rating', '>=', $request->min_rating); // Filter by average rating
-        }
+            $minRating = $request->min_rating;
 
+            // Subquery to calculate the average rating for each product
+            $averageRatingSubquery = DB::table('reviews')
+                ->select('reviewable_id', DB::raw('AVG(rating) as average_rating'))
+                ->where('reviewable_type', Product::class)
+                ->where('status', 'approved')
+                ->groupBy('reviewable_id');
+
+            // Join the subquery with the products table
+            $query->joinSub($averageRatingSubquery, 'product_ratings', function ($join) {
+                $join->on('products.id', '=', 'product_ratings.reviewable_id');
+            })
+                ->where('product_ratings.average_rating', '>=', $minRating);
+        }
         // Apply sorting
         if (isset($request->sort)) {
             switch ($request->sort) {
@@ -644,12 +673,44 @@ class FrontendController extends Controller
             ->where('status', 'approved')
             ->where('deleted_at', null)
             ->paginate($perPage);
-
+        // Extract unique attributes from variants
+        $uniqueAttributes = $this->getUniqueAttributesFromVariants($products);
         return response()->json([
             'messages' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
-            'meta' => new PaginationResource($products)
+            'meta' => new PaginationResource($products),
+            'filters' => $uniqueAttributes
         ], 200);
+    }
+
+    protected function getUniqueAttributesFromVariants($products)
+    {
+        $attributes = [];
+
+        foreach ($products as $product) {
+            foreach ($product->variants as $variant) {
+                if (!empty($variant->attributes)) {
+                    // Decode the JSON attributes if they are stored as a JSON string
+                    $variantAttributes = json_decode($variant->attributes, true);
+
+                    if (is_array($variantAttributes)) {
+                        foreach ($variantAttributes as $key => $value) {
+                            // Initialize the key if it doesn't exist
+                            if (!isset($attributes[$key])) {
+                                $attributes[$key] = [];
+                            }
+
+                            // Add the value to the key's array if it's not already present
+                            if (!in_array($value, $attributes[$key])) {
+                                $attributes[$key][] = $value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $attributes;
     }
 
     public function productDetails(Request $request, $product_slug)
@@ -1318,9 +1379,44 @@ class FrontendController extends Controller
         $setting = BecomeSellerSetting::with('related_translations')
             ->where('status', 1)
             ->first();
+        if (!$setting) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
         $content = jsonImageModifierFormatter($setting->content);
         $setting->content = $content;
         return response()->json(new BecomeSellerPublicResource($setting));
+    }
+    public function getStoreWiseProducts(Request $request)
+    {
+        // Base query
+        $query = Product::with('store') // Eager load the store relationship
+        ->where('status', 'approved')
+            ->whereNull('deleted_at'); // Only fetch non-deleted products
+
+        // Apply search filter
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // Apply store filter
+        if ($request->has('store_id') && !empty($request->store_id)) {
+            $query->where('store_id', $request->store_id);
+        }
+
+        // Select specific fields
+        $query->select('id', 'name', 'store_id');
+
+        // Paginate results dynamically
+        $perPage = $request->per_page ?? 20;
+        $products = $query->paginate($perPage);
+
+        return response()->json([
+            'status' => true,
+            'data' => StoreWiseProductDropdownResource::collection($products),
+            'meta' => new PaginationResource($products),
+        ]);
     }
 
 }

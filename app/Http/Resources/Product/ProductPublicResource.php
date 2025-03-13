@@ -48,9 +48,9 @@ class ProductPublicResource extends JsonResource
             'price' => optional($firstVariant)->price,
             'special_price' => optional($firstVariant)->special_price,
             'singleVariant' => $filteredVariants->count() === 1 ? [$firstVariant] : [],
-            'discount_percentage' => $firstVariant && $firstVariant->price > 0
+            'discount_percentage' => $firstVariant && $firstVariant->price > 0 && $firstVariant->special_price > 0
                 ? round((($firstVariant->price - $firstVariant->special_price) / $firstVariant->price) * 100, 2)
-                : null,
+                : 0,
 //            'price' => optional($this->variants->first())->price,
 //            'special_price' => optional($this->variants->first())->special_price,
 //            'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
