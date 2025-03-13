@@ -1075,6 +1075,32 @@ class PermissionAdminSeeder extends Seeder
         $admin_settings_related_menu = [
             [
 
+                // Notifications Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Notifications Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Notifications Management',
+                        'ar' => 'إدارة الأعمال'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value,
+                            'PermissionTitle' => 'Notifications',
+                            'activity_scope' => 'system_level',
+                            'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Notifications',
+                                'ar' => 'إعدادات الأعمال'
+                            ]
+                        ]
+                    ]
+                ],
+
                 // Notice Management
                 [
                     'PermissionName' => '',

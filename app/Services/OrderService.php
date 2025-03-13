@@ -100,7 +100,9 @@ class OrderService
                 // find the product
                 $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                 // Validate product variant
-                $variant = ProductVariant::where('id', $itemData['variant_id'])->where('product_id', $product->id)->first();
+                $variant = ProductVariant::where('id', $itemData['variant_id'])
+                    ->where('product_id', $product->id)
+                    ->first();
                 // Add to total order amount
                 if (!empty($variant) && isset($variant->price)) {
                     $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;

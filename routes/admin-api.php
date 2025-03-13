@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminNotificationController;
 use App\Http\Controllers\Api\V1\Admin\AdminOrderManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminOrderRefundManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
@@ -421,7 +422,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('pages/status-change', [PagesManageController::class, 'pagesStatusChange']);
             Route::delete('pages/remove/{id}', [PagesManageController::class, 'pagesDestroy']);
         });
-        // Store Notice manage    
+
+        // Notifications manage
+        Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value])->group(function () {
+            Route::get('/', [AdminNotificationController::class, 'index']);
+            Route::patch('/read/{id}', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
+            Route::delete('remove/{id}', [AdminNotificationController::class, 'destroy']);
+        });
+
+        // Store Notice manage
         Route::prefix('store-notices/')->middleware(['permission:' . PermissionKey::ADMIN_NOTICE_MANAGEMENT->value])->group(function () {
             Route::get('list', [AdminStoreNoticeController::class, 'index']); // Get all notices
             Route::post('add', [AdminStoreNoticeController::class, 'store']); // Create a new notice
@@ -430,6 +439,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('change-status', [AdminStoreNoticeController::class, 'changeStatus']); // Change notice status
             Route::delete('remove/{id}', [AdminStoreNoticeController::class, 'destroy']); // Delete a specific notice
         });
+
         Route::group(['prefix' => 'feedback-control/'], function () {
             Route::group(['prefix' => 'review/'], function () {
                 Route::get('/', [AdminReviewManageController::class, 'index']);
