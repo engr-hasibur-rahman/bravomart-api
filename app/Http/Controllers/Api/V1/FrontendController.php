@@ -636,17 +636,11 @@ class FrontendController extends Controller
                 ->where('status', 'approved')
                 ->groupBy('reviewable_id');
 
-            // Debugging: Log the subquery SQL
-            \Log::info('Subquery SQL:', [$averageRatingSubquery->toSql()]);
-
             // Join the subquery with the products table
             $query->joinSub($averageRatingSubquery, 'product_ratings', function ($join) {
                 $join->on('products.id', '=', 'product_ratings.reviewable_id');
             })
                 ->where('product_ratings.average_rating', '>=', $minRating);
-
-            // Debugging: Log the final SQL query
-            \Log::info($query->toSql());
         }
         // Apply sorting
         if (isset($request->sort)) {
@@ -678,12 +672,44 @@ class FrontendController extends Controller
             ->where('status', 'approved')
             ->where('deleted_at', null)
             ->paginate($perPage);
-
+        // Extract unique attributes from variants
+        $uniqueAttributes = $this->getUniqueAttributesFromVariants($products);
         return response()->json([
             'messages' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
-            'meta' => new PaginationResource($products)
+            'meta' => new PaginationResource($products),
+            'filters' => $uniqueAttributes
         ], 200);
+    }
+
+    protected function getUniqueAttributesFromVariants($products)
+    {
+        $attributes = [];
+
+        foreach ($products as $product) {
+            foreach ($product->variants as $variant) {
+                if (!empty($variant->attributes)) {
+                    // Decode the JSON attributes if they are stored as a JSON string
+                    $variantAttributes = json_decode($variant->attributes, true);
+
+                    if (is_array($variantAttributes)) {
+                        foreach ($variantAttributes as $key => $value) {
+                            // Initialize the key if it doesn't exist
+                            if (!isset($attributes[$key])) {
+                                $attributes[$key] = [];
+                            }
+
+                            // Add the value to the key's array if it's not already present
+                            if (!in_array($value, $attributes[$key])) {
+                                $attributes[$key][] = $value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $attributes;
     }
 
     public function productDetails(Request $request, $product_slug)
