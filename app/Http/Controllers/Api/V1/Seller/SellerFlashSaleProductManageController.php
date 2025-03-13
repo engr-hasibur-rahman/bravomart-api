@@ -76,13 +76,20 @@ class SellerFlashSaleProductManageController extends Controller
         }
     }
 
-    public function getFlashSaleProducts()
+    public function getFlashSaleProducts(Request $request)
     {
-        $flashSaleProducts = $this->flashSaleService->getSellerFlashSaleProducts();
-        return response()->json([
-            'data' => FlashSaleProductResource::collection($flashSaleProducts),
-            'meta' => new PaginationResource($flashSaleProducts)
-        ]);
+        $flashSaleProducts = $this->flashSaleService->getSellerFlashSaleProducts($request->store_id);
+        if (!empty($flashSaleProducts)) {
+            return response()->json([
+                'data' => FlashSaleProductResource::collection($flashSaleProducts),
+                'meta' => new PaginationResource($flashSaleProducts)
+            ]);
+        } else{
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ],404);
+        }
+
     }
 
     public function getValidFlashSales()

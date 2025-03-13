@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\FlashSale;
 use App\Models\FlashSaleProduct;
 use App\Models\Product;
+use App\Models\Store;
 use App\Models\Translation;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -286,10 +287,15 @@ class FlashSaleService
         }
     }
 
-    public function getSellerFlashSaleProducts()
+    public function getSellerFlashSaleProducts(int $store_id)
     {
+        $seller_stores = Store::where('store_seller_id', auth('api')->id())->pluck('id')->toArray();
+        // Check if the provided store_id belongs to the authenticated seller
+        if (!in_array($store_id, $seller_stores)) {
+            return [];
+        }
         return FlashSaleProduct::with(['product', 'flashSale'])
-            ->where('created_by', auth('api')->id())
+            ->where('store_id', $store_id)
             ->paginate(10);
     }
 
