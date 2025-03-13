@@ -9,6 +9,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Seller\FlashSaleProduct\FlashSaleProductResource;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SellerFlashSaleProductManageController extends Controller
 {
@@ -78,16 +79,22 @@ class SellerFlashSaleProductManageController extends Controller
 
     public function getFlashSaleProducts(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'store_id' => 'required|exists:stores,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
         $flashSaleProducts = $this->flashSaleService->getSellerFlashSaleProducts($request->store_id);
         if (!empty($flashSaleProducts)) {
             return response()->json([
                 'data' => FlashSaleProductResource::collection($flashSaleProducts),
                 'meta' => new PaginationResource($flashSaleProducts)
             ]);
-        } else{
+        } else {
             return response()->json([
                 'message' => __('messages.data_not_found')
-            ],404);
+            ], 404);
         }
 
     }
