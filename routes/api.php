@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
 use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
 use App\Http\Controllers\Api\V1\Com\ComSiteGeneralController;
 use App\Http\Controllers\Api\V1\Com\FrontendPageSettingsController;
@@ -117,6 +118,8 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/blog/{slug}', [FrontendController::class, 'blogDetails']);
     Route::get('/coupons', [FrontendController::class, 'couponList']);
     Route::get('/become-a-seller', [FrontendController::class, 'becomeSeller']);
+    Route::get('/store-wise-products', [FrontendController::class, 'getStoreWiseProducts']);
+
 
 
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);

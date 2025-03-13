@@ -38,6 +38,7 @@ use App\Http\Resources\Product\ProductKeywordSuggestionPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
 use App\Http\Resources\Product\ProductSuggestionPublicResource;
 use App\Http\Resources\Product\RelatedProductPublicResource;
+use App\Http\Resources\Product\StoreWiseProductDropdownResource;
 use App\Http\Resources\Product\TopDealsPublicResource;
 use App\Http\Resources\Product\TopRatedProductPublicResource;
 use App\Http\Resources\Product\TrendingProductPublicResource;
@@ -1386,6 +1387,36 @@ class FrontendController extends Controller
         $content = jsonImageModifierFormatter($setting->content);
         $setting->content = $content;
         return response()->json(new BecomeSellerPublicResource($setting));
+    }
+    public function getStoreWiseProducts(Request $request)
+    {
+        // Base query
+        $query = Product::with('store') // Eager load the store relationship
+        ->where('status', 'approved')
+            ->whereNull('deleted_at'); // Only fetch non-deleted products
+
+        // Apply search filter
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // Apply store filter
+        if ($request->has('store_id') && !empty($request->store_id)) {
+            $query->where('store_id', $request->store_id);
+        }
+
+        // Select specific fields
+        $query->select('id', 'name', 'store_id');
+
+        // Paginate results dynamically
+        $perPage = $request->per_page ?? 20;
+        $products = $query->paginate($perPage);
+
+        return response()->json([
+            'status' => true,
+            'data' => StoreWiseProductDropdownResource::collection($products),
+            'meta' => new PaginationResource($products),
+        ]);
     }
 
 }
