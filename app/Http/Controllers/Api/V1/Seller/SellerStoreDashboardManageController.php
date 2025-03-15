@@ -57,7 +57,7 @@ class SellerStoreDashboardManageController extends Controller
     public function otherSummaryData(Request $request)
     {
         $validator = Validator::make(['slug' => $request->slug], [
-            'slug' => 'required',
+            'slug' => 'nullable|exists:stores,slug',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);

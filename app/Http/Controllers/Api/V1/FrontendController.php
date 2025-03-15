@@ -774,7 +774,6 @@ class FrontendController extends Controller
 
     }
 
-
     public function getNewArrivals(Request $request)
     {
         $query = Product::query();

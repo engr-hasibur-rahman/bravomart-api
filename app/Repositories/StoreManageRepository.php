@@ -375,7 +375,7 @@ class StoreManageRepository implements StoreManageInterface
         $user = auth('api')->user();
         if ($slug) {
             // Fetch data for a specific store
-            $stores = Store::where('slug', $slug)->where('store_seller_id',$user->id)->get();
+            $stores = Store::where('slug', $slug)->where('store_seller_id', $user->id)->get();
         } else {
             // Fetch data for all stores of the seller
             $stores = Store::where('store_seller_id', $user->id)->get();
@@ -467,8 +467,7 @@ class StoreManageRepository implements StoreManageInterface
             ->get();
     }
 
-
-    public function getOtherSummaryData(string $slug)
+    public function getOtherSummaryData(?string $slug = null)
     {
         $topRatedProducts = $this->getTopRatedProducts($slug);
         $recentCompletedOrders = $this->getRecentCompletedOrders($slug);
@@ -479,11 +478,22 @@ class StoreManageRepository implements StoreManageInterface
         ];
     }
 
-    public function getTopRatedProducts($slug)
+    public function getTopRatedProducts($slug = null)
     {
-        $store = Store::where('slug', $slug)->first();
+        $user = auth('api')->user();
+
+        if ($slug) {
+            $store = Store::where('slug', $slug)->where('store_seller_id', $user->id)->first();
+            if (!$store) {
+                return collect([]); // Return empty collection if store not found
+            }
+            $storeIds = [$store->id]; // Convert to array for whereIn
+        } else {
+            $storeIds = Store::where('store_seller_id', $user->id)->pluck('id')->toArray();
+        }
+
         return Product::with(['variants', 'store'])
-            ->where('products.store_id', $store->id) // Prefix 'store_id' with 'products'
+            ->whereIn('products.store_id', $storeIds)
             ->where('products.status', 'approved')
             ->whereNull('products.deleted_at')
             ->leftJoin('reviews', function ($join) {
@@ -513,16 +523,28 @@ class StoreManageRepository implements StoreManageInterface
             ->get();
     }
 
-    public function getRecentCompletedOrders($slug)
+    public function getRecentCompletedOrders($slug = null)
     {
-        $store = Store::where('slug', $slug)->first();
+        $user = auth('api')->user();
+
+        if ($slug) {
+            $store = Store::where('slug', $slug)->where('store_seller_id', $user->id)->first();
+            if (!$store) {
+                return collect([]); // Return empty collection if store not found
+            }
+            $storeIds = [$store->id];
+        } else {
+            $storeIds = Store::where('store_seller_id', $user->id)->pluck('id')->toArray();
+        }
+
         return Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
-            ->where('store_id', $store->id)
+            ->whereIn('store_id', $storeIds)
             ->where('status', 'delivered')
             ->orderByDesc('delivery_completed_at')
             ->limit(5)
             ->get();
     }
+
 
     public function storeDashboard(string $slug)
     {
