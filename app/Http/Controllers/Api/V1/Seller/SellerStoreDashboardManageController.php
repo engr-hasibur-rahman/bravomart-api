@@ -32,13 +32,13 @@ class SellerStoreDashboardManageController extends Controller
 
         $data = $this->storeRepo->getSummaryData($request->slug);
 
-        return response()->json(new SellerStoreSummaryResource((object) $data));
+        return response()->json(new SellerStoreSummaryResource((object)$data));
     }
 
     public function salesSummaryData(Request $request)
     {
         $validator = Validator::make(['slug' => $request->slug], [
-            'slug' => 'required',
+            'slug' => 'nullable|exists:stores,slug',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -50,9 +50,10 @@ class SellerStoreDashboardManageController extends Controller
             "start_date" => $request->start_date,
             "end_date" => $request->end_date,
         ];
-        $data = $this->storeRepo->getSalesSummaryData($request->slug, $filters);
+        $data = $this->storeRepo->getSalesSummaryData($filters, $request->slug);
         return response()->json(new SalesSummaryResource($data));
     }
+
     public function otherSummaryData(Request $request)
     {
         $validator = Validator::make(['slug' => $request->slug], [
