@@ -53,14 +53,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
         });
         Route::group(['prefix' => 'dashboard/'], function () {
             Route::get('/', [SellerStoreDashboardManageController::class, 'summaryData']);
-
+            Route::get('sales-summary', [SellerStoreDashboardManageController::class, 'salesSummaryData']);
         });
 
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
             Route::group(['prefix' => 'dashboard'], function () {
                 Route::get('/{slug?}', [SellerStoreDashboardManageController::class, 'summaryData']);
-                Route::get('sales-summary/{slug}', [SellerStoreDashboardManageController::class, 'salesSummaryData']);
+                Route::get('sales-summary/{slug?}', [SellerStoreDashboardManageController::class, 'salesSummaryData']);
                 Route::get('other-summary/{slug}', [SellerStoreDashboardManageController::class, 'otherSummaryData']);
             });
             // POS Manage
