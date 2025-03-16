@@ -22,7 +22,7 @@ class AdminBannerManageController extends Controller
         $banner = $this->bannerRepo->getPaginatedBanner(
             $request->per_page ?? 10,
             $request->page ?? 1,
-            $request->language ?? DEFAULT_LANGUAGE,
+            $request->language ?? 'en',
             $request->search ?? "",
             $request->sortField ?? 'id',
             $request->sort ?? 'asc',

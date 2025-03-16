@@ -31,13 +31,13 @@ class BannerManageRepository implements BannerManageInterface
         array      $filters
     )
     {
-        $query = Banner::query()
-            ->with([
-                'related_translations' => function ($q) use ($language) {
-                    $q->where('language', $language)
-                        ->whereIn('key', ['title', 'description', 'button_text']);
-                }
-            ]);
+        $query = Banner::query();
+//            ->with([
+//                'related_translations' => function ($q) use ($language) {
+//                    $q->where('language', $language)
+//                        ->whereIn('key', ['title', 'description', 'button_text']);
+//                }
+//            ]);
 
         // Apply search filter if search parameter exists
         if (!empty($search)) {
@@ -57,7 +57,7 @@ class BannerManageRepository implements BannerManageInterface
         }
 
         // Paginate the results
-        return $query->paginate($per_page ?? 10);
+        return $query->with('related_translations')->paginate($per_page ?? 10);
     }
 
 

@@ -11,7 +11,7 @@ class ReviewService
 {
     public function getAllReviews($filters)
     {
-        $query = Review::with(['customer', 'reviewable', 'store']);
+        $query = Review::with(['customer', 'reviewable', 'store.related_translations']);
 
         if (isset($filters['customer_name'])) {
             $query->whereHas('customer', function ($customerQuery) use ($filters) {
