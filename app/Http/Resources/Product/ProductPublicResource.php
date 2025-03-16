@@ -42,21 +42,19 @@ class ProductPublicResource extends JsonResource
             'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
-            'rating' => number_format((float) $this->rating, 2, '.', ''),
+            'rating' => number_format((float)$this->rating, 2, '.', ''),
             'review_count' => $this->review_count,
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
+            'attributes' => $this->variants->pluck('attributes')->map(function ($attribute) {
+                return json_decode($attribute, true);
+            })->toArray(),
             'price' => optional($firstVariant)->price,
             'special_price' => optional($firstVariant)->special_price,
             'singleVariant' => $filteredVariants->count() === 1 ? [$firstVariant] : [],
             'discount_percentage' => $firstVariant && $firstVariant->price > 0 && $firstVariant->special_price > 0
                 ? round((($firstVariant->price - $firstVariant->special_price) / $firstVariant->price) * 100, 2)
                 : 0,
-//            'price' => optional($this->variants->first())->price,
-//            'special_price' => optional($this->variants->first())->special_price,
-//            'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
-//            'discount_percentage' => $this->variants->isNotEmpty() && optional($this->variants->first())->price > 0
-//                ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
-//                : null,
+
         ];
     }
 }
