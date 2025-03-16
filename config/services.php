@@ -36,7 +36,7 @@ return [
     'googleOAuth' => [
         'client_id' => env('GOOGLE_CLIENT_ID', 'MISSING_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET', 'MISSING_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT', 'MISSING_REDIRECT'),
+        'redirect' => env('APP_URL') . '/api/v1/auth/google/callback',
     ],
 
 ];
