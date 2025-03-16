@@ -29,7 +29,8 @@ class OrderGrowthSummaryResource extends JsonResource
                 ? round((($currentMonthOrders - $previousMonthOrders) / $previousMonthOrders) * 100, 2)
                 : 0;
 
-            $growthData[date("F", mktime(0, 0, 0, $month, 1))] = [
+            $growthData[] = [
+                'month' => date("F", mktime(0, 0, 0, $month, 1)), // Convert month number to name
                 'orders' => $currentMonthOrders,
                 'growth' => $growthPercentage
             ];
