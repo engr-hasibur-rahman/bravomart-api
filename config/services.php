@@ -1,5 +1,4 @@
 <?php
-
 return [
 
     /*
@@ -34,10 +33,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-    'google' => [
-        'client_id' => env('GOOGLE_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT'),
+    'googleOAuth' => [
+        'client_id' => env('GOOGLE_CLIENT_ID', 'MISSING_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET', 'MISSING_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT', 'MISSING_REDIRECT'),
     ],
 
 ];
