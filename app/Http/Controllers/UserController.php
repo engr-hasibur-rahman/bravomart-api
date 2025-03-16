@@ -33,35 +33,30 @@ class UserController extends Controller
     }
 
     /* Social login start */
-//    public function redirectToGoogle()
-//    {
-//        /** @var \Laravel\Socialite\Two\GoogleProvider */
-//        $driver = Socialite::driver('google');
-//        return $driver->stateless()->redirect();
-//    }
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
         /** @var \Laravel\Socialite\Two\GoogleProvider */
-        \Log::info('GOOGLE_CLIENT_ID:', ['value' => config('services.google.client_id')]);
-        \Log::info('GOOGLE_REDIRECT:', ['value' => config('services.google.redirect')]);
-
-        dd(env('GOOGLE_REDIRECT'));
-        $driver = Socialite::driver('google')
+        return Socialite::driver('google')
+            ->scopes(['email', 'profile'])
             ->with([
-                'client_id'=>'483247466424-makrg9bs86r4vup300m3p3r63tpaa9v0.apps.googleusercontent.com',
-                'redirect_uri'=>'http://localhost:8000/api/v1/auth/google/callback'
+                'client_id' => config('services.googleOAuth.client_id'),
+                'redirect_uri' => config('services.googleOAuth.redirect'),
+                'prompt' => 'select_account',  // Forces Google to ask for account selection
             ])
             ->stateless()
             ->redirect();
-        return $driver;
     }
 
 
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(Request $request)
     {
         // Retrieve the user information from Google & need to use GoogleProvider for stateless function as laravel socialiate is not compatible with api.
         /** @var \Laravel\Socialite\Two\GoogleProvider */
-        $user = Socialite::driver('google');
+        $user = Socialite::driver('google')->with([
+            'client_id' => config('services.googleOAuth.client_id'),
+            'client_secret' => config('services.googleOAuth.client_secret'),
+            'redirect_uri' => config('services.googleOAuth.redirect'),
+        ]);
         $user->stateless()->user();
         $google_id = $user->user()->id;
         $google_email = $user->user()->email;

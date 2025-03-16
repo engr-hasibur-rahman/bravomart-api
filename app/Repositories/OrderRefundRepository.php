@@ -80,7 +80,7 @@ class OrderRefundRepository implements OrderRefundInterface
         if (!$order_belongs_to_customer) {
             return 'does_not_belong_to_customer';
         }
-        if ($order->status !== 'delivered' || $order->delivery_completed_at == null) {
+        if ($order->status !== 'delivered') {
             return 'not_delivered';
         }
         $alreadyRequested = OrderRefund::where('order_id', $order_id)->exists();
