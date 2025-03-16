@@ -14,6 +14,10 @@ class AdminReviewResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $store_translation = $this->store?->related_translations->where('language', $language);
         return [
             "id" => $this->id,
             "reviewable_type" => $this->reviewable_type,
@@ -28,7 +32,9 @@ class AdminReviewResource extends JsonResource
                     $this->reviewable->first_name . ' ' . $this->reviewable->last_name :
                     ($this->reviewable_type == 'App\Models\Product' ?
                         $this->reviewable->name : null)) : null,
-            "store" => $this->store->name ?? null,
+            "store" => !empty($store_translation) && $store_translation->where('key', 'name')->first()
+                ? $store_translation->where('key', 'name')->first()->value
+                : $this->store?->name,
         ];
     }
 }

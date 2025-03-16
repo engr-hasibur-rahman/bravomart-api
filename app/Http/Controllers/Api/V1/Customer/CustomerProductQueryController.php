@@ -44,18 +44,11 @@ class CustomerProductQueryController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $questions = $this->productQueryRepo->searchQuestion($request->all());
-        if ($questions->isEmpty()) {
-            return [];
-        }
-        if ($questions) {
-            return response()->json([
-                'data' => CustomerProductQueryResource::collection($questions),
-                'meta' => new PaginationResource($questions),
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => __('messages.something_went_wrong')
-            ], 500);
-        }
+
+        return response()->json([
+            'data' => CustomerProductQueryResource::collection($questions),
+            'meta' => new PaginationResource($questions),
+        ], 200);
+
     }
 }

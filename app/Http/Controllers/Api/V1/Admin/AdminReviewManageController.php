@@ -31,21 +31,11 @@ class AdminReviewManageController extends Controller
             "per_page" => $request->per_page,
         ];
         $reviews = $this->reviewService->getAllReviews($filters);
-        if (!empty($reviews)) {
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => AdminReviewResource::collection($reviews),
-                'meta' => new PaginationResource($reviews)
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'status_code' => 404,
-                'message' => __('messages.data_not_found')
-            ]);
-        }
+        return response()->json([
+            'data' => AdminReviewResource::collection($reviews),
+            'meta' => new PaginationResource($reviews)
+        ]);
+
     }
 
     public function approveReview(Request $request)

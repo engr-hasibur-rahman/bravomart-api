@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Dashboard\AdminOtherSummaryResource;
+use App\Http\Resources\Dashboard\OrderGrowthSummaryResource;
 use App\Http\Resources\Dashboard\SalesSummaryResource;
 use App\Http\Resources\Dashboard\SellerStoreOtherSummaryResource;
 use App\Http\Resources\Dashboard\SellerStoreSummaryResource;
@@ -52,6 +53,18 @@ class SellerStoreDashboardManageController extends Controller
         ];
         $data = $this->storeRepo->getSalesSummaryData($filters, $request->slug);
         return response()->json(new SalesSummaryResource($data));
+    }
+
+    public function orderGrowthData(Request $request)
+    {
+        $validator = Validator::make(['slug' => $request->slug], [
+            'slug' => 'nullable|exists:stores,slug',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $data = $this->storeRepo->getOrderGrowthData($request->slug);
+        return response()->json(new OrderGrowthSummaryResource($data));
     }
 
     public function otherSummaryData(Request $request)

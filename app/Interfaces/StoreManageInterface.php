@@ -38,6 +38,8 @@ interface StoreManageInterface
 
     public function getOtherSummaryData(?string $slug);
 
+    public function getOrderGrowthData(?string $slug = null);
+
     public function storeDashboard(string $slug);
 
     public function getSellerWiseStores(?int $SellerId);

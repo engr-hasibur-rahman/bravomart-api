@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\ImageModifier;
 use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
@@ -12,15 +11,13 @@ use App\Mail\EmailVerificationMail;
 use App\Models\StoreSeller;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Spatie\Permission\Models\Role;
 
@@ -36,17 +33,32 @@ class UserController extends Controller
     }
 
     /* Social login start */
+//    public function redirectToGoogle()
+//    {
+//        /** @var \Laravel\Socialite\Two\GoogleProvider */
+//        $driver = Socialite::driver('google');
+//        return $driver->stateless()->redirect();
+//    }
     public function redirectToGoogle()
     {
         /** @var \Laravel\Socialite\Two\GoogleProvider */
-        $driver = Socialite::driver('google');
+        \Log::info('GOOGLE_CLIENT_ID:', ['value' => config('services.google.client_id')]);
+        \Log::info('GOOGLE_REDIRECT:', ['value' => config('services.google.redirect')]);
 
-        return $driver->stateless()->redirect();
+        dd(env('GOOGLE_REDIRECT'));
+        $driver = Socialite::driver('google')
+            ->with([
+                'client_id'=>'483247466424-makrg9bs86r4vup300m3p3r63tpaa9v0.apps.googleusercontent.com',
+                'redirect_uri'=>'http://localhost:8000/api/v1/auth/google/callback'
+            ])
+            ->stateless()
+            ->redirect();
+        return $driver;
     }
+
 
     public function handleGoogleCallback()
     {
-
         // Retrieve the user information from Google & need to use GoogleProvider for stateless function as laravel socialiate is not compatible with api.
         /** @var \Laravel\Socialite\Two\GoogleProvider */
         $user = Socialite::driver('google');

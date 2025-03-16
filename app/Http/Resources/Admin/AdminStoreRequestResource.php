@@ -24,8 +24,8 @@ class AdminStoreRequestResource extends JsonResource
             'area' => $this->area->name ?? null,
             'seller' => $this->seller ? $this->seller->first_name . '' . $this->seller->last_name : null,
             'store_type' => $this->store_type,
-            'name' => $translation->isNotEmpty()
-                ? $translation->where('key', 'name')->first()?->value
+            'name' => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
                 : $this->name,
             'phone' => $this->phone,
             'email' => $this->email,

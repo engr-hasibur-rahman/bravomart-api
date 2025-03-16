@@ -467,6 +467,33 @@ class StoreManageRepository implements StoreManageInterface
             ->get();
     }
 
+    public function getOrderGrowthData(?string $slug = null)
+    {
+        $user = auth('api')->user();
+        $year = Carbon::now()->year;
+
+        // Get store(s) based on slug
+        $storeIds = $slug
+            ? Store::where('slug', $slug)->where('store_seller_id', $user->id)->pluck('id')->toArray()
+            : Store::where('store_seller_id', $user->id)->pluck('id')->toArray();
+
+        if (empty($storeIds)) {
+            return array_fill(1, 12, 0); // Return all months with 0 if no store found
+        }
+
+        // Fetch order counts per month
+        $monthlyData = Order::whereIn('store_id', $storeIds)
+            ->whereYear('created_at', $year)
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as total_orders')
+            )
+            ->pluck('total_orders', 'month');
+        // Fill missing months with 0
+        return collect(range(1, 12))->mapWithKeys(fn($month) => [$month => $monthlyData->get($month, 0)]);
+    }
+
     public function getOtherSummaryData(?string $slug = null)
     {
         $topRatedProducts = $this->getTopRatedProducts($slug);
