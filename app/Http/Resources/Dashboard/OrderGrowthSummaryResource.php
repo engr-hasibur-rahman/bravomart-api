@@ -24,10 +24,15 @@ class OrderGrowthSummaryResource extends JsonResource
         for ($month = 1; $month <= 12; $month++) {
             $currentMonthOrders = $orderData->get($month, 0); // Get orders for the current month
 
-            // Calculate Growth: ((Current - Previous) / Previous) * 100
-            $growthPercentage = $previousMonthOrders > 0
-                ? round((($currentMonthOrders - $previousMonthOrders) / $previousMonthOrders) * 100, 2)
-                : 0;
+            // Handle growth calculation
+            $growthPercentage = 0;
+            if ($previousMonthOrders == 0 && $currentMonthOrders > 0) {
+                // First month with orders after previous month having 0 orders
+                $growthPercentage = 100; // Treat as 100% growth
+            } elseif ($previousMonthOrders > 0) {
+                // Regular growth calculation
+                $growthPercentage = round((($currentMonthOrders - $previousMonthOrders) / $previousMonthOrders) * 100, 2);
+            }
 
             $growthData[] = [
                 'month' => date("F", mktime(0, 0, 0, $month, 1)), // Convert month number to name
