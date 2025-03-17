@@ -11,7 +11,7 @@ use Kreait\Firebase\Messaging\Notification;
 
 class OrderManageNotificationService
 {
-    public function createOrderNotification($last_order_ids)
+    public function createOrderNotification($last_order_ids, $otherCheckData = null)
     {
         if (empty($last_order_ids)) {
             return;
@@ -28,24 +28,27 @@ class OrderManageNotificationService
             ->whereIn('id' ,$order_ids_convert_to_array)
             ->get();
 
-
         // if order not found
         if ($orders->count() === 0) {
             return;
         }
 
-        foreach ($orders as $order_details) {
-            $last_order_id =$order_details->id;
-            // Notification Data
-            $title = 'New Order Update';
-            $message = 'You have a new update for Order #' . $order_details->id;
-            $data = ['order_id' => $order_details->id];
+        // check others data
+        $other_check = false;
+        if (!empty($otherCheckData) && $otherCheckData == 'new-order'){
+            $other_check = true;
+        }
 
+        foreach ($orders as $order_details) {
+            $last_order_id = $order_details->id;
+            // Notification Data
+            $messages = getOrderStatusMessage($order_details, $other_check);
+            $data = ['order_id' => $order_details->id];
             // create notification for every one
-            $this->notifyAdmin($title, $message, $data);
-            $this->notifyStore($order_details, $title, $message, $data);
-            $this->notifyCustomer($order_details, $title, $message, $data);
-            $this->notifyDeliveryman($order_details, $title, $message, $data);
+            $this->notifyAdmin($messages['title'], $messages['admin'], $data);
+            $this->notifyStore($order_details, $messages['title'], $messages['store'], $data);
+            $this->notifyCustomer($order_details, $messages['title'], $messages['customer'], $data);
+            $this->notifyDeliveryman($order_details, $messages['title'], $messages['deliveryman'], $data);
 
             // Customer notification
             $this->sendOrderNotification(
@@ -53,8 +56,8 @@ class OrderManageNotificationService
                 'customer_id',
                 $order_details->orderMaster?->customer_id ?? 0,
                 $last_order_id,
-                __('Order Placed Successfully'),
-                __('Your order ID: # :id has been placed successfully.', ['id' => $last_order_id])
+                $messages['title'],
+                $messages['customer']
             );
 
             // Seller notification
@@ -63,8 +66,8 @@ class OrderManageNotificationService
                 'seller_id',
                 $order_details->store?->store_seller_id ?? 0,
                 $last_order_id,
-                __('New Order Received'),
-                __('You have received a new order. Order ID: # :id.', ['id' => $last_order_id])
+                $messages['title'],
+                $messages['store']
             );
 
             // Deliveryman notification
@@ -73,8 +76,8 @@ class OrderManageNotificationService
                 'deliveryman_id',
                 $order_details->deliveryman?->id ?? 0,
                 $last_order_id,
-                __('New Delivery Assigned'),
-                __('A new delivery has been assigned. Order ID: # :id.', ['id' => $last_order_id])
+                $messages['title'],
+                $messages['deliveryman']
             );
         }
 
@@ -142,7 +145,7 @@ class OrderManageNotificationService
     // Notify Deliveryman
     protected function notifyDeliveryman($order_details, $title, $message, $data)
     {
-        if ($order_details->deliveryman &&!empty($order_details->deliveryman)) {
+        if ($order_details->deliveryman && !empty($order_details->deliveryman)) {
             $this->sendNotification($order_details->deliveryman->id, 'deliveryman', $title, $message, $data);
         }
     }
