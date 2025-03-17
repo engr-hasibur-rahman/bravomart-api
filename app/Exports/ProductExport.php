@@ -38,6 +38,8 @@ class ProductExport implements FromCollection, WithHeadings
         "status",
         "available_time_starts",
         "available_time_ends",
+        "manufacture_date",
+        "expiry_date",
     ];
 
     /**
@@ -119,7 +121,9 @@ class ProductExport implements FromCollection, WithHeadings
             "views",
             "status",
             "available_time_starts",
-            "available_time_ends"
+            "available_time_ends",
+            "manufacture_date",
+            "expiry_date"
         );
 
         // Execute the query and return the collection

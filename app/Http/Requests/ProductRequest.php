@@ -49,6 +49,8 @@ class ProductRequest extends FormRequest
             "meta_image" => "nullable|string|max:255",
             "available_time_starts" => "nullable|date",
             "available_time_ends" => "nullable|date|after_or_equal:available_time_starts",
+            "manufacture_date" => "nullable|date",
+            "expiry_date" => "nullable|date|after_or_equal:expiry_date",
 
             "variants" => "required|array|min:1",
             "variants.*.variant_slug" => "nullable|string|max:255|unique:product_variants,variant_slug," . ($this->route('product') ?? 0) . ",id",
@@ -87,6 +89,9 @@ class ProductRequest extends FormRequest
             "type.in" => "The selected type is invalid.",
             "behaviour.in" => "The selected behaviour is invalid.",
             "delivery_time_max.gte" => "The max delivery time must be greater than or equal to min delivery time.",
+            "manufacture_date.date" => "The manufacture date must be a date.",
+            "expiry_date.date" => "The expiry date must be a date.",
+            "expiry_date.after_or_equal" => "The expiry date must be after or equal to manufacture date.",
             "variants.*.variant_slug.unique" => "Each variant slug must be unique.",
             "variants.*.sku.unique" => "Each SKU must be unique.",
             "variants.*.stock_quantity.required" => "Stock quantity is required for each variant.",
