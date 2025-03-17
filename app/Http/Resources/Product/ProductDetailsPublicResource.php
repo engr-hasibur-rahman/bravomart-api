@@ -60,6 +60,8 @@ class ProductDetailsPublicResource extends JsonResource
             'status' => $this->status,
             'available_time_starts' => $this->available_time_starts,
             'available_time_ends' => $this->available_time_ends,
+            'manufacture_date' => $this->manufacture_date,
+            'expiry_date' => $this->expiry_date,
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
             'rating' => number_format((float) $this->rating, 2, '.', ''),
             'review_count'=>$this->review_count,
