@@ -50,6 +50,7 @@ return new class extends Migration {
             $table->id();
             $table->string('category_name');
             $table->string('category_slug');
+            $table->string('type');
             $table->string('category_name_paths')->nullable();
             $table->string('parent_path')->nullable();
             $table->integer('parent_id')->nullable();
