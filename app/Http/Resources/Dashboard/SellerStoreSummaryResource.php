@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Dashboard;
 
+use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,6 +16,7 @@ class SellerStoreSummaryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'store_details' => StoreDetailsPublicResource::collection($this->store_details),
             'summary' => [
                 'store' => [
                     'icon' => 'store-icon',

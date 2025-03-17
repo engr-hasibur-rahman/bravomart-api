@@ -44,8 +44,10 @@ return new class extends Migration
             $table->text('meta_description')->nullable();
             $table->text('meta_keywords')->nullable();
             $table->text('meta_image')->nullable();
-            $table->timestamp('available_time_starts')->nullable(); //Only for Food Item
-            $table->timestamp('available_time_ends')->nullable(); //Only for Food Item
+            $table->timestamp('available_time_starts')->nullable(); // Only for Food Item
+            $table->timestamp('available_time_ends')->nullable(); // Only for Food Item
+            $table->date('manufacture_date')->nullable(); // Items like medicine
+            $table->date('expiry_date')->nullable(); // Items like medicine
             $table->softDeletes();
             $table->timestamps();
         });

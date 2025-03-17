@@ -99,7 +99,6 @@ class AdminProductManageController extends Controller
 
     public function destroy($id)
     {
-
         $product = Product::findorfail($id);
         if ($product) {
             $product->delete();
@@ -297,7 +296,4 @@ class AdminProductManageController extends Controller
             ]);
         }
     }
-
-
-
 }

@@ -373,15 +373,8 @@ class StoreManageRepository implements StoreManageInterface
     public function getSummaryData(?string $slug = null)
     {
         $user = auth('api')->user();
-        if ($slug) {
-            // Fetch data for a specific store
-            $stores = Store::where('slug', $slug)->where('store_seller_id', $user->id)->get();
-        } else {
-            // Fetch data for all stores of the seller
-            $stores = Store::where('store_seller_id', $user->id)->get();
-        }
-
         $summary = [
+            'store_details' => [],
             'total_earnings' => 0,
             'total_refunds' => 0,
             'total_stores' => 0,
@@ -394,6 +387,16 @@ class StoreManageRepository implements StoreManageInterface
             'deliveryman_not_assigned_orders' => 0,
             'refunded_orders' => 0,
         ];
+
+        if ($slug) {
+            // Fetch data for a specific store
+            $stores = Store::with('related_translations')->where('slug', $slug)->where('store_seller_id', $user->id)->get();
+            $summary['store_details'] = $stores;
+        } else {
+            // Fetch data for all stores of the seller
+            $stores = Store::where('store_seller_id', $user->id)->get();
+        }
+
 
         foreach ($stores as $store) {
             $summary['total_earnings'] += Order::where('store_id', $store->id)
