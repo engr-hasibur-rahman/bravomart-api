@@ -14,11 +14,11 @@ class ProductCategorySeeder extends Seeder
     {
         // Store types
         $storeTypes = [
-            'Daily Needs' => ['Fruits', 'Dairy', 'Beverages', 'Snacks','Meat & Seafood', 'Canned', 'Spices', 'Personal Care', 'Cleaning Supplies'],
-            'Fresh Bakery' => ['Bread', 'Pastries', 'Cakes', 'Cookies', 'Muffins', 'Buns','Pies', 'Bagels'],
-            'Pharmacy Essentials' => ['Pain Relief', 'Cold & Cough', 'Vitamins','Digestive','BP & Heart Disease', 'Skin Care', 'Eye Care', 'Herbal'],
+            'Daily Needs' => ['Fruits', 'Dairy', 'Beverages', 'Snacks', 'Meat & Seafood', 'Canned', 'Spices', 'Personal Care', 'Cleaning Supplies'],
+            'Fresh Bakery' => ['Bread', 'Pastries', 'Cakes', 'Cookies', 'Muffins', 'Buns', 'Pies', 'Bagels'],
+            'Pharmacy Essentials' => ['Pain Relief', 'Cold & Cough', 'Vitamins', 'Digestive', 'BP & Heart Disease', 'Skin Care', 'Eye Care', 'Herbal'],
             'Beauty & Cosmetics' => ['Foundations', 'Lipsticks', 'Eyeshadows', 'Mascaras', 'Blushes'],
-            'Bag Collections' => ['Handbags', 'Totes', 'Backpacks','Wallets', 'Clutches', 'Crossbody'],
+            'Bag Collections' => ['Handbags', 'Totes', 'Backpacks', 'Wallets', 'Clutches', 'Crossbody'],
             'Clothing & Style' => ['Men', 'Women'],
             'Furniture & Decor' => ['Sofas', 'Chairs', 'Beds', 'Tables', 'Dressers', 'Bookshelves', 'Desks'],
             'Book Collection' => ['Fiction', 'Non-Fiction', 'Sci-Fi', 'Fantasy', 'Biography'],
@@ -32,6 +32,7 @@ class ProductCategorySeeder extends Seeder
             $parent_id = DB::table('product_category')->insertGetId([
                 'category_name' => ucfirst(strtolower($storeType)),
                 'category_slug' => strtolower($storeType),
+                'type' => 'undefined',
                 'category_level' => 1,
                 'is_featured' => 1,
                 'admin_commission_rate' => 10,
@@ -47,6 +48,7 @@ class ProductCategorySeeder extends Seeder
                 DB::table('product_category')->insert([
                     'category_name' => $category,
                     'category_slug' => strtolower(str_replace(' ', '-', $category)),
+                    'type' => 'undefined',
                     'category_name_paths' => ucfirst(strtolower($storeType)),
                     'parent_path' => strtolower($storeType),
                     'parent_id' => $parent_id,
