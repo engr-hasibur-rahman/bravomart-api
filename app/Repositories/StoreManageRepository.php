@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
+use App\Http\Resources\Seller\SellerStoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
 use App\Models\Banner;
 use App\Models\Customer;
@@ -177,7 +178,7 @@ class StoreManageRepository implements StoreManageInterface
         try {
             $store = Store::with(['related_translations', 'seller', 'area', 'activeSubscription'])->findorfail($id);
             if ($store) {
-                return $store;
+                return response()->json(new SellerStoreDetailsResource($store));
             } else {
                 return false;
             }
