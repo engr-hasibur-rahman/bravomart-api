@@ -175,6 +175,15 @@ class UserController extends Controller
 
     public function StoreOwnerRegistration(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|max:12',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
 
         try {
             // By default role ---->

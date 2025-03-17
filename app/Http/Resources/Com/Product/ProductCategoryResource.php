@@ -27,6 +27,7 @@ class ProductCategoryResource extends JsonResource
             'value' => $this->id,
             'label' => $locales['category_name']['value'] ?? $this->category_name,
             'category_name' => $locales['category_name']['value'] ?? $this->category_name,
+            'type' => $this->type,
             'parent_id' => $this->parent_id,
             'childrenRecursive' => ProductChildCategoryResource::collection($this->childrenRecursive),
             'category_slug' => $locales['category_slug']['value'] ?? $this->category_slug,

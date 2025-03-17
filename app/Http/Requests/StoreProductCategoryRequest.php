@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\StoreType;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -25,6 +26,7 @@ class StoreProductCategoryRequest extends FormRequest
     {
         return [
             'category_name' => 'required|string|max:255',
+            'type' => 'required|string|in:' . implode(',', array_column(StoreType::cases(), 'value')),
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'display_order' => 'nullable|integer',

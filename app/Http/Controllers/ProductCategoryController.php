@@ -21,10 +21,10 @@ class ProductCategoryController extends Controller
 
     public function index(Request $request)
     {
-
         $per_page = $request->per_page ?? 10;
         $language = $request->language ?? DEFAULT_LANGUAGE;
         $search = $request->search;
+        $type = $request->type; // Get the type filter
 
         $categories = ProductCategory::leftJoin('translations', function ($join) use ($language) {
             $join->on('product_category.id', '=', 'translations.translatable_id')
@@ -36,6 +36,11 @@ class ProductCategoryController extends Controller
                 'product_category.*',
                 DB::raw('COALESCE(translations.value, product_category.category_name) as category_name')
             );
+
+        // Apply type filter if type is provided
+        if ($type) {
+            $categories->where('product_category.type', $type);
+        }
 
         // Apply search filter if search parameter exists
         if ($search) {
@@ -58,9 +63,11 @@ class ProductCategoryController extends Controller
                 ->orderBy($sortField, $sortOrder)
                 ->paginate($per_page);
         }
-        // Return a collection of ProductBrandResource (including the image)
+
+        // Return the collection of categories
         return ProductCategoryResource::collection($categories);
     }
+
 
     public function show(Request $request)
     {

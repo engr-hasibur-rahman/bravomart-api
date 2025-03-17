@@ -39,6 +39,7 @@ class ProductCategoryRepository extends BaseRepository
 
         // Prepare data for category
         $data = [
+            'type' => $request['type'],
             'category_name' => $request['category_name'],
             'category_name_paths' => $request['category_name_paths'],
             'parent_path' => $request['parent_path'],
