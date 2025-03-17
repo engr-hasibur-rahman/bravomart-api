@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\ImageModifier;
 use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
@@ -12,15 +11,13 @@ use App\Mail\EmailVerificationMail;
 use App\Models\StoreSeller;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Spatie\Permission\Models\Role;
 
@@ -36,20 +33,30 @@ class UserController extends Controller
     }
 
     /* Social login start */
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
         /** @var \Laravel\Socialite\Two\GoogleProvider */
-        $driver = Socialite::driver('google');
-
-        return $driver->stateless()->redirect();
+        return Socialite::driver('google')
+            ->scopes(['email', 'profile'])
+            ->with([
+                'client_id' => config('services.googleOAuth.client_id'),
+                'redirect_uri' => config('services.googleOAuth.redirect'),
+                'prompt' => 'select_account',  // Forces Google to ask for account selection
+            ])
+            ->stateless()
+            ->redirect();
     }
 
-    public function handleGoogleCallback()
-    {
 
+    public function handleGoogleCallback(Request $request)
+    {
         // Retrieve the user information from Google & need to use GoogleProvider for stateless function as laravel socialiate is not compatible with api.
         /** @var \Laravel\Socialite\Two\GoogleProvider */
-        $user = Socialite::driver('google');
+        $user = Socialite::driver('google')->with([
+            'client_id' => config('services.googleOAuth.client_id'),
+            'client_secret' => config('services.googleOAuth.client_secret'),
+            'redirect_uri' => config('services.googleOAuth.redirect'),
+        ]);
         $user->stateless()->user();
         $google_id = $user->user()->id;
         $google_email = $user->user()->email;

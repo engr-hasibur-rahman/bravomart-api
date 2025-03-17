@@ -170,66 +170,6 @@ class ProductManageRepository implements ProductManageInterface
         }
     }
 
-    // Update data
-//    public function update(array $data)
-//    {
-//        try {
-//            // Exclude translations from the update data
-//            $data = Arr::except($data, ['translations']);
-//
-//            // Retrieve the product by ID
-//            $product = Product::findorfail($data['id']);
-//            // Update the product details
-//            $product->update($data);
-//
-//            // Update or create variants
-//            if (!empty($data['variants']) && is_array($data['variants'])) {
-//                $variants = array_map(function ($variant) use ($product) {
-//                    // Generate the variant slug
-//                    $variant['attributes'] = !empty($variant['attributes']) ? json_encode($variant['attributes']) : null;
-//                    $variant['variant_slug'] = $variant['variant']; // Assign the generated slug
-//                    $variant['product_id'] = $product->id;
-//                    return $variant;
-//                }, $data['variants']);
-//
-//                ProductVariant::where('product_id', $product->id)->forceDelete();
-//
-//                // Update existing variants or create new ones
-//                foreach ($variants as $variant) {
-////                    if (!empty($variant['id'])) {
-////                        // Check if variant ID exists in the database
-////                        $existingVariant = ProductVariant::find($variant['id']);
-////                        if ($existingVariant) {
-////                            // Update the existing variant
-////                            ProductVariant::where('product_id', $product->id)->delete();
-////                            $existingVariant->update($variant);
-////                            continue;
-////                        }
-////                    }
-////                    // Create a new variant if no valid ID is found
-//                    ProductVariant::create($variant);
-//                }
-//            }
-//            // Update product tags
-//            if (!empty($data['tag_ids']) && is_array($data['tag_ids'])) {
-//                // First, delete existing tags to avoid duplicates
-//                $product->tags()->delete();
-//
-//                // Insert the new tags
-//                $productTags = [];
-//                foreach ($data['tag_ids'] as $tagId) {
-//                    $productTags[] = [
-//                        'product_id' => $product->id,
-//                        'tag_id' => $tagId,
-//                    ];
-//                }
-//                ProductTag::insert($productTags);
-//            }
-//            return $product->id;
-//        } catch (\Throwable $th) {
-//            throw $th;
-//        }
-//    }
     public function update(array $data)
     {
         try {

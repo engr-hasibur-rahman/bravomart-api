@@ -1,5 +1,4 @@
 <?php
-
 return [
 
     /*
@@ -33,6 +32,11 @@ return [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
+    ],
+    'googleOAuth' => [
+        'client_id' => env('GOOGLE_CLIENT_ID', 'MISSING_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET', 'MISSING_SECRET'),
+        'redirect' => env('APP_URL') . '/api/v1/auth/google/callback',
     ],
 
 ];

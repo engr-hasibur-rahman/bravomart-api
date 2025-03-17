@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Dashboard;
 
+use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +16,13 @@ class SellerStoreSummaryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'store_details' => StoreDetailsPublicResource::collection($this->store_details),
             'summary' => [
+                'store' => [
+                    'icon' => 'store-icon',
+                    'title' => 'Total Stores',
+                    'count' => $this->total_stores
+                ],
                 'product' => [
                     'icon' => 'product-icon',
                     'title' => 'Total Product',
@@ -26,10 +33,15 @@ class SellerStoreSummaryResource extends JsonResource
                     'title' => 'Total Order',
                     'count' => $this->total_order
                 ],
-                'staff' => [
-                    'icon' => 'staff-icon',
-                    'title' => 'Total Staff',
-                    'count' => $this->total_stuff
+                'earnings' => [
+                    'icon' => 'earning-icon',
+                    'title' => 'Total Earnings',
+                    'count' => $this->total_earnings
+                ],
+                'refunds' => [
+                    'icon' => 'refund-icon',
+                    'title' => 'Total Refunds',
+                    'count' => $this->total_refunds
                 ],
             ],
             'order_summary' => [

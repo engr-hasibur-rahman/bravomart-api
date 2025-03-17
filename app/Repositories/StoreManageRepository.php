@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
+use App\Http\Resources\Seller\SellerStoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
 use App\Models\Banner;
 use App\Models\Customer;
@@ -177,7 +178,7 @@ class StoreManageRepository implements StoreManageInterface
         try {
             $store = Store::with(['related_translations', 'seller', 'area', 'activeSubscription'])->findorfail($id);
             if ($store) {
-                return $store;
+                return response()->json(new SellerStoreDetailsResource($store));
             } else {
                 return false;
             }
@@ -373,15 +374,11 @@ class StoreManageRepository implements StoreManageInterface
     public function getSummaryData(?string $slug = null)
     {
         $user = auth('api')->user();
-        if ($slug) {
-            // Fetch data for a specific store
-            $stores = Store::where('slug', $slug)->get();
-        } else {
-            // Fetch data for all stores of the seller
-            $stores = Store::where('store_seller_id', $user->id)->get();
-        }
-
         $summary = [
+            'store_details' => [],
+            'total_earnings' => 0,
+            'total_refunds' => 0,
+            'total_stores' => 0,
             'total_product' => 0,
             'total_order' => 0,
             'total_stuff' => 0,
@@ -392,7 +389,26 @@ class StoreManageRepository implements StoreManageInterface
             'refunded_orders' => 0,
         ];
 
+        if ($slug) {
+            // Fetch data for a specific store
+            $stores = Store::with('related_translations')->where('slug', $slug)->where('store_seller_id', $user->id)->get();
+            $summary['store_details'] = $stores;
+        } else {
+            // Fetch data for all stores of the seller
+            $stores = Store::where('store_seller_id', $user->id)->get();
+        }
+
+
         foreach ($stores as $store) {
+            $summary['total_earnings'] += Order::where('store_id', $store->id)
+                ->whereHas('orderMaster', function ($query) {
+                    $query->where('payment_status', 'paid');
+                })
+                ->sum('order_amount_store_value');
+            $summary['total_refunds'] += Order::where('store_id', $store->id)
+                ->where('refund_status', 'refunded')
+                ->sum('order_amount');
+            $summary['total_stores'] += Store::where('id', $store->id)->count();
             $summary['total_product'] += Product::where('store_id', $store->id)->count();
             $summary['total_order'] += Order::where('store_id', $store->id)->count();
             $summary['total_stuff'] += User::where('activity_scope', 'store_level')
@@ -413,10 +429,21 @@ class StoreManageRepository implements StoreManageInterface
         return $summary;
     }
 
-    public function getSalesSummaryData(string $slug, array $filters)
+    public function getSalesSummaryData(array $filters, ?string $slug = null)
     {
-        $store = Store::where('slug', $slug)->first();
-        $query = Order::where('store_id', $store->id);
+        $user = auth('api')->user();
+
+        if ($slug) {
+            $store = Store::where('slug', $slug)->where('store_seller_id', $user->id)->first();
+            if (!$store) {
+                return collect([]);
+            }
+            $storeIds = [$store->id];
+        } else {
+            $storeIds = Store::where('store_seller_id', $user->id)->pluck('id')->toArray();
+        }
+
+        $query = Order::whereIn('store_id', $storeIds);
 
         if (!empty($filters['this_week'])) {
             $startDate = Carbon::now()->startOfWeek();
@@ -444,7 +471,34 @@ class StoreManageRepository implements StoreManageInterface
             ->get();
     }
 
-    public function getOtherSummaryData(string $slug)
+    public function getOrderGrowthData(?string $slug = null)
+    {
+        $user = auth('api')->user();
+        $year = Carbon::now()->year;
+
+        // Get store(s) based on slug
+        $storeIds = $slug
+            ? Store::where('slug', $slug)->where('store_seller_id', $user->id)->pluck('id')->toArray()
+            : Store::where('store_seller_id', $user->id)->pluck('id')->toArray();
+
+        if (empty($storeIds)) {
+            return array_fill(1, 12, 0); // Return all months with 0 if no store found
+        }
+
+        // Fetch order counts per month
+        $monthlyData = Order::whereIn('store_id', $storeIds)
+            ->whereYear('created_at', $year)
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as total_orders')
+            )
+            ->pluck('total_orders', 'month');
+        // Fill missing months with 0
+        return collect(range(1, 12))->mapWithKeys(fn($month) => [$month => $monthlyData->get($month, 0)]);
+    }
+
+    public function getOtherSummaryData(?string $slug = null)
     {
         $topRatedProducts = $this->getTopRatedProducts($slug);
         $recentCompletedOrders = $this->getRecentCompletedOrders($slug);
@@ -455,11 +509,22 @@ class StoreManageRepository implements StoreManageInterface
         ];
     }
 
-    public function getTopRatedProducts($slug)
+    public function getTopRatedProducts($slug = null)
     {
-        $store = Store::where('slug', $slug)->first();
+        $user = auth('api')->user();
+
+        if ($slug) {
+            $store = Store::where('slug', $slug)->where('store_seller_id', $user->id)->first();
+            if (!$store) {
+                return collect([]); // Return empty collection if store not found
+            }
+            $storeIds = [$store->id]; // Convert to array for whereIn
+        } else {
+            $storeIds = Store::where('store_seller_id', $user->id)->pluck('id')->toArray();
+        }
+
         return Product::with(['variants', 'store'])
-            ->where('products.store_id', $store->id) // Prefix 'store_id' with 'products'
+            ->whereIn('products.store_id', $storeIds)
             ->where('products.status', 'approved')
             ->whereNull('products.deleted_at')
             ->leftJoin('reviews', function ($join) {
@@ -489,16 +554,28 @@ class StoreManageRepository implements StoreManageInterface
             ->get();
     }
 
-    public function getRecentCompletedOrders($slug)
+    public function getRecentCompletedOrders($slug = null)
     {
-        $store = Store::where('slug', $slug)->first();
+        $user = auth('api')->user();
+
+        if ($slug) {
+            $store = Store::where('slug', $slug)->where('store_seller_id', $user->id)->first();
+            if (!$store) {
+                return collect([]); // Return empty collection if store not found
+            }
+            $storeIds = [$store->id];
+        } else {
+            $storeIds = Store::where('store_seller_id', $user->id)->pluck('id')->toArray();
+        }
+
         return Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
-            ->where('store_id', $store->id)
+            ->whereIn('store_id', $storeIds)
             ->where('status', 'delivered')
             ->orderByDesc('delivery_completed_at')
             ->limit(5)
             ->get();
     }
+
 
     public function storeDashboard(string $slug)
     {

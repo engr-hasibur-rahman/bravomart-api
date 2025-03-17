@@ -34,9 +34,11 @@ interface StoreManageInterface
 
     public function getSummaryData(string $slug);
 
-    public function getSalesSummaryData(string $slug, array $filters);
+    public function getSalesSummaryData(array $filters, ?string $slug);
 
-    public function getOtherSummaryData(string $slug);
+    public function getOtherSummaryData(?string $slug);
+
+    public function getOrderGrowthData(?string $slug = null);
 
     public function storeDashboard(string $slug);
 

@@ -80,7 +80,7 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
     public function getAllQuestionsAndReplies(array $data)
     {
         return ProductQuery::query()
-            ->with(['product', 'customer', 'seller'])
+            ->with(['product.related_translations', 'customer', 'store.related_translations'])
             ->when(isset($data['search']), function ($query) use ($data) {
                 $searchTerm = $data['search'];
 
@@ -92,11 +92,9 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
                 });
 
                 $query->orWhere(function ($q) use ($searchTerm) {
-                    $q->where('seller_id', $searchTerm)
-                        ->orWhereHas('seller', function ($q) use ($searchTerm) {
-                            $q->where('first_name', 'LIKE', '%' . $searchTerm . '%')
-                                ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%');
-                        });
+                    $q->WhereHas('store', function ($q) use ($searchTerm) {
+                        $q->where('name', 'LIKE', '%' . $searchTerm . '%');
+                    });
                 });
 
                 $query->orWhere(function ($q) use ($searchTerm) {

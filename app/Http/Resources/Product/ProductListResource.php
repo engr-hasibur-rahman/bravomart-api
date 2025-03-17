@@ -51,6 +51,8 @@ class ProductListResource extends JsonResource
             'status' => $this->status,
             'available_time_starts' => $this->available_time_starts,
             'available_time_ends' => $this->available_time_ends,
+            "manufacture_date" => $this->manufacture_date,
+            "expiry_date" => $this->expiry_date,
         ];
     }
 }

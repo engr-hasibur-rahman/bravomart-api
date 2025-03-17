@@ -53,15 +53,18 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], funct
         });
         Route::group(['prefix' => 'dashboard/'], function () {
             Route::get('/', [SellerStoreDashboardManageController::class, 'summaryData']);
-
+            Route::get('sales-summary', [SellerStoreDashboardManageController::class, 'salesSummaryData']);
+            Route::get('other-summary', [SellerStoreDashboardManageController::class, 'otherSummaryData']);
+            Route::get('order-growth-summary', [SellerStoreDashboardManageController::class, 'orderGrowthData']);
         });
 
         // Store manage
         Route::group(['prefix' => 'store/'], function () {
             Route::group(['prefix' => 'dashboard'], function () {
                 Route::get('/{slug?}', [SellerStoreDashboardManageController::class, 'summaryData']);
-                Route::get('sales-summary/{slug}', [SellerStoreDashboardManageController::class, 'salesSummaryData']);
-                Route::get('other-summary/{slug}', [SellerStoreDashboardManageController::class, 'otherSummaryData']);
+                Route::get('sales-summary/{slug?}', [SellerStoreDashboardManageController::class, 'salesSummaryData']);
+                Route::get('other-summary/{slug?}', [SellerStoreDashboardManageController::class, 'otherSummaryData']);
+                Route::get('order-growth-summary/{slug?}', [SellerStoreDashboardManageController::class, 'orderGrowthData']);
             });
             // POS Manage
             Route::group(['prefix' => 'pos/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_POS_SALES->value]], function () {

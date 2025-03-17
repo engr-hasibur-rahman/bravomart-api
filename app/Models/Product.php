@@ -45,6 +45,8 @@ class Product extends Model
         "status",
         "available_time_starts",
         "available_time_ends",
+        "manufacture_date",
+        "expiry_date"
     ];
     public $translationKeys = [
         'name',

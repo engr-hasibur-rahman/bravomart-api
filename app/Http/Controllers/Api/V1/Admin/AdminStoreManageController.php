@@ -105,7 +105,7 @@ class AdminStoreManageController extends Controller
 
     public function storeRequest()
     {
-        $stores = Store::pendingStores()->paginate(10);
+        $stores = Store::with('related_translations')->pendingStores()->paginate(10);
         return response()->json([
             'data' => AdminStoreRequestResource::collection($stores),
             'meta' => new PaginationResource($stores),

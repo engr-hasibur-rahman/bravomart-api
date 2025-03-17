@@ -44,6 +44,8 @@ class ProductDetailsResource extends JsonResource
             "status" => $this->status,
             "available_time_starts" => $this->available_time_starts,
             "available_time_ends" => $this->available_time_ends,
+            "manufacture_date" => $this->manufacture_date,
+            "expiry_date" => $this->expiry_date,
             "meta_title" => $this->meta_title,
             "meta_description" => $this->meta_description,
             "meta_keywords" => is_array($decodedKeywords = json_decode($this->meta_keywords, true))
