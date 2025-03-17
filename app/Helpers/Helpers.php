@@ -5,6 +5,7 @@ use App\Models\SettingOption;
 use App\Models\Coupon;
 use App\Models\CouponLine;
 use App\Models\Media;
+use App\Models\UniversalNotification;
 use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
@@ -393,3 +394,70 @@ if (!function_exists('translate')) {
     }
 
 }
+
+
+if (!function_exists('getOrderStatusMessage')) {
+    function getOrderStatusMessage($order, $isNewOrder = false)
+    {
+        $messages = [
+            'admin' => "Order #{$order->id} has been updated.",
+            'store' => "Order #{$order->id} status has changed.",
+            'customer' => "Your order #{$order->id} has been updated.",
+            'deliveryman' => "New update for Order #{$order->id}.",
+            'title' => "Order #{$order->id}."
+        ];
+
+        // If the order is newly placed
+        if ($isNewOrder) {
+            $messages['admin'] = "A new order #{$order->id} has been placed.";
+            $messages['store'] = "You have received a new order #{$order->id}. Please review it.";
+            $messages['customer'] = "Your order #{$order->id} has been placed successfully.";
+            $messages['deliveryman'] = "A new order #{$order->id} will be assigned soon.";
+            $messages['title'] = "Order Placed Successfully.";
+
+            return $messages;
+        }
+
+        // message
+        if($order->status === 'pending') {
+            $messages['admin'] = "A new order #{$order->id} is pending confirmation.";
+            $messages['store'] = "New order #{$order->id} is waiting for approval.";
+            $messages['customer'] = "Your order #{$order->id} is pending confirmation.";
+            $messages['deliveryman'] = "Order #{$order->id} is pending, not yet assigned.";
+            $messages['title'] = "Order #{$order->id} is pending";
+        }elseif ($order->status === 'confirmed'){
+            $messages['admin'] = "Order #{$order->id} has been confirmed by the store.";
+            $messages['store'] = "You have confirmed order #{$order->id}.";
+            $messages['customer'] = "Your order #{$order->id} has been confirmed and is being prepared.";
+            $messages['deliveryman'] = "Order #{$order->id} is confirmed and will be assigned soon.";
+            $messages['title'] = "Order #{$order->id} is confirmed";
+        }elseif ($order->status === 'processing'){
+            $messages['admin'] = "Order #{$order->id} is being processed.";
+            $messages['store'] = "Order #{$order->id} is being processed.";
+            $messages['customer'] = "Your order #{$order->id} is now in processing.";
+            $messages['deliveryman'] = "Order #{$order->id} is still in processing state.";
+            $messages['title'] = "Order #{$order->id} is processing";
+        }elseif ($order->status === 'shipped'){
+            $messages['admin'] = "Order #{$order->id} has been shipped.";
+            $messages['store'] = "Order #{$order->id} has been shipped to the customer.";
+            $messages['customer'] = "Your order #{$order->id} has been shipped.";
+            $messages['deliveryman'] = "Order #{$order->id} is now out for delivery.";
+            $messages['title'] = "Order #{$order->id} is shipped";
+        }elseif ($order->status === 'delivered'){
+            $messages['admin'] = "Order #{$order->id} has been successfully delivered.";
+            $messages['store'] = "Order #{$order->id} has been delivered to the customer.";
+            $messages['customer'] = "Your order #{$order->id} has been delivered. Thank you for shopping with us!";
+            $messages['deliveryman'] = "Order #{$order->id} delivery is completed.";
+            $messages['title'] = "Order #{$order->id} is delivered";
+        }elseif ($order->status === 'cancelled'){
+            $messages['admin'] = "Order #{$order->id} has been cancelled.";
+            $messages['store'] = "Order #{$order->id} has been cancelled by the customer or admin.";
+            $messages['customer'] = "Your order #{$order->id} has been cancelled.";
+            $messages['deliveryman'] = "Order #{$order->id} has been cancelled. No delivery required.";
+            $messages['title'] = "Order #{$order->id} is cancelled";
+        }
+
+        return $messages;
+    }
+}
+

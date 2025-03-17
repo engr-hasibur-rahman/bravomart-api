@@ -517,7 +517,7 @@ class OrderService
 
             // order notification
             $all_orders_ids = Order::where('order_master_id', $order_master->id)->pluck('id')->toArray();
-            $this->orderManageNotificationService->createOrderNotification($all_orders_ids);
+            $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
 
             // Dispatch the email job asynchronously
             dispatch(new DispatchOrderEmails($order_master->id));
