@@ -25,6 +25,7 @@ class StoreProductCategoryRequest extends FormRequest
     {
         return [
             'category_name' => 'required|string|max:255',
+            'type'=>'required|string',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'display_order' => 'nullable|integer',

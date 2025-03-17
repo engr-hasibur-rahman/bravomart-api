@@ -21,6 +21,7 @@ class ProductCategoryByIdResource extends JsonResource
         return [
             'id' => $this->id,
             'category_name' => $this->category_name,
+            'type' => $this->type,
             'display_order' => $this->display_order,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
