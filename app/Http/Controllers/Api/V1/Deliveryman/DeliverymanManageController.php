@@ -92,7 +92,6 @@ class DeliverymanManageController extends Controller
     public function login(Request $request)
     {
         try {
-            // Validate the incoming request
             $request->validate([
                 'email' => 'required|email',
                 'password' => 'required',
