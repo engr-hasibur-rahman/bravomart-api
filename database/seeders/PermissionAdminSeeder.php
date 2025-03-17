@@ -1355,12 +1355,12 @@ class PermissionAdminSeeder extends Seeder
                                 ],
                                 [
                                     'PermissionName' => PermissionKey::BECOME_SELLER_PAGE_SETTINGS->value,
-                                    'PermissionTitle' => 'Contact Page',
+                                    'PermissionTitle' => 'Become A Seller Page',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
-                                        'en' => 'Contact Page',
+                                        'en' => 'Become A Seller Page',
                                         'ar' => 'إعدادات الصيانة'
                                     ]
                                 ]
