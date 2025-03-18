@@ -14,14 +14,17 @@ class PageSettingsManageController extends Controller
     public function __construct(
         protected TranslationInterface $transRepo,
         protected SettingOption        $get_com_option,
-    ) {}
+    )
+    {
+    }
 
     public function translationKeys(): mixed
     {
         return $this->get_com_option->translationKeys;
     }
 
-    public function registerSettings(Request $request){
+    public function registerSettings(Request $request)
+    {
         if ($request->isMethod('POST')) {
             // check options
             $this->validate($request, [
@@ -65,12 +68,12 @@ class PageSettingsManageController extends Controller
             }
             return $this->success(translate('messages.update_success', ['name' => 'Register Page Settings']));
 
-        }else{
+        } else {
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
 
             $ComOptionGet = SettingOption::with('translations')
-                ->whereIn('option_name', ['com_register_page_title', 'com_register_page_subtitle', 'com_register_page_description','com_register_page_terms_title'])
+                ->whereIn('option_name', ['com_register_page_title', 'com_register_page_subtitle', 'com_register_page_description', 'com_register_page_terms_title'])
                 ->get(['id']);
 
             // transformed data
@@ -91,7 +94,8 @@ class PageSettingsManageController extends Controller
                 'com_register_page_title' => com_option_get('com_register_page_title'),
                 'com_register_page_subtitle' => com_option_get('com_register_page_subtitle'),
                 'com_register_page_description' => com_option_get('com_register_page_description'),
-                'com_register_page_image' => $imageModifier->generateImageUrl(com_option_get('com_register_page_image')),
+                'com_register_page_image' => com_option_get('com_register_page_image'),
+                'com_register_page_image_url' => $imageModifier->generateImageUrl(com_option_get('com_register_page_image')),
                 'com_register_page_terms_page' => com_option_get('com_register_page_terms_page'),
                 'com_register_page_terms_title' => com_option_get('com_register_page_terms_title'),
                 'com_register_page_social_enable_disable' => com_option_get('com_register_page_social_enable_disable'),
@@ -99,13 +103,14 @@ class PageSettingsManageController extends Controller
             ];
 
             return response()->json([
-               'data' => $fields,
+                'data' => $fields,
             ]);
         }
 
     }
 
-    public function loginSettings(Request $request){
+    public function loginSettings(Request $request)
+    {
         if ($request->isMethod('POST')) {
             // check options
             $this->validate($request, [
@@ -141,7 +146,7 @@ class PageSettingsManageController extends Controller
             }
             return $this->success(translate('messages.update_success', ['name' => 'Login Page Settings']));
 
-        }else{
+        } else {
             // ImageModifier
             $imageModifier = new ImageModifier();
             $ComOptionGet = SettingOption::with('translations')
@@ -165,7 +170,8 @@ class PageSettingsManageController extends Controller
             $fields = [
                 'com_login_page_title' => com_option_get('com_login_page_title'),
                 'com_login_page_subtitle' => com_option_get('com_login_page_subtitle'),
-                'com_login_page_image' => $imageModifier->generateImageUrl(com_option_get('com_login_page_image')),
+                'com_login_page_image' => com_option_get('com_login_page_image'),
+                'com_login_page_image_url' => $imageModifier->generateImageUrl(com_option_get('com_login_page_image')),
                 'com_login_page_social_enable_disable' => com_option_get('com_login_page_social_enable_disable'),
                 'translations' => $transformedData,
             ];
@@ -177,7 +183,8 @@ class PageSettingsManageController extends Controller
 
     }
 
-    public function ProductDetailsSettings(Request $request){
+    public function ProductDetailsSettings(Request $request)
+    {
         if ($request->isMethod('POST')) {
             $this->validate($request, [
                 // fee delivery
@@ -227,7 +234,7 @@ class PageSettingsManageController extends Controller
             }
             return $this->success(translate('messages.update_success', ['name' => 'Product Details Page Settings']));
 
-        }else{
+        } else {
             $ComOptionGet = SettingOption::with('translations')
                 ->whereIn('option_name', [
                     'com_product_details_page_delivery_title',
