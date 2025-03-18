@@ -46,7 +46,7 @@ class SellerStoreSummaryResource extends JsonResource
                 'revenue' => [
                     'icon' => 'revenue-icon',
                     'title' => 'Total Revenue',
-                    'count' => $this->total_earnings ?? 0 - $this->total_refunds ?? 0
+                    'count' => ($this->total_earnings ?? 0) - ($this->total_refunds ?? 0)
                 ],
             ],
             'order_summary' => [
