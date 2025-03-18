@@ -71,7 +71,7 @@ class Store extends Model
 
     public function seller()
     {
-        return $this->belongsTo(User::class, 'store_seller_id', 'store_seller_id');
+        return $this->belongsTo(User::class,  'store_seller_id');
     }
 
     public function related_translations()
