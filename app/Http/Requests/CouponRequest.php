@@ -26,9 +26,11 @@ class CouponRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'image' => 'nullable|max:255',
             'status' => 'nullable|integer|in:0,1',
         ];
     }
+
     public function messages()
     {
         return [
@@ -36,6 +38,7 @@ class CouponRequest extends FormRequest
             'title.string' => __('validation.string', ['attribute' => 'Title']),
             'title.max' => __('validation.max.string', ['attribute' => 'Title']),
             'description.string' => __('validation.string', ['attribute' => 'Description']),
+            'image.max' => __('validation.max.string', ['attribute' => 'Image']),
             'status.in' => __('validation.in', ['attribute' => 'Status', 'enum' => '0,1']),
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Coupon;
 
+use App\Actions\ImageModifier;
 use App\Http\Resources\Translation\CouponTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,6 +20,8 @@ class CouponResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
+            'image' => $this->image,
+            'image_url' => ImageModifier::generateImageUrl($this->image),
             'status' => $this->status,
             'created_by' => $this->creator?->first_name, // Safely handle null creator
             "translations" => $this->related_translations
