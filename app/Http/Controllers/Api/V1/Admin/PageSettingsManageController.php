@@ -31,7 +31,7 @@ class PageSettingsManageController extends Controller
                 'com_register_page_title' => 'nullable|string',
                 'com_register_page_subtitle' => 'nullable|string',
                 'com_register_page_description' => 'nullable|string',
-                'com_register_page_image' => 'nullable|string',
+                'com_register_page_image' => 'nullable|max:255',
                 'com_register_page_terms_page' => 'nullable|string',
                 'com_register_page_terms_title' => 'nullable|string',
                 'com_register_page_social_enable_disable' => 'nullable|string',
@@ -116,7 +116,7 @@ class PageSettingsManageController extends Controller
             $this->validate($request, [
                 'com_login_page_title' => 'nullable|string',
                 'com_login_page_subtitle' => 'nullable|string',
-                'com_login_page_image' => 'nullable|string',
+                'com_login_page_image' => 'nullable|max:255',
                 'com_login_page_social_enable_disable' => 'nullable|string',
             ]);
 
