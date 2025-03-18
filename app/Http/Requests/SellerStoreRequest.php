@@ -54,7 +54,7 @@ class SellerStoreRequest extends FormRequest
             'off_day' => 'nullable|string|max:50',
             'enable_saling' => 'nullable|in:0,1',
             'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
+            'meta_description' => 'nullable|string|max:1000',
             'meta_image' => 'nullable|string|max:255',
         ];
     }

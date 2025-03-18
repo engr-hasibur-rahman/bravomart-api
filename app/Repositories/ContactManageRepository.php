@@ -14,8 +14,10 @@ class ContactManageRepository implements ContactManageInterface
     {
         $success = ContactUsMessage::create($data);
         if ($success) {
-            Mail::to($data['email'])->send(new ContactUserMail());
-            return true;
+            try {
+                Mail::to($data['email'])->send(new ContactUserMail($success));
+                return true;
+            } catch (\Exception $exception) {}
         } else {
             return false;
         }
