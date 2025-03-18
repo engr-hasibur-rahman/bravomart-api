@@ -269,4 +269,69 @@ class PageSettingsManageController extends Controller
         }
 
     }
+
+    public function blogSettings(Request $request){
+        if ($request->isMethod('POST')) {
+            $this->validate($request, [
+                // fee delivery
+                'com_blog_details_popular_title' => 'nullable|string',
+                'com_blog_details_related_title' => 'nullable|string',
+            ]);
+
+            // set options
+            $fields = [
+                'com_blog_details_popular_title',
+                'com_blog_details_related_title',
+            ];
+
+            // update options
+            foreach ($fields as $field) {
+                $value = $request->input($field) ?? null;
+                com_option_update($field, $value);
+            }
+
+            // Define the fields that need to be translated
+            $fields = [
+                'com_blog_details_popular_title',
+                'com_blog_details_related_title'
+            ];
+            $setting_options = SettingOption::whereIn('option_name', $fields)->get();
+
+            foreach ($setting_options as $com_option) {
+                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', [$com_option->option_name]);
+            }
+            return $this->success(translate('messages.update_success', ['name' => 'Product Details Page Settings']));
+
+        }else{
+            $ComOptionGet = SettingOption::with('translations')
+                ->whereIn('option_name', [
+                    'com_blog_details_popular_title',
+                    'com_blog_details_related_title'
+                ])->get(['id']);
+
+            // transformed data
+            $transformedData = [];
+            foreach ($ComOptionGet as $com_option) {
+                $translations = $com_option->translations()->get()->groupBy('language');
+                foreach ($translations as $language => $items) {
+                    $languageInfo = ['language' => $language];
+                    /* iterate all Column to Assign Language Value */
+                    foreach ($this->get_com_option->translationKeys as $columnName) {
+                        $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
+                    }
+                    $transformedData[] = $languageInfo;
+                }
+            }
+
+            $fields = [
+                'com_blog_details_popular_title' => com_option_get('com_blog_details_popular_title'),
+                'com_blog_details_related_title' => com_option_get('com_blog_details_related_title')
+            ];
+
+            return response()->json([
+                'data' => $fields,
+            ]);
+        }
+
+    }
 }
