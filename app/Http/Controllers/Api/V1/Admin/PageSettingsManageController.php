@@ -240,7 +240,7 @@ class PageSettingsManageController extends Controller
     public function ProductDetailsSettings(Request $request)
     {
         if ($request->isMethod('POST')) {
-            $this->validate($request, [
+            $validatedData = $request->validate([
                 // fee delivery
                 'com_product_details_page_delivery_title' => 'nullable|string',
                 'com_product_details_page_delivery_subtitle' => 'nullable|string',
@@ -270,23 +270,24 @@ class PageSettingsManageController extends Controller
 
             // update options
             foreach ($fields as $field) {
-                $value = $request->input($field) ?? null;
-                com_option_update($field, $value);
+                com_option_update($field, $validatedData[$field] ?? null);
             }
 
-            // Define the fields that need to be translated
-            $fields = [
+            // Handle translations
+            $settingOptions = SettingOption::whereIn('option_name', [
                 'com_product_details_page_delivery_title',
                 'com_product_details_page_delivery_subtitle',
                 'com_product_details_page_return_refund_title',
                 'com_product_details_page_return_refund_subtitle',
-            ];
-            $setting_options = SettingOption::whereIn('option_name', $fields)->get();
+            ])->pluck('id', 'option_name');
 
-            foreach ($setting_options as $com_option) {
-                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', [$com_option->option_name]);
+            foreach ($settingOptions as $optionName => $optionId) {
+                $this->createOrUpdateTranslation($request, $optionId, 'App\Models\SettingOption', [$optionName]);
             }
-            return $this->success(translate('messages.update_success', ['name' => 'Product Details Page Settings']));
+
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Product Details Settings']),
+            ]);
 
         } else {
             $ComOptionGet = SettingOption::with('translations')
@@ -297,19 +298,20 @@ class PageSettingsManageController extends Controller
                     'com_product_details_page_return_refund_subtitle',
                 ])->get(['id']);
 
-            // transformed data
-            $transformedData = [];
-            foreach ($ComOptionGet as $com_option) {
-                $translations = $com_option->translations()->get()->groupBy('language');
-                foreach ($translations as $language => $items) {
-                    $languageInfo = ['language' => $language];
-                    /* iterate all Column to Assign Language Value */
-                    foreach ($this->get_com_option->translationKeys as $columnName) {
-                        $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                    }
-                    $transformedData[] = $languageInfo;
-                }
-            }
+            $translations = $ComOptionGet->flatMap(function ($settingOption) {
+                return $settingOption->related_translations->map(function ($translation) {
+                    return [
+                        'language' => $translation->language,
+                        'key' => $translation->key,
+                        'value' => trim($translation->value, '"'), // Removes extra quotes
+                    ];
+                });
+            })->groupBy('language')->map(function ($items, $language) {
+                return array_merge(
+                    ['language_code' => $language],
+                    $items->pluck('value', 'key')->toArray()
+                );
+            })->toArray();
 
             $fields = [
                 'com_product_details_page_delivery_title' => com_option_get('com_product_details_page_delivery_title'),
@@ -321,7 +323,7 @@ class PageSettingsManageController extends Controller
                 'com_product_details_page_return_refund_url' => com_option_get('com_product_details_page_return_refund_url'),
                 'com_product_details_page_return_refund_enable_disable' => com_option_get('com_product_details_page_return_refund_enable_disable'),
                 'com_product_details_page_related_title' => com_option_get('com_product_details_page_related_title'),
-                'translations' => $transformedData,
+                'translations' => $translations,
             ];
 
             return response()->json([
