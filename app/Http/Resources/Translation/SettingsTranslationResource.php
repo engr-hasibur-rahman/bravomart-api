@@ -5,7 +5,7 @@ namespace App\Http\Resources\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BecomeSellerSettingsTranslationResource extends JsonResource
+class SettingsTranslationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

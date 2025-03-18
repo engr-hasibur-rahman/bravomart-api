@@ -43,12 +43,32 @@ class SellerStoreSummaryResource extends JsonResource
                     'title' => 'Total Refunds',
                     'count' => $this->total_refunds
                 ],
+                'revenue' => [
+                    'icon' => 'revenue-icon',
+                    'title' => 'Total Revenue',
+                    'count' => ($this->total_earnings ?? 0) - ($this->total_refunds ?? 0)
+                ],
             ],
             'order_summary' => [
+                'confirmed_orders' => [
+                    'icon' => 'confirmed-icon',
+                    'title' => 'Confirmed Orders',
+                    'count' => $this->confirmed_orders
+                ],
                 'pending_orders' => [
                     'icon' => 'pending-icon',
                     'title' => 'Pending Orders',
                     'count' => $this->pending_orders
+                ],
+                'processing_orders' => [
+                    'icon' => 'processing-icon',
+                    'title' => 'Processing Orders',
+                    'count' => $this->processing_orders
+                ],
+                'shipped_orders' => [
+                    'icon' => 'shipped-icon',
+                    'title' => 'Shipped Orders',
+                    'count' => $this->shipped_orders
                 ],
                 'completed_orders' => [
                     'icon' => 'completed-icon',
