@@ -7,6 +7,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\InvoiceResource;
 use App\Http\Resources\Order\OrderSummaryResource;
 use App\Http\Resources\Order\StoreOrderResource;
+use App\Jobs\DispatchOrderEmails;
 use App\Models\Order;
 use App\Models\Store;
 use App\Services\Order\OrderManageNotificationService;
@@ -136,7 +137,7 @@ class SellerStoreOrderController extends Controller
 
         $seller_id = auth('api')->user()->id;
         $seller_stores = Store::where('store_seller_id', $seller_id)->pluck('id');
-        $order = Order::find($request->order_id);
+        $order = Order::with('orderMaster')->find($request->order_id);
 
         if (!$order) {
             return response()->json([
@@ -156,6 +157,11 @@ class SellerStoreOrderController extends Controller
             // Notify seller and customer
             $order = [$order->id];
             $this->orderManageNotificationService->createOrderNotification($order);
+
+            try {
+                // Dispatch the email job asynchronously
+                dispatch(new DispatchOrderEmails($order->orderMaster?->id));
+            }catch (\Exception $e) {}
 
             if ($success) {
                 return response()->json([
