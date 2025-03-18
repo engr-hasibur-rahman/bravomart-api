@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Coupon;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,7 @@ class CouponPublicResource extends JsonResource
             "coupon_description" => !empty($coupon_translation) && $coupon_translation->where('key', 'description')->first()
                 ? $coupon_translation->where('key', 'description')->first()->value
                 : $this->coupon?->description, // If language is empty or not provided attribute
+            "coupon_image_url" => ImageModifier::generateImageUrl($this->coupon?->image) ?? null,
             "coupon_code" => $this->coupon_code,
             "discount_type" => $this->discount_type,
             "discount" => $this->discount,
