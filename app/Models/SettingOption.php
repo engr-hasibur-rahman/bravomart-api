@@ -33,6 +33,11 @@ class SettingOption extends Model
     {
         return $this->morphMany(Translation::class, 'translatable');
     }
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 
     public $timestamps = true;
 }
