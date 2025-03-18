@@ -382,7 +382,10 @@ class StoreManageRepository implements StoreManageInterface
             'total_product' => 0,
             'total_order' => 0,
             'total_stuff' => 0,
+            'confirmed_orders' => 0,
             'pending_orders' => 0,
+            'processing_orders' => 0,
+            'shipped_orders' => 0,
             'completed_orders' => 0,
             'cancelled_orders' => 0,
             'deliveryman_not_assigned_orders' => 0,
@@ -416,7 +419,10 @@ class StoreManageRepository implements StoreManageInterface
                 ->whereNull('store_seller_id')
                 ->whereJsonContains('stores', $store->id)
                 ->count();
+            $summary['confirmed_orders'] += Order::where('status', 'confirmed')->where('store_id', $store->id)->count();
             $summary['pending_orders'] += Order::where('status', 'pending')->where('store_id', $store->id)->count();
+            $summary['processing_orders'] += Order::where('status', 'processing')->where('store_id', $store->id)->count();
+            $summary['shipped_orders'] += Order::where('status', 'shipped')->where('store_id', $store->id)->count();
             $summary['completed_orders'] += Order::where('status', 'delivered')->where('store_id', $store->id)->count();
             $summary['cancelled_orders'] += Order::where('status', 'cancelled')->where('store_id', $store->id)->count();
             $summary['deliveryman_not_assigned_orders'] += Order::where('status', 'processing')
