@@ -342,7 +342,6 @@ class StoreManageRepository implements StoreManageInterface
         $stores = Store::with('related_translations') // Load all related translations
         ->where('store_seller_id', $seller_id)
             ->where('enable_saling', 1)
-            ->where('status', 1)
             ->get();
 
         return $stores;
