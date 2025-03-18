@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Behaviour;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Banner\BannerPublicResource;
+use App\Http\Resources\Com\AboutUsPublicResource;
 use App\Http\Resources\Com\BecomeSellerPublicResource;
 use App\Http\Resources\Com\Blog\BlogCategoryPublicResource;
 use App\Http\Resources\Com\Blog\BlogCommentResource;
@@ -53,6 +54,7 @@ use App\Interfaces\CountryManageInterface;
 use App\Interfaces\OrderRefundInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
+use App\Models\AboutSetting;
 use App\Models\Banner;
 use App\Models\BecomeSellerSetting;
 use App\Models\Blog;
@@ -1386,6 +1388,20 @@ class FrontendController extends Controller
         $content = jsonImageModifierFormatter($setting->content);
         $setting->content = $content;
         return response()->json(new BecomeSellerPublicResource($setting));
+    }
+    public function aboutUs(Request $request)
+    {
+        $setting = AboutSetting::with('related_translations')
+            ->where('status', 1)
+            ->first();
+        if (!$setting) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+        $content = jsonImageModifierFormatter($setting->content);
+        $setting->content = $content;
+        return response()->json(new AboutUsPublicResource($setting));
     }
     public function getStoreWiseProducts(Request $request)
     {

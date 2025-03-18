@@ -6,7 +6,7 @@ use App\Http\Resources\Translation\SettingsTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AdminBecomeSellerResource extends JsonResource
+class AdminAboutSettingsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

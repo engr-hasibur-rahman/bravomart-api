@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources\Com;
 
-use App\Http\Resources\Translation\SettingsTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BecomeSellerPublicResource extends JsonResource
+class AboutUsPublicResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
