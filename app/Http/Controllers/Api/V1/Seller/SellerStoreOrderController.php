@@ -4,26 +4,26 @@ namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Http\Resources\Customer\CustomerResource;
-use App\Http\Resources\Order\AdminOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
-use App\Http\Resources\Order\OrderDetailsResource;
-use App\Http\Resources\Order\OrderPaymentResource;
 use App\Http\Resources\Order\OrderSummaryResource;
-use App\Http\Resources\Order\SellerStoreOrderResource;
-use App\Http\Resources\Order\SellerStoreOrderPaymentResource;
 use App\Http\Resources\Order\StoreOrderResource;
+use App\Jobs\DispatchOrderEmails;
 use App\Models\Order;
-use App\Models\OrderDetail;
-use App\Models\OrderMaster;
-use App\Models\OrderPayment;
 use App\Models\Store;
+use App\Services\Order\OrderManageNotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class SellerStoreOrderController extends Controller
 {
+
+    protected $orderManageNotificationService;
+
+    public function __construct(OrderManageNotificationService $orderManageNotificationService)
+    {
+        $this->orderManageNotificationService = $orderManageNotificationService;
+    }
     public function allOrders(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -33,27 +33,32 @@ class SellerStoreOrderController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
         if ($request->order_id) {
+
             $order = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
                 ->where('id', $request->order_id)
                 ->first();
+
             if (!$order) {
                 return response()->json([
                     'message' => __('message.data_not_found'),
                 ], 404);
             }
+
             $seller_id = auth('api')->user()->id;
             $seller_stores = Store::where('store_seller_id', $seller_id)->pluck('id');
+
             if (!$seller_stores->contains($order->store_id)) {
                 return response()->json(['message' => __('messages.order_does_not_belong_to_seller')], 422);
             }
-            return response()->json(
-                [
+
+            return response()->json([
                     'order_data' => new StoreOrderResource($order),
                     'order_summary' => new OrderSummaryResource($order)
-                ], 200
-            );
+                ]);
         }
+
         if (isset($request->store_id)) {
             $store = Store::where('id', $request->store_id)
                 ->where('store_seller_id', auth('api')->user()->id)
@@ -129,9 +134,11 @@ class SellerStoreOrderController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
         $seller_id = auth('api')->user()->id;
         $seller_stores = Store::where('store_seller_id', $seller_id)->pluck('id');
-        $order = Order::find($request->order_id);
+        $order = Order::with('orderMaster')->find($request->order_id);
+
         if (!$order) {
             return response()->json([
                 'message' => __('messages.data_not_found')
@@ -142,18 +149,30 @@ class SellerStoreOrderController extends Controller
             return response()->json(['message' => __('messages.order_does_not_belong_to_seller')], 422);
         }
         if ($order->status === 'pending' || $order->status === 'confirmed' || $order->status === 'processing') {
+
             $success = $order->update([
                 'status' => $request->status
             ]);
+
+            // Notify seller and customer
+            $order = [$order->id];
+            $this->orderManageNotificationService->createOrderNotification($order);
+
+            try {
+                // Dispatch the email job asynchronously
+                dispatch(new DispatchOrderEmails($order->orderMaster?->id));
+            }catch (\Exception $e) {}
+
             if ($success) {
                 return response()->json([
                     'message' => __('messages.update_success', ['name' => 'Order status'])
-                ], 200);
+                ]);
             } else {
                 return response()->json([
                     'message' => __('messages.update_failed', ['name' => 'Order status'])
                 ], 500);
             }
+
         } else {
             return response()->json([
                 'message' => __('messages.order_status_not_changeable')
@@ -187,6 +206,11 @@ class SellerStoreOrderController extends Controller
                 'cancelled_at' => Carbon::now(),
                 'status' => 'cancelled'
             ]);
+
+            // Notify seller and customer
+            $order = [$order->id];
+            $this->orderManageNotificationService->createOrderNotification($order, 'order-cancelled');
+
             if ($success) {
                 return response()->json([
                     'message' => __('messages.order_cancel_successful')
