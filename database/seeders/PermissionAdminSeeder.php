@@ -20,7 +20,7 @@ class PermissionAdminSeeder extends Seeder
             [
                 // Dashboard
                 [
-                    'PermissionName' => 'dashboard',
+                    'PermissionName' => PermissionKey::ADMIN_DASHBOARD->value,
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'system_level',
                     'icon' => 'LayoutDashboard',

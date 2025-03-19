@@ -11,4 +11,9 @@ class Menu extends Model
     public $translationKeys = [
         'name',
     ];
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 }

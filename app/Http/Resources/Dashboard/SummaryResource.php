@@ -19,49 +19,49 @@ class SummaryResource extends JsonResource
                 'store' => [
                     'icon' => 'store-icon',
                     'title' => 'Total Store',
-                    'count' => $this->total_store
+                    'count' => $this->total_stores
                 ],
                 'store_owner' => [
                     'icon' => 'user-icon',
                     'title' => 'Total Seller',
-                    'count' => $this->total_seller
+                    'count' => $this->total_sellers
                 ],
                 'product' => [
                     'icon' => 'product-icon',
                     'title' => 'Total Product',
-                    'count' => $this->total_product
+                    'count' => $this->total_products
                 ],
                 'order' => [
                     'icon' => 'order-icon',
                     'title' => 'Total Order',
-                    'count' => $this->total_order
+                    'count' => $this->total_orders
                 ],
                 'customer' => [
                     'icon' => 'customer-icon',
                     'title' => 'Total Customer',
-                    'count' => $this->total_customer
+                    'count' => $this->total_customers
                 ],
                 'staff' => [
                     'icon' => 'staff-icon',
                     'title' => 'Total Staff',
-                    'count' => $this->total_stuff
+                    'count' => $this->total_staff
                 ],
             ],
             'order_summary' => [
                 'pending_orders' => [
                     'icon' => 'pending-icon',
                     'title' => 'Pending Orders',
-                    'count' => $this->pending_orders
+                    'count' => $this->total_pending_orders
                 ],
                 'completed_orders' => [
                     'icon' => 'completed-icon',
                     'title' => 'Completed Orders',
-                    'count' => $this->completed_orders
+                    'count' => $this->total_delivered_orders
                 ],
                 'cancelled_orders' => [
                     'icon' => 'cancelled-icon',
                     'title' => 'Cancelled Orders',
-                    'count' => $this->cancelled_orders
+                    'count' => $this->total_cancelled_orders
                 ],
                 'deliveryman_not_assigned_orders' => [
                     'icon' => 'unassigned-icon',
@@ -71,7 +71,7 @@ class SummaryResource extends JsonResource
                 'refunded_orders' => [
                     'icon' => 'refunded-icon',
                     'title' => 'Refunded Orders',
-                    'count' => $this->refunded_orders
+                    'count' => $this->total_refunded_orders
                 ],
             ]
         ];
