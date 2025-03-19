@@ -13,73 +13,75 @@ class OrderManageNotificationService
 {
     public function createOrderNotification($last_order_ids, $otherCheckData = null)
     {
-        if (empty($last_order_ids)) {
-            return;
-        }
+        try {
+            if (empty($last_order_ids)) {
+                return;
+            }
 
-        // Order with relationship data get
-        if (!is_array($last_order_ids)) {
-            $order_ids_convert_to_array = collect($last_order_ids)->toArray();
-        } else {
-            $order_ids_convert_to_array = $last_order_ids;
-        }
+            // Order with relationship data get
+            if (!is_array($last_order_ids)) {
+                $order_ids_convert_to_array = collect($last_order_ids)->toArray();
+            } else {
+                $order_ids_convert_to_array = $last_order_ids;
+            }
 
-        $orders = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store.seller', 'deliveryman')
-            ->whereIn('id' ,$order_ids_convert_to_array)
-            ->get();
+            $orders = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store.seller', 'deliveryman')
+                ->whereIn('id' ,$order_ids_convert_to_array)
+                ->get();
 
-        // if order not found
-        if ($orders->count() === 0) {
-            return;
-        }
+            // if order not found
+            if ($orders->count() === 0) {
+                return;
+            }
 
-        // check others data
-        $other_check = false;
-        if (!empty($otherCheckData) && $otherCheckData == 'new-order'){
-            $other_check = true;
-        }
+            // check others data
+            $other_check = false;
+            if (!empty($otherCheckData) && $otherCheckData == 'new-order'){
+                $other_check = true;
+            }
 
-        foreach ($orders as $order_details) {
-            $last_order_id = $order_details->id;
-            // Notification Data
-            $messages = getOrderStatusMessage($order_details, $other_check);
-            $data = ['order_id' => $order_details->id];
-            // create notification for every one
-            $this->notifyAdmin($messages['title'], $messages['admin'], $data);
-            $this->notifyStore($order_details, $messages['title'], $messages['store'], $data);
-            $this->notifyCustomer($order_details, $messages['title'], $messages['customer'], $data);
-            $this->notifyDeliveryman($order_details, $messages['title'], $messages['deliveryman'], $data);
+            foreach ($orders as $order_details) {
+                $last_order_id = $order_details->id;
+                // Notification Data
+                $messages = getOrderStatusMessage($order_details, $other_check);
+                $data = ['order_id' => $order_details->id];
+                // create notification for every one
+                $this->notifyAdmin($messages['title'], $messages['admin'], $data);
+                $this->notifyStore($order_details, $messages['title'], $messages['store'], $data);
+                $this->notifyCustomer($order_details, $messages['title'], $messages['customer'], $data);
+                $this->notifyDeliveryman($order_details, $messages['title'], $messages['deliveryman'], $data);
 
-            // Customer notification
-            $this->sendOrderNotification(
-                $order_details->orderMaster?->customer,
-                'customer_id',
-                $order_details->orderMaster?->customer_id ?? 0,
-                $last_order_id,
-                $messages['title'],
-                $messages['customer']
-            );
+                // Customer notification
+                $this->sendOrderNotification(
+                    $order_details->orderMaster?->customer,
+                    'customer_id',
+                    $order_details->orderMaster?->customer_id ?? 0,
+                    $last_order_id,
+                    $messages['title'],
+                    $messages['customer']
+                );
 
-            // Seller notification
-            $this->sendOrderNotification(
-                $order_details->store?->seller,
-                'seller_id',
-                $order_details->store?->store_seller_id ?? 0,
-                $last_order_id,
-                $messages['title'],
-                $messages['store']
-            );
+                // Seller notification
+                $this->sendOrderNotification(
+                    $order_details->store?->seller,
+                    'seller_id',
+                    $order_details->store?->store_seller_id ?? 0,
+                    $last_order_id,
+                    $messages['title'],
+                    $messages['store']
+                );
 
-            // Deliveryman notification
-            $this->sendOrderNotification(
-                $order_details->deliveryman,
-                'deliveryman_id',
-                $order_details->deliveryman?->id ?? 0,
-                $last_order_id,
-                $messages['title'],
-                $messages['deliveryman']
-            );
-        }
+                // Deliveryman notification
+                $this->sendOrderNotification(
+                    $order_details->deliveryman,
+                    'deliveryman_id',
+                    $order_details->deliveryman?->id ?? 0,
+                    $last_order_id,
+                    $messages['title'],
+                    $messages['deliveryman']
+                );
+            }
+        }catch (\Exception $exception){}
 
 
     }

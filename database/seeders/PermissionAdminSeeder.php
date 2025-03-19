@@ -1379,6 +1379,17 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
+                                    'PermissionName' => PermissionKey::MENU_CUSTOMIZATION->value,
+                                    'PermissionTitle' => 'Menu Manage',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Menu Manage',
+                                        'ar' => 'تخصيص التذييل'
+                                    ]
+                                ],
+                                [
                                     'PermissionName' => PermissionKey::FOOTER_CUSTOMIZATION->value,
                                     'PermissionTitle' => 'Footer Customization',
                                     'activity_scope' => 'system_level',
