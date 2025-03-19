@@ -12,7 +12,6 @@ use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\NotificationManageController;
 use App\Http\Controllers\Customer\OrderPaymentController;
-use App\Http\Controllers\Customer\PlaceOrderController;
 use Illuminate\Support\Facades\Route;
 
 

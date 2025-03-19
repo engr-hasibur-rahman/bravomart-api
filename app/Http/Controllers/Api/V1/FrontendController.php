@@ -1364,12 +1364,24 @@ class FrontendController extends Controller
 
         // Pagination
         $perPage = $request->input('per_page', 10); // Default to 10 items per page
-        $coupon = $query->with('coupon.related_translations')
-            ->whereHas('coupon', function ($q) {
-                $q->where('status', 1);
-            })
-            ->where('status', 1)
-            ->paginate($perPage);
+        if (auth('api_customer')->check()) {
+            $coupon = $query->with('coupon.related_translations')
+                ->whereHas('coupon', function ($q) {
+                    $q->where('status', 1);
+                })
+                ->where('status', 1)
+                ->whereNull('customer_id')
+                ->orWhere('customer_id', auth('api_customer')->user()->id)
+                ->paginate($perPage);
+        } else {
+            $coupon = $query->with('coupon.related_translations')
+                ->whereHas('coupon', function ($q) {
+                    $q->where('status', 1);
+                })
+                ->where('status', 1)
+                ->whereNull('customer_id')
+                ->paginate($perPage);
+        }
 
         return response()->json([
             'data' => CouponPublicResource::collection($coupon),
@@ -1391,6 +1403,7 @@ class FrontendController extends Controller
         $setting->content = $content;
         return response()->json(new BecomeSellerPublicResource($setting));
     }
+
     public function aboutUs(Request $request)
     {
         $setting = AboutSetting::with('related_translations')
@@ -1405,6 +1418,7 @@ class FrontendController extends Controller
         $setting->content = $content;
         return response()->json(new AboutUsPublicResource($setting));
     }
+
     public function contactUs(Request $request)
     {
         $setting = ContactSetting::with('related_translations')
@@ -1419,6 +1433,7 @@ class FrontendController extends Controller
         $setting->content = $content;
         return response()->json(new ContactUsPublicResource($setting));
     }
+
     public function getStoreWiseProducts(Request $request)
     {
         // Base query
