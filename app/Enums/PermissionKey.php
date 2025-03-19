@@ -182,6 +182,7 @@ enum PermissionKey: string
     case BECOME_SELLER_PAGE_SETTINGS = '/admin/system-management/page-settings/become-seller';
 
     case APPEARANCE_SETTINGS = 'appearance_settings';
+    case MENU_CUSTOMIZATION = '/admin/system-management/menu-customization';
     case FOOTER_CUSTOMIZATION = '/admin/system-management/footer-customization';
     case MAINTENANCE_SETTINGS = '/admin/system-management/maintenance-settings';
     case SMTP_SETTINGS = '/admin/system-management/email-settings/smtp';
