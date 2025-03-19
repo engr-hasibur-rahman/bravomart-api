@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MenuManageController extends Controller
 {
@@ -17,17 +18,30 @@ class MenuManageController extends Controller
     // Create a new menu item
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'url' => 'required|string',
-            'icon' => 'nullable|string',
+
+        // Validate the incoming data
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'url' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:255',
             'position' => 'required|integer',
             'is_visible' => 'required|boolean',
         ]);
 
-        $menu = Menu::create($validated);
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->messages()
+            ], 422);
+        }
 
-        return response()->json($menu, 201);
+        // Use the validated data to create the menu item
+        Menu::create($validator->validated());
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Menu created successfully.',
+        ]);
     }
 
     // Update an existing menu item

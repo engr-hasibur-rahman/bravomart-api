@@ -589,7 +589,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // menu manage
             Route::prefix('menu-manage/')->middleware(['permission:' . PermissionKey::MENU_CUSTOMIZATION->value])->group(function () {
                 Route::get('list', [MenuManageController::class, 'index']);
-                Route::post('add', [MenuManageController::class, 'store']);
+                Route::post('store', [MenuManageController::class, 'store']);
                 Route::post('update', [MenuManageController::class, 'update']);
                 Route::delete('remove/{id}', [MenuManageController::class, 'destroy']);
             });
