@@ -90,7 +90,6 @@ class StoreManageRepository implements StoreManageInterface
         return $store
             ->where('deleted_at', null)
             ->where('store_seller_id', auth('api')->id())
-            ->where('status', 1)
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
@@ -343,7 +342,6 @@ class StoreManageRepository implements StoreManageInterface
         $stores = Store::with('related_translations') // Load all related translations
         ->where('store_seller_id', $seller_id)
             ->where('enable_saling', 1)
-            ->where('status', 1)
             ->get();
 
         return $stores;

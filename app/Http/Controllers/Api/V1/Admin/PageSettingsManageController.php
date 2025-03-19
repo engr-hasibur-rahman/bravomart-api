@@ -357,10 +357,10 @@ class PageSettingsManageController extends Controller
 
     }
 
-    public function blogSettings(Request $request){
+    public function blogSettings(Request $request)
+    {
         if ($request->isMethod('POST')) {
-            $this->validate($request, [
-                // fee delivery
+            $validatedData = $request->validate([
                 'com_blog_details_popular_title' => 'nullable|string',
                 'com_blog_details_related_title' => 'nullable|string',
             ]);
@@ -373,46 +373,48 @@ class PageSettingsManageController extends Controller
 
             // update options
             foreach ($fields as $field) {
-                $value = $request->input($field) ?? null;
-                com_option_update($field, $value);
+                com_option_update($field, $validatedData[$field] ?? null);
             }
 
-            // Define the fields that need to be translated
-            $fields = [
+            // Handle translations
+            $settingOptions = SettingOption::whereIn('option_name', [
                 'com_blog_details_popular_title',
-                'com_blog_details_related_title'
-            ];
-            $setting_options = SettingOption::whereIn('option_name', $fields)->get();
+                'com_blog_details_related_title',
+            ])->pluck('id', 'option_name');
 
-            foreach ($setting_options as $com_option) {
-                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', [$com_option->option_name]);
+            foreach ($settingOptions as $optionName => $optionId) {
+                $this->createOrUpdateTranslation($request, $optionId, 'App\Models\SettingOption', [$optionName]);
             }
-            return $this->success(translate('messages.update_success', ['name' => 'Product Details Page Settings']));
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Blog Details Settings']),
+            ]);
 
-        }else{
+        } else {
             $ComOptionGet = SettingOption::with('translations')
                 ->whereIn('option_name', [
                     'com_blog_details_popular_title',
                     'com_blog_details_related_title'
                 ])->get(['id']);
 
-            // transformed data
-            $transformedData = [];
-            foreach ($ComOptionGet as $com_option) {
-                $translations = $com_option->translations()->get()->groupBy('language');
-                foreach ($translations as $language => $items) {
-                    $languageInfo = ['language' => $language];
-                    /* iterate all Column to Assign Language Value */
-                    foreach ($this->get_com_option->translationKeys as $columnName) {
-                        $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                    }
-                    $transformedData[] = $languageInfo;
-                }
-            }
+            $translations = $ComOptionGet->flatMap(function ($settingOption) {
+                return $settingOption->related_translations->map(function ($translation) {
+                    return [
+                        'language' => $translation->language,
+                        'key' => $translation->key,
+                        'value' => trim($translation->value, '"'), // Removes extra quotes
+                    ];
+                });
+            })->groupBy('language')->map(function ($items, $language) {
+                return array_merge(
+                    ['language_code' => $language],
+                    $items->pluck('value', 'key')->toArray()
+                );
+            })->toArray();
 
             $fields = [
                 'com_blog_details_popular_title' => com_option_get('com_blog_details_popular_title'),
-                'com_blog_details_related_title' => com_option_get('com_blog_details_related_title')
+                'com_blog_details_related_title' => com_option_get('com_blog_details_related_title'),
+                'translations' => $translations
             ];
 
             return response()->json([

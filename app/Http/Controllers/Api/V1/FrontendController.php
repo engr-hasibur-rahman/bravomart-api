@@ -12,6 +12,7 @@ use App\Http\Resources\Com\Blog\BlogCommentResource;
 use App\Http\Resources\Com\Blog\BlogDetailsPublicResource;
 use App\Http\Resources\Com\Blog\BlogPublicResource;
 use App\Http\Resources\Com\ComAreaListForDropdownResource;
+use App\Http\Resources\Com\ContactUsPublicResource;
 use App\Http\Resources\Com\Department\DepartmentListForDropdown;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
@@ -61,6 +62,7 @@ use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\BlogComment;
 use App\Models\BlogView;
+use App\Models\ContactSetting;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -1362,12 +1364,24 @@ class FrontendController extends Controller
 
         // Pagination
         $perPage = $request->input('per_page', 10); // Default to 10 items per page
-        $coupon = $query->with('coupon.related_translations')
-            ->whereHas('coupon', function ($q) {
-                $q->where('status', 1);
-            })
-            ->where('status', 1)
-            ->paginate($perPage);
+        if (auth('api_customer')->check()) {
+            $coupon = $query->with('coupon.related_translations')
+                ->whereHas('coupon', function ($q) {
+                    $q->where('status', 1);
+                })
+                ->where('status', 1)
+                ->whereNull('customer_id')
+                ->orWhere('customer_id', auth('api_customer')->user()->id)
+                ->paginate($perPage);
+        } else {
+            $coupon = $query->with('coupon.related_translations')
+                ->whereHas('coupon', function ($q) {
+                    $q->where('status', 1);
+                })
+                ->where('status', 1)
+                ->whereNull('customer_id')
+                ->paginate($perPage);
+        }
 
         return response()->json([
             'data' => CouponPublicResource::collection($coupon),
@@ -1389,6 +1403,7 @@ class FrontendController extends Controller
         $setting->content = $content;
         return response()->json(new BecomeSellerPublicResource($setting));
     }
+
     public function aboutUs(Request $request)
     {
         $setting = AboutSetting::with('related_translations')
@@ -1403,6 +1418,22 @@ class FrontendController extends Controller
         $setting->content = $content;
         return response()->json(new AboutUsPublicResource($setting));
     }
+
+    public function contactUs(Request $request)
+    {
+        $setting = ContactSetting::with('related_translations')
+            ->where('status', 1)
+            ->first();
+        if (!$setting) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+        $content = jsonImageModifierFormatter($setting->content);
+        $setting->content = $content;
+        return response()->json(new ContactUsPublicResource($setting));
+    }
+
     public function getStoreWiseProducts(Request $request)
     {
         // Base query
