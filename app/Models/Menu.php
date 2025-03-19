@@ -7,4 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     protected $fillable = ['name', 'url', 'icon', 'position', 'is_visible'];
+
+    public $translationKeys = [
+        'name',
+    ];
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\MenuPublicViewResource;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,8 +13,14 @@ class MenuManageController extends Controller
 {
     public function index()
     {
-        $menus = Menu::where('is_visible', true)->orderBy('position')->get();
-        return response()->json($menus);
+        $menus = Menu::where('is_visible', true)
+            ->orderBy('position')
+            ->paginate(10);
+
+        return response()->json([
+            'menus' => MenuPublicViewResource::collection($menus),
+            'meta' => new PaginationResource($menus)
+        ]);
     }
 
     // Create a new menu item
@@ -45,27 +53,49 @@ class MenuManageController extends Controller
     }
 
     // Update an existing menu item
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $menu = Menu::findOrFail($id);
+        // Find the menu item by ID
+        $menu = Menu::findOrFail($request->id);
 
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'url' => 'required|string',
-            'icon' => 'nullable|string',
+        // Validate the incoming request data
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'url' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:255',
             'position' => 'required|integer',
             'is_visible' => 'required|boolean',
         ]);
 
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->messages()
+            ], 422);
+        }
+
+        $validated = $validator->validated();
         $menu->update($validated);
-        return response()->json($menu);
+        return response()->json([
+            'status' => true,
+            'message' => 'Menu updated successfully.',
+        ]);
     }
 
     // Delete a menu item
     public function destroy($id)
     {
         $menu = Menu::findOrFail($id);
+        if (empty($menu)){
+            return response()->json([
+                'status' => false,
+                'message' => 'Menu not found.',
+            ], 404);
+        }
         $menu->delete();
-        return response()->json(null, 204);
+        return response()->json([
+            'status' => true,
+            'message' => 'Menu deleted successfully.',
+        ]);
     }
 }

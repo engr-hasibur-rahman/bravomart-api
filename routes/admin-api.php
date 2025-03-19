@@ -591,7 +591,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list', [MenuManageController::class, 'index']);
                 Route::post('store', [MenuManageController::class, 'store']);
                 Route::post('update', [MenuManageController::class, 'update']);
-                Route::delete('remove/{id}', [MenuManageController::class, 'destroy']);
+                Route::delete('remove/{id?}', [MenuManageController::class, 'destroy']);
             });
 
             Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization'])->middleware('permission:' . PermissionKey::FOOTER_CUSTOMIZATION->value);
