@@ -27,47 +27,6 @@ class PageSettingsManageController extends Controller
     public function registerSettings(Request $request)
     {
         if ($request->isMethod('POST')) {
-//            // check options
-//            $this->validate($request, [
-//                'com_register_page_title' => 'nullable|string',
-//                'com_register_page_subtitle' => 'nullable|string',
-//                'com_register_page_description' => 'nullable|string',
-//                'com_register_page_image' => 'nullable|max:255',
-//                'com_register_page_terms_page' => 'nullable|string',
-//                'com_register_page_terms_title' => 'nullable|string',
-//                'com_register_page_social_enable_disable' => 'nullable|string',
-//            ]);
-//
-//            // set options
-//            $fields = [
-//                'com_register_page_title',
-//                'com_register_page_subtitle',
-//                'com_register_page_description',
-//                'com_register_page_image',
-//                'com_register_page_terms_page',
-//                'com_register_page_terms_title',
-//                'com_register_page_social_enable_disable',
-//            ];
-//
-//            // update options
-//            foreach ($fields as $field) {
-//                $value = $request->input($field) ?? null;
-//                com_option_update($field, $value);
-//            }
-//
-//            // Define the fields that need to be translated
-//            $fields = [
-//                'com_register_page_title',
-//                'com_register_page_subtitle',
-//                'com_register_page_description',
-//                'com_register_page_terms_title',
-//            ];
-//            $setting_options = SettingOption::whereIn('option_name', $fields)->get();
-//
-//            foreach ($setting_options as $com_option) {
-//                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', [$com_option->option_name]);
-//            }
-//            return $this->success(translate('messages.update_success', ['name' => 'Register Page Settings']));
             $validatedData = $request->validate([
                 'com_register_page_title' => 'nullable|string',
                 'com_register_page_subtitle' => 'nullable|string',
@@ -129,20 +88,6 @@ class PageSettingsManageController extends Controller
                     $items->pluck('value', 'key')->toArray()
                 );
             })->toArray();
-
-//            // transformed data
-//            $transformedData = [];
-//            foreach ($ComOptionGet as $com_option) {
-//                $translations = $com_option->translations()->get()->groupBy('language');
-//                foreach ($translations as $language => $items) {
-//                    $languageInfo = ['language' => $language];
-//                    /* iterate all Column to Assign Language Value */
-//                    foreach ($this->get_com_option->translationKeys as $columnName) {
-//                        $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-//                    }
-//                    $transformedData[] = $languageInfo;
-//                }
-//            }
 
             $fields = [
                 'com_register_page_title' => com_option_get('com_register_page_title'),
@@ -303,6 +248,7 @@ class PageSettingsManageController extends Controller
                 'com_product_details_page_delivery_subtitle',
                 'com_product_details_page_return_refund_title',
                 'com_product_details_page_return_refund_subtitle',
+                'com_product_details_page_related_title'
             ])->pluck('id', 'option_name');
 
             foreach ($settingOptions as $optionName => $optionId) {
@@ -320,6 +266,7 @@ class PageSettingsManageController extends Controller
                     'com_product_details_page_delivery_subtitle',
                     'com_product_details_page_return_refund_title',
                     'com_product_details_page_return_refund_subtitle',
+                    'com_product_details_page_related_title'
                 ])->get(['id']);
 
             $translations = $ComOptionGet->flatMap(function ($settingOption) {

@@ -36,6 +36,7 @@ use App\Http\Controllers\Api\V1\Admin\EmailTemplateManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PageSettingsManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
+use App\Http\Controllers\Api\V1\MenuManageController;
 use App\Http\Controllers\Api\V1\NotificationManageController;
 use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
@@ -584,6 +585,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::match(['get', 'post'], 'contact', [ContactSettingsManageController::class, 'contactSettings'])->middleware('permission:' . PermissionKey::CONTACT_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'become-seller', [BecomeSellerSettingsController::class, 'becomeSellerSettings'])->middleware('permission:' . PermissionKey::BECOME_SELLER_PAGE_SETTINGS->value);
             });
+
+            // menu manage
+            Route::prefix('menu-manage/')->middleware(['permission:' . PermissionKey::MENU_CUSTOMIZATION->value])->group(function () {
+                Route::get('list', [MenuManageController::class, 'index']);
+                Route::post('store', [MenuManageController::class, 'store']);
+                Route::post('update', [MenuManageController::class, 'update']);
+                Route::delete('remove/{id}', [MenuManageController::class, 'destroy']);
+            });
+
             Route::match(['get', 'post'], '/footer-customization', [SystemManagementController::class, 'footerCustomization'])->middleware('permission:' . PermissionKey::FOOTER_CUSTOMIZATION->value);
             Route::match(['get', 'post'], '/maintenance-settings', [SystemManagementController::class, 'maintenanceSettings'])->middleware('permission:' . PermissionKey::MAINTENANCE_SETTINGS->value);
             Route::match(['get', 'post'], '/seo-settings', [SystemManagementController::class, 'seoSettings'])->middleware('permission:' . PermissionKey::SEO_SETTINGS->value);
