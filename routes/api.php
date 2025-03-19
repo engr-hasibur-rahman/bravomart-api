@@ -79,7 +79,7 @@ Route::group(['prefix' => 'v1/'], function () {
     });
 
     // public routes for frontend
-    Route::post('migrate-refresh',[MigrationController::class, 'migrateRefresh']);
+    Route::post('migrate-refresh', [MigrationController::class, 'migrateRefresh']);
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     Route::get('/product-list', [FrontendController::class, 'productList']);
     Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);
@@ -114,14 +114,13 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/product-suggestion', [FrontendController::class, 'getSearchSuggestions']);
     Route::get('/keyword-suggestion', [FrontendController::class, 'getKeywordSuggestions']);
     Route::get('/orders/refund-reason-list', [FrontendController::class, 'allOrderRefundReason']);
+    Route::get('/coupons', [FrontendController::class, 'couponList']);
     Route::get('/blogs', [FrontendController::class, 'blogs']);
     Route::get('/blog/{slug}', [FrontendController::class, 'blogDetails']);
-    Route::get('/coupons', [FrontendController::class, 'couponList']);
     Route::get('/become-a-seller', [FrontendController::class, 'becomeSeller']);
     Route::get('/about-us', [FrontendController::class, 'aboutUs']);
     Route::get('/contact-us', [FrontendController::class, 'contactUs']);
     Route::get('/store-wise-products', [FrontendController::class, 'getStoreWiseProducts']);
-
 
 
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);
@@ -145,7 +144,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::post('/checkout-info', [OtherChargeInfoController::class, 'getCheckoutInfo']);
 
     // customer place order
-    Route::group(['namespace' => 'Api\V1','middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
+    Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
         Route::post('orders/checkout', [PlaceOrderController::class, 'placeOrder']);
     });
 
