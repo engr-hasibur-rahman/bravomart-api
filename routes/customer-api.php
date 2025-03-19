@@ -12,10 +12,11 @@ use App\Http\Controllers\Api\V1\Customer\WishListManageController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\NotificationManageController;
 use App\Http\Controllers\Customer\OrderPaymentController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
+
     Route::get('/', [CustomerManageController::class, 'getDashboard']);
     // media manage
     Route::group(['prefix' => 'media-upload'], function () {

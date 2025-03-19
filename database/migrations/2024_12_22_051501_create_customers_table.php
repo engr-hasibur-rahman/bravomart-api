@@ -20,6 +20,10 @@ return new class extends Migration {
             $table->date('birth_day')->nullable();
             $table->string('gender')->nullable(); // male, female, others
             $table->string('def_lang')->nullable();
+            $table->string('firebase_token')->nullable();
+            $table->string('google_id')->nullable();
+            $table->string('facebook_id')->nullable();
+            $table->string('apple_id')->nullable();
             $table->string('password');
             $table->timestamp('password_changed_at')->nullable();
             $table->text('email_verify_token')->nullable();
@@ -30,7 +34,6 @@ return new class extends Migration {
             $table->boolean('activity_notification')->default(1);
             $table->boolean('marketing_email')->default(0);
             $table->boolean('marketing_sms')->default(0);
-            $table->string('firebase_token')->nullable();
             $table->integer('status')->default(1)->comment('1: active, 0: inactive, 2: suspended');
             $table->timestamp('deactivated_at')->nullable();
             $table->softDeletes();

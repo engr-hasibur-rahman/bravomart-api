@@ -27,6 +27,8 @@ class ApiAuthMiddleware
             if ($req_url === 'api/v1/delivery-man/login' ||
                 $req_url === 'api/v1/delivery-man/registration' ||
                 $req_url === 'api/v1/customer/login' ||
+                $req_url === 'api/v1/customer/google' ||
+                $req_url === 'api/v1/customer/google/callback' ||
                 $req_url === 'api/v1/customer/registration'||
                 $req_url === 'api/partner/login'||
                 $req_url === 'api/token'

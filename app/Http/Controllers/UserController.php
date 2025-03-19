@@ -8,13 +8,13 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
 use App\Mail\EmailVerificationMail;
+use App\Models\Customer;
 use App\Models\StoreSeller;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -35,6 +35,13 @@ class UserController extends Controller
     /* Social login start */
     public function redirectToGoogle(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'role' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        $role = $request->role ?? 'user'; // Default to 'user' if not provided
         /** @var \Laravel\Socialite\Two\GoogleProvider */
         return Socialite::driver('google')
             ->scopes(['email', 'profile'])
@@ -42,6 +49,7 @@ class UserController extends Controller
                 'client_id' => config('services.googleOAuth.client_id'),
                 'redirect_uri' => config('services.googleOAuth.redirect'),
                 'prompt' => 'select_account',  // Forces Google to ask for account selection
+                'state' => $role
             ])
             ->stateless()
             ->redirect();
@@ -61,9 +69,17 @@ class UserController extends Controller
         $google_id = $user->user()->id;
         $google_email = $user->user()->email;
         $name = $user->user()->name;
+        // Retrieve the role from the OAuth state parameter
+        $role = $request->input('state', 'user'); // Default to 'user'
+
         // Find or create a user in the database
-        $existingUser = User::where('google_id', $google_id)
-            ->orWhere('email', $google_email)->first();
+        if ($role == 'customer') {
+            $existingUser = Customer::where('google_id', $google_id)
+                ->orWhere('email', $google_email)->first();
+        } else {
+            $existingUser = User::where('google_id', $google_id)
+                ->orWhere('email', $google_email)->first();
+        }
 
         if ($existingUser) {
             // Update the user's Google ID if it's missing
@@ -82,13 +98,49 @@ class UserController extends Controller
             ], 200);
         } else {
             // Create a new user in the database
-            $newUser = User::create([
-                'first_name' => $name,
-                'email' => $google_email,
-                'slug' => username_slug_generator($name),
-                'google_id' => $google_id,
-                'password' => Hash::make('123456dummy'),
-            ]);
+            if ($role == 'customer') {
+                $newUser = Customer::create([
+                    'first_name' => $name,
+                    'email' => $google_email,
+                    'slug' => username_slug_generator($name),
+                    'google_id' => $google_id,
+                    'password' => Hash::make('123456dummy'),
+                ]);
+            } elseif ($role == 'seller') {
+                $newUser = User::create([
+                    'first_name' => $name,
+                    'email' => $google_email,
+                    'slug' => username_slug_generator($name),
+                    'google_id' => $google_id,
+                    'password' => Hash::make('123456dummy'),
+                    'activity_scope' => 'store_level',
+                    'store_owner' => 1,
+                    'status' => 1,
+                ]);
+            } elseif ($role == 'deliveryman') {
+                $newUser = User::create([
+                    'first_name' => $name,
+                    'email' => $google_email,
+                    'slug' => username_slug_generator($name),
+                    'google_id' => $google_id,
+                    'password' => Hash::make('123456dummy'),
+                    'activity_scope' => 'delivery_level',
+                    'store_owner' => 0,
+                    'status' => 1,
+                ]);
+            } else {
+                $newUser = User::create([
+                    'first_name' => $name,
+                    'email' => $google_email,
+                    'slug' => username_slug_generator($name),
+                    'google_id' => $google_id,
+                    'password' => Hash::make('123456dummy'),
+                    'activity_scope' => null,
+                    'store_owner' => 0,
+                    'status' => 1,
+                ]);
+            }
+
 
             // Generate a Sanctum token for the new user
             $token = $newUser->createToken('api_token')->plainTextToken;
