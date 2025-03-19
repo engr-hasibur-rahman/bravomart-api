@@ -172,6 +172,11 @@ class PageSettingsManageController extends Controller
                 'com_login_page_subtitle' => 'nullable|string',
                 'com_login_page_image' => 'nullable|max:255',
                 'com_login_page_social_enable_disable' => 'nullable|string',
+                // seller and admin login page
+                'com_seller_login_page_title' => 'nullable|string',
+                'com_seller_login_page_subtitle' => 'nullable|string',
+                'com_seller_login_page_image' => 'nullable|max:255',
+                'com_seller_login_page_social_enable_disable' => 'nullable|string',
             ]);
 
             // set options
@@ -180,6 +185,11 @@ class PageSettingsManageController extends Controller
                 'com_login_page_subtitle',
                 'com_login_page_image',
                 'com_login_page_social_enable_disable',
+                // seller and admin login page
+                'com_seller_login_page_title',
+                'com_seller_login_page_subtitle',
+                'com_seller_login_page_image',
+                'com_seller_login_page_social_enable_disable',
             ];
 
             // update options
@@ -188,8 +198,11 @@ class PageSettingsManageController extends Controller
             }
 
             // Handle translations
-            $settingOptions = SettingOption::whereIn('option_name', [
-                'com_login_page_title', 'com_login_page_subtitle'
+            $settingOptions = SettingOption::whereIn('option_name',[
+                'com_login_page_title',
+                'com_login_page_subtitle',
+                'com_seller_login_page_title',
+                'com_seller_login_page_subtitle',
             ])->pluck('id', 'option_name');
 
             foreach ($settingOptions as $optionName => $optionId) {
@@ -204,7 +217,12 @@ class PageSettingsManageController extends Controller
             // ImageModifier
             $imageModifier = new ImageModifier();
             $ComOptionGet = SettingOption::with('translations')
-                ->whereIn('option_name', ['com_login_page_title', 'com_login_page_subtitle'])
+                ->whereIn('option_name',  [
+                    'com_login_page_title',
+                    'com_login_page_subtitle',
+                    'com_seller_login_page_title',
+                    'com_seller_login_page_subtitle',
+                    ])
                 ->get(['id']);
 
             $translations = $ComOptionGet->flatMap(function ($settingOption) {
@@ -228,6 +246,12 @@ class PageSettingsManageController extends Controller
                 'com_login_page_image' => com_option_get('com_login_page_image'),
                 'com_login_page_image_url' => $imageModifier->generateImageUrl(com_option_get('com_login_page_image')),
                 'com_login_page_social_enable_disable' => com_option_get('com_login_page_social_enable_disable'),
+                // seller login page
+                'com_seller_login_page_title' => com_option_get('com_seller_login_page_title'),
+                'com_seller_login_page_subtitle' => com_option_get('com_seller_login_page_subtitle'),
+                'com_seller_login_page_image' => com_option_get('com_seller_login_page_image'),
+                'com_seller_login_page_image_url' => $imageModifier->generateImageUrl(com_option_get('com_seller_login_page_image')),
+                'com_seller_login_page_social_enable_disable' => com_option_get('com_seller_login_page_social_enable_disable'),
                 'translations' => $translations,
             ];
 
