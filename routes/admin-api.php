@@ -84,8 +84,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
     /* --------------------- Admin route start ------------------------- */
     Route::group(['prefix' => 'admin/'], function () {
         // Dashboard manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_POS_SALES->value]], function () {
-            Route::get('dashboard', [AdminDashboardController::class, 'summaryData']);
+        Route::group(['prefix' => 'dashboard/', 'middleware' => ['permission:' . PermissionKey::ADMIN_DASHBOARD->value]], function () {
+            Route::get('/', [AdminDashboardController::class, 'summaryData']);
             Route::get('sales-summary', [AdminDashboardController::class, 'salesSummaryData']);
             Route::get('other-summary', [AdminDashboardController::class, 'otherSummaryData']);
         });
@@ -574,7 +574,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         /*--------------------- System management ----------------------------*/
         Route::group(['prefix' => 'system-management/'], function () {
             Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings'])->middleware('permission:' . PermissionKey::GENERAL_SETTINGS->value);
-           // all pages settings
+            // all pages settings
             Route::group(['prefix' => 'page-settings/', 'middleware' => 'permission:' . PermissionKey::PAGE_SETTINGS->value], function () {
                 Route::match(['get', 'post'], 'register', [PageSettingsManageController::class, 'registerSettings'])->middleware('permission:' . PermissionKey::REGISTER_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'login', [PageSettingsManageController::class, 'loginSettings'])->middleware('permission:' . PermissionKey::LOGIN_PAGE_SETTINGS->value);
