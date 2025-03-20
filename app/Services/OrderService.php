@@ -504,7 +504,6 @@ class OrderService
                 $all_orders,
                 $order_master,
                 'customer' => $customer,
-                'token' => $token,
             ];
         } catch (\Exception $e) {
             DB::rollBack();
