@@ -54,7 +54,7 @@ class OrderService
         // customer ID
         $customer_id = $customer->id;
         $basePrice = 0;
-        dd($customer_id);
+
         // check package  | if store subscription system check | if store subscription expire or order limit end this store product not create order
         foreach ($data['packages'] as $packageData) {
              // if type subscription
@@ -77,8 +77,8 @@ class OrderService
                  }
              } // subscription check end
 
-
             foreach ($packageData['items'] as $itemData) {
+                dump(5555);
                 // find the product
                 $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                 // Validate product variant
