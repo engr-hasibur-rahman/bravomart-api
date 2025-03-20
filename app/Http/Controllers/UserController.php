@@ -15,6 +15,7 @@ use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -33,6 +34,92 @@ class UserController extends Controller
     }
 
     /* Social login start */
+    public function redirectToFacebook(Request $request)
+    {
+//        $validator = Validator::make($request->all(), [
+//            'role' => 'required',
+//        ]);
+//        if ($validator->fails()) {
+//            return response()->json($validator->errors());
+//        }
+//        $role = $request->role ?? 'user'; // Default to 'user' if not provided
+//        dd(config('services'));
+        // Make sure you use the correct configuration
+        return Socialite::driver('facebook')
+            ->with([
+                'client_id' => config('services.facebookOAuth.client_id'),
+                'client_secret' => config('services.facebookOAuth.client_secret'),
+                'redirect_uri' => config('services.facebookOAuth.redirect'),
+            ])
+            ->scopes(['email']) // Request the 'email' scope
+            ->stateless()
+            ->redirect();
+    }
+    public function handleFacebookCallback()
+    {
+        try {
+            $user = Socialite::driver('facebook')
+                ->with([
+                    'client_id' => config('services.facebookOAuth.client_id'),
+                    'client_secret' => config('services.facebookOAuth.client_secret'),
+                    'redirect_uri' => config('services.facebookOAuth.redirect'),
+                ])
+                ->stateless()
+                ->user(); // Use stateless() here
+            dd($user);
+            $facebook_id = $user->id;
+            $email = $user->email;
+            $name = $user->name;
+
+            // Find user in database
+            $existingUser = User::where('facebook_id', $facebook_id)
+                ->orWhere('email', $email)
+                ->first();
+
+            if ($existingUser) {
+                // Update Facebook ID if missing
+                if (!$existingUser->facebook_id) {
+                    $existingUser->update(['facebook_id' => $facebook_id]);
+                }
+
+                // Generate a Sanctum token for API access
+                $token = $existingUser->createToken('api_token')->plainTextToken;
+
+                return response()->json([
+                    'success' => true,
+                    'message' => __('auth.social.login'),
+                    'token' => $token,
+                    'user' => $existingUser,
+                ], 200);
+            }
+
+            // Create a new user
+            $newUser = User::create([
+                'name' => $name,
+                'email' => $email,
+                'facebook_id' => $facebook_id,
+                'password' => Hash::make('123456dummy'), // Dummy password
+            ]);
+
+            // Generate a Sanctum token for API access
+            $token = $newUser->createToken('api_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => __('auth.social.register'),
+                'token' => $token,
+                'user' => $newUser,
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Facebook authentication failed!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function redirectToGoogle(Request $request)
     {
         $validator = Validator::make($request->all(), [
