@@ -107,6 +107,8 @@ class OrderService
                 $variant = ProductVariant::where('id', $itemData['variant_id'])
                     ->where('product_id', $product->id)
                     ->first();
+//                dump($variant);
+                dd($variant);
                 // Add to total order amount
                 if (!empty($variant) && isset($variant->price)) {
                     $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
