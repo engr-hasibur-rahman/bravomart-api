@@ -20,7 +20,7 @@ class PermissionAdminSeeder extends Seeder
             [
                 // Dashboard
                 [
-                    'PermissionName' => 'dashboard',
+                    'PermissionName' => PermissionKey::ADMIN_DASHBOARD->value,
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'system_level',
                     'icon' => 'LayoutDashboard',
@@ -1380,7 +1380,7 @@ class PermissionAdminSeeder extends Seeder
                             'submenu' => [
                                 [
                                     'PermissionName' => PermissionKey::MENU_CUSTOMIZATION->value,
-                                    'PermissionTitle' => 'Menu Manage',
+                                    'PermissionTitle' => 'Menu Customization',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
