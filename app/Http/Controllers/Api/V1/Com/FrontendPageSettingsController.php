@@ -30,19 +30,20 @@ class FrontendPageSettingsController extends Controller
                 'com_register_page_terms_title',
             ])->get(['id']);
 
-        // transformed data
-        $transformedData = [];
-        foreach ($ComOptionGet as $com_option) {
-            $translations = $com_option->translations()->get()->groupBy('language');
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->get_com_option->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
-        }
+        $translations = $ComOptionGet->flatMap(function ($settingOption) {
+            return $settingOption->related_translations->map(function ($translation) {
+                return [
+                    'language' => $translation->language,
+                    'key' => $translation->key,
+                    'value' => trim($translation->value, '"'), // Removes extra quotes
+                ];
+            });
+        })->groupBy('language')->map(function ($items, $language) {
+            return array_merge(
+                ['language_code' => $language],
+                $items->pluck('value', 'key')->toArray()
+            );
+        })->toArray();
 
         $page_settings[] = [
             'com_register_page_title' => com_option_get('com_register_page_title') ?? '',
@@ -52,7 +53,7 @@ class FrontendPageSettingsController extends Controller
             'com_register_page_terms_page' => com_option_get('com_register_page_terms_page'),
             'com_register_page_terms_title' => com_option_get('com_register_page_terms_title'),
             'com_register_page_social_enable_disable' => com_option_get('com_register_page_social_enable_disable'),
-            'translations' => $transformedData,
+            'translations' => $translations,
         ];
 
         return response()->json([
@@ -67,26 +68,27 @@ class FrontendPageSettingsController extends Controller
                 'com_login_page_subtitle',
             ])->get(['id']);
 
-        // transformed data
-        $transformedData = [];
-        foreach ($ComOptionGet as $com_option) {
-            $translations = $com_option->translations()->get()->groupBy('language');
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->get_com_option->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
-        }
+        $translations = $ComOptionGet->flatMap(function ($settingOption) {
+            return $settingOption->related_translations->map(function ($translation) {
+                return [
+                    'language' => $translation->language,
+                    'key' => $translation->key,
+                    'value' => trim($translation->value, '"'), // Removes extra quotes
+                ];
+            });
+        })->groupBy('language')->map(function ($items, $language) {
+            return array_merge(
+                ['language_code' => $language],
+                $items->pluck('value', 'key')->toArray()
+            );
+        })->toArray();
 
         $page_settings[] = [
             'com_login_page_title' => com_option_get('com_login_page_title') ?? '',
             'com_login_page_subtitle' => com_option_get('com_login_page_subtitle') ?? '',
             'com_login_page_social_enable_disable' => com_option_get('com_login_page_social_enable_disable'),
             'com_login_page_image' => ImageModifier::generateImageUrl(com_option_get('com_login_page_image')),
-            'translations' => $transformedData,
+            'translations' => $translations,
         ];
 
         return response()->json([
@@ -104,19 +106,20 @@ class FrontendPageSettingsController extends Controller
                 'com_product_details_page_related_title'
             ])->get(['id']);
 
-        // transformed data
-        $transformedData = [];
-        foreach ($ComOptionGet as $com_option) {
-            $translations = $com_option->translations()->get()->groupBy('language');
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->get_com_option->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
-        }
+        $translations = $ComOptionGet->flatMap(function ($settingOption) {
+            return $settingOption->related_translations->map(function ($translation) {
+                return [
+                    'language' => $translation->language,
+                    'key' => $translation->key,
+                    'value' => trim($translation->value, '"'), // Removes extra quotes
+                ];
+            });
+        })->groupBy('language')->map(function ($items, $language) {
+            return array_merge(
+                ['language_code' => $language],
+                $items->pluck('value', 'key')->toArray()
+            );
+        })->toArray();
 
         $page_settings[] = [
             'com_product_details_page_delivery_title' => com_option_get('com_product_details_page_delivery_title') ?? '',
@@ -128,7 +131,7 @@ class FrontendPageSettingsController extends Controller
             'com_product_details_page_return_refund_url' => com_option_get('com_product_details_page_return_refund_url') ?? '',
             'com_product_details_page_return_refund_enable_disable' => com_option_get('com_product_details_page_return_refund_enable_disable') ?? '',
             'com_product_details_page_related_title' => com_option_get('com_product_details_page_related_title') ?? '',
-            'translations' => $transformedData,
+            'translations' => $translations,
         ];
 
         return response()->json([
@@ -145,26 +148,27 @@ class FrontendPageSettingsController extends Controller
                 'com_login_page_social_enable_disable',
             ])->get(['id']);
 
-        // transformed data
-        $transformedData = [];
-        foreach ($ComOptionGet as $com_option) {
-            $translations = $com_option->translations()->get()->groupBy('language');
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->get_com_option->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
-        }
+        $translations = $ComOptionGet->flatMap(function ($settingOption) {
+            return $settingOption->related_translations->map(function ($translation) {
+                return [
+                    'language' => $translation->language,
+                    'key' => $translation->key,
+                    'value' => trim($translation->value, '"'), // Removes extra quotes
+                ];
+            });
+        })->groupBy('language')->map(function ($items, $language) {
+            return array_merge(
+                ['language_code' => $language],
+                $items->pluck('value', 'key')->toArray()
+            );
+        })->toArray();
 
         $page_settings[] = [
             'com_login_page_title' => com_option_get('com_login_page_title') ?? '',
             'com_login_page_subtitle' => com_option_get('com_login_page_subtitle') ?? '',
             'com_login_page_social_enable_disable' => com_option_get('com_login_page_social_enable_disable') ?? '',
             'com_login_page_image' => ImageModifier::generateImageUrl(com_option_get('com_login_page_image')),
-            'translations' => $transformedData,
+            'translations' => $translations,
         ];
 
         return response()->json([
