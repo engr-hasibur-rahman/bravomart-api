@@ -45,30 +45,7 @@ class OrderService
 
         try {
         $customer = auth()->guard('api_customer')->user();
-        // guest registration/login
-        $token = null;
-        if (!$customer && isset($data['guest_info']['guest_order']) && $data['guest_info']['guest_order'] === true) {
-            $guestData = $data['guest_info'];
-            // Check if email already exists
-            $customer = Customer::where('email', $guestData['email'])->first();
-            $fullName = trim($guestData['name']);
-            $nameParts = preg_split('/\s+/', $fullName, -1, PREG_SPLIT_NO_EMPTY);
-            $firstName = $nameParts[0] ?? ''; // First word as first name
-            $lastName = isset($nameParts[1]) ? implode(' ', array_slice($nameParts, 1)) : '';
-            if (!$customer) {
-                $customer = Customer::create([
-                    'first_name' => $firstName,
-                    'last_name'  => $lastName,
-                    'email' => $guestData['email'],
-                    'phone' => $guestData['phone'],
-                    'password' => Hash::make($guestData['password']),
-                ]);
-
-                $token = $customer->createToken('customer_auth_token')->plainTextToken;
-            }
-        }
-
-        // Step 2: Ensure that the customer is authenticated
+        //  check authenticated
         if (!$customer) {
             DB::rollBack();
             return false;
@@ -77,6 +54,7 @@ class OrderService
         // customer ID
         $customer_id = $customer->id;
         $basePrice = 0;
+
         // check package  | if store subscription system check | if store subscription expire or order limit end this store product not create order
         foreach ($data['packages'] as $packageData) {
              // if type subscription
@@ -99,17 +77,18 @@ class OrderService
                  }
              } // subscription check end
 
-
             foreach ($packageData['items'] as $itemData) {
                 // find the product
                 $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                 // Validate product variant
-                $variant = ProductVariant::where('id', $itemData['variant_id'])
-                    ->where('product_id', $product->id)
-                    ->first();
-                // Add to total order amount
-                if (!empty($variant) && isset($variant->price)) {
-                    $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
+                if (!empty($product)){
+                    $variant = ProductVariant::where('id', $itemData['variant_id'])
+                        ->where('product_id', $product->id)
+                        ->first();
+                    // Add to total order amount
+                    if (!empty($variant) && isset($variant->price)) {
+                        $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
+                    }
                 }
             }
         }
@@ -525,7 +504,6 @@ class OrderService
                 $all_orders,
                 $order_master,
                 'customer' => $customer,
-                'token' => $token,
             ];
         } catch (\Exception $e) {
             DB::rollBack();
