@@ -36,13 +36,13 @@ class UserController extends Controller
     /* Social login start */
     public function redirectToFacebook(Request $request)
     {
-//        $validator = Validator::make($request->all(), [
-//            'role' => 'required',
-//        ]);
-//        if ($validator->fails()) {
-//            return response()->json($validator->errors());
-//        }
-//        $role = $request->role ?? 'user'; // Default to 'user' if not provided
+        $validator = Validator::make($request->all(), [
+            'role' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        $role = $request->role ?? 'user'; // Default to 'user' if not provided
 //        dd(config('services'));
         // Make sure you use the correct configuration
         return Socialite::driver('facebook')
@@ -50,12 +50,13 @@ class UserController extends Controller
                 'client_id' => config('services.facebookOAuth.client_id'),
                 'client_secret' => config('services.facebookOAuth.client_secret'),
                 'redirect_uri' => config('services.facebookOAuth.redirect'),
+                'state' => $role
             ])
             ->scopes(['email']) // Request the 'email' scope
             ->stateless()
             ->redirect();
     }
-    public function handleFacebookCallback()
+    public function handleFacebookCallback(Request $request)
     {
         try {
             $user = Socialite::driver('facebook')
@@ -66,15 +67,27 @@ class UserController extends Controller
                 ])
                 ->stateless()
                 ->user(); // Use stateless() here
-            dd($user);
             $facebook_id = $user->id;
             $email = $user->email;
             $name = $user->name;
 
-            // Find user in database
-            $existingUser = User::where('facebook_id', $facebook_id)
-                ->orWhere('email', $email)
-                ->first();
+            // Retrieve the role from the OAuth state parameter
+            $role = $request->input('state', 'user'); // Default to 'user'
+
+            // Find or create a user in the database
+            if ($role == 'customer') {
+                $existingUser = Customer::where('facebook_id', $facebook_id)
+                    ->orWhere('email', $email)->first();
+            } elseif ($role == 'seller') {
+                $existingUser = User::where('facebook_id', $facebook_id)
+                    ->orWhere('email', $email)->first();
+            } elseif ($role == 'deliveryman') {
+                $existingUser = User::where('facebook_id', $facebook_id)
+                    ->orWhere('email', $email)->first();
+            } else {
+                $existingUser = User::where('facebook_id', $facebook_id)
+                    ->orWhere('email', $email)->first();
+            }
 
             if ($existingUser) {
                 // Update Facebook ID if missing
@@ -94,19 +107,55 @@ class UserController extends Controller
             }
 
             // Create a new user
-            $newUser = User::create([
-                'name' => $name,
-                'email' => $email,
-                'facebook_id' => $facebook_id,
-                'password' => Hash::make('123456dummy'), // Dummy password
-            ]);
+            if ($role == 'customer') {
+                $newUser = Customer::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    'facebook_id' => $facebook_id,
+                    'password' => Hash::make('123456dummy'), // Dummy password
+                ]);
+            } elseif ($role == 'seller') {
+                $newUser = User::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    'facebook_id' => $facebook_id,
+                    'password' => Hash::make('123456dummy'),
+                    'activity_scope' => 'store_level',
+                    'store_owner' => 1,
+                    'status' => 1,
+                ]);
+            } elseif ($role == 'deliveryman') {
+                $newUser = User::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    'facebook_id' => $facebook_id,
+                    'password' => Hash::make('123456dummy'),
+                    'activity_scope' => 'delivery_level',
+                    'store_owner' => 0,
+                    'status' => 1,
+                ]);
+            } else {
+                $newUser = User::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    'facebook_id' => $facebook_id,
+                    'password' => Hash::make('123456dummy'),
+                    'activity_scope' => null,
+                    'store_owner' => 0,
+                    'status' => 1,
+                ]);
+            }
 
-            // Generate a Sanctum token for API access
+            // Generate a Sanctum token for the new user
             $token = $newUser->createToken('api_token')->plainTextToken;
 
             return response()->json([
                 'success' => true,
-                'message' => __('auth.social.register'),
+                'message' => __('auth.social.login'),
                 'token' => $token,
                 'user' => $newUser,
             ], 201);
@@ -119,6 +168,7 @@ class UserController extends Controller
             ], 500);
         }
     }
+
 
     public function redirectToGoogle(Request $request)
     {
