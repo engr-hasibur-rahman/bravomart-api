@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Actions\ImageModifier;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\MenuPublicViewResource;
 use App\Interfaces\TranslationInterface;
+use App\Models\Menu;
 use App\Models\SettingOption;
 use Illuminate\Http\Request;
 
@@ -171,5 +173,18 @@ class FrontendPageSettingsController extends Controller
             'data' => $page_settings
         ]);
     }
+
+
+    public function menuOptionSettings(){
+        $menus = Menu::where('is_visible', true)
+            ->orderBy('position')
+            ->get();
+        return response()->json([
+            'menus' => MenuPublicViewResource::collection($menus),
+        ]);
+    }
+
+
+
 
 }
