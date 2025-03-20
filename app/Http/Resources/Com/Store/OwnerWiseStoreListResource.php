@@ -15,8 +15,10 @@ class OwnerWiseStoreListResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'label' => $this->name,
+            'id' => $this->id,
             'value' => $this->id,
+            'label' => $this->name,
+            'type' => $this->store_type,
             'slug' => $this->slug,
             'translations' => $this->related_translations
         ];
