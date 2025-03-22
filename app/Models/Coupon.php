@@ -21,7 +21,6 @@ class Coupon extends Model
         'description'
     ];
 
-
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
