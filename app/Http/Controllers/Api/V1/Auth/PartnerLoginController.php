@@ -81,6 +81,11 @@ class PartnerLoginController extends Controller
         } else {
             $stores = [];
         }
+        // Handle the "Remember Me" option
+        $remember_me = $request->has('remember_me');
+
+        // Set token expiration dynamically
+        config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
 
         return [
             "success" => true,
