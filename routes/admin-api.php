@@ -243,7 +243,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('list', [AdminContactManageController::class, 'index']);
             Route::post('reply', [AdminContactManageController::class, 'reply']);
             Route::post('change-status', [AdminContactManageController::class, 'changeStatus']);
-            Route::delete('remove', [AdminContactManageController::class, 'destroy']);
+            Route::post('remove', [AdminContactManageController::class, 'destroy']);
         });
         // Seller Manage
         Route::group(['prefix' => 'seller/'], function () {

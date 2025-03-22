@@ -43,8 +43,6 @@ class UserController extends Controller
             return response()->json($validator->errors());
         }
         $role = $request->role ?? 'user'; // Default to 'user' if not provided
-//        dd(config('services'));
-        // Make sure you use the correct configuration
         return Socialite::driver('facebook')
             ->with([
                 'client_id' => config('services.facebookOAuth.client_id'),
