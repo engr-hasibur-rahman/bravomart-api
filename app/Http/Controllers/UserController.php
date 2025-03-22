@@ -54,6 +54,7 @@ class UserController extends Controller
             ->stateless()
             ->redirect();
     }
+
     public function handleFacebookCallback(Request $request)
     {
         try {
@@ -332,6 +333,10 @@ class UserController extends Controller
                 ->get();
             // Handle the "Remember Me" option
             $remember_me = $request->has('remember_me');
+
+            // Set token expiration dynamically
+            config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
+
             // Build and return the response
             return response()->json([
                 "status" => true,

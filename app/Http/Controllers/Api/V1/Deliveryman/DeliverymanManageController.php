@@ -126,6 +126,11 @@ class DeliverymanManageController extends Controller
             $user->update([
                 'firebase_token' => $request->firebase_device_token,
             ]);
+            // Handle the "Remember Me" option
+            $remember_me = $request->has('remember_me');
+
+            // Set token expiration dynamically
+            config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
 
             // Build and return the response
             return response()->json([
