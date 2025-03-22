@@ -330,7 +330,8 @@ class UserController extends Controller
                 ->whereNull('parent_id')
                 ->with('childrenRecursive')
                 ->get();
-
+            // Handle the "Remember Me" option
+            $remember_me = $request->has('remember_me');
             // Build and return the response
             return response()->json([
                 "status" => true,
