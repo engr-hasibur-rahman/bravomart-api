@@ -36,6 +36,7 @@ return new class extends Migration {
             $table->boolean('marketing_sms')->default(0);
             $table->integer('status')->default(1)->comment('1: active, 0: inactive, 2: suspended');
             $table->timestamp('deactivated_at')->nullable();
+            $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
         });

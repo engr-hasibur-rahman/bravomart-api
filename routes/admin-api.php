@@ -225,7 +225,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // CUSTOMER
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
                 Route::get('list', [AdminCustomerManageController::class, 'getCustomerList']);
-                Route::get('details', [AdminCustomerManageController::class, 'getCustomerDetails']);
+                Route::get('details/{id}', [AdminCustomerManageController::class, 'getCustomerDetails']);
                 Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
             });
             // Newsletter
