@@ -231,7 +231,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // Newsletter
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
                 Route::group(['prefix' => 'newsletter/'], function () {
-                    Route::post('list', [SubscriberManageController::class, 'allSubscribers']);
+                    Route::get('list', [SubscriberManageController::class, 'allSubscribers']);
                     Route::post('bulk-status-change', [SubscriberManageController::class, 'bulkStatusChange']);
                     Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
                     Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
