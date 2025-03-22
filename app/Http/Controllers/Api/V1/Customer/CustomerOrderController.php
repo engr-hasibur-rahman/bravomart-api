@@ -37,6 +37,8 @@ class CustomerOrderController extends Controller
             ], 200);
         }
 
+        $request['status'] = $request->status == 'active' ? 'confirmed': $request->status;
+
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 
         $ordersQuery->when($request->payment_status, function ($query) use ($request) {
