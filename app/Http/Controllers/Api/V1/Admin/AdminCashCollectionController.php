@@ -8,6 +8,7 @@ use App\Http\Resources\Admin\AdminCashCollectionResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\Order;
 use App\Models\OrderActivity;
+use App\Models\OrderDeliveryHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -71,8 +72,12 @@ class AdminCashCollectionController extends Controller
 
     private function isOrderValidForCashCollection($order, $deliverymanId)
     {
-        return $order->orderDeliveryHistory?->status == 'delivered' &&
-            $order->orderDeliveryHistory?->deliveryman_id == $deliverymanId;
+//        return $order->orderDeliveryHistory?->status == 'delivered' &&
+//            $order->orderDeliveryHistory?->deliveryman_id == $deliverymanId;
+        return OrderDeliveryHistory::where('order_id', $order->id)
+            ->where('deliveryman_id', $deliverymanId)
+            ->where('status','delivered')
+            ->exists();
     }
 
     private function isCashOnDelivery($order)
