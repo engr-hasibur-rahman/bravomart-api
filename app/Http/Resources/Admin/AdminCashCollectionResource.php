@@ -14,6 +14,15 @@ class AdminCashCollectionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this->id,
+            "order_id" => $this->order_id,
+            "activity_from" => $this->activity_from,
+            "activity_type" => $this->activity_type,
+            "reference" => $this->reference,
+            "activity_value" => $this->activity_value,
+            "created_at" => $this->created_at->format('F d, Y h:i a'),
+            "ref" => $this->ref?->full_name,
+        ];
     }
 }
