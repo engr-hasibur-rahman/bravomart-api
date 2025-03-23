@@ -58,7 +58,6 @@ class PlaceOrderRequest extends FormRequest
             'additional_charge_amount' => 'nullable|numeric|min:0',
             // packages
             'packages' => 'required|array',
-            'packages.*.store_id' => 'required|exists:stores,id',
             'packages.*.delivery_option' => 'required|in:home_delivery,parcel,takeaway',
             'packages.*.delivery_type' => 'nullable|in:standard,express,freight',
             'packages.*.delivery_time' => 'nullable',
@@ -71,15 +70,31 @@ class PlaceOrderRequest extends FormRequest
             'packages.*.items' => 'required|array',
             'packages.*.items.*.product_id' => 'required|exists:products,id',
             'packages.*.items.*.product_campaign_id' => 'nullable|numeric',
-//            'packages.*.items.*.variant_id' => 'required|exists:product_variants,id',
             'packages.*.items.*.variant_id' => [
                 'required',
                 'integer',
                 function ($attribute, $value, $fail) {
-                    $productId = request()->input(str_replace('.variant_id', '.product_id', $attribute));
+                    $productId = request()->input(str_replace('.variant_id', '.product_id', $attribute));                
                     $variantExists = \App\Models\ProductVariant::where('id', $value)->where('product_id', $productId)->exists();
                     if (!$variantExists) {
                         $fail("The selected variant does not belong to the given product.");
+                    }
+                }
+            ],
+            'packages.*.store_id' => [
+                'required',
+                'integer',
+                'exists:stores,id',
+                function ($attribute, $value, $fail) {
+                    $storeKey = str_replace('.store_id', '.items.*.product_id', $attribute);
+                    $productIds = request()->input($storeKey, []);
+
+                    // Check if all products in the package belong to the given store
+                    $productExists = \App\Models\Product::whereIn('id', $productIds)
+                            ->where('store_id', $value)
+                            ->count() == count($productIds);
+                    if (!$productExists) {
+                        $fail("Invalid product for store.");
                     }
                 }
             ],
