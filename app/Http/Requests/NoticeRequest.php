@@ -26,7 +26,7 @@ class NoticeRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'message' => 'nullable|string',
-            'type' => 'nullable|in:general,specific_store,specific_vendor', // Fix enum rule
+            'type' => 'nullable|in:general,specific_store,specific_seller', // Fix enum rule
             'priority' => 'nullable|in:low,medium,high', // Fix enum rule
             'active_date' => 'nullable|date|date_format:Y-m-d',
             'expire_date' => 'nullable|date|date_format:Y-m-d|after_or_equal:active_date', // Ensure after_or_equal rule works
@@ -42,7 +42,7 @@ class NoticeRequest extends FormRequest
             'title.string' => __('validation.string', ['attribute' => 'Title']),
             'title.max' => __('validation.max.string', ['attribute' => 'Title']),
             'message.string' => __('validation.string', ['attribute' => 'Message']),
-            'type.in' => __('validation.in', ['attribute' => 'Type', 'enum' => 'general,specific_store,specific_vendor']), // Fix enum message
+            'type.in' => __('validation.in', ['attribute' => 'Type', 'enum' => 'general,specific_store,specific_seller']), // Fix enum message
             'priority.in' => __('validation.in', ['attribute' => 'Priority', 'enum' => 'low,medium,high']), // Fix enum message
             'active_date.date' => __('validation.date', ['attribute' => 'Active Date']),
             'active_date.date_format' => __('validation.date_format', ['attribute' => 'Active Date', 'format' => 'Y-m-d']),
