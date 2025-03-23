@@ -21,6 +21,7 @@ class NoticeManageRepository implements NoticeManageInterface
     {
         return $this->storeNotice->translationKeys;
     }
+
     public function createNotice(array $data)
     {
         DB::beginTransaction(); // Start a transaction
@@ -35,7 +36,7 @@ class NoticeManageRepository implements NoticeManageInterface
             if ($notice_recipient) {
                 // Commit the transaction if all went well
                 DB::commit();
-                return true;
+                return $notice->id;
             } else {
                 DB::rollBack();
                 return false;
@@ -84,7 +85,7 @@ class NoticeManageRepository implements NoticeManageInterface
     public function getById($id)
     {
         try {
-            $notice = StoreNotice::with('recipients')->findOrFail($id);
+            $notice = StoreNotice::with(['recipients','related_translations'])->findOrFail($id);
             return $notice;
         } catch (\Exception $exception) {
             return false;
@@ -94,8 +95,8 @@ class NoticeManageRepository implements NoticeManageInterface
     public function updateNotice(array $data)
     {
         try {
-            StoreNotice::findorfail($data['id'])->update($data);
-            return true;
+            $notice = StoreNotice::findorfail($data['id'])->update($data);
+            return $notice->id;
         } catch (\Exception $exception) {
             return false;
         }
@@ -162,6 +163,7 @@ class NoticeManageRepository implements NoticeManageInterface
 
         return $query->paginate(10);
     }
+
     public function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         if (empty($request['translations'])) {
