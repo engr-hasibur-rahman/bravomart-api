@@ -72,8 +72,6 @@ class AdminCashCollectionController extends Controller
 
     private function isOrderValidForCashCollection($order, $deliverymanId)
     {
-//        return $order->orderDeliveryHistory?->status == 'delivered' &&
-//            $order->orderDeliveryHistory?->deliveryman_id == $deliverymanId;
         return OrderDeliveryHistory::where('order_id', $order->id)
             ->where('deliveryman_id', $deliverymanId)
             ->where('status','delivered')
