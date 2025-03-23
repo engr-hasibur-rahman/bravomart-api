@@ -85,7 +85,7 @@ class SubscriberManageRepository implements SubscriberManageInterface
 
         // Update the status of these subscribers
         Subscriber::whereIn('id', $subscribersToUpdate->pluck('id'))
-            ->update(['is_subscribed' => $data['status'], 'unsubscribed_at' => $data['status'] == null ? now() : null]);
+            ->update(['is_subscribed' => $data['status'], 'unsubscribed_at' => $data['status'] == 0 ? now() : null]);
 
         // Send appropriate email notifications
         foreach ($subscribersToUpdate as $subscriber) {

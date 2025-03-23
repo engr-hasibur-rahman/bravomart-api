@@ -24,7 +24,7 @@ class CustomerOrderResource extends JsonResource
             'store' => $this->store->name ?? null,
             'customer_name' => $this->orderMaster->customer->first_name . ' ' . $this->orderMaster->customer->last_name ?? null,
             'invoice_number' => $this->invoice_number,
-            'order_date' => $this->created_at,
+            'order_date' => $this->created_at->format('F d, Y h:i a'),
             'invoice_date' => $this->invoice_date,
             'order_type' => $this->order_type,
             'delivery_option' => $this->delivery_option,

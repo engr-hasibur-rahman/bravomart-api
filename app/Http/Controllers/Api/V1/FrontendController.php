@@ -902,13 +902,17 @@ class FrontendController extends Controller
             $search = $request->search;
             $sort = $request->sort ?? 'asc';
             $sortField = $request->sortField ?? 'id';
+            $type = $request->type; // Get the type filter
             $categories = ProductCategory::leftJoin('translations', function ($join) use ($language) {
                 $join->on('product_category.id', '=', 'translations.translatable_id')
                     ->where('translations.translatable_type', '=', ProductCategory::class)
                     ->where('translations.language', '=', $language)
                     ->where('translations.key', '=', 'category_name');
             })->select('product_category.*', DB::raw('COALESCE(translations.value, product_category.category_name) as category_name'));
-
+            // Apply type filter if type is provided
+            if ($type) {
+                $categories->where('product_category.type', $type);
+            }
             // Apply search filter if search parameter exists
             if ($search) {
                 $categories->where(function ($query) use ($search) {
@@ -1327,7 +1331,7 @@ class FrontendController extends Controller
         }
 
         // Sorting by discount (highest to lowest)
-        if ($request->filled('sort_by_discount') && $request->sort_by_discount) {
+        if ($request->sort_by_discount) {
             $query->orderBy('discount', 'desc');
         }
 

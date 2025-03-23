@@ -5,11 +5,23 @@ namespace App\Repositories;
 use App\Interfaces\NoticeManageInterface;
 use App\Models\StoreNotice;
 use App\Models\StoreNoticeRecipient;
+use App\Models\Translation;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class NoticeManageRepository implements NoticeManageInterface
 {
+    public function __construct(protected StoreNotice $storeNotice, protected Translation $translation)
+    {
+
+    }
+
+    public function translationKeys(): mixed
+    {
+        return $this->storeNotice->translationKeys;
+    }
+
     public function createNotice(array $data)
     {
         DB::beginTransaction(); // Start a transaction
@@ -24,13 +36,12 @@ class NoticeManageRepository implements NoticeManageInterface
             if ($notice_recipient) {
                 // Commit the transaction if all went well
                 DB::commit();
-                return true;
+                return $notice->id;
             } else {
                 DB::rollBack();
                 return false;
             }
         } catch (\Exception $exception) {
-            // Rollback the transaction if any exception occurs
             DB::rollBack();
             return false;
         }
@@ -74,7 +85,7 @@ class NoticeManageRepository implements NoticeManageInterface
     public function getById($id)
     {
         try {
-            $notice = StoreNotice::with('recipients')->findOrFail($id);
+            $notice = StoreNotice::with(['recipients','related_translations'])->findOrFail($id);
             return $notice;
         } catch (\Exception $exception) {
             return false;
@@ -84,8 +95,8 @@ class NoticeManageRepository implements NoticeManageInterface
     public function updateNotice(array $data)
     {
         try {
-            StoreNotice::findorfail($data['id'])->update($data);
-            return true;
+            $notice = StoreNotice::findorfail($data['id'])->update($data);
+            return $notice->id;
         } catch (\Exception $exception) {
             return false;
         }
@@ -151,5 +162,55 @@ class NoticeManageRepository implements NoticeManageInterface
             });
 
         return $query->paginate(10);
+    }
+
+    public function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
+    {
+        if (empty($request['translations'])) {
+            return false;  // Return false if no translations are provided
+        }
+
+        $translations = [];
+        foreach ($request['translations'] as $translation) {
+            foreach ($colNames as $key) {
+                // Fallback value if translation key does not exist
+                $translatedValue = $translation[$key] ?? null;
+
+                // Skip translation if the value is NULL
+                if ($translatedValue === null) {
+                    continue; // Skip this field if it's NULL
+                }
+
+                // Check if a translation exists for the given reference path, ID, language, and key
+                $trans = $this->translation
+                    ->where('translatable_type', $refPath)
+                    ->where('translatable_id', $refid)
+                    ->where('language', $translation['language_code'])
+                    ->where('key', $key)
+                    ->first();
+
+                if ($trans) {
+                    // Update the existing translation
+                    $trans->value = $translatedValue;
+                    $trans->save();
+                } else {
+                    // Prepare new translation entry for insertion
+                    $translations[] = [
+                        'translatable_type' => $refPath,
+                        'translatable_id' => $refid,
+                        'language' => $translation['language_code'],
+                        'key' => $key,
+                        'value' => $translatedValue,
+                    ];
+                }
+            }
+        }
+
+        // Insert new translations if any
+        if (!empty($translations)) {
+            $this->translation->insert($translations);
+        }
+
+        return true;
     }
 }

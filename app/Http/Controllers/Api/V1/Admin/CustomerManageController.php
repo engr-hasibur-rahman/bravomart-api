@@ -29,7 +29,7 @@ class CustomerManageController extends Controller
         $customers = $query->paginate($request->perPage ?? 10);
         return response()->json([
             'customers' => CustomerResource::collection($customers),
-            'pagination' => new PaginationResource($customers)
+            'meta' => new PaginationResource($customers)
         ]);
     }
 

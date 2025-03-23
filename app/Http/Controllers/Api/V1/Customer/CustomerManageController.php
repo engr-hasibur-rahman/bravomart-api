@@ -101,6 +101,11 @@ class CustomerManageController extends Controller
                 "token" => null,
             ], 401);
         } else {
+            // Handle the "Remember Me" option
+            $remember_me = $request->has('remember_me');
+
+            // Set token expiration dynamically
+            config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
             return response()->json([
                 "status" => true,
                 "status_code" => 200,

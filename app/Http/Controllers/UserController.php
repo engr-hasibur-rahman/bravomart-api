@@ -15,6 +15,7 @@ use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -33,6 +34,141 @@ class UserController extends Controller
     }
 
     /* Social login start */
+    public function redirectToFacebook(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'role' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        $role = $request->role ?? 'user'; // Default to 'user' if not provided
+        return Socialite::driver('facebook')
+            ->with([
+                'client_id' => config('services.facebookOAuth.client_id'),
+                'client_secret' => config('services.facebookOAuth.client_secret'),
+                'redirect_uri' => config('services.facebookOAuth.redirect'),
+                'state' => $role
+            ])
+            ->scopes(['email']) // Request the 'email' scope
+            ->stateless()
+            ->redirect();
+    }
+
+    public function handleFacebookCallback(Request $request)
+    {
+        try {
+            $user = Socialite::driver('facebook')
+                ->with([
+                    'client_id' => config('services.facebookOAuth.client_id'),
+                    'client_secret' => config('services.facebookOAuth.client_secret'),
+                    'redirect_uri' => config('services.facebookOAuth.redirect'),
+                ])
+                ->stateless()
+                ->user(); // Use stateless() here
+            $facebook_id = $user->id;
+            $email = $user->email;
+            $name = $user->name;
+
+            // Retrieve the role from the OAuth state parameter
+            $role = $request->input('state', 'user'); // Default to 'user'
+
+            // Find or create a user in the database
+            if ($role == 'customer') {
+                $existingUser = Customer::where('facebook_id', $facebook_id)
+                    ->orWhere('email', $email)->first();
+            } elseif ($role == 'seller') {
+                $existingUser = User::where('facebook_id', $facebook_id)
+                    ->orWhere('email', $email)->first();
+            } elseif ($role == 'deliveryman') {
+                $existingUser = User::where('facebook_id', $facebook_id)
+                    ->orWhere('email', $email)->first();
+            } else {
+                $existingUser = User::where('facebook_id', $facebook_id)
+                    ->orWhere('email', $email)->first();
+            }
+
+            if ($existingUser) {
+                // Update Facebook ID if missing
+                if (!$existingUser->facebook_id) {
+                    $existingUser->update(['facebook_id' => $facebook_id]);
+                }
+
+                // Generate a Sanctum token for API access
+                $token = $existingUser->createToken('api_token')->plainTextToken;
+
+                return response()->json([
+                    'success' => true,
+                    'message' => __('auth.social.login'),
+                    'token' => $token,
+                    'user' => $existingUser,
+                ], 200);
+            }
+
+            // Create a new user
+            if ($role == 'customer') {
+                $newUser = Customer::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    'facebook_id' => $facebook_id,
+                    'password' => Hash::make('123456dummy'), // Dummy password
+                ]);
+            } elseif ($role == 'seller') {
+                $newUser = User::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    'facebook_id' => $facebook_id,
+                    'password' => Hash::make('123456dummy'),
+                    'activity_scope' => 'store_level',
+                    'store_owner' => 1,
+                    'status' => 1,
+                ]);
+            } elseif ($role == 'deliveryman') {
+                $newUser = User::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    'facebook_id' => $facebook_id,
+                    'password' => Hash::make('123456dummy'),
+                    'activity_scope' => 'delivery_level',
+                    'store_owner' => 0,
+                    'status' => 1,
+                ]);
+            } else {
+                $newUser = User::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    'facebook_id' => $facebook_id,
+                    'password' => Hash::make('123456dummy'),
+                    'activity_scope' => null,
+                    'store_owner' => 0,
+                    'status' => 1,
+                ]);
+            }
+
+            // Generate a Sanctum token for the new user
+            $token = $newUser->createToken('api_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => __('auth.social.login'),
+                'token' => $token,
+                'user' => $newUser,
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Facebook authentication failed!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
     public function redirectToGoogle(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -195,6 +331,11 @@ class UserController extends Controller
                 ->whereNull('parent_id')
                 ->with('childrenRecursive')
                 ->get();
+            // Handle the "Remember Me" option
+            $remember_me = $request->has('remember_me');
+
+            // Set token expiration dynamically
+            config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
 
             // Build and return the response
             return response()->json([

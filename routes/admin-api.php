@@ -225,13 +225,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             // CUSTOMER
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
                 Route::get('list', [AdminCustomerManageController::class, 'getCustomerList']);
-                Route::get('details', [AdminCustomerManageController::class, 'getCustomerDetails']);
+                Route::get('details/{id}', [AdminCustomerManageController::class, 'getCustomerDetails']);
                 Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
             });
             // Newsletter
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
                 Route::group(['prefix' => 'newsletter/'], function () {
-                    Route::post('list', [SubscriberManageController::class, 'allSubscribers']);
+                    Route::get('list', [SubscriberManageController::class, 'allSubscribers']);
                     Route::post('bulk-status-change', [SubscriberManageController::class, 'bulkStatusChange']);
                     Route::post('bulk-email-send', [SubscriberManageController::class, 'sendBulkEmail']);
                     Route::delete('remove/{id}', [SubscriberManageController::class, 'destroy']);
@@ -243,7 +243,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('list', [AdminContactManageController::class, 'index']);
             Route::post('reply', [AdminContactManageController::class, 'reply']);
             Route::post('change-status', [AdminContactManageController::class, 'changeStatus']);
-            Route::delete('remove', [AdminContactManageController::class, 'destroy']);
+            Route::post('remove', [AdminContactManageController::class, 'destroy']);
         });
         // Seller Manage
         Route::group(['prefix' => 'seller/'], function () {
@@ -537,7 +537,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
             // Collect Cash (for cash collection)
-            Route::get('cash-collection', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
+            Route::match(['get','post'],'cash-collection', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
         });
 
 
