@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\OrderActivityType;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminCashCollectionResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\Order;
 use App\Models\OrderActivity;
 use Illuminate\Http\Request;
@@ -58,6 +60,13 @@ class AdminCashCollectionController extends Controller
                     : __('messages.save_failed', ['name' => 'Cash Deposit'])
             ], $orderActivity ? 201 : 500);
         }
+        $cash_collection = OrderActivity::with('ref')->where('activity_type', OrderActivityType::CASH_DEPOSIT->value)
+            ->latest()
+            ->paginate(10);
+        return response()->json([
+            'data' => AdminCashCollectionResource::collection($cash_collection),
+            'meta' => new PaginationResource($cash_collection),
+        ]);
     }
 
     private function isOrderValidForCashCollection($order, $deliverymanId)
