@@ -16,9 +16,9 @@ class OrderRefundReasonDetailsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'=>$this->id,
-            'reason' =>$this->reason,
-            'translations'=>OrderRefundReasonTranslationResource::collection($this->related_translations->groupBy('language'))
+            'id' => $this->id,
+            'reason' => $this->reason,
+            'translations' => OrderRefundReasonTranslationResource::collection($this->related_translations->groupBy('language'))
         ];
     }
 }

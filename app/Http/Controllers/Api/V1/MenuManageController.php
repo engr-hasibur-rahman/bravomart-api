@@ -63,7 +63,7 @@ class MenuManageController extends Controller
 
     public function show(Request $request)
     {
-        $menu = Menu::with('related_translations')->find($request->id);
+        $menu = Menu::with(['related_translations'])->find($request->id);
         if (!$menu) {
             return response()->json([
                 'message' => __('messages.data_not_found')
