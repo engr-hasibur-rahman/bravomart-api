@@ -71,8 +71,8 @@ class AdminCashCollectionController extends Controller
 
     private function isOrderValidForCashCollection($order, $deliverymanId)
     {
-        return $order->orderDeliveryHistory->status == 'delivered' &&
-            $order->orderDeliveryHistory->deliveryman_id == $deliverymanId;
+        return $order->orderDeliveryHistory?->status == 'delivered' &&
+            $order->orderDeliveryHistory?->deliveryman_id == $deliverymanId;
     }
 
     private function isCashOnDelivery($order)
