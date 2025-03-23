@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Interfaces;
+
+use Illuminate\Http\Request;
+
 interface NoticeManageInterface
 {
     public function createNotice(array $data);
@@ -16,4 +19,6 @@ interface NoticeManageInterface
     public function deleteNotice($id);
 
     public function getSellerStoreNotices();
+
+    public function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 }

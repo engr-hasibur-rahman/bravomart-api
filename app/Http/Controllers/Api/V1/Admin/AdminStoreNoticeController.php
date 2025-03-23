@@ -37,7 +37,7 @@ class AdminStoreNoticeController extends Controller
 
     public function store(NoticeRequest $request)
     {
-        if ($request->type == 'general' && isset($request->store_id) || isset($request->seller_id)) {
+        if ($request->type == 'general' && (isset($request->store_id) || isset($request->seller_id))) {
             return response()->json([
                 'status' => false,
                 'status_code' => 400,
