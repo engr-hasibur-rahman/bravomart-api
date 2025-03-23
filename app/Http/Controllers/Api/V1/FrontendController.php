@@ -1331,7 +1331,7 @@ class FrontendController extends Controller
         }
 
         // Sorting by discount (highest to lowest)
-        if ($request->filled('sort_by_discount') && $request->sort_by_discount) {
+        if ($request->filled('sort_by_discount')) {
             $query->orderBy('discount', 'desc');
         }
 
