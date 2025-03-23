@@ -29,7 +29,9 @@ class OrderActivity extends Model
     {
         return $this->belongsTo(User::class, 'collected_by');
     }
-    public function ref(){
+
+    public function ref()
+    {
         return $this->belongsTo(User::class, 'ref_id');
     }
 }
