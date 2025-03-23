@@ -94,12 +94,9 @@ class NoticeManageRepository implements NoticeManageInterface
 
     public function updateNotice(array $data)
     {
-        try {
-            $notice = StoreNotice::findorfail($data['id'])->update($data);
+            $notice = StoreNotice::find($data['id']);
+            $notice->update($data);
             return $notice->id;
-        } catch (\Exception $exception) {
-            return false;
-        }
     }
 
     public function toggleStatus($id)

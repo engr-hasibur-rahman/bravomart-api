@@ -25,6 +25,8 @@ class AdminNoticeDetailsResource extends JsonResource
             "expire_date" => $this->expire_date,
             "status" => $this->status,
             "created_at" => $this->created_at,
+            "seller_id"=>$this->recipients?->seller_id,
+            "store_id"=>$this->recipients?->store_id,
             "translations" => NoticeTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
