@@ -40,14 +40,10 @@ class OrderService
 
     public function createOrder($data)
     {
-
-        DB::beginTransaction();
-
         try {
         $customer = auth()->guard('api_customer')->user();
         //  check authenticated
         if (!$customer) {
-            DB::rollBack();
             return false;
         }
 
@@ -100,6 +96,15 @@ class OrderService
                 if (isset($coupon_data['final_order_amount'])){
                     $total_order_amount = $coupon_data['final_order_amount'];
                     $total_discount_amount = $coupon_data['discount_amount'];
+
+                    // Only set success to true if coupon is valid
+                    $coupon_data['success'] = true;
+                }else{
+                    $coupon_data = [
+                        'success' => false,
+                        'coupon_code' => null,
+                        'coupon_title' => null,
+                    ];
                 }
             }else{
                 $coupon_data = [
@@ -109,8 +114,7 @@ class OrderService
                 ];
             }
 
-
-            // create order master
+        // create order master
         $order_master = OrderMaster::create([
                 'customer_id' => $customer_id,
                 'area_id' => 0, // main zone id
@@ -215,6 +219,7 @@ class OrderService
             $customer_lat = $data['customer_latitude'] ?? null;
             $customer_lng = $data['customer_longitude'] ?? null;
 
+            $coupon_discount_amount_admin_final = 0;
             foreach ($data['packages'] as $packageData) {
                 // find store wise area id
                 $store_info = Store::find($packageData['store_id']);
@@ -326,12 +331,18 @@ class OrderService
                                $flash_sale_discount_type = null;
                                $flash_sale_discount_amount = 0;
                                $product_flash_sale_discount_rate = 0;
+
+                               $flash_sale_admin_discount = 0;
+                           }else{
+                               // store and admin discount calculate per product wise
+                               $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage')
+                                   ? ($basePrice * $flash_sale_discount_amount / 100.00)
+                                   : $flash_sale_discount_amount;
                            }
-                       };
+                       }else{
+                           $flash_sale_admin_discount = 0;
+                       }
 
-
-                       // store and admin discount calculate per product wise
-                       $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100.00) : $flash_sale_discount_amount;
 
 
                        // Calculate final price
@@ -449,16 +460,20 @@ class OrderService
 
                        // set order package discount info
                        $order_package_total_amount += $orderDetails->line_total_price;
-                       $product_discount_amount += ($variant?->price - $variant?->special_price);
-                       $flash_discount_amount_admin += $orderDetails->admin_discount_amount;
-                       $coupon_discount_amount_admin += $orderDetails->coupon_discount_amount;
+
+                       $product_discount_amount += $variant?->special_price > 0
+                           ? ($variant->price - $variant->special_price) * $itemData['quantity']
+                           : 0;
+
+                       $flash_discount_amount_admin += $orderDetails->admin_discount_amount * $itemData['quantity'];
+                       $coupon_discount_amount_admin += $orderDetails->coupon_discount_amount * $itemData['quantity'];
 
                        // order package update other info
                        $package_order_amount_store_value += $orderDetails->line_total_price - $orderDetails->admin_commission_amount;
                        $package_order_amount_admin_commission += $orderDetails->admin_commission_amount;
                    }
 
-                } // end order details
+                } // item loops end order details
 
                 // update order package details
                 $package->order_amount = $order_package_total_amount; //order package total amount
@@ -469,26 +484,22 @@ class OrderService
                 $package->order_amount_admin_commission = $package_order_amount_admin_commission; // order_amount_admin_commission
                 $package->save();
 
-
                 // Accumulate package values for the main order
-                $order_package_total_amount += $order_package_total_amount;
                 $product_discount_amount += $product_discount_amount;
                 $flash_discount_amount_admin += $flash_discount_amount_admin;
-                $coupon_discount_amount_admin += $coupon_discount_amount_admin;
+                $coupon_discount_amount_admin_final += $coupon_discount_amount_admin;
                 $shipping_charge += $package->shipping_charge;
+                $order_package_total_amount +=  $package->order_amount;
             } // end order package
 
 
-
-           // main order update all package price wise
+           // Update Order Master
             $order_master->product_discount_amount = $product_discount_amount;
             $order_master->flash_discount_amount_admin = $flash_discount_amount_admin;
-            $order_master->coupon_discount_amount_admin = $coupon_discount_amount_admin;
+            $order_master->coupon_discount_amount_admin = $coupon_discount_amount_admin_final;
             $order_master->shipping_charge = $shipping_charge;
-            $order_master->order_amount = $order_package_total_amount;
+            $order_master->order_amount = $order_package_total_amount + $shipping_charge;
             $order_master->save();
-
-            DB::commit();
 
             // return all order id
             $all_orders = Order::with('store.seller')->where('order_master_id', $order_master->id)->get();
@@ -496,9 +507,9 @@ class OrderService
 
             // order notification
             $all_orders_ids = Order::where('order_master_id', $order_master->id)->pluck('id')->toArray();
-            $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
-            // Dispatch the email job asynchronously
-            dispatch(new DispatchOrderEmails($order_master->id));
+//            $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
+//            // Dispatch the email job asynchronously
+//            dispatch(new DispatchOrderEmails($order_master->id));
 
             return [
                 $all_orders,
@@ -506,8 +517,6 @@ class OrderService
                 'customer' => $customer,
             ];
         } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e; // Rethrow exception for proper error handling
         }
     }
 
