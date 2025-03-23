@@ -76,7 +76,7 @@ class NoticeManageRepository implements NoticeManageInterface
 
             // Paginate the results
             $perPage = isset($filters['per_page']) ? $filters['per_page'] : 10; // Default to 15 if not provided
-            return $query->paginate($perPage);
+            return $query->latest()->paginate($perPage);
         } catch (\Exception $exception) {
             return false;
         }
@@ -85,7 +85,7 @@ class NoticeManageRepository implements NoticeManageInterface
     public function getById($id)
     {
         try {
-            $notice = StoreNotice::with(['recipients','related_translations'])->findOrFail($id);
+            $notice = StoreNotice::with(['recipients', 'related_translations'])->findOrFail($id);
             return $notice;
         } catch (\Exception $exception) {
             return false;
@@ -94,11 +94,11 @@ class NoticeManageRepository implements NoticeManageInterface
 
     public function updateNotice(array $data)
     {
-            $notice = StoreNotice::find($data['id']);
-            $notice_recipent = StoreNoticeRecipient::where('notice_id', $notice->id)->first();
-            $notice_recipent->update($data);
-            $notice->update($data);
-            return $notice->id;
+        $notice = StoreNotice::find($data['id']);
+        $notice_recipent = StoreNoticeRecipient::where('notice_id', $notice->id)->first();
+        $notice_recipent->update($data);
+        $notice->update($data);
+        return $notice->id;
     }
 
     public function toggleStatus($id)

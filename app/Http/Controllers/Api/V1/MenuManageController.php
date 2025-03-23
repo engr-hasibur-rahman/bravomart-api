@@ -24,7 +24,7 @@ class MenuManageController extends Controller
 
     public function index()
     {
-        $menus = Menu::with('related_translations')->where('is_visible', true)
+        $menus = Menu::with('related_translations')
             ->orderBy('position')
             ->paginate(10);
 
