@@ -53,24 +53,29 @@ class ContactSettingsManageController extends Controller
 
     }
 
-    private function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
+    public function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         if (empty($request['translations'])) {
-            return false;  // Return false if no translations are provided
+            return false;
         }
+
+        $requestedLanguages = array_column($request['translations'], 'language_code');
+
+        // Delete translations for languages not present in the request
+        $this->translation->where('translatable_type', $refPath)
+            ->where('translatable_id', $refid)
+            ->whereNotIn('language', $requestedLanguages)
+            ->delete();
 
         $translations = [];
         foreach ($request['translations'] as $translation) {
             foreach ($colNames as $key) {
-                // Fallback value if translation key does not exist
                 $translatedValue = $translation[$key] ?? null;
 
-                // Skip translation if the value is NULL
                 if ($translatedValue === null) {
-                    continue; // Skip this field if it's NULL
+                    continue;
                 }
 
-                // Check if a translation exists for the given reference path, ID, language, and key
                 $trans = $this->translation
                     ->where('translatable_type', $refPath)
                     ->where('translatable_id', $refid)
@@ -79,25 +84,24 @@ class ContactSettingsManageController extends Controller
                     ->first();
 
                 if ($trans) {
-                    // Update the existing translation
                     $trans->value = $translatedValue;
                     $trans->save();
                 } else {
-                    // Prepare new translation entry for insertion
                     $translations[] = [
                         'translatable_type' => $refPath,
                         'translatable_id' => $refid,
                         'language' => $translation['language_code'],
                         'key' => $key,
-                        'value' => json_encode($translatedValue, JSON_UNESCAPED_UNICODE),
+                        'value' => $translatedValue,
                     ];
                 }
             }
         }
-        // Insert new translations if any
+
         if (!empty($translations)) {
             $this->translation->insert($translations);
         }
+
         return true;
     }
 }
