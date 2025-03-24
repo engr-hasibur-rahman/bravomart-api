@@ -41,7 +41,10 @@ class ProductBrandRepository extends BaseRepository
         $brandId = $request->input('id');
         if ($brandId) {
             // Update existing brand
-            $brand = ProductBrand::findOrFail($brandId);
+            $brand = ProductBrand::find($brandId);
+            if (!$brand) {
+                return [];
+            }
         }
 
 
@@ -115,52 +118,6 @@ class ProductBrandRepository extends BaseRepository
             }
             $brand->translations()->createMany($translations);
         }
-
-        return $brand;
-    }
-
-
-    public function updateProductBrand($request)
-    {
-        // Prepare data for default brand
-        $data = [
-            'brand_name' => $request['brand_name'],
-            'brand_slug' => MultilangSlug::makeSlug(ProductBrand::class, $request['brand_name'], 'brand_slug'),
-            'meta_title' => $request['meta_title'],
-            'meta_description' => $request['meta_description'],
-            'display_order' => 2,
-        ];
-
-
-        $brand = $this->findOrFail($request->id)->update($data);
-//
-//        $translations = [];
-//        $defaultKeys = ['brand_name', 'brand_slug', 'meta_title', 'meta_description'];
-//        // Handle translations
-//        if ($request['translations']) {
-//            foreach ($request['translations'] as $translation) {
-//                foreach ($defaultKeys as $key) {
-//                    $translatedValue = $translation[$key] ?? null;
-//                    if ($key === 'brand_slug') {
-//                        $translatedValue = MultilangSlug::makeSlug(
-//                            Translation::class,
-//                            $translation['brand_name'] ?? $data['brand_name'],
-//                            'value'
-//                        );
-//                    }
-//                    $translations[] = [
-//                        'language' => $translation['language_code'],
-//                        'key' => $key,
-//                        'value' => $translatedValue,
-//                    ];
-//                }
-//            }
-//        }
-//
-//        // Save translations if available
-//        if (!empty($translations)) {
-//            $brand->translations()->createMany($translations);
-//        }
 
         return $brand;
     }
