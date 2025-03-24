@@ -65,7 +65,6 @@ class ProductBrandRepository extends BaseRepository
                 : null,
             'created_by' => auth()->user()->id ?? null, // Assuming authentication is used
             'updated_by' => auth()->user()->id ?? null,
-            'status' => $request['status'] ?? 0, // Default to 'active' if not provided
         ];
 
         if ($brandId) {
