@@ -320,8 +320,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list', [ProductBrandController::class, 'index']);
                 Route::post('add', [ProductBrandController::class, 'store']);
                 Route::post('update', [ProductBrandController::class, 'update']);
-                Route::get('details', [ProductBrandController::class, 'show']);
-                Route::post('approve', [ProductBrandController::class, 'productBrandStatus']);
+                Route::get('details/{id}', [ProductBrandController::class, 'show']);
+                Route::post('change-status', [ProductBrandController::class, 'productBrandStatus']);
+                Route::delete('remove/{id}', [ProductBrandController::class, 'destroy']);
             });
         });
         // Product Author manage

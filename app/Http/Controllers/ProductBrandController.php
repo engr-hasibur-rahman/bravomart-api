@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductBrandRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\ProductBrandByIdResource;
 use App\Http\Resources\ProductBrandResource;
 use App\Models\ProductBrand;
@@ -34,9 +35,9 @@ class ProductBrandController extends Controller
                 ->where('translations.language', '=', $language)
                 ->where('translations.key', '=', 'brand_name');
         })->select(
-                'product_brand.*',
-                DB::raw('COALESCE(translations.value, product_brand.brand_name) as brand_name')
-            );
+            'product_brand.*',
+            DB::raw('COALESCE(translations.value, product_brand.brand_name) as brand_name')
+        );
 
         // Apply search filter if search parameter exists
         if ($search) {
@@ -48,16 +49,19 @@ class ProductBrandController extends Controller
 
         // Apply sorting and pagination
         $brands = $brands->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
-            ->paginate($limit);
+            ->paginate($limit ?? 10);
 
         // Return a collection of ProductBrandResource (including the image)
-        return ProductBrandResource::collection($brands);
+        return response()->json([
+            'data' => ProductBrandResource::collection($brands),
+            'meta' => new PaginationResource($brands)
+        ]);
     }
 
 
-    public function show($id)
+    public function show(Request $request)
     {
-        $brand = $this->repository->with(['translations'])->findOrFail($id);
+        $brand = $this->repository->with(['related_translations'])->findOrFail($request->id);
         if ($brand) {
             return new ProductBrandByIdResource($brand);
         }
@@ -84,16 +88,32 @@ class ProductBrandController extends Controller
             throw new \RuntimeException('Could not create the product brand.' . $e);
         }
     }
+
     /* Change or Approve product brand status (Admin only) */
     public function productBrandStatus(Request $request)
     {
         $productBrand = ProductBrand::findOrFail($request->id);
-        $productBrand->status = $request->status;
+        $productBrand->status = !$productBrand->status;
         $productBrand->save();
         return response()->json([
             'success' => true,
             'message' => 'Product brand status updated successfully',
             'status' => $productBrand->status
         ]);
+    }
+
+    public function destroy(Request $request)
+    {
+        $brand = ProductBrand::find($request->id);
+        if ($brand) {
+            $brand->delete();
+            return response()->json([
+                'message' => __('messages.delete_success', ['name' => 'Brand'])
+            ]);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ]);
+        }
     }
 }
