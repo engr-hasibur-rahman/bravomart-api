@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Admin\AdminTagResource;
 use App\Interfaces\TagInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -59,27 +60,14 @@ class TagRepository implements TagInterface
     public function getTagById(int|string $id)
     {
         try {
-            $tag = Tag::find($id);
-            $translations = $tag->translations()->get()->groupBy('language');
-            // Initialize an array to hold the transformed data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-                /* iterate all Column to Assign Language Value */
-                foreach ($this->tag->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
+            $tag = Tag::with('related_translations')->find($id);
             if ($tag) {
                 return response()->json([
-                    "data" => $tag->toArray(),
-                    'translations' => $transformedData,
-                    "massage" => "Data was found"
-                ], 201);
+                    "data" => new AdminTagResource($tag),
+                ]);
             } else {
                 return response()->json([
-                    "massage" => "Data was not found"
+                    "massage" => __('message.data_not_found'),
                 ], 404);
             }
         } catch (\Throwable $th) {
