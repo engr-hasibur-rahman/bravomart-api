@@ -381,7 +381,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['prefix' => 'tag/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_TAG_LIST->value]], function () {
             Route::get('list', [TagManageController::class, 'index']);
             Route::post('add', [TagManageController::class, 'store']);
-            Route::get('details', [TagManageController::class, 'show']);
+            Route::get('details/{id}', [TagManageController::class, 'show']);
             Route::post('update', [TagManageController::class, 'update']);
             Route::delete('remove/{id}', [TagManageController::class, 'destroy']);
         });
