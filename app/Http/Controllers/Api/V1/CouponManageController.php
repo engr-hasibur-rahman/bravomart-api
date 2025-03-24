@@ -75,6 +75,17 @@ class CouponManageController extends Controller
         return $this->success(translate('messages.update_success', ['name' => 'Coupon']));
     }
 
+    public function couponWiseLine(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'coupon_id' => 'required|exists:coupons,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        return $this->couponRepo->coupon_wise_coupon_line($request->coupon_id);
+    }
+
     public function couponLineIndex(Request $request)
     {
         $couponLines = $this->couponLineRepo->getPaginatedCouponLines(
