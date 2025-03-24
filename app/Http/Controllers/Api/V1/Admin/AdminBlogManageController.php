@@ -59,7 +59,7 @@ class AdminBlogManageController extends Controller
                 ]);
             }
             $category = $this->blogRepo->store($request->all(), BlogCategory::class);
-            $this->blogRepo->storeTranslation($request, $category, 'App\Models\BlogCategory', $this->blogRepo->translationKeysForCategory());
+            createOrUpdateTranslation($request, $category, 'App\Models\BlogCategory', $this->blogRepo->translationKeysForCategory());
 
             if ($category) {
                 return $this->success(translate('messages.save_success', ['name' => 'Blog Category']));
@@ -89,7 +89,7 @@ class AdminBlogManageController extends Controller
                 ]);
             }
             $category = $this->blogRepo->update($request->all(), BlogCategory::class);
-            $this->blogRepo->updateTranslation($request, $category, 'App\Models\BlogCategory', $this->blogRepo->translationKeysForCategory());
+            createOrUpdateTranslation($request, $category, 'App\Models\BlogCategory', $this->blogRepo->translationKeysForCategory());
             if ($category) {
                 return $this->success(translate('messages.update_success', ['name' => 'Blog Category']));
             } else {
@@ -158,7 +158,7 @@ class AdminBlogManageController extends Controller
         $request['admin_id'] = auth('api')->user()->id;
         try {
             $blog = $this->blogRepo->store($request->all(), Blog::class);
-            $this->blogRepo->storeTranslation($request, $blog, 'App\Models\Blog', $this->blogRepo->translationKeysForBlog());
+            createOrUpdateTranslation($request, $blog, 'App\Models\Blog', $this->blogRepo->translationKeysForBlog());
             if ($blog) {
                 return $this->success(translate('messages.save_success', ['name' => 'Blog']));
             } else {
@@ -173,7 +173,7 @@ class AdminBlogManageController extends Controller
     {
         try {
             $blog = $this->blogRepo->update($request->all(), Blog::class);
-            $this->blogRepo->updateTranslation($request, $blog, 'App\Models\Blog', $this->blogRepo->translationKeysForBlog());
+            createOrUpdateTranslation($request, $blog, 'App\Models\Blog', $this->blogRepo->translationKeysForBlog());
             if ($blog) {
                 return $this->success(translate('messages.update_success', ['name' => 'Blog']));
             } else {

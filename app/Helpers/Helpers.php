@@ -5,11 +5,13 @@ use App\Models\SettingOption;
 use App\Models\Coupon;
 use App\Models\CouponLine;
 use App\Models\Media;
+use App\Models\Translation;
 use App\Models\UniversalNotification;
 use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -30,6 +32,114 @@ if (!function_exists('translate')) {
     }
 
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
+    if (!function_exists('createOrUpdateTranslationJson')) {
+        function createOrUpdateTranslationJson(Request $request, int|string $refid, string $refPath, array $colNames): bool
+        {
+            if (empty($request['translations'])) {
+                return false;
+            }
+
+            $requestedLanguages = array_column($request['translations'], 'language_code');
+
+            // Delete translations for languages not present in the request
+            Translation::where('translatable_type', $refPath)
+                ->where('translatable_id', $refid)
+                ->whereNotIn('language', $requestedLanguages)
+                ->delete();
+
+            $translations = [];
+            foreach ($request['translations'] as $translation) {
+                foreach ($colNames as $key) {
+                    $translatedValue = $translation[$key] ?? null;
+
+                    if ($translatedValue === null) {
+                        continue;
+                    }
+
+                    // Check if the translation already exists
+                    $trans = Translation::where('translatable_type', $refPath)
+                        ->where('translatable_id', $refid)
+                        ->where('language', $translation['language_code'])
+                        ->where('key', $key)
+                        ->first();
+
+                    if ($trans) {
+                        $trans->value = $translatedValue;
+                        $trans->save();
+                    } else {
+                        $translations[] = [
+                            'translatable_type' => $refPath,
+                            'translatable_id' => $refid,
+                            'language' => $translation['language_code'],
+                            'key' => $key,
+                            'value' => json_encode($translatedValue),
+                        ];
+                    }
+                }
+            }
+
+            // Bulk insert new translations
+            if (!empty($translations)) {
+                Translation::insert($translations);
+            }
+
+            return true;
+        }
+    }
+    if (!function_exists('createOrUpdateTranslation')) {
+        function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
+        {
+            if (empty($request['translations'])) {
+                return false;
+            }
+
+            $requestedLanguages = array_column($request['translations'], 'language_code');
+
+            // Delete translations for languages not present in the request
+            Translation::where('translatable_type', $refPath)
+                ->where('translatable_id', $refid)
+                ->whereNotIn('language', $requestedLanguages)
+                ->delete();
+
+            $translations = [];
+            foreach ($request['translations'] as $translation) {
+                foreach ($colNames as $key) {
+                    $translatedValue = $translation[$key] ?? null;
+
+                    if ($translatedValue === null) {
+                        continue;
+                    }
+
+                    // Check if the translation already exists
+                    $trans = Translation::where('translatable_type', $refPath)
+                        ->where('translatable_id', $refid)
+                        ->where('language', $translation['language_code'])
+                        ->where('key', $key)
+                        ->first();
+
+                    if ($trans) {
+                        $trans->value = $translatedValue;
+                        $trans->save();
+                    } else {
+                        $translations[] = [
+                            'translatable_type' => $refPath,
+                            'translatable_id' => $refid,
+                            'language' => $translation['language_code'],
+                            'key' => $key,
+                            'value' => $translatedValue,
+                        ];
+                    }
+                }
+            }
+
+            // Bulk insert new translations
+            if (!empty($translations)) {
+                Translation::insert($translations);
+            }
+
+            return true;
+        }
+    }
     if (!function_exists('jsonImageModifierFormatter')) {
         function jsonImageModifierFormatter(array $data)
         {
@@ -419,37 +529,37 @@ if (!function_exists('getOrderStatusMessage')) {
         }
 
         // message
-        if($order->status === 'pending') {
+        if ($order->status === 'pending') {
             $messages['admin'] = "A new order #{$order->id} is pending confirmation.";
             $messages['store'] = "New order #{$order->id} is waiting for approval.";
             $messages['customer'] = "Your order #{$order->id} is pending confirmation.";
             $messages['deliveryman'] = "Order #{$order->id} is pending, not yet assigned.";
             $messages['title'] = "Order #{$order->id} is pending";
-        }elseif ($order->status === 'confirmed'){
+        } elseif ($order->status === 'confirmed') {
             $messages['admin'] = "Order #{$order->id} has been confirmed by the store.";
             $messages['store'] = "You have confirmed order #{$order->id}.";
             $messages['customer'] = "Your order #{$order->id} has been confirmed and is being prepared.";
             $messages['deliveryman'] = "Order #{$order->id} is confirmed and will be assigned soon.";
             $messages['title'] = "Order #{$order->id} is confirmed";
-        }elseif ($order->status === 'processing'){
+        } elseif ($order->status === 'processing') {
             $messages['admin'] = "Order #{$order->id} is being processed.";
             $messages['store'] = "Order #{$order->id} is being processed.";
             $messages['customer'] = "Your order #{$order->id} is now in processing.";
             $messages['deliveryman'] = "Order #{$order->id} is still in processing state.";
             $messages['title'] = "Order #{$order->id} is processing";
-        }elseif ($order->status === 'shipped'){
+        } elseif ($order->status === 'shipped') {
             $messages['admin'] = "Order #{$order->id} has been shipped.";
             $messages['store'] = "Order #{$order->id} has been shipped to the customer.";
             $messages['customer'] = "Your order #{$order->id} has been shipped.";
             $messages['deliveryman'] = "Order #{$order->id} is now out for delivery.";
             $messages['title'] = "Order #{$order->id} is shipped";
-        }elseif ($order->status === 'delivered'){
+        } elseif ($order->status === 'delivered') {
             $messages['admin'] = "Order #{$order->id} has been successfully delivered.";
             $messages['store'] = "Order #{$order->id} has been delivered to the customer.";
             $messages['customer'] = "Your order #{$order->id} has been delivered. Thank you for shopping with us!";
             $messages['deliveryman'] = "Order #{$order->id} delivery is completed.";
             $messages['title'] = "Order #{$order->id} is delivered";
-        }elseif ($order->status === 'cancelled'){
+        } elseif ($order->status === 'cancelled') {
             $messages['admin'] = "Order #{$order->id} has been cancelled.";
             $messages['store'] = "Order #{$order->id} has been cancelled by the customer or admin.";
             $messages['customer'] = "Your order #{$order->id} has been cancelled.";
