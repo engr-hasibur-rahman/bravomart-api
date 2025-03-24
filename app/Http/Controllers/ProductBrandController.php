@@ -82,7 +82,12 @@ class ProductBrandController extends Controller
     public function update(StoreProductBrandRequest $request)
     {
         try {
-            $brand = $this->repository->updateProductBrand($request);
+            $brand = $this->repository->storeProductBrand($request);
+            if (empty($brand)) {
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ]);
+            }
             return $this->success(trans('messages.save_success', ['name' => 'Brand']));
         } catch (\Exception $e) {
             throw new \RuntimeException('Could not create the product brand.' . $e);
