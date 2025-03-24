@@ -72,13 +72,13 @@ class AdminReportAnalyticsManageController extends Controller
         }
 
         if (isset($filters['payment_gateway'])) {
-            $query->whereHas('order', function ($q) use ($filters) {
+            $query->whereHas('order.orderMaster', function ($q) use ($filters) {
                 $q->where('payment_gateway', $filters['payment_gateway']);
             });
         }
 
         if (isset($filters['payment_status'])) {
-            $query->whereHas('order', function ($q) use ($filters) {
+            $query->whereHas('order.orderMaster', function ($q) use ($filters) {
                 $q->where('payment_status', $filters['payment_status']);
             });
         }
@@ -94,7 +94,7 @@ class AdminReportAnalyticsManageController extends Controller
         }
 
         if (isset($filters['customer_id'])) {
-            $query->whereHas('order', function ($q) use ($filters) {
+            $query->whereHas('order.orderMaster', function ($q) use ($filters) {
                 $q->where('customer_id', $filters['customer_id']);
             });
         }
@@ -113,7 +113,7 @@ class AdminReportAnalyticsManageController extends Controller
             });
         }
 
-        $orderDetails = $query->with(['order.customer', 'store', 'area'])
+        $orderDetails = $query->with(['order.orderMaster.customer','order.orderMaster', 'store', 'area'])
             ->latest()
             ->paginate($filters['per_page'] ?? 20);
         // Check if export option is requested (either csv or xlsx)
