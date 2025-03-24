@@ -81,6 +81,7 @@ class ProductBrandController extends Controller
 
     public function update(StoreProductBrandRequest $request)
     {
+        dd($request);
         try {
             $brand = $this->repository->storeProductBrand($request);
             if (empty($brand)) {

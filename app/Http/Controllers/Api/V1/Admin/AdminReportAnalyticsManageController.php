@@ -58,8 +58,8 @@ class AdminReportAnalyticsManageController extends Controller
         $query = OrderDetail::query();
 
         if (isset($filters['search'])) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('order_id', 'LIKE', '%' . $filters['search'] . '%')
+            $query->whereHas('order', function ($q) use ($filters) {
+                $q->where('id', 'LIKE', '%' . $filters['search'] . '%')
                     ->orWhere('invoice_number', 'LIKE', '%' . $filters['search'] . '%');
             });
         }
@@ -116,7 +116,7 @@ class AdminReportAnalyticsManageController extends Controller
             });
         }
 
-        $orderDetails = $query->with(['order.orderMaster.customer','order.orderMaster', 'store', 'area'])
+        $orderDetails = $query->with(['order.orderMaster.customer', 'order.orderMaster', 'store', 'area'])
             ->latest()
             ->paginate($filters['per_page'] ?? 20);
         // Check if export option is requested (either csv or xlsx)
