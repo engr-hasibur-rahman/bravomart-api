@@ -46,7 +46,7 @@ class PagesManageController extends Controller
                 ]);
             }
             $page = $this->pageRepo->store($request->all(), Page::class);
-            $this->pageRepo->storeTranslation($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
+            createOrUpdateTranslation($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
 
             if ($page) {
                 return $this->success(translate('messages.save_success', ['title' => 'Page']));
@@ -76,7 +76,7 @@ class PagesManageController extends Controller
                 ]);
             }
             $category = $this->pageRepo->update($request->all(), Page::class);
-            $this->pageRepo->updateTranslation($request, $category, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
+            createOrUpdateTranslation($request, $category, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
             if ($category) {
                 return $this->success(translate('messages.update_success', ['name' => 'Page']));
             } else {

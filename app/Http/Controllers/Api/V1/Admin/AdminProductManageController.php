@@ -71,7 +71,7 @@ class AdminProductManageController extends Controller
         $request['warranty'] = json_encode($request['warranty']);
         $request['status'] = 'approved';
         $product = $this->productRepo->store($request->all());
-        $this->productRepo->storeTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
+        createOrUpdateTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
             return $this->success(translate('messages.save_success', ['name' => 'Product']));
         } else {
@@ -89,7 +89,7 @@ class AdminProductManageController extends Controller
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $request['warranty'] = json_encode($request['warranty']);
         $product = $this->productRepo->update($request->all());
-        $this->productRepo->updateTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
+        createOrUpdateTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
             return $this->success(translate('messages.update_success', ['name' => 'Product']));
         } else {

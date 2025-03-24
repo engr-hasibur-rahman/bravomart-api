@@ -42,7 +42,7 @@ class BecomeSellerSettingsController extends Controller
             ['id' => $request->id],
             ['content' => $validatedData['content']]
         );
-        $this->createOrUpdateTranslation($request, $settings->id, 'App\Models\BecomeSellerSetting', $this->translationKeys());
+        createOrUpdateTranslationJson($request, $settings->id, 'App\Models\BecomeSellerSetting', $this->translationKeys());
 
         return response()->json([
             'success' => true,

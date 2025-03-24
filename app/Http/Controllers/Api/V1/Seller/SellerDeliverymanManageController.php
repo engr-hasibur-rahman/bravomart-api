@@ -125,7 +125,7 @@ class SellerDeliverymanManageController extends Controller
     public function storeVehicle(VehicleTypeRequest $request)
     {
         $vehicle = $this->deliverymanRepo->addVehicle($request->all());
-        $this->deliverymanRepo->storeTranslation($request, $vehicle, 'App\Models\VehicleType', $this->deliverymanRepo->translationKeys());
+        createOrUpdateTranslation($request, $vehicle, 'App\Models\VehicleType', $this->deliverymanRepo->translationKeys());
         if ($vehicle) {
             return $this->success(__('messages.save_success', ['name' => 'Vehicle type']));
         } else {
@@ -149,7 +149,7 @@ class SellerDeliverymanManageController extends Controller
     public function updateVehicle(VehicleTypeRequest $request)
     {
         $vehicle = $this->deliverymanRepo->updateVehicle($request->all());
-        $this->deliverymanRepo->updateTranslation($request, $vehicle, 'App\Models\VehicleType', $this->deliverymanRepo->translationKeys());
+        createOrUpdateTranslation($request, $vehicle, 'App\Models\VehicleType', $this->deliverymanRepo->translationKeys());
         if ($vehicle) {
             return $this->success(__('messages.update_success', ['name' => 'Vehicle type']));
         } else {

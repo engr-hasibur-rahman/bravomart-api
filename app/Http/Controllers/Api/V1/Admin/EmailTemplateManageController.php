@@ -113,64 +113,14 @@ class EmailTemplateManageController extends Controller
 
         // Find and update the email template
         $emailTemplate = EmailTemplate::findOrFail($request->id);
-        $this->createOrUpdateTranslation($request, $emailTemplate->id, 'App\Models\EmailTemplate', $this->translationKeys());
+        createOrUpdateTranslation($request, $emailTemplate->id, 'App\Models\EmailTemplate', $this->translationKeys());
         $emailTemplate->update($request->only(['name', 'subject', 'body']));
         return response()->json([
             'message' => 'Email template updated successfully',
         ], 201);
     }
 
-    private function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
-    {
-        if (empty($request['translations'])) {
-            return false;
-        }
 
-        $requestedLanguages = array_column($request['translations'], 'language_code');
-
-        // Delete translations for languages not present in the request
-        $this->translation->where('translatable_type', $refPath)
-            ->where('translatable_id', $refid)
-            ->whereNotIn('language', $requestedLanguages)
-            ->delete();
-
-        $translations = [];
-        foreach ($request['translations'] as $translation) {
-            foreach ($colNames as $key) {
-                $translatedValue = $translation[$key] ?? null;
-
-                if ($translatedValue === null) {
-                    continue;
-                }
-
-                $trans = $this->translation
-                    ->where('translatable_type', $refPath)
-                    ->where('translatable_id', $refid)
-                    ->where('language', $translation['language_code'])
-                    ->where('key', $key)
-                    ->first();
-
-                if ($trans) {
-                    $trans->value = $translatedValue;
-                    $trans->save();
-                } else {
-                    $translations[] = [
-                        'translatable_type' => $refPath,
-                        'translatable_id' => $refid,
-                        'language' => $translation['language_code'],
-                        'key' => $key,
-                        'value' => $translatedValue,
-                    ];
-                }
-            }
-        }
-
-        if (!empty($translations)) {
-            $this->translation->insert($translations);
-        }
-
-        return true;
-    }
 
     public function deleteEmailTemplate(Request $request)
     {
