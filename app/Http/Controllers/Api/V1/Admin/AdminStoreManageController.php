@@ -65,8 +65,8 @@ class AdminStoreManageController extends Controller
 
     public function show(Request $request)
     {
-        $store = $this->storeRepo->getStoreById($request->id);
-        return response()->json(new AdminStoreDetailsResource($store));
+        return $this->storeRepo->getStoreById($request->id);
+//        return response()->json(new AdminStoreDetailsResource($store));
     }
 
     public function sellerStores(Request $request)

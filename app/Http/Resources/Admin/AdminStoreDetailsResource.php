@@ -18,10 +18,6 @@ class AdminStoreDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // Get the requested language from the query parameter
-        $language = $request->input('language', 'en');
-        // Get the translation for the requested language
-        $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
             "area" => new ComAreaListForDropdownResource($this->area),
@@ -47,9 +43,7 @@ class AdminStoreDetailsResource extends JsonResource
 
             "admin_commission_type" => $this->admin_commission_type,
             "admin_commission_amount" => $this->admin_commission_amount,
-            "name" => $translation->isNotEmpty()
-                ? $translation->where('key', 'name')->first()?->value
-                : $this->name,
+            "name" =>  $this->name,
             "slug" => $this->slug,
             "phone" => $this->phone,
             "email" => $this->email,
@@ -57,9 +51,7 @@ class AdminStoreDetailsResource extends JsonResource
             "logo_url" => ImageModifier::generateImageUrl($this->logo),
             "banner" => $this->banner,
             "banner_url" => ImageModifier::generateImageUrl($this->banner),
-            "address" => $translation->isNotEmpty()
-                ? $translation->where('key', 'address')->first()?->value
-                : $this->address,
+            "address" =>  $this->address,
             "latitude" => $this->latitude,
             "longitude" => $this->longitude,
             "is_featured" => $this->is_featured,
@@ -73,12 +65,8 @@ class AdminStoreDetailsResource extends JsonResource
             "veg_status" => $this->veg_status,
             "off_day" => $this->off_day,
             "enable_saling" => $this->enable_saling,
-            "meta_title" => $translation->isNotEmpty()
-                ? $translation->where('key', 'meta_title')->first()?->value
-                : $this->meta_title,
-            "meta_description" => $translation->isNotEmpty()
-                ? $translation->where('key', 'meta_description')->first()?->value
-                : $this->meta_description,
+            "meta_title" =>  $this->meta_title,
+            "meta_description" => $this->meta_description,
             "meta_image" => $this->meta_image,
             "meta_image_url" => ImageModifier::generateImageUrl($this->meta_image),
             "status" => $this->status,
