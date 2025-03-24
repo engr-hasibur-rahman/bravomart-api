@@ -175,11 +175,13 @@ class StoreManageRepository implements StoreManageInterface
     public function getStoreById(int|string $id)
     {
         try {
-            $store = Store::with(['related_translations', 'seller', 'area', 'activeSubscription'])->findorfail($id);
+            $store = Store::with(['related_translations', 'seller', 'area', 'activeSubscription'])->find($id);
             if ($store) {
                 return response()->json(new SellerStoreDetailsResource($store));
             } else {
-                return false;
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ]);
             }
         } catch (\Throwable $th) {
             throw $th;
