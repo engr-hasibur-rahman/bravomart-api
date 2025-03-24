@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Actions\ImageModifier;
+use App\Http\Resources\Translation\BrandTranslationResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 
@@ -17,21 +18,6 @@ class ProductBrandByIdResource extends JsonResource
 
     public function toArray($request)
     {
-        $translations = $this->translations->groupBy('language');
-
-        // Initialize an array to hold the transformed data
-        $transformedData = [];
-
-        foreach ($translations as $language => $items) {
-            $itemData = [
-                'language' => $language,
-                'brand_name' => $items->where('key', 'brand_name')->first()->value ?? "",
-                'meta_title' => $items->where('key', 'meta_title')->first()->value ?? "",
-                'meta_description' => $items->where('key', 'meta_description')->first()->value ?? "",
-            ];
-
-            $transformedData[] = $itemData;
-        }
 
         return [
             'id' => $this->id,
@@ -41,7 +27,7 @@ class ProductBrandByIdResource extends JsonResource
             'meta_description' => $this->meta_description,
             'brand_logo' => $this->brand_logo, // Fetch the URL of the brand logo
             'brand_logo_url' => ImageModifier::generateImageUrl($this->brand_logo), // Fetch the URL of the brand logo
-            'translations' => $transformedData,
+            'translations' => BrandTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
 }
