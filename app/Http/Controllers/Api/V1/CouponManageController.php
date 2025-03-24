@@ -37,7 +37,7 @@ class CouponManageController extends Controller
     public function store(CouponRequest $request): JsonResponse
     {
         $coupon = $this->couponRepo->store($request->all());
-        $this->couponRepo->storeTranslation($request, $coupon, 'App\Models\Coupon', $this->couponRepo->translationKeys());
+        createOrUpdateTranslation($request, $coupon, 'App\Models\Coupon', $this->couponRepo->translationKeys());
         if ($coupon) {
             return $this->success(translate('messages.save_success', ['name' => 'Coupon']));
         } else {
@@ -48,7 +48,7 @@ class CouponManageController extends Controller
     public function update(CouponRequest $request)
     {
         $coupon = $this->couponRepo->update($request->all());
-        $this->couponRepo->updateTranslation($request, $coupon, 'App\Models\Coupon', $this->couponRepo->translationKeys());
+        createOrUpdateTranslation($request, $coupon, 'App\Models\Coupon', $this->couponRepo->translationKeys());
         if ($coupon) {
             return $this->success(translate('messages.update_success', ['name' => 'Coupon']));
         } else {

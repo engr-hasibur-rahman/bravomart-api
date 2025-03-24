@@ -55,7 +55,7 @@ class MenuManageController extends Controller
         }
         // Use the validated data to create the menu item
         $menu = Menu::create($validator->validated());
-        $this->createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
+        createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
         return response()->json([
             'message' => __('messages.save_success', ['name' => 'Menu']),
         ]);
@@ -99,7 +99,7 @@ class MenuManageController extends Controller
 
         $validated = $validator->validated();
         $menu->update($validated);
-        $this->createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
+        createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
         return response()->json([
             'message' => __('messages.update_success', ['name' => 'Menu']),
         ]);
@@ -120,57 +120,5 @@ class MenuManageController extends Controller
             'status' => true,
             'message' => 'Menu deleted successfully.',
         ]);
-    }
-
-    private function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
-    {
-        if (empty($request['translations'])) {
-            return false;
-        }
-
-        $requestedLanguages = array_column($request['translations'], 'language_code');
-
-        // Delete translations for languages not present in the request
-        $this->translation->where('translatable_type', $refPath)
-            ->where('translatable_id', $refid)
-            ->whereNotIn('language', $requestedLanguages)
-            ->delete();
-
-        $translations = [];
-        foreach ($request['translations'] as $translation) {
-            foreach ($colNames as $key) {
-                $translatedValue = $translation[$key] ?? null;
-
-                if ($translatedValue === null) {
-                    continue;
-                }
-
-                $trans = $this->translation
-                    ->where('translatable_type', $refPath)
-                    ->where('translatable_id', $refid)
-                    ->where('language', $translation['language_code'])
-                    ->where('key', $key)
-                    ->first();
-
-                if ($trans) {
-                    $trans->value = $translatedValue;
-                    $trans->save();
-                } else {
-                    $translations[] = [
-                        'translatable_type' => $refPath,
-                        'translatable_id' => $refid,
-                        'language' => $translation['language_code'],
-                        'key' => $key,
-                        'value' => $translatedValue,
-                    ];
-                }
-            }
-        }
-
-        if (!empty($translations)) {
-            $this->translation->insert($translations);
-        }
-
-        return true;
     }
 }

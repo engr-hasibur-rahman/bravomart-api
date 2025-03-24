@@ -23,7 +23,7 @@ class WishListResource extends JsonResource
             'name' => $this->product->name,
             'slug' => $this->product->slug,
             'description' => $this->product->description,
-            'image' => ImageModifier::generateImageUrl($this->product->image),
+            'image_url' => ImageModifier::generateImageUrl($this->product->image),
             'stock' => $this->product->variants->isNotEmpty() ? $this->product->variants->sum('stock_quantity') : null,
             'price' => optional($this->product->variants->first())->price,
             'special_price' => optional($this->product->variants->first())->special_price,

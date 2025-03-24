@@ -44,7 +44,7 @@ class AdminStoreManageController extends Controller
     public function store(AdminStoreRequest $request): JsonResponse
     {
         $store = $this->storeRepo->store($request->all());
-        $this->storeRepo->storeTranslation($request, $store, 'App\Models\Store', $this->storeRepo->translationKeys());
+        createOrUpdateTranslation($request, $store, 'App\Models\Store', $this->storeRepo->translationKeys());
         if ($store) {
             return $this->success(translate('messages.save_success', ['name' => 'Store']));
         } else {
@@ -55,7 +55,7 @@ class AdminStoreManageController extends Controller
     public function update(SellerStoreRequest $request)
     {
         $store = $this->storeRepo->update($request->all());
-        $this->storeRepo->updateTranslation($request, $store, 'App\Models\Store', $this->storeRepo->translationKeys());
+        createOrUpdateTranslation($request, $store, 'App\Models\Store', $this->storeRepo->translationKeys());
         if ($store) {
             return $this->success(translate('messages.update_success', ['name' => 'Store']));
         } else {

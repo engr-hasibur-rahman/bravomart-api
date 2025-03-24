@@ -35,7 +35,7 @@ class SliderManageController extends Controller
     public function store(SliderRequest $request)
     {
         $slider = $this->sliderRepo->store($request->all());
-        $this->sliderRepo->storeTranslation($request, $slider, 'App\Models\Slider', $this->sliderRepo->translationKeys());
+        createOrUpdateTranslation($request, $slider, 'App\Models\Slider', $this->sliderRepo->translationKeys());
         if ($slider) {
             return $this->success(translate('messages.save_success', ['name' => 'Slider Details']));
         } else {
@@ -46,7 +46,7 @@ class SliderManageController extends Controller
     public function update(SliderRequest $request)
     {
         $slider = $this->sliderRepo->update($request->all());
-        $this->sliderRepo->updateTranslation($request, $slider, 'App\Models\Slider', $this->sliderRepo->translationKeys());
+        createOrUpdateTranslation($request, $slider, 'App\Models\Slider', $this->sliderRepo->translationKeys());
         if ($slider) {
             return $this->success(translate('messages.update_success', ['name' => 'Slider Details']));
         } else {

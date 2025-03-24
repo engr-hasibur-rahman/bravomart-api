@@ -43,7 +43,7 @@ class ContactSettingsManageController extends Controller
             ['id' => $request->id],
             ['content' => $validatedData['content']]
         );
-        $this->createOrUpdateTranslation($request, $settings->id, 'App\Models\ContactSetting', $this->translationKeys());
+        createOrUpdateTranslationJson($request, $settings->id, 'App\Models\ContactSetting', $this->translationKeys());
 
         return response()->json([
             'success' => true,
