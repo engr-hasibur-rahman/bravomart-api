@@ -3,9 +3,11 @@
 namespace App\Repositories;
 
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Coupon\CouponLineResource;
 use App\Http\Resources\Coupon\CouponResource;
 use App\Interfaces\CouponManageInterface;
 use App\Models\Coupon;
+use App\Models\CouponLine;
 use App\Models\Translation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
@@ -61,6 +63,14 @@ class CouponManageRepository implements CouponManageInterface
         return response()->json([
             'coupons' => CouponResource::collection($coupons),
             'meta' => new PaginationResource($coupons),
+        ]);
+    }
+
+    public function coupon_wise_coupon_line(int $coupon_id)
+    {
+        $coupon_line = CouponLine::where('coupon_id', $coupon_id)->get();
+        return response()->json([
+            'coupon_line' => CouponLineResource::collection($coupon_line),
         ]);
     }
 
