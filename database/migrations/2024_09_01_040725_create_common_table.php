@@ -34,12 +34,12 @@ return new class extends Migration {
             $table->string('brand_name');
             $table->string('brand_slug');
             $table->string('brand_logo')->nullable();
-            $table->string('meta_title');
-            $table->text('meta_description');
+            $table->string('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
             $table->string('seller_relation_with_brand')->nullable();
             $table->timestamp('authorization_valid_from')->nullable();
             $table->timestamp('authorization_valid_to')->nullable();
-            $table->integer('display_order');
+            $table->integer('display_order')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->boolean('status')->default(0);
