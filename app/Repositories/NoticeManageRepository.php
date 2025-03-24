@@ -89,7 +89,9 @@ class NoticeManageRepository implements NoticeManageInterface
     {
         $notice = StoreNotice::find($data['id']);
         $notice_recipent = StoreNoticeRecipient::where('notice_id', $notice->id)->first();
-        $notice_recipent->update($data);
+        if ($notice_recipent){
+            $notice_recipent->update($data);
+        }
         $notice->update($data);
         return $notice->id;
     }
