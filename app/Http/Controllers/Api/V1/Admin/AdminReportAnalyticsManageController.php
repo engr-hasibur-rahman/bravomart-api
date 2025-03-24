@@ -58,7 +58,10 @@ class AdminReportAnalyticsManageController extends Controller
         $query = OrderDetail::query();
 
         if (isset($filters['search'])) {
-            $query->where('order_id', $filters['search']);
+            $query->where(function ($q) use ($filters) {
+                $q->where('order_id', 'LIKE', '%' . $filters['search'] . '%')
+                    ->orWhere('invoice_number', 'LIKE', '%' . $filters['search'] . '%');
+            });
         }
 
         if (isset($filters['type'])) {

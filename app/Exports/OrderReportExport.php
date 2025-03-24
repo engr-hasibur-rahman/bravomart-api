@@ -27,6 +27,7 @@ class OrderReportExport implements FromCollection, WithHeadings, ShouldAutoSize
         return [
             'ID',
             'Order ID',
+            'Invoice',
             'Store',
             'Area',
             'Customer',

@@ -17,6 +17,7 @@ class AdminOrderReportResource extends JsonResource
         return [
             "id" => $this->id,
             "order_id" => $this->order_id,
+            "invoice" => $this->order?->invoice,
             "store" => $this->store?->name,
             "area" => $this->area?->name,
             "customer" => $this->order?->orderMaster?->customer->full_name,
