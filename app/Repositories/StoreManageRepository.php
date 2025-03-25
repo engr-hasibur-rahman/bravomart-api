@@ -407,6 +407,7 @@ class StoreManageRepository implements StoreManageInterface
                 ->whereHas('orderMaster', function ($query) {
                     $query->where('payment_status', 'paid');
                 })
+                ->where('refund_status', '!=', 'refunded')
                 ->sum('order_amount_store_value');
             $summary['total_refunds'] += Order::where('store_id', $store->id)
                 ->where('refund_status', 'refunded')
