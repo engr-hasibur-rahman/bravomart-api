@@ -26,6 +26,27 @@ class AdminDeliverymanManageController extends Controller
 
     }
 
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'deliveryman_id' => 'required|exists:users,id',
+            'password' => 'required|min:8|max:12',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        $deliveryman = $this->deliverymanRepo->change_password($request->deliveryman_id, $request->password);
+        if ($deliveryman) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Deliveryman password']),
+            ]);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ]);
+        }
+    }
+
     public function index(Request $request)
     {
 
@@ -227,7 +248,7 @@ class AdminDeliverymanManageController extends Controller
     {
         $vehicle_types = $this->deliverymanRepo->vehicleTypeDropdown();
         if ($vehicle_types) {
-            return response()->json(AdminVehicleTypeDropdownResource::collection($vehicle_types),200);
+            return response()->json(AdminVehicleTypeDropdownResource::collection($vehicle_types), 200);
         } else {
             return response()->json([
                 'message' => __('messages.data_not_found')

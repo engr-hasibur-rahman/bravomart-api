@@ -465,6 +465,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list-dropdown', [AdminDeliverymanManageController::class, 'deliverymanDropdownList']);
                 Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest']);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
+                Route::post('change-password', [AdminDeliverymanManageController::class, 'changePassword']);
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
                 Route::post('update', [AdminDeliverymanManageController::class, 'update']);
                 Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
