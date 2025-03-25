@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 interface DeliverymanManageInterface
 {
+    public function change_password(int $deliveryman_id, string $password);
 
     public function update(array $data);
 
