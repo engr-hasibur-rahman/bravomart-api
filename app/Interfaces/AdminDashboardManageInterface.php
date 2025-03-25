@@ -11,4 +11,6 @@ interface AdminDashboardManageInterface
     public function getSalesSummaryData(array $filters);
 
     public function getOtherSummaryData();
+
+    public function getOrderGrowthData();
 }

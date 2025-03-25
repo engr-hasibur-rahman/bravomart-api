@@ -11,6 +11,8 @@ use App\Models\Blog;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\OrderMaster;
 use App\Models\Page;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
@@ -24,6 +26,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Modules\Subscription\app\Models\SubscriptionHistory;
+use Modules\Wallet\app\Models\WalletWithdrawalsTransaction;
 
 class AdminDashboardManageRepository implements AdminDashboardManageInterface
 {
@@ -57,8 +61,28 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
         $total_pages = Page::count();
         $total_blogs = Blog::count();
         $total_tickets = Ticket::count();
-        return [
-            'total_customers' => $total_customer,
+        $total_earnings = Order::whereHas('orderMaster', function ($q) {
+            $q->where('payment_status', 'paid');
+        })
+            ->where('refund_status', '!=', 'refunded')
+            ->sum('order_amount');
+        $total_refunds = Order::where('refund_status', 'refunded')->sum('order_amount');
+        $total_withdrawals = WalletWithdrawalsTransaction::where('status', 'approved')->sum('amount');
+        $total_subscription_earnings = SubscriptionHistory::where('status', 1)->where('payment_status', 'paid')->sum('price');
+        $total_tax = OrderDetail::whereHas('order', function ($orderQuery) {
+            $orderQuery->where('refund_status', '!=', 'refunded')
+                ->whereHas('orderMaster', function ($masterQuery) {
+                    $masterQuery->where('payment_status', 'paid');
+                });
+        })->sum('total_tax_amount');
+        $total_admin_commission_amount = Order::whereHas('orderMaster', function ($q) {
+            $q->where('payment_status', 'paid');
+        })
+            ->where('refund_status', '!=', 'refunded')
+            ->sum('order_amount_admin_commission');
+        $total_order_revenue = $total_earnings - $total_refunds;
+        $total_revenue = ($total_order_revenue + $total_admin_commission_amount + $total_subscription_earnings) - $total_tax;
+        return ['total_customers' => $total_customer,
             'total_sellers' => $total_seller,
             'total_stores' => $total_store,
             'total_products' => $total_product,
@@ -83,13 +107,13 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             'deliveryman_not_assigned_orders' => $deliveryman_not_assigned_orders,
             'total_refunded_orders' => $refunded_orders,
 
-            'total_earnings' => $total_order,
-            'total_refunds' => $total_order,
-            'total_order_revenue' => $total_order,
-            'total_withdrawals' => $total_order,
-            'total_tax' => $total_order,
-            'total_subscription_earnings' => $total_order,
-            'total_revenue' => $total_order,
+            'total_earnings' => $total_earnings,
+            'total_refunds' => $total_refunds,
+            'total_order_revenue' => $total_order_revenue,
+            'total_withdrawals' => $total_withdrawals,
+            'total_tax' => $total_tax,
+            'total_subscription_earnings' => $total_subscription_earnings,
+            'total_revenue' => $total_revenue,
         ];
     }
 
@@ -122,6 +146,22 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             ->groupBy('date')
             ->orderBy('date')
             ->get();
+    }
+
+    public function getOrderGrowthData()
+    {
+        $year = Carbon::now()->year;
+
+        // Fetch order counts per month
+        $monthlyData = Order::whereYear('created_at', $year)
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as total_orders')
+            )
+            ->pluck('total_orders', 'month');
+        // Fill missing months with 0
+        return collect(range(1, 12))->mapWithKeys(fn($month) => [$month => $monthlyData->get($month, 0)]);
     }
 
     public function getOtherSummaryData()

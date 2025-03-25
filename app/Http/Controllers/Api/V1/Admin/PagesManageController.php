@@ -49,14 +49,14 @@ class PagesManageController extends Controller
             createOrUpdateTranslation($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
 
             if ($page) {
-                return $this->success(translate('messages.save_success', ['title' => 'Page']));
+                return $this->success(translate('messages.save_success', ['name' => 'Page']));
             } else {
-                return $this->failed(translate('messages.save_failed', ['title' => 'Page']));
+                return $this->failed(translate('messages.save_failed', ['name' => 'Page']));
             }
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json([
                 'success' => false,
-                'message' => translate('messages.validation_failed', ['title' => 'Page']),
+                'message' => translate('messages.validation_failed', ['name' => 'Page']),
                 'errors' => $validationException->errors(),
             ], 422);
         }

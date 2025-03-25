@@ -89,6 +89,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('/', [AdminDashboardController::class, 'summaryData']);
             Route::get('sales-summary', [AdminDashboardController::class, 'salesSummaryData']);
             Route::get('other-summary', [AdminDashboardController::class, 'otherSummaryData']);
+            Route::get('order-growth-summary', [AdminDashboardController::class, 'orderGrowthData']);
         });
         // POS Manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_POS_SALES->value]], function () {
@@ -420,7 +421,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PAGES_LIST->value]], function () {
             Route::get('pages/list', [PagesManageController::class, 'pagesIndex']);
             Route::post('pages/store', [PagesManageController::class, 'pagesStore']);
-            Route::get('pages/details', [PagesManageController::class, 'pagesShow']);
+            Route::get('pages/details/{id}', [PagesManageController::class, 'pagesShow']);
             Route::post('pages/update', [PagesManageController::class, 'pagesUpdate']);
             Route::post('pages/status-change', [PagesManageController::class, 'pagesStatusChange']);
             Route::delete('pages/remove/{id}', [PagesManageController::class, 'pagesDestroy']);
@@ -539,7 +540,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
             // Collect Cash (for cash collection)
-            Route::match(['get','post'],'cash-collection', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
+            Route::match(['get', 'post'], 'cash-collection', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
         });
 
 
