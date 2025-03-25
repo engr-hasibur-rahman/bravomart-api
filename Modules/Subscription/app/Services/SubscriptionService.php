@@ -310,24 +310,12 @@ class SubscriptionService
 
         // Set default values for payment status
         $subscription_status = 0;
-        $payment_status = 'pending';
-
-        // Check payment gateway (wallet or others)
-        if ($payment_gateway == 'wallet') {
-            // Update store status if paid through wallet
-            $store->status = 1;
-            $store->save();
-
-            $subscription_status = 1;
-            $payment_status = 'paid';
-        }
+        $payment_status = $data['payment_status'];
 
         // Check for existing subscription and update if found
         $existing_subscription = StoreSubscription::where('store_id', $store_id)
             ->where('subscription_id', $subscription_package->id)
             ->first();
-
-
 
         if (!$existing_subscription) {
             StoreSubscription::create([
