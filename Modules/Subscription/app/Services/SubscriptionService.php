@@ -80,6 +80,7 @@ class SubscriptionService
 
             // Create subscription history
             SubscriptionHistory::create([
+                'store_subscription_id' => $existing_subscription->id,
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
@@ -102,7 +103,7 @@ class SubscriptionService
 
         } else {
             // Create a new subscription if no existing one found
-            StoreSubscription::create([
+       $store_sub = StoreSubscription::create([
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
@@ -124,6 +125,7 @@ class SubscriptionService
             ]);
             // Create subscription history
             SubscriptionHistory::create([
+                'store_subscription_id' => $store_sub->id,
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
@@ -218,6 +220,7 @@ class SubscriptionService
 
         // Create subscription history
         SubscriptionHistory::create([
+            'store_subscription_id' => $currentSubscription->id,
             'store_id' => $store_id,
             'subscription_id' => $subscriptionPackage->id,
             'name' => $subscriptionPackage->name,
@@ -318,7 +321,7 @@ class SubscriptionService
             ->first();
 
         if (!$existing_subscription) {
-            StoreSubscription::create([
+            $store_sub = StoreSubscription::create([
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
@@ -340,6 +343,7 @@ class SubscriptionService
             ]);
             // Create subscription history
             SubscriptionHistory::create([
+                'store_subscription_id' => $store_sub->id,
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
