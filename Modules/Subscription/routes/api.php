@@ -23,7 +23,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/business-operations/subscr
     // seller list
     Route::prefix('store')->middleware(['permission:' . PermissionKey::ADMIN_SUBSCRIPTION_STORE_PACKAGE_MANAGE->value])->group(function () {
         Route::get('list', [AdminSubscriptionSellerController::class, 'index']);
-        Route::get('history', [AdminSubscriptionSellerController::class, 'subscriptionHistory']);
+        Route::get('history/{id?}', [AdminSubscriptionSellerController::class, 'subscriptionHistory']);
         Route::post('assign', [AdminSubscriptionSellerController::class, 'assignStoreSubscription']);
         Route::post('change-status', [AdminSubscriptionSellerController::class, 'statusChange']);
     });
