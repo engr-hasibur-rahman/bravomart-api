@@ -25,20 +25,18 @@ class AdminSubscriptionSellerController extends Controller
     public function index(Request $request)
     {
         $query = StoreSubscription::query();
-        if ($request->has('status')) {
+        if (!empty($request->status)) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('expire_date')) {
+        if ($request->has('expire_date') && !empty($request->expire_date)) {
             $query->whereDate('expire_date', $request->expire_date);
         }
 
-        if ($request->has('created_at')) {
+        if ($request->has('created_at') && !empty($request->created_at)) {
             $query->whereDate('created_at', $request->created_at);
         }
-
-        $perPage = $request->input('per_page', 10);
-        $subscriptions = $query->paginate($perPage);
+        $subscriptions = $query->paginate(10);
         return response()->json([
             'success' => true,
             'data' => AdminSubscriptionPackageResource::collection($subscriptions),
