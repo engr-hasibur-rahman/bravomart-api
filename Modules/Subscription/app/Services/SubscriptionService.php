@@ -15,15 +15,6 @@ class SubscriptionService
     public function buySubscriptionPackage($data)
     {
 
-        // Authenticate user
-        $seller = Auth::guard('api')->user();
-        if (!$seller) {
-            return [
-                'success' => false,
-                'message' => 'User is not authenticated.',
-            ];
-        }
-
        $store_id = $data['store_id'];
        $subscription_id = $data['subscription_id'];
        $payment_gateway = $data['payment_gateway'];
@@ -36,14 +27,6 @@ class SubscriptionService
                 'message' => 'Store not found.',
             ];
         }
-
-//        // Check if the store has a valid subscription type
-//        if (isset($store->subscription_type) && $store->subscription_type !== 'subscription') {
-//            return [
-//                'success' => false,
-//                'message' => 'Subscription type not found.',
-//            ];
-//        }
 
         // Find the subscription package
         $subscription_package = Subscription::where('id', $subscription_id)
@@ -283,5 +266,121 @@ class SubscriptionService
         ];
 
     }
+
+
+
+
+    public function adminAssignStoreSubscription($data)
+    {
+        // Authenticate user
+        $seller = Auth::guard('api')->user();
+        if (!$seller) {
+            return [
+                'success' => false,
+                'message' => 'User is not authenticated.',
+            ];
+        }
+
+        $store_id = $data['store_id'];
+        $subscription_id = $data['subscription_id'];
+        $payment_gateway = $data['payment_gateway'];
+
+        // Find the store
+        $store = Store::find($store_id);
+        if (!$store) {
+            return [
+                'success' => false,
+                'message' => 'Store not found.',
+            ];
+        }
+
+        // Find the subscription package
+        $subscription_package = Subscription::where('id', $subscription_id)
+            ->where('status', 1)
+            ->first();
+
+        // If package not found
+        if (empty($subscription_package)) {
+            return [
+                'success' => false,
+                'status_code' => 409,
+                'message' => 'Subscription package not found.',
+            ];
+        }
+
+        // Set default values for payment status
+        $subscription_status = 0;
+        $payment_status = $data['payment_status'];
+
+        // Check for existing subscription and update if found
+        $existing_subscription = StoreSubscription::where('store_id', $store_id)
+            ->where('subscription_id', $subscription_package->id)
+            ->first();
+
+        if (!$existing_subscription) {
+            StoreSubscription::create([
+                'store_id' => $store_id,
+                'subscription_id' => $subscription_package->id,
+                'name' => $subscription_package->name,
+                'validity' => $subscription_package->validity,
+                'price' => $subscription_package->price,
+                'pos_system' => $subscription_package->pos_system,
+                'self_delivery' => $subscription_package->self_delivery,
+                'mobile_app' => $subscription_package->mobile_app,
+                'live_chat' => $subscription_package->live_chat,
+                'order_limit' => $subscription_package->order_limit,
+                'product_limit' => $subscription_package->product_limit,
+                'product_featured_limit' => $subscription_package->product_featured_limit,
+                'payment_gateway' => $payment_gateway ?? null,
+                'payment_status' => $payment_status ?? null,
+                'transaction_ref' => null,
+                'manual_image' => null,
+                'expire_date' => now()->addDays($subscription_package->validity),
+                'status' => $subscription_status,
+            ]);
+            // Create subscription history
+            SubscriptionHistory::create([
+                'store_id' => $store_id,
+                'subscription_id' => $subscription_package->id,
+                'name' => $subscription_package->name,
+                'validity' => $subscription_package->validity,
+                'price' => $subscription_package->price,
+                'pos_system' => $subscription_package->pos_system,
+                'self_delivery' => $subscription_package->self_delivery,
+                'mobile_app' => $subscription_package->mobile_app,
+                'live_chat' => $subscription_package->live_chat,
+                'order_limit' => $subscription_package->order_limit,
+                'product_limit' => $subscription_package->product_limit,
+                'product_featured_limit' => $subscription_package->product_featured_limit,
+                'payment_gateway' => $payment_gateway ?? null,
+                'payment_status' => $payment_status ?? null,
+                'transaction_ref' =>  null,
+                'manual_image' =>  null,
+                'expire_date' => now()->addDays($subscription_package->validity),
+                'status' => $subscription_status,
+            ]);
+            $store->update(['subscription_type' => 'subscription']);
+            return [
+                'success' => true,
+                'message' => 'Subscription successfully purchased.',
+                'status_code' => 201
+            ];
+        }else{
+            return [
+                'success' => false,
+                'message' => 'Subscription already exists.',
+                'status_code' => 409
+            ];
+        }
+
+        // fallback
+        return [
+            'success' => false,
+            'message' => 'Failed to assign subscription.',
+            'status_code' => 500,
+        ];
+
+    }
+
 
 }
