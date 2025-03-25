@@ -29,4 +29,9 @@ class StoreSubscription extends Model
         'expire_date',
         'status',
     ];
+
+    public function subscriptionHistories()
+    {
+        return $this->hasMany(SubscriptionHistory::class, 'store_subscription_id');
+    }
 }

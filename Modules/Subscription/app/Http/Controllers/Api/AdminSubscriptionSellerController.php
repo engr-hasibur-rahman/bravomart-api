@@ -47,7 +47,7 @@ class AdminSubscriptionSellerController extends Controller
     public function subscriptionHistory(Request $request)
     {
         $store_subscription_id = $request->id;
-        $subscription_history = SubscriptionHistory::where('store_id', $store_subscription_id)
+        $subscription_history = SubscriptionHistory::where('store_subscription_id', $store_subscription_id)
             ->paginate(10);
 
         return response()->json([
