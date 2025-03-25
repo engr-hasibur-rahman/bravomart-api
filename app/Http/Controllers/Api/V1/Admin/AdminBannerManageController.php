@@ -37,7 +37,7 @@ class AdminBannerManageController extends Controller
     public function store(AdminBannerRequest $request)
     {
         $banner = $this->bannerRepo->store($request->all());
-        $this->bannerRepo->storeTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
+        createOrUpdateTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
         if ($banner) {
             return $this->success(__('messages.save_success', ['name' => 'Banner']));
         } else {
@@ -48,7 +48,7 @@ class AdminBannerManageController extends Controller
     public function update(AdminBannerRequest $request)
     {
         $banner = $this->bannerRepo->update($request->all());
-        $this->bannerRepo->updateTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
+        createOrUpdateTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
         if ($banner) {
             return $this->success(translate('messages.update_success', ['name' => 'Banner']));
         } else {

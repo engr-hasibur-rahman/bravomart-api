@@ -22,7 +22,7 @@ class StoreNotice extends Model
 
     public function recipients()
     {
-        return $this->hasMany(StoreNoticeRecipient::class, 'notice_id');
+        return $this->belongsTo(StoreNoticeRecipient::class,'id','notice_id');
     }
 
     public function related_translations()

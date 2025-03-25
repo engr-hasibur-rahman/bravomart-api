@@ -29,7 +29,7 @@ class TagManageController extends Controller
         $created_by = Auth::user()->id;
         $request['created_by'] = $created_by;
         $tag = $this->tagRepo->store($request->all());
-        $this->tagRepo->storeTranslation($request, $tag, 'App\Models\Tag', $this->tagRepo->translationKeys());
+        createOrUpdateTranslation($request, $tag, 'App\Models\Tag', $this->tagRepo->translationKeys());
         if ($tag) {
             return $this->success(translate('messages.save_success', ['name' => 'Tag']));
         } else {
@@ -43,7 +43,7 @@ class TagManageController extends Controller
     public function update(TagRequest $request)
     {
         $tag = $this->tagRepo->update($request->all());
-        $this->tagRepo->updateTranslation($request, $tag, 'App\Models\Tag', $this->tagRepo->translationKeys());
+        createOrUpdateTranslation($request, $tag, 'App\Models\Tag', $this->tagRepo->translationKeys());
         if ($tag) {
             return $this->success(translate('messages.update_success', ['name' => 'Tag']));
         } else {

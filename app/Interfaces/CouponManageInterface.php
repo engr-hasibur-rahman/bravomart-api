@@ -20,6 +20,8 @@ interface CouponManageInterface
 
     public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 
+    public function coupon_wise_coupon_line(int $coupon_id);
+
     public function translationKeys();
 
 }

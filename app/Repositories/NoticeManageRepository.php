@@ -27,20 +27,13 @@ class NoticeManageRepository implements NoticeManageInterface
         DB::beginTransaction(); // Start a transaction
         try {
             $notice = StoreNotice::create($data);
+            DB::commit();
             if ($notice && $data['type'] !== 'general') {
                 $data['notice_id'] = $notice->id;
                 $notice_recipient = StoreNoticeRecipient::create($data);
-            } else {
-                return false;
-            }
-            if ($notice_recipient) {
-                // Commit the transaction if all went well
                 DB::commit();
-                return $notice->id;
-            } else {
-                DB::rollBack();
-                return false;
             }
+            return $notice->id;
         } catch (\Exception $exception) {
             DB::rollBack();
             return false;
@@ -76,7 +69,7 @@ class NoticeManageRepository implements NoticeManageInterface
 
             // Paginate the results
             $perPage = isset($filters['per_page']) ? $filters['per_page'] : 10; // Default to 15 if not provided
-            return $query->paginate($perPage);
+            return $query->latest()->paginate($perPage);
         } catch (\Exception $exception) {
             return false;
         }
@@ -85,7 +78,7 @@ class NoticeManageRepository implements NoticeManageInterface
     public function getById($id)
     {
         try {
-            $notice = StoreNotice::with(['recipients','related_translations'])->findOrFail($id);
+            $notice = StoreNotice::with(['recipients', 'related_translations'])->findOrFail($id);
             return $notice;
         } catch (\Exception $exception) {
             return false;
@@ -94,12 +87,13 @@ class NoticeManageRepository implements NoticeManageInterface
 
     public function updateNotice(array $data)
     {
-        try {
-            $notice = StoreNotice::findorfail($data['id'])->update($data);
-            return $notice->id;
-        } catch (\Exception $exception) {
-            return false;
+        $notice = StoreNotice::find($data['id']);
+        $notice_recipent = StoreNoticeRecipient::where('notice_id', $notice->id)->first();
+        if ($notice_recipent){
+            $notice_recipent->update($data);
         }
+        $notice->update($data);
+        return $notice->id;
     }
 
     public function toggleStatus($id)

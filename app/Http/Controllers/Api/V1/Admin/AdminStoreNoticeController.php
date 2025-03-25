@@ -45,7 +45,7 @@ class AdminStoreNoticeController extends Controller
             ]);
         }
         $success = $this->noticeRepo->createNotice($request->all());
-        $this->noticeRepo->createOrUpdateTranslation($request, $success, 'App\Models\StoreNotice', $this->noticeRepo->translationKeys());
+        createOrUpdateTranslation($request, $success, 'App\Models\StoreNotice', $this->noticeRepo->translationKeys());
         if ($success) {
             return $this->success(__('messages.save_success', ['name' => 'Notice']));
         } else {
@@ -61,8 +61,15 @@ class AdminStoreNoticeController extends Controller
 
     public function update(NoticeRequest $request)
     {
+        if ($request->type == 'general' && (isset($request->store_id) || isset($request->seller_id))) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'General notices are not allowed to assign specific store or seller'
+            ]);
+        }
         $success = $this->noticeRepo->updateNotice($request->all());
-        $this->noticeRepo->createOrUpdateTranslation($request, $success, 'App\Models\StoreNotice', $this->noticeRepo->translationKeys());
+        createOrUpdateTranslation($request, $success, 'App\Models\StoreNotice', $this->noticeRepo->translationKeys());
         if ($success) {
             return $this->success(__('messages.update_success', ['name' => 'Notice']));
         } else {

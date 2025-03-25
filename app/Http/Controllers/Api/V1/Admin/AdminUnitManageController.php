@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UnitRequest;
@@ -33,7 +33,7 @@ class AdminUnitManageController extends Controller
     public function store(UnitRequest $request): JsonResponse
     {
         $unit = $this->unitRepo->store($request->all());
-        $this->unitRepo->storeTranslation($request, $unit, 'App\Models\Unit', $this->unitRepo->translationKeys());
+        createOrUpdateTranslation($request, $unit, 'App\Models\Unit', $this->unitRepo->translationKeys());
         if ($unit) {
             return $this->success(translate('messages.save_success', ['name' => 'Unit']));
         } else {
@@ -48,7 +48,7 @@ class AdminUnitManageController extends Controller
     public function update(UnitRequest $request)
     {
         $unit = $this->unitRepo->update($request->all());
-        $this->unitRepo->updateTranslation($request, $unit, 'App\Models\Unit', $this->unitRepo->translationKeys());
+        createOrUpdateTranslation($request, $unit, 'App\Models\Unit', $this->unitRepo->translationKeys());
         if ($unit) {
             return $this->success(translate('messages.update_success', ['name' => 'Unit']));
         } else {

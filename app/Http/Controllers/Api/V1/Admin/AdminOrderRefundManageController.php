@@ -118,7 +118,7 @@ class AdminOrderRefundManageController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $success = $this->orderRefundRepo->create_order_refund_reason($request->reason);
-        $this->orderRefundRepo->createOrUpdateTranslation($request, $success, 'App\Models\OrderRefundReason', $this->orderRefundRepo->translationKeys());
+        createOrUpdateTranslation($request, $success, 'App\Models\OrderRefundReason', $this->orderRefundRepo->translationKeys());
         if ($success) {
             return response()->json([
                 'message' => __('messages.save_success', ['name' => 'Order Refund Reason']),
@@ -140,7 +140,7 @@ class AdminOrderRefundManageController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $success = $this->orderRefundRepo->update_order_refund_reason($request->all());
-        $this->orderRefundRepo->createOrUpdateTranslation($request, $success, 'App\Models\OrderRefundReason', $this->orderRefundRepo->translationKeys());
+        createOrUpdateTranslation($request, $success, 'App\Models\OrderRefundReason', $this->orderRefundRepo->translationKeys());
         if ($success) {
             return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Order Refund Reason']),

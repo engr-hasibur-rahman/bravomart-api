@@ -31,6 +31,7 @@ class AdminFlashSaleDetailsResource extends JsonResource
             "description" => $this->description,
             "title_color" => $this->title_color,
             "description_color" => $this->description_color,
+            "background_color" => $this->background_color,
             "image" => $this->image,
             "image_url" => ImageModifier::generateImageUrl($this->image),
             "cover_image" => $this->cover_image,

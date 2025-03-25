@@ -175,11 +175,13 @@ class StoreManageRepository implements StoreManageInterface
     public function getStoreById(int|string $id)
     {
         try {
-            $store = Store::with(['related_translations', 'seller', 'area', 'activeSubscription'])->findorfail($id);
+            $store = Store::with(['related_translations', 'seller', 'area', 'activeSubscription'])->find($id);
             if ($store) {
                 return response()->json(new SellerStoreDetailsResource($store));
             } else {
-                return false;
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ]);
             }
         } catch (\Throwable $th) {
             throw $th;
@@ -405,6 +407,7 @@ class StoreManageRepository implements StoreManageInterface
                 ->whereHas('orderMaster', function ($query) {
                     $query->where('payment_status', 'paid');
                 })
+                ->where('refund_status', '!=', 'refunded')
                 ->sum('order_amount_store_value');
             $summary['total_refunds'] += Order::where('store_id', $store->id)
                 ->where('refund_status', 'refunded')
