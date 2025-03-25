@@ -31,7 +31,7 @@ class PageManageRepository implements PageManageInterface
     public function getPageById(int|string $id)
     {
         try {
-            $page = Page::find($id);
+            $page = Page::with('related_translations')->find($id);
 
             if (!$page) {
                 return response()->json([
@@ -39,28 +39,9 @@ class PageManageRepository implements PageManageInterface
                 ], 404);
             }
 
-            // Get all translations grouped by language
-            $translations = $page->translations()->get()->groupBy('language');
-
-            // Prepare translations data
-            $transformedData = [];
-            foreach ($translations as $language => $items) {
-                $languageInfo = ['language' => $language];
-
-                // Iterate all column names to assign language values
-                foreach ($this->page->translationKeys as $columnName) {
-                    $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-                }
-                $transformedData[] = $languageInfo;
-            }
-
             // Return response with Page and translations
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
                 'data' => new PageDetailsResource($page),
-                'translations' => $transformedData
             ]);
 
         } catch (\Throwable $th) {
