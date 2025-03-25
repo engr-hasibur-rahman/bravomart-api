@@ -14,6 +14,8 @@ class AdminDeliverymanResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return array_merge(parent::toArray($request), [
+            'full_name' => $this->user?->full_name  // Add your custom variable here
+        ]);
     }
 }
