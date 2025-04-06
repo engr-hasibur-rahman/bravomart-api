@@ -36,7 +36,6 @@ class PagesManageController extends Controller
             // Validate input data
             $validator = Validator::make($request->all(), [
                 'title' => 'required|unique:pages,title',
-                'slug' => 'nullable|unique:pages,slug',
             ]);
             if ($validator->fails()) {
                 return response()->json([
