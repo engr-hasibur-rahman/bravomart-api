@@ -15,6 +15,7 @@ use App\Http\Resources\Com\ComAreaListForDropdownResource;
 use App\Http\Resources\Com\ContactUsPublicResource;
 use App\Http\Resources\Com\Department\DepartmentListForDropdown;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Com\PrivacyPolicyResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
@@ -66,6 +67,7 @@ use App\Models\ContactSetting;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Page;
 use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductBrand;
@@ -1436,6 +1438,21 @@ class FrontendController extends Controller
         $content = jsonImageModifierFormatter($setting->content);
         $setting->content = $content;
         return response()->json(new ContactUsPublicResource($setting));
+    }
+
+    public function getPage(Request $request, $slug)
+    {
+        $page = Page::with('related_translations')
+            ->where('slug', $slug)
+            ->where('status', 'published')
+            ->first();
+
+        if (!$page) {
+            return response()->json([
+                'message' => __('Page Not Found')
+            ], 404);
+        }
+        return response()->json(new PrivacyPolicyResource($page));
     }
 
     public function getStoreWiseProducts(Request $request)
