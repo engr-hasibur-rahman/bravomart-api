@@ -39,6 +39,7 @@ class UserResource extends JsonResource
             "store_seller_id" => $this->store_seller_id,
             "stores" => $stores,
             'roles' => $this->roles->pluck('name'),
+            "status" => $this->status
         ];
     }
 }
