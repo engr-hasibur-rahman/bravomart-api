@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Dashboard\AdminOtherSummaryResource;
+use App\Http\Resources\Dashboard\OrderGrowthSummaryResource;
 use App\Http\Resources\Dashboard\SalesSummaryResource;
 use App\Http\Resources\Dashboard\SummaryResource;
 use App\Interfaces\AdminDashboardManageInterface;
@@ -33,6 +34,11 @@ class AdminDashboardController extends Controller
         ];
         $data = $this->adminRepo->getSalesSummaryData($filters);
         return response()->json(new SalesSummaryResource($data));
+    }
+    public function orderGrowthData()
+    {
+        $data = $this->adminRepo->getOrderGrowthData();
+        return response()->json(new OrderGrowthSummaryResource($data));
     }
 
     public function otherSummaryData()

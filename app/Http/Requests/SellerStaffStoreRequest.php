@@ -32,7 +32,7 @@ class SellerStaffStoreRequest extends FormRequest
             ],
             'password' => 'nullable|string|min:8|max:12',
             'phone' => 'nullable|string|max:15',
-            'image' => 'nullable|string',
+            'image' => 'nullable',
             'stores' => 'nullable|array',
             'stores.*' => ['nullable', 'integer', new ValidSellerStore],
             'roles' => 'nullable|array',

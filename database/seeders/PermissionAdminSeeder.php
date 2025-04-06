@@ -882,20 +882,22 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
-                                    'PermissionName' => PermissionKey::USERS_LIST_ADMIN->value,
+                                    'PermissionName' => PermissionKey::ADMIN_STAFF_LIST->value,
                                     'PermissionTitle' => 'List',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
                                         'en' => 'List',
                                         'ar' => 'علاوة'
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::USERS_ADD_ADMIN->value,
+                                    'PermissionName' => PermissionKey::ADMIN_STAFF_MANAGE->value,
                                     'PermissionTitle' => 'Add Staff',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
                                         'en' => 'Add Staff',
                                         'ar' => 'إضافة الموظفين'
@@ -1189,13 +1191,13 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_SUBSCRIPTION_SELLER_PACKAGE_MANAGE->value,
-                                    'PermissionTitle' => 'Seller Subscription',
+                                    'PermissionName' => PermissionKey::ADMIN_SUBSCRIPTION_STORE_PACKAGE_MANAGE->value,
+                                    'PermissionTitle' => 'Store Subscription',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
                                     'translations' => [
-                                        'en' => 'Seller Subscription',
+                                        'en' => 'Store Subscription',
                                         'ar' => 'قائمة المشتركين'
                                     ]
                                 ],

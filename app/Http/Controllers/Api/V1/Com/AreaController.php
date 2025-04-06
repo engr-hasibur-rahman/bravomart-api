@@ -44,7 +44,7 @@ class AreaController extends Controller
     {
         try {
             $area = $this->areaRepo->store($this->areaService->prepareAddData($request));
-            $this->transRepo->storeTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
+            createOrUpdateTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
 
             return $this->success(translate('messages.save_success', ['name' => $request->name]));
         } catch (\Exception $e) {
@@ -69,7 +69,7 @@ class AreaController extends Controller
         try {
 
             $area = $this->areaRepo->update($this->areaService->prepareAddData($request), $request->id);
-            $this->transRepo->updateTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
+            createOrUpdateTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
 
             return $this->success(translate('messages.update_success', ['name' => $area->name]));
         } catch (\Exception $e) {

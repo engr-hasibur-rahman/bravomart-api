@@ -43,7 +43,7 @@ class AdminStoreTypeManageController extends Controller
     public function updateStoreType(StoreTypeRequest $request)
     {
         $success = $this->storeTypeRepo->updateStoreType($request->all());
-        $this->storeTypeRepo->createOrUpdateTranslation($request, $success, 'App\Models\StoreType', $this->storeTypeRepo->translationKeys());
+        createOrUpdateTranslation($request, $success, 'App\Models\StoreType', $this->storeTypeRepo->translationKeys());
         if ($success) {
             return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Store Type']),

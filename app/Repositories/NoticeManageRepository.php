@@ -27,20 +27,13 @@ class NoticeManageRepository implements NoticeManageInterface
         DB::beginTransaction(); // Start a transaction
         try {
             $notice = StoreNotice::create($data);
+            DB::commit();
             if ($notice && $data['type'] !== 'general') {
                 $data['notice_id'] = $notice->id;
                 $notice_recipient = StoreNoticeRecipient::create($data);
-            } else {
-                return false;
-            }
-            if ($notice_recipient) {
-                // Commit the transaction if all went well
                 DB::commit();
-                return $notice->id;
-            } else {
-                DB::rollBack();
-                return false;
             }
+            return $notice->id;
         } catch (\Exception $exception) {
             DB::rollBack();
             return false;
@@ -96,7 +89,9 @@ class NoticeManageRepository implements NoticeManageInterface
     {
         $notice = StoreNotice::find($data['id']);
         $notice_recipent = StoreNoticeRecipient::where('notice_id', $notice->id)->first();
-        $notice_recipent->update($data);
+        if ($notice_recipent){
+            $notice_recipent->update($data);
+        }
         $notice->update($data);
         return $notice->id;
     }

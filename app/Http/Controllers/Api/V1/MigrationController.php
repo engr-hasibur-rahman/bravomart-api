@@ -27,7 +27,7 @@ class MigrationController extends Controller
             // Step 1: Backup existing table data
             $existingData = DB::table($table)->get();
 
-            // Step 2: Get migration file name for the table
+// Step 2: Get migration file name for the table
             $migration = DB::table('migrations')->where('migration', 'like', "%{$table}%")->first();
 
             if (!$migration) {
@@ -36,11 +36,24 @@ class MigrationController extends Controller
 
             $migrationName = $migration->migration;
 
-            // Step 3: Disable foreign key checks before migration
+// Step 3: Disable foreign key checks before migration
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-            // Step 4: Rollback and re-run the migration
-            Artisan::call('migrate:refresh', ['--path' => "database/migrations/{$migrationName}.php", '--force' => true]);
+// Step 4: Rollback and re-run the migration
+            if ($migrationName) {
+                // If migration name exists, we run the migration refresh for the specific migration
+                Artisan::call('migrate:refresh', [
+                    '--path' => "Modules/Subscription/database/migrations/{$migrationName}.php", // Correct path to your migration file
+                    '--force' => true
+                ]);
+            } else {
+                // If no specific migration file is provided, run all migrations in the Subscription module
+                Artisan::call('migrate', [
+                    '--path' => 'Modules/Subscription/database/migrations', // Path to all migrations in the module
+                    '--force' => true
+                ]);
+            }
+
 
             // Step 5: Get the current columns of the table after migration
             $columns = Schema::getColumnListing($table);

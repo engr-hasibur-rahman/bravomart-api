@@ -11,6 +11,7 @@ class SubscriptionHistory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'store_subscription_id',
         'store_id',
         'subscription_id',
         'name',
@@ -30,5 +31,10 @@ class SubscriptionHistory extends Model
         'expire_date',
         'status',
     ];
+
+    public function storeSubscription()
+    {
+        return $this->belongsTo(StoreSubscription::class, 'store_subscription_id');
+    }
 
 }

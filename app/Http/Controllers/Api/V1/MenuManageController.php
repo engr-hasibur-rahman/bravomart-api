@@ -55,7 +55,7 @@ class MenuManageController extends Controller
         }
         // Use the validated data to create the menu item
         $menu = Menu::create($validator->validated());
-        $this->createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
+        createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
         return response()->json([
             'message' => __('messages.save_success', ['name' => 'Menu']),
         ]);
@@ -99,7 +99,7 @@ class MenuManageController extends Controller
 
         $validated = $validator->validated();
         $menu->update($validated);
-        $this->createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
+        createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
         return response()->json([
             'message' => __('messages.update_success', ['name' => 'Menu']),
         ]);
@@ -120,53 +120,5 @@ class MenuManageController extends Controller
             'status' => true,
             'message' => 'Menu deleted successfully.',
         ]);
-    }
-
-    private function createOrUpdateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
-    {
-        if (empty($request['translations'])) {
-            return false;  // Return false if no translations are provided
-        }
-
-        $translations = [];
-        foreach ($request['translations'] as $translation) {
-            foreach ($colNames as $key) {
-                // Fallback value if translation key does not exist
-                $translatedValue = $translation[$key] ?? null;
-
-                // Skip translation if the value is NULL
-                if ($translatedValue === null) {
-                    continue; // Skip this field if it's NULL
-                }
-
-                // Check if a translation exists for the given reference path, ID, language, and key
-                $trans = $this->translation
-                    ->where('translatable_type', $refPath)
-                    ->where('translatable_id', $refid)
-                    ->where('language', $translation['language_code'])
-                    ->where('key', $key)
-                    ->first();
-
-                if ($trans) {
-                    // Update the existing translation
-                    $trans->value = $translatedValue;
-                    $trans->save();
-                } else {
-                    // Prepare new translation entry for insertion
-                    $translations[] = [
-                        'translatable_type' => $refPath,
-                        'translatable_id' => $refid,
-                        'language' => $translation['language_code'],
-                        'key' => $key,
-                        'value' => $translatedValue,
-                    ];
-                }
-            }
-        }
-        // Insert new translations if any
-        if (!empty($translations)) {
-            $this->translation->insert($translations);
-        }
-        return true;
     }
 }

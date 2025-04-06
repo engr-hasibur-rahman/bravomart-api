@@ -21,6 +21,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletTransaction;
@@ -42,6 +43,20 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     }
 
     /*------------------------------------------------------------>DeliveryMan Start<---------------------------------------------------*/
+    public function change_password(int $deliveryman_id, string $password)
+    {
+        if (auth('api')->check()) {
+            unauthorized_response();
+        }
+        $deliveryman = User::where('id', $deliveryman_id)->where('activity_scope', 'delivery_level')->first();
+        if (!$deliveryman) {
+            return [];
+        }
+        $deliveryman->password = Hash::make($password);
+        $deliveryman->save();
+        return $deliveryman;
+    }
+
     public function getAllDeliveryman(array $filters)
     {
         $query = DeliveryMan::with([

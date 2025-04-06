@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Dashboard;
 
 use App\Http\Resources\Order\AdminOrderResource;
+use App\Http\Resources\Product\TopProductCategoryResource;
 use App\Http\Resources\Product\TopRatedProductPublicResource;
 use App\Http\Resources\Store\StoreDetailsForOrderResource;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class AdminOtherSummaryResource extends JsonResource
             'top_rated_products' => TopRatedProductPublicResource::collection($this->top_rated_products),
             'top_selling_stores' => StoreDetailsForOrderResource::collection($this->top_selling_stores->pluck('store')),
             'recent_completed_orders' => AdminOrderResource::collection($this->recent_completed_orders),
+            'top_categories' => TopProductCategoryResource::collection($this->top_categories)
         ];
     }
 }

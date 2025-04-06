@@ -66,7 +66,7 @@ class ProductAuthorController extends Controller
         $request['slug'] = $slug;
         $request['created_by'] = auth('api')->id();
         $author = $this->authorRepo->store($request->all());
-        $this->authorRepo->storeTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
+        createOrUpdateTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
         if ($author) {
             return $this->success(translate('messages.save_success', ['name' => 'Author']));
         } else {
@@ -80,7 +80,7 @@ class ProductAuthorController extends Controller
         $request['slug'] = $slug;
         $request['created_by'] = auth('api')->id();
         $author = $this->authorRepo->store($request->all());
-        $this->authorRepo->storeTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
+        createOrUpdateTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
         if ($author) {
             return $this->success(translate('messages.request_success', ['name' => 'Author']));
         } else {
@@ -116,7 +116,7 @@ class ProductAuthorController extends Controller
             unset($data['status']); // Remove 'status' if user is store_level
         }
         $author = $this->authorRepo->update($data);
-        $this->authorRepo->updateTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
+        createOrUpdateTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
         if ($author) {
             return $this->success(translate('messages.update_success', ['name' => 'Author']));
         } else {

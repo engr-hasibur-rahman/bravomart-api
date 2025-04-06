@@ -37,7 +37,7 @@ class CouponManageController extends Controller
     public function store(CouponRequest $request): JsonResponse
     {
         $coupon = $this->couponRepo->store($request->all());
-        $this->couponRepo->storeTranslation($request, $coupon, 'App\Models\Coupon', $this->couponRepo->translationKeys());
+        createOrUpdateTranslation($request, $coupon, 'App\Models\Coupon', $this->couponRepo->translationKeys());
         if ($coupon) {
             return $this->success(translate('messages.save_success', ['name' => 'Coupon']));
         } else {
@@ -48,7 +48,7 @@ class CouponManageController extends Controller
     public function update(CouponRequest $request)
     {
         $coupon = $this->couponRepo->update($request->all());
-        $this->couponRepo->updateTranslation($request, $coupon, 'App\Models\Coupon', $this->couponRepo->translationKeys());
+        createOrUpdateTranslation($request, $coupon, 'App\Models\Coupon', $this->couponRepo->translationKeys());
         if ($coupon) {
             return $this->success(translate('messages.update_success', ['name' => 'Coupon']));
         } else {
@@ -73,6 +73,17 @@ class CouponManageController extends Controller
         $coupon->status = !$coupon->status;
         $coupon->save();
         return $this->success(translate('messages.update_success', ['name' => 'Coupon']));
+    }
+
+    public function couponWiseLine(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'coupon_id' => 'required|exists:coupons,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        return $this->couponRepo->coupon_wise_coupon_line($request->coupon_id);
     }
 
     public function couponLineIndex(Request $request)

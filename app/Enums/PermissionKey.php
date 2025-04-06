@@ -156,7 +156,7 @@ enum PermissionKey: string
     case ADMIN_STORE_TYPE_MANAGE = '/admin/business-operations/store-type';
     case ADMIN_GEO_AREA_MANAGE = '/admin/business-operations/area/list';
     case ADMIN_SUBSCRIPTION_PACKAGE_MANAGE = '/admin/business-operations/subscription/package/list';
-    case ADMIN_SUBSCRIPTION_SELLER_PACKAGE_MANAGE = '/admin/business-operations/subscription/seller/list';
+    case ADMIN_SUBSCRIPTION_STORE_PACKAGE_MANAGE = '/admin/business-operations/subscription/store/list';
     case ADMIN_SUBSCRIPTION_SETTINGS = '/admin/business-operations/subscription/settings';
     case ADMIN_COMMISSION_SETTINGS = '/admin/business-operations/commission/settings';
 
@@ -198,6 +198,11 @@ enum PermissionKey: string
     case FIREBASE_SETTINGS = '/admin/system-management/firebase-settings';
     case SOCIAL_LOGIN_SETTINGS = '/admin/system-management/social-login-settings';
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //              Blog Management                                                        //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_STAFF_LIST = '/admin/staff/list';
+    case ADMIN_STAFF_MANAGE = '/admin/staff';
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Blog Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//

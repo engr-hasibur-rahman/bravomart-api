@@ -38,7 +38,7 @@ class SellerBannerManageController extends Controller
     public function store(SellerBannerRequest $request): JsonResponse
     {
         $banner = $this->bannerRepo->store($request->all());
-        $this->bannerRepo->storeTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
+        createOrUpdateTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
         if ($banner) {
             return $this->success(translate('messages.save_success', ['name' => 'Banner']));
         } else {
@@ -49,7 +49,7 @@ class SellerBannerManageController extends Controller
     public function update(SellerBannerRequest $request)
     {
         $banner = $this->bannerRepo->update($request->all());
-        $this->bannerRepo->updateTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
+        createOrUpdateTranslation($request, $banner, 'App\Models\Banner', $this->bannerRepo->translationKeys());
         if ($banner) {
             return $this->success(translate('messages.update_success', ['name' => 'Banner']));
         } else {

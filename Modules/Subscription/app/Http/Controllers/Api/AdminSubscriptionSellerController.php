@@ -3,63 +3,95 @@
 namespace Modules\Subscription\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Modules\Subscription\app\Models\StoreSubscription;
+use Modules\Subscription\app\Models\Subscription;
+use Modules\Subscription\app\Models\SubscriptionHistory;
+use Modules\Subscription\app\Services\SubscriptionService;
+use Modules\Subscription\app\Transformers\AdminSubscriptionPackageResource;
+use Modules\Subscription\app\Transformers\StoreSubscriptionHistoryResource;
 
 class AdminSubscriptionSellerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected $subscriptionService;
+
+    public function __construct(SubscriptionService $subscriptionService)
     {
-        return view('subscription::index');
+        $this->subscriptionService = $subscriptionService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(Request $request)
     {
-        return view('subscription::create');
+        $query = StoreSubscription::query();
+        if (!empty($request->status)) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('expire_date') && !empty($request->expire_date)) {
+            $query->whereDate('expire_date', $request->expire_date);
+        }
+
+        if ($request->has('created_at') && !empty($request->created_at)) {
+            $query->whereDate('created_at', $request->created_at);
+        }
+        $subscriptions = $query->paginate(10);
+        return response()->json([
+            'success' => true,
+            'data' => AdminSubscriptionPackageResource::collection($subscriptions),
+            'meta' => new PaginationResource($subscriptions),
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function subscriptionHistory(Request $request)
     {
-        //
+        $store_subscription_id = $request->id;
+        $subscription_history = SubscriptionHistory::where('store_subscription_id', $store_subscription_id)
+            ->paginate(10);
+
+        return response()->json([
+            'success' => true,
+            'data' => StoreSubscriptionHistoryResource::collection($subscription_history),
+            'meta' => new PaginationResource($subscription_history),
+        ]);
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
+    public function assignStoreSubscription(Request $request)
     {
-        return view('subscription::show');
+        $result = $this->subscriptionService->adminAssignStoreSubscription($request->all());
+        return response()->json($result, $result['status_code'] ?? 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function statusChange(Request $request)
     {
-        return view('subscription::edit');
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:store_subscriptions,id',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $storeSubscription = StoreSubscription::findOrFail($request->id);
+        if (!$storeSubscription) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Store Subscription not found',
+            ], 404);
+        }
+
+        $storeSubscription->update(['status' => $storeSubscription->status == 0 ? 1 : 0 ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Status updated successfully',
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

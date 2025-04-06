@@ -26,6 +26,7 @@ class OrderObserver
             // check which guard is being used
             if (auth()->guard('api_customer')->check()) {
                 $user = auth()->guard('api_customer')->user();
+                dispatch(new DispatchOrderEmails($order->id, 'order-status-change-deliveryman'));
             } elseif (auth()->guard('api')->check()) {
                 $user = auth()->guard('api')->user();
             }
@@ -37,8 +38,6 @@ class OrderObserver
                 dispatch(new DispatchOrderEmails($order->id, 'order-status-change-admin'));
             } elseif ($user->activity_scope === 'delivery_level') {
                 dispatch(new DispatchOrderEmails($order->id, 'order-status-change-customer'));
-            } elseif ($user->hasRole('deliveryman')) {
-                dispatch(new DispatchOrderEmails($order->id, 'order-status-change-deliveryman'));
             }
         }
     }

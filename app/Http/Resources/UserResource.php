@@ -17,17 +17,17 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
-        $stores=[];
-        if($this->stores!='') {
+        $stores = [];
+        if ($this->stores) {
             $stores = Store::whereIn('id', $this->stores)
-                ->select(['id', 'name','store_type'])
+                ->select(['id', 'name', 'store_type'])
                 ->get()
                 ->toArray();
         }
 
         return [
             'id' => $this->id,
+            'full_name' => $this->full_name,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'phone' => $this->phone,
@@ -40,6 +40,7 @@ class UserResource extends JsonResource
             "store_seller_id" => $this->store_seller_id,
             "stores" => $stores,
             'roles' => $this->roles->pluck('name'),
+            "status" => $this->status
         ];
     }
 }

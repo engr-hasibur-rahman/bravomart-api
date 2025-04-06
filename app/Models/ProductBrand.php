@@ -12,9 +12,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class ProductBrand extends Model implements HasMedia
+class ProductBrand extends Model
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
 
     protected $table = 'product_brand';
     protected $fillable = [
@@ -29,6 +29,11 @@ class ProductBrand extends Model implements HasMedia
         'authorization_valid_to',
         'status'
     ];
+    public $translationKeys = [
+        'brand_name',
+        'meta_title',
+        'meta_description'
+    ];
 
     public function translations()
     {
@@ -37,5 +42,10 @@ class ProductBrand extends Model implements HasMedia
     public function getTranslation(string $key, string $language)
     {
         return $this->translations()->where('language', $language)->where('key', $key)->first()->value ?? null;
+    }
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
     }
 }

@@ -19,8 +19,9 @@ class StoreProductBrandRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'id' => 'nullable|exists:product_brand,id',
             'brand_name' => 'required|string|max:255',
-            'brand_logo' => 'nullable|string|max:255',
+            'brand_logo' => 'nullable|max:255',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'display_order' => 'nullable|integer',

@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreTypeManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminSupportTicketManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminUnitManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
 use App\Http\Controllers\Api\V1\Admin\BecomeSellerSettingsController;
@@ -36,13 +37,12 @@ use App\Http\Controllers\Api\V1\Admin\EmailTemplateManageController;
 use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PageSettingsManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
-use App\Http\Controllers\Api\V1\MenuManageController;
-use App\Http\Controllers\Api\V1\NotificationManageController;
-use App\Http\Controllers\Api\V1\AdminUnitManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\MediaController;
+use App\Http\Controllers\Api\V1\MenuManageController;
+use App\Http\Controllers\Api\V1\NotificationManageController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
 use App\Http\Controllers\Api\V1\SliderManageController;
@@ -52,6 +52,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawGatewayManageController;
@@ -89,6 +90,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('/', [AdminDashboardController::class, 'summaryData']);
             Route::get('sales-summary', [AdminDashboardController::class, 'salesSummaryData']);
             Route::get('other-summary', [AdminDashboardController::class, 'otherSummaryData']);
+            Route::get('order-growth-summary', [AdminDashboardController::class, 'orderGrowthData']);
         });
         // POS Manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_POS_SALES->value]], function () {
@@ -320,8 +322,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list', [ProductBrandController::class, 'index']);
                 Route::post('add', [ProductBrandController::class, 'store']);
                 Route::post('update', [ProductBrandController::class, 'update']);
-                Route::get('details', [ProductBrandController::class, 'show']);
-                Route::post('approve', [ProductBrandController::class, 'productBrandStatus']);
+                Route::get('details/{id}', [ProductBrandController::class, 'show']);
+                Route::post('change-status', [ProductBrandController::class, 'productBrandStatus']);
+                Route::delete('remove/{id}', [ProductBrandController::class, 'destroy']);
             });
         });
         // Product Author manage
@@ -364,6 +367,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Coupon manage
         Route::group(['prefix' => 'coupon/', 'middleware' => ['permission:' . PermissionKey::ADMIN_COUPON_MANAGE->value]], function () {
             Route::get('list', [CouponManageController::class, 'index']);
+            Route::get('coupon-wise-line', [CouponManageController::class, 'couponWiseLine']);
             Route::get('details/{id}', [CouponManageController::class, 'show']);
             Route::post('add', [CouponManageController::class, 'store']);
             Route::post('update', [CouponManageController::class, 'update']);
@@ -413,12 +417,22 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
         });
 
+        // Staff manage
+        Route::group(['prefix' => 'staff/'], function () {
+            Route::get('list', [StaffController::class, 'index'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_LIST->value]);
+            Route::post('add', [StaffController::class, 'store'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::get('details/{id}', [StaffController::class, 'show'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::post('update', [StaffController::class, 'update'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::post('change-status', [StaffController::class, 'changeStatus'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::post('change-password', [StaffController::class, 'changePassword'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::delete('remove/{id}', [StaffController::class, 'destroy'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+        });
 
         // Pages manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PAGES_LIST->value]], function () {
             Route::get('pages/list', [PagesManageController::class, 'pagesIndex']);
             Route::post('pages/store', [PagesManageController::class, 'pagesStore']);
-            Route::get('pages/details', [PagesManageController::class, 'pagesShow']);
+            Route::get('pages/details/{id}', [PagesManageController::class, 'pagesShow']);
             Route::post('pages/update', [PagesManageController::class, 'pagesUpdate']);
             Route::post('pages/status-change', [PagesManageController::class, 'pagesStatusChange']);
             Route::delete('pages/remove/{id}', [PagesManageController::class, 'pagesDestroy']);
@@ -462,6 +476,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list-dropdown', [AdminDeliverymanManageController::class, 'deliverymanDropdownList']);
                 Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest']);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
+                Route::post('change-password', [AdminDeliverymanManageController::class, 'changePassword']);
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
                 Route::post('update', [AdminDeliverymanManageController::class, 'update']);
                 Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
@@ -537,7 +552,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
             // Collect Cash (for cash collection)
-            Route::match(['get','post'],'cash-collection', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
+            Route::match(['get', 'post'], 'cash-collection', [AdminCashCollectionController::class, 'collectCash'])->middleware('permission:' . PermissionKey::ADMIN_FINANCIAL_COLLECT_CASH->value);
         });
 
 
