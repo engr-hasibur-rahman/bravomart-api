@@ -86,7 +86,7 @@ class StaffController extends Controller
             'store_seller_id' => $isAdmin ? null : auth()->guard('api')->user()->id, // Authenticated store admin id is seller ID
             'email' => $request->email,
             'phone' => $request->phone,
-            'image' => ImageModifier::generateImageUrl($request->image),
+            'image' => $request->image,
             'status' => 1,
             'password' => Hash::make($request->password),
         ]);
