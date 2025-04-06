@@ -77,6 +77,7 @@ class FrontendPageSettingsController extends Controller
             'com_login_page_subtitle' => com_option_get('com_login_page_subtitle') ?? '',
             'com_login_page_social_enable_disable' => com_option_get('com_login_page_social_enable_disable') ?? '',
             'com_login_page_image' => ImageModifier::generateImageUrl(com_option_get('com_login_page_image')),
+            'com_site_logo' => ImageModifier::generateImageUrl(com_option_get('com_site_logo')),
             // admin login
             'com_seller_login_page_title' => com_option_get('com_seller_login_page_title') ?? '',
             'com_seller_login_page_subtitle' => com_option_get('com_seller_login_page_subtitle') ?? '',
@@ -92,11 +93,8 @@ class FrontendPageSettingsController extends Controller
                 $page_settings[$settingOption->option_name] = trim($translation->value, '"');
             }
         }
-
         return response()->json(['data' => $page_settings]);
     }
-
-
     public function productDetailsPageSettings(Request $request)
     {
         $language = $request->input('language', 'en'); // Default language is 'en'

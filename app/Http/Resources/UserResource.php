@@ -17,9 +17,8 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         $stores=[];
-        if($this->stores!='') {
+        if($this->stores) {
             $stores = Store::whereIn('id', $this->stores)
                 ->select(['id', 'name','store_type'])
                 ->get()

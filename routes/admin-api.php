@@ -52,6 +52,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductBrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawGatewayManageController;
@@ -416,6 +417,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             });
         });
 
+        // Staff manage
+        Route::group(['prefix' => 'staff/'], function () {
+            Route::get('list', [StaffController::class, 'index'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_LIST->value]);
+            Route::post('add', [StaffController::class, 'store'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::get('details/{id}', [StaffController::class, 'show'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::post('update', [StaffController::class, 'update'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::post('change-status', [StaffController::class, 'changeStatus'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::delete('remove/{id}', [StaffController::class, 'destroy'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+        });
 
         // Pages manage
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PAGES_LIST->value]], function () {
