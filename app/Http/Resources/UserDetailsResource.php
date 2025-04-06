@@ -18,10 +18,15 @@ class UserDetailsResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        $stores=[];
-        if($this->stores!='') {
-            $stores = Store::whereIn('id', json_decode($this->stores))
-                ->select(['id', 'name','store_type'])
+        $stores = [];
+
+        if (!empty($this->stores)) {
+            $storeIds = is_array($this->stores)
+                ? $this->stores
+                : explode(',', $this->stores); // Convert comma-separated string to array
+
+            $stores = Store::whereIn('id', $storeIds)
+                ->select(['id', 'name', 'store_type'])
                 ->get()
                 ->toArray();
         }
