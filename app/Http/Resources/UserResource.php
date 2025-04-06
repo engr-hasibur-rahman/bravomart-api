@@ -18,8 +18,13 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         $stores = [];
-        if ($this->stores) {
-            $stores = Store::whereIn('id', $this->stores)
+
+        if (!empty($this->stores)) {
+            $storeIds = is_array($this->stores)
+                ? $this->stores
+                : explode(',', $this->stores); // Convert comma-separated string to array
+
+            $stores = Store::whereIn('id', $storeIds)
                 ->select(['id', 'name', 'store_type'])
                 ->get()
                 ->toArray();
@@ -36,11 +41,11 @@ class UserResource extends JsonResource
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'activity_scope' => $this->activity_scope,
             'email_verified_at' => $this->email_verified_at,
-            "store_owner" => $this->store_owner,
-            "store_seller_id" => $this->store_seller_id,
-            "stores" => $stores,
+            'store_owner' => $this->store_owner,
+            'store_seller_id' => $this->store_seller_id,
+            'stores' => $stores,
             'roles' => $this->roles->pluck('name'),
-            "status" => $this->status
+            'status' => $this->status
         ];
     }
 }
