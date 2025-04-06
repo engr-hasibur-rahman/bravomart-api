@@ -157,6 +157,10 @@ class UserController extends Controller
                 'message' => __('auth.social.login'),
                 'token' => $token,
                 'user' => $newUser,
+                'email_verified' => $newUser->email_verified,
+                'account_status' => $newUser->account_status,
+                'marketing_email' => $newUser->marketing_email,
+                'activity_notification' => $newUser->activity_notification,
             ], 201);
 
         } catch (\Exception $e) {
@@ -286,6 +290,10 @@ class UserController extends Controller
                 'message' => __('auth.social.login'),
                 'token' => $token,
                 'user' => $newUser,
+                'email_verified' => $newUser->email_verified,
+                'account_status' => $newUser->account_status,
+                'marketing_email' => $newUser->marketing_email,
+                'activity_notification' => $newUser->activity_notification,
             ], 201);
         }
     }
