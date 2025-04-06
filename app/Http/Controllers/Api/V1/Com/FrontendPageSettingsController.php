@@ -67,6 +67,8 @@ class FrontendPageSettingsController extends Controller
             ->whereIn('option_name', [
                 'com_login_page_title',
                 'com_login_page_subtitle',
+                'com_seller_login_page_title',
+                'com_seller_login_page_subtitle',
             ])->get();
 
         // Default settings
@@ -75,6 +77,11 @@ class FrontendPageSettingsController extends Controller
             'com_login_page_subtitle' => com_option_get('com_login_page_subtitle') ?? '',
             'com_login_page_social_enable_disable' => com_option_get('com_login_page_social_enable_disable') ?? '',
             'com_login_page_image' => ImageModifier::generateImageUrl(com_option_get('com_login_page_image')),
+            // admin login
+            'com_seller_login_page_title' => com_option_get('com_seller_login_page_title') ?? '',
+            'com_seller_login_page_subtitle' => com_option_get('com_seller_login_page_subtitle') ?? '',
+            'com_seller_login_page_social_enable_disable' => com_option_get('com_seller_login_page_social_enable_disable') ?? '',
+            'com_seller_login_page_image' => ImageModifier::generateImageUrl(com_option_get('com_seller_login_page_image')),
         ];
 
         // Replace with translation values based on requested language
