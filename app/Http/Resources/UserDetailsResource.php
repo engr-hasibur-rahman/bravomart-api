@@ -20,15 +20,8 @@ class UserDetailsResource extends JsonResource
 
         $stores = [];
 
-        if (!empty($this->stores)) {
-            $storeIds = is_array($this->stores)
-                ? $this->stores
-                : explode(',', $this->stores); // Convert comma-separated string to array
-
-            $stores = Store::whereIn('id', $storeIds)
-                ->select(['id', 'name', 'store_type'])
-                ->get()
-                ->toArray();
+        if ($this->stores_array) {
+            $stores = Store::whereIn('id', $this->stores_array);
         }
 
         return [
