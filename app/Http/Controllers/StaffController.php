@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\ImageModifier;
 use App\Enums\Role as UserRole;
 use App\Http\Requests\SellerStaffStoreRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Staff\SellerStaffDetailsResource;
 use App\Http\Resources\UserDetailsResource;
 use App\Http\Resources\UserResource;
@@ -30,14 +31,23 @@ class StaffController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page ?? 10;
-        $roles = QueryBuilder::for(User::class)
+
+        $query = QueryBuilder::for(User::class)
             ->with(['permissions'])
             ->when($request->filled('available_for'), function ($query) use ($request) {
                 $query->where('available_for', $request->available_for);
-            })
-            ->paginate($per_page);
+            });
 
-        return UserResource::collection($roles);
+        if (auth('api')->user()->activity_scope == 'system_level') {
+            $query->whereNull('stores');
+        }
+
+        $roles = $query->paginate($per_page);
+
+        return response()->json([
+            'data' => UserResource::collection($roles),
+            'meta' => new PaginationResource($roles)
+        ]);
     }
 
     public function store(SellerStaffStoreRequest $request)
@@ -60,18 +70,20 @@ class StaffController extends Controller
 //            ->toArray();
 
         // Add role from request if provided
+
         if (isset($request->roles)) {
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
+        $isAdmin = auth('api')->user()->activity_scope == 'system_level';
 
         // Create user
         $user = $this->repository->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'slug' => username_slug_generator($request->first_name, $request->last_name),
-            'activity_scope' => 'store_level',
-            'stores' => json_encode($request->stores), // Encode as JSON if needed
-            'store_seller_id' => auth()->guard('api')->user()->id, // Authenticated store admin id is seller ID
+            'activity_scope' => $isAdmin ? 'system_level' : 'store_level',
+            'stores' => $isAdmin ? null : json_encode($request->stores), // Encode as JSON if needed
+            'store_seller_id' => $isAdmin ? null : auth()->guard('api')->user()->id, // Authenticated store admin id is seller ID
             'email' => $request->email,
             'phone' => $request->phone,
             'image' => ImageModifier::generateImageUrl($request->image),
@@ -96,6 +108,9 @@ class StaffController extends Controller
         $validator = Validator::make(['id' => $request->id], [
             'id' => 'required|exists:users,id',
         ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
         $user = User::with('permissions')->findOrFail($request->id);
         return response()->json(new UserDetailsResource($user));
     }
@@ -108,23 +123,27 @@ class StaffController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $seller = auth('api')->user();
-        $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id')->toArray();
+        if (auth('api')->user()->activity_scope == 'store_level') {
+            $seller = auth('api')->user();
+            $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id')->toArray();
 
-        $user = User::find($request->id);
-        if ($user->stores == null) {
-            return response()->json([
-                'message' => __('messages.staff_not_assign_to_stores'),
-            ], 422);
-        }
-        $user_stores = json_decode($user->stores, true);
+            $user = User::find($request->id);
+            if ($user->stores == null) {
+                return response()->json([
+                    'message' => __('messages.staff_not_assign_to_stores'),
+                ], 422);
+            }
+            $user_stores = json_decode($user->stores, true);
 
-        $user_is_your_staff = !empty(array_intersect($seller_stores, $user_stores));
+            $user_is_your_staff = !empty(array_intersect($seller_stores, $user_stores));
 
-        if (!$user_is_your_staff) {
-            return response()->json([
-                'message' => __('messages.staff_doesnt_belongs_to_seller'),
-            ], 422);
+            if (!$user_is_your_staff) {
+                return response()->json([
+                    'message' => __('messages.staff_doesnt_belongs_to_seller'),
+                ], 422);
+            }
+        } else {
+            $user = User::find($request->id);
         }
         if ($user) {
             $user->status = !$user->status;
@@ -143,52 +162,66 @@ class StaffController extends Controller
 
     public function update(SellerStaffStoreRequest $request)
     {
-
         $validatedData = $request->validated();
+
+        // Check for not allowed roles
+        $notAllowedRoles = [UserRole::SUPER_ADMIN];
+        if (
+            (isset($request->roles->value) && in_array($request->roles->value, $notAllowedRoles)) ||
+            (isset($request->roles) && in_array($request->roles, $notAllowedRoles))
+        ) {
+            throw new AuthorizationException(__('messages.authorization_invalid'));
+        }
+
+        // Get the role from request
         $roles = [];
         if (isset($request->roles)) {
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
 
-        // Find the user and update details
+        $isAdmin = auth('api')->user()->activity_scope == 'system_level';
+
+        // Find the user
         $user = User::find($request->id);
-        if ($user) {
-            // Update user details
-            $user->first_name = $validatedData['first_name'];
-            $user->last_name = $validatedData['last_name'];
-            $user->slug = username_slug_generator($validatedData['first_name'], $validatedData['last_name']);
-            $user->email = $validatedData['email'];
-            $user->phone = $validatedData['phone'];
-            $user->stores = json_encode($validatedData['stores']);  // Store as JSON
-            $user->store_seller_id = auth()->guard('api')->user()->id;  // Set authenticated seller's ID
-            $user->activity_scope = 'store_level';  // Assuming it's constant for all users
-            $user->image = $validatedData['image'] ?? null; // Default status, assuming active
-            $user->status = 1;  // Default status, assuming active
 
-            // Update password only if provided
-            if (!empty($validatedData['password'])) {
-                $user->password = Hash::make($validatedData['password']);
-            }
-
-            $user->save();
-
-            // Sync roles with the user
-            if (!empty($roles)) {
-                $user->syncRoles($roles);
-            }
-
-            // Return success response with user data
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.update_success', ['name' => 'Staff']),
-            ]);
-        } else {
+        if (!$user) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
         }
+
+        // Update user data
+        $user->first_name = $validatedData['first_name'];
+        $user->last_name = $validatedData['last_name'];
+        $user->slug = username_slug_generator($validatedData['first_name'], $validatedData['last_name']);
+        $user->email = $validatedData['email'];
+        $user->phone = $validatedData['phone'];
+        $user->stores = $isAdmin ? null : json_encode($validatedData['stores']);
+        $user->store_seller_id = $isAdmin ? null : auth()->guard('api')->user()->id;
+        $user->activity_scope = $isAdmin ? 'system_level' : 'store_level';
+        $user->image = ImageModifier::generateImageUrl($validatedData['image'] ?? null);
+        $user->status = 1;
+
+        // Update password only if provided
+        if (!empty($validatedData['password'])) {
+            $user->password = Hash::make($validatedData['password']);
+        }
+
+        $user->save();
+
+        // Sync roles if provided
+        if (!empty($roles)) {
+            $user->syncRoles($roles);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.update_success', ['name' => 'Staff']),
+            'user' => new SellerStaffDetailsResource($user),
+        ]);
     }
+
 
     public function destroy(Request $request)
     {
