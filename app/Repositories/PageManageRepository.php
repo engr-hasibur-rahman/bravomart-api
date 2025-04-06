@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\PageDetailsResource;
 use App\Interfaces\PageManageInterface;
 use App\Models\Page;
@@ -19,13 +20,16 @@ class PageManageRepository implements PageManageInterface
     public function translationKeysForPage(): mixed
     {
         return $this->page->translationKeys;
-    }    
- 
+    }
+
     public function getPaginatedPage(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $query = Page::query()->with('related_translations');
         $paginatedPage = $query->orderBy($sortField, $sort)->paginate($limit);
-        return PageDetailsResource::collection($paginatedPage);
+        return response()->json([
+            'data' => PageDetailsResource::collection($paginatedPage),
+            'meta' => new PaginationResource($paginatedPage),
+        ]);
     }
 
     public function getPageById(int|string $id)
@@ -49,7 +53,8 @@ class PageManageRepository implements PageManageInterface
                 'error' => $th->getMessage()
             ], 500);
         }
-    }  
+    }
+
     public function store(array $data, string $modelClass)
     {
         if (!class_exists($modelClass)) {
