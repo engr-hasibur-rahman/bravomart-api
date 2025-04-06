@@ -172,11 +172,32 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
 
         $recentCompletedOrders = $this->getRecentCompletedOrders();
 
+        $topCategories = $this->getTopCategories();
+
         return [
             'top_rated_products' => $topRatedProducts,
             'top_selling_stores' => $topSellingStores,
             'recent_completed_orders' => $recentCompletedOrders,
+            'top_categories' => $topCategories,
         ];
+    }
+
+    public function getTopCategories()
+    {
+        $topCategoryIds = Product::select('category_id')
+            ->whereNotNull('category_id')
+            ->groupBy('category_id')
+            ->orderByRaw('SUM(order_count) DESC')
+            ->limit(10)
+            ->pluck('category_id');
+
+        return ProductCategory::with('translations')
+            ->whereIn('id', $topCategoryIds)
+            ->get()
+            ->sortBy(function ($category) use ($topCategoryIds) {
+                return array_search($category->id, $topCategoryIds->toArray());
+            })
+            ->values(); // To reindex the collection properly
     }
 
     public function getTopRatedProducts()
