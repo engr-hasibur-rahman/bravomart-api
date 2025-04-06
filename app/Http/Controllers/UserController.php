@@ -188,8 +188,8 @@ class UserController extends Controller
         return Socialite::driver('google')
             ->scopes(['email', 'profile'])
             ->with([
-                'client_id' => config('services.googleOAuth.client_id'),
-                'redirect_uri' => config('services.googleOAuth.redirect'),
+                'client_id' => com_option_get('com_google_app_id'),
+                'redirect_uri' => com_option_get('com_google_client_callback_url'),
                 'prompt' => 'select_account',  // Forces Google to ask for account selection
                 'state' => $role
             ])
@@ -203,9 +203,9 @@ class UserController extends Controller
         // Retrieve the user information from Google & need to use GoogleProvider for stateless function as laravel socialiate is not compatible with api.
         /** @var \Laravel\Socialite\Two\GoogleProvider */
         $user = Socialite::driver('google')->with([
-            'client_id' => config('services.googleOAuth.client_id'),
-            'client_secret' => config('services.googleOAuth.client_secret'),
-            'redirect_uri' => config('services.googleOAuth.redirect'),
+            'client_id' => com_option_get('com_google_app_id'),
+            'client_secret' => com_option_get('com_google_client_secret'),
+            'redirect_uri' => com_option_get('com_google_client_callback_url'),
         ]);
         $user->stateless()->user();
         $google_id = $user->user()->id;
