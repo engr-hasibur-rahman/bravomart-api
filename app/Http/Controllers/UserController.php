@@ -45,9 +45,9 @@ class UserController extends Controller
         $role = $request->role ?? 'user'; // Default to 'user' if not provided
         return Socialite::driver('facebook')
             ->with([
-                'client_id' => config('services.facebookOAuth.client_id'),
-                'client_secret' => config('services.facebookOAuth.client_secret'),
-                'redirect_uri' => config('services.facebookOAuth.redirect'),
+                'client_id' => com_option_get('com_facebook_app_id'),
+                'client_secret' => com_option_get('com_facebook_client_secret'),
+                'redirect_uri' => com_option_get('com_facebook_client_callback_url'),
                 'state' => $role
             ])
             ->scopes(['email']) // Request the 'email' scope
@@ -60,9 +60,9 @@ class UserController extends Controller
         try {
             $user = Socialite::driver('facebook')
                 ->with([
-                    'client_id' => config('services.facebookOAuth.client_id'),
-                    'client_secret' => config('services.facebookOAuth.client_secret'),
-                    'redirect_uri' => config('services.facebookOAuth.redirect'),
+                    'client_id' => com_option_get('com_facebook_app_id'),
+                    'client_secret' => com_option_get('com_facebook_client_secret'),
+                    'redirect_uri' => com_option_get('com_facebook_client_callback_url'),
                 ])
                 ->stateless()
                 ->user(); // Use stateless() here
