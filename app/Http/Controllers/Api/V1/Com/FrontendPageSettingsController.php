@@ -40,7 +40,7 @@ class FrontendPageSettingsController extends Controller
             'com_register_page_title' => com_option_get('com_register_page_title') ?? '',
             'com_register_page_subtitle' => com_option_get('com_register_page_subtitle') ?? '',
             'com_register_page_description' => com_option_get('com_register_page_description') ?? '',
-            'com_register_page_image' => ImageModifier::generateImageUrl(com_option_get('com_register_page_description')),
+            'com_register_page_image' => ImageModifier::generateImageUrl(com_option_get('com_register_page_image')),
             'com_register_page_terms_page' => com_option_get('com_register_page_terms_page') ?? '',
             'com_register_page_terms_title' => com_option_get('com_register_page_terms_title') ?? '',
             'com_register_page_social_enable_disable' => com_option_get('com_register_page_social_enable_disable') ?? '',

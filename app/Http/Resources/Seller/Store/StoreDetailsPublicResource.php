@@ -48,6 +48,7 @@ class StoreDetailsPublicResource extends JsonResource
             'is_featured' => $this->is_featured,
             'opening_time' => $this->opening_time,
             'closing_time' => $this->closing_time,
+            'started_from' => $this->created_at->format('M d, Y'),
             'veg_status' => $this->veg_status,
             'off_day' => $this->off_day,
             'total_product' => $this->products()->where('deleted_at', null)->where('status', 'approved')->count(),
