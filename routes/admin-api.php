@@ -424,6 +424,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('details/{id}', [StaffController::class, 'show'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
             Route::post('update', [StaffController::class, 'update'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
             Route::post('change-status', [StaffController::class, 'changeStatus'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::post('change-password', [StaffController::class, 'changePassword'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
             Route::delete('remove/{id}', [StaffController::class, 'destroy'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
         });
 

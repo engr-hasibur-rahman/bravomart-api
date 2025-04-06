@@ -248,4 +248,37 @@ class StaffController extends Controller
             ], 500);
         }
     }
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'password' => 'required|min:8|max:12',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        $deliveryman = $this->change_password($request->user_id, $request->password);
+        if ($deliveryman) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Staff password']),
+            ]);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ]);
+        }
+    }
+    private function change_password(int $user_id, string $password)
+    {
+        if (auth('api')->check()) {
+            unauthorized_response();
+        }
+        $user = User::where('id', $user_id)->first();
+        if (!$user) {
+            return [];
+        }
+        $user->password = Hash::make($password);
+        $user->save();
+        return $user;
+    }
 }
