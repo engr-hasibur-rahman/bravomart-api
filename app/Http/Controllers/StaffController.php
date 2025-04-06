@@ -199,7 +199,7 @@ class StaffController extends Controller
         $user->stores = $isAdmin ? null : json_encode($validatedData['stores']);
         $user->store_seller_id = $isAdmin ? null : auth()->guard('api')->user()->id;
         $user->activity_scope = $isAdmin ? 'system_level' : 'store_level';
-        $user->image = ImageModifier::generateImageUrl($validatedData['image'] ?? null);
+        $user->image = $validatedData['image'] ?? null;
         $user->status = 1;
 
         // Update password only if provided
