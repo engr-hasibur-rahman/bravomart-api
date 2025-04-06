@@ -101,7 +101,10 @@ class UserController extends Controller
                     'success' => true,
                     'message' => __('auth.social.login'),
                     'token' => $token,
-                    'user' => $existingUser,
+                    'email_verified' => (bool)$existingUser->email_verified,
+                    'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+                    'marketing_email' => (bool)$existingUser->marketing_email,
+                    'activity_notification' => (bool)$existingUser->activity_notification,
                 ], 200);
             }
 
@@ -156,7 +159,10 @@ class UserController extends Controller
                 'success' => true,
                 'message' => __('auth.social.login'),
                 'token' => $token,
-                'user' => $newUser,
+                'email_verified' => $newUser->email_verified,
+                'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => $newUser->marketing_email,
+                'activity_notification' => $newUser->activity_notification,
             ], 201);
 
         } catch (\Exception $e) {
@@ -230,7 +236,10 @@ class UserController extends Controller
                 'success' => true,
                 'message' => __('auth.social.login'),
                 'token' => $token,
-                'user' => $existingUser,
+                'email_verified' => (bool)$existingUser->email_verified,
+                'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => (bool)$existingUser->marketing_email,
+                'activity_notification' => (bool)$existingUser->activity_notification,
             ], 200);
         } else {
             // Create a new user in the database
@@ -285,7 +294,10 @@ class UserController extends Controller
                 'success' => true,
                 'message' => __('auth.social.login'),
                 'token' => $token,
-                'user' => $newUser,
+                'email_verified' => $newUser->email_verified,
+                'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => $newUser->marketing_email,
+                'activity_notification' => $newUser->activity_notification,
             ], 201);
         }
     }
