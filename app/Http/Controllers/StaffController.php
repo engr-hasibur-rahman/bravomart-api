@@ -36,6 +36,15 @@ class StaffController extends Controller
             ->with(['permissions'])
             ->when($request->filled('available_for'), function ($query) use ($request) {
                 $query->where('available_for', $request->available_for);
+            })
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%$search%")
+                        ->orWhere('last_name', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%")
+                        ->orWhere('phone', 'like', "%$search%");
+                });
             });
 
         if (auth('api')->user()->activity_scope == 'system_level') {
@@ -49,6 +58,7 @@ class StaffController extends Controller
             'meta' => new PaginationResource($roles)
         ]);
     }
+
 
     public function store(SellerStaffStoreRequest $request)
     {
@@ -82,7 +92,7 @@ class StaffController extends Controller
             'last_name' => $request->last_name,
             'slug' => username_slug_generator($request->first_name, $request->last_name),
             'activity_scope' => $isAdmin ? 'system_level' : 'store_level',
-            'stores' => $isAdmin ? null : json_encode($request->stores), // Encode as JSON if needed
+            'stores' => $isAdmin ? null : implode(',', $request->stores), // Encode as JSON if needed
             'store_seller_id' => $isAdmin ? null : auth()->guard('api')->user()->id, // Authenticated store admin id is seller ID
             'email' => $request->email,
             'phone' => $request->phone,
@@ -196,11 +206,10 @@ class StaffController extends Controller
         $user->slug = username_slug_generator($validatedData['first_name'], $validatedData['last_name']);
         $user->email = $validatedData['email'];
         $user->phone = $validatedData['phone'];
-        $user->stores = $isAdmin ? null : json_encode($validatedData['stores']);
+        $user->stores = $isAdmin ? null : implode(',', $validatedData['stores']);
         $user->store_seller_id = $isAdmin ? null : auth()->guard('api')->user()->id;
         $user->activity_scope = $isAdmin ? 'system_level' : 'store_level';
         $user->image = $validatedData['image'] ?? null;
-        $user->status = 1;
 
         // Update password only if provided
         if (!empty($validatedData['password'])) {
