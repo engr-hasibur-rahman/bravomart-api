@@ -122,6 +122,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/become-a-seller', [FrontendController::class, 'becomeSeller']);
     Route::get('/about-us', [FrontendController::class, 'aboutUs']);
     Route::get('/contact-us', [FrontendController::class, 'contactUs']);
+    Route::get('/pages/{slug}', [FrontendController::class, 'getPage']);
     Route::get('/store-wise-products', [FrontendController::class, 'getStoreWiseProducts']);
 
 
