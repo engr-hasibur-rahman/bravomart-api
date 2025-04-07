@@ -23,6 +23,11 @@ class MenuPublicDetailsResource extends JsonResource
             "icon" => $this->icon,
             "position" => $this->position,
             "is_visible" => $this->is_visible,
+            'parent_id' => $this->parent_id,
+            'parent_path' => $this->parent_path,
+            'menu_level' => $this->menu_level,
+            'menu_path' => $this->menu_path,
+            'childrenRecursive' => MenuPublicViewResource::collection($this->whenLoaded('childrenRecursive')),
             "translations" => MenuTranslationResource::collection($this->related_translations->groupBy('language'))
         ];
     }

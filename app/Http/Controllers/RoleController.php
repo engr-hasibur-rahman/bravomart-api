@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ComHelper;
 use App\Http\Requests\RoleRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\RoleResource;
 use App\Models\CustomPermission;
 use App\Models\CustomRole;
@@ -16,14 +17,34 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page ?? 10;
-        $roles = QueryBuilder::for(Role::class)
-            ->with(['permissions'])
+        $search = $request->search;
+        $sortField = $request->sortField ?? 'id';
+        $sortOrder = $request->sort ?? 'asc';
+        $isPaginationDisabled = $request->has('pagination') && $request->pagination === "false";
+
+        $roles = Role::with('permissions')
             ->when($request->filled('available_for'), function ($query) use ($request) {
                 $query->where('available_for', $request->available_for);
             })
-            ->paginate($per_page);
-        return RoleResource::collection($roles);
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->orderBy($sortField, $sortOrder);
+
+        if ($isPaginationDisabled) {
+            $roles = $roles->get();
+            return response()->json([
+                'roles' => RoleResource::collection($roles),
+            ]);
+        } else {
+            $roles = $roles->paginate($per_page);
+            return response()->json([
+                'roles' => RoleResource::collection($roles),
+                'meta' => new PaginationResource($roles),
+            ]);
+        }
     }
+
     public function store(RoleRequest $request)
     {
 

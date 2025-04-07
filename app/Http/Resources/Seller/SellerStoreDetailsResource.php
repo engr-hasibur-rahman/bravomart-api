@@ -23,6 +23,7 @@ class SellerStoreDetailsResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
+            "seller_id" => $this->seller?->id,
             "area" => new ComAreaListForDropdownResource($this->area),
             "store_type" => $this->store_type,
             "tax" => $this->tax,

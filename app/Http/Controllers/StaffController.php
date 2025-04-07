@@ -41,7 +41,13 @@ class StaffController extends Controller
         if (auth('api')->user()->activity_scope == 'system_level') {
             $query->whereNull('stores');
         }
-
+        if (isset($request->search)) {
+            $query->where(function ($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('last_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%'); // add other fields if needed
+            });
+        }
         $roles = $query->paginate($per_page);
 
         return response()->json([
@@ -75,7 +81,6 @@ class StaffController extends Controller
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
         $isAdmin = auth('api')->user()->activity_scope == 'system_level';
-
         // Create user
         $user = $this->repository->create([
             'first_name' => $request->first_name,
@@ -86,7 +91,7 @@ class StaffController extends Controller
             'store_seller_id' => $isAdmin ? null : auth()->guard('api')->user()->id, // Authenticated store admin id is seller ID
             'email' => $request->email,
             'phone' => $request->phone,
-            'image' => ImageModifier::generateImageUrl($request->image),
+            'image' => $request->image,
             'status' => 1,
             'password' => Hash::make($request->password),
         ]);
@@ -199,8 +204,7 @@ class StaffController extends Controller
         $user->stores = $isAdmin ? null : json_encode($validatedData['stores']);
         $user->store_seller_id = $isAdmin ? null : auth()->guard('api')->user()->id;
         $user->activity_scope = $isAdmin ? 'system_level' : 'store_level';
-        $user->image = ImageModifier::generateImageUrl($validatedData['image'] ?? null);
-        $user->status = 1;
+        $user->image = $validatedData['image'] ?? null;
 
         // Update password only if provided
         if (!empty($validatedData['password'])) {
@@ -247,5 +251,40 @@ class StaffController extends Controller
                 'message' => __('messages.delete_failed', ['name' => 'Staff']),
             ], 500);
         }
+    }
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'password' => 'required|min:8|max:12',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        $deliveryman = $this->change_password($request->user_id, $request->password);
+        if ($deliveryman) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Staff password']),
+            ]);
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ]);
+        }
+    }
+
+    private function change_password(int $user_id, string $password)
+    {
+        if (auth('api')->check()) {
+            unauthorized_response();
+        }
+        $user = User::where('id', $user_id)->first();
+        if (!$user) {
+            return [];
+        }
+        $user->password = Hash::make($password);
+        $user->save();
+        return $user;
     }
 }

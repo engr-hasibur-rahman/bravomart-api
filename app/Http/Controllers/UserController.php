@@ -45,9 +45,9 @@ class UserController extends Controller
         $role = $request->role ?? 'user'; // Default to 'user' if not provided
         return Socialite::driver('facebook')
             ->with([
-                'client_id' => config('services.facebookOAuth.client_id'),
-                'client_secret' => config('services.facebookOAuth.client_secret'),
-                'redirect_uri' => config('services.facebookOAuth.redirect'),
+                'client_id' => com_option_get('com_facebook_app_id'),
+                'client_secret' => com_option_get('com_facebook_client_secret'),
+                'redirect_uri' => com_option_get('com_facebook_client_callback_url'),
                 'state' => $role
             ])
             ->scopes(['email']) // Request the 'email' scope
@@ -60,9 +60,9 @@ class UserController extends Controller
         try {
             $user = Socialite::driver('facebook')
                 ->with([
-                    'client_id' => config('services.facebookOAuth.client_id'),
-                    'client_secret' => config('services.facebookOAuth.client_secret'),
-                    'redirect_uri' => config('services.facebookOAuth.redirect'),
+                    'client_id' => com_option_get('com_facebook_app_id'),
+                    'client_secret' => com_option_get('com_facebook_client_secret'),
+                    'redirect_uri' => com_option_get('com_facebook_client_callback_url'),
                 ])
                 ->stateless()
                 ->user(); // Use stateless() here
@@ -101,7 +101,10 @@ class UserController extends Controller
                     'success' => true,
                     'message' => __('auth.social.login'),
                     'token' => $token,
-                    'user' => $existingUser,
+                    'email_verified' => (bool)$existingUser->email_verified,
+                    'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+                    'marketing_email' => (bool)$existingUser->marketing_email,
+                    'activity_notification' => (bool)$existingUser->activity_notification,
                 ], 200);
             }
 
@@ -156,7 +159,10 @@ class UserController extends Controller
                 'success' => true,
                 'message' => __('auth.social.login'),
                 'token' => $token,
-                'user' => $newUser,
+                'email_verified' => $newUser->email_verified,
+                'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => $newUser->marketing_email,
+                'activity_notification' => $newUser->activity_notification,
             ], 201);
 
         } catch (\Exception $e) {
@@ -182,8 +188,8 @@ class UserController extends Controller
         return Socialite::driver('google')
             ->scopes(['email', 'profile'])
             ->with([
-                'client_id' => config('services.googleOAuth.client_id'),
-                'redirect_uri' => config('services.googleOAuth.redirect'),
+                'client_id' => com_option_get('com_google_app_id'),
+                'redirect_uri' => com_option_get('com_google_client_callback_url'),
                 'prompt' => 'select_account',  // Forces Google to ask for account selection
                 'state' => $role
             ])
@@ -197,9 +203,9 @@ class UserController extends Controller
         // Retrieve the user information from Google & need to use GoogleProvider for stateless function as laravel socialiate is not compatible with api.
         /** @var \Laravel\Socialite\Two\GoogleProvider */
         $user = Socialite::driver('google')->with([
-            'client_id' => config('services.googleOAuth.client_id'),
-            'client_secret' => config('services.googleOAuth.client_secret'),
-            'redirect_uri' => config('services.googleOAuth.redirect'),
+            'client_id' => com_option_get('com_google_app_id'),
+            'client_secret' => com_option_get('com_google_client_secret'),
+            'redirect_uri' => com_option_get('com_google_client_callback_url'),
         ]);
         $user->stateless()->user();
         $google_id = $user->user()->id;
@@ -230,7 +236,10 @@ class UserController extends Controller
                 'success' => true,
                 'message' => __('auth.social.login'),
                 'token' => $token,
-                'user' => $existingUser,
+                'email_verified' => (bool)$existingUser->email_verified,
+                'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => (bool)$existingUser->marketing_email,
+                'activity_notification' => (bool)$existingUser->activity_notification,
             ], 200);
         } else {
             // Create a new user in the database
@@ -285,7 +294,10 @@ class UserController extends Controller
                 'success' => true,
                 'message' => __('auth.social.login'),
                 'token' => $token,
-                'user' => $newUser,
+                'email_verified' => $newUser->email_verified,
+                'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => $newUser->marketing_email,
+                'activity_notification' => $newUser->activity_notification,
             ], 201);
         }
     }
