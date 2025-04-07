@@ -28,7 +28,7 @@ class MenuManageController extends Controller
         $per_page = $request->per_page ?? 10;
         $language = $request->language ?? DEFAULT_LANGUAGE;
         $search = $request->search;
-
+        $isPaginationDisabled = $request->has('pagination') && $request->pagination === "false";
         $menus = Menu::leftJoin('translations', function ($join) use ($language) {
             $join->on('menus.id', '=', 'translations.translatable_id')
                 ->where('translations.translatable_type', '=', Menu::class)
@@ -52,7 +52,7 @@ class MenuManageController extends Controller
         $sortField = $request->sortField ?? 'position';
         $sortOrder = $request->sort ?? 'asc';
 
-        if (isset($request->pagination) && !$request->pagination) {
+        if ($isPaginationDisabled) {
             $menus = $menus->with('childrenRecursive')
                 ->whereNull('parent_id')
                 ->orderBy($sortField, $sortOrder)
