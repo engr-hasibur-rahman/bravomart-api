@@ -54,6 +54,7 @@ class MenuManageController extends Controller
 
         if (isset($request->pagination) && !$request->pagination) {
             $menus = $menus->with('childrenRecursive')
+                ->whereNull('parent_id')
                 ->orderBy($sortField, $sortOrder)
                 ->get();
             return response()->json([
