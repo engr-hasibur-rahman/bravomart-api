@@ -41,7 +41,13 @@ class StaffController extends Controller
         if (auth('api')->user()->activity_scope == 'system_level') {
             $query->whereNull('stores');
         }
-
+        if (isset($request->search)) {
+            $query->where(function ($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('last_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%'); // add other fields if needed
+            });
+        }
         $roles = $query->paginate($per_page);
 
         return response()->json([
@@ -246,6 +252,7 @@ class StaffController extends Controller
             ], 500);
         }
     }
+
     public function changePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -266,6 +273,7 @@ class StaffController extends Controller
             ]);
         }
     }
+
     private function change_password(int $user_id, string $password)
     {
         if (auth('api')->check()) {
