@@ -15,6 +15,7 @@ class Menu extends Model
         'parent_id',
         'menu_level',
         'menu_path',
+        'parent_path'
     ];
 
     public $translationKeys = [

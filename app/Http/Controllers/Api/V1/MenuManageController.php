@@ -154,8 +154,8 @@ class MenuManageController extends Controller
             'parent_path' => 'nullable|string',
             'menu_path' => 'nullable|string',
             'translations' => 'nullable|array',
-            'translations.*.language' => 'required|string',
-            'translations.*.value' => 'required|string',
+            'translations.*.language' => 'nullable|string',
+            'translations.*.value' => 'nullable|string',
         ]);
 
         // Check if validation fails
