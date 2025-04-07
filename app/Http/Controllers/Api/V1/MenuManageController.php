@@ -77,7 +77,7 @@ class MenuManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'url' => 'required|string',
+            'url' => 'nullable|string',
             'icon' => 'nullable|string',
             'position' => 'nullable|integer',
             'is_visible' => 'boolean',
@@ -147,7 +147,7 @@ class MenuManageController extends Controller
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'url' => 'required|string',
+            'url' => 'nullable|string',
             'icon' => 'nullable|string',
             'position' => 'nullable|integer',
             'is_visible' => 'boolean',
