@@ -24,6 +24,7 @@ class MenuPublicDetailsResource extends JsonResource
             "position" => $this->position,
             "is_visible" => $this->is_visible,
             'parent_id' => $this->parent_id,
+            'parent_path' => $this->parent_path,
             'menu_level' => $this->menu_level,
             'menu_path' => $this->menu_path,
             'childrenRecursive' => MenuPublicViewResource::collection($this->whenLoaded('childrenRecursive')),
