@@ -51,10 +51,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'stores' => 'array',
     ];
-    public function getStoresArrayAttribute()
-    {
-        return $this->stores ? array_map('intval', explode(',', $this->stores)) : [];
-    }
+
     public function wallet()
     {
         return $this->hasOne(Wallet::class);
