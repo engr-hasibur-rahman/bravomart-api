@@ -4,19 +4,18 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Modules\Wallet\app\Models\Wallet;
-use Spatie\Permission\Contracts\Role as RoleContract;
+use NotificationChannels\WebPush\HasPushSubscriptions;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Models\Permission;
+use NotificationChannels\WebPush\PushSubscription;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
+    use HasApiTokens, HasFactory, HasPushSubscriptions,Notifiable, HasRoles, SoftDeletes;
 
     protected $appends = ['rating', 'review_count'];
     protected $fillable = [
@@ -51,6 +50,32 @@ class User extends Authenticatable
         'password' => 'hashed',
         'stores' => 'array',
     ];
+
+    public function routeNotificationForWebPush($notification)
+    {
+        // Assuming the user has many WebPushTokens, find the active one (you may adjust this logic)
+        $subscription = $this->pushSubscriptions()->first();
+
+        if ($subscription) {
+            // Convert to PushSubscription object
+            return $subscription->toPushSubscription();
+        }
+
+        return null; // No subscription found
+    }
+    public function updatePushSubscription($endpoint, $key = null, $token = null, $contentEncoding = null)
+    {
+        $this->pushSubscriptions()->updateOrCreate(
+            ['endpoint' => $endpoint], // Ensure the endpoint is passed here
+            ['key' => $key, 'token' => $token, 'content_encoding' => 'aes128gcm']
+        );
+    }
+
+
+    public function pushSubscriptions()
+    {
+        return $this->hasMany(WebPushToken::class);
+    }
 
     public function wallet()
     {
