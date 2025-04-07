@@ -43,7 +43,7 @@ class MigrationController extends Controller
             if ($migrationName) {
                 // If migration name exists, we run the migration refresh for the specific migration
                 Artisan::call('migrate:refresh', [
-                    '--path' => "Modules/Subscription/database/migrations/{$migrationName}.php", // Correct path to your migration file
+                    '--path' => "database/migrations/{$migrationName}.php", // Correct path to your migration file
                     '--force' => true
                 ]);
             } else {
