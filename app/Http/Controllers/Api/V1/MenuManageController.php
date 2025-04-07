@@ -52,21 +52,22 @@ class MenuManageController extends Controller
         $sortField = $request->sortField ?? 'position';
         $sortOrder = $request->sort ?? 'asc';
 
-        if ($request->pagination == "false") {
+        if (isset($request->pagination) && !$request->pagination) {
             $menus = $menus->with('childrenRecursive')
-                ->whereNull('parent_id')
                 ->orderBy($sortField, $sortOrder)
                 ->get();
+            return response()->json([
+                'menus' => MenuPublicViewResource::collection($menus),
+            ]);
         } else {
             $menus = $menus->with('childrenRecursive')
                 ->orderBy($sortField, $sortOrder)
                 ->paginate($per_page);
+            return response()->json([
+                'menus' => MenuPublicViewResource::collection($menus),
+                'meta' => new PaginationResource($menus)
+            ]);
         }
-
-        return response()->json([
-            'menus' => MenuPublicViewResource::collection($menus),
-            'meta' => new PaginationResource($menus)
-        ]);
     }
 
 
@@ -80,6 +81,8 @@ class MenuManageController extends Controller
             'position' => 'nullable|integer',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id',
+            'parent_path' => 'nullable|string',
+            'menu_path' => 'nullable|string',
             'translations' => 'nullable|array',
             'translations.*.language' => 'nullable|string',
             'translations.*.value' => 'nullable|string',
@@ -98,6 +101,8 @@ class MenuManageController extends Controller
                 'position' => $request->position ?? 0,
                 'is_visible' => $request->is_visible ?? true,
                 'parent_id' => $request->parent_id,
+                'parent_path' => $request->parent_path,
+                'menu_path' => $request->menu_path,
                 'menu_level' => $request->parent_id ? Menu::find($request->parent_id)->menu_level + 1 : 0,
             ]);
 
@@ -146,6 +151,8 @@ class MenuManageController extends Controller
             'position' => 'nullable|integer',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id|not_in:' . $request->id,
+            'parent_path' => 'nullable|string',
+            'menu_path' => 'nullable|string',
             'translations' => 'nullable|array',
             'translations.*.language' => 'required|string',
             'translations.*.value' => 'required|string',
@@ -166,6 +173,8 @@ class MenuManageController extends Controller
                 'position' => $request->position ?? 0,
                 'is_visible' => $request->is_visible ?? true,
                 'parent_id' => $request->parent_id,
+                'parent_path' => $request->parent_path,
+                'menu_path' => $request->menu_path,
                 'menu_level' => $request->parent_id ? Menu::find($request->parent_id)->menu_level + 1 : 0,
             ]);
             if ($request->has('translations')){

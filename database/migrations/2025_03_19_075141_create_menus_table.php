@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->integer('position')->default(0);
             $table->unsignedBigInteger('parent_id')->nullable(); // For nesting
+            $table->string('parent_path')->nullable(); // For nesting
             $table->integer('menu_level')->nullable();           // Optional, similar to category_level
             $table->string('menu_path')->nullable();             // Optional, similar to parent_path
             $table->boolean('is_visible')->default(true);
