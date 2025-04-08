@@ -315,6 +315,7 @@ class UserController extends Controller
             ]);
         }
     }
+
     public function socialJsonResponse(Request $request)
     {
         return response()->json([
@@ -897,6 +898,58 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required|string',
+            'new_password' => 'required|string|min:8|max:12|different:old_password', // Ensure new password is different from old password
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Check if user is authenticated
+            if (!auth()->guard('api')->user()) {
+                return unauthorized_response();
+            }
+
+            $userId = auth('api')->id();
+            $user = User::findOrFail($userId);
+
+            // Verify if the old password is correct
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 401,
+                    'message' => __('messages.old_password_invalid'),
+                ]);
+            }
+
+            // Update the password with the new one
+            $user->update([
+                'password' => Hash::make($request->new_password), // Hash the new password before saving
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.password_updated_success'),
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.something_went_wrong'),
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
 
     public function deactivateAccount()
     {

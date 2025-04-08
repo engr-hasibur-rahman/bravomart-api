@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth:sanctum', ApiAuthMiddleware::class]], funct
         Route::get('profile', [UserController::class, 'userProfile']);
         Route::post('/profile-edit', [UserController::class, 'userProfileUpdate']);
         Route::post('/email-change', [UserController::class, 'userEmailUpdate']);
+        Route::post('/change-password', [UserController::class, 'changePassword']);
     });
 });
 Route::post('contact-us', [ContactManageController::class, 'store']);
