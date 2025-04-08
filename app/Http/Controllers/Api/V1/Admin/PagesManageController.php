@@ -31,7 +31,7 @@ class PagesManageController extends Controller
 
     public function pagesStore(Request $request): JsonResponse
     {
-        $request['slug'] = MultilangSlug::makeSlug(Page::class, $request->name, 'slug');
+        $request['slug'] = MultilangSlug::makeSlug(Page::class, $request->title, 'slug');
         try {
             // Validate input data
             $validator = Validator::make($request->all(), [
