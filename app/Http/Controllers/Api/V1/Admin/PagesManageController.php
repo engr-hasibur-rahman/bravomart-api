@@ -45,7 +45,7 @@ class PagesManageController extends Controller
                 ]);
             }
             $page = $this->pageRepo->store($request->all(), Page::class);
-            createOrUpdateTranslation($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
+            createOrUpdateTranslationJson($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
 
             if ($page) {
                 return $this->success(translate('messages.save_success', ['name' => 'Page']));
