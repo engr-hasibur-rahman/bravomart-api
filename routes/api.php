@@ -60,6 +60,7 @@ Route::group(['prefix' => 'v1/'], function () {
     });
 
     Route::group(['prefix' => 'seller/'], function () {
+        Route::post('registration', [UserController::class, 'StoreOwnerRegistration']);
         // password reset
         Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
         Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
