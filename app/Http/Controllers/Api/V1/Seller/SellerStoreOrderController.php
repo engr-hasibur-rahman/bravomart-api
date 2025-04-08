@@ -24,6 +24,7 @@ class SellerStoreOrderController extends Controller
     {
         $this->orderManageNotificationService = $orderManageNotificationService;
     }
+
     public function allOrders(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -54,9 +55,9 @@ class SellerStoreOrderController extends Controller
             }
 
             return response()->json([
-                    'order_data' => new StoreOrderResource($order),
-                    'order_summary' => new OrderSummaryResource($order)
-                ]);
+                'order_data' => new StoreOrderResource($order),
+                'order_summary' => new OrderSummaryResource($order)
+            ]);
         }
 
         if (isset($request->store_id)) {
@@ -83,11 +84,11 @@ class SellerStoreOrderController extends Controller
             // Apply payment_status filter
             if (isset($request->payment_status)) {
                 $orders->whereHas('orderMaster', function ($query) use ($request) {
-                    $query->where('payment_status',$request->payment_status);
+                    $query->where('payment_status', $request->payment_status);
                 });
             }
 
-            $orders = $orders->orderBy('created_at', 'desc')->paginate(10);
+            $orders = $orders->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
 
             return response()->json([
                 'order_masters' => StoreOrderResource::collection($orders),
@@ -161,7 +162,8 @@ class SellerStoreOrderController extends Controller
             try {
                 // Dispatch the email job asynchronously
                 dispatch(new DispatchOrderEmails($order->orderMaster?->id));
-            }catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
 
             if ($success) {
                 return response()->json([
