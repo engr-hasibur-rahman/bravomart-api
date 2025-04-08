@@ -232,15 +232,22 @@ class UserController extends Controller
             // Generate a Sanctum token for the existing user
             $token = $existingUser->createToken('api_token')->plainTextToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => __('auth.social.login'),
+//            return response()->json([
+//                'success' => true,
+//                'message' => __('auth.social.login'),
+//                'token' => $token,
+//                'email_verified' => (bool)$existingUser->email_verified,
+//                'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+//                'marketing_email' => (bool)$existingUser->marketing_email,
+//                'activity_notification' => (bool)$existingUser->activity_notification,
+//            ], 200);
+            return redirect()->route('social.response', [
                 'token' => $token,
-                'email_verified' => (bool)$existingUser->email_verified,
-                'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
-                'marketing_email' => (bool)$existingUser->marketing_email,
-                'activity_notification' => (bool)$existingUser->activity_notification,
-            ], 200);
+                'verified' => $existingUser->email_verified,
+                'status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => $existingUser->marketing_email,
+                'activity_notification' => $existingUser->activity_notification,
+            ]);
         } else {
             // Create a new user in the database
             if ($role == 'customer') {
@@ -290,16 +297,36 @@ class UserController extends Controller
             // Generate a Sanctum token for the new user
             $token = $newUser->createToken('api_token')->plainTextToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => __('auth.social.login'),
+//            return response()->json([
+//                'success' => true,
+//                'message' => __('auth.social.login'),
+//                'token' => $token,
+//                'email_verified' => $newUser->email_verified,
+//                'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
+//                'marketing_email' => $newUser->marketing_email,
+//                'activity_notification' => $newUser->activity_notification,
+//            ], 201);
+            return redirect()->route('social.response', [
                 'token' => $token,
-                'email_verified' => $newUser->email_verified,
-                'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
+                'verified' => $newUser->email_verified,
+                'status' => $newUser->deactivated_at ? 'deactivated' : 'active',
                 'marketing_email' => $newUser->marketing_email,
                 'activity_notification' => $newUser->activity_notification,
-            ], 201);
+            ]);
         }
+    }
+
+    public function socialJsonResponse(Request $request)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => __('auth.social.login'),
+            'token' => $request->token,
+            'email_verified' => filter_var($request->verified, FILTER_VALIDATE_BOOLEAN),
+            'account_status' => $request->status,
+            'marketing_email' => filter_var($request->marketing_email, FILTER_VALIDATE_BOOLEAN),
+            'activity_notification' => filter_var($request->activity_notification, FILTER_VALIDATE_BOOLEAN),
+        ]);
     }
 
     /* Social login end */
@@ -792,7 +819,7 @@ class UserController extends Controller
         }
     }
 
-    public function userProfileUpdate(UserUpdateRequest $request)
+    public function userProfileUpdate(Request $request)
     {
         try {
             if (!auth()->guard('api')->user()) {
@@ -803,7 +830,7 @@ class UserController extends Controller
             $user = User::findOrFail($userId);
 
             if ($user) {
-                $user->update($request->only('first_name', 'last_name', 'phone', 'image'));
+                $user->update($request->only('first_name', 'last_name', 'phone', 'image', 'email'));
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
@@ -871,6 +898,58 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required|string',
+            'new_password' => 'required|string|min:8|max:12|different:old_password', // Ensure new password is different from old password
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Check if user is authenticated
+            if (!auth()->guard('api')->user()) {
+                return unauthorized_response();
+            }
+
+            $userId = auth('api')->id();
+            $user = User::findOrFail($userId);
+
+            // Verify if the old password is correct
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 401,
+                    'message' => __('messages.old_password_invalid'),
+                ]);
+            }
+
+            // Update the password with the new one
+            $user->update([
+                'password' => Hash::make($request->new_password), // Hash the new password before saving
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.update_success', ['name' => 'Password']),
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => __('messages.something_went_wrong'),
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
 
     public function deactivateAccount()
     {

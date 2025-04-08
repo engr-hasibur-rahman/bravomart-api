@@ -62,7 +62,7 @@ class AdminOrderManageController extends Controller
 
         $ordersQuery->when($request->search, fn($query) => $query->where('id', 'like', '%' . $request->search . '%'));
 
-        $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate(10);
+        $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
 
         return response()->json([
             'orders' => AdminOrderResource::collection($orders),

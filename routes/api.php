@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\DeliveryChargeCalculateController;
 use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\MigrationController;
 use App\Http\Controllers\Api\V1\OtherChargeInfoController;
+use App\Http\Controllers\Api\V1\SeederController;
 use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\TaxInfoController;
 use App\Http\Controllers\Customer\PlaceOrderController;
@@ -41,6 +42,7 @@ Route::group(['middleware' => ['auth:sanctum', ApiAuthMiddleware::class]], funct
         Route::get('profile', [UserController::class, 'userProfile']);
         Route::post('/profile-edit', [UserController::class, 'userProfileUpdate']);
         Route::post('/email-change', [UserController::class, 'userEmailUpdate']);
+        Route::post('/change-password', [UserController::class, 'changePassword']);
     });
 });
 Route::post('contact-us', [ContactManageController::class, 'store']);
@@ -59,6 +61,7 @@ Route::group(['prefix' => 'v1/'], function () {
     });
 
     Route::group(['prefix' => 'seller/'], function () {
+        Route::post('registration', [UserController::class, 'StoreOwnerRegistration']);
         // password reset
         Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
         Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
@@ -70,6 +73,7 @@ Route::group(['prefix' => 'v1/'], function () {
         Route::get('google/callback', [UserController::class, 'handleGoogleCallback']);
         Route::get('facebook', [UserController::class, 'redirectToFacebook']);
         Route::get('facebook/callback', [UserController::class, 'handleFacebookCallback']);
+        Route::get('social/response', [UserController::class, 'socialJsonResponse'])->name('social.response');
         Route::post('forget-password', [UserController::class, 'forgetPassword']);
         Route::post('verify-token', [UserController::class, 'verifyToken']);
         Route::post('reset-password', [UserController::class, 'resetPassword']);
@@ -82,6 +86,7 @@ Route::group(['prefix' => 'v1/'], function () {
 
     // public routes for frontend
     Route::post('migrate-refresh', [MigrationController::class, 'migrateRefresh']);
+    Route::post('seed', [SeederController::class, 'runSeeder']);
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     Route::get('/product-list', [FrontendController::class, 'productList']);
     Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);

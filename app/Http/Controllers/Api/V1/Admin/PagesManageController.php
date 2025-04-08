@@ -31,7 +31,7 @@ class PagesManageController extends Controller
 
     public function pagesStore(Request $request): JsonResponse
     {
-        $request['slug'] = MultilangSlug::makeSlug(Page::class, $request->name, 'slug');
+        $request['slug'] = MultilangSlug::makeSlug(Page::class, $request->title, 'slug');
         try {
             // Validate input data
             $validator = Validator::make($request->all(), [
@@ -45,7 +45,7 @@ class PagesManageController extends Controller
                 ]);
             }
             $page = $this->pageRepo->store($request->all(), Page::class);
-            createOrUpdateTranslation($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
+            createOrUpdateTranslationJson($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
 
             if ($page) {
                 return $this->success(translate('messages.save_success', ['name' => 'Page']));

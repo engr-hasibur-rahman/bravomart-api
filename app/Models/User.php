@@ -7,15 +7,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Modules\Wallet\app\Models\Wallet;
-use NotificationChannels\WebPush\HasPushSubscriptions;
+//use NotificationChannels\WebPush\HasPushSubscriptions;
+//use NotificationChannels\WebPush\PushSubscription;
+
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use NotificationChannels\WebPush\PushSubscription;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasPushSubscriptions,Notifiable, HasRoles, SoftDeletes;
+//HasPushSubscriptions
+    use HasApiTokens, HasFactory,Notifiable, HasRoles, SoftDeletes;
 
     protected $appends = ['rating', 'review_count'];
     protected $fillable = [

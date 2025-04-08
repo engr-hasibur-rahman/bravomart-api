@@ -28,9 +28,8 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum',]], function () {
+Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function () {
     Route::group(['prefix' => 'seller/'], function () {
-        Route::post('registration', [UserController::class, 'StoreOwnerRegistration']);
         Route::get('store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
 
