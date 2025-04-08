@@ -9,6 +9,7 @@ return [
     'email.verify.success' => 'Email verified successfully',
     'email.resend.failed' => 'Email resend failed',
     'email.resend.success' => 'Email resend successfully',
+    'old_password_invalid' => 'Old password is invalid',
 
     'something_went_wrong' => 'Something went wrong',
 
