@@ -3,6 +3,7 @@
 namespace App\Services;
 
 
+use App\Events\OrderPlaced;
 use App\Helpers\DeliveryChargeHelper;
 use App\Jobs\DispatchOrderEmails;
 use App\Mail\DynamicEmail;
@@ -40,7 +41,7 @@ class OrderService
 
     public function createOrder($data)
     {
-        try {
+//        try {
         $customer = auth()->guard('api_customer')->user();
         //  check authenticated
         if (!$customer) {
@@ -220,7 +221,7 @@ class OrderService
             $customer_lng = $data['customer_longitude'] ?? null;
 
             $coupon_discount_amount_admin_final = 0;
-            foreach ($data['packages'] as $packageData) {
+            foreach ($data['packages'] as $packageData) {              
                 // find store wise area id
                 $store_info = Store::find($packageData['store_id']);
                 $store_area_id = $store_info->area_id;
@@ -507,6 +508,14 @@ class OrderService
 
             // order notification
             $all_orders_ids = Order::where('order_master_id', $order_master->id)->pluck('id')->toArray();
+
+            // Fire the event to broadcast the order creation
+//            event(new OrderPlaced($all_orders));
+            foreach ($all_orders as $order) {
+                event(new OrderPlaced($order));
+            }
+
+
             $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
 //            // Dispatch the email job asynchronously
 //            dispatch(new DispatchOrderEmails($order_master->id));
@@ -516,8 +525,8 @@ class OrderService
                 $order_master,
                 'customer' => $customer,
             ];
-        } catch (\Exception $e) {
-        }
+//        } catch (\Exception $e) {
+//        }
     }
 
     public function updateOrderStatus($orderId, $status)
