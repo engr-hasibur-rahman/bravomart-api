@@ -819,7 +819,7 @@ class UserController extends Controller
         }
     }
 
-    public function userProfileUpdate(UserUpdateRequest $request)
+    public function userProfileUpdate(Request $request)
     {
         try {
             if (!auth()->guard('api')->user()) {
@@ -830,7 +830,7 @@ class UserController extends Controller
             $user = User::findOrFail($userId);
 
             if ($user) {
-                $user->update($request->only('first_name', 'last_name', 'phone', 'image'));
+                $user->update($request->only('first_name', 'last_name', 'phone', 'image','email'));
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
