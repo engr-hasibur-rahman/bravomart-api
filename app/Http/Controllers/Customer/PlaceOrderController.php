@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Events\MyEvent;
+use App\Events\OrderPlaced;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\PlaceOrderRequest;
 use App\Http\Resources\Order\OrderMasterResource;
@@ -35,16 +37,17 @@ class PlaceOrderController extends Controller
         $data = $request->validated();
 
 
-        $user = User::with('pushSubscriptions')->find(1);
-        // Retrieve the push subscription details from the request (sent from the frontend)
-        $endpoint = 'https://fcm.googleapis.com/fcm/send/endpoint';  // Example endpoint, replace with actual subscription endpoint from the frontend
-        $key = 'p256dh';  // Encryption key (replace with actual key from the frontend)
-        $token = auth()->user()->currentAccessToken()->token;  // Auth token (replace with actual token from the frontend, but using Laravel Auth token here)
-        $contentEncoding = 'utf-8';  // Content encoding type (you can use 'aes128gcm' or other supported encodings)
-        Log::info('Sending notification...');
-        $user->updatePushSubscription($endpoint, $key, $token, $contentEncoding);
-        $user->notify(new NewOrderNotification($data));
-        return response()->json(['message' => 'Order placed and notification sent']);
+//        $user = User::with('pushSubscriptions')->find(1);
+//        // Get subscription data from the request
+//        $endpoint = $request->input('endpoint');
+//        $key = $request->input('keys.p256dh');
+//        $token = auth()->user()->currentAccessToken()->token;
+//        $contentEncoding = $request->input('content_encoding', 'aes128gcm');
+//        Log::info('Sending notification...');
+//
+//        $user->updatePushSubscription($endpoint, $key, $token, $contentEncoding);
+//        $user->notify(new NewOrderNotification($data));
+//        return response()->json(['message' => 'Order placed and notification sent']);
 
 
         // login check
@@ -60,16 +63,15 @@ class PlaceOrderController extends Controller
 
         $orders = $this->orderService->createOrder($data);
         // if return false
-        if($orders === false){
+        if($orders === false || empty($orders)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to place order. Please try again.',
             ], 400);
+        }else{
+            $all_orders = $orders[0];
+            $order_master = $orders[1];
         }
-
-        // response order data
-        $all_orders = $orders[0];
-        $order_master = $orders[1];
 
         try {
             if ($orders) {
