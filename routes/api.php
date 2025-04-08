@@ -70,6 +70,7 @@ Route::group(['prefix' => 'v1/'], function () {
         Route::get('google/callback', [UserController::class, 'handleGoogleCallback']);
         Route::get('facebook', [UserController::class, 'redirectToFacebook']);
         Route::get('facebook/callback', [UserController::class, 'handleFacebookCallback']);
+        Route::get('social/response', [UserController::class, 'socialJsonResponse'])->name('social.response');
         Route::post('forget-password', [UserController::class, 'forgetPassword']);
         Route::post('verify-token', [UserController::class, 'verifyToken']);
         Route::post('reset-password', [UserController::class, 'resetPassword']);

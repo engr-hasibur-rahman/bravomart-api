@@ -232,15 +232,22 @@ class UserController extends Controller
             // Generate a Sanctum token for the existing user
             $token = $existingUser->createToken('api_token')->plainTextToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => __('auth.social.login'),
+//            return response()->json([
+//                'success' => true,
+//                'message' => __('auth.social.login'),
+//                'token' => $token,
+//                'email_verified' => (bool)$existingUser->email_verified,
+//                'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+//                'marketing_email' => (bool)$existingUser->marketing_email,
+//                'activity_notification' => (bool)$existingUser->activity_notification,
+//            ], 200);
+            return redirect()->route('social.response', [
                 'token' => $token,
-                'email_verified' => (bool)$existingUser->email_verified,
-                'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
-                'marketing_email' => (bool)$existingUser->marketing_email,
-                'activity_notification' => (bool)$existingUser->activity_notification,
-            ], 200);
+                'verified' => $existingUser->email_verified,
+                'status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => $existingUser->marketing_email,
+                'activity_notification' => $existingUser->activity_notification,
+            ]);
         } else {
             // Create a new user in the database
             if ($role == 'customer') {
@@ -290,16 +297,35 @@ class UserController extends Controller
             // Generate a Sanctum token for the new user
             $token = $newUser->createToken('api_token')->plainTextToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => __('auth.social.login'),
+//            return response()->json([
+//                'success' => true,
+//                'message' => __('auth.social.login'),
+//                'token' => $token,
+//                'email_verified' => $newUser->email_verified,
+//                'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
+//                'marketing_email' => $newUser->marketing_email,
+//                'activity_notification' => $newUser->activity_notification,
+//            ], 201);
+            return redirect()->route('social.response', [
                 'token' => $token,
-                'email_verified' => $newUser->email_verified,
-                'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
+                'verified' => $newUser->email_verified,
+                'status' => $newUser->deactivated_at ? 'deactivated' : 'active',
                 'marketing_email' => $newUser->marketing_email,
                 'activity_notification' => $newUser->activity_notification,
-            ], 201);
+            ]);
         }
+    }
+    public function socialJsonResponse(Request $request)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => __('auth.social.login'),
+            'token' => $request->token,
+            'email_verified' => filter_var($request->verified, FILTER_VALIDATE_BOOLEAN),
+            'account_status' => $request->status,
+            'marketing_email' => filter_var($request->marketing_email, FILTER_VALIDATE_BOOLEAN),
+            'activity_notification' => filter_var($request->activity_notification, FILTER_VALIDATE_BOOLEAN),
+        ]);
     }
 
     /* Social login end */
