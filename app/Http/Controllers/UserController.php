@@ -830,7 +830,7 @@ class UserController extends Controller
             $user = User::findOrFail($userId);
 
             if ($user) {
-                $user->update($request->only('first_name', 'last_name', 'phone', 'image','email'));
+                $user->update($request->only('first_name', 'last_name', 'phone', 'image', 'email'));
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
@@ -937,7 +937,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => __('messages.password_updated_success'),
+                'message' => __('messages.update_success', ['name' => 'Password']),
             ]);
 
         } catch (\Exception $e) {

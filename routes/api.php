@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\DeliveryChargeCalculateController;
 use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\MigrationController;
 use App\Http\Controllers\Api\V1\OtherChargeInfoController;
+use App\Http\Controllers\Api\V1\SeederController;
 use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\TaxInfoController;
 use App\Http\Controllers\Customer\PlaceOrderController;
@@ -85,6 +86,7 @@ Route::group(['prefix' => 'v1/'], function () {
 
     // public routes for frontend
     Route::post('migrate-refresh', [MigrationController::class, 'migrateRefresh']);
+    Route::post('seed', [SeederController::class, 'runSeeder']);
     Route::get('/slider-list', [FrontendController::class, 'allSliders']);
     Route::get('/product-list', [FrontendController::class, 'productList']);
     Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);

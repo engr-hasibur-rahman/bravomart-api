@@ -248,13 +248,21 @@ if (!function_exists('translate')) {
                 $username = "{$username}-{$slugLastName}";
             }
 
-            // Ensure the slug is unique
             $originalUsername = $username;
             $counter = 1;
 
-            while (User::where('slug', $username)->exists()) {
-                $username = "{$originalUsername}-{$counter}";
-                $counter++;
+            // Loop until a unique slug is found
+            do {
+                $exists = User::where('slug', $username)->exists();
+                if ($exists) {
+                    $username = "{$originalUsername}-{$counter}";
+                    $counter++;
+                }
+            } while ($exists && $counter < 1000);
+
+            // Fallback in case uniqueness is not achieved after many attempts
+            if ($exists) {
+                $username = "{$originalUsername}-" . Str::random(5);
             }
 
             return $username;
