@@ -67,7 +67,7 @@ class Order extends Model
     protected static function booted()
     {
         static::creating(function ($order) {
-            $order->invoice_number = now()->year . '-' . time();
+            $order->invoice_number = now()->year . '-' . time() . '-' . uniqid();
             $order->invoice_date = now();
         });
     }
