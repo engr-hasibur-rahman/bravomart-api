@@ -214,7 +214,7 @@ class StaffController extends Controller
         $user->slug = username_slug_generator($validatedData['first_name'], $validatedData['last_name']);
         $user->email = $validatedData['email'];
         $user->phone = $validatedData['phone'];
-        $user->stores = $isAdmin ? null : json_encode($validatedData['stores']);
+        $user->stores = $isAdmin ? null : $validatedData['stores'];
         $user->store_seller_id = $isAdmin ? null : auth()->guard('api')->user()->id;
         $user->activity_scope = $isAdmin ? 'system_level' : 'store_level';
         $user->image = $validatedData['image'] ?? null;
