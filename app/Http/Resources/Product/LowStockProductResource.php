@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -29,6 +30,7 @@ class LowStockProductResource extends JsonResource
                 : $this->store?->name, // If language is empty or not provided attribute
             'slug' => $this->slug,
             'type' => $this->type,
+            'image_url' =>ImageModifier::generateImageUrl($this->image),
             'variants' => $this->lowStockVariants()->map(function ($variant) {
                 return [
                     'product_id' => $variant->product_id,
