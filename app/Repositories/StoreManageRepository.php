@@ -339,10 +339,23 @@ class StoreManageRepository implements StoreManageInterface
             unauthorized_response();
         }
 
-        $seller_id = auth('api')->id();
+        $seller = auth('api')->user();
+        if ($seller->store_owner == 0) {
+            // Decode the JSON string to an array
+            $storeIds = json_decode($seller->stores, true);
+
+            // If the stores data exists and is not empty, proceed with the query
+            if (!empty($storeIds)) {
+                $stores = Store::with('related_translations') // Load all related translations
+                ->whereIn('id', $storeIds)
+                    ->get();
+            } else {
+                $stores = collect(); // Return an empty collection if no stores exist
+            }
+        }
 
         $stores = Store::with('related_translations') // Load all related translations
-        ->where('store_seller_id', $seller_id)
+        ->where('store_seller_id', $seller->id)
             ->where('enable_saling', 1)
             ->get();
 
