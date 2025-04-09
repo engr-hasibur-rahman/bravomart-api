@@ -90,13 +90,24 @@ class StaffController extends Controller
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }
         $isAdmin = auth('api')->user()->activity_scope == 'system_level';
+        // Ensure stores is a proper array format, even if it's a string or another format
+        $stores = [];
+        if (isset($request->stores)) {
+            // Check if it's a JSON string, and decode it into an array if so
+            $stores = is_string($request->stores) ? json_decode($request->stores, true) : $request->stores;
+
+            // Ensure it's an array and convert to a simple array of integers
+            if (is_array($stores)) {
+                $stores = array_map('intval', $stores);
+            }
+        }
         // Create user
         $user = $this->repository->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'slug' => username_slug_generator($request->first_name, $request->last_name),
             'activity_scope' => $isAdmin ? 'system_level' : 'store_level',
-            'stores' => $isAdmin ? null : json_encode($request->stores), // Encode as JSON if needed
+            'stores' => $isAdmin ? null : json_encode($stores), // Encode as JSON if needed
             'store_seller_id' => $isAdmin ? null : auth()->guard('api')->user()->id, // Authenticated store admin id is seller ID
             'email' => $request->email,
             'phone' => $request->phone,
