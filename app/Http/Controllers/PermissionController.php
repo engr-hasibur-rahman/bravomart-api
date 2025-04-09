@@ -10,12 +10,15 @@ use App\Models\CustomPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Permission as SpatiePermission; // Alias the Spatie PermissionKey model
+use Spatie\Permission\Models\Permission as SpatiePermission;
+
+// Alias the Spatie PermissionKey model
 use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
-use App\Enums\PermissionKey; // Ensure you are importing your custom PermissionKey enum
+use App\Enums\PermissionKey;
 
+// Ensure you are importing your custom PermissionKey enum
 
 
 class PermissionController extends Controller
@@ -24,22 +27,21 @@ class PermissionController extends Controller
     public function getpermissions(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
-        $shop_count=1; // Primarily Pass For All
-        $permissions=null;
+        $shop_count = 1; // Primarily Pass For All
+        $permissions = null;
         // Now Check if user is a Store User and he have assigned Stores
-        if($user->activity_scope=='store_level')
-        {
-            $shop_count=Store::where('store_seller_id', $user->id)->count();
+        if ($user->activity_scope == 'store_level') {
+            $shop_count = Store::where('store_seller_id', $user->id)->count();
         }
 
-        if($shop_count > 0) {
+        if ($shop_count > 0) {
             // Handle permissions for any route under "seller/store/"
 //            if ($user->activity_scope=='store_level' && !empty($request->store_slug) && $request->is('seller/store/*') && !$request->is('seller/store/list')) {
-            if ($user->activity_scope=='store_level' && !empty($request->store_slug)) {
+            if ($user->activity_scope == 'store_level' && !empty($request->store_slug)) {
                 $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
-            }elseif($user->activity_scope == 'system_level'){
+            } elseif ($user->activity_scope == 'system_level') {
                 $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
-            }else{
+            } else {
                 // Define the permissions array for non-store level seller
                 $permissionsArray = [
                     'dashboard',
@@ -76,7 +78,7 @@ class PermissionController extends Controller
                 });
             }
 
-        } else{
+        } else {
             // Define the permissions array for non-store level seller
             $permissionsArray = [
                 'dashboard',
@@ -168,7 +170,7 @@ class PermissionController extends Controller
             ->whereNull('parent_id') // Start with top-level permissions
             ->with('childrenRecursive') // Include recursive children
             ->get();
-        return  ComHelper::buildMenuTree([0],$permissions);
+        return ComHelper::buildMenuTree([0], $permissions);
 //        return PermissionResource::collection($permissions);
     }
 
