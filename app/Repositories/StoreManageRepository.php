@@ -340,9 +340,16 @@ class StoreManageRepository implements StoreManageInterface
         }
 
         $seller = auth('api')->user();
+
         if ($seller->store_owner == 0) {
-            // Decode the JSON string to an array
-            $storeIds = json_decode($seller->stores, true);
+            // Check if stores is a string (assuming it's JSON encoded if a string)
+            if (is_string($seller->stores)) {
+                // Decode the JSON string to an array
+                $storeIds = json_decode($seller->stores, true);
+            } else {
+                // If it's already an array, use it directly
+                $storeIds = $seller->stores;
+            }
 
             // If the stores data exists and is not empty, proceed with the query
             if (!empty($storeIds)) {
@@ -352,12 +359,13 @@ class StoreManageRepository implements StoreManageInterface
             } else {
                 $stores = collect(); // Return an empty collection if no stores exist
             }
+        } else {
+            // Fetch the stores for the seller when store_owner is 1
+            $stores = Store::with('related_translations') // Load all related translations
+            ->where('store_seller_id', $seller->id)
+                ->where('enable_saling', 1)
+                ->get();
         }
-
-        $stores = Store::with('related_translations') // Load all related translations
-        ->where('store_seller_id', $seller->id)
-            ->where('enable_saling', 1)
-            ->get();
 
         return $stores;
     }
