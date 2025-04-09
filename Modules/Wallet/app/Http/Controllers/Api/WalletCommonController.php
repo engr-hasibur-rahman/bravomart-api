@@ -40,7 +40,9 @@ class WalletCommonController extends Controller
         } else {
             $wallets = Wallet::forOwner($user)->first();
         }
-
+        if(!$wallets){
+            return [];
+        }
         $wallet_settings = com_option_get('max_deposit_per_transaction');
 
         return response()->json([
