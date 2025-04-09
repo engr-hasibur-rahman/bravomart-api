@@ -404,16 +404,16 @@ class PermissionStoreSeeder extends Seeder
                                 'ar' => 'قائمة'
                             ]
                         ],
-                        [
-                            'PermissionName' => PermissionKey::SELLER_STAFF_ROLES_STORE->value,
-                            'PermissionTitle' => 'Staff Roles',
-                            'activity_scope' => 'store_level',
-                            'icon' => 'LockKeyholeOpen',
-                            'translations' => [
-                                'en' => 'Staff Roles',
-                                'ar' => 'أدوار الموظفين'
-                            ]
-                        ],
+//                        [
+//                            'PermissionName' => PermissionKey::SELLER_STAFF_ROLES_STORE->value,
+//                            'PermissionTitle' => 'Staff Roles',
+//                            'activity_scope' => 'store_level',
+//                            'icon' => 'LockKeyholeOpen',
+//                            'translations' => [
+//                                'en' => 'Staff Roles',
+//                                'ar' => 'أدوار الموظفين'
+//                            ]
+//                        ],
 
                     ]
                 ],

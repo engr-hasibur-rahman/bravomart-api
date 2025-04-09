@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
 use App\Http\Controllers\Api\V1\DeliveryChargeCalculateController;
 use App\Http\Controllers\Api\V1\FrontendController;
+use App\Http\Controllers\Api\V1\MenuManageController;
 use App\Http\Controllers\Api\V1\MigrationController;
 use App\Http\Controllers\Api\V1\OtherChargeInfoController;
 use App\Http\Controllers\Api\V1\SeederController;
@@ -129,6 +130,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/contact-us', [FrontendController::class, 'contactUs']);
     Route::get('/pages/{slug}', [FrontendController::class, 'getPage']);
     Route::get('/store-wise-products', [FrontendController::class, 'getStoreWiseProducts']);
+    Route::get('/menu', [MenuManageController::class, 'index']);
 
 
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);

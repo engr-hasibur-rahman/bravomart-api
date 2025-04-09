@@ -42,8 +42,13 @@ class StaffController extends Controller
             $query->whereNull('stores');
         }
         if (auth('api')->user()->activity_scope == 'store_level' && auth('api')->user()->store_owner == 1) {
-            $seller_stores = Store::where('store_seller_id', auth('api')->user()->id)->pluck('id');
-            $query->whereIn('stores', $seller_stores);
+            $seller_stores = Store::where('store_seller_id', auth('api')->user()->id)->pluck('id')->toArray();
+
+            $query->where(function ($q) use ($seller_stores) {
+                foreach ($seller_stores as $storeId) {
+                    $q->orWhereJsonContains('stores', $storeId);
+                }
+            });
         }
         if (isset($request->search)) {
             $query->where(function ($q) use ($request) {
