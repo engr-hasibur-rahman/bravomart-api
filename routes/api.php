@@ -146,7 +146,6 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/login-page-settings', [FrontendPageSettingsController::class, 'LoginPageSettings']);
     Route::get('/blog-page-settings', [FrontendPageSettingsController::class, 'BlogPageSettings']);
     Route::get('/product-details-page-settings', [FrontendPageSettingsController::class, 'productDetailsPageSettings']);
-    Route::get('/menu-options', [FrontendPageSettingsController::class, 'menuOptionSettings']);
 
     // delivery charge calculate
     Route::post('/calculate-delivery-charge', [DeliveryChargeCalculateController::class, 'calculateDeliveryCharge']);
