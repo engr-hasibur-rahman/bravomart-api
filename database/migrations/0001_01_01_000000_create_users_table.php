@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('apple_id')->nullable();
             $table->unsignedBigInteger('store_owner')->nullable()->comment('1=store_owner');
             $table->unsignedBigInteger('store_seller_id')->nullable();
-            $table->string('stores')->nullable();
+            $table->json('stores')->nullable();
             $table->integer('status')->default(0)->comment('0=Inactive,1=Active,2=Suspended');
             $table->rememberToken();
             $table->timestamp('deactivated_at')->nullable();
