@@ -41,6 +41,10 @@ class StaffController extends Controller
         if (auth('api')->user()->activity_scope == 'system_level') {
             $query->whereNull('stores');
         }
+        if (auth('api')->user()->activity_scope == 'store_level' && auth('api')->user()->store_owner == 1) {
+            $seller_stores = Store::where('store_seller_id', auth('api')->user()->id)->pluck('id');
+            $query->whereIn('stores', $seller_stores);
+        }
         if (isset($request->search)) {
             $query->where(function ($q) use ($request) {
                 $q->where('first_name', 'like', '%' . $request->search . '%')

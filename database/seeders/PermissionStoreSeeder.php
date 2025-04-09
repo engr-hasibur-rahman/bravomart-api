@@ -612,7 +612,6 @@ class PermissionStoreSeeder extends Seeder
                     }
                 }
             }
-
         }
     }
 }
