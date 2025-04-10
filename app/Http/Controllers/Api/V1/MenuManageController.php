@@ -114,7 +114,7 @@ class MenuManageController extends Controller
 
             DB::commit();
             return response()->json([
-                'message' => __('messages.save_success',['name'=> 'Menu']),
+                'message' => __('messages.save_success', ['name' => 'Menu']),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -139,6 +139,12 @@ class MenuManageController extends Controller
     public function update(Request $request)
     {
         $menu = Menu::find($request->id);
+        // Prevent updating URL if status is 0
+        if ($menu->status == 0 && $request->has('url') && $request->url !== $menu->url) {
+            return response()->json([
+                'message' => __('messages.can\'t_modify',['name' => 'Menu url'])
+            ], 403);
+        }
 
         if (!$menu) {
             return response()->json(['message' => 'Menu not found'], 404);
@@ -169,7 +175,7 @@ class MenuManageController extends Controller
         try {
             $menu->update([
                 'name' => $request->name,
-                'url' => $request->url,
+                'url' => $menu->status == 0 ? $menu->url : $request->url,
                 'icon' => $request->icon,
                 'position' => $request->position ?? 0,
                 'is_visible' => $request->is_visible ?? true,
@@ -178,14 +184,14 @@ class MenuManageController extends Controller
                 'menu_path' => $request->menu_path,
                 'menu_level' => $request->parent_id ? Menu::find($request->parent_id)->menu_level + 1 : 0,
             ]);
-            if ($request->has('translations')){
+            if ($request->has('translations')) {
                 createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
             }
             DB::commit();
             return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Menu']),
             ]);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Something went wrong', 'error' => $e->getMessage()], 500);
         }
@@ -196,7 +202,11 @@ class MenuManageController extends Controller
     public function destroy($id)
     {
         $menu = Menu::find($id);
-
+        if ($menu->status == 0) {
+            return response()->json(
+                ['message' => __('messages.can\'t_modify', ['name' => 'Menu'])]
+            );
+        }
         if (!$menu) {
             return response()->json(['message' => 'Menu not found'], 404);
         }
