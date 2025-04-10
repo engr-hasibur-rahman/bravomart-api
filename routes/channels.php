@@ -2,18 +2,24 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
-// Public channel for general order updates
-Broadcast::channel('orders', function ($user) {
-    return true;  // Everyone can listen to this channel (public channel)
+// Private channel for a specific customer
+Broadcast::channel('customer.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
 });
 
-// Private channel for a specific order
-Broadcast::channel('orders.{orderId}', function ($user, $orderId) {
-    // Ensure only the user who owns the order can listen to the channel
-    return (int) $user->id === (int) $orderId;  // Allow access only to the user who owns the order
+// Private channel for a specific seller
+Broadcast::channel('seller.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
 });
 
-// Private channel for a specific user (example)
+// Admin channel – allow access to all authenticated users or restrict by role
+Broadcast::channel('admin', function ($user) {
+    // Optional: Restrict to users with an admin role
+    // return $user->hasRole('admin');
+    return true;
+});
+
+// (Optional) Default Laravel Echo channel for user presence/auth if needed
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;  // Allow access to the channel if the user ID matches
+    return (int) $user->id === (int) $id;
 });

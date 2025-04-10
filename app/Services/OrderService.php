@@ -509,11 +509,15 @@ class OrderService
             // order notification
             $all_orders_ids = Order::where('order_master_id', $order_master->id)->pluck('id')->toArray();
 
+
+        // Call the service to handle notifications
+//        $this->firebaseNotificationService->sendOrderNotifications($orderMaster);
+
             // Fire the event to broadcast the order creation
 //            event(new OrderPlaced($all_orders));
-            foreach ($all_orders as $order) {
-                event(new OrderPlaced($order));
-            }
+//            foreach ($all_orders as $order) {
+//                event(new OrderPlaced($order));
+//            }
 
 
             $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
