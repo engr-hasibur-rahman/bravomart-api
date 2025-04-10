@@ -61,7 +61,7 @@ class MenuManageController extends Controller
                 'menus' => MenuPublicViewResource::collection($menus),
             ]);
         } else {
-            $menus = $menus->with('childrenRecursive')
+            $menus = $menus
                 ->orderBy($sortField, $sortOrder)
                 ->paginate($per_page);
             return response()->json([
