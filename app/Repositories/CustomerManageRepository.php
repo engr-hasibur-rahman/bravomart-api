@@ -55,7 +55,7 @@ class CustomerManageRepository implements CustomerManageInterface
         }
 
         try {
-            $token = Str::random(10);
+            $token = rand(100000, 999999);
             $customer->email_verify_token = $token;
             $customer->save();
             // Send email verification
