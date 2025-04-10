@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('menu_level')->nullable();           // Optional, similar to category_level
             $table->string('menu_path')->nullable();             // Optional, similar to parent_path
             $table->boolean('is_visible')->default(true);
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

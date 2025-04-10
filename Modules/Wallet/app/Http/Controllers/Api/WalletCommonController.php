@@ -36,29 +36,15 @@ class WalletCommonController extends Controller
         if ($user->activity_scope === 'store_level') {
             $store = Store::find($request->store_id);
 
-            if (!$store) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Store not found.',
-                ], 404);
-            }
-
             $wallets = Wallet::forOwner($store)->first();
         } else {
             $wallets = Wallet::forOwner($user)->first();
         }
 
-        if (!$wallets) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User Wallet not found'
-            ], 404);
-        }
-
         $wallet_settings = com_option_get('max_deposit_per_transaction');
 
         return response()->json([
-            'wallets' => new UserWalletDetailsResource($wallets),
+            'wallets' => $wallets ? new UserWalletDetailsResource($wallets):[],
             'max_deposit_per_transaction' => $wallet_settings,
         ]);
     }
@@ -168,23 +154,11 @@ class WalletCommonController extends Controller
         // user's wallet
         if ($user->activity_scope === 'store_level') {
             $store = Store::find($request->store_id);
-
-            if (!$store) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Store not found.',
-                ], 404);
-            }
-
             $wallet = Wallet::forOwner($store)->first();
         } else {
             $wallet = Wallet::forOwner($user)->first();
         }
 
-
-        if (!$wallet) {
-            return response()->json(['message' => 'Wallet not found'], 404);
-        }
         $query = WalletTransaction::query();
 
         if (!empty($filters['start_date']) || !empty($filters['end_date'])) {
@@ -212,7 +186,7 @@ class WalletCommonController extends Controller
             $query->where('type', $filters['type']);
         }
 
-        $transactions = $query->paginate($filters['per_page'] ?? 10); // Change 10 to desired per-page limit
+        $transactions = $query->where('wallet_id',$wallet->id)->paginate($filters['per_page'] ?? 10); // Change 10 to desired per-page limit
         return response()->json([
             'wallets' => WalletTransactionListResource::collection($transactions),
             'meta' => new PaginationResource($transactions),

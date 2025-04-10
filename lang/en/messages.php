@@ -123,6 +123,8 @@ return [
     'order_is_not_accepted' => 'This order is not accepted yet!',
     'order_is_not_cash_on_delivery' => 'This order is not cash on delivery!',
 
+    'can\'t_modify' => 'You can\'t modify this :name!',
+
 
 ];
 

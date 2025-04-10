@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
                 'email' => 'owner@store.com',
                 'email_verified_at' => null,
                 'first_name' => 'Store Admin',
-                'password' => '$2y$12$D/0ga9RUUqk.EpzWpUNZJuZFL5KPZN1hfVUM115D0e7ZOe107iuQG',
+                'password' => '$2y$10$oSKpyEavNDBqA29RYY1UueFB1Y0hTUXmHqQeJC9lB1gnzoVTHpVV2',
                 'remember_token' => null,
                 'slug' => 'store-owner',
                 'status' => 1,

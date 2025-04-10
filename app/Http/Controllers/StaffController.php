@@ -41,6 +41,19 @@ class StaffController extends Controller
         if (auth('api')->user()->activity_scope == 'system_level') {
             $query->whereNull('stores');
         }
+        if (auth('api')->user()->activity_scope == 'store_level' && auth('api')->user()->store_owner == 1) {
+            $seller_stores = Store::where('store_seller_id', auth('api')->user()->id)->pluck('id')->toArray();
+
+            $query->where(function ($q) use ($seller_stores) {
+                foreach ($seller_stores as $storeId) {
+                    // Use `LIKE` to search for the storeId in the format of "[1,2,3]"
+                    $q->orWhere('stores', 'LIKE', '%[' . $storeId . ']%')
+                        ->orWhere('stores', 'LIKE', '%,"' . $storeId . '"%')
+                        ->orWhere('stores', 'LIKE', '%"' . $storeId . '"%')
+                        ->orWhere('stores', 'LIKE', $storeId);
+                }
+            });
+        }
         if (isset($request->search)) {
             $query->where(function ($q) use ($request) {
                 $q->where('first_name', 'like', '%' . $request->search . '%')
@@ -87,7 +100,7 @@ class StaffController extends Controller
             'last_name' => $request->last_name,
             'slug' => username_slug_generator($request->first_name, $request->last_name),
             'activity_scope' => $isAdmin ? 'system_level' : 'store_level',
-            'stores' => $isAdmin ? null : json_encode($request->stores), // Encode as JSON if needed
+            'stores' => $isAdmin ? null : $request->stores, // Encode as JSON if needed
             'store_seller_id' => $isAdmin ? null : auth()->guard('api')->user()->id, // Authenticated store admin id is seller ID
             'email' => $request->email,
             'phone' => $request->phone,
@@ -201,7 +214,7 @@ class StaffController extends Controller
         $user->slug = username_slug_generator($validatedData['first_name'], $validatedData['last_name']);
         $user->email = $validatedData['email'];
         $user->phone = $validatedData['phone'];
-        $user->stores = $isAdmin ? null : json_encode($validatedData['stores']);
+        $user->stores = $isAdmin ? null : $validatedData['stores'];
         $user->store_seller_id = $isAdmin ? null : auth()->guard('api')->user()->id;
         $user->activity_scope = $isAdmin ? 'system_level' : 'store_level';
         $user->image = $validatedData['image'] ?? null;

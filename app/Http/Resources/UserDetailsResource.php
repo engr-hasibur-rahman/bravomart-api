@@ -20,7 +20,7 @@ class UserDetailsResource extends JsonResource
 
         $stores=[];
         if($this->stores!='') {
-            $stores = Store::whereIn('id', json_decode($this->stores))
+            $stores = Store::whereIn('id', $this->stores)
                 ->select(['id', 'name','store_type'])
                 ->get()
                 ->toArray();

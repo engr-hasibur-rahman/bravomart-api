@@ -70,8 +70,8 @@ class BivaCommandAuto extends Command
         } while (true);
 
         do {
-            $password = 'admin';
-            $confirmPassword = 'admin';
+            $password = '12345678';
+            $confirmPassword = '12345678';
             if ($password !== $confirmPassword) {
                 info('Passwords do not match. Please try again.');
             }

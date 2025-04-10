@@ -339,35 +339,108 @@ class StoreManageRepository implements StoreManageInterface
             unauthorized_response();
         }
 
-        $seller_id = auth('api')->id();
+        $seller = auth('api')->user();
 
-        $stores = Store::with('related_translations') // Load all related translations
-        ->where('store_seller_id', $seller_id)
-            ->where('enable_saling', 1)
-            ->get();
+        if ($seller->store_owner == 0) {
+            // Check if stores is a string (assuming it's JSON encoded if a string)
+            if (is_string($seller->stores)) {
+                // Decode the JSON string to an array
+                $storeIds = json_decode($seller->stores, true);
+            } else {
+                // If it's already an array, use it directly
+                $storeIds = $seller->stores;
+            }
+
+            // If the stores data exists and is not empty, proceed with the query
+            if (!empty($storeIds)) {
+                $stores = Store::with('related_translations') // Load all related translations
+                ->whereIn('id', $storeIds)
+                    ->get();
+            } else {
+                $stores = collect(); // Return an empty collection if no stores exist
+            }
+        } else {
+            // Fetch the stores for the seller when store_owner is 1
+            $stores = Store::with('related_translations') // Load all related translations
+            ->where('store_seller_id', $seller->id)
+                ->where('enable_saling', 1)
+                ->get();
+        }
 
         return $stores;
     }
 
     public function checkStoreBelongsToSeller(string $slug)
     {
+        // Ensure the user is authenticated
         if (!auth('api')->check()) {
-            unauthorized_response();
+            return unauthorized_response(); // Make sure the response is returned
         }
-        $seller_id = auth('api')->id();
-        $storeBelongsToSeller = Store::with(['seller'])
-            ->where('store_seller_id', $seller_id)
+
+        $seller = auth('api')->user();
+
+        // Check if the seller is a store owner or not
+        if ($seller->store_owner == 0) {
+            $storeIds = $this->getSellerStores($seller);
+
+            // If no stores are found, return an empty collection
+            if ($storeIds->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => __('messages.store.not.found')
+                ]);
+            }
+
+            // Fetch the store based on slug
+            return $this->getStoreBySlug($slug, $storeIds);
+        }
+
+        // If the seller owns the store directly, check for a match
+        return $this->getStoreBySellerAndSlug($seller->id, $slug);
+    }
+
+    private function getSellerStores($seller)
+    {
+        // Decode JSON if stores are stored as a string, otherwise use the array directly
+        return collect(is_string($seller->stores) ? json_decode($seller->stores, true) : $seller->stores);
+    }
+
+    private function getStoreBySlug($slug, $storeIds)
+    {
+        // Fetch stores where the slug exists in the list of store IDs
+        $storeSlugCollection = Store::whereIn('id', $storeIds)->pluck('slug');
+
+        // Check if the store slug exists in the seller's stores
+        if ($storeSlugCollection->contains($slug)) {
+            return Store::with(['seller'])->where('slug', $slug)->first();
+        }
+
+        return response()->json([
+            'status' => false,
+            'status_code' => 404,
+            'message' => __('messages.store.not.found')
+        ]);
+    }
+
+    private function getStoreBySellerAndSlug($sellerId, $slug)
+    {
+        // Fetch the store directly by seller ID and slug
+        $store = Store::with(['seller'])
+            ->where('store_seller_id', $sellerId)
             ->where('slug', $slug)
             ->first();
-        if ($storeBelongsToSeller) {
-            return $storeBelongsToSeller;
-        } else {
-            return response()->json([
-                'status' => false,
-                'status_code' => 401,
-                'message' => __('messages.store.doesnt.belongs.to.seller')
-            ]);
+
+        // If the store is found, return it; otherwise, return an error message
+        if ($store) {
+            return $store;
         }
+
+        return response()->json([
+            'status' => false,
+            'status_code' => 401,
+            'message' => __('messages.store.doesnt.belongs.to.seller')
+        ]);
     }
 
     /*-------------------------------------------------------------------------------------------------------------------*/
@@ -394,7 +467,11 @@ class StoreManageRepository implements StoreManageInterface
 
         if ($slug) {
             // Fetch data for a specific store
-            $stores = Store::with('related_translations')->where('slug', $slug)->where('store_seller_id', $user->id)->get();
+            if ($user->store_owner == 0){
+                $stores = Store::with('related_translations')->where('slug', $slug)->get();
+            } else {
+                $stores = Store::with('related_translations')->where('slug', $slug)->where('store_seller_id', $user->id)->get();
+            }
             $summary['store_details'] = $stores;
         } else {
             // Fetch data for all stores of the seller

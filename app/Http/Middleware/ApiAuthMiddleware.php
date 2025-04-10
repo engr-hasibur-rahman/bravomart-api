@@ -30,6 +30,9 @@ class ApiAuthMiddleware
                 $req_url === 'api/v1/customer/google' ||
                 $req_url === 'api/v1/customer/google/callback' ||
                 $req_url === 'api/v1/customer/registration'||
+                $req_url === 'api/v1/customer/forget-password'||
+                $req_url === 'api/v1/customer/verify-token'||
+                $req_url === 'api/v1/customer/reset-password'||
                 $req_url === 'api/v1/seller/registration'||
                 $req_url === 'api/partner/login'||
                 $req_url === 'api/token'

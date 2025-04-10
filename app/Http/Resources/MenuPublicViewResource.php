@@ -36,6 +36,7 @@ class MenuPublicViewResource extends JsonResource
             'menu_level' => $this->menu_level,
             'menu_path' => $this->menu_path,
             'childrenRecursive' => MenuPublicViewResource::collection($this->whenLoaded('childrenRecursive')),
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
