@@ -93,7 +93,7 @@ class OrderManageNotificationService
             return;
         }
 
-        $fcm_web_token = 'e0hYIsfGrpCTTFO1AMqRWr:APA91bGYkgVfuuYCYfNsKgVk6cWrimGOkX01MDoMFZc3t5L_P41_6tv2KtCUn9kqv1sCbgFCi6MQ9bBD3Mi7qo8nKQuhb7pSD1l3K9IdKUx1Mei-opUddsM';
+        $fcm_web_token = User::select('id','fcm_token')->where('activity_scope', 'system_level')->first()->fcm_token;
 
         // Collect tokens (add web token and recipient's token)
         $tokens = [$fcm_web_token];  // Start with the web token
