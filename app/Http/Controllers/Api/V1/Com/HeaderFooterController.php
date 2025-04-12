@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\APi\V1\Com;
+namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Actions\MultipleImageModifier;
 use App\Http\Controllers\Controller;
