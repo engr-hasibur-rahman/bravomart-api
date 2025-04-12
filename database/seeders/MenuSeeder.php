@@ -16,7 +16,7 @@ class MenuSeeder extends Seeder
             [
                 'id' => 1,
                 'name' => 'About',
-                'url' => null,
+                'url' => 'about-us',
                 'icon' => 'fa fa-phone',
                 'position' => 1,
                 'parent_id' => null,
