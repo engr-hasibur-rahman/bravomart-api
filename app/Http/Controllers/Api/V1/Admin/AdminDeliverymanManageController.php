@@ -322,7 +322,8 @@ class AdminDeliverymanManageController extends Controller
             ], 404);
         }
         return response()->json([
-            'data' => DeliverymanDropdownResource::collection($deliverymen)
+            'data' => DeliverymanDropdownResource::collection($deliverymen),
+            'meta' => new PaginationResource($deliverymen)
         ], 200);
     }
 }
