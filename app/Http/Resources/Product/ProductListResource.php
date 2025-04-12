@@ -19,6 +19,10 @@ class ProductListResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
             'store' => $this->store,
@@ -28,9 +32,13 @@ class ProductListResource extends JsonResource
             'tag' => new TagPublicResource($this->tag),
             'type' => $this->type,
             'behaviour' => $this->behaviour,
-            'name' => $this->name,
+            'name' => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
+                : $this->name, // If language is empty or not provided attribute
             'slug' => $this->slug,
-            'description' => $this->description,
+            'description' => !empty($translation) && $translation->where('key', 'description')->first()
+                ? $translation->where('key', 'description')->first()->value
+                : $this->description, // If language is empty or not provided attribute
             'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'gallery_images' => $this->gallery_images,

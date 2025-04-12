@@ -22,6 +22,7 @@ class ProductDetailsResource extends JsonResource
             "id" => $this->id,
             "value" => $this->id,
             "label" => $this->name,
+            "name" => $this->name,
             "type" => $this->type,
             "behaviour" => $this->behaviour,
             "slug" => $this->slug,
