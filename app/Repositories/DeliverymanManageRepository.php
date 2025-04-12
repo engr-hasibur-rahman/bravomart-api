@@ -573,6 +573,8 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 'status' => $status,
             ]);
             if ($order->orderMaster->payment_gateway === 'cash_on_delivery') {
+                $order->orderMaster->payment_status = 'paid';
+                $order->orderMaster->save();
                 OrderActivity::create([
                     'order_id' => $order_id,
                     'activity_from' => 'deliveryman',
