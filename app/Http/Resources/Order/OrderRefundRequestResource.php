@@ -22,6 +22,7 @@ class OrderRefundRequestResource extends JsonResource
         return [
             "id" => $this->id,
             "order_id" => $this->order_id,
+            "invoice" => $this->order?->invoice_number,
             "customer_note" => $this->customer_note,
             "status" => $this->status,
             "amount" => $this->amount,
