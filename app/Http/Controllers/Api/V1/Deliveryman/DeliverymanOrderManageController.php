@@ -155,16 +155,16 @@ class DeliverymanOrderManageController extends Controller
             })
             ->exists();
 
-        $is_cash_on_delivery = Order::where('id', $request->id)
-            ->whereHas('orderMaster', function ($query) {
-                $query->where('payment_gateway', 'cash_on_delivery');
-            })
-            ->exists();
-        if (!$is_cash_on_delivery) {
-            return response()->json([
-                'message' => __('messages.order_is_not_cash_on_delivery')
-            ], 422);
-        }
+//        $is_cash_on_delivery = Order::where('id', $request->id)
+//            ->whereHas('orderMaster', function ($query) {
+//                $query->where('payment_gateway', 'cash_on_delivery');
+//            })
+//            ->exists();
+//        if (!$is_cash_on_delivery) {
+//            return response()->json([
+//                'message' => __('messages.order_is_not_cash_on_delivery')
+//            ], 422);
+//        }
         if ($already_cancelled_or_ignored_or_delivered) {
             return response()->json([
                 'message' => __('messages.order_already_cancelled_or_ignored_or_delivered')
