@@ -6,6 +6,7 @@ use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
+use App\Http\Resources\Store\StoreShortDetailsResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -25,7 +26,7 @@ class ProductListResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
-            'store' => $this->store,
+            'store' => new StoreShortDetailsResource($this->store),
             'category' => new ProductCategoryPublicResource($this->category),
             'brand' => new ProductBrandPublicResource($this->brand),
             'unit' => new ProductBrandPublicResource($this->unit),
