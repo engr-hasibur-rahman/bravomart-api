@@ -31,9 +31,14 @@ class OrderRefundRepository implements OrderRefundInterface
             $query->where('status', $filters['status']);
         }
         if (isset($filters['search'])) {
-            $query->whereHas('customer', function ($query) use ($filters) {
-                $query->where('first_name', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('last_name', 'like', '%' . $filters['search'] . '%');
+            $query->where(function ($q) use ($filters) {
+                $q->whereHas('customer', function ($q) use ($filters) {
+                    $q->where('first_name', 'like', '%' . $filters['search'] . '%')
+                        ->orWhere('last_name', 'like', '%' . $filters['search'] . '%');
+                })
+                    ->orWhereHas('order', function ($q) use ($filters) {
+                        $q->where('invoice_number', 'like', '%' . $filters['search'] . '%');
+                    });
             });
         }
         if (isset($filters['order_refund_reason_id'])) {
@@ -42,7 +47,7 @@ class OrderRefundRepository implements OrderRefundInterface
         if (isset($filters['store_id'])) {
             $query->where('store_id', $filters['store_id']);
         }
-        return $query->with(['store.related_translations', 'customer', 'orderRefundReason.related_translations'])->latest()->paginate($filters['per_page'] ?? 10);
+        return $query->with(['order','store.related_translations', 'customer', 'orderRefundReason.related_translations'])->latest()->paginate($filters['per_page'] ?? 10);
     }
 
     public function get_seller_store_order_refund_request(int $store_id, array $filters)
