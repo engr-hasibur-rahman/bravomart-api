@@ -9,7 +9,7 @@ use App\Models\SettingOption;
 use Illuminate\Http\Request;
 
 
-class HeaderFooterController extends Controller
+class  HeaderFooterController extends Controller
 {
     public function siteFooterInfo(){
         // Create an instance of ImageModifier
