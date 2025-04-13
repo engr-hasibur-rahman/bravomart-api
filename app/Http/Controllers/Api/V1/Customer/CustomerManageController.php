@@ -64,9 +64,9 @@ class CustomerManageController extends Controller
         if (!$customer) {
             return response()->json([
                 "status" => false,
-                "status_code" => 404,
+                "status_code" => 204,
                 "message" => __('messages.customer.not.found'),
-            ], 404);
+            ],204);
         }
 
         // update firebase device token
@@ -96,10 +96,10 @@ class CustomerManageController extends Controller
         if (!$authCustomer) {
             return response()->json([
                 "status" => false,
-                "status_code" => 401,
-                "message" => __('messages.login_failed', ['name' => 'Customer']),
+                "status_code" => 204,
+                "message" => __('messages.wrong_credential'),
                 "token" => null,
-            ], 401);
+            ], 204);
         } else {
             // Handle the "Remember Me" option
             $remember_me = $request->has('remember_me');
