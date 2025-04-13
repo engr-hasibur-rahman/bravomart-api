@@ -23,6 +23,7 @@ class BlogRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isUpdate = !empty($this->id); // If $this->id exists, it's an update
         return [
             'admin_id' => 'nullable|exists:users,id',
             'category_id' => 'nullable|exists:blog_categories,id',
@@ -33,7 +34,12 @@ class BlogRequest extends FormRequest
             'views' => 'nullable|integer|min:0',
             'visibility' => 'nullable',
             'status' => 'required|boolean',
-            'schedule_date' => 'nullable|date|after_or_equal:today|date_format:Y-m-d',
+            'schedule_date' => array_filter([
+                'nullable',
+                'date',
+                !$isUpdate ? 'after_or_equal:today' : null,
+                'date_format:Y-m-d',
+            ]),
             'tag_name' => 'nullable',
             'meta_title' => 'nullable',
             'meta_description' => 'nullable',
