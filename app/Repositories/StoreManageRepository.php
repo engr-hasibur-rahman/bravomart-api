@@ -377,7 +377,6 @@ class StoreManageRepository implements StoreManageInterface
             // Fetch the stores for the seller when store_owner is 1
             $stores = Store::with('related_translations') // Load all related translations
             ->where('store_seller_id', $seller->id)
-                ->where('enable_saling', 1)
                 ->get();
         }
 
