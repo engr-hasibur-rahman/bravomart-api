@@ -1190,19 +1190,24 @@ class FrontendController extends Controller
     public function blogs(Request $request)
     {
         $blogsQuery = Blog::with(['category', 'related_translations'])
-            ->where('status', 1)
-            ->whereDate('schedule_date', '<=', now())// Only blogs with a schedule date <= today's date
-            ->orWhereNull('schedule_date');
+            ->where(function ($query) {
+                $query->where('status', 1)
+                    ->where(function ($q) {
+                        $q->whereDate('schedule_date', '<=', now())
+                            ->orWhereNull('schedule_date');
+                    });
+            });
 
         // Check for "most_viewed" filter
         if ($request->has('most_viewed') && $request->most_viewed) {
             $blogsQuery->orderBy('views', 'desc');  // Assuming you have a 'views' column
         }
 
-        // Check for search filter
         if ($request->has('search') && $request->search) {
-            $blogsQuery->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('description', 'like', '%' . $request->search . '%');
+            $blogsQuery->where(function ($query) use ($request) {
+                $query->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
         }
 
         // Check for sort filter (sort by created_at only)
