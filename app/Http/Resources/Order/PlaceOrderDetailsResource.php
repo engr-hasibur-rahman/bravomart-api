@@ -6,7 +6,7 @@ use App\Enums\OrderStatusType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PlaceOrderDetailsResource extends JsonResource
+class sPlaceOrderDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
