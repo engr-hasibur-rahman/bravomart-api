@@ -44,8 +44,8 @@ return [
     'ticket_does_not_belongs_to_this_store' => 'Ticket does not belongs to this store!',
     'ticket_does_not_belongs_to_this_customer' => 'Ticket does not belongs to this customer!',
 
-    'customer.not.found' => 'Customer not found!',
-
+    'customer.not.found' => 'This customer email doesn\'t exists!',
+    'wrong_credential' =>'Wrong credential!',
     'support_ticket.message.sent' => 'Support ticket has been sent!',
 
     'store.doesnt.belongs.to.seller' => 'Store doesn\'t belongs to this seller!',
