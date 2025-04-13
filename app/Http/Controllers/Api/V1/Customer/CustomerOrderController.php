@@ -37,7 +37,7 @@ class CustomerOrderController extends Controller
             ], 200);
         }
 
-        $request['status'] = $request->status == 'active' ? 'confirmed': $request->status;
+        $request['status'] = $request->status == 'active' ? 'confirmed' : $request->status;
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 
@@ -49,7 +49,7 @@ class CustomerOrderController extends Controller
 
         $ordersQuery->when($request->search, fn($query) => $query->where('id', 'like', '%' . $request->search . '%'));
 
-        $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate(10);
+        $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
 
         return response()->json([
             'message' => __('messages.data_found'),
