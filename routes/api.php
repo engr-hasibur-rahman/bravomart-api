@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
 use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
 use App\Http\Controllers\Api\V1\Com\ComSiteGeneralController;
 use App\Http\Controllers\Api\V1\Com\FrontendPageSettingsController;
-use App\Http\Controllers\APi\V1\Com\HeaderFooterController;
+use App\Http\Controllers\Api\V1\Com\HeaderFooterController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\ContactManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;

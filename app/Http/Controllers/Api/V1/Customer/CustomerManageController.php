@@ -49,7 +49,6 @@ class CustomerManageController extends Controller
             'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8|max:15',
         ]);
-
         if ($validator->fails()) {
             return response()->json([
                 "status" => false,
@@ -60,13 +59,12 @@ class CustomerManageController extends Controller
 
         $customer = Customer::where('email', $request->email)
             ->first();
-
         if (!$customer) {
             return response()->json([
                 "status" => false,
-                "status_code" => 404,
+                "status_code" => 204,
                 "message" => __('messages.customer.not.found'),
-            ], 404);
+            ]);
         }
 
         // update firebase device token
@@ -96,10 +94,10 @@ class CustomerManageController extends Controller
         if (!$authCustomer) {
             return response()->json([
                 "status" => false,
-                "status_code" => 401,
-                "message" => __('messages.login_failed', ['name' => 'Customer']),
+                "status_code" => 204,
+                "message" => __('messages.wrong_credential'),
                 "token" => null,
-            ], 401);
+            ]);
         } else {
             // Handle the "Remember Me" option
             $remember_me = $request->has('remember_me');
