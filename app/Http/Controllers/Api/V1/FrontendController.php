@@ -653,21 +653,26 @@ class FrontendController extends Controller
         if (isset($request->sort)) {
             switch ($request->sort) {
                 case 'price_low_high':
-                    $query->whereHas('variants', fn($q) => $q->orderBy('price', 'asc'));
+                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+                        ->orderBy('product_variants.price', 'asc')
+                        ->select('products.*'); // Select only product fields to avoid conflicts
                     break;
 
                 case 'price_high_low':
-                    $query->whereHas('variants', fn($q) => $q->orderBy('price', 'desc'));
+                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+                        ->orderBy('product_variants.price', 'desc')
+                        ->select('products.*'); // Select only product fields to avoid conflicts
                     break;
 
                 case 'newest':
-                    $query->orderBy('created_at', 'desc');
+                    $query->orderBy('products.created_at', 'desc');
                     break;
 
                 default:
-                    $query->latest();
+                    $query->latest('products.created_at');
             }
         }
+
         if (!empty($request->search)) {
             $query->where('name', 'like', '%' . $request->search . '%')
                 ->orWhere('description', 'like', '%' . $request->search . '%');
@@ -675,9 +680,17 @@ class FrontendController extends Controller
 
         // Pagination
         $perPage = $request->per_page ?? 10;
-        $products = $query->with(['category', 'unit', 'tags', 'store', 'brand', 'variants', 'related_translations'])
-            ->where('status', 'approved')
-            ->where('deleted_at', null)
+        $products = $query->with(['category', 'unit', 'tags', 'store', 'brand',
+            'variants' => function ($query) use ($request) {
+                if ($request->sort === 'price_low_high') {
+                    $query->orderBy('price', 'asc')->limit(1);
+                } elseif ($request->sort === 'price_high_low') {
+                    $query->orderBy('price', 'desc')->limit(1);
+                }
+            }
+            , 'related_translations'])
+            ->where('products.status', 'approved')
+            ->whereNull('products.deleted_at')
             ->paginate($perPage);
         // Extract unique attributes from variants
         $uniqueAttributes = $this->getUniqueAttributesFromVariants($products);
