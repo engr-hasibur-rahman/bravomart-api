@@ -9,6 +9,7 @@ use App\Http\Resources\Seller\SellerStoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
 use App\Models\Banner;
 use App\Models\Customer;
+use App\Models\ProductVariant;
 use App\Models\Store;
 use App\Models\DeliveryMan;
 use App\Models\Order;
@@ -221,28 +222,41 @@ class StoreManageRepository implements StoreManageInterface
         }
     }
 
-    public function delete(int|string $id)
+    public function delete(int|string $id): bool
     {
-        try {
-            $store = Store::findOrFail($id);
-            $this->deleteTranslation($store->id, Store::class);
-            $store->delete();
-            return true;
-        } catch (\Throwable $th) {
-            throw $th;
-        }
+        $store = Store::findOrFail($id);
+
+        // Delete related translations
+        $this->deleteTranslation($store->id, Store::class);
+
+        // Delete related products and variants
+        $this->deleteStoreRelatedProducts($store->id);
+
+        // Delete the store
+        $store->delete();
+
+        return true;
     }
 
-    private function deleteTranslation(int|string $id, string $translatable_type)
+    private function deleteStoreRelatedProducts(int $storeId): bool
     {
-        try {
-            $translation = Translation::where('translatable_id', $id)
-                ->where('translatable_type', $translatable_type)
-                ->delete();
-            return true;
-        } catch (\Throwable $th) {
-            throw $th;
+        $productIds = Product::where('store_id', $storeId)->pluck('id');
+
+        if ($productIds->isNotEmpty()) {
+            ProductVariant::whereIn('product_id', $productIds)->delete();
+            Product::whereIn('id', $productIds)->delete();
         }
+
+        return true;
+    }
+
+    private function deleteTranslation(int|string $id, string $translatableType): bool
+    {
+        Translation::where('translatable_id', $id)
+            ->where('translatable_type', $translatableType)
+            ->delete();
+
+        return true;
     }
 
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
