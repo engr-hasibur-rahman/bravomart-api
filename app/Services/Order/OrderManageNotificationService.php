@@ -96,11 +96,11 @@ class OrderManageNotificationService
         $fcm_web_token = User::select('id','fcm_token')->where('activity_scope', 'system_level')->first()->fcm_token;
 
         // Collect tokens (add web token and recipient's token)
-        $tokens = [$fcm_web_token];  // Start with the web token
+        $token = [$fcm_web_token];  // Start with the web token
         // If the recipient has a firebase_token (Flutter token), add it
         if (!empty($recipient->firebase_token)) {
             $flutterToken = is_array($recipient->firebase_token) ? $recipient->firebase_token : [$recipient->firebase_token];
-            $tokens = array_merge($tokens, $flutterToken);  // Merge Flutter tokens with Web token
+            $tokens = array_merge($token, $flutterToken);  // Merge Flutter tokens with Web token
         }
 
         // empty check
