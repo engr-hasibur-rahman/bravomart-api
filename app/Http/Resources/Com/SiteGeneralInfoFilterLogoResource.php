@@ -6,7 +6,7 @@ use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SiteGeneralInfoFilterResource extends JsonResource
+class SiteGeneralInfoFilterLogoResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,7 +16,7 @@ class SiteGeneralInfoFilterResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'com_site_logo' => ImageModifier::generateImageUrl(com_option_get('com_site_logo'))
+            'com_site_white_logo' => ImageModifier::generateImageUrl(com_option_get('com_site_white_logo'))
         ];
     }
 }
