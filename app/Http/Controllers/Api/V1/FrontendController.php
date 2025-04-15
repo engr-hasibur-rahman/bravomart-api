@@ -1462,7 +1462,7 @@ class FrontendController extends Controller
     {
         $page = Page::with('related_translations')
             ->where('slug', $slug)
-            ->where('status', 'published')
+            ->where('status', 'publish')
             ->first();
 
         if (!$page) {

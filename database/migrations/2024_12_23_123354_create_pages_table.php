@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('meta_title')->nullable();
             $table->longText('meta_description')->nullable();
             $table->text('meta_keywords')->nullable();
-            $table->string('status')->default('draft')->comment('draft, published,unpublished');
+            $table->string('status')->default('draft')->comment('draft, publish');
             $table->timestamps();
         });
     }
