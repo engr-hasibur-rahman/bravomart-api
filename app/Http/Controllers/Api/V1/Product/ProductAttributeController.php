@@ -46,7 +46,7 @@ class ProductAttributeController extends Controller
             });
         }
         // Apply sorting and pagination
-        $attributes = $attributes
+        $attributes = $attributes->where('created_by',auth('api')->id())
             ->with(['related_translations', 'attribute_values'])
             ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
             ->paginate($limit);
