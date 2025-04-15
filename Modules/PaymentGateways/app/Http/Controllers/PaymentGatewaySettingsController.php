@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
 use Modules\PaymentGateways\app\Models\PaymentGateway;
 use Modules\PaymentGateways\app\Transformers\PaymentGatewaysListPublicResource;
-use Modules\PaymentGateways\App\Transformers\PaymentGatewaysResource;
+use Modules\PaymentGateways\app\Transformers\PaymentGatewaysResource;
 
 class PaymentGatewaySettingsController extends Controller
 {
