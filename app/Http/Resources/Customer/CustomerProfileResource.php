@@ -28,6 +28,8 @@ class CustomerProfileResource extends JsonResource
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'status' => $this->status,
             'email_verified' => (bool)$this->email_verified,
+            'unread_notifications' => $this->unread_notifications,
+            'wishlist_count' => $this->wishlist_count,
         ];
     }
 }
