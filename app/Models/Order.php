@@ -105,9 +105,11 @@ class Order extends Model
         return $this->hasOne(OrderRefund::class, 'order_id', 'id');
     }
 
-    public function isReviewedByCustomer(int $customerId): bool
+    public function isReviewedByCustomer(int $customerId, int $orderId): bool
     {
-        return $this->orderMaster()->where('customer_id', $customerId)->exists();
+        return Review::where('customer_id', $customerId)
+            ->where('order_id', $orderId)
+            ->exists();
     }
 
 
