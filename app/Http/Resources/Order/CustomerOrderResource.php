@@ -41,6 +41,9 @@ class CustomerOrderResource extends JsonResource
             'delivery_completed_at' => $this->delivery_completed_at,
             'payment_status' => $this->orderMaster->payment_status,
             'status' => $this->status,
+            'review_status' => auth('api_customer')->check() ?
+                $this->isReviewedByCustomer(auth('api_customer')->user()->id)
+                : false,
             'refund_status' => $this->refund_status,
             'store_details' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
