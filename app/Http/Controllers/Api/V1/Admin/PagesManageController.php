@@ -77,7 +77,7 @@ class PagesManageController extends Controller
                 ]);
             }
             $category = $this->pageRepo->update($request->all(), Page::class);
-            createOrUpdateTranslation($request, $category, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
+            createOrUpdateTranslationJson($request, $category, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
             if ($category) {
                 return $this->success(translate('messages.update_success', ['name' => 'Page']));
             } else {
