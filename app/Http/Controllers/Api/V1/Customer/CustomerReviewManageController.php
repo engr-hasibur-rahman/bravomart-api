@@ -58,7 +58,7 @@ class CustomerReviewManageController extends Controller
         $order = Order::findorfail($request->order_id);
 
 
-        $order_belongs_to_customer = $order->where('customer_id', $customer_id)->exists();
+        $order_belongs_to_customer = $order->orderMaster?->where('customer_id', $customer_id)->exists();
         if (!$order_belongs_to_customer) {
             return response()->json([
                 'status' => false,
