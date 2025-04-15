@@ -15,8 +15,12 @@ class SiteGeneralInfoFilterResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'com_site_logo' => ImageModifier::generateImageUrl(com_option_get('com_site_logo'))
-        ];
+        $result = [];
+
+        foreach ($this->resource as $key => $value) {
+            $result[$key] = ImageModifier::generateImageUrl($value);
+        }
+
+        return $result;
     }
 }
