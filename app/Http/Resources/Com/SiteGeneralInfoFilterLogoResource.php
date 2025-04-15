@@ -16,7 +16,9 @@ class SiteGeneralInfoFilterLogoResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'com_site_white_logo' => ImageModifier::generateImageUrl(com_option_get('com_site_white_logo'))
+            'com_site_logo' => ImageModifier::generateImageUrl(com_option_get('com_site_logo')),
+            'com_site_white_logo' => ImageModifier::generateImageUrl(com_option_get('com_site_white_logo')),
+            'com_site_favicon' => ImageModifier::generateImageUrl(com_option_get('com_site_favicon'))
         ];
     }
 }
