@@ -32,6 +32,7 @@ class SystemManagementController extends Controller
         if ($request->isMethod('POST')) {
             $validator = Validator::make($request->all(), [
                 'com_site_logo' => 'nullable|string',
+                'com_site_white_logo' => 'nullable|string',
                 'com_site_favicon' => 'nullable|string',
                 'com_site_title' => 'nullable|string',
                 'com_site_subtitle' => 'nullable|string',
@@ -46,6 +47,7 @@ class SystemManagementController extends Controller
                 'com_site_footer_copyright' => 'nullable|string',
             ], [
                 'com_site_logo.string' => 'The site logo must be a valid string.',
+                'com_site_white_logo.string' => 'The site logo must be a valid string.',
                 'com_site_favicon.string' => 'The site favicon must be a valid string.',
                 'com_site_title.string' => 'The site title must be a valid string.',
                 'com_site_subtitle.string' => 'The site subtitle must be a valid string.',
@@ -67,7 +69,7 @@ class SystemManagementController extends Controller
                 ], 422);
             }
 
-            $fields = ['com_site_logo', 'com_site_favicon', 'com_site_title', 'com_site_subtitle', 'com_user_email_verification','com_user_login_otp', 'com_maintenance_mode',
+            $fields = ['com_site_logo','com_site_white_logo', 'com_site_favicon', 'com_site_title', 'com_site_subtitle', 'com_user_email_verification','com_user_login_otp', 'com_maintenance_mode',
                 'com_site_full_address','com_site_contact_number', 'com_site_website_url', 'com_site_email', 'com_site_footer_copyright'
             ];
 
@@ -107,6 +109,7 @@ class SystemManagementController extends Controller
             }
 
             $com_site_logo = com_option_get('com_site_logo');
+            $com_site_white_logo = com_option_get('com_site_white_logo');
             $com_site_favicon = com_option_get('com_site_favicon');
             $com_site_logo_image_url = $imageModifier->generateImageUrl(com_option_get('com_site_logo'));
             $com_site_favicon_image_url = $imageModifier->generateImageUrl(com_option_get('com_site_favicon'));
@@ -125,6 +128,7 @@ class SystemManagementController extends Controller
 
             return $this->success([
                 'com_site_logo' => $com_site_logo,
+                'com_site_white_logo' => $com_site_white_logo,
                 'com_site_favicon' => $com_site_favicon,
                 'com_site_logo_image_url' => $com_site_logo_image_url,
                 'com_site_favicon_image_url' => $com_site_favicon_image_url,
