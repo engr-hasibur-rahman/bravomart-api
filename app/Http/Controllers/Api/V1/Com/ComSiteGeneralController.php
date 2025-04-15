@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\SiteGeneralInfoFilterFavResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterLogoResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterResource;
 use App\Http\Resources\Com\SiteGeneralInfoResource;
@@ -26,6 +27,13 @@ class ComSiteGeneralController extends Controller
             ];
             return response()->json([
                 'site_settings' => New SiteGeneralInfoFilterLogoResource($site_settings),
+            ]);
+        }elseif ($filter_data == 'fav-icon') {
+            $site_settings = [
+                'com_site_favicon' => com_option_get('com_site_favicon'),
+            ];
+            return response()->json([
+                'site_settings' => New SiteGeneralInfoFilterFavResource($site_settings),
             ]);
         }else{
             $site_settings = [
