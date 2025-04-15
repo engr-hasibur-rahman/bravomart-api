@@ -28,7 +28,7 @@ class ReviewRequest extends FormRequest
             'store_id' => 'required|exists:stores,id',
             'reviewable_id' => 'required|integer',
             'reviewable_type' => 'required|string|in:product,delivery_man',
-            'review' => 'required|string|min:10|max:1000',
+            'review' => 'required|string|max:1000',
             'rating' => 'required|numeric|between:1,5',
         ];
     }
@@ -51,7 +51,6 @@ class ReviewRequest extends FormRequest
 
             'review.required' => __('validation.required', ['attribute' => 'Review']),
             'review.string' => __('validation.string', ['attribute' => 'Review']),
-            'review.min' => __('validation.min', ['attribute' => 'Review']),
             'review.max' => __('validation.max', ['attribute' => 'Review']),
 
             'rating.required' => __('validation.required', ['attribute' => 'Rating']),
