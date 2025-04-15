@@ -40,7 +40,8 @@ class User extends Authenticatable
         'apple_id',
         'def_lang',
         'deactivated_at',
-        'firebase_token'
+        'firebase_token',
+        'fcm_token',
     ];
     protected $guard_name = 'api';
     protected $hidden = [

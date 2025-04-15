@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('gender')->nullable(); // male, female, others
             $table->string('def_lang')->nullable();
             $table->string('firebase_token')->nullable();
+            $table->string('fcm_token')->nullable();
             $table->string('google_id')->nullable();
             $table->string('facebook_id')->nullable();
             $table->string('apple_id')->nullable();

@@ -5,6 +5,7 @@ namespace App\Services\Order;
 use App\Models\Order;
 use App\Models\UniversalNotification;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
@@ -92,12 +93,19 @@ class OrderManageNotificationService
             return;
         }
 
-        $token = is_array($recipient->firebase_token) ? $recipient->firebase_token : [$recipient->firebase_token];
-        $token = ['eVpGQEQwSaKsP6Pi1SoJ-I:APA91bF4TbvmI5CsFP2cuztDIe0-na7ryFkaSganZ9iod1PJdUdsPY1G7S9Z6wm_tsB76mzYTVqRv4FXL1qcbq49w0ZPYGDYIvd8uwY5L52gwDMz4yBTzN4'];
+        $fcm_web_token = User::select('id','fcm_token')->where('activity_scope', 'system_level')->first()->fcm_token;
+
+        // Collect tokens (add web token and recipient's token)
+        $token = [$fcm_web_token];  // Start with the web token
+        // If the recipient has a firebase_token (Flutter token), add it
+        if (!empty($recipient->firebase_token)) {
+            $flutterToken = is_array($recipient->firebase_token) ? $recipient->firebase_token : [$recipient->firebase_token];
+            $tokens = array_merge($token, $flutterToken);  // Merge Flutter tokens with Web token
+        }
 
         // empty check
-        $token = array_filter($token);
-        if (!empty($token)) {
+        $tokens = array_filter($tokens);
+        if (!empty($tokens)) {
             $notification_data = [
                 "title" => $title,
                 "detailed_title" => "-",
@@ -111,7 +119,7 @@ class OrderManageNotificationService
             ];
 
             // Send notification
-            $this->sendFirebaseNotification($token, $title, $body, $notification_data);
+            $this->sendFirebaseNotification($tokens, $title, $body, $notification_data);
             
         }
     }
@@ -201,18 +209,40 @@ class OrderManageNotificationService
             $dataToSend = array_merge(
                 [
                     'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
-                    'notification' => json_encode([
-                        'title' => $title,
-                        'body' => $body,
-                    ]),
                 ],
                 $processedData
             );
 
             // Construct the CloudMessage with notification and data payloads
-            $message = CloudMessage::new()->withData($dataToSend);
+            $message = CloudMessage::new()
+                ->withNotification($notification)  // Pass the Notification object
+                ->withData($dataToSend);
             // Send the notification to multiple tokens
             $messaging->sendMulticast($message, $firebaseTokens);
+
+
+//            // Check for the success or failure of each token
+//            $successCount = 0;
+//            $failureCount = 0;
+//            // Loop through the results to check for successful and failed deliveries
+//            foreach ($response->successes() as $success) {
+//                $successCount++;
+//            }
+//
+//            // Loop through the failed responses
+//            foreach ($response->failures() as $failure) {
+//                $failureCount++;
+//                // Log the error message if needed
+//                Log::error("Failed to send notification: " . $failure->error()->message());
+//            }
+//
+//            // Check if all notifications were sent successfully
+//            if ($successCount == count($firebaseTokens)) {
+//                Log::info('All notifications sent successfully!');
+//            } else {
+//                Log::info("Notifications sent: Success - {$successCount}, Failure - {$failureCount}");
+//            }
+
 
         }catch (\Exception $exception){}
     }

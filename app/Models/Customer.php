@@ -28,6 +28,7 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         'marketing_email',
         'marketing_sms',
         'firebase_token',
+        'fcm_token',
         'google_id',
         'facebook_id',
         'apple_id',
