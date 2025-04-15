@@ -75,13 +75,6 @@ class Product extends Model
     {
         return $this->morphMany(Review::class, 'reviewable');
     }
-    public function isReviewedByCustomer(int $customerId, int $orderId): bool
-    {
-        return $this->reviews()
-            ->where('customer_id', $customerId)
-            ->where('order_id', $orderId)
-            ->exists();
-    }
 
     public function variants()
     {
