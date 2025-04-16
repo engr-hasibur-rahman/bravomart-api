@@ -959,7 +959,7 @@ class UserController extends Controller
                     'status' => false,
                     'status_code' => 401,
                     'message' => __('messages.old_password_invalid'),
-                ]);
+                ],401);
             }
 
             // Update the password with the new one
