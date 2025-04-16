@@ -31,7 +31,7 @@ class PermissionAdminSeeder extends Seeder
                     ]
                 ],
 
-                // Orders & Reviews
+                // Orders & Refunds
                 [
                     'PermissionName' => '',
                     'PermissionTitle' => 'Orders & Refunds',
@@ -78,7 +78,7 @@ class PermissionAdminSeeder extends Seeder
                                 ],
                                 [
                                     'PermissionName' => PermissionKey::ADMIN_ORDERS_RETURNED_OR_REFUND_REASON->value,
-                                    'PermissionTitle' => 'ShieldQuestion',
+                                    'PermissionTitle' => 'Refund Reason',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
