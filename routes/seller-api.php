@@ -184,7 +184,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
             });
 
             // Notifications manage
-            Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value])->group(function () {
+            Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::SELLER_NOTIFICATION_MANAGEMENT->value])->group(function () {
                 Route::get('/', [NotificationManageController::class, 'index']);
                 Route::get('/read/{id}', [NotificationManageController::class, 'markAsRead']);
             });
@@ -260,7 +260,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
         // Store Notice manage
         Route::group(['prefix' => 'store-notices/'], function () {
             Route::get('list', [SellerStoreNoticeController::class, 'index']); // Get all notices
-            Route::get('details/{id}', [SellerStoreNoticeController::class, 'show']); // View a specific notice
+            Route::get('details', [SellerStoreNoticeController::class, 'show']); // View a specific notice
         });
     });
 });

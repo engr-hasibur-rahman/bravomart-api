@@ -15,11 +15,12 @@ class SellerNoticeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "notice_id" => $this->notice->id,
-            "title" => $this->notice->title,
-            "type" => $this->notice->type,
-            "priority" => $this->notice->priority,
-            "status" => $this->notice->status,
+            "notice_id" => $this->notice?->id,
+            "title" => $this->notice?->title,
+            "type" => $this->notice?->type,
+            "priority" => $this->notice?->priority,
+            "status" => $this->notice?->status,
+            "created_at" => $this->notice?->created_at->diffForHumans(),
         ];
     }
 }

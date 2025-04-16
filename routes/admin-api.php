@@ -439,7 +439,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         // Notifications manage
-        Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::SELLER_NOTIFICATION_MANAGEMENT->value])->group(function () {
+        Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value])->group(function () {
             Route::get('/', [NotificationManageController::class, 'index']);
             Route::get('/read/{id}', [NotificationManageController::class, 'markAsRead']);
             Route::delete('remove/{id}', [NotificationManageController::class, 'destroy']);

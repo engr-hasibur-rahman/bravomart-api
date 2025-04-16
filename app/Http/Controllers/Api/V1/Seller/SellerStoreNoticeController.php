@@ -46,6 +46,5 @@ class SellerStoreNoticeController extends Controller
                 'message' => __('messages.data_not_found'),
             ]);
         }
-
     }
 }

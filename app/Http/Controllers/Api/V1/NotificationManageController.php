@@ -32,7 +32,7 @@ class NotificationManageController extends Controller
             $notifiableType = 'customer';
         } elseif ($user) {
             $notifiableTypes = [
-                'system_level' => null,
+                'system_level' => 'admin',
                 'store_level' => 'store',
                 'delivery_level' => 'deliveryman',
             ];
@@ -40,22 +40,13 @@ class NotificationManageController extends Controller
         }
 
         // Build the query based on notifiable type
-        $query = UniversalNotification::latest();
+        $query = UniversalNotification::query();
         if ($notifiableType) {
             $query->where('notifiable_type', $notifiableType);
         }
 
         // Paginate results
-        $notifications = $query->paginate(10);
-
-        // Return response
-        if ($notifications->isEmpty()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'No notifications found',
-                'data' => [],
-            ], 404);
-        }
+        $notifications = $query->latest()->paginate($request->per_page ?? 10);
 
         return response()->json([
             'success' => true,
