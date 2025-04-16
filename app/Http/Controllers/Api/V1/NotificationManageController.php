@@ -67,8 +67,10 @@ class NotificationManageController extends Controller
             $notification = UniversalNotification::findOrFail($id);
 
             // If notification hasn't been read, mark it as read
-            if (!$notification->read_at) {
-                $notification->update(['read_at' => now()]);
+            if ($notification->status == 'unread') {
+                $notification->update([
+                    'status' => 'read'
+                ]);
                 return response()->json(['message' => 'Notification marked as read']);
             }
 
