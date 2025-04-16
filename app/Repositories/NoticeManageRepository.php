@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\NoticeManageInterface;
+use App\Models\Store;
 use App\Models\StoreNotice;
 use App\Models\StoreNoticeRecipient;
 use App\Models\Translation;
@@ -122,7 +123,8 @@ class NoticeManageRepository implements NoticeManageInterface
 
     public function getSellerStoreNotices()
     {
-        $userStores = auth('api')->user()->stores;
+        $user = auth('api')->user();
+        $userStores = Store::where('store_seller_id',$user->id)->pluck('id');
         $isStoreOwner = User::where('id', auth('api')->id())
             ->where('store_owner', 1)
             ->exists();
