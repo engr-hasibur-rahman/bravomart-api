@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\AdminEmailDetailsResource;
 use App\Http\Resources\Admin\AdminEmailResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Mail\TestEmail;
+use App\Mail\GeneralMail;
 use App\Models\EmailTemplate;
 use App\Models\OrderRefundReason;
 use App\Models\Translation;
