@@ -56,6 +56,20 @@
             font-size: 12px;
             color: #999999;
         }
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #ffffff;
+        }
+        .logo a {
+            display: inline-block;
+        }
+        .logo img {
+            max-width: 200px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
