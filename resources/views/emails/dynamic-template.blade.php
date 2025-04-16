@@ -40,13 +40,36 @@
             font-size: 22px;
         }
         .email-body {
-            padding: 30px;
-            color: #333333;
+            font-family: Arial, sans-serif;
+            color: #333;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: auto;
         }
+
+        .email-body h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .email-body ul {
+            list-style-type: none;
+            padding-left: 0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .email-body ul li {
+            margin-bottom: 6px;
+        }
+
         .email-body p {
             font-size: 16px;
             margin-bottom: 20px;
             color: #555555;
+            line-height: 1.6;
         }
         .email-body p:last-child {
             margin-bottom: 0;
@@ -115,7 +138,7 @@
             </a>
         </div>
         <div class="email-body">
-            {!! $data['message'] !!}
+            {!! $data !!}
         </div>
         <footer>
             {!! com_get_footer_copyright() !!}
