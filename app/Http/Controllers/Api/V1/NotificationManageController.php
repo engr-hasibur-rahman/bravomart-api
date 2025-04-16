@@ -48,15 +48,6 @@ class NotificationManageController extends Controller
         // Paginate results
         $notifications = $query->paginate(10);
 
-        // Return response
-        if ($notifications->isEmpty()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'No notifications found',
-                'data' => [],
-            ], 404);
-        }
-
         return response()->json([
             'success' => true,
             'message' => 'List all notifications',
