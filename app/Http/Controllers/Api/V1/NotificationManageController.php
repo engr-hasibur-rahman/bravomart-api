@@ -15,7 +15,7 @@ class NotificationManageController extends Controller
     /**
      * Display a listing of the notifications.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Check if the user is authenticated as an API user or customer
         $user = auth('api')->user();
