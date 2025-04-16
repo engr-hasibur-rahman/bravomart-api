@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\TestEmail;
+use App\Mail\GeneralMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -77,7 +77,10 @@ class EmailSettingsController extends Controller
         $recipient = $request->input('test_email');
 
         try {
-            Mail::to($recipient)->send(new TestEmail());
+            Mail::to($recipient)->send(new GeneralMail([
+                'subject' => __('Test Mail'),
+                'body' => $recipient,
+            ]));
             return response()->json([
                 'status' => 'success',
                 'message' => translate('messages.test_email_sent_success', ['name' => 'Test Mail']),

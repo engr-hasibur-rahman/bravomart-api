@@ -61,7 +61,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         // Notifications manage
        Route::group(['prefix' => 'notifications'], function () {
             Route::get('/', [NotificationManageController::class, 'index']);
-            Route::get('/read/{id}', [NotificationManageController::class, 'markAsRead']);
+            Route::post('/read', [NotificationManageController::class, 'markAsRead']);
         });
 
         Route::group(['prefix' => 'wish-list'], function () {

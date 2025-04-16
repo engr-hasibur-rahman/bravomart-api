@@ -10,7 +10,9 @@ use App\Http\Resources\User\UserDetailsResource;
 use App\Interfaces\CustomerManageInterface;
 use App\Models\Customer;
 use App\Models\CustomerDeactivationReason;
+use App\Models\UniversalNotification;
 use App\Models\User;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -361,6 +363,17 @@ class CustomerManageController extends Controller
 
             $userId = auth('sanctum')->id();
             $user = Customer::findOrFail($userId);
+
+            // count unread customer notification
+            $unreadNotifications = UniversalNotification::forCustomers()
+                ->where('notifiable_id', $userId)
+                ->where('status', 'unread')
+                ->count();
+
+           $wishlist_count = Wishlist::where('customer_id', $userId)->count();
+
+            $user->unread_notifications = $unreadNotifications;
+            $user->wishlist_count = $wishlist_count;
 
             return new CustomerProfileResource($user);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

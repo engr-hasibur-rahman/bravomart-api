@@ -7,6 +7,8 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Notifications\OrderNotificationForAdmin;
 use App\Models\Customer;
 use App\Models\UniversalNotification;
+use Illuminate\Support\Facades\Request;
+
 
 class NotificationManageController extends Controller
 {
@@ -60,11 +62,11 @@ class NotificationManageController extends Controller
     /**
      * Mark a notification as read.
      */
-    public function markAsRead($id)
+    public function markAsRead(Request $request)
     {
         try {
             // Attempt to find the notification
-            $notification = UniversalNotification::findOrFail($id);
+            $notification = UniversalNotification::findOrFail($request->id);
 
             // If notification hasn't been read, mark it as read
             if ($notification->status == 'unread') {

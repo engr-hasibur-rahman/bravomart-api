@@ -112,6 +112,7 @@ class SystemManagementController extends Controller
             $com_site_white_logo = com_option_get('com_site_white_logo');
             $com_site_favicon = com_option_get('com_site_favicon');
             $com_site_logo_image_url = $imageModifier->generateImageUrl(com_option_get('com_site_logo'));
+            $com_site_white_logo_image_url = $imageModifier->generateImageUrl(com_option_get('com_site_white_logo'));
             $com_site_favicon_image_url = $imageModifier->generateImageUrl(com_option_get('com_site_favicon'));
             $com_site_title = com_option_get('com_site_title') ?? '';
             $com_site_subtitle = com_option_get('com_site_subtitle') ?? '';
@@ -131,6 +132,7 @@ class SystemManagementController extends Controller
                 'com_site_white_logo' => $com_site_white_logo,
                 'com_site_favicon' => $com_site_favicon,
                 'com_site_logo_image_url' => $com_site_logo_image_url,
+                'com_site_white_logo_image_url' => $com_site_white_logo_image_url,
                 'com_site_favicon_image_url' => $com_site_favicon_image_url,
                 'com_site_title' => $com_site_title,
                 'com_site_subtitle' => $com_site_subtitle,

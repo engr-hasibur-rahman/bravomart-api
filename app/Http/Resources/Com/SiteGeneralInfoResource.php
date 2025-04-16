@@ -20,6 +20,7 @@ class SiteGeneralInfoResource extends JsonResource
             'com_site_subtitle' => com_option_get('com_site_subtitle'),
             'com_site_favicon' => ImageModifier::generateImageUrl(com_option_get('com_site_favicon')),
             'com_site_logo' => ImageModifier::generateImageUrl(com_option_get('com_site_logo')),
+            'com_site_white_logo' => ImageModifier::generateImageUrl(com_option_get('com_site_white_logo')),
             'com_site_footer_copyright' => com_option_get('com_site_footer_copyright'),
             'com_site_email' => com_option_get('com_site_email'),
             'com_site_website_url' => com_option_get('com_site_website_url'),
