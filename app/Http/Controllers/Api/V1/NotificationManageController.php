@@ -7,7 +7,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Notifications\OrderNotificationForAdmin;
 use App\Models\Customer;
 use App\Models\UniversalNotification;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 
 class NotificationManageController extends Controller
