@@ -451,7 +451,7 @@ class PermissionStoreSeeder extends Seeder
                     'icon' => 'MessageCircleMore',
                     'options' => ['View'],
                     'translations' => [
-                        'en' => 'Notifications',
+                        'en' => 'Notifications Management',
                         'ar' => 'إعدادات المتجر'
                     ],
                     'submenu' => [
