@@ -328,7 +328,7 @@ if (!function_exists('translate')) {
 
     function com_get_footer_copyright()
     {
-        $copyright_text = com_option_get('site_' . 'en' . '_footer_copyright');
+        $copyright_text = com_option_get('com_site_footer_copyright');
         $copyright_text = str_replace(array('{copy}', '{year}'), array('&copy;', date('Y')), $copyright_text);
         return $copyright_text;
     }
