@@ -1388,12 +1388,15 @@ class FrontendController extends Controller
 
         // Pagination
         $perPage = $request->input('per_page', 10); // Default to 10 items per page
+        $today = now()->toDateString();
         if (auth('api_customer')->check()) {
             $coupon = $query->with('coupon.related_translations')
                 ->whereHas('coupon', function ($q) {
                     $q->where('status', 1);
                 })
                 ->where('status', 1)
+                ->whereDate('start_date', '<=', $today)
+                ->whereDate('end_date', '>=', $today)
                 ->whereNull('customer_id')
                 ->orWhere('customer_id', auth('api_customer')->user()->id)
                 ->paginate($perPage);
@@ -1403,6 +1406,8 @@ class FrontendController extends Controller
                     $q->where('status', 1);
                 })
                 ->where('status', 1)
+                ->whereDate('start_date', '<=', $today)
+                ->whereDate('end_date', '>=', $today)
                 ->whereNull('customer_id')
                 ->paginate($perPage);
         }

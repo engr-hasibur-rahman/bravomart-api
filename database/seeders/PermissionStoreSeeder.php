@@ -446,12 +446,12 @@ class PermissionStoreSeeder extends Seeder
                 // Notifications Settings
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Notifications',
+                    'PermissionTitle' => 'Notifications Management',
                     'activity_scope' => 'store_level',
                     'icon' => 'MessageCircleMore',
                     'options' => ['View'],
                     'translations' => [
-                        'en' => 'Notifications',
+                        'en' => 'Notifications Management',
                         'ar' => 'إعدادات المتجر'
                     ],
                     'submenu' => [

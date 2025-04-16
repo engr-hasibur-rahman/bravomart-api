@@ -7,13 +7,15 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Notifications\OrderNotificationForAdmin;
 use App\Models\Customer;
 use App\Models\UniversalNotification;
+use Illuminate\Http\Request;
+
 
 class NotificationManageController extends Controller
 {
     /**
      * Display a listing of the notifications.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Check if the user is authenticated as an API user or customer
         $user = auth('api')->user();
@@ -41,8 +43,10 @@ class NotificationManageController extends Controller
 
         // Build the query based on notifiable type
         $query = UniversalNotification::query();
-        if ($notifiableType) {
-            $query->where('notifiable_type', $notifiableType);
+        if ($notifiableType == 'customer') {
+            $query->where('notifiable_type', $notifiableType)->where('notifiable_id',$customer->id);
+        } else {
+            $query->where('notifiable_type', $notifiableType)->where('notifiable_id',$user->id);
         }
 
         // Paginate results
@@ -60,15 +64,17 @@ class NotificationManageController extends Controller
     /**
      * Mark a notification as read.
      */
-    public function markAsRead($id)
+    public function markAsRead(Request $request)
     {
         try {
             // Attempt to find the notification
-            $notification = UniversalNotification::findOrFail($id);
+            $notification = UniversalNotification::findOrFail($request->id);
 
             // If notification hasn't been read, mark it as read
-            if (!$notification->read_at) {
-                $notification->update(['read_at' => now()]);
+            if ($notification->status == 'unread') {
+                $notification->update([
+                    'status' => 'read'
+                ]);
                 return response()->json(['message' => 'Notification marked as read']);
             }
 
