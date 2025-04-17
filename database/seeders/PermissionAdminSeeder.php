@@ -4,8 +4,16 @@ namespace Database\Seeders;
 
 use App\Enums\PermissionKey;
 use App\Models\Translation;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Permission as ModelsPermission;
+use Spatie\Permission\Models\Role;
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
 
 class PermissionAdminSeeder extends Seeder
 {
@@ -16,6 +24,7 @@ class PermissionAdminSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('permissions')->where('available_for','system_level')->delete();
         $admin_main_menu = [
             [
                 // Dashboard
@@ -1688,6 +1697,18 @@ class PermissionAdminSeeder extends Seeder
                 }
             }
 
+        }
+
+        $user = auth('api')->user();
+        if ($user) {
+            //Assign PermissionKey to Super Admin Role
+            $role = Role::where(['available_for'  => 'system_level'])->first();
+            //PermissionKey::firstOrCreate(['name'  => 'all'], ['name'  => 'all', 'guard_name' => 'api']);
+            $role->givePermissionTo(Permission::whereIn('available_for',['system_level','COMMON'])->get());
+            $user->assignRole($role);
+
+            // Update View Option For All permission
+            DB::table('role_has_permissions')->update(['view' => true]);
         }
     }
 }
