@@ -27,7 +27,7 @@ class MenuSeeder extends Seeder
                 'created_at' => '2025-03-19 21:20:57',
                 'updated_at' => '2025-04-07 02:42:03',
             ],[
-                'id' => 1,
+                'id' => 2,
                 'name' => 'Coupon',
                 'url' => 'coupon',
                 'icon' => 'fa fa-phone',
@@ -42,7 +42,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-07 02:42:03',
             ],
             [
-                'id' => 2,
+                'id' => 3,
                 'name' => 'Product',
                 'url' => 'product',
                 'icon' => null,
@@ -57,7 +57,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-08 06:30:36',
             ],
             [
-                'id' => 3,
+                'id' => 4,
                 'name' => 'Become A Seller',
                 'url' => 'become-a-seller',
                 'icon' => null,
@@ -72,7 +72,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-08 06:30:29',
             ],
             [
-                'id' => 4,
+                'id' => 5,
                 'name' => 'Pages',
                 'url' => null,
                 'icon' => null,
@@ -87,7 +87,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-08 06:29:09',
             ],
             [
-                'id' => 5,
+                'id' => 6,
                 'name' => 'Blog',
                 'url' => 'blogs',
                 'icon' => null,
@@ -102,7 +102,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-08 06:30:12',
             ],
             [
-                'id' => 6,
+                'id' => 7,
                 'name' => 'Privacy & Policy',
                 'url' => 'privacy-policy',
                 'icon' => null,
@@ -117,7 +117,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-08 06:29:58',
             ],
             [
-                'id' => 7,
+                'id' => 8,
                 'name' => 'Terms and conditions',
                 'url' => 'terms-conditions',
                 'icon' => null,
@@ -132,7 +132,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-08 06:29:49',
             ],
             [
-                'id' => 8,
+                'id' => 9,
                 'name' => 'Faq',
                 'url' => null,
                 'icon' => null,
@@ -147,7 +147,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-08 06:29:31',
             ],
             [
-                'id' => 9,
+                'id' => 10,
                 'name' => 'Contact',
                 'url' => 'contact-us',
                 'icon' => null,
@@ -162,7 +162,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-08 06:28:21',
             ],
             [
-                'id' => 10,
+                'id' => 11,
                 'name' => 'Home',
                 'url' => '/',
                 'icon' => null,
@@ -177,7 +177,7 @@ class MenuSeeder extends Seeder
                 'updated_at' => '2025-04-08 06:31:03',
             ],
             [
-                'id' => 11,
+                'id' => 12,
                 'name' => 'Store',
                 'url' => 'store/list',
                 'icon' => null,
