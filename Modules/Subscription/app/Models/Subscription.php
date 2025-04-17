@@ -30,6 +30,11 @@ class Subscription extends Model
         'status',
     ];
 
+    public $translationKeys = [
+        'name',
+        'description'
+    ];
+
     protected $hidden = [
         // Add sensitive attributes to hide if necessary
     ];

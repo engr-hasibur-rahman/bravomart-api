@@ -1700,7 +1700,7 @@ class PermissionAdminSeeder extends Seeder
         }
 
         $user = auth('api')->user();
-        if ($user) {
+        if ($user && $user->activity_scope == 'system_level') {
             //Assign PermissionKey to Super Admin Role
             $role = Role::where(['available_for'  => 'system_level'])->first();
             //PermissionKey::firstOrCreate(['name'  => 'all'], ['name'  => 'all', 'guard_name' => 'api']);
