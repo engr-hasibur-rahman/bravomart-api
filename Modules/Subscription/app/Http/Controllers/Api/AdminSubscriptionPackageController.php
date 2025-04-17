@@ -8,6 +8,7 @@ use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Subscription\app\Models\Subscription;
+use Modules\Subscription\app\Transformers\AdminSubscriptionPackageDetailsResource;
 use Modules\Subscription\app\Transformers\AdminSubscriptionPackageResource;
 
 class AdminSubscriptionPackageController extends Controller
@@ -74,7 +75,7 @@ class AdminSubscriptionPackageController extends Controller
         $package = Subscription::findOrFail($id);
         return response()->json([
             'success' => true,
-            'package' => new AdminSubscriptionPackageResource($package),
+            'package' => new AdminSubscriptionPackageDetailsResource($package),
         ]);
     }
 
