@@ -153,6 +153,11 @@ class WalletCommonController extends Controller
 
         // user's wallet
         if ($user->activity_scope === 'store_level') {
+            if (!$request->store_id || empty($request->store_id)) {
+                return response()->json([
+                    'message' => 'Store ID is required'
+                ],422);
+            }
             $store = Store::find($request->store_id);
             $wallet = Wallet::forOwner($store)->first();
         } else {
