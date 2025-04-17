@@ -13,6 +13,7 @@ class Subscription extends Model
     protected $fillable = [
         'store_id',
         'name',
+        'type',
         'validity',
         'price',
         'image',
