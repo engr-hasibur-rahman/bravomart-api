@@ -16,6 +16,7 @@ class StoreSubscriptionHistoryResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'type' => $this->type,
             'validity' => $this->validity,
             'price' => $this->price,
             'pos_system' => $this->pos_system,

@@ -634,8 +634,6 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 // mail send
                 try {
                     // order notification
-
-
                     $email_template_deliveryman = EmailTemplate::where('type', 'deliveryman-earning')->where('status', 1)->first();
                     $email_template_order_delivered = EmailTemplate::where('type', 'order-status-delivered')->where('status', 1)->first();
                     // customer, store and admin
@@ -668,7 +666,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             }
 
             // send mail and notification
-            $customer_email = $order->orderAddress?->email ?? $order->customer?->email ?? 'hasibur2060@gmail.com';
+            $customer_email = $order->orderAddress?->email ?? $order->customer?->email;
             $store_email = $order->store?->email;
             $system_global_email = com_option_get('com_site_email');
             // mail send

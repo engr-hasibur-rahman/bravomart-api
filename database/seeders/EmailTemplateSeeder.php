@@ -26,12 +26,26 @@ class EmailTemplateSeeder extends Seeder
                 "body" => "<h1>Welcome @name!</h1>
                             <p>Thank you for joining @site_name.</p>
                             <ul>
-                                <li>Username: @username</li>
+                                <li>Name: @name</li>
                                 <li>Email: @email</li>
                                 <li>Phone: @phone</li>
-                                <li>Password: @password</li>
                             </ul>
-                            <p>We hope you enjoy our service!</p>",
+                          ",
+                "status" => 1,
+                "created_at" => $now,
+                "updated_at" => $now,
+            ],
+            [
+                "type" => 'register',
+                "name" => 'User Registration',
+                "subject" => 'Welcome to ' . config('app.name'),
+                "body" => "<h1>Hello Admin, A New Seller Just Joined BravoMart!</h1>
+                            <ul>
+                                <li>Name: @name</li>
+                                <li>Email: @email</li>
+                                <li>Phone: @phone</li>
+                            </ul>
+                          ",
                 "status" => 1,
                 "created_at" => $now,
                 "updated_at" => $now,

@@ -5,134 +5,145 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{com_option_get('com_site_title').' '. __('Mail')}}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <style>
-        *{
-            font-family: 'Open Sans', sans-serif;
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
         }
-        .mail-container {
-            max-width: 650px;
-            margin: 0 auto;
-            text-align: center;
-            background-color: #f2f2f2;
+        .container {
+            width: 100%;
             padding: 40px 0;
         }
-        .inner-wrap {
-            background-color: #fff;
-            margin: 40px;
-            padding: 30px 20px;
-            text-align: left;
-            box-shadow: 0 0 20px 0 rgba(0,0,0,0.01);
+        .email-box {
+            width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .inner-wrap p {
-            font-size: 16px;
-            line-height: 26px;
-            color: #656565;
-            margin: 0;
-        }
-        .message-wrap {
-            background-color: #f2f2f2;
-            padding: 30px;
-            margin-top: 40px;
-        }
-
-        .message-wrap p {
-            font-size: 14px;
-            line-height: 26px;
-        }
-        .btn-wrap {
+        .email-header {
+            background-color: #4F46E5;
+            padding: 20px;
             text-align: center;
         }
-
-        .btn-wrap .anchor-btn {
-            background-color: #005ec6;
-            color: #fff;
-            font-size: 14px;
-            line-height: 26px;
-            font-weight: 500;
-            text-transform: capitalize;
-            text-decoration: none;
-            padding: 8px 20px;
-            display: inline-block;
-            margin-top: 40px;
-            border-radius: 5px;
-            transition: all 300ms;
+        .email-header img {
+            max-height: 50px;
+            margin-bottom: 10px;
+        }
+        .email-header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 22px;
+        }
+        .email-body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: auto;
         }
 
-        .btn-wrap .anchor-btn:hover {
-            opacity: .8;
+        .email-body h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
         }
-        .verify-code{
-            background-color:#f2f2f2;
-            color:#333;
-            padding: 10px 15px;
-            border-radius: 3px;
+
+        .email-body ul {
+            list-style-type: none;
+            padding-left: 0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .email-body ul li {
+            margin-bottom: 6px;
+        }
+
+        .email-body p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555555;
+            line-height: 1.6;
+        }
+        .email-body p:last-child {
+            margin-bottom: 0;
+        }
+        .footer {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #999999;
+        }
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #ffffff;
+        }
+        .logo a {
             display: inline-block;
-            margin: 20px;
         }
-        table {
+        .logo img {
+            max-width: 200px;
+            height: auto;
+            display: block;
             margin: 0 auto;
         }
-        table {
-            border-collapse: collapse;
-            width: 100%;
+
+        /* RTL Specific Styles */
+        [dir="rtl"] .email-header h1 {
+            text-align: right;
+        }
+        [dir="rtl"] .email-body p {
+            text-align: right;
+        }
+        [dir="rtl"] .footer {
+            text-align: right;
         }
 
-        table td, table th {
-            border: 1px solid #ddd;
-            padding: 8px;
+        /* Media Queries for Responsiveness */
+        @media screen and (max-width: 600px) {
+            .email-box {
+                width: 100% !important;
+                padding: 10px;
+            }
+            .email-header h1 {
+                font-size: 18px !important;
+            }
+            .email-body p {
+                font-size: 14px !important;
+            }
+            .footer {
+                font-size: 10px !important;
+                padding: 15px;
+            }
+            .logo img {
+                max-width: 150px !important;
+            }
         }
-
-        table tr:nth-child(even){background-color: #f2f2f2;}
-
-        table tr:hover {background-color: #ddd;}
-
-        table th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #111d5c;
-            color: white;
-        }
-        .logo-wrapper img{
-            max-width: 200px;
-        }
-
-        [dir="rtl"] .earning-wrapper {
-            text-align: right !important;
-        }
-        [dir="rtl"] .earning-wrapper .earning-title {
-            text-align: right !important;
-        }
-        [dir="rtl"] .wrap-para {
-            text-align: right !important;
-        }
-        [dir="rtl"] .inner-wrap-contents p {
-            text-align: right !important;
-        }
-        [dir="rtl"] .inner-wrap-contents .earning-order-title {
-            text-align: right !important;
-        }
-        [dir="rtl"] .earning-title {
-            text-align: right !important;
-        }
-
     </style>
 </head>
 <body>
-<div class="mail-container">
-    <div class="logo-wrapper">
-        <a href="{{url('/')}}">
-            {!! com_option_get_id_wise_url(com_option_get('com_site_logo')) !!}
-        </a>
+<div class="container">
+     <div class="email-box">
+        <div class="logo">
+            <a href="{{url('/')}}">
+                {!! com_option_get_id_wise_url(com_option_get('com_site_logo')) !!}
+            </a>
+        </div>
+        <div class="email-body">
+            {!! $data !!}
+        </div>
+        <footer>
+            {!! com_get_footer_copyright() !!}
+        </footer>
     </div>
-    <div class="inner-wrap wrap-para">
-        {!! $data['message'] !!}
-    </div>
-    <footer>
-        {!! com_get_footer_copyright() !!}
-    </footer>
 </div>
 </body>
 </html>

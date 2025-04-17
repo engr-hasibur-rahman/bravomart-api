@@ -86,4 +86,12 @@ class AdminSellerManageController extends Controller
             'meta' => new PaginationResource($sellers),
         ]);
     }
+
+    public function changeStatus(Request $request)
+    {
+        $user = User::findOrFail($request->id);
+        $user->status = !$user->status;
+        $user->save();
+        return $this->success(translate('messages.update_success', ['name' => 'User']));
+    }
 }

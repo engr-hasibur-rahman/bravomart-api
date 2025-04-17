@@ -7,8 +7,11 @@ use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
+use App\Jobs\SendDynamicEmailJob;
+use App\Mail\DynamicEmail;
 use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
+use App\Models\EmailTemplate;
 use App\Models\StoreSeller;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -419,10 +422,10 @@ class UserController extends Controller
         }
 
         try {
-            // By default role ---->
+            // By default role
             $roles = Role::where('available_for', 'store_level')->pluck('name');
 
-            // When admin creates a seller ---->
+            // When admin creates a seller
             if (isset($request->roles)) {
                 $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
             }
@@ -450,6 +453,35 @@ class UserController extends Controller
             $user->store_seller_id = $seller->id;
             $user->save();
 
+            // Send email to seller register in background
+            try {
+
+                $seller_email = $user->email;
+                $seller_phone = $user->phone;
+                $seller_name = $user->full_name;
+                $system_global_title = com_option_get('com_site_title');
+                $system_global_email = com_option_get('com_site_email');
+
+                $email_template_seller = EmailTemplate::where('type', 'register')->where('status', 1)->first();
+                $email_template_admin =  EmailTemplate::where('type', 'seller-register-for-admin')->where('status', 1)->first();
+                $seller_subject = $email_template_seller->subject;
+                $admin_subject = $email_template_admin->subject;
+                $seller_message = $email_template_seller->body;
+                $admin_message = $email_template_admin->body;
+
+                $seller_subject = str_replace(["@name"], [$seller_name], $seller_subject);
+                $seller_message = str_replace(["@name", "@site_name", "@email", "@phone"], [$seller_name, $system_global_title,$seller_email,$seller_phone], $seller_message);
+                $admin_message = str_replace(["@name", "@email", "@phone"], [$seller_name, $seller_email,$seller_phone], $admin_message);
+
+                // Check if template exists and email is valid and // Send the email using queued job
+                if ($email_template_seller) {
+                    // mail to seller
+                    dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
+                    dispatch(new SendDynamicEmailJob($system_global_email, $admin_subject, $admin_message));
+                }
+            } catch (\Exception $th) {
+            }
+
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
@@ -465,7 +497,8 @@ class UserController extends Controller
                 "store_seller_id" => $user->store_seller_id,
                 "stores" => json_decode($user->stores),
                 "next_stage" => "2"
-            ], 200);
+            ]);
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 "message" => __('messages.validation_failed', ['name' => 'Seller']),

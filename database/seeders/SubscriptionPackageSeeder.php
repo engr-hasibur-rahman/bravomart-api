@@ -17,6 +17,7 @@ class SubscriptionPackageSeeder extends Seeder
         $packages = [
             [
                 "name" => "Trial Package",
+                "type" => 'Weekly',
                 "validity" => 30,
                 "price" => 0,
                 "pos_system" => false,
@@ -29,8 +30,9 @@ class SubscriptionPackageSeeder extends Seeder
             ],
             [
                 "name" => "Basic Package",
-                "validity" => 60,
-                "price" => 29.99,
+                "type" => 'Monthly',
+                "validity" => 30,
+                "price" => 30,
                 "pos_system" => true,
                 "self_delivery" => false,
                 "mobile_app" => false,
@@ -41,8 +43,9 @@ class SubscriptionPackageSeeder extends Seeder
             ],
             [
                 "name" => "Standard Package",
+                "type" => 'Half-Yearly',
                 "validity" => 180,
-                "price" => 99.99,
+                "price" => 100,
                 "pos_system" => true,
                 "self_delivery" => true,
                 "mobile_app" => false,
@@ -53,8 +56,9 @@ class SubscriptionPackageSeeder extends Seeder
             ],
             [
                 "name" => "Premium Package",
+                "type" => 'Yearly',
                 "validity" => 365,
-                "price" => 199.99,
+                "price" => 200,
                 "pos_system" => true,
                 "self_delivery" => true,
                 "mobile_app" => true,
@@ -65,8 +69,9 @@ class SubscriptionPackageSeeder extends Seeder
             ],
             [
                 "name" => "Enterprise Package",
-                "validity" => 365,
-                "price" => 499.99,
+                "type" => 'Extended',
+                "validity" => 1095,
+                "price" => 500,
                 "pos_system" => true,
                 "self_delivery" => true,
                 "mobile_app" => true,

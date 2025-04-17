@@ -70,6 +70,27 @@
             display: block;
             margin: 0 auto;
         }
+
+        /* Media Queries for Responsiveness */
+        @media screen and (max-width: 600px) {
+            .email-box {
+                width: 100% !important;
+                padding: 10px;
+            }
+            .email-header h1 {
+                font-size: 18px !important;
+            }
+            .email-body p {
+                font-size: 14px !important;
+            }
+            .footer {
+                font-size: 10px !important;
+                padding: 15px;
+            }
+            .logo img {
+                max-width: 150px !important;
+            }
+        }
     </style>
 </head>
 <body>
