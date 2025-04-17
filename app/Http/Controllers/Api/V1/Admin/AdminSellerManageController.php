@@ -90,7 +90,7 @@ class AdminSellerManageController extends Controller
     public function changeStatus(Request $request)
     {
         $user = User::findOrFail($request->id);
-        $user->status = !$user->status;
+        $user->status = $request->status;
         $user->save();
         return $this->success(translate('messages.update_success', ['name' => 'User']));
     }
