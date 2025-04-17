@@ -72,6 +72,7 @@ class SubscriptionService
             $new_expire_date = $existing_expiry_date->addDays($new_validity);
 
             // Update the existing subscription
+            $existing_subscription->type = $subscription_package->type;
             $existing_subscription->expire_date = $new_expire_date;
             $existing_subscription->status = $subscription_status;
             $existing_subscription->payment_status = $payment_status;
@@ -84,6 +85,7 @@ class SubscriptionService
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
+                'type' => $subscription_package->type,
                 'validity' => $subscription_package->validity,
                 'price' => $subscription_package->price,
                 'pos_system' => $subscription_package->pos_system,
@@ -107,6 +109,7 @@ class SubscriptionService
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
+                'type' => $subscription_package->type,
                 'validity' => $subscription_package->validity,
                 'price' => $subscription_package->price,
                 'pos_system' => $subscription_package->pos_system,
@@ -129,6 +132,7 @@ class SubscriptionService
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
+                'type' => $subscription_package->type,
                 'validity' => $subscription_package->validity,
                 'price' => $subscription_package->price,
                 'pos_system' => $subscription_package->pos_system,
@@ -224,6 +228,7 @@ class SubscriptionService
             'store_id' => $store_id,
             'subscription_id' => $subscriptionPackage->id,
             'name' => $subscriptionPackage->name,
+            'type' => $subscriptionPackage->type,
             'validity' => $subscriptionPackage->validity,
             'price' => $subscriptionPackage->price,
             'pos_system' => $subscriptionPackage->pos_system,
@@ -245,6 +250,7 @@ class SubscriptionService
         $currentSubscription->update([
             'subscription_id' => $subscriptionPackage->id,
             'name' => $subscriptionPackage->name,
+            'type' => $subscriptionPackage->type,
             'validity' => $subscriptionPackage->validity,
             'price' => $subscriptionPackage->price,
             'pos_system' => $subscriptionPackage->pos_system,
@@ -325,6 +331,7 @@ class SubscriptionService
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
+                'type' => $subscription_package->type,
                 'validity' => $subscription_package->validity,
                 'price' => $subscription_package->price,
                 'pos_system' => $subscription_package->pos_system,
@@ -347,6 +354,7 @@ class SubscriptionService
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
+                'type' => $subscription_package->type,
                 'validity' => $subscription_package->validity,
                 'price' => $subscription_package->price,
                 'pos_system' => $subscription_package->pos_system,

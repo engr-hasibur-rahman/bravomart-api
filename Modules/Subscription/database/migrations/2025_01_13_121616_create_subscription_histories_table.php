@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedInteger('store_id');
             $table->bigInteger('subscription_id');
             $table->string('name');
+            $table->string('type')->nullable();
             $table->integer('validity');
             $table->double('price', 10, 2)->default(0);
             $table->boolean('pos_system')->default(false);
