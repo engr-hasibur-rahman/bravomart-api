@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 
 class MigrationController extends Controller
@@ -36,20 +37,20 @@ class MigrationController extends Controller
 
             $migrationName = $migration->migration;
 
-// Step 3: Disable foreign key checks before migration
+             // Step 3: Disable foreign key checks before migration
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-// Step 4: Rollback and re-run the migration
-            if ($migrationName) {
-                // If migration name exists, we run the migration refresh for the specific migration
+            $singleMigrationPath = base_path("Modules/Subscription/database/migrations/{$migrationName}.php");
+
+               // Step 4: Rollback and re-run the migration
+            if ($migrationName && File::exists($singleMigrationPath)) {
                 Artisan::call('migrate:refresh', [
-                    '--path' => "database/migrations/{$migrationName}.php", // Correct path to your migration file
+                    '--path' => 'Modules/Subscription/database/migrations',
                     '--force' => true
                 ]);
             } else {
-                // If no specific migration file is provided, run all migrations in the Subscription module
-                Artisan::call('migrate', [
-                    '--path' => 'Modules/Subscription/database/migrations', // Path to all migrations in the module
+                Artisan::call('migrate:refresh', [
+                    '--path' => "database/migrations/{$migrationName}.php",
                     '--force' => true
                 ]);
             }
