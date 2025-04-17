@@ -4,6 +4,7 @@ namespace Modules\Subscription\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Subscription\app\Models\Subscription;
@@ -11,10 +12,19 @@ use Modules\Subscription\app\Transformers\AdminSubscriptionPackageResource;
 
 class AdminSubscriptionPackageController extends Controller
 {
+    public function __construct(protected Subscription $subscription, protected Translation $translation)
+    {
+    }
+
+    public function translationKeys(): mixed
+    {
+        return $this->subscription->translationKeys;
+    }
+
     public function index()
     {
         // Paginate the packages, 10 items per page
-        $packages = Subscription::paginate(10);
+        $packages = Subscription::with('related_translations')->paginate(10);
         return response()->json([
             'success' => true,
             'packages' => AdminSubscriptionPackageResource::collection($packages),
@@ -28,7 +38,7 @@ class AdminSubscriptionPackageController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'type' =>  'required|string|max:255',
+            'type' => 'required|string|max:255',
             'validity' => 'required|integer',
             'price' => 'required|numeric',
             'pos_system' => 'nullable|boolean',
@@ -50,7 +60,8 @@ class AdminSubscriptionPackageController extends Controller
             ], 422);  // 422 Unprocessable Entity
         }
 
-        Subscription::create($validator->validated());
+        $subscription = Subscription::create($validator->validated());
+        createOrUpdateTranslation($request, $subscription->id, Subscription::class, $this->translationKeys());
 
         return response()->json([
             'status' => 'success',
@@ -70,6 +81,7 @@ class AdminSubscriptionPackageController extends Controller
     public function update(Request $request)
     {
         $subscription = Subscription::find($request->id);
+        createOrUpdateTranslation($request, $subscription->id, Subscription::class, $this->translationKeys());
         if (!$subscription) {
             return response()->json([
                 'status' => 'error',
@@ -134,7 +146,7 @@ class AdminSubscriptionPackageController extends Controller
             ]);
         }
 
-        $package->update(['status' => $package->status == 0 ? 1 : 0 ]);
+        $package->update(['status' => $package->status == 0 ? 1 : 0]);
 
         return response()->json([
             'status' => 'success',

@@ -2,6 +2,7 @@
 
 namespace Modules\Subscription\app\Models;
 
+use App\Models\Translation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Modules\Subscription\Database\Factories\SubscriptionFactory;
@@ -31,6 +32,11 @@ class Subscription extends Model
         'status',
     ];
 
+    public $translationKeys = [
+        'name',
+        'description'
+    ];
+
     protected $hidden = [
         // Add sensitive attributes to hide if necessary
     ];
@@ -47,6 +53,10 @@ class Subscription extends Model
         'status' => 'integer',
     ];
 
-
+    public function related_translations()
+    {
+        return $this->hasMany(Translation::class, 'translatable_id')
+            ->where('translatable_type', self::class);
+    }
 
 }

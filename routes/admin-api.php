@@ -256,6 +256,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('list/pending', [AdminSellerManageController::class, 'pendingSellers']);
             Route::post('approve', [AdminSellerManageController::class, 'approveSeller']);
             Route::post('suspend', [AdminSellerManageController::class, 'rejectSeller']);
+            Route::post('change-status', [AdminSellerManageController::class, 'changeStatus']);
         });
         // Department manage
         Route::group(['prefix' => 'department/'], function () {
