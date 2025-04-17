@@ -96,8 +96,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
     public function withdrawDetails(Request $request)
     {
 
-        $withdraw = WalletWithdrawalsTransaction::where('id', $request->id)
-            ->where('owner_id', auth('api')->user()->id)->first();
+        $withdraw = WalletWithdrawalsTransaction::where('id', $request->id)->first();
 
         if (!empty($withdraw)) {
             return response()->json([
