@@ -136,6 +136,11 @@ enum PermissionKey: string
     case ADMIN_CUSTOMER_MANAGEMENT_LIST = '/admin/customer/list';
     case ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST = '/admin/customer/subscriber-list';
     case ADMIN_CUSTOMER_CONTACT_MESSAGES = '/admin/customer/contact-messages';
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                          Seller management                                             //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case ADMIN_SELLER_MANAGEMENT = '/admin/seller/list';
+    case ADMIN_SELLER_REGISTRATION = '/admin/seller/registration';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Financial Activity                                                          //

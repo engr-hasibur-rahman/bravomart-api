@@ -44,7 +44,7 @@ class WalletCommonController extends Controller
         $wallet_settings = com_option_get('max_deposit_per_transaction');
 
         return response()->json([
-            'wallets' => $wallets ? new UserWalletDetailsResource($wallets):[],
+            'wallets' => $wallets ? new UserWalletDetailsResource($wallets) : [],
             'max_deposit_per_transaction' => $wallet_settings,
         ]);
     }
@@ -156,7 +156,7 @@ class WalletCommonController extends Controller
             if (!$request->store_id || empty($request->store_id)) {
                 return response()->json([
                     'message' => 'Store ID is required'
-                ],422);
+                ], 422);
             }
             $store = Store::find($request->store_id);
             $wallet = Wallet::forOwner($store)->first();
@@ -191,7 +191,7 @@ class WalletCommonController extends Controller
             $query->where('type', $filters['type']);
         }
 
-        $transactions = $query->where('wallet_id',$wallet->id)->paginate($filters['per_page'] ?? 10); // Change 10 to desired per-page limit
+        $transactions = $query->where('wallet_id', $wallet->id)->paginate($filters['per_page'] ?? 10); // Change 10 to desired per-page limit
         return response()->json([
             'wallets' => WalletTransactionListResource::collection($transactions),
             'meta' => new PaginationResource($transactions),
@@ -280,6 +280,7 @@ class WalletCommonController extends Controller
             'message' => 'Payment status updated successfully',
         ]);
     }
+
     public function walletHistory(Request $request)
     {
         // Check authentication
@@ -314,7 +315,7 @@ class WalletCommonController extends Controller
             ->get();
 
         // Fetch latest withdrawal history
-        $withdrawHistory = WalletWithdrawalsTransaction::where('wallet_id',$user_wallet->id)->latest()->get();
+        $withdrawHistory = WalletWithdrawalsTransaction::where('wallet_id', $user_wallet->id)->latest()->get();
 
         return response()->json([
             'status' => true,
