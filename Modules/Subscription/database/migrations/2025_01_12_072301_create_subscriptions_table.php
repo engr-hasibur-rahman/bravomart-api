@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->string('name'); // Subscription package name
+            $table->string('type')->nullable(); //trial, weekly, monthly yearly
             $table->integer('validity'); // Validity period in days
             $table->string('image')->nullable();
             $table->text('description')->nullable();
