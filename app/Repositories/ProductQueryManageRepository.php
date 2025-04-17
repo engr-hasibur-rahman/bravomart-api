@@ -39,6 +39,7 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
     public function getSellerQuestions(array $data)
     {
         return ProductQuery::query()
+            ->with(['product','customer'])
             ->whereIn('store_id', $data['store_ids'])
             ->when(isset($data['date_filter']), function ($query) use ($data) {
                 switch ($data['date_filter']) {

@@ -28,7 +28,11 @@ class SellerReviewResource extends JsonResource
                     $this->reviewable->first_name . ' ' . $this->reviewable->last_name :
                     ($this->reviewable_type == 'App\Models\Product' ?
                         $this->reviewable->name : null)) : null,
-            "store" => $this->store->name ?? null,
+            "slug" => $this->reviewable_type == 'App\Models\Product' && $this->reviewable
+                ? $this->reviewable->slug
+                : null,
+            "store" => $this->store?->name,
+            "store_slug" => $this->store?->slug,
         ];
     }
 }

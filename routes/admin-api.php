@@ -248,7 +248,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('remove', [AdminContactManageController::class, 'destroy']);
         });
         // Seller Manage
-        Route::group(['prefix' => 'seller/'], function () {
+        Route::group(['prefix' => 'seller/', 'middleware' => ['permission:' . PermissionKey::ADMIN_SELLER_MANAGEMENT->value]], function () {
+            Route::post('registration', [UserController::class, 'StoreOwnerRegistration'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_REGISTRATION->value);
             Route::get('list', [AdminSellerManageController::class, 'getSellerList']);
             Route::get('active', [AdminSellerManageController::class, 'getActiveSellerList']);
             Route::get('details/{slug}', [AdminSellerManageController::class, 'getSellerDetails']);
