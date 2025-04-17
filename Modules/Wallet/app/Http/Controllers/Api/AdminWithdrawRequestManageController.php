@@ -18,7 +18,7 @@ class AdminWithdrawRequestManageController extends Controller
 {
     public function withdrawRequestList(Request $request)
     {
-        $query = WalletWithdrawalsTransaction::with('owner')->where('status', 'pending');
+        $query = WalletWithdrawalsTransaction::with('owner.related_translations')->where('status', 'pending');
         // Apply filters if provided
         if (!empty($request->owner_id)) {
             $query->where('owner_id', $request->owner_id);
