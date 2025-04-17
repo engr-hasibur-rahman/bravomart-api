@@ -29,21 +29,7 @@ class SellerResource extends JsonResource
             "store_owner" => (bool)$this->store_owner,
             "store_seller_id" => $this->store_seller_id,
             "stores" => $this->stores,
-            "status" => $this->getStatusText($this->status),
+            "status" => $this->status,
         ];
-    }
-
-    private function getStatusText($status)
-    {
-        switch ($status) {
-            case 0:
-                return 'Inactive';
-            case 1:
-                return 'Active';
-            case 2:
-                return 'Suspended';
-            default:
-                return 'Unknown'; // Fallback for unexpected status
-        }
     }
 }
