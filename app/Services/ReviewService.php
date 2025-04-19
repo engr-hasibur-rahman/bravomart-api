@@ -135,9 +135,9 @@ class ReviewService
         if (!auth('api')->check()) {
             unauthorized_response();
         }
-        $seller_stores = Store::where('reviewable_type',Product::class)->where('store_seller_id', $sellerId)->pluck('id');
+        $seller_stores = Store::where('store_seller_id', $sellerId)->pluck('id');
 
-        $query = Review::with(['reviewable', 'store', 'customer'])->whereIn('store_id', $seller_stores->toArray());
+        $query = Review::where('reviewable_type',Product::class)->with(['reviewable', 'store', 'customer'])->whereIn('store_id', $seller_stores->toArray());
 
         if (isset($filters['min_rating']) && isset($filters['max_rating'])) {
             $query->whereBetween('rating', [$filters['min_rating'], $filters['max_rating']]);
