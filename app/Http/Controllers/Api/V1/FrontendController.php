@@ -1159,7 +1159,7 @@ class FrontendController extends Controller
 
     public function storeTypeList()
     {
-        $storeTypes = StoreType::get();
+        $storeTypes = StoreType::where('status', 1)->get();
         return response()->json(StoreTypeDropdownPublicResource::collection($storeTypes));
     }
 
