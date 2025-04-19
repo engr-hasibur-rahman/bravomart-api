@@ -88,11 +88,35 @@ class NoticeManageRepository implements NoticeManageInterface
 
     public function updateNotice(array $data)
     {
+        $general = $data['type'] == 'general';
+        $seller = $data['type'] == 'specific_seller';
+        $store = $data['type'] == 'specific_store';
         $notice = StoreNotice::find($data['id']);
         $notice_recipent = StoreNoticeRecipient::where('notice_id', $notice->id)->first();
         if ($notice_recipent){
-            $notice_recipent->update($data);
+            if ($general) {
+                $notice_recipent->update([
+                    'seller_id' => null,
+                    'store_id' => null,
+                ]);
+            }
+            else if ($seller) {
+                $notice_recipent->update([
+                    'seller_id' => $data['seller_id'],
+                    'store_id' => null,
+                ]);
+            }
+            else if ($store) {
+                $notice_recipent->update([
+                    'store_id' => $data['store_id'],
+                    'seller_id' => null,
+                ]);
+            }
+            else{
+                $notice_recipent->update($data);
+            }
         }
+
         $notice->update($data);
         return $notice->id;
     }
