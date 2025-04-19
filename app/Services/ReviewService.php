@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Product;
 use App\Models\Store;
 use App\Models\Review;
 use App\Models\ReviewReaction;
@@ -134,7 +135,7 @@ class ReviewService
         if (!auth('api')->check()) {
             unauthorized_response();
         }
-        $seller_stores = Store::where('store_seller_id', $sellerId)->pluck('id');
+        $seller_stores = Store::where('reviewable_type',Product::class)->where('store_seller_id', $sellerId)->pluck('id');
 
         $query = Review::with(['reviewable', 'store', 'customer'])->whereIn('store_id', $seller_stores->toArray());
 
@@ -146,19 +147,6 @@ class ReviewService
             $query->where('rating', '<=', $filters['max_rating']);
         } elseif (isset($filters['rating'])) {
             $query->where('rating', $filters['rating']);
-        }
-        if (isset($filters['store_id'])) {
-            $query->where('store_id', $filters['store_id']);
-        }
-        if (isset($filters['reviewable_type'])) {
-            if ($filters['reviewable_type'] === 'product') {
-                $reviewable_type = 'App\Models\Product';
-            } elseif ($filters['reviewable_type'] === 'delivery_man') {
-                $reviewable_type = 'App\Models\User';
-            } else {
-                $reviewable_type = 'undefined';
-            }
-            $query->where('reviewable_type', $reviewable_type);
         }
         if (isset($filters['start_date']) && isset($filters['end_date'])) {
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
