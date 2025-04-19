@@ -28,6 +28,7 @@ class AdminSellerManageController extends Controller
         }
         $sellers = $query
             ->where('deleted_at', null)
+            ->latest()
             ->paginate($request->perPage ?? 10);
         return response()->json([
             'sellers' => SellerResource::collection($sellers),
