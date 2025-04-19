@@ -258,17 +258,11 @@ class AdminProductManageController extends Controller
     public function productRequests()
     {
         $products = $this->productRepo->getPendingProducts();
-        if ($products) {
-            return response()->json([
-                'data' => ProductRequestResource::collection($products),
-                'meta' => new PaginationResource($products),
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'status_code' => 404,
-            ]);
-        }
+        return response()->json([
+            'data' => ProductRequestResource::collection($products),
+            'meta' => new PaginationResource($products),
+        ]);
+
     }
 
     public function approveProductRequests(Request $request)
@@ -278,24 +272,18 @@ class AdminProductManageController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'status_code' => 422,
                 'errors' => $validator->errors(),
-            ]);
+            ], 422);
         }
         $success = $this->productRepo->approvePendingProducts($request->product_ids);
         if ($success) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.update_success', ['name' => 'Products status']),
             ]);
         } else {
             return response()->json([
-                'status' => false,
-                'status_code' => 500,
                 'message' => __('messages.update_failed', ['name' => 'Products status']),
-            ]);
+            ], 500);
         }
     }
 }

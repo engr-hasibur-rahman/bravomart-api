@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->enum('priority', ['low', 'medium', 'high'])->default('low')->comment('Priority: low, medium, high'); // Priority as a string
             $table->dateTime('active_date')->nullable()->comment('Start date of the notice'); // Active start date
             $table->dateTime('expire_date')->nullable()->comment('End date of the notice'); // Expiration date
-            $table->integer('status')->default(0)->comment('0=inactive, 1=active');
+            $table->integer('status')->default(1)->comment('0=inactive, 1=active');
             $table->timestamps();
         });
     }
