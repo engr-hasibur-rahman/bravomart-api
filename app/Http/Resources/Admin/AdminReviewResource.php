@@ -37,7 +37,7 @@ class AdminReviewResource extends JsonResource
                     $this->reviewable->first_name . ' ' . $this->reviewable->last_name :
                     ($this->reviewable_type == 'App\Models\Product' ?
                         $this->reviewable->name : null)) : null,
-            "slug" => $this->reviewable_type == Product::class ? $this->reviewable->slug : null,
+            "slug" => $this->reviewable_type == Product::class ? $this->reviewable?->slug : null,
             "store" => !empty($store_translation) && $store_translation->where('key', 'name')->first()
                 ? $store_translation->where('key', 'name')->first()->value
                 : $this->store?->name,
