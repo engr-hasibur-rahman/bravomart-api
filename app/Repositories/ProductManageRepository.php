@@ -32,11 +32,14 @@ class ProductManageRepository implements ProductManageInterface
     }
 
     // Fetch all products with parameters
-    public function getPaginatedProduct(int|string $store_id, int|string $limit, int $page, string $language, string $type, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedProduct(int|string $store_id,string $status, int|string $limit, int $page, string $language, string $type, string $search, string $sortField, string $sort, array $filters)
     {
         $product = Product::query();
         if ($store_id) {
             $product->where('store_id', $store_id);
+        }
+        if ($status) {
+            $product->where('status', $status);
         }
         if ($type) {
             $product->where('type', $type);

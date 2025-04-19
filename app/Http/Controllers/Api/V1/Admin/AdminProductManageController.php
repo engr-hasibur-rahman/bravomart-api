@@ -35,6 +35,7 @@ class AdminProductManageController extends Controller
     public function index(Request $request)
     {
         $storeId = $request->store_id ?? '';
+        $status = $request->status ?? '';
         $limit = $request->per_page ?? 10;
         $page = $request->page ?? 1;
         $locale = $request->language ?? 'en';
@@ -46,6 +47,7 @@ class AdminProductManageController extends Controller
 
         $products = $this->productRepo->getPaginatedProduct(
             $storeId,
+            $status,
             $limit,
             $page,
             $locale,
