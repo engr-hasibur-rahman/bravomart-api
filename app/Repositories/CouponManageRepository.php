@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Coupon\CouponDetailsResource;
 use App\Http\Resources\Coupon\CouponLineResource;
 use App\Http\Resources\Coupon\CouponResource;
 use App\Interfaces\CouponManageInterface;
@@ -57,7 +58,7 @@ class CouponManageRepository implements CouponManageInterface
         // Apply sorting and pagination
         // Return the result
         $coupons = $coupon
-            ->with('creator')
+            ->with(['creator','related_translations'])
             ->orderBy($sortField, $sort)
             ->paginate($limit);
         return response()->json([
@@ -91,7 +92,7 @@ class CouponManageRepository implements CouponManageInterface
         try {
             $coupon = Coupon::with(['creator', 'related_translations'])->findorfail($id);
             if ($coupon) {
-                return response()->json(new CouponResource($coupon));
+                return response()->json(new CouponDetailsResource($coupon));
             } else {
                 return response()->json([
                     "massage" => "Data was not found"
