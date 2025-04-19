@@ -2,7 +2,7 @@
 
 use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\V1\Admin\AboutSettingsManageController;
-use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminAreaSetupManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBannerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBlogManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
