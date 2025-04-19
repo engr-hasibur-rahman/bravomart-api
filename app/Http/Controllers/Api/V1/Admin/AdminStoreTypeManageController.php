@@ -28,16 +28,10 @@ class AdminStoreTypeManageController extends Controller
             'status' => $request->status,
         ];
         $store_types = $this->storeTypeRepo->getAllStoreTypes($filters);
-        if ($store_types) {
-            return response()->json([
-                'data' => StoreTypePublicResource::collection($store_types),
-                'meta' => new PaginationResource($store_types)
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
-        }
+        return response()->json([
+            'data' => StoreTypePublicResource::collection($store_types),
+            'meta' => new PaginationResource($store_types)
+        ], 200);
     }
 
     public function updateStoreType(StoreTypeRequest $request)
