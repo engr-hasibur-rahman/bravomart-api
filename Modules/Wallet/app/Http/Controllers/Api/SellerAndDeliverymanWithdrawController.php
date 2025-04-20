@@ -96,8 +96,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
     public function withdrawDetails(Request $request)
     {
 
-        $withdraw = WalletWithdrawalsTransaction::where('id', $request->id)
-            ->where('owner_id', auth('api')->user()->id)->first();
+        $withdraw = WalletWithdrawalsTransaction::where('id', $request->id)->first();
 
         if (!empty($withdraw)) {
             return response()->json([
@@ -166,24 +165,21 @@ class SellerAndDeliverymanWithdrawController extends Controller
 
         if (empty($wallet)) {
             return response()->json([
-                'status' => false,
                 'message' => 'You have no wallet.',
-            ], 402);
+            ], 422);
         }
 
         if (!empty($wallet) && $wallet->balance <= 0) {
             return response()->json([
-                'status' => false,
                 'message' => 'You have insufficient balance.',
-            ], 402);
+            ], 422);
         }
 
         // Validate if store finances exist and current balance is sufficient
         if ($wallet->balance < $request->amount) {
             return response()->json([
-                'status' => false,
                 'message' => 'You have insufficient balance.',
-            ], 402);
+            ], 422);
         }
 
         $method = WithdrawGateway::find($request->withdraw_gateway_id);
@@ -201,16 +197,12 @@ class SellerAndDeliverymanWithdrawController extends Controller
 
         if ($success) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.request_success', ['name' => 'Withdrawal']),
-            ]);
+            ], 200);
         } else {
             return response()->json([
-                'status' => false,
-                'status_code' => 400,
                 'message' => __('messages.request_failed', ['name' => 'Withdrawal']),
-            ]);
+            ], 500);
         }
     }
 }

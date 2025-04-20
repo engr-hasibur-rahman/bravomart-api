@@ -29,9 +29,7 @@ class SellerReviewController extends Controller
         $filters = [
             "min_rating" => $request->min_rating,
             "max_rating" => $request->min_rating,
-            "reviewable_type" => $request->reviewable_type,
             "rating" => $request->rating,
-            "store_id" => $request->store_id,
             "start_date" => $request->start_date,
             "end_date" => $request->end_date,
             "per_page" => $request->per_page,

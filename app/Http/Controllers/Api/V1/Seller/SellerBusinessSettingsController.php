@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Store\SellerStoreCommissionResource;
 use App\Models\Store;
+use App\Models\SystemCommission;
 use Illuminate\Http\Request;
 use Modules\Subscription\app\Models\StoreSubscription;
 
@@ -57,6 +58,9 @@ class SellerBusinessSettingsController extends Controller
                 'message' => 'Store not found or you do not have access to this store.',
             ], 404);
         }
+        $systemCommission = SystemCommission::first();
+        $commission_enabled = $systemCommission->commission_enabled;
+        $subscription_enabled = $systemCommission->subscription_enabled;
 
         // set type
         $subscription_type = 'commission';
@@ -67,7 +71,16 @@ class SellerBusinessSettingsController extends Controller
                 $subscription_type = 'subscription';
             }
         }
-
+        if (!$commission_enabled && $subscription_type == 'commission'){
+            return response()->json([
+                'message' => __('messages.commission_option_is_not_available')
+            ],422);
+        }
+        if (!$subscription_enabled && $subscription_type == 'subscription'){
+            return response()->json([
+                'message' => __('messages.subscription_option_is_not_available')
+            ],422);
+        }
         // change business plan
         $store->update([
             'subscription_type' => $subscription_type,

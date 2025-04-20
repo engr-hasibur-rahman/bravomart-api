@@ -28,6 +28,7 @@ class AdminQueriesResource extends JsonResource
             "store" => !empty($store_translation) && $store_translation->where('key', 'name')->first()
                 ? $store_translation->where('key', 'name')->first()->value
                 : $this->store?->name,
+            "store_slug" => $this->store?->slug,
             "reply" => $this->reply,
             "replied_at" => $this->replied_at,
             "status" => $this->status,
@@ -37,7 +38,8 @@ class AdminQueriesResource extends JsonResource
                 ? $product_translation->where('key', 'name')->first()->value
                 : $this->product?->name,
             "product_image" => $this->product?->image,
-            "product_image_url" => ImageModifier::generateImageUrl($this->product->image) ?? null,
+            "product_image_url" => ImageModifier::generateImageUrl($this->product?->image) ?? null,
+            "slug" => $this->product?->slug,
             "customer" => $this->customer->getFullNameAttribute() ?? null,
         ];
     }

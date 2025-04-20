@@ -33,7 +33,7 @@ class SellerStoreRequest extends FormRequest
             'id' => 'nullable|exists:store_sellers,id',
             'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class),
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|unique:stores,slug,' . $this->id,
+            'slug' => ($this->id ? 'nullable' : 'required') . '|string|unique:stores,slug,' . $this->id,
             'phone' => 'nullable|string|max:15',
             'email' => 'nullable|email|max:255',
             'logo' => 'nullable|string|max:255',

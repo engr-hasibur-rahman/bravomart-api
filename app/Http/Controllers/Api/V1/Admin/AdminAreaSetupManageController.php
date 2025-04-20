@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AddAreaChargeRequest;
 use App\Http\Requests\AreaCreateRequest;
 use App\Http\Requests\StoreAreaSettingsRequest;
 use App\Http\Resources\Admin\AdminAreaSettingsDetailsResource;

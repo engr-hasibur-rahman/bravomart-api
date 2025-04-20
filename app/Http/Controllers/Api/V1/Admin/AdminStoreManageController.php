@@ -27,6 +27,7 @@ class AdminStoreManageController extends Controller
     {
         $stores = $this->storeRepo->getAllStores(
             $request->per_page ?? 10,
+            $request->status ?? 1,
             $request->page ?? 1,
             $request->language ?? DEFAULT_LANGUAGE,
             $request->search ?? "",

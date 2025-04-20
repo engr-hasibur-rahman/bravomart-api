@@ -28,7 +28,8 @@ class AdminSellerManageController extends Controller
         }
         $sellers = $query
             ->where('deleted_at', null)
-            ->paginate($request->perPage ?? 10);
+            ->latest()
+            ->paginate($request->per_page ?? 10);
         return response()->json([
             'sellers' => SellerResource::collection($sellers),
             'meta' => new PaginationResource($sellers),
@@ -85,5 +86,13 @@ class AdminSellerManageController extends Controller
             'sellers' => SellerResource::collection($sellers),
             'meta' => new PaginationResource($sellers),
         ]);
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $user = User::findOrFail($request->id);
+        $user->status = $request->status;
+        $user->save();
+        return $this->success(translate('messages.update_success', ['name' => 'User']));
     }
 }

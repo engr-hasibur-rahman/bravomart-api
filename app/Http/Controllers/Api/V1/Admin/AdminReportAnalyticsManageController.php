@@ -66,7 +66,7 @@ class AdminReportAnalyticsManageController extends Controller
 
         if (isset($filters['type'])) {
             $query->whereHas('store', function ($q) use ($filters) {
-                $q->where('type', $filters['type']);
+                $q->where('store_type', $filters['type']);
             });
         }
 

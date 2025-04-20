@@ -1159,7 +1159,7 @@ class FrontendController extends Controller
 
     public function storeTypeList()
     {
-        $storeTypes = StoreType::get();
+        $storeTypes = StoreType::where('status', 1)->get();
         return response()->json(StoreTypeDropdownPublicResource::collection($storeTypes));
     }
 
@@ -1330,7 +1330,7 @@ class FrontendController extends Controller
                 ->limit(5)
                 ->get();
         }
-        $blog_comments = BlogComment::with(['user', 'blogCommentReactions'])->orderByLikeDislikeRatio()->get();
+        $blog_comments = BlogComment::where('blog_id',$blog->id)->with(['user', 'blogCommentReactions'])->orderByLikeDislikeRatio()->get();
         return response()->json([
             'blog_details' => new BlogDetailsPublicResource($blog),
             'all_blog_categories' => BlogCategoryPublicResource::collection($all_blog_categories),

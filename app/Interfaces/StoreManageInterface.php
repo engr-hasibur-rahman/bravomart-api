@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface StoreManageInterface
 {
-    public function getAllStores(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters);
+    public function getAllStores(int|string $limit, int $status, int $page, string $language, string $search, string $sortField, string $sort, array $filters);
 
     public function getAuthSellerStores(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters);
 

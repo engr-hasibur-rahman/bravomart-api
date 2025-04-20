@@ -7,6 +7,7 @@ use App\Http\Requests\SellerStoreRequest;
 use App\Http\Resources\Com\Store\OwnerWiseStoreListResource;
 use App\Http\Resources\Com\Store\StoreListResource;
 use App\Interfaces\StoreManageInterface;
+use App\Models\SystemCommission;
 use App\Services\StoreManageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 class SellerStoreManageController extends Controller
 {
     protected $storeManageService;
+
     public function __construct(protected StoreManageInterface $storeRepo, StoreManageService $storeManageService)
     {
         $this->storeManageService = $storeManageService;
@@ -38,13 +40,26 @@ class SellerStoreManageController extends Controller
 
     public function store(SellerStoreRequest $request): JsonResponse
     {
+        $systemCommission = SystemCommission::first();
+        $commission_enabled = $systemCommission->commission_enabled;
+        $subscription_enabled = $systemCommission->subscription_enabled;
+        if (!$commission_enabled && isset($request->subscription_type) && $request->subscription_type === 'commission') {
+            return response()->json([
+                'message' => __('messages.commission_option_is_not_available')
+            ], 422);
+        }
+        if (!$subscription_enabled && isset($request->subscription_type) && $request->subscription_type === 'subscription') {
+            return response()->json([
+                'message' => __('messages.subscription_option_is_not_available')
+            ],422);
+        }
         $store = $this->storeManageService->storeForAuthSeller($request->all());
         if ($store) {
-            createOrUpdateTranslation($request, $store['store_id'], 'App\Models\Store', $this->storeRepo->translationKeys());
+            createOrUpdateTranslation($request, $store->id, 'App\Models\Store', $this->storeRepo->translationKeys());
             return $this->success(
                 translate('messages.save_success', ['name' => 'Store']),
                 200,
-                ['store_id' => $store] // Data payload
+                ['store_id' => $store->id] // Data payload
             );
         } else {
             return $this->failed(translate('messages.save_failed', ['name' => 'Store']));
@@ -74,7 +89,6 @@ class SellerStoreManageController extends Controller
     }
 
 
-
     public function ownerWiseStore()
     {
         try {
@@ -91,5 +105,14 @@ class SellerStoreManageController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    public function get_commission_option()
+    {
+        $systemCommission = SystemCommission::first();
+        return response()->json([
+            'commission_enabled' => $systemCommission->commission_enabled,
+            'subscription_enabled' => $systemCommission->subscription_enabled,
+        ]);
     }
 }

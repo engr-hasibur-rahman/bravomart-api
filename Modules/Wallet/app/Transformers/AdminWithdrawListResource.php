@@ -30,9 +30,11 @@ class AdminWithdrawListResource extends JsonResource
             "approved_at" => $this->approved_at,
             "created_at" => $this->created_at,
             "wallet" => $this->wallet ? new WalletBalanceInfoResource($this->wallet) : null,
-            "owner" => isset($this->owner->store_seller_id) ?
-                new StoreShortDetailsResource($this->owner) :
-                new UserDetailsResource($this->owner)
+//            "owner" => $this->owner
+//                ? (isset($this->owner->store_seller_id)
+//                    ? new StoreShortDetailsResource($this->owner)
+//                    : new UserDetailsResource($this->owner))
+//                : null,
         ];
     }
 }

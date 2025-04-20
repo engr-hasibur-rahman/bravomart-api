@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,7 +22,10 @@ class AdminReviewResource extends JsonResource
         $store_translation = $this->store?->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "reviewable_type" => $this->reviewable_type,
+            "reviewable_type" => $this->reviewable_type ?
+                ($this->reviewable_type == User::class ? 'Deliveryman' :
+                    ($this->reviewable_type == Product::class ? 'Product' : null)
+                ) : null,
             "reviewer" => $this->customer ? $this->customer->first_name . ' ' . $this->customer->last_name : null,
             "review" => $this->review,
             "rating" => $this->rating,
@@ -32,9 +37,11 @@ class AdminReviewResource extends JsonResource
                     $this->reviewable->first_name . ' ' . $this->reviewable->last_name :
                     ($this->reviewable_type == 'App\Models\Product' ?
                         $this->reviewable->name : null)) : null,
+            "slug" => $this->reviewable_type == Product::class ? $this->reviewable?->slug : null,
             "store" => !empty($store_translation) && $store_translation->where('key', 'name')->first()
                 ? $store_translation->where('key', 'name')->first()->value
                 : $this->store?->name,
+            "store_slug" => $this->reviewable_type == Product::class ? $this->store?->slug : null,
         ];
     }
 }

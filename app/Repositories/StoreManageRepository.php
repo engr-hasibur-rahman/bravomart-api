@@ -45,7 +45,7 @@ class StoreManageRepository implements StoreManageInterface
         return Store::class;
     }
 
-    public function getAllStores(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getAllStores(int|string $limit, int $status, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $store = Store::leftJoin('translations as name_translations', function ($join) use ($language) {
             $join->on('stores.id', '=', 'name_translations.translatable_id')
@@ -63,9 +63,8 @@ class StoreManageRepository implements StoreManageInterface
                 $query->where(DB::raw("CONCAT_WS(' ', stores.name, name_translations.value)"), 'like', "%{$search}%");
             });
         }
-        // Apply sorting and pagination
-        // Return the result
         return $store->with(['seller', 'area', 'related_translations'])
+            ->where('status',$status)
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
@@ -506,7 +505,7 @@ class StoreManageRepository implements StoreManageInterface
 
         if ($slug) {
             // Fetch data for a specific store
-            if ($user->store_owner == 0){
+            if ($user->store_owner == 0) {
                 $stores = Store::with('related_translations')->where('slug', $slug)->get();
             } else {
                 $stores = Store::with('related_translations')->where('slug', $slug)->where('store_seller_id', $user->id)->get();

@@ -2,11 +2,11 @@
 
 use App\Enums\PermissionKey;
 use App\Http\Controllers\Api\V1\Admin\AboutSettingsManageController;
-use App\Http\Controllers\Api\v1\Admin\AdminAreaSetupManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminAreaSetupManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBannerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBlogManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminCashCollectionController;
-use App\Http\Controllers\Api\v1\Admin\AdminCommissionManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminCommissionManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminContactManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
@@ -18,7 +18,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminOrderRefundManageController;
 use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductQueryManageController;
-use App\Http\Controllers\Api\v1\Admin\AdminReportAnalyticsManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminReportAnalyticsManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
@@ -229,6 +229,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list', [AdminCustomerManageController::class, 'getCustomerList']);
                 Route::get('details/{id}', [AdminCustomerManageController::class, 'getCustomerDetails']);
                 Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
+                Route::post('change-password', [AdminCustomerManageController::class, 'changePassword']);
             });
             // Newsletter
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
@@ -256,6 +257,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('list/pending', [AdminSellerManageController::class, 'pendingSellers']);
             Route::post('approve', [AdminSellerManageController::class, 'approveSeller']);
             Route::post('suspend', [AdminSellerManageController::class, 'rejectSeller']);
+            Route::post('change-status', [AdminSellerManageController::class, 'changeStatus']);
         });
         // Department manage
         Route::group(['prefix' => 'department/'], function () {
