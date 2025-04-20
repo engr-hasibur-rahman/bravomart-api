@@ -2,15 +2,19 @@
 
 namespace App\Repositories;
 
+use App\Enums\StatusType;
 use App\Helpers\MultilangSlug;
 use App\Http\Resources\Seller\Store\Product\ProductDetailsResource;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
+use App\Jobs\SendDynamicEmailJob;
+use App\Models\EmailTemplate;
 use App\Models\Store;
 use App\Models\Product;
 use App\Models\ProductTag;
 use App\Models\ProductVariant;
 use App\Models\Translation;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
@@ -374,10 +378,32 @@ class ProductManageRepository implements ProductManageInterface
             $product = Product::findOrFail($data['id']);
             $product->status = $data['status'];
             $product->save();
-            return $product;
+            try {
+                $store = Store::find($product->store_id);
+                $seller = User::find($store->store_seller_id);
+                $seller_email = $seller->email;
+                $seller_name = $seller->first_name . ' ' . $seller->last_name;
+                $store_name = $store->name;
+
+                $email_template_seller = EmailTemplate::where('type', 'product-status-change-seller')->where('status', 1)->first();
+
+                if ($email_template_seller) {
+                    $seller_subject = $email_template_seller->subject;
+                    $seller_message = str_replace(
+                        ["@seller_name", "@store_name", "@status"],
+                        [$seller_name, $store_name,$product->status],
+                        $email_template_seller->body
+                    );
+
+                    dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
+                }
+            } catch (\Exception $ex) { }
+            return $store->count() > 0;
         } catch (\Exception $e) {
             return false;
         }
+
+           return $product;
     }
 
     public function approvePendingProducts(array $productIds)

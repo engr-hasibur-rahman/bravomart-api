@@ -163,12 +163,13 @@ class SubscriptionService
 
     public function renewSubscriptionPackage($store_id, $subscription_id, $request_payment_gateway)
     {
+
         // Authenticate user
         $seller = Auth::guard('api')->user();
         if (!$seller) {
             return [
                 'success' => false,
-                'message' => 'User is not authenticated.',
+                'message' => __('messages.authorization_invalid'),
             ];
         }
 
@@ -177,7 +178,7 @@ class SubscriptionService
         if (!$store || $store->store_seller_id != $seller->id) {
             return [
                 'success' => false,
-                'message' => 'Store not found or access denied.',
+                'message' => __('messages.store_not_found'),
             ];
         }
 
@@ -185,7 +186,7 @@ class SubscriptionService
         if ($store->subscription_type !== 'subscription') {
             return [
                 'success' => false,
-                'message' => 'Invalid subscription type for the store.',
+                'message' => __('messages.store_subscription_invalid_type'),
             ];
         }
 
@@ -194,7 +195,7 @@ class SubscriptionService
         if (!$currentSubscription) {
             return [
                 'success' => false,
-                'message' => 'No active subscription found for the store.',
+                'message' => __('messages.store_subscription_no_active_not_found'),
             ];
         }
 
@@ -206,7 +207,7 @@ class SubscriptionService
         if (!$subscriptionPackage) {
             return [
                 'success' => false,
-                'message' => 'Subscription package not found.',
+                'message' => __('messages.subscription_not_found'),
             ];
         }
 
