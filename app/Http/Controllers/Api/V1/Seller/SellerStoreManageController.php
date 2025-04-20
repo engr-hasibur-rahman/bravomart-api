@@ -7,6 +7,7 @@ use App\Http\Requests\SellerStoreRequest;
 use App\Http\Resources\Com\Store\OwnerWiseStoreListResource;
 use App\Http\Resources\Com\Store\StoreListResource;
 use App\Interfaces\StoreManageInterface;
+use App\Models\SystemCommission;
 use App\Services\StoreManageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -101,5 +102,14 @@ class SellerStoreManageController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    public function get_commission_option()
+    {
+        $systemCommission = SystemCommission::first();
+        return response()->json([
+            'commission_enabled' => $systemCommission->commission_enabled,
+            'subscription_enabled' => $systemCommission->subscription_enabled,
+        ]);
     }
 }

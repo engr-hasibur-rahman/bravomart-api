@@ -125,6 +125,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
                 Route::post('change-status', [SellerStoreManageController::class, 'status_update']);
                 Route::delete('remove/{id}', [SellerStoreManageController::class, 'destroy']);
                 Route::get('deleted/records', [SellerStoreManageController::class, 'deleted_records']);
+                Route::get('get-commission-settings', [SellerStoreManageController::class, 'get_commission_option']);
+
             });
 
             // seller product manage
