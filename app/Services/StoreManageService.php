@@ -65,7 +65,9 @@ class StoreManageService
             }
         } else {
             DB::rollBack();
-            return 'commission_option_is_not_available';
+            return [
+                'code' => 'commission_option_is_not_available'
+            ];
         }
         // Store Subscription handle logic
         // check subscription system_commission settings
@@ -76,7 +78,9 @@ class StoreManageService
             DB::commit();
         } else {
             DB::rollBack();
-            return 'subscription_option_is_not_available';
+            return [
+                'code' => 'subscription_option_is_not_available'
+            ];
         }
         return $store;
     }
