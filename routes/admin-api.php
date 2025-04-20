@@ -229,6 +229,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('list', [AdminCustomerManageController::class, 'getCustomerList']);
                 Route::get('details/{id}', [AdminCustomerManageController::class, 'getCustomerDetails']);
                 Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
+                Route::post('change-password', [AdminCustomerManageController::class, 'changePassword']);
             });
             // Newsletter
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
