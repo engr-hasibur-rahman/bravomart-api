@@ -50,7 +50,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
         $deliveryman = User::where('id', $deliveryman_id)->where('activity_scope', 'delivery_level')->first();
         if (!$deliveryman) {
-            return [];
+            return false;
         }
         $deliveryman->password = Hash::make($password);
         $deliveryman->save();
