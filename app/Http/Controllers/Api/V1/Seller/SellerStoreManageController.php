@@ -40,17 +40,20 @@ class SellerStoreManageController extends Controller
 
     public function store(SellerStoreRequest $request): JsonResponse
     {
-        $store = $this->storeManageService->storeForAuthSeller($request->all());
-        if ($store == 'commission_option_is_not_available') {
+        $systemCommission = SystemCommission::first();
+        $commission_enabled = $systemCommission->commission_enabled;
+        $subscription_enabled = $systemCommission->subscription_enabled;
+        if (!$commission_enabled && isset($request->subscription_type) && $request->subscription_type === 'commission') {
             return response()->json([
                 'message' => __('messages.commission_option_is_not_available')
             ], 422);
         }
-        if ($store == 'subscription_option_is_not_available') {
+        if (!$subscription_enabled && isset($request->subscription_type) && $request->subscription_type === 'subscription') {
             return response()->json([
                 'message' => __('messages.subscription_option_is_not_available')
-            ]);
+            ],422);
         }
+        $store = $this->storeManageService->storeForAuthSeller($request->all());
         if ($store) {
             createOrUpdateTranslation($request, $store->id, 'App\Models\Store', $this->storeRepo->translationKeys());
             return $this->success(
