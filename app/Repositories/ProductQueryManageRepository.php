@@ -89,17 +89,11 @@ class ProductQueryManageRepository implements ProductQueryManageInterface
                     $q->where('product_id', $searchTerm)
                         ->orWhereHas('product', function ($q) use ($searchTerm) {
                             $q->where('name', 'LIKE', '%' . $searchTerm . '%');
-                        });
-                });
-
-                $query->orWhere(function ($q) use ($searchTerm) {
-                    $q->WhereHas('store', function ($q) use ($searchTerm) {
-                        $q->where('name', 'LIKE', '%' . $searchTerm . '%');
-                    });
-                });
-
-                $query->orWhere(function ($q) use ($searchTerm) {
-                    $q->where('customer_id', $searchTerm)
+                        })
+                        ->orWhereHas('store', function ($q) use ($searchTerm) {
+                            $q->where('name', 'LIKE', '%' . $searchTerm . '%');
+                        })
+                        ->orWhere('customer_id', $searchTerm)
                         ->orWhereHas('customer', function ($q) use ($searchTerm) {
                             $q->where('first_name', 'LIKE', '%' . $searchTerm . '%')
                                 ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%');
