@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 class SellerStoreManageController extends Controller
 {
     protected $storeManageService;
+
     public function __construct(protected StoreManageInterface $storeRepo, StoreManageService $storeManageService)
     {
         $this->storeManageService = $storeManageService;
@@ -39,6 +40,16 @@ class SellerStoreManageController extends Controller
     public function store(SellerStoreRequest $request): JsonResponse
     {
         $store = $this->storeManageService->storeForAuthSeller($request->all());
+        if ($store == 'commission_option_is_not_available') {
+            return response()->json([
+                'message' => __('messages.commission_option_is_not_available')
+            ], 422);
+        }
+        if ($store == 'subscription_option_is_not_available') {
+            return response()->json([
+                'message' => __('messages.subscription_option_is_not_available')
+            ]);
+        }
         if ($store) {
             createOrUpdateTranslation($request, $store['store_id'], 'App\Models\Store', $this->storeRepo->translationKeys());
             return $this->success(
@@ -72,7 +83,6 @@ class SellerStoreManageController extends Controller
         $this->storeRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
     }
-
 
 
     public function ownerWiseStore()
