@@ -78,10 +78,7 @@ class StoreManageService
             DB::rollBack();
             return 'subscription_option_is_not_available';
         }
-        return [
-            'store_id' => $store_id,
-            'slug' => $store->slug,
-        ];
+        return $store;
     }
 
 
