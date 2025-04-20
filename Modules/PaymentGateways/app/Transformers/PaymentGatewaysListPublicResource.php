@@ -15,6 +15,8 @@ class PaymentGatewaysListPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'value' => $this->id,
+            'label' => $this->name,
             'name' => $this->name,
             'slug' => $this->slug,
             'image' => $this->image,
