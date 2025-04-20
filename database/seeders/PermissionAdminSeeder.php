@@ -452,17 +452,6 @@ class PermissionAdminSeeder extends Seeder
                                         'ar' => 'في انتظار الموافقة/الرفض'
                                     ]
                                 ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_STORE_RECOMMENDED->value,
-                                    'PermissionTitle' => 'Recommended Store',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'update'],
-                                    'translations' => [
-                                        'en' => 'Recommended Store',
-                                        'ar' => 'المتجر الموصى به'
-                                    ]
-                                ]
                             ]
                         ]
                     ]
