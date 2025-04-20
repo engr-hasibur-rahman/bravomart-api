@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Customer\CustomerDetailsResource;
 use App\Http\Resources\Customer\CustomerResource;
@@ -34,6 +35,26 @@ class CustomerManageController extends Controller
             'customers' => CustomerResource::collection($customers),
             'meta' => new PaginationResource($customers)
         ]);
+    }
+    public function register(CustomerRequest $request)
+    {
+        try {
+            $customer = Customer::create($request->all());
+            // Return a successful response with the token and permissions
+            if ($customer) {
+                return response()->json([
+                    "message" => __('messages.registration_success', ['name' => 'Customer']),
+                ]);
+            }else{
+                return response()->json([
+                    "message" => __('messages.registration_failed', ['name' => 'Customer']),
+                ],500);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ],500);
+        }
     }
 
     public function getCustomerDetails(Request $request)

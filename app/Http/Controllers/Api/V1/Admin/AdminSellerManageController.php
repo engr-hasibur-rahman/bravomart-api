@@ -9,6 +9,7 @@ use App\Http\Resources\Seller\SellerDetailsResource;
 use App\Http\Resources\Seller\SellerResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AdminSellerManageController extends Controller
 {
@@ -94,5 +95,24 @@ class AdminSellerManageController extends Controller
         $user->status = $request->status;
         $user->save();
         return $this->success(translate('messages.update_success', ['name' => 'User']));
+    }
+    public function destroy(Request $request)
+    {
+        $validator = Validator::make(['seller_id' => $request->seller_id], [
+            'seller_id' => 'required|exists:users,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+        $seller = User::find($request->seller_id);
+        if (!$seller) {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ], 404);
+        }
+        $seller->delete();
+        return response()->json([
+            'message' => __('messages.delete_success', ['name' => 'Seller']),
+        ]);
     }
 }
