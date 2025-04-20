@@ -160,7 +160,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('stock-report', [AdminProductManageController::class, 'lowOrOutOfStockProducts'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_STOCK_REPORT->value);
             });
         });
-        // Store Management
+        // seller Store Management
         Route::group(['prefix' => 'store/'], function () {
             // Store List Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_LIST->value]], function () {

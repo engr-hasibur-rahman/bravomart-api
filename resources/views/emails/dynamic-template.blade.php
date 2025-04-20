@@ -18,7 +18,8 @@
             padding: 40px 0;
         }
         .email-box {
-            width: 600px;
+            width: 100%;
+            max-width: 600px;
             margin: 0 auto;
             background-color: #ffffff;
             border-radius: 6px;
@@ -30,23 +31,34 @@
             padding: 20px;
             text-align: center;
         }
+
         .email-header img {
             max-height: 50px;
             margin-bottom: 10px;
         }
+
         .email-header h1 {
             color: #ffffff;
             margin: 0;
             font-size: 22px;
         }
+
         .email-body {
+            box-sizing: border-box;
+            position: relative;
             font-family: Arial, sans-serif;
             color: #333;
             padding: 20px;
-            background-color: #f9f9f9;
+            background-color: #ffffff !important;
             border-radius: 8px;
-            max-width: 600px;
-            margin: auto;
+            margin: 140px auto;
+            text-align: center;
+            display: block;
+        }
+
+        .email-body > div {
+            display: inline-block;
+            text-align: left;
         }
 
         .email-body h2 {
@@ -55,8 +67,8 @@
         }
 
         .email-body ul {
-            list-style-type: none;
-            padding-left: 0;
+            list-style: none;
+            padding: 0;
             font-size: 16px;
             line-height: 1.6;
         }
@@ -68,27 +80,35 @@
         .email-body p {
             font-size: 16px;
             margin-bottom: 20px;
-            color: #555555;
+            color: #555;
             line-height: 1.6;
+            text-align: left!important;
         }
+
         .email-body p:last-child {
             margin-bottom: 0;
         }
+
         .footer {
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
-            font-size: 12px;
-            color: #999999;
+            background-color: #f4f4f4!important;
+            text-align: center!important;
+            padding: 20px!important;
+            font-size: 12px!important;
+            color: #999!important;
+            width: 100%!important;
         }
+
         .logo {
             text-align: center;
             padding: 20px 0;
             background-color: #ffffff;
+            width: 100%!important;
         }
+
         .logo a {
             display: inline-block;
         }
+
         .logo img {
             max-width: 200px;
             height: auto;
@@ -97,50 +117,69 @@
         }
 
         /* RTL Specific Styles */
-        [dir="rtl"] .email-header h1 {
-            text-align: right;
-        }
-        [dir="rtl"] .email-body p {
-            text-align: right;
-        }
+        [dir="rtl"] .email-header h1,
+        [dir="rtl"] .email-body p,
         [dir="rtl"] .footer {
             text-align: right;
         }
 
-        /* Media Queries for Responsiveness */
+        /* Responsive */
         @media screen and (max-width: 600px) {
             .email-box {
                 width: 100% !important;
                 padding: 10px;
             }
+
             .email-header h1 {
                 font-size: 18px !important;
             }
+
             .email-body p {
                 font-size: 14px !important;
+            }
+
+            .footer {
+                font-size: 10px !important;
+                padding: 15px;
+            }
+
+            .logo img {
+                max-width: 150px !important;
             }
             .footer {
                 font-size: 10px !important;
                 padding: 15px;
             }
-            .logo img {
-                max-width: 150px !important;
-            }
         }
+
+        p{
+            text-align: left!important;
+      }
+
     </style>
 </head>
 <body>
+
 <div class="container">
      <div class="email-box">
         <div class="logo">
+            @php
+                if (!empty(com_option_get_id_wise_url(com_option_get('com_site_logo')))){
+                     $logo = !empty(com_option_get_id_wise_url(com_option_get('com_site_logo')));
+                }else{
+                     $logo = asset('storage/images/no-image.png');
+                }
+            @endphp
             <a href="{{url('/')}}">
-                {!! com_option_get_id_wise_url(com_option_get('com_site_logo')) !!}
+                <img src="{{$logo}}" alt="logo" width="200" height="auto">
             </a>
         </div>
         <div class="email-body">
-            {!! $data !!}
+            <div>
+             {!! $data !!}
+            </div>
         </div>
-        <footer>
+        <footer class="footer">
             {!! com_get_footer_copyright() !!}
         </footer>
     </div>

@@ -26,10 +26,11 @@ class SellerStoreRequest extends FormRequest
     {
         return [
             'subscription_type' => 'nullable',
-            'subscription_id' => 'nullable',
+            'subscription_id' => 'nullable|exists:subscriptions,id',
             'payment_gateway' => 'nullable',
             //'area_id' => 'nullable|exists:areas,id',
             //'store_seller_id' => 'nullable|exists:sellers,id',
+            'id' => 'nullable|exists:store_sellers,id',
             'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class),
             'name' => 'required|string|max:255',
             'slug' => 'required|string|unique:stores,slug,' . $this->id,

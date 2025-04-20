@@ -7,8 +7,10 @@ use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Seller\SellerStoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
+use App\Jobs\SendDynamicEmailJob;
 use App\Models\Banner;
 use App\Models\Customer;
+use App\Models\EmailTemplate;
 use App\Models\ProductVariant;
 use App\Models\Store;
 use App\Models\DeliveryMan;
@@ -167,6 +169,30 @@ class StoreManageRepository implements StoreManageInterface
         try {
             $data = Arr::except($data, ['translations']);
             $store = Store::create($data);
+
+
+            $seller = User::find($store->store_seller_id);
+            // Send email to seller register in background
+            try {
+
+                $seller_email = $seller->email;
+                $seller_name = $seller->first_name . ' ' . $seller->last_name;
+                $store_name = $store->name;
+                // template
+                $email_template_seller = EmailTemplate::where('type', 'store-creation')->where('status', 1)->first();
+                // seller
+                $seller_subject = $email_template_seller->subject;
+                $seller_message = $email_template_seller->body;
+                $seller_message = str_replace(["@seller_name", "@store_name"], [$seller_name, $store_name], $seller_message);
+
+                // Check if template exists and email is valid and // Send the email using queued job
+                if ($email_template_seller) {
+                    // mail to seller
+                    dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
+                }
+            } catch (\Exception $th) {
+            }
+
             return $store->id;
         } catch (\Throwable $th) {
             throw $th;

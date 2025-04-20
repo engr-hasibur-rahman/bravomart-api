@@ -462,7 +462,7 @@ class UserController extends Controller
                 $system_global_title = com_option_get('com_site_title');
                 $system_global_email = com_option_get('com_site_email');
 
-                $email_template_seller = EmailTemplate::where('type', 'register')->where('status', 1)->first();
+                $email_template_seller = EmailTemplate::where('type', 'seller-register')->where('status', 1)->first();
                 $email_template_admin =  EmailTemplate::where('type', 'seller-register-for-admin')->where('status', 1)->first();
                 $seller_subject = $email_template_seller->subject;
                 $admin_subject = $email_template_admin->subject;
