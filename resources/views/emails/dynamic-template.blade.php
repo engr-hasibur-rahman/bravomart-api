@@ -171,7 +171,7 @@
                 }
             @endphp
             <a href="{{url('/')}}">
-                <img src="{{$logo}}" alt="logo" width="200" height="auto">
+                <img src="{{$logo}}" alt="logo" width="150" height="auto">
             </a>
         </div>
         <div class="email-body">
