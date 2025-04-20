@@ -51,11 +51,11 @@ class SellerStoreManageController extends Controller
             ]);
         }
         if ($store) {
-            createOrUpdateTranslation($request, $store['store_id'], 'App\Models\Store', $this->storeRepo->translationKeys());
+            createOrUpdateTranslation($request, $store->id, 'App\Models\Store', $this->storeRepo->translationKeys());
             return $this->success(
                 translate('messages.save_success', ['name' => 'Store']),
                 200,
-                ['store_id' => $store] // Data payload
+                ['store_id' => $store->id] // Data payload
             );
         } else {
             return $this->failed(translate('messages.save_failed', ['name' => 'Store']));
