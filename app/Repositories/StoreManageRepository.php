@@ -7,8 +7,10 @@ use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Seller\SellerStoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
+use App\Jobs\SendDynamicEmailJob;
 use App\Models\Banner;
 use App\Models\Customer;
+use App\Models\EmailTemplate;
 use App\Models\ProductVariant;
 use App\Models\Store;
 use App\Models\DeliveryMan;
@@ -166,6 +168,30 @@ class StoreManageRepository implements StoreManageInterface
         try {
             $data = Arr::except($data, ['translations']);
             $store = Store::create($data);
+
+
+            $seller = User::find($store->store_seller_id);
+            // Send email to seller register in background
+            try {
+
+                $seller_email = $seller->email;
+                $seller_name = $seller->first_name . ' ' . $seller->last_name;
+                $store_name = $store->name;
+                // template
+                $email_template_seller = EmailTemplate::where('type', 'store-creation')->where('status', 1)->first();
+                // seller
+                $seller_subject = $email_template_seller->subject;
+                $seller_message = $email_template_seller->body;
+                $seller_message = str_replace(["@seller_name", "@store_name"], [$seller_name, $store_name], $seller_message);
+
+                // Check if template exists and email is valid and // Send the email using queued job
+                if ($email_template_seller) {
+                    // mail to seller
+                    dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
+                }
+            } catch (\Exception $th) {
+            }
+
             return $store->id;
         } catch (\Throwable $th) {
             throw $th;
@@ -769,14 +795,45 @@ class StoreManageRepository implements StoreManageInterface
     public function approveStores(array $ids)
     {
         try {
-            $stores = Store::whereIn('id', $ids)
-                ->where('deleted_at', null)
-                ->where('status', 0)
-                ->orWhere('status', 2)
-                ->update([
-                    'status' => 1
-                ]);
-            return $stores > 0;
+        $stores = Store::whereIn('id', $ids)
+            ->whereNull('deleted_at')
+            ->whereIn('status', [0, 2])
+            ->get();
+
+        if ($stores->isEmpty()) {
+            return false;
+        }
+
+            foreach ($stores as $store) {
+                $store->status = 1;
+                $store->save();
+
+                try {
+                    $seller = User::find($store->store_seller_id);
+                    if (!$seller) {
+                        continue;
+                    }
+
+                    $seller_email = $seller->email;
+                    $seller_name = $seller->first_name . ' ' . $seller->last_name;
+                    $store_name = $store->name;
+
+                    $email_template_seller = EmailTemplate::where('type', 'store-approved-seller')->where('status', 1)->first();
+
+                    if ($email_template_seller) {
+                        $seller_subject = $email_template_seller->subject;
+                        $seller_message = str_replace(
+                            ["@seller_name", "@store_name"],
+                            [$seller_name, $store_name],
+                            $email_template_seller->body
+                        );
+
+                        dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
+                    }
+                } catch (\Exception $ex) { }
+            }
+
+            return $stores->count() > 0;
         } catch (\Exception $e) {
             return false;
         }
@@ -790,7 +847,39 @@ class StoreManageRepository implements StoreManageInterface
                 ->update([
                     'status' => $data['status']
                 ]);
-            return $store > 0;
+
+            try {
+                $store = Store::where('id', $data['id'])->where('deleted_at', null)->first();
+                $seller = User::find($store->store_seller_id);
+                $seller_email = $seller->email;
+                $seller_name = $seller->first_name . ' ' . $seller->last_name;
+                $store_name = $store->name;
+
+                // status
+                $store_status = '';
+                if ($store->status === 0) {
+                    $store_status = __('Pending');
+                } elseif ($store->status === 1) {
+                    $store_status = __('Active');
+                } elseif ($store->status === 2) {
+                    $store_status = __('Inactive');
+                }
+
+                $email_template_seller = EmailTemplate::where('type', 'store-status-change-seller')->where('status', 1)->first();
+
+                if ($email_template_seller) {
+                    $seller_subject = $email_template_seller->subject;
+                    $seller_message = str_replace(
+                        ["@seller_name", "@store_name", "@status"],
+                        [$seller_name, $store_name,$store_status],
+                        $email_template_seller->body
+                    );
+
+                    dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
+                }
+            } catch (\Exception $ex) { }
+
+            return $store->count() > 0;
         } catch (\Exception $e) {
             return false;
         }

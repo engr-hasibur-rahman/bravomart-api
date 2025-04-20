@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Jobs\SendDynamicEmailJob;
 use App\Jobs\SendStoreCreatedEmailJob;
+use App\Models\EmailTemplate;
 use App\Models\Store;
 use App\Models\SystemCommission;
 use Illuminate\Support\Arr;
@@ -24,7 +26,6 @@ class StoreManageService
 
     public function storeForAuthSeller($data)
     {
-
         $data = Arr::except($data, ['translations']);
         $data['store_seller_id'] = auth('api')->id();
         DB::beginTransaction();
@@ -42,29 +43,53 @@ class StoreManageService
                 // get system commission
                 $system_commission = SystemCommission::first();
 
-                // Ensure the commission type is valid
-                $commission_type = $system_commission->commission_type;
-                if ($commission_type !== 'commission' && $commission_type !== 'fixed') {
-                    $commission_type = 'commission'; // Default value
-                }
-
-                // Update store commission
-                $store->admin_commission_type = $commission_type;
-                $store->admin_commission_amount = $system_commission->commission_amount;
-                $store->save();
-                DB::commit();
-                // Dispatch job to send email in the background
-                try {
-                    dispatch(new SendStoreCreatedEmailJob($store));
-                } catch (\Exception $exception) {
-                }
-                return [
-                    'store_id' => $store_id,
-                    'slug' => $store->slug,
-                ];
+            // Ensure the commission type is valid
+            $commission_type = $system_commission->commission_type;
+            if ($commission_type !== 'commission' && $commission_type !== 'fixed') {
+                $commission_type = 'commission'; // Default value
             }
-        } else {
-            DB::rollBack();
+
+            // Update store commission
+            $store->admin_commission_type = $commission_type;
+            $store->admin_commission_amount = $system_commission->commission_amount;
+            $store->save();
+        }
+            $seller = auth('api')->user();
+
+            // Send email to seller register in background
+            try {
+
+                $seller_email = $seller->email;
+                $seller_phone = $seller->phone;
+                $seller_name = $seller->first_name . ' ' . $seller->last_name;
+                $store_name = $store->name;
+
+                $system_global_title = com_option_get('com_site_title');
+                $system_global_email = com_option_get('com_site_email');
+
+                // template
+                $email_template_seller = EmailTemplate::where('type', 'store-creation')->where('status', 1)->first();
+                $email_template_admin =  EmailTemplate::where('type', 'store-creation-admin')->where('status', 1)->first();
+
+                // seller
+                $seller_subject = $email_template_seller->subject;
+                $seller_message = $email_template_seller->body;
+                // admin
+                $admin_subject = $email_template_admin->subject;
+                $admin_message = $email_template_admin->body;
+
+                $seller_message = str_replace(["@seller_name", "@store_name"], [$seller_name, $store_name], $seller_message);
+                $admin_message = str_replace(["@seller_name", "@store_name"], [$seller_name, $store_name], $admin_message);
+
+                // Check if template exists and email is valid and // Send the email using queued job
+                if ($email_template_seller) {
+                    // mail to seller
+                    dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
+                    dispatch(new SendDynamicEmailJob($system_global_email, $admin_subject, $admin_message));
+                }
+            } catch (\Exception $th) {
+            }
+
             return [
                 'code' => 'commission_option_is_not_available'
             ];
@@ -88,36 +113,15 @@ class StoreManageService
 
     public function storeUpdateForAuthSeller($data)
     {
+        $store = Store::find($data['id']);
 
-        $store = Store::findOrFail($data['id']);
         if ($store) {
             $data = Arr::except($data, ['translations']);
             $store->update($data);
         }
 
         $store_id = $store->id;
-        if (isset($store->subscription_type) && $store->subscription_type === 'commission') {
-            // get system commission
-            $system_commission = SystemCommission::first();
-            // update store commission
-            $store->admin_commission_type = $system_commission->commission_type;
-            $store->admin_commission_amount = $system_commission->commission_amount;
-            $store->save();
 
-            // Dispatch job to send email in the background
-            try {
-                dispatch(new SendStoreCreatedEmailJob($store));
-            } catch (\Exception $exception) {
-            }
-            return [
-                'store_id' => $store_id,
-                'slug' => $store->slug,
-            ];
-        }
-        // Store Subscription handle logic
-        if (moduleExistsAndStatus('Subscription')) {
-            $this->subscriptionService->renewSubscriptionPackage($store, $data);
-        }
         return [
             'store_id' => $store_id,
             'slug' => $store->slug,

@@ -52,6 +52,11 @@ return [
     'staff_doesnt_belongs_to_seller' => 'Staff doesn\'t belongs to this seller!',
     'staff_not_assign_to_stores' => 'Staff is not assigned to any store yet!',
 
+    'store_not_found' => 'Store not found or access denied',
+    'store_subscription_invalid_type' => 'Invalid subscription type for the store',
+    'store_subscription_no_active_not_found' => 'No active subscription found for the store.',
+    'store_subscription_not_found' => 'subscription not found.',
+
     'default.address' => 'Default address can\'t be deleted!',
     'invalid.address' => 'Invalid address!',
 

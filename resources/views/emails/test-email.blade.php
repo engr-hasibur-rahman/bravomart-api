@@ -97,8 +97,15 @@
 <div class="container">
     <div class="email-box">
         <div class="logo">
+            @php
+            if (!empty(com_option_get_id_wise_url(com_option_get('com_site_logo')))){
+                 $logo = !empty(com_option_get_id_wise_url(com_option_get('com_site_logo')));
+            }else{
+                 $logo = asset('storage/images/no-image.png');
+            }
+           @endphp
             <a href="{{url('/')}}">
-                <img src="{{ com_option_get_id_wise_url(com_option_get('com_site_logo')) }}" alt="logo" width="200" height="auto">
+                <img   src="{{ $logo}}"  alt="logo" width="200" height="auto">
             </a>
         </div>
         <div class="email-body">
