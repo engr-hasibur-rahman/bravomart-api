@@ -228,6 +228,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
                 Route::get('list', [AdminCustomerManageController::class, 'getCustomerList']);
                 Route::get('details/{id}', [AdminCustomerManageController::class, 'getCustomerDetails']);
+                Route::post('register', [AdminCustomerManageController::class, 'register']);
                 Route::post('change-status', [AdminCustomerManageController::class, 'changeStatus']);
                 Route::post('change-password', [AdminCustomerManageController::class, 'changePassword']);
                 Route::post('email-verify', [AdminCustomerManageController::class, 'emailVerify']);
@@ -262,6 +263,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('approve', [AdminSellerManageController::class, 'approveSeller']);
             Route::post('suspend', [AdminSellerManageController::class, 'rejectSeller']);
             Route::post('change-status', [AdminSellerManageController::class, 'changeStatus']);
+            Route::delete('remove/{seller_id}', [AdminSellerManageController::class, 'destroy']);
         });
         // Department manage
         Route::group(['prefix' => 'department/'], function () {
