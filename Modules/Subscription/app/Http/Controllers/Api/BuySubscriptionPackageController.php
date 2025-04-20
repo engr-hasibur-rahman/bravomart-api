@@ -4,6 +4,7 @@ namespace Modules\Subscription\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Store;
+use App\Models\SystemCommission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -24,12 +25,26 @@ class BuySubscriptionPackageController extends Controller
 
     public function buySubscriptionPackage(Request $request)
     {
+        $systemCommission = SystemCommission::first();
+        $subscription_enabled = $systemCommission->subscription_enabled;
+        if (!$subscription_enabled) {
+            return response()->json([
+                'message' => __('messages.subscription_option_is_not_available')
+            ],422);
+        }
         $result = $this->subscriptionService->buySubscriptionPackage($request->all());
         return response()->json($result);
     }
 
     public function renewSubscriptionPackage(RenewSubscriptionRequest $request)
     {
+        $systemCommission = SystemCommission::first();
+        $subscription_enabled = $systemCommission->subscription_enabled;
+        if (!$subscription_enabled) {
+            return response()->json([
+                'message' => __('messages.subscription_option_is_not_available')
+            ],422);
+        }
         $store_id = $request->store_id;
         $subscription_id = $request->subscription_id;
         $payment_gateway = $request->payment_gateway;

@@ -74,12 +74,12 @@ class SellerBusinessSettingsController extends Controller
         if (!$commission_enabled && $subscription_type == 'commission'){
             return response()->json([
                 'message' => __('messages.commission_option_is_not_available')
-            ]);
+            ],422);
         }
         if (!$subscription_enabled && $subscription_type == 'subscription'){
             return response()->json([
                 'message' => __('messages.subscription_option_is_not_available')
-            ]);
+            ],422);
         }
         // change business plan
         $store->update([
