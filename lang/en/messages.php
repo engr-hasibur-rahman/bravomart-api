@@ -10,6 +10,7 @@ return [
     'email.resend.failed' => 'Email resend failed',
     'email.resend.success' => 'Email resend successfully',
     'old_password_invalid' => 'Old password is invalid',
+    'suspended' => ':name account suspended!',
 
     'something_went_wrong' => 'Something went wrong',
 

@@ -29,6 +29,8 @@ class CustomerResource extends JsonResource
             "verified" => (bool)$this->verified,
             "status" => $this->status,
             "address" => $this->defaultAddress ?? null,
+            "gender" => $this->gender,
+            "birth_day" => $this->birth_day
         ];
     }
 }
