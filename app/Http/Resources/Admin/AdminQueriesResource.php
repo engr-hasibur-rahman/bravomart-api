@@ -38,7 +38,7 @@ class AdminQueriesResource extends JsonResource
                 ? $product_translation->where('key', 'name')->first()->value
                 : $this->product?->name,
             "product_image" => $this->product?->image,
-            "product_image_url" => ImageModifier::generateImageUrl($this->product->image) ?? null,
+            "product_image_url" => ImageModifier::generateImageUrl($this->product?->image) ?? null,
             "slug" => $this->product?->slug,
             "customer" => $this->customer->getFullNameAttribute() ?? null,
         ];
