@@ -18,6 +18,7 @@ class StoreDetailsForOrderResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "area_id" => $this->area_id,
             "slug" => $this->slug,
             "phone" => $this->phone,
             "email" => $this->email,

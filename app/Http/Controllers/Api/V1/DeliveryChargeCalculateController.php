@@ -17,7 +17,7 @@ class DeliveryChargeCalculateController extends Controller
             'customer_longitude' => 'required|numeric',
         ]);
 
-        if ($validator->failed()){
+        if ($validator->fails()){
             return response()->json([
                 'success' => false,
                 'message' => 'Validation Error',
