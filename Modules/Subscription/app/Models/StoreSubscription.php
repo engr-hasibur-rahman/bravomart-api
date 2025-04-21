@@ -35,7 +35,15 @@ class StoreSubscription extends Model
     {
         return $this->hasMany(SubscriptionHistory::class, 'store_subscription_id');
     }
-    public function store(){
+
+    public function store()
+    {
         return $this->belongsTo(Store::class, 'store_id');
     }
+
+    public function subscription()
+    {
+        return $this->belongsTo(Subscription::class, 'subscription_id');
+    }
+
 }
