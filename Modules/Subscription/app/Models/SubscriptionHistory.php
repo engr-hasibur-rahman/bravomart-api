@@ -2,8 +2,10 @@
 
 namespace Modules\Subscription\app\Models;
 
+use App\Models\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 // use Modules\Subscription\Database\Factories\SubscriptionHistoryFactory;
 
 class SubscriptionHistory extends Model
@@ -35,6 +37,16 @@ class SubscriptionHistory extends Model
     public function storeSubscription()
     {
         return $this->belongsTo(StoreSubscription::class, 'store_subscription_id');
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
+    }
+
+    public function subscription()
+    {
+        return $this->belongsTo(Subscription::class, 'subscription_id');
     }
 
 }
