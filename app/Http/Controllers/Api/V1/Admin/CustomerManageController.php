@@ -66,7 +66,7 @@ class CustomerManageController extends Controller
     public function changeStatus(Request $request)
     {
         $customer = Customer::findOrFail($request->id);
-        $customer->status = !$customer->status;
+        $customer->status = $request->status;
         $customer->save();
 
         return $this->success(translate('messages.update_success', ['name' => 'Customer']));
