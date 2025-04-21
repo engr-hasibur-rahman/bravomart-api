@@ -130,6 +130,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/contact-us', [FrontendController::class, 'contactUs']);
     Route::get('/pages/{slug}', [FrontendController::class, 'getPage']);
     Route::get('/store-wise-products', [FrontendController::class, 'getStoreWiseProducts']);
+    Route::get('/get-check-out-page-extra-info', [FrontendController::class, 'getCheckOutPageExtraInfo']);
     Route::get('/menu', [MenuManageController::class, 'index']);
 
 
