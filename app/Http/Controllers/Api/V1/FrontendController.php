@@ -1538,7 +1538,7 @@ class FrontendController extends Controller
         return response()->json([
             'flash_sale_products' => FlashSaleAllProductPublicResource::collection($flashDealProducts),
             'additional_charge' => $additionalCharge,
-            'order_additional_charge_enable_disable' => $systemCommissionSettings->order_additional_charge_enable_disable,
+            'order_include_tax_amount' => $systemCommissionSettings->order_include_tax_amount,
         ]);
     }
 
