@@ -1518,25 +1518,29 @@ class FrontendController extends Controller
             'product_ids' => 'nullable|array',
             'product_ids.*' => 'exists:products,id'
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        // check flash sale products
-        $flashDealProducts = FlashSaleProduct::with(['flashSale', 'product'])->whereIn('product_id', $request->product_ids);
 
-        // system commission settings
+        $flashDealProducts = FlashSaleProduct::with(['flashSale', 'product'])
+            ->whereIn('product_id', $request->product_ids ?? [])
+            ->get();
+
         $systemCommissionSettings = SystemCommission::first();
+
         $additionalCharge = [
             'order_additional_charge_enable_disable' => $systemCommissionSettings->order_additional_charge_enable_disable,
             'order_additional_charge_name' => $systemCommissionSettings->order_additional_charge_name,
-            'order_additional_charge_amount' => $systemCommissionSettings->order_additional_charge_amount
+            'order_additional_charge_amount' => $systemCommissionSettings->order_additional_charge_amount,
         ];
-        $orderAdditionalChargeEnableDisable = $systemCommissionSettings->order_additional_charge_enable_disable;
+
         return response()->json([
             'flash_sale_products' => FlashSaleAllProductPublicResource::collection($flashDealProducts),
             'additional_charge' => $additionalCharge,
-            'order_additional_charge_enable_disable' => $orderAdditionalChargeEnableDisable,
+            'order_additional_charge_enable_disable' => $systemCommissionSettings->order_additional_charge_enable_disable,
         ]);
     }
+
 
 }
