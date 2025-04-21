@@ -36,7 +36,7 @@ class AdminSubscriptionSellerController extends Controller
         if ($request->has('created_at') && !empty($request->created_at)) {
             $query->whereDate('created_at', $request->created_at);
         }
-        $subscriptions = $query->paginate(10);
+        $subscriptions = $query->with('related_translations')->paginate(10);
         return response()->json([
             'success' => true,
             'data' => AdminSubscriptionPackageResource::collection($subscriptions),
