@@ -18,6 +18,8 @@ class StoreSubscriptionHistoryResource extends JsonResource
             'name' => $this->name,
             'store' => $this->store?->name,
             'store_slug' => $this->store?->slug,
+            'image' => $this->subscription?->image,
+            'image_url' => ImageModifier::generateImageUrl($this->subscription?->image),
             'type' => $this->type,
             'validity' => $this->validity,
             'price' => $this->price,
