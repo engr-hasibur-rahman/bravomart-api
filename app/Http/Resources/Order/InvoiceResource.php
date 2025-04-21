@@ -48,7 +48,7 @@ class InvoiceResource extends JsonResource
                     'name' => $item->product->name,
                     'description' => $item->product->description,
                     'quantity' => $item->quantity,
-                    'amount' => $item->base_price,
+                    'amount' => $item->price,
                     'tax_rate' => $item->tax_rate,
                     'tax_amount' => $item->tax_amount,
                     'total_tax_amount' => $item->total_tax_amount,
