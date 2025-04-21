@@ -67,6 +67,7 @@ use App\Models\ContactSetting;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\FlashSaleProduct;
 use App\Models\Page;
 use App\Models\Product;
 use App\Models\ProductAttribute;
@@ -77,11 +78,13 @@ use App\Models\Slider;
 use App\Models\Store;
 use App\Models\StoreArea;
 use App\Models\StoreType;
+use App\Models\SystemCommission;
 use App\Models\Tag;
 use App\Models\Unit;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class FrontendController extends Controller
 {
@@ -1330,7 +1333,7 @@ class FrontendController extends Controller
                 ->limit(5)
                 ->get();
         }
-        $blog_comments = BlogComment::where('blog_id',$blog->id)->with(['user', 'blogCommentReactions'])->orderByLikeDislikeRatio()->get();
+        $blog_comments = BlogComment::where('blog_id', $blog->id)->with(['user', 'blogCommentReactions'])->orderByLikeDislikeRatio()->get();
         return response()->json([
             'blog_details' => new BlogDetailsPublicResource($blog),
             'all_blog_categories' => BlogCategoryPublicResource::collection($all_blog_categories),
@@ -1506,6 +1509,33 @@ class FrontendController extends Controller
             'status' => true,
             'data' => StoreWiseProductDropdownResource::collection($products),
             'meta' => new PaginationResource($products),
+        ]);
+    }
+
+    public function getCheckOutPageExtraInfo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_ids' => 'nullable|array',
+            'product_ids.*' => 'exists:products,id'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        // check flash sale products
+        $flashDealProducts = FlashSaleProduct::with(['flashSale', 'product'])->whereIn('product_id', $request->product_ids);
+
+        // system commission settings
+        $systemCommissionSettings = SystemCommission::first();
+        $additionalCharge = [
+            'order_additional_charge_enable_disable' => $systemCommissionSettings->order_additional_charge_enable_disable,
+            'order_additional_charge_name' => $systemCommissionSettings->order_additional_charge_name,
+            'order_additional_charge_amount' => $systemCommissionSettings->order_additional_charge_amount
+        ];
+        $orderAdditionalChargeEnableDisable = $systemCommissionSettings->order_additional_charge_enable_disable;
+        return response()->json([
+            'flash_sale_products' => FlashSaleAllProductPublicResource::collection($flashDealProducts),
+            'additional_charge' => $additionalCharge,
+            'order_additional_charge_enable_disable' => $orderAdditionalChargeEnableDisable,
         ]);
     }
 
