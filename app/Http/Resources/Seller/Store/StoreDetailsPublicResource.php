@@ -24,6 +24,7 @@ class StoreDetailsPublicResource extends JsonResource
         return [
             'id' => $this->id,
             'area' => $this->area->name ?? null,
+            'area_id' => $this->area_id,
             'seller' => new SellerDetailsPublicResource($this->seller),
             'store_type' => $this->store_type,
             'name' => $translation->isNotEmpty()
