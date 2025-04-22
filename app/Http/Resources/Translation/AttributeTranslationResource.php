@@ -16,7 +16,7 @@ class AttributeTranslationResource extends JsonResource
     {
         return [
             "language_code" => $this->first()->language,
-            "name" => $this->where('key', 'name')->first()?->value,
+            "label" => $this->where('key', 'name')->first()?->value,
         ];
     }
 }
