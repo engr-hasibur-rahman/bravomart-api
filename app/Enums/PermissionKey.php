@@ -271,7 +271,7 @@ enum PermissionKey: string
     // ----------- Seller Product Inventory
     case SELLER_STORE_PRODUCT_INVENTORY = '/seller/store/product/inventory';
     // ----------- Seller Product Attribute
-    case SELLER_PRODUCT_ATTRIBUTE_ADD = '/seller/store/attribute';
+    case SELLER_PRODUCT_ATTRIBUTE_ADD = '/seller/store/attribute/list';
 
     //-----------Seller Staff Manage----------
     case SELLER_STORE_STAFF_MANAGE = '/seller/store/staff/list';

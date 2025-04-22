@@ -49,18 +49,16 @@ class ProductAttributeController extends Controller
         $seller = auth('api')->user();
 
         if ($seller->activity_scope == 'store_level') {
-            $store = Store::where('id', $request->store_id)->get();
-            if (!$store) {
+            $store = Store::where('id', $request->store_id)->first();
+            if (!$store && !$request->store_id) {
                 return response()->json([
                     'message' => __('messages.data_not_found')
                 ]);
             }
-            $attributes = $attributes
-                ->with(['related_translations', 'attribute_values'])
-                ->where('created_by', $seller->id)
+            // Add specific store level filtering
+            $attributes->where('created_by', $seller->id)
                 ->where('product_type', $store->store_type)
-                ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
-                ->paginate($limit);
+                ->where('status', 1);
         }
         $attributes = $attributes
             ->with(['related_translations', 'attribute_values'])
@@ -71,6 +69,7 @@ class ProductAttributeController extends Controller
             'data' => ProductAttributeResource::collection($attributes),
             'meta' => new PaginationResource($attributes)
         ]);
+
     }
 
     public function store(ProductAttributeRequest $request)
