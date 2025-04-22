@@ -6,6 +6,7 @@ use App\Enums\PermissionKey;
 use App\Models\Translation;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Permission as ModelsPermission;
 use Spatie\Permission\Models\Role;
@@ -19,6 +20,7 @@ class PermissionStoreSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('permissions')->where('available_for','store_level')->delete();
         $admin_main_menu = [];
         $shop_menu = [
             [
