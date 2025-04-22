@@ -199,6 +199,7 @@ class CustomerOrderController extends Controller
                 'message' => __('messages.something_wrong'),
             ]);
         }
+        // check max discount amount
         if ($final_amount_after_removing_coupon_discount > $coupon->max_discount){
             $discount_amount = $coupon->max_discount;
             $final_amount_after_removing_coupon_discount = $sub_total - $discount_amount;

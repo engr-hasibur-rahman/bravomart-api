@@ -31,6 +31,8 @@ class CouponPublicResource extends JsonResource
             "coupon_code" => $this->coupon_code,
             "discount_type" => $this->discount_type,
             "discount" => $this->discount,
+            "min_order_value" => $this->min_order_value,
+            "max_discount" => $this->max_discount,
             "start_date" => $this->start_date?->format('Y-m-d H:i:s'),
             "end_date" => $this->end_date?->format('Y-m-d H:i:s'),
         ];
