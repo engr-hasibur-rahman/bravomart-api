@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Behaviour;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminFlashSaleDetailsResource;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\AboutUsPublicResource;
 use App\Http\Resources\Com\BecomeSellerPublicResource;
@@ -1536,6 +1537,14 @@ class FrontendController extends Controller
         ];
 
         return response()->json([
+            'flash_sale' => $flashDealProducts->flashSale?->map(function ($item){
+                return [
+                    'flash_sale_id' => $item->flashSale?->id,
+                    'discount_type' => $item->flashSale?->discount_type,
+                    'discount_amount' => $item->flashSale?->discount_amount,
+                    'purchase_limit' => $item->flashSale?->purchase_limit,
+                ];
+            }),
             'flash_sale_products' => FlashSaleAllProductPublicResource::collection($flashDealProducts),
             'additional_charge' => $additionalCharge,
             'order_include_tax_amount' => $systemCommissionSettings->order_include_tax_amount,
