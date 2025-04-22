@@ -10,6 +10,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\ProductAttributeResource;
 use App\Models\ProductAttribute;
 use App\Models\ProductAttributeValue;
+use App\Models\Store;
 use App\Repositories\ProductAttributeRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,10 +27,9 @@ class ProductAttributeController extends Controller
 
     public function index(Request $request)
     {
-        $limit = $request->limit ?? 10;
         $language = $request->language ?? DEFAULT_LANGUAGE;
         $search = $request->search;
-        $limit = $request->limit ?? 10;
+        $limit = $request->per_page ?? 10;
         $attributes = ProductAttribute::leftJoin('translations', function ($join) use ($language) {
             $join->on('product_attributes.id', '=', 'translations.translatable_id')
                 ->where('translations.translatable_type', '=', ProductAttribute::class)
@@ -46,6 +46,22 @@ class ProductAttributeController extends Controller
             });
         }
         // Apply sorting and pagination
+        $seller = auth('api')->user();
+
+        if ($seller->activity_scope == 'store_level') {
+            $store = Store::where('id', $request->store_id)->get();
+            if (!$store) {
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ]);
+            }
+            $attributes = $attributes
+                ->with(['related_translations', 'attribute_values'])
+                ->where('created_by', $seller->id)
+                ->where('product_type', $store->store_type)
+                ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+                ->paginate($limit);
+        }
         $attributes = $attributes
             ->with(['related_translations', 'attribute_values'])
             ->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')

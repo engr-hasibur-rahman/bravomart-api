@@ -4,8 +4,11 @@ namespace Database\Seeders;
 
 use App\Enums\PermissionKey;
 use App\Models\Translation;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Permission as ModelsPermission;
+use Spatie\Permission\Models\Role;
 
 class PermissionStoreSeeder extends Seeder
 {
@@ -162,7 +165,7 @@ class PermissionStoreSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::PRODUCT_ATTRIBUTE_LIST_STORE->value,
+                            'PermissionName' => PermissionKey::SELLER_PRODUCT_ATTRIBUTE_ADD->value,
                             'PermissionTitle' => 'Attribute List',
                             'activity_scope' => 'store_level',
                             'icon' => 'Ratio',
@@ -521,7 +524,6 @@ class PermissionStoreSeeder extends Seeder
 
         $page_list = array_merge($admin_main_menu, $shop_menu);
 
-
         foreach ($page_list as $x_mod) {
             foreach ($x_mod as $level_1) {
 
@@ -613,5 +615,12 @@ class PermissionStoreSeeder extends Seeder
                 }
             }
         }
+
+        //Assign PermissionKey to Store Admin Role
+        $role = Role::where('id',2)->first();
+        $role->givePermissionTo(Permission::whereIn('available_for',['store_level','COMMON'])->get());
+        $user = User::whereEmail('owner@store.com')->first();
+        // Assign default Store User to a Specific Role
+        $user->assignRole($role);
     }
 }
