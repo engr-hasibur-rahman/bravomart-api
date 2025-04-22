@@ -1537,14 +1537,15 @@ class FrontendController extends Controller
         ];
 
         return response()->json([
-            'flash_sale' => $flashDealProducts->map(function ($item){
+            'flash_sale' => $flashDealProducts->map(function ($item) {
                 return [
                     'flash_sale_id' => $item->flashSale?->id,
                     'discount_type' => $item->flashSale?->discount_type,
                     'discount_amount' => $item->flashSale?->discount_amount,
                     'purchase_limit' => $item->flashSale?->purchase_limit,
                 ];
-            })->unique('flash_sale_id'), // keep only unique flash sales
+            })->unique('flash_sale_id') // keep only unique flash sales
+            ->values(), // <--- this reindexes the collection,
             'flash_sale_products' => FlashSaleAllProductPublicResource::collection($flashDealProducts),
             'additional_charge' => $additionalCharge,
             'order_include_tax_amount' => $systemCommissionSettings->order_include_tax_amount,
