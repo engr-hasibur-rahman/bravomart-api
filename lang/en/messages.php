@@ -92,6 +92,7 @@ return [
     'coupon_expired' => 'Coupon has expired.',
     'coupon_limit_reached' => 'Coupon usage limit reached.',
     'coupon_applied' => 'Coupon applied successfully!.',
+    'coupon_min_order_amount' => 'Minimum order amount is :amount.',
 
     'settings_not_created_yet' => 'Settings not created yet!',
 

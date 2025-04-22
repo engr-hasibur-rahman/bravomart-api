@@ -126,6 +126,7 @@ class CustomerOrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'coupon_code' => 'required|string|exists:coupon_lines,coupon_code',
+            'sub_total' => 'required'
         ]);
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()], 422);
@@ -178,14 +179,42 @@ class CustomerOrderController extends Controller
                 'message' => __('messages.coupon_inactive'),
             ], 400);
         }
+        // check min_order status
+        if ($request->sub_total < $coupon->min_order_value) {
+            return response()->json([
+                'message' => __('messages.coupon_min_order_amount', ['amount' => $coupon->min_order_value]),
+            ], 400);
+        }
+        $sub_total = $request->sub_total;
+        $final_amount_after_removing_coupon_discount = 0;
+        $discount_amount = 0;
+        if ($coupon->discount_type == 'percentage') {
+            $discount_amount = $sub_total / 100 * $coupon->discount;
+            $final_amount_after_removing_coupon_discount = $sub_total - $discount_amount;
+        } elseif ($coupon->discount_type == 'amount') {
+            $discount_amount = $coupon->discount;
+            $final_amount_after_removing_coupon_discount = $sub_total - $discount_amount;
+        } else {
+            return response()->json([
+                'message' => __('messages.something_wrong'),
+            ]);
+        }
+        if ($final_amount_after_removing_coupon_discount > $coupon->max_discount){
+            $discount_amount = $coupon->max_discount;
+            $final_amount_after_removing_coupon_discount = $sub_total - $discount_amount;
+        }
         // If all checks pass, return the coupon's discount details
         return response()->json([
             'message' => __('messages.coupon_applied'),
             'coupon' => [
                 'title' => $coupon->coupon->title,
                 'discount_amount' => $coupon->discount,
+                'max_discount' => $coupon->max_discount,
+                'min_order_value' => $coupon->min_order_value,
                 'discount_type' => $coupon->discount_type,
                 'code' => $coupon->coupon_code,
+                'discounted_amount' => $discount_amount,
+                'final_amount' => $final_amount_after_removing_coupon_discount,
             ]
         ], 200);
     }
