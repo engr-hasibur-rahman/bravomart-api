@@ -147,6 +147,16 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
                     Route::get('stock-report', [SellerProductManageController::class, 'lowOrOutOfStockProducts'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_STOCK_REPORT->value);
                 });
             });
+            //Product Attribute Management
+            Route::group(['prefix' => 'attribute/', 'middleware/' => ['permission:' . PermissionKey::SELLER_PRODUCT_ATTRIBUTE_ADD->value]], function () {
+                Route::get('list', [ProductAttributeController::class, 'index']);
+                Route::get('details/{id}', [ProductAttributeController::class, 'show']);
+                Route::get('type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
+                Route::post('add', [ProductAttributeController::class, 'store']);
+                Route::post('update', [ProductAttributeController::class, 'update']);
+                Route::post('change-status', [ProductAttributeController::class, 'changeStatus']);
+                Route::delete('remove/{id}', [ProductAttributeController::class, 'destroy']);
+            });
             // Staff manage
             Route::group(['prefix' => 'staff/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_STAFF_MANAGE->value]], function () {
                 Route::get('list', [StaffController::class, 'index']);

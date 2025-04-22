@@ -78,6 +78,7 @@ class BivaCommandAuto extends Command
         } while ($password !== $confirmPassword);
 
         info('Please wait, Creating an admin profile for you...');
+        // create admin
         $validator = Validator::make(
             [
                 'first_name'  =>  $first_name,
