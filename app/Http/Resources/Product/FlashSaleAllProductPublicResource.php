@@ -32,6 +32,7 @@ class FlashSaleAllProductPublicResource extends JsonResource
             'discount_type' => $this->flashSale?->discount_type,
             'discount_amount' => $this->flashSale?->discount_amount,
             'purchase_limit' => $this->flashSale?->purchase_limit,
+            'flash_sale_id' => $this->flashSale?->id,
         ];
     }
 }
