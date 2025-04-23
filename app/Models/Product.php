@@ -12,7 +12,7 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $appends = ['wishlist', 'rating', 'review_count','reviews'];
+    protected $appends = ['wishlist', 'rating', 'review_count', 'reviews'];
     protected $dates = ['deleted_at'];
     protected $table = "products";
     protected $fillable = [
@@ -219,6 +219,31 @@ class Product extends Model
         return $this->hasOne(FlashSaleProduct::class, 'product_id');
     }
 
+    public function isInFlashDeal()
+    {
+        $flashSaleProduct = $this->flashSaleProduct()
+            ->whereHas('flashSale', function ($query) {
+                $query->where('status', 'active')
+                    ->where('start_time', '<=', now())
+                    ->where('end_time', '>=', now());
+            })
+            ->with('flashSale') // eager load to access details
+            ->first();
+
+        if ($flashSaleProduct && $flashSaleProduct->flashSale) {
+            return [
+                'flash_sale_id'   => $flashSaleProduct->flashSale->id,
+                'discount_type'   => $flashSaleProduct->flashSale->discount_type,
+                'discount_amount' => $flashSaleProduct->flashSale->discount_amount,
+                'purchase_limit'  => $flashSaleProduct->flashSale->purchase_limit,
+                'start_time'      => $flashSaleProduct->flashSale->start_time,
+                'end_time'        => $flashSaleProduct->flashSale->end_time,
+            ];
+        }
+
+        return false;
+    }
+
     public function getRatingAttribute()
     {
         $averageRating = $this->reviews()
@@ -236,9 +261,10 @@ class Product extends Model
             ->where('status', 'approved')
             ->count();
     }
+
     public function getReviewsAttribute()
     {
-        return $this->reviews()->with(['customer','reviewReactions'])
+        return $this->reviews()->with(['customer', 'reviewReactions'])
             ->where('reviewable_type', Product::class)
             ->where('status', 'approved')
             ->get();
