@@ -46,7 +46,7 @@ class AdminWithdrawManageController extends Controller
 
     public function withdrawDetails(Request $request)
     {
-        $WithdrawalRecord = WalletWithdrawalsTransaction::with('owner', 'wallet')->find($request->id);
+        $WithdrawalRecord = WalletWithdrawalsTransaction::with('owner.related_translations', 'wallet')->find($request->id);
         if ($WithdrawalRecord) {
             return response([
                 'status' => true,
