@@ -18,7 +18,7 @@ class StoreShortDetailsResource extends JsonResource
         // Get the requested language from the query parameter
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
-        $translation = $this->related_translations->where('language', $language);
+        $translation = $this->related_translations?->where('language', $language);
         return [
             "id" => $this->id,
             "name" => !empty($translation) && $translation->where('key', 'name')->first()
