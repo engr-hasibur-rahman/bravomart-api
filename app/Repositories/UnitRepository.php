@@ -47,7 +47,7 @@ class UnitRepository implements UnitInterface
         }
         // Apply sorting and pagination
         // Return the result
-        $units = $unit
+        $units = $unit->with('related_translations')
             ->orderBy($sortField, $sort)
             ->paginate($limit);
         return $units;
