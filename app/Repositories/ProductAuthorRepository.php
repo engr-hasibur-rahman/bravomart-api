@@ -56,7 +56,7 @@ class ProductAuthorRepository implements ProductAuthorInterface
         }
         // Apply sorting and pagination
         // Return the result
-        return $author
+        return $author->with('related_translations')
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }

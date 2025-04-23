@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Admin\AdminTagDetailsResource;
 use App\Http\Resources\Admin\AdminTagResource;
 use App\Interfaces\TagInterface;
 use Illuminate\Support\Facades\DB;
@@ -14,15 +15,20 @@ use Illuminate\Support\Arr;
 
 class TagRepository implements TagInterface
 {
-    public function __construct(protected Tag $tag, protected Translation $translation) {}
+    public function __construct(protected Tag $tag, protected Translation $translation)
+    {
+    }
+
     public function translationKeys(): mixed
     {
         return $this->tag->translationKeys;
     }
+
     public function model(): string
     {
         return Tag::class;
     }
+
     public function getPaginatedTag(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $tag = Tag::leftJoin('translations', function ($join) use ($language) {
@@ -43,10 +49,12 @@ class TagRepository implements TagInterface
         }
         // Apply sorting and pagination
         // Return the result
-        return $tag
+        $tags = $tag->with('related_translations')
             ->orderBy($sortField, $sort)
             ->paginate($limit);
+        return response()->json(AdminTagResource::collection($tags), 200);
     }
+
     public function store(array $data)
     {
         try {
@@ -57,13 +65,14 @@ class TagRepository implements TagInterface
             throw $th;
         }
     }
+
     public function getTagById(int|string $id)
     {
         try {
             $tag = Tag::with('related_translations')->find($id);
             if ($tag) {
                 return response()->json([
-                    "data" => new AdminTagResource($tag),
+                    "data" => new AdminTagDetailsResource($tag),
                 ]);
             } else {
                 return response()->json([
@@ -74,6 +83,7 @@ class TagRepository implements TagInterface
             throw $th;
         }
     }
+
     public function update(array $data)
     {
         try {
@@ -89,6 +99,7 @@ class TagRepository implements TagInterface
             throw $th;
         }
     }
+
     public function delete(int|string $id)
     {
         try {
@@ -100,6 +111,7 @@ class TagRepository implements TagInterface
             throw $th;
         }
     }
+
     private function deleteTranslation(int|string $id, string $translatable_type)
     {
         try {
@@ -111,7 +123,8 @@ class TagRepository implements TagInterface
             throw $th;
         }
     }
-    public function storeTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {
@@ -141,7 +154,8 @@ class TagRepository implements TagInterface
         }
         return true;
     }
-    public function updateTranslation(Request $request, int|string $refid, string $refPath, array  $colNames): bool
+
+    public function updateTranslation(Request $request, int|string $refid, string $refPath, array $colNames): bool
     {
         $translations = [];
         if ($request['translations']) {

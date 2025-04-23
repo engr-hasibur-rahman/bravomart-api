@@ -65,7 +65,8 @@ class ProductDetailsPublicResource extends JsonResource
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
             'rating' => number_format((float) $this->rating, 2, '.', ''),
             'review_count'=>$this->review_count,
-            'reviews' => ProductReviewPublicResource::collection($this->reviews)
+            'reviews' => ProductReviewPublicResource::collection($this->reviews),
+            'flash_sale' => $this->isInFlashDeal()
         ];
     }
 }

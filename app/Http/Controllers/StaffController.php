@@ -39,7 +39,7 @@ class StaffController extends Controller
             });
 
         if (auth('api')->user()->activity_scope == 'system_level') {
-            $query->whereNull('stores');
+            $query->where('activity_scope','system_level');
         }
         if (auth('api')->user()->activity_scope == 'store_level' && auth('api')->user()->store_owner == 1) {
             $seller_stores = Store::where('store_seller_id', auth('api')->user()->id)->pluck('id')->toArray();

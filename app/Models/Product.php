@@ -238,7 +238,7 @@ class Product extends Model
             ];
         }
 
-        return false;
+        return null;
     }
 
     public function getRatingAttribute()

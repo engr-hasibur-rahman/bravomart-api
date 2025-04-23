@@ -48,7 +48,7 @@ class ProductBrandController extends Controller
         }
 
         // Apply sorting and pagination
-        $brands = $brands->orderBy($request->sortField ?? 'id', $request->sort ?? 'asc')
+        $brands = $brands->orderBy($request->sortField ?? 'id', $request->sort ?? 'desc')
             ->paginate($limit ?? 10);
 
         // Return a collection of ProductBrandResource (including the image)

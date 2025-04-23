@@ -1551,6 +1551,4 @@ class FrontendController extends Controller
             'order_include_tax_amount' => $systemCommissionSettings->order_include_tax_amount,
         ]);
     }
-
-
 }

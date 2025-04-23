@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\PageDetailsResource;
+use App\Http\Resources\PageResource;
 use App\Interfaces\PageManageInterface;
 use App\Models\Page;
 use App\Models\Translation;
@@ -27,7 +28,7 @@ class PageManageRepository implements PageManageInterface
         $query = Page::query()->with('related_translations');
         $paginatedPage = $query->orderBy($sortField, $sort)->paginate($limit);
         return response()->json([
-            'data' => PageDetailsResource::collection($paginatedPage),
+            'data' => PageResource::collection($paginatedPage),
             'meta' => new PaginationResource($paginatedPage),
         ]);
     }
