@@ -56,7 +56,7 @@ class AdminWithdrawManageController extends Controller
         } else {
             return response([
                 'status' => false,
-                'message' => 'messages.data_not_found',
+                'message' => __('messages.data_not_found'),
                 'data' => null
             ]);
         }
