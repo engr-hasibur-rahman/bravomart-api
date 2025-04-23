@@ -3,8 +3,10 @@
 namespace App\Repositories;
 
 use App\Interfaces\SubscriberManageInterface;
+use App\Jobs\SendDynamicEmailJob;
 use App\Mail\SubscribedMail;
 use App\Mail\UnsubscribedMail;
+use App\Models\EmailTemplate;
 use App\Models\Subscriber;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -87,14 +89,38 @@ class SubscriberManageRepository implements SubscriberManageInterface
         Subscriber::whereIn('id', $subscribersToUpdate->pluck('id'))
             ->update(['is_subscribed' => $data['status'], 'unsubscribed_at' => $data['status'] == 0 ? now() : null]);
 
+        $web_site_name = com_option_get('com_site_title');
+
         // Send appropriate email notifications
         foreach ($subscribersToUpdate as $subscriber) {
             if ($data['status'] == 0) {
-                // Send Unsubscribe Email
-                Mail::to($subscriber->email)->send(new UnsubscribedMail($subscriber));
+                try {
+                    $email_template = EmailTemplate::where('type', 'unsubscribe')->where('status', 1)->first();
+                    if ($email_template) {
+                        $subject = $email_template->subject;
+                        $message = str_replace(
+                            ["@website_name", "@website_name"],
+                            [$web_site_name,$web_site_name],
+                            $email_template->body
+                        );
+
+                        dispatch(new SendDynamicEmailJob($subscriber->email, $subject, $message));
+                    }
+                } catch (\Exception $ex) { }
             } else {
-                // Send Subscribe Email
-                Mail::to($subscriber->email)->send(new SubscribedMail($subscriber));
+                try {
+                    $email_template = EmailTemplate::where('type', 'subscribers-bulk-mail')->where('status', 1)->first();
+                    if ($email_template) {
+                        $subject = $email_template->subject;
+                        $message = str_replace(
+                            ["@website_name", "@website_name"],
+                            [$web_site_name,$web_site_name],
+                            $email_template->body
+                        );
+
+                        dispatch(new SendDynamicEmailJob($subscriber->email, $subject, $message));
+                    }
+                } catch (\Exception $ex) { }
             }
         }
 
@@ -106,7 +132,20 @@ class SubscriberManageRepository implements SubscriberManageInterface
         $subscribers = Subscriber::whereIn('id', $data['ids'])->get();
 
         foreach ($subscribers as $subscriber) {
-            Mail::to($subscriber->email)->send(new SubscribedMail($subscriber));
+            try {
+                $web_site_name = com_option_get('com_site_title');
+                $email_template = EmailTemplate::where('type', 'subscribers-bulk-mail')->where('status', 1)->first();
+                if ($email_template) {
+                    $subject = $email_template->subject;
+                    $message = str_replace(
+                        ["@website_name", "@website_name"],
+                        [$web_site_name,$web_site_name],
+                        $email_template->body
+                    );
+
+                    dispatch(new SendDynamicEmailJob($subscriber->email, $subject, $message));
+                }
+            } catch (\Exception $ex) { }
         }
         return true;
     }
