@@ -20,6 +20,7 @@ use App\Http\Resources\Com\PrivacyPolicyResource;
 use App\Http\Resources\Com\Product\ProductAttributeResource;
 use App\Http\Resources\Com\Product\ProductBrandPublicResource;
 use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
+use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\Com\Product\ProductUnitPublicResource;
 use App\Http\Resources\Com\Store\BehaviourPublicResource;
 use App\Http\Resources\Com\Store\StorePublicDropdownResource;
@@ -922,6 +923,7 @@ class FrontendController extends Controller
             $sort = $request->sort ?? 'asc';
             $sortField = $request->sortField ?? 'id';
             $type = $request->type; // Get the type filter
+            $all = $request->all ?? false;
             $categories = ProductCategory::leftJoin('translations', function ($join) use ($language) {
                 $join->on('product_category.id', '=', 'translations.translatable_id')
                     ->where('translations.translatable_type', '=', ProductCategory::class)
@@ -941,13 +943,22 @@ class FrontendController extends Controller
             }
 
             // Apply sorting and pagination
+            if ($all){
+                $categories = $categories
+                    ->orderBy($sortField, $sort)
+                    ->paginate($limit);
+                return response()->json([
+                    'message' => __('messages.data_found'),
+                    'data' => ProductCategoryPublicResource::collection($categories),
+                    'meta' => new PaginationResource($categories)
+                ], 200);
+            }
             $categories = $categories->whereNull('parent_id')
                 ->orderBy($sortField, $sort)
                 ->paginate($limit);
-
             return response()->json([
                 'message' => __('messages.data_found'),
-                'data' => ProductCategoryPublicResource::collection($categories),
+                'data' => ProductCategoryResource::collection($categories),
                 'meta' => new PaginationResource($categories)
             ], 200);
         } catch (\Exception $e) {
