@@ -223,21 +223,18 @@ class Product extends Model
     {
         $flashSaleProduct = $this->flashSaleProduct()
             ->whereHas('flashSale', function ($query) {
-                $query->where('status', 'active')
+                $query->where('status', 1)
                     ->where('start_time', '<=', now())
                     ->where('end_time', '>=', now());
             })
             ->with('flashSale') // eager load to access details
             ->first();
-
         if ($flashSaleProduct && $flashSaleProduct->flashSale) {
             return [
                 'flash_sale_id'   => $flashSaleProduct->flashSale->id,
                 'discount_type'   => $flashSaleProduct->flashSale->discount_type,
                 'discount_amount' => $flashSaleProduct->flashSale->discount_amount,
                 'purchase_limit'  => $flashSaleProduct->flashSale->purchase_limit,
-                'start_time'      => $flashSaleProduct->flashSale->start_time,
-                'end_time'        => $flashSaleProduct->flashSale->end_time,
             ];
         }
 
