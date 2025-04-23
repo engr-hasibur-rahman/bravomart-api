@@ -35,7 +35,7 @@ class SellerStaffStoreRequest extends FormRequest
             'image' => 'nullable',
             'stores' => 'nullable|array',
             'stores.*' => ['nullable', 'integer', new ValidSellerStore],
-            'roles' => 'nullable|array',
+            'roles' => 'nullable',
             'roles.*.value' => 'required|string|exists:roles,name',
         ];
     }
