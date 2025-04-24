@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Permission as ModelsPermission;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 class CustomPermission extends Permission
@@ -42,5 +44,10 @@ class CustomPermission extends Permission
     public function parent()
     {
         return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    public function roles(): belongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'role_has_permissions', 'permission_id', 'role_id');
     }
 }

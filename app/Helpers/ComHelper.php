@@ -182,9 +182,13 @@ class ComHelper
     public static function buildMenuTree(array $role_id, $data_list)
     {
         $tree = [];
+//        dd($data_list->toArray());
         foreach ($data_list as $data_item) {
-
-            $children = $data_item->children != '' && count($data_item->children) ? ComHelper::buildMenuTree($role_id, $data_item->children) : [];
+//            dump($data_item->children->toArray());
+//            $children = $data_item->children != '' && count($data_item->children) ? ComHelper::buildMenuTree($role_id, $data_item->children) : [];
+            $children = $data_item->childrenRecursive != '' && count($data_item->childrenRecursive)
+                ? ComHelper::buildMenuTree($role_id, $data_item->childrenRecursive)
+                : [];
             $users = DB::table('role_has_permissions')->where('permission_id', $data_item->id)->whereIn('role_id', $role_id)->first();
             $translations = Translation::where('translatable_type', 'App\Models\Permissions')->where('translatable_id', $data_item->id)->get()->groupBy('language');
             //logger($translations);

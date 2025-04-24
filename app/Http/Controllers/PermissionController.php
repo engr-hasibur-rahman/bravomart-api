@@ -27,6 +27,7 @@ class PermissionController extends Controller
     public function getpermissions(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
+        $roleIds = $user->roles()->pluck('id');
         $shop_count = 1; // Primarily Pass For All
         $permissions = null;
         // Now Check if user is a Store User and he have assigned Stores
@@ -40,7 +41,26 @@ class PermissionController extends Controller
             if ($user->activity_scope == 'store_level' && !empty($request->store_slug)) {
                 $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
             } elseif ($user->activity_scope == 'system_level') {
-                $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+//                $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
+                $permissions = $user->rolePermissionsQuery() // Start from permissions assigned to the user's roles
+                    ->whereNull('parent_id') // Fetch only top-level (root) permissions (i.e., no parent)
+                    ->with([
+                    // Eager load children recursively, but only if those children are assigned to the user's roles
+                        'childrenRecursive' => function ($query) use ($roleIds) {
+                            $query->whereHas('roles', function ($q) use ($roleIds) {
+                                // Filter to include only permissions that are assigned to the user's roles
+                                $q->whereIn('role_id', $roleIds);
+                            })->with([
+                                // Now for each child, load their children (grandchildren) recursively,
+                                // again only if assigned to the user's roles
+                                'childrenRecursive' => function ($subQuery) use ($roleIds) {
+                                $subQuery->whereHas('roles', function ($q) use ($roleIds) {
+                                    $q->whereIn('role_id', $roleIds);
+                                });
+                            }]);
+                        }
+                    ])
+                    ->get(); // Finally, execute the query and get the results
             } else {
                 // Define the permissions array for non-store level seller
                 $permissionsArray = [
@@ -113,6 +133,7 @@ class PermissionController extends Controller
                 }
                 return $permission;
             });
+
         }
 
         return [
