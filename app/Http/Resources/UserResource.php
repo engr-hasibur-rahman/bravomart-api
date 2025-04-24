@@ -29,7 +29,6 @@ class UserResource extends JsonResource
                 ->get()
                 ->toArray();
         }
-
         return [
             'id' => $this->id,
             'full_name' => $this->full_name,
@@ -45,6 +44,7 @@ class UserResource extends JsonResource
             'store_seller_id' => $this->store_seller_id,
             'stores' => $stores,
             'roles' => $this->roles->pluck('name'),
+            'locked' => $this->roles->where('locked', 1)->isNotEmpty(),
             'status' => $this->status
         ];
     }

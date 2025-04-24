@@ -173,6 +173,11 @@ class RoleController extends Controller
     public function changeStatus(Request $request)
     {
         $role = Role::find($request->id);
+        if ($role->locked){
+            return response()->json([
+                'message' => __('messages.role_can\'t_be_edited', ['reason' => 'This role is locked.'])
+            ]);
+        }
         if ($role) {
             $role->status = !$role->status;
             $role->save();
