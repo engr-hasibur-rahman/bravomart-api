@@ -208,27 +208,28 @@ class PermissionAdminSeeder extends Seeder
 
                         // category manage
                         [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Category',
+                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value,
+                            'PermissionTitle' => 'Categories',
                             'activity_scope' => 'system_level',
                             'icon' => 'List',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Category',
                                 'ar' => 'قائمة الفئات'
                             ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value,
-                                    'PermissionTitle' => 'Category List',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
-                                    'translations' => [
-                                        'en' => 'Category List',
-                                        'ar' => 'قائمة فئات المنتجات'
-                                    ]
-                                ]
-                            ]
+//                            'submenu' => [
+//                                [
+//                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value,
+//                                    'PermissionTitle' => 'Category List',
+//                                    'activity_scope' => 'system_level',
+//                                    'icon' => '',
+//                                    'options' => ['view', 'insert', 'update', 'delete'],
+//                                    'translations' => [
+//                                        'en' => 'Category List',
+//                                        'ar' => 'قائمة فئات المنتجات'
+//                                    ]
+//                                ]
+//                            ]
                         ],
                         [
                             'PermissionName' => '',
