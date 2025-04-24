@@ -28,6 +28,7 @@ use Illuminate\Http\Request;
 use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
+use function PHPUnit\Framework\isEmpty;
 
 class StoreManageRepository implements StoreManageInterface
 {
@@ -64,7 +65,7 @@ class StoreManageRepository implements StoreManageInterface
             });
         }
         return $store->with(['seller', 'area', 'related_translations'])
-            ->where('status',$status)
+            ->where('status', $status)
             ->orderBy($sortField, $sort)
             ->paginate($limit);
     }
@@ -553,8 +554,8 @@ class StoreManageRepository implements StoreManageInterface
 
     public function getSalesSummaryData(array $filters, ?string $slug = null)
     {
-        $user = auth('api')->user();
 
+        $user = auth('api')->user();
         // Get store IDs based on the provided slug or all stores for the seller
         if ($slug) {
             $store = Store::where('slug', $slug)->where('store_seller_id', $user->id)->first();
@@ -595,7 +596,12 @@ class StoreManageRepository implements StoreManageInterface
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
-
+        if ($query->get()->isEmpty()) {
+            return [
+                'date' => "",
+                "total_sales" => "",
+            ];
+        }
         // Return grouped sales summary for delivered orders
         return $query->where('status', 'delivered')
             ->selectRaw('DATE(created_at) as date, SUM(order_amount) as total_sales')
@@ -806,14 +812,14 @@ class StoreManageRepository implements StoreManageInterface
     public function approveStores(array $ids)
     {
         try {
-        $stores = Store::whereIn('id', $ids)
-            ->whereNull('deleted_at')
-            ->whereIn('status', [0, 2])
-            ->get();
+            $stores = Store::whereIn('id', $ids)
+                ->whereNull('deleted_at')
+                ->whereIn('status', [0, 2])
+                ->get();
 
-        if ($stores->isEmpty()) {
-            return false;
-        }
+            if ($stores->isEmpty()) {
+                return false;
+            }
 
             foreach ($stores as $store) {
                 $store->status = 1;
@@ -841,7 +847,8 @@ class StoreManageRepository implements StoreManageInterface
 
                         dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
                     }
-                } catch (\Exception $ex) { }
+                } catch (\Exception $ex) {
+                }
             }
 
             return $stores->count() > 0;
@@ -882,13 +889,14 @@ class StoreManageRepository implements StoreManageInterface
                     $seller_subject = $email_template_seller->subject;
                     $seller_message = str_replace(
                         ["@seller_name", "@store_name", "@status"],
-                        [$seller_name, $store_name,$store_status],
+                        [$seller_name, $store_name, $store_status],
                         $email_template_seller->body
                     );
 
                     dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
                 }
-            } catch (\Exception $ex) { }
+            } catch (\Exception $ex) {
+            }
 
             return $store->count() > 0;
         } catch (\Exception $e) {
