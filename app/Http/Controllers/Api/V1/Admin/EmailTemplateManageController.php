@@ -41,7 +41,7 @@ class EmailTemplateManageController extends Controller
         if (!empty($request->subject)) {
             $query->where('subject', 'like', '%' . $request->subject . '%');
         }
-        $emailTemplates = $query->paginate(10);
+        $emailTemplates = $query->with('related_translations')->paginate(10);
 
         return response()->json([
             'data' => AdminEmailResource::collection($emailTemplates),

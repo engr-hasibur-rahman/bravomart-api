@@ -23,7 +23,7 @@ class SellerStoreDashboardManageController extends Controller
 
     public function summaryData(Request $request)
     {
-        $validator = Validator::make(['slug' => $request->slug], [
+        $validator = Validator::make($request->all(), [
             'slug' => 'nullable|exists:stores,slug',
         ]);
 
@@ -38,7 +38,7 @@ class SellerStoreDashboardManageController extends Controller
 
     public function salesSummaryData(Request $request)
     {
-        $validator = Validator::make(['slug' => $request->slug], [
+        $validator = Validator::make($request->all(), [
             'slug' => 'nullable|exists:stores,slug',
         ]);
         if ($validator->fails()) {
@@ -57,7 +57,7 @@ class SellerStoreDashboardManageController extends Controller
 
     public function orderGrowthData(Request $request)
     {
-        $validator = Validator::make(['slug' => $request->slug], [
+        $validator = Validator::make($request->all(), [
             'slug' => 'nullable|exists:stores,slug',
         ]);
         if ($validator->fails()) {
@@ -69,7 +69,7 @@ class SellerStoreDashboardManageController extends Controller
 
     public function otherSummaryData(Request $request)
     {
-        $validator = Validator::make(['slug' => $request->slug], [
+        $validator = Validator::make($request->all(), [
             'slug' => 'nullable|exists:stores,slug',
         ]);
         if ($validator->fails()) {
