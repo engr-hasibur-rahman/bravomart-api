@@ -27,14 +27,14 @@ class AdminDeliverymanResource extends JsonResource
                     [
                         'name' => !empty($translation) && $translation->where('key', 'name')->first()
                             ? $translation->where('key', 'name')->first()->value
-                            : $this->name, // If language is empty or not provided attribute
+                            : $this->vehicle_type->name, // If language is empty or not provided attribute
                     ]
                 )
                 : null,
             'area' => $this->area ? array_merge($this->area->toArray(), [
                 'name' => !empty($area_translation) && $area_translation->where('key', 'name')->first()
                     ? $area_translation->where('key', 'name')->first()->value
-                    : $this->name, // If language is empty or not provided attribute
+                    : $this->area->name, // If language is empty or not provided attribute
             ]): null,
         ]);
     }
