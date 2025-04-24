@@ -79,6 +79,7 @@ class RoleController extends Controller
             "message" => __('messages.save_success', ['name' => 'Role'])
         ], 201);
     }
+
     public function show(string $id)
     {
         $role = CustomRole::with([
@@ -107,10 +108,16 @@ class RoleController extends Controller
             "permissions" => ComHelper::buildMenuTree([$role->id], $allPermissions)
         ];
     }
+
     public function update(RoleRequest $request)
     {
         $role = Role::find($request->role_id);
-        if ($role){
+        if ($role->locked){
+            return response()->json([
+                'message' => __('messages.role_can\'t_be_edited', ['reason' => 'This role is locked.'])
+            ]);
+        }
+        if ($role) {
             $role->name = $request->role_name;
             $role->available_for = $request->available_for;
             $role->save();
@@ -131,30 +138,52 @@ class RoleController extends Controller
         } else {
             return response()->json([
                 "message" => __('messages.data_not_found')
-            ],404);
+            ], 404);
         }
     }
+
     public function destroy(string $id)
     {
-        $role = Role::findOrFail($id);
-        $role->delete();
-        return response()->json('Role deleted');
+        $user = auth('api')->user();
+        if ($user->activity_scope == 'system_level') {
+            $role = $user->roles()->pluck('id');
+            if ($role->contains($id)) {
+                return response()->json([
+                    'message' => __('messages.role_can\'t_be_deleted', ['reason' => 'You are assigned to this role.'])
+                ], 403);
+            }
+            $role = Role::findOrFail($id);
+            if ($role->locked){
+                return response()->json([
+                    'message' => __('messages.role_can\'t_be_deleted', ['reason' => 'This role is locked.'])
+                ]);
+            }
+            $permissions = $role->permissions;
+            $role->delete();
+            $role->permissions()->delete();
+            return response()->json('Role deleted');
+        } else {
+            return response()->json([
+                'message' => __('messages.role_can\'t_be_deleted', ['reason' => 'You are not allowed to delete this role.'])
+            ], 403);
+        }
+
     }
 
     public function changeStatus(Request $request)
     {
         $role = Role::find($request->id);
-        if ($role){
+        if ($role) {
             $role->status = !$role->status;
             $role->save();
             return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Role']),
 
-            ],200);
+            ], 200);
         } else {
             return response()->json([
                 'message' => __('messages.update_failed', ['name' => 'Role'])
-            ],500);
+            ], 500);
         }
 
     }

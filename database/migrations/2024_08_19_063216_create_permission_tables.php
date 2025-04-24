@@ -51,6 +51,7 @@ return new class extends Migration
             $table->string('available_for')->default('system_level');
             $table->string('name');       // For MyISAM use string('name', 225); // (or 166 for InnoDB with Redundant/Compact row format)
             $table->string('guard_name'); // For MyISAM use string('guard_name', 25);
+            $table->boolean('locked')->default(0);
             $table->boolean('status')->default(1);
             $table->timestamps();
             if ($teams || config('permission.testing')) {

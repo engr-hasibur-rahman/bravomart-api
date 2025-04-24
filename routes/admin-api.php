@@ -655,6 +655,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('details/{id}', [RoleController::class, 'show']);
             Route::post('update', [RoleController::class, 'update']);
             Route::post('change-status', [RoleController::class, 'changeStatus']);
+            Route::delete('remove/{id}', [RoleController::class, 'destroy']);
         });
     });
 });
