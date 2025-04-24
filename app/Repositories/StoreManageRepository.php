@@ -555,11 +555,14 @@ class StoreManageRepository implements StoreManageInterface
     {
         $user = auth('api')->user();
 
+        // Get store IDs based on the provided slug or all stores for the seller
         if ($slug) {
             $store = Store::where('slug', $slug)->where('store_seller_id', $user->id)->first();
+
             if (!$store) {
-                return collect([]);
+                return collect([]); // Return empty collection if slug not valid
             }
+
             $storeIds = [$store->id];
         } else {
             $storeIds = Store::where('store_seller_id', $user->id)->pluck('id')->toArray();
@@ -567,26 +570,34 @@ class StoreManageRepository implements StoreManageInterface
 
         $query = Order::whereIn('store_id', $storeIds);
 
-        if (!empty($filters['this_week'])) {
-            $startDate = Carbon::now()->startOfWeek();
-            $endDate = Carbon::now()->endOfWeek();
-        } elseif (!empty($filters['this_month'])) {
-            $startDate = Carbon::now()->startOfMonth();
-            $endDate = Carbon::now()->endOfMonth();
-        } elseif (!empty($filters['this_year'])) {
-            $startDate = Carbon::now()->startOfYear();
-            $endDate = Carbon::now()->endOfYear();
-        } elseif (!empty($filters['start_date']) && !empty($filters['end_date'])) {
-            $startDate = Carbon::parse($filters['start_date'])->startOfDay();
-            $endDate = Carbon::parse($filters['end_date'])->endOfDay();
+        // Handle time period filter
+        $startDate = null;
+        $endDate = null;
+
+        if (!empty($filters['time_period'])) {
+            switch ($filters['time_period']) {
+                case 'this_week':
+                    $startDate = Carbon::now()->startOfWeek();
+                    $endDate = Carbon::now()->endOfWeek();
+                    break;
+                case 'this_month':
+                    $startDate = Carbon::now()->startOfMonth();
+                    $endDate = Carbon::now()->endOfMonth();
+                    break;
+                case 'this_year':
+                    $startDate = Carbon::now()->startOfYear();
+                    $endDate = Carbon::now()->endOfYear();
+                    break;
+            }
         }
 
-        if (isset($startDate) && isset($endDate)) {
+        // Apply date range filter if valid
+        if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        return $query
-            ->where('status', 'delivered')
+        // Return grouped sales summary for delivered orders
+        return $query->where('status', 'delivered')
             ->selectRaw('DATE(created_at) as date, SUM(order_amount) as total_sales')
             ->groupBy('date')
             ->orderBy('date')
