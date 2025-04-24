@@ -554,7 +554,6 @@ class StoreManageRepository implements StoreManageInterface
 
     public function getSalesSummaryData(array $filters, ?string $slug = null)
     {
-
         $user = auth('api')->user();
         // Get store IDs based on the provided slug or all stores for the seller
         if ($slug) {
