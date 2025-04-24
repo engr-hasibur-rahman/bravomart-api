@@ -962,7 +962,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionTitle' => 'Support Ticket Management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
-                    'options' => ['view', 'insert', 'update', 'delete'],
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Support Ticket Management',
                         'ar' => 'إدارة المدونة'
@@ -973,7 +973,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Tickets',
                             'activity_scope' => 'system_level',
                             'icon' => 'Headphones',
-                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Tickets',
                                 'ar' => 'التذاكر'
@@ -1513,7 +1513,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Third-Party Integrations',
                             'activity_scope' => 'system_level',
                             'icon' => 'Blocks',
-                            'options' => ['view', 'update'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Third-Party Integrations',
                                 'ar' => 'التكاملات مع جهات خارجية'
