@@ -52,6 +52,8 @@ return [
     'store.doesnt.belongs.to.seller' => 'Store doesn\'t belongs to this seller!',
     'staff_doesnt_belongs_to_seller' => 'Staff doesn\'t belongs to this seller!',
     'staff_not_assign_to_stores' => 'Staff is not assigned to any store yet!',
+    'role_can\'t_be_deleted' => ':reason Role cannot be deleted!',
+    'role_can\'t_be_edited' => ':reason Role cannot be edited!',
 
     'store_not_found' => 'Store not found or access denied',
     'store_subscription_invalid_type' => 'Invalid subscription type for the store',
