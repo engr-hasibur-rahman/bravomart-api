@@ -45,9 +45,7 @@ class SellerStoreDashboardManageController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $filters = [
-            "this_week" => $request->this_week,
-            "this_month" => $request->this_month,
-            "this_year" => $request->this_year,
+            "time_period" => $request->time_period,
             "start_date" => $request->start_date,
             "end_date" => $request->end_date,
         ];
