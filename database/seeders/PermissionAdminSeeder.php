@@ -214,148 +214,64 @@ class PermissionAdminSeeder extends Seeder
                             'icon' => 'List',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
-                                'en' => 'Category',
+                                'en' => 'Categories',
                                 'ar' => 'قائمة الفئات'
-                            ],
-//                            'submenu' => [
-//                                [
-//                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_CATEGORY_LIST->value,
-//                                    'PermissionTitle' => 'Category List',
-//                                    'activity_scope' => 'system_level',
-//                                    'icon' => '',
-//                                    'options' => ['view', 'insert', 'update', 'delete'],
-//                                    'translations' => [
-//                                        'en' => 'Category List',
-//                                        'ar' => 'قائمة فئات المنتجات'
-//                                    ]
-//                                ]
-//                            ]
-                        ],
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Attribute',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'AttributeIcon',
-                            'translations' => [
-                                'en' => 'Attribute',
-                                'ar' => 'قائمة السمات'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_ATTRIBUTE_LIST->value,
-                                    'PermissionTitle' => 'Attribute List',
-                                    'activity_scope' => 'system_level',
-                                    'options' => ['view'],
-                                    'icon' => 'list-collapse',
-                                    'translations' => [
-                                        'en' => 'Attribute List',
-                                        'ar' => 'قائمة السمات'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::PRODUCT_ATTRIBUTE_ADD->value,
-                                    'PermissionTitle' => 'Add Attribute',
-                                    'activity_scope' => 'system_level',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
-                                    'icon' => 'list-plus',
-                                    'translations' => [
-                                        'en' => 'Add Attribute',
-                                        'ar' => 'إضافة سمة'
-                                    ]
-                                ]
                             ]
                         ],
                         [
-                            'PermissionName' => '',
+                            'PermissionName' => PermissionKey::PRODUCT_ATTRIBUTE_LIST->value,
+                            'PermissionTitle' => 'Attributes',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'AttributeIcon',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Attributes',
+                                'ar' => 'قائمة السمات'
+                            ],
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value,
                             'PermissionTitle' => 'Units',
                             'activity_scope' => 'system_level',
                             'icon' => 'Boxes',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Units',
                                 'ar' => 'قائمة السمات'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value,
-                                    'PermissionTitle' => 'Unit List',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => 'Ungroup',
-                                    'translations' => [
-                                        'en' => 'Attribute List',
-                                        'ar' => 'قائمة السمات'
-                                    ]
-                                ]
                             ]
                         ],
                         // Product Brand
                         [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Brand Management',
+                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_BRAND_LIST->value,
+                            'PermissionTitle' => 'Brands',
                             'activity_scope' => 'system_level',
                             'icon' => 'LayoutList',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
-                                'en' => 'Brand Management',
+                                'en' => 'Brands',
                                 'ar' => 'المنشورات'
                             ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_BRAND_LIST->value,
-                                    'PermissionTitle' => 'Brand Lists',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
-                                    'translations' => [
-                                        'en' => 'Brand Lists',
-                                        'ar' => ' للمنتج'
-                                    ]
-                                ]
-                            ]
                         ],
                         [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Tags Management',
+                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_TAG_LIST->value,
+                            'PermissionTitle' => 'Tags',
                             'activity_scope' => 'system_level',
                             'icon' => 'Tags',
-                            'options' => ['view'],
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
                             'translations' => [
-                                'en' => 'Tag List',
+                                'en' => 'Tags',
                                 'ar' => 'العلامات'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_TAG_LIST->value,
-                                    'PermissionTitle' => 'Tag List',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => 'Align-Left',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'Tag List',
-                                        'ar' => 'قائمة العلامات'
-                                    ]
-                                ]
                             ]
                         ],
                         [
-                            'PermissionName' => '',
+                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_AUTHORS_MANAGE->value,
                             'PermissionTitle' => 'Authors',
                             'activity_scope' => 'system_level',
                             'icon' => '',
+                            'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Authors',
                                 'ar' => 'قائمة المؤلفين'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_AUTHORS_MANAGE->value,
-                                    'PermissionTitle' => 'Author List',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
-                                    'translations' => [
-                                        'en' => 'Author List',
-                                        'ar' => 'قائمة المؤلفين'
-                                    ]
-                                ]
                             ]
                         ],
                         [
@@ -371,23 +287,23 @@ class PermissionAdminSeeder extends Seeder
                             'submenu' => [
                                 [
                                     'PermissionName' => PermissionKey::ADMIN_COUPON_MANAGE->value,
-                                    'PermissionTitle' => 'Coupon list',
+                                    'PermissionTitle' => 'Coupons',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
-                                        'en' => 'Coupon list',
+                                        'en' => 'Coupons',
                                         'ar' => 'إدارة التركيبات'
                                     ]
                                 ],
                                 [
                                     'PermissionName' => PermissionKey::ADMIN_COUPON_LINE_MANAGE->value,
-                                    'PermissionTitle' => 'Coupon line list',
+                                    'PermissionTitle' => 'Coupon Lines',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
                                     'options' => ['view', 'insert', 'update', 'delete'],
                                     'translations' => [
-                                        'en' => 'Coupon line list',
+                                        'en' => 'Coupon Lines',
                                         'ar' => 'إضافة مجموعات'
                                     ]
                                 ]
@@ -532,30 +448,19 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ]
                             ]
-                        ], [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Banner',
+                        ],
+
+                        // Banner Management
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_BANNER_MANAGE->value,
+                            'PermissionTitle' => 'Banners',
                             'activity_scope' => 'system_level',
                             'icon' => 'AlignJustify',
-                            'options' => ['view'],
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
                             'translations' => [
-                                'en' => 'Banner',
+                                'en' => 'Banners',
                                 'ar' => 'راية'
                             ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_PROMOTIONAL_BANNER_MANAGE->value,
-                                    'PermissionTitle' => 'List',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'List',
-                                        'ar' => 'قائمة'
-                                    ]
-                                ],
-
-                            ]
                         ]
                     ]
                 ],
