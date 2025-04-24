@@ -19,7 +19,6 @@ class SellerStaffStoreRequest extends FormRequest
 
     public function rules(): array
     {
-
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'nullable|string|max:255',
@@ -39,8 +38,6 @@ class SellerStaffStoreRequest extends FormRequest
             'roles.*.value' => 'required|string|exists:roles,name',
         ];
     }
-
-
     /**
      * Get custom messages for validation errors.
      */
@@ -60,7 +57,6 @@ class SellerStaffStoreRequest extends FormRequest
             'roles.*.value.exists' => 'The role provided does not exist.',
         ];
     }
-
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));
