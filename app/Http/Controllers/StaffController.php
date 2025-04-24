@@ -39,7 +39,7 @@ class StaffController extends Controller
             });
 
         if (auth('api')->user()->activity_scope == 'system_level') {
-            $query->where('activity_scope','system_level');
+            $query->where('activity_scope', 'system_level');
         }
         if (auth('api')->user()->activity_scope == 'store_level' && auth('api')->user()->store_owner == 1) {
             $seller_stores = Store::where('store_seller_id', auth('api')->user()->id)->pluck('id')->toArray();
@@ -141,6 +141,12 @@ class StaffController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        $staff = User::find($request->id);
+        if ($staff->locked) {
+            return response()->json([
+                'message' => __('messages.staff_can\'t_be_modified', ['reason' => 'This staff has assigned for super admin.', 'action' => 'edited']),
+            ],403);
+        }
         if (auth('api')->user()->activity_scope == 'store_level') {
             $seller = auth('api')->user();
             $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id')->toArray();
@@ -201,7 +207,11 @@ class StaffController extends Controller
 
         // Find the user
         $user = User::find($request->id);
-
+        if ($user->locked) {
+            return response()->json([
+                'message' => __('messages.staff_can\'t_be_modified', ['reason' => 'This staff has assigned for super admin.', 'action' => 'edited']),
+            ],403);
+        }
         if (!$user) {
             return response()->json([
                 'message' => __('messages.data_not_found')
@@ -249,6 +259,11 @@ class StaffController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $staff = User::find($request->id);
+        if ($staff->locked) {
+            return response()->json([
+                'message' => __('messages.staff_can\'t_be_modified', ['reason' => 'This staff has assigned for super admin.', 'action' => 'deleted']),
+            ],403);
+        }
         if (!$staff) {
             return response()->json([
                 'message' => __('messages.data_not_found')
@@ -275,8 +290,14 @@ class StaffController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
-        $deliveryman = $this->change_password($request->user_id, $request->password);
-        if ($deliveryman) {
+        $staff = User::where('id', $request->user_id)->first();
+        if ($staff->locked) {
+            return response()->json([
+                'message' => __('messages.staff_can\'t_be_modified', ['reason' => 'This staff has assigned for super admin.', 'action' => 'edited']),
+            ],403);
+        }
+        $staff = $this->change_password($request->user_id, $request->password);
+        if ($staff) {
             return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Staff password']),
             ]);

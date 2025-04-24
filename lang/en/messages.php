@@ -54,6 +54,7 @@ return [
     'staff_not_assign_to_stores' => 'Staff is not assigned to any store yet!',
     'role_can\'t_be_deleted' => ':reason Role cannot be deleted!',
     'role_can\'t_be_edited' => ':reason Role cannot be edited!',
+    'staff_can\'t_be_modified' => ':reason Role cannot be :action!',
 
     'store_not_found' => 'Store not found or access denied',
     'store_subscription_invalid_type' => 'Invalid subscription type for the store',
