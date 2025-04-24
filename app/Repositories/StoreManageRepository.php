@@ -597,8 +597,10 @@ class StoreManageRepository implements StoreManageInterface
         }
         if ($query->get()->isEmpty()) {
             return [
-                'date' => "",
-                "total_sales" => "",
+                [
+                    "date" => "",
+                    "total_sales" => "",
+                ]
             ];
         }
         // Return grouped sales summary for delivered orders
