@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Modules\Wallet\app\Models\Wallet;
+
 //use NotificationChannels\WebPush\HasPushSubscriptions;
 //use NotificationChannels\WebPush\PushSubscription;
 
@@ -17,7 +18,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
 //HasPushSubscriptions
-    use HasApiTokens, HasFactory,Notifiable, HasRoles, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     protected $appends = ['rating', 'review_count'];
     protected $fillable = [
@@ -66,6 +67,7 @@ class User extends Authenticatable
 
         return null; // No subscription found
     }
+
     public function updatePushSubscription($endpoint, $key = null, $token = null, $contentEncoding = null)
     {
         $this->pushSubscriptions()->updateOrCreate(
@@ -156,6 +158,11 @@ class User extends Authenticatable
             ->where('reviewable_type', User::class)
             ->where('status', 'approved')
             ->count();
+    }
+
+    public function getLockedAttribute()
+    {
+        return $this->roles->where('locked', 1)->isNotEmpty();
     }
 
 }
