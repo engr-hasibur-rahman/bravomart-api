@@ -61,8 +61,8 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     {
         $query = DeliveryMan::with([
             'user',
-            'vehicle_type',
-            'area',
+            'vehicle_type.related_translations',
+            'area.related_translations',
             'creator',
             'updater'
         ]);
