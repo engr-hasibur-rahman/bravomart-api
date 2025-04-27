@@ -27,9 +27,7 @@ class StorePublicListResource extends JsonResource
             'name' => $translation->isNotEmpty()
                 ? $translation->where('key', 'name')->first()?->value
                 : $this->name,
-            'slug' => $translation->isNotEmpty()
-                ? $translation->where('key', 'slug')->first()?->value
-                : $this->slug,
+            'slug' => $this->slug,
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' => $this->logo,

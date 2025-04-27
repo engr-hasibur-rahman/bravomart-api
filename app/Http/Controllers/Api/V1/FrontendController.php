@@ -943,7 +943,7 @@ class FrontendController extends Controller
             }
 
             // Apply sorting and pagination
-            if ($all){
+            if ($all) {
                 $categories = $categories
                     ->orderBy($sortField, $sort)
                     ->paginate($limit);

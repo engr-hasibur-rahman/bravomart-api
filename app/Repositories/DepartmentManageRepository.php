@@ -2,13 +2,20 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Department\DepartmentDetailsResource;
 use App\Interfaces\DepartmentManageInterface;
 use App\Models\Department;
+use App\Models\Translation;
 
 class DepartmentManageRepository implements DepartmentManageInterface
 {
-    public function __construct(protected Department $department)
+    public function __construct(protected Department $department, protected Translation $translation)
     {
+    }
+
+    public function translationKeys(): mixed
+    {
+        return $this->department->translationKeys;
     }
 
     public function getPaginatedDepartments(int|string $perPage, string $search, string $sortField, string $sort)
@@ -24,14 +31,14 @@ class DepartmentManageRepository implements DepartmentManageInterface
         $query->orderBy($sortField, $sort);
 
         // Paginate the results
-        return $query->paginate($perPage);
+        return $query->latest()->paginate($perPage);
     }
 
     public function store(array $data)
     {
         try {
             $department = $this->department->create($data);
-            return true;
+            return $department->id;
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -41,7 +48,7 @@ class DepartmentManageRepository implements DepartmentManageInterface
     {
         try {
             $department = $this->department->findorfail($id);
-            return $department;
+            return new DepartmentDetailsResource($department);
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -53,7 +60,7 @@ class DepartmentManageRepository implements DepartmentManageInterface
             $department = $this->department->findorfail($data['id']);
             if ($department) {
                 $department->update($data);
-                return true;
+                return $department->id;
             } else {
                 return false;
             }

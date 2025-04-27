@@ -56,9 +56,11 @@ class StoreDetailsPublicResource extends JsonResource
             'all_products' => StoreProductListPublicResource::collection($this->products()
                 ->where('deleted_at', null)
                 ->where('status', 'approved')
-                ->with(['variants' => function ($query) {
-                    $query->take(1);
-                }])
+                ->with([
+                    'variants' => function ($query) {
+                        $query->take(1);
+                    }
+                ])
                 ->latest()
                 ->get()),
             'featured_products' => StoreProductListPublicResource::collection($this->products()

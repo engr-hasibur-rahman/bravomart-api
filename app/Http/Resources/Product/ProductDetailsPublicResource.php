@@ -34,13 +34,13 @@ class ProductDetailsPublicResource extends JsonResource
             'tag' => $this->tag,
             'type' => $this->type,
             'behaviour' => $this->behaviour,
-            'name' => $translation->isNotEmpty()
-                ? $translation->where('key', 'name')->first()?->value
-                : $this->name,
+            'name' => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
+                : $this->name, // If language is empty or not provided attribute
             'slug' => $this->slug,
-            'description' => $translation->isNotEmpty()
-                ? $translation->where('key', 'description')->first()?->value
-                : $this->description,
+            'description' => !empty($translation) && $translation->where('key', 'description')->first()
+                ? $translation->where('key', 'description')->first()->value
+                : $this->description, // If language is empty or not provided attribute
             'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'gallery_images' => $this->gallery_images,
@@ -63,8 +63,8 @@ class ProductDetailsPublicResource extends JsonResource
             'manufacture_date' => $this->manufacture_date,
             'expiry_date' => $this->expiry_date,
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
-            'rating' => number_format((float) $this->rating, 2, '.', ''),
-            'review_count'=>$this->review_count,
+            'rating' => number_format((float)$this->rating, 2, '.', ''),
+            'review_count' => $this->review_count,
             'reviews' => ProductReviewPublicResource::collection($this->reviews),
             'flash_sale' => $this->isInFlashDeal()
         ];
