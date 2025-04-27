@@ -39,7 +39,9 @@ class FlashSaleWithProductPublicResource extends JsonResource
             "discount_type" => $this->discount_type,
             "discount_amount" => $this->discount_amount,
             "special_price" => $this->special_price,
-            "button_text" => $this->button_text,
+            "button_text" => !empty($translation) && $translation->where('key', 'button_text')->first()
+                ? $translation->where('key', 'button_text')->first()->value
+                : $this->button_text,
             "button_text_color" => $this->button_text_color,
             "button_hover_color" => $this->button_hover_color,
             "button_bg_color" => $this->button_bg_color,

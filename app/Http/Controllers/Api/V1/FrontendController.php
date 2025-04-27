@@ -1049,7 +1049,6 @@ class FrontendController extends Controller
             ], 204);
         }
         return response()->json([
-            'message' => 'Sliders fetched successfully.',
             'sliders' => SliderPublicResource::collection($sliders->items()),
         ], 200);
     }
