@@ -48,7 +48,7 @@ class DepartmentManageRepository implements DepartmentManageInterface
     {
         try {
             $department = $this->department->findorfail($id);
-            return new DepartmentDetailsResource($department);
+            return response()->json(new DepartmentDetailsResource($department));
         } catch (\Throwable $th) {
             throw $th;
         }
