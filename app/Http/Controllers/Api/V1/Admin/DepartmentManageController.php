@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Department\DepartmentResource;
 use App\Interfaces\DepartmentManageInterface;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,7 +26,10 @@ class DepartmentManageController extends Controller
             $request->sort_by ?? 'id',
             $request->sort ?? 'desc',
         );
-        return DepartmentResource::collection($departments);
+        return response()->json([
+            'data' => DepartmentResource::collection($departments),
+            'meta' => new PaginationResource($departments),
+        ]);
     }
 
     public function store(Request $request): JsonResponse
@@ -40,6 +45,7 @@ class DepartmentManageController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $department = $this->departmentRepo->store($request->all());
+        createOrUpdateTranslation($request, $department, Department::class, $this->departmentRepo->translationKeys());
         if ($department) {
             return $this->success(translate('messages.save_success', ['name' => 'Department']));
         } else {
@@ -60,6 +66,7 @@ class DepartmentManageController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $department = $this->departmentRepo->update($request->all());
+        createOrUpdateTranslation($request, $department, Department::class, $this->departmentRepo->translationKeys());
         if ($department) {
             return $this->success(translate('messages.update_success', ['name' => 'Department']));
         } else {

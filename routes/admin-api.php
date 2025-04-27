@@ -269,7 +269,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['prefix' => 'department/'], function () {
             Route::get('list', [DepartmentManageController::class, 'index']);
             Route::post('add', [DepartmentManageController::class, 'store']);
-            Route::get('details', [DepartmentManageController::class, 'show']);
+            Route::get('details/{id}', [DepartmentManageController::class, 'show']);
             Route::post('update', [DepartmentManageController::class, 'update']);
             Route::delete('remove/{id}', [DepartmentManageController::class, 'destroy']);
         });
