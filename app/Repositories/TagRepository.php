@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Http\Resources\Admin\AdminTagDetailsResource;
 use App\Http\Resources\Admin\AdminTagResource;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\TagInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -52,7 +53,10 @@ class TagRepository implements TagInterface
         $tags = $tag->with('related_translations')
             ->orderBy($sortField, $sort)
             ->paginate($limit);
-        return response()->json(AdminTagResource::collection($tags), 200);
+        return response()->json([
+            'data' => AdminTagResource::collection($tags),
+            'meta' => new PaginationResource($tags)
+        ]);
     }
 
     public function store(array $data)
