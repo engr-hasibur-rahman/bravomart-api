@@ -16,6 +16,7 @@ class DepartmentDetailsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'name' => $this->name, // If language is empty or not provided attribute
             'status' => $this->status,
             'translation' => DepartmentTranslationResource::collection($this->related_translations->groupBy('language'))
