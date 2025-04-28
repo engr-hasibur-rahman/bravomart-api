@@ -52,18 +52,18 @@ class OrderService
         $customer_id = $customer->id;
         $basePrice = 0;
 
-        // check package  | if store subscription system check | if store subscription expire or order limit end this store product not create order
+        // check package | if store subscription system check | if store subscription expire or order limit end this store product not create order
         foreach ($data['packages'] as $packageData) {
-             // if type subscription
-             $store = Store::find($packageData['store_id']);
+            // if type subscription
+            $store = Store::find($packageData['store_id']);
             // subscription check start
-            if ($store->subscription_type === 'subscription'){
+            if ($store->subscription_type === 'subscription') {
                 // check store subscription package
                 $store_subscription = StoreSubscription::where('store_id', $store->id)
                     ->whereDate('expire_date', '>=', now())
                     ->first();
                 // if expire subscription
-                if (empty($store_subscription)){
+                if (empty($store_subscription)) {
                     return false;
                 }
                 //  condition
@@ -71,14 +71,14 @@ class OrderService
                 // check order limit
                 if (!empty($store_subscription) && $store_subscription->order_limit <= $total_store_order) {
                     return false;
-                 }
-             } // subscription check end
+                }
+            } // subscription check end
 
             foreach ($packageData['items'] as $itemData) {
                 // find the product
                 $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
                 // Validate product variant
-                if (!empty($product)){
+                if (!empty($product)) {
                     $variant = ProductVariant::where('id', $itemData['variant_id'])
                         ->where('product_id', $product->id)
                         ->first();
@@ -92,443 +92,443 @@ class OrderService
 
 
         // calculate order coupon
-            if(isset($data['coupon_code'])){
-                $coupon_data = applyCoupon($data['coupon_code'], $basePrice);
-                if (isset($coupon_data['final_order_amount'])){
-                    $total_order_amount = $coupon_data['final_order_amount'];
-                    $total_discount_amount = $coupon_data['discount_amount'];
+        if (isset($data['coupon_code'])) {
+            $coupon_data = applyCoupon($data['coupon_code'], $basePrice);
+            if (isset($coupon_data['final_order_amount'])) {
+                $total_order_amount = $coupon_data['final_order_amount'];
+                $total_discount_amount = $coupon_data['discount_amount'];
 
-                    // Only set success to true if coupon is valid
-                    $coupon_data['success'] = true;
-                }else{
-                    $coupon_data = [
-                        'success' => false,
-                        'coupon_code' => null,
-                        'coupon_title' => null,
-                    ];
-                }
-            }else{
+                // Only set success to true if coupon is valid
+                $coupon_data['success'] = true;
+            } else {
                 $coupon_data = [
                     'success' => false,
                     'coupon_code' => null,
                     'coupon_title' => null,
                 ];
             }
+        } else {
+            $coupon_data = [
+                'success' => false,
+                'coupon_code' => null,
+                'coupon_title' => null,
+            ];
+        }
 
         // create order master
         $order_master = OrderMaster::create([
-                'customer_id' => $customer_id,
-                'area_id' => 0, // main zone id
-                'shipping_address_id' => $data['shipping_address_id'],
-                'coupon_code' => $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
-                'coupon_title' => $coupon_data['success'] === false ? null : $data['coupon_title'] ?? null,
+            'customer_id' => $customer_id,
+            'area_id' => 0, // main zone id
+            'shipping_address_id' => $data['shipping_address_id'],
+            'coupon_code' => $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
+            'coupon_title' => $coupon_data['success'] === false ? null : $data['coupon_title'] ?? null,
+            'coupon_discount_amount_admin' => 0,
+            'product_discount_amount' => 0,
+            'flash_discount_amount_admin' => 0,
+            'shipping_charge' => 0,
+            'additional_charge_name' => null,
+            'additional_charge_amount' => 0,
+            'additional_charge_commission' => 0,
+            'order_amount' => 0,
+            'paid_amount' => 0,
+            'payment_gateway' => $data['payment_gateway'],
+            'payment_status' => 'pending',
+            'order_notes' => $data['order_notes'] ?? null,
+        ]);
+
+        // create order address
+        $customer_address = CustomerAddress::find($data['shipping_address_id']);
+        OrderAddress::create([
+            'order_master_id' => $order_master->id,
+            'area_id' => 0, // main zone id
+            'shipping_address_id' => $customer_address->id,
+            'type' => $customer_address->type,
+            'email' => $customer_address->email,
+            'contact_number' => $customer_address->contact_number,
+            'address' => $customer_address->address,
+            'latitude' => $customer_address->latitude,
+            'longitude' => $customer_address->longitude,
+            'road' => $customer_address->road,
+            'house' => $customer_address->house,
+            'floor' => $customer_address->floor,
+            'postal_code' => $customer_address->postal_code,
+        ]);
+
+        $calculate_total_order_amount_base_price = 0; // To accumulate the total price
+        $main_order_amount_after_discount = 0; // To accumulate the total price
+        // this calculations only for main order base price calculate
+        foreach ($data['packages'] as $packageData) {
+            foreach ($packageData['items'] as $itemData) {
+
+                // find the product
+                $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
+                // Validate product variant
+                $variant = ProductVariant::where('id', $itemData['variant_id'])->where('product_id', $product->id)->first();
+                if (!empty($variant) && isset($variant->price)) {
+                    $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
+                }
+                if (!empty($product) && !empty($variant)) {
+                    // product flash sale info
+                    $product_flash_sale_id = null;
+                    $flash_sale_discount_type = null;
+                    $flash_sale_discount_amount = 0.00;
+                    $product_flash_sale_discount_rate = 0.00;
+
+                    if (!empty($product->flashSale) && isset($product->flashSale->discount_amount)) {
+                        $product_flash_sale_id = $product->flashSale?->id;
+                        $flash_sale_discount_type = $product->flashSale->discount_type;
+                        $flash_sale_discount_amount = $product->flashSale->discount_amount;
+                        $product_flash_sale_discount_rate = $product->flashSale->discount_amount;
+
+                        // Check if the flash sale has expired
+                        $flash_sale_start_time = $product->flashSale->start_time;
+                        $flash_sale_end_time = $product->flashSale->end_time;
+
+                        // Check if current time is within the flash sale period
+                        $current_time = now(); // Get the current time
+                        $is_expired = $current_time->gt($flash_sale_end_time); // Check if current time is greater than the end time
+
+                        if ($is_expired) {
+                            // Flash sale has expired
+                            $product_flash_sale_id = null;
+                            $flash_sale_discount_type = null;
+                            $flash_sale_discount_amount = 0;
+                            $product_flash_sale_discount_rate = 0;
+                        }
+                    };
+
+                    // store and admin discount calculate per product wise
+                    $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100.00) : $flash_sale_discount_amount;
+                    $finalPrice = $basePrice - $flash_sale_admin_discount;
+                    $after_any_discount_final_price = $finalPrice;
+
+                    $calculate_total_order_amount_base_price += $basePrice;
+                    $main_order_amount_after_discount += $after_any_discount_final_price;
+
+                }
+            }
+        }
+
+
+        // system commission
+        $system_commission = SystemCommission::latest()->first();
+        // shipping charge calculate
+        $order_shipping_charge = $system_commission->order_shipping_charge;
+
+        //  packages and details
+        $shipping_charge = 0;
+        $customer_lat = $data['customer_latitude'] ?? null;
+        $customer_lng = $data['customer_longitude'] ?? null;
+
+        $coupon_discount_amount_admin_final = 0;
+        $product_discount_amount_master = 0;
+
+        foreach ($data['packages'] as $packageData) {
+            // find store wise area id
+            $store_info = Store::find($packageData['store_id']);
+            $store_area_id = $store_info->area_id;
+
+            // area wise calculate delivery charge
+            $deliveryChargeData = DeliveryChargeHelper::calculateDeliveryCharge($store_area_id, $customer_lat, $customer_lng);
+
+            // Ensure delivery charge data is an array to avoid errors
+            if (!is_array($deliveryChargeData)) {
+                $deliveryChargeData = ['delivery_charge' => null];
+            }
+
+            // Get the delivery charge or default to 0
+            $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
+
+
+            // If area-wise delivery charge is 0 or not set, use the default order shipping charge
+            if (empty($deliveryChargeData['delivery_charge']) || $deliveryChargeData['delivery_charge'] == 0) {
+                $final_shipping_charge = $order_shipping_charge;
+            }
+
+            // delivery time
+            $delivery_time = null;
+            if (isset($packageData['delivery_time'])) {
+                $delivery_time = $packageData['delivery_time'] ?? null;
+            }
+
+            // Commission Rate on Delivery Charge (%)
+            $commission_type = $system_commission->commission_type;
+            $default_delivery_commission_charge = $system_commission->default_delivery_commission_charge;
+
+            // Calculate admin commission based on type
+            if ($commission_type === 'percentage') {
+                $delivery_charge_admin_commission = ($final_shipping_charge * $default_delivery_commission_charge) / 100;
+            } elseif ($commission_type === 'fixed') {
+                $delivery_charge_admin_commission = $default_delivery_commission_charge;
+            } else {
+                $delivery_charge_admin_commission = 0;
+            }
+            // the delivery charge commission
+            $delivery_charge_admin_commission = min($delivery_charge_admin_commission, $final_shipping_charge);
+            // Calculate Deliveryman's earning
+            $delivery_charge_delivery_man_commission = $final_shipping_charge - $delivery_charge_admin_commission;
+
+            // create order main order package wise
+            $package = Order::create([
+                'order_master_id' => $order_master->id,
+                'store_id' => $packageData['store_id'],
+                'area_id' => $store_area_id,
+                'order_type' => 'regular', // if customer order create
+                'delivery_option' => $packageData['delivery_option'],
+                'delivery_type' => 'standard',
+                'delivery_time' => $delivery_time,
+                'order_amount' => 0,
                 'coupon_discount_amount_admin' => 0,
                 'product_discount_amount' => 0,
                 'flash_discount_amount_admin' => 0,
-                'shipping_charge' => 0,
-                'additional_charge_name' => null,
-                'additional_charge_amount' => 0,
-                'additional_charge_commission' => 0,
-                'order_amount' => 0,
-                'paid_amount' => 0,
-                'payment_gateway' => $data['payment_gateway'],
-                'payment_status' => 'pending',
-                'order_notes' => $data['order_notes'] ?? null,
+                'shipping_charge' => $final_shipping_charge,
+                'delivery_charge_admin' => $delivery_charge_delivery_man_commission, // Full delivery charge
+                'delivery_charge_admin_commission' => $delivery_charge_admin_commission, // Admin commission on delivery charge
+                'is_reviewed' => false,
+                'status' => 'pending',
             ]);
 
-                // create order address
-                $customer_address = CustomerAddress::find($data['shipping_address_id']);
-                 OrderAddress::create([
-                    'order_master_id' => $order_master->id,
-                    'area_id' => 0, // main zone id
-                    'shipping_address_id' => $customer_address->id,
-                    'type' => $customer_address->type,
-                    'email' => $customer_address->email,
-                    'contact_number' => $customer_address->contact_number,
-                    'address' => $customer_address->address,
-                    'latitude' => $customer_address->latitude,
-                    'longitude' => $customer_address->longitude,
-                    'road' => $customer_address->road,
-                    'house' => $customer_address->house,
-                    'floor' => $customer_address->floor,
-                    'postal_code' => $customer_address->postal_code,
-                ]);
 
-              $calculate_total_order_amount_base_price = 0; // To accumulate the total price
-              $main_order_amount_after_discount = 0; // To accumulate the total price
-                // this calculations only for main order base price calculate
-                foreach ($data['packages'] as $packageData) {
-                    foreach ($packageData['items'] as $itemData) {
+            // set order package discount info
+            $order_package_total_amount = 0;
+            $product_discount_amount_package = 0;
+            $flash_discount_amount_admin = 0;
+            $coupon_discount_amount_admin = 0;
+            $package_order_amount_store_value = 0;
+            $package_order_amount_admin_commission = 0;
 
-                        // find the product
-                        $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
-                        // Validate product variant
-                        $variant = ProductVariant::where('id',$itemData['variant_id'])->where('product_id', $product->id)->first();
-                        if (!empty($variant) && isset($variant->price)) {
-                            $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
-                        }
-                        if (!empty($product) && !empty($variant)) {
-                            // product flash sale info
+            // per item calculate
+            foreach ($packageData['items'] as $itemData) {
+                // find the product
+                $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
+                // Validate product variant
+                $variant = ProductVariant::where('id', $itemData['variant_id'])->where('product_id', $product->id)->first();
+                $product_discount_amount = ($variant->special_price < $variant->price)
+                    ? ($variant->price - $variant->special_price) * $itemData['quantity']
+                    : 0;
+                $product_discount_amount_master += $product_discount_amount;
+                $product_discount_amount_package += $product_discount_amount;
+                if (!empty($variant) && isset($variant->price)) {
+                    $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
+                }
+
+                if (!empty($product) && !empty($variant)) {
+                    // product flash sale info
+                    $product_flash_sale_id = null;
+                    $flash_sale_discount_type = null;
+                    $flash_sale_discount_amount = 0.00;
+                    $product_flash_sale_discount_rate = 0.00;
+                    // Flash Sale Calculation
+                    if (!empty($product->flashSale) && isset($product->flashSale->discount_amount)) {
+                        $product_flash_sale_id = $product->flashSale?->id;
+                        $flash_sale_discount_type = $product->flashSale->discount_type;
+                        $flash_sale_discount_amount = $product->flashSale->discount_amount;
+                        $product_flash_sale_discount_rate = $product->flashSale->discount_amount;
+
+                        // Check if the flash sale has expired
+                        $flash_sale_start_time = $product->flashSale->start_time;
+                        $flash_sale_end_time = $product->flashSale->end_time;
+
+                        // Check if current time is within the flash sale period
+                        $current_time = now(); // Get the current time
+                        $is_expired = $current_time->gt($flash_sale_end_time); // Check if current time is greater than the end time
+
+                        if ($is_expired) {
+                            // Flash sale has expired
                             $product_flash_sale_id = null;
                             $flash_sale_discount_type = null;
-                            $flash_sale_discount_amount = 0.00;
-                            $product_flash_sale_discount_rate = 0.00;
+                            $flash_sale_discount_amount = 0;
+                            $product_flash_sale_discount_rate = 0;
 
-                            if (!empty($product->flashSale) && isset($product->flashSale->discount_amount)){
-                                $product_flash_sale_id = $product->flashSale?->id;
-                                $flash_sale_discount_type = $product->flashSale->discount_type;
-                                $flash_sale_discount_amount = $product->flashSale->discount_amount;
-                                $product_flash_sale_discount_rate = $product->flashSale->discount_amount;
-
-                                // Check if the flash sale has expired
-                                $flash_sale_start_time = $product->flashSale->start_time;
-                                $flash_sale_end_time = $product->flashSale->end_time;
-
-                                // Check if current time is within the flash sale period
-                                $current_time = now(); // Get the current time
-                                $is_expired = $current_time->gt($flash_sale_end_time); // Check if current time is greater than the end time
-
-                                if ($is_expired) {
-                                    // Flash sale has expired
-                                    $product_flash_sale_id = null;
-                                    $flash_sale_discount_type = null;
-                                    $flash_sale_discount_amount = 0;
-                                    $product_flash_sale_discount_rate = 0;
-                                }
-                            };
-
+                            $flash_sale_admin_discount = 0;
+                        } else {
                             // store and admin discount calculate per product wise
-                            $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100.00) : $flash_sale_discount_amount;
-                            $finalPrice = $basePrice - $flash_sale_admin_discount;
-                            $after_any_discount_final_price = $finalPrice;
+                            $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage')
+                                ? ($basePrice * $flash_sale_discount_amount / 100.00)
+                                : $flash_sale_discount_amount;
+                        }
+                    } else {
+                        $flash_sale_admin_discount = 0;
+                    }
 
-                            $calculate_total_order_amount_base_price += $basePrice;
-                            $main_order_amount_after_discount += $after_any_discount_final_price;
 
+                    // Calculate final price
+                    $finalPrice = $basePrice - $flash_sale_admin_discount;
+
+                    // line total price with qty
+                    $line_total_price_with_qty = $finalPrice - $itemData['quantity'];
+
+                    // after flash sale discount
+                    $after_flash_sale_discount_final_price = $finalPrice;
+
+                    // **Calculate Coupon Discount Per Item**
+                    $per_item_coupon_discount_amount = 0;
+                    if (isset($coupon_data['discount_amount'])) {
+                        $coupon_discount_type = $coupon_data['coupon_type'];
+                        $coupon_discount_rate = $coupon_data['discount_rate'];
+                        $coupon_discount_amount = $coupon_data['discount_amount'];
+
+                        if ($coupon_discount_type === 'percentage') {
+                            // Percentage-based discount - distribute
+                            $per_item_coupon_discount_amount = round($after_flash_sale_discount_final_price * ($coupon_discount_rate / 100), 2);
+                        } elseif ($coupon_discount_type === 'fixed') {
+                            // Fixed amount discount - distribute
+                            $item_contribution_ratio = $after_flash_sale_discount_final_price / $main_order_amount_after_discount;
+                            $per_item_coupon_discount_amount = round($item_contribution_ratio * $coupon_discount_amount, 2);
+
+                        } else {
+                            $per_item_coupon_discount_amount = 0;
                         }
                     }
-                }
 
 
-            // system commission
-            $system_commission = SystemCommission::latest()->first();
-            // shipping charge calculate
-            $order_shipping_charge = $system_commission->order_shipping_charge;
+                    // Calculate final price after all discounts (flash sale + coupon)
+                    $after_any_discount_final_price = $after_flash_sale_discount_final_price;
 
-            //  packages and details
-            $shipping_charge = 0;
-            $customer_lat = $data['customer_latitude'] ?? null;
-            $customer_lng = $data['customer_longitude'] ?? null;
+                    // total quantity and after flash discount
+                    $after_discount_final_price_with_qty = $after_any_discount_final_price * $itemData['quantity'];
 
-            $coupon_discount_amount_admin_final = 0;
-            foreach ($data['packages'] as $packageData) {              
-                // find store wise area id
-                $store_info = Store::find($packageData['store_id']);
-                $store_area_id = $store_info->area_id;
+                    // without tax line total price  and - coupon total discount
+                    $line_total_excluding_tax = $after_discount_final_price_with_qty - $per_item_coupon_discount_amount;
 
-                // area wise calculate delivery charge
-                $deliveryChargeData = DeliveryChargeHelper::calculateDeliveryCharge($store_area_id, $customer_lat, $customer_lng);
+                    // vat/tax calculate
+                    $store_tax_amount = $product->store?->tax;
+                    $taxAmount = $after_any_discount_final_price * ($store_tax_amount / 100.00);
 
-                // Ensure delivery charge data is an array to avoid errors
-                if (!is_array($deliveryChargeData)) {
-                    $deliveryChargeData = ['delivery_charge' => null];
-                }
+                    // Total tax amount based on quantity
+                    $total_tax_amount = $taxAmount * $itemData['quantity'];
 
-                // Get the delivery charge or default to 0
-                $final_shipping_charge = $deliveryChargeData['delivery_charge'] ?? 0;
+                    // Final line total price based on quantity
+                    $line_total_price = $line_total_excluding_tax + $total_tax_amount;
 
 
-                // If area-wise delivery charge is 0 or not set, use the default order shipping charge
-                if (empty($deliveryChargeData['delivery_charge']) || $deliveryChargeData['delivery_charge'] == 0) {
-                    $final_shipping_charge = $order_shipping_charge;
-                }
+                    // Initialize commission variables
+                    $system_commission_type = null;
+                    $system_commission_amount = 0.00;
+                    $admin_commission_amount = 0.00;
+                    // calculate commission
+                    if (isset($system_commission) && $system_commission->commission_enabled === true) {
+                        // Check store type
+                        if ($product->store) {
+                            $store_subscription_type = $product->store?->subscription_type;
+                            // If store is commission-based
+                            if ($store_subscription_type === 'commission') {
+                                $system_commission_type = $system_commission->commission_type;
+                                $system_commission_amount = $system_commission->commission_amount;
 
-                // delivery time
-                $delivery_time = null;
-                if(isset($packageData['delivery_time'])){
-                    $delivery_time = $packageData['delivery_time'] ?? null;
-                }
-
-                 // Commission Rate on Delivery Charge (%)
-                $commission_type = $system_commission->commission_type;
-                $default_delivery_commission_charge = $system_commission->default_delivery_commission_charge;
-
-                // Calculate admin commission based on type
-                if ($commission_type === 'percent') {
-                    $delivery_charge_admin_commission = ($final_shipping_charge * $default_delivery_commission_charge) / 100;
-                } elseif ($commission_type === 'fixed') {
-                    $delivery_charge_admin_commission = $default_delivery_commission_charge;
-                } else {
-                    $delivery_charge_admin_commission = 0;
-                }
-                // the delivery charge commission
-                $delivery_charge_admin_commission = min($delivery_charge_admin_commission, $final_shipping_charge);
-               // Calculate Deliveryman's earning
-                $delivery_charge_delivery_man_commission = $final_shipping_charge - $delivery_charge_admin_commission;
-
-                // create order main order package wise
-                $package = Order::create([
-                    'order_master_id' => $order_master->id,
-                    'store_id' => $packageData['store_id'],
-                    'area_id' => $store_area_id,
-                    'order_type' => 'regular', // if customer order create
-                    'delivery_option' => $packageData['delivery_option'],
-                    'delivery_type' => 'standard',
-                    'delivery_time' => $delivery_time,
-                    'order_amount' => 0,
-                    'coupon_discount_amount_admin' => 0,
-                    'product_discount_amount' => 0,
-                    'flash_discount_amount_admin' => 0,
-                    'shipping_charge' => $final_shipping_charge,
-                    'delivery_charge_admin' => $delivery_charge_delivery_man_commission, // Full delivery charge
-                    'delivery_charge_admin_commission' => $delivery_charge_admin_commission, // Admin commission on delivery charge
-                    'is_reviewed' => false,
-                    'status' => 'pending',
-                ]);
-
-
-                // set order package discount info
-                $order_package_total_amount = 0;
-                $product_discount_amount = 0;
-                $flash_discount_amount_admin = 0;
-                $coupon_discount_amount_admin = 0;
-                $package_order_amount_store_value = 0;
-                $package_order_amount_admin_commission = 0;
-
-                 // per item calculate
-                foreach ($packageData['items'] as $itemData) {
-                    // find the product
-                    $product = Product::with('variants','store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
-                    // Validate product variant
-                    $variant = ProductVariant::where('id', $itemData['variant_id'])->where('product_id', $product->id)->first();
-                    if (!empty($variant) && isset($variant->price)) {
-                        $basePrice = ($variant->special_price > 0) ? $variant->special_price : $variant->price;
+                                // Calculate admin commission based on type
+                                if ($system_commission_type === 'percentage') {
+                                    $admin_commission_amount = ($line_total_excluding_tax * $system_commission_amount) / 100.00;
+                                } elseif ($system_commission_type === 'fixed') {
+                                    $admin_commission_amount = $system_commission_amount;
+                                }
+                            }
+                        }
                     }
 
-                    if (!empty($product) && !empty($variant)) {
-                       // product flash sale info
-                       $product_flash_sale_id = null;
-                       $flash_sale_discount_type = null;
-                       $flash_sale_discount_amount = 0.00;
-                       $product_flash_sale_discount_rate = 0.00;
 
-                       if (!empty($product->flashSale) && isset($product->flashSale->discount_amount)){
-                           $product_flash_sale_id = $product->flashSale?->id;
-                           $flash_sale_discount_type = $product->flashSale->discount_type;
-                           $flash_sale_discount_amount = $product->flashSale->discount_amount;
-                           $product_flash_sale_discount_rate = $product->flashSale->discount_amount;
+                    // create order details add
+                    $orderDetails = OrderDetail::create([
+                        'order_id' => $package->id,
+                        'store_id' => $product->store?->id,
+                        'area_id' => $product->store?->area_id,
+                        'product_id' => $product->id,
+                        'product_sku' => $variant->sku,
+                        'behaviour' => $product->behaviour,
 
-                           // Check if the flash sale has expired
-                           $flash_sale_start_time = $product->flashSale->start_time;
-                           $flash_sale_end_time = $product->flashSale->end_time;
+                        'variant_details' => $variant->attributes,
+                        'product_campaign_id' => $product_flash_sale_id,
 
-                           // Check if current time is within the flash sale period
-                           $current_time = now(); // Get the current time
-                           $is_expired = $current_time->gt($flash_sale_end_time); // Check if current time is greater than the end time
+                        // admin discount amount
+                        'admin_discount_type' => $flash_sale_discount_type,
+                        'admin_discount_rate' => $product_flash_sale_discount_rate,
+                        'admin_discount_amount' => $flash_sale_admin_discount,
 
-                           if ($is_expired) {
-                               // Flash sale has expired
-                               $product_flash_sale_id = null;
-                               $flash_sale_discount_type = null;
-                               $flash_sale_discount_amount = 0;
-                               $product_flash_sale_discount_rate = 0;
+                        // coupon discount amount
+                        'coupon_discount_amount' => $per_item_coupon_discount_amount,
 
-                               $flash_sale_admin_discount = 0;
-                           }else{
-                               // store and admin discount calculate per product wise
-                               $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage')
-                                   ? ($basePrice * $flash_sale_discount_amount / 100.00)
-                                   : $flash_sale_discount_amount;
-                           }
-                       }else{
-                           $flash_sale_admin_discount = 0;
-                       }
+                        // price and qty
+                        'base_price' => $basePrice,
+                        'price' => $after_any_discount_final_price,
+                        'quantity' => $itemData['quantity'],
+                        'line_total_price_with_qty' => $after_discount_final_price_with_qty,
+                        'line_total_excluding_tax' => $line_total_excluding_tax, // Total without tax
+                        'tax_rate' => $store_tax_amount,
+                        'tax_amount' => $taxAmount,
+                        'total_tax_amount' => $total_tax_amount,
+                        'line_total_price' => $line_total_price,
 
+                        // admin commission
+                        'admin_commission_type' => $system_commission_type,
+                        'admin_commission_rate' => $system_commission_amount,
+                        'admin_commission_amount' => $admin_commission_amount,
+                    ]);
 
+                    // set order package discount info
+                    $order_package_total_amount += $orderDetails->line_total_price;
 
-                       // Calculate final price
-                       $finalPrice = $basePrice - $flash_sale_admin_discount;
+                    $flash_discount_amount_admin += $orderDetails->admin_discount_amount * $itemData['quantity'];
+                    $coupon_discount_amount_admin += $orderDetails->coupon_discount_amount * $itemData['quantity'];
 
-                       // line total price with qty
-                       $line_total_price_with_qty = $finalPrice - $itemData['quantity'];
+                    // order package update other info
+                    $package_order_amount_store_value += $orderDetails->line_total_price - $orderDetails->admin_commission_amount;
+                    $package_order_amount_admin_commission += $orderDetails->admin_commission_amount;
+                }
 
-                       // after flash sale discount
-                       $after_flash_sale_discount_final_price = $finalPrice;
+            } // item loops end order details
 
-                       // **Calculate Coupon Discount Per Item**
-                       $per_item_coupon_discount_amount = 0;
-                       if (isset($coupon_data['discount_amount'])) {
-                           $coupon_discount_type = $coupon_data['coupon_type'];
-                           $coupon_discount_rate = $coupon_data['discount_rate'];
-                           $coupon_discount_amount= $coupon_data['discount_amount'];
+            // update order package details
+            $package->order_amount = $order_package_total_amount; //order package total amount
+            $package->product_discount_amount += $product_discount_amount_package; // product coupon  discount
+            $package->flash_discount_amount_admin = $flash_discount_amount_admin;  // flash sale discount
+            $package->coupon_discount_amount_admin = $coupon_discount_amount_admin; // admin coupon  discount
+            $package->order_amount_store_value = $package_order_amount_store_value; // order_amount_admin_commission
+            $package->order_amount_admin_commission = $package_order_amount_admin_commission; // order_amount_admin_commission
+            $package->save();
+            // Accumulate package values for the main order
+//            $product_discount_amount += $product_discount_amount;
 
-                           if ($coupon_discount_type === 'percentage') {
-                               // Percentage-based discount - distribute
-                               $per_item_coupon_discount_amount = round($after_flash_sale_discount_final_price * ($coupon_discount_rate / 100), 2);
-                           } elseif ($coupon_discount_type === 'fixed') {
-                               // Fixed amount discount - distribute
-                               $item_contribution_ratio = $after_flash_sale_discount_final_price / $main_order_amount_after_discount;
-                               $per_item_coupon_discount_amount = round($item_contribution_ratio * $coupon_discount_amount, 2);
+            $flash_discount_amount_admin += $flash_discount_amount_admin;
+            $coupon_discount_amount_admin_final += $coupon_discount_amount_admin;
+            $shipping_charge += $package->shipping_charge;
+            $order_package_total_amount += $package->order_amount;
+        } // end order package
 
-                           }else {
-                               $per_item_coupon_discount_amount = 0;
-                           }
-                       }
+        // Update Order Master
+        $order_master->product_discount_amount = $product_discount_amount_master;
+        $order_master->flash_discount_amount_admin = $flash_discount_amount_admin;
+        $order_master->coupon_discount_amount_admin = $coupon_discount_amount_admin_final;
+        $order_master->shipping_charge = $shipping_charge;
+        $order_master->order_amount = $order_package_total_amount + $shipping_charge;
+        $order_master->save();
 
+        // return all order id
+        $all_orders = Order::with('store.seller')->where('order_master_id', $order_master->id)->get();
+        $order_master = OrderMaster::with('orderAddress', 'customer')->find($order_master->id);
 
-                       // Calculate final price after all discounts (flash sale + coupon)
-                       $after_any_discount_final_price = $after_flash_sale_discount_final_price;
-
-                       // total quantity and after flash discount
-                       $after_discount_final_price_with_qty =  $after_any_discount_final_price * $itemData['quantity'];
-
-                       // without tax line total price  and - coupon total discount
-                       $line_total_excluding_tax =  $after_discount_final_price_with_qty - $per_item_coupon_discount_amount;
-
-                       // vat/tax calculate
-                       $store_tax_amount = $product->store?->tax;
-                       $taxAmount = $after_any_discount_final_price * ($store_tax_amount / 100.00);
-
-                       // Total tax amount based on quantity
-                       $total_tax_amount = $taxAmount * $itemData['quantity'];
-
-                       // Final line total price based on quantity
-                       $line_total_price = $line_total_excluding_tax + $total_tax_amount;
-
-
-                       // Initialize commission variables
-                       $system_commission_type = null;
-                       $system_commission_amount = 0.00;
-                       $admin_commission_amount = 0.00;                     
-                       // calculate commission
-                       if (isset($system_commission) && $system_commission->commission_enabled === true) {                      
-                           // Check store type
-                           if ($product->store) {
-                               $store_subscription_type = $product->store?->subscription_type;
-                               // If store is commission-based
-                               if ($store_subscription_type === 'commission') {
-                                   $system_commission_type = $system_commission->commission_type;
-                                   $system_commission_amount = $system_commission->commission_amount;
-                                  
-                                   // Calculate admin commission based on type
-                                   if ($system_commission_type === 'percentage') {
-                                       $admin_commission_amount = ($line_total_excluding_tax * $system_commission_amount) / 100.00;
-                                   } elseif ($system_commission_type === 'fixed') {
-                                       $admin_commission_amount = $system_commission_amount;
-                                   }
-                               }
-                           }
-                       }
-
-
-
-                       // create order details add
-                        $orderDetails =  OrderDetail::create([
-                           'order_id' => $package->id,
-                           'store_id' => $product->store?->id,
-                           'area_id' => $product->store?->area_id,
-                           'product_id' => $product->id,
-                           'product_sku' => $variant->sku,
-                           'behaviour' => $product->behaviour,
-
-                           'variant_details' => $variant->attributes,
-                           'product_campaign_id' => $product_flash_sale_id,
-
-                           // admin discount amount
-                           'admin_discount_type' => $flash_sale_discount_type,
-                           'admin_discount_rate' => $product_flash_sale_discount_rate,
-                           'admin_discount_amount' => $flash_sale_admin_discount,
-
-                           // coupon discount amount
-                           'coupon_discount_amount' => $per_item_coupon_discount_amount,
-
-                           // price and qty
-                           'base_price' =>  $basePrice,
-                           'price' => $after_any_discount_final_price,
-                           'quantity' => $itemData['quantity'],
-                           'line_total_price_with_qty' => $after_discount_final_price_with_qty,
-                           'line_total_excluding_tax' => $line_total_excluding_tax, // Total without tax
-                           'tax_rate' => $store_tax_amount,
-                           'tax_amount' => $taxAmount,
-                           'total_tax_amount' => $total_tax_amount,
-                           'line_total_price' => $line_total_price,
-
-                           // admin commission
-                           'admin_commission_type' => $system_commission_type,
-                           'admin_commission_rate' => $system_commission_amount,
-                           'admin_commission_amount' => $admin_commission_amount,
-                       ]);
-
-                       // set order package discount info
-                       $order_package_total_amount += $orderDetails->line_total_price;
-
-                       $product_discount_amount += $variant?->special_price > 0
-                           ? ($variant->price - $variant->special_price) * $itemData['quantity']
-                           : 0;
-
-                       $flash_discount_amount_admin += $orderDetails->admin_discount_amount * $itemData['quantity'];
-                       $coupon_discount_amount_admin += $orderDetails->coupon_discount_amount * $itemData['quantity'];
-
-                       // order package update other info
-                       $package_order_amount_store_value += $orderDetails->line_total_price - $orderDetails->admin_commission_amount;
-                       $package_order_amount_admin_commission += $orderDetails->admin_commission_amount;
-                   }
-
-                } // item loops end order details
-
-                // update order package details
-                $package->order_amount = $order_package_total_amount; //order package total amount
-                $package->product_discount_amount = $product_discount_amount; // product coupon  discount
-                $package->flash_discount_amount_admin = $flash_discount_amount_admin;  // flash sale discount
-                $package->coupon_discount_amount_admin = $coupon_discount_amount_admin; // admin coupon  discount
-                $package->order_amount_store_value = $package_order_amount_store_value; // order_amount_admin_commission
-                $package->order_amount_admin_commission = $package_order_amount_admin_commission; // order_amount_admin_commission
-                $package->save();
-
-                // Accumulate package values for the main order
-                $product_discount_amount += $product_discount_amount;
-                $flash_discount_amount_admin += $flash_discount_amount_admin;
-                $coupon_discount_amount_admin_final += $coupon_discount_amount_admin;
-                $shipping_charge += $package->shipping_charge;
-                $order_package_total_amount +=  $package->order_amount;
-            } // end order package
-
-
-           // Update Order Master
-            $order_master->product_discount_amount = $product_discount_amount;
-            $order_master->flash_discount_amount_admin = $flash_discount_amount_admin;
-            $order_master->coupon_discount_amount_admin = $coupon_discount_amount_admin_final;
-            $order_master->shipping_charge = $shipping_charge;
-            $order_master->order_amount = $order_package_total_amount + $shipping_charge;
-            $order_master->save();
-
-            // return all order id
-            $all_orders = Order::with('store.seller')->where('order_master_id', $order_master->id)->get();
-            $order_master = OrderMaster::with('orderAddress','customer')->find($order_master->id);
-
-            // order notification
-            $all_orders_ids = Order::where('order_master_id', $order_master->id)->pluck('id')->toArray();
+        // order notification
+        $all_orders_ids = Order::where('order_master_id', $order_master->id)->pluck('id')->toArray();
 
 
         // Call the service to handle notifications
 //        $this->firebaseNotificationService->sendOrderNotifications($orderMaster);
 
-            // Fire the event to broadcast the order creation
+        // Fire the event to broadcast the order creation
 //            event(new OrderPlaced($all_orders));
 //            foreach ($all_orders as $order) {
 //                event(new OrderPlaced($order));
 //            }
 
 
-            $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
+        $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
 //            // Dispatch the email job asynchronously
 //            dispatch(new DispatchOrderEmails($order_master->id));
 
-            return [
-                $all_orders,
-                $order_master,
-                'customer' => $customer,
-            ];
+        return [
+            $all_orders,
+            $order_master,
+            'customer' => $customer,
+        ];
 //        } catch (\Exception $e) {
 //        }
     }
