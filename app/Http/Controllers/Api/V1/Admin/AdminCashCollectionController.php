@@ -44,6 +44,9 @@ class AdminCashCollectionController extends Controller
             if (!$this->isCashOnDelivery($order)) {
                 return response()->json(['message' => __('messages.order_is_not_cash_on_delivery')], 422);
             }
+            if (!$this->activityValueIsValid($request->order_id, $request->deliveryman_id, $request->activity_value)) {
+                $this->activityValueIsValid($request->order_id, $request->deliveryman_id, $request->activity_value);
+            }
 
             $orderActivity = OrderActivity::create([
                 'order_id' => $request->order_id,
@@ -74,13 +77,29 @@ class AdminCashCollectionController extends Controller
     {
         return OrderDeliveryHistory::where('order_id', $order->id)
             ->where('deliveryman_id', $deliverymanId)
-            ->where('status','delivered')
+            ->where('status', 'delivered')
             ->exists();
     }
 
     private function isCashOnDelivery($order)
     {
         return $order->orderMaster->payment_gateway == 'cash_on_delivery';
+    }
+
+    private function activityValueIsValid(int $orderId, int $deliverymanId, string|int $activityValue)
+    {
+        $cash_collection = OrderActivity::with('ref')
+            ->where('order_id', $orderId)
+            ->where('deliveryman_id', $deliverymanId)
+            ->where('activity_type', OrderActivityType::CASH_COLLECTION->value)
+            ->first();
+        if (!$cash_collection) {
+            return response()->json(['message' => __('messages.order_does_not_belong_to_delivery')], 422);
+        }
+        if ($activityValue > $cash_collection->activity_value) {
+            return response()->json(['message' => __('messages.received_amount_can\'t_be_greater')], 422);
+        }
+        return true;
     }
 
 }
