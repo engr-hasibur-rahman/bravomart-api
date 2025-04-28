@@ -591,6 +591,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             if ($wallet) {
                 // Update wallet balance
                 $wallet->balance += $order->delivery_charge_admin; // Add earnings to the balance
+                $wallet->earnings += $order->delivery_charge_admin;
                 $wallet->save();
 
                 // Create wallet transaction history
