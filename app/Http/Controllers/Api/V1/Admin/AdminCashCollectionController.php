@@ -90,7 +90,7 @@ class AdminCashCollectionController extends Controller
     {
         $cash_collection = OrderActivity::with('ref')
             ->where('order_id', $orderId)
-            ->where('deliveryman_id', $deliverymanId)
+            ->where('ref_id', $deliverymanId)
             ->where('activity_type', OrderActivityType::CASH_COLLECTION->value)
             ->first();
         if (!$cash_collection) {
