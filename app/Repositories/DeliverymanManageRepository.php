@@ -602,26 +602,6 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     'status' => 1,
                 ]);
 
-                // Deliveryman wallet update
-                $wallet = Wallet::where('owner_id', $deliveryman->id)
-                    ->where('owner_type', WalletOwnerType::DELIVERYMAN->value)
-                    ->first();
-
-                if ($wallet) {
-                    // Update wallet balance
-                    $wallet->balance += $order->delivery_charge_admin; // Add earnings to the balance
-                    $wallet->save();
-
-                    // Create wallet transaction history
-                    WalletTransaction::create([
-                        'wallet_id' => $wallet->id,
-                        'amount' => $order->delivery_charge_admin,
-                        'type' => 'credit',
-                        'purpose' => 'Delivery Earnings',
-                        'status' => 1,
-                    ]);
-                }
-
                 // send mail and notification
                 $customer_email = $order->orderAddress?->email ?? $order->orderMaster?->customer?->email;
                 $store_email = $order->store?->email;

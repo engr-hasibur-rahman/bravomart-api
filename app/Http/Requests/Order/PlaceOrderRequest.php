@@ -88,11 +88,10 @@ class PlaceOrderRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $storeKey = str_replace('.store_id', '.items.*.product_id', $attribute);
                     $productIds = request()->input($storeKey, []);
-
                     // Check if all products in the package belong to the given store
                     $productExists = \App\Models\Product::whereIn('id', $productIds)
                             ->where('store_id', $value)
-                            ->count() == count($productIds);
+                            ->exists();
                     if (!$productExists) {
                         $fail("Invalid product for store.");
                     }

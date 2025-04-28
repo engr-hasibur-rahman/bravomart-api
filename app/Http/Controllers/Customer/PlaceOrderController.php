@@ -36,7 +36,6 @@ class PlaceOrderController extends Controller
 
         $data = $request->validated();
 
-
 //        $user = User::with('pushSubscriptions')->find(1);
 //        // Get subscription data from the request
 //        $endpoint = $request->input('endpoint');
@@ -75,13 +74,18 @@ class PlaceOrderController extends Controller
 
         try {
             if ($orders) {
-                $response = [
+                return response()->json([
                     'success' => true,
                     'message' => 'Order placed successfully.',
                     'orders' => PlaceOrderDetailsResource::collection($all_orders),
                     'order_master' => new PlaceOrderMasterResource($order_master),
-                ];
-                return response()->json($response);
+                ]);
+            }
+            else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while placing the order.',
+                ],500);
             }
 
         } catch (\Exception $e) {
