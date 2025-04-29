@@ -529,7 +529,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('status', [WalletManageAdminController::class, 'status']);
                 Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
                 Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_TRANSACTION->value]);
-                Route::post('transactions-status/{id}', [WalletManageAdminController::class, 'transactionStatus']);
+                Route::post('transactions-status', [WalletManageAdminController::class, 'transactionStatus']);
             });
 
             // withdrawals manage
