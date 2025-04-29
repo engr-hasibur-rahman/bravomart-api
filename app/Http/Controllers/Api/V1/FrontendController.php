@@ -917,7 +917,7 @@ class FrontendController extends Controller
     public function productCategoryList(Request $request)
     {
         try {
-            $per_page = $request->limit ?? 100;
+            $per_page = $request->per_page ?? 100;
             $language = $request->language ?? DEFAULT_LANGUAGE;
             $search = $request->search;
             $sort = $request->sort ?? 'asc';
@@ -946,7 +946,7 @@ class FrontendController extends Controller
             if ($all) {
                 $categories = $categories
                     ->orderBy($sortField, $sort)
-                    ->paginate($limit);
+                    ->paginate($per_page);
                 return response()->json([
                     'message' => __('messages.data_found'),
                     'data' => ProductCategoryPublicResource::collection($categories),
