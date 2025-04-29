@@ -130,7 +130,7 @@ class OrderService
             'area_id' => 0, // main zone id
             'shipping_address_id' => $data['shipping_address_id'],
             'coupon_code' => $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
-            'coupon_title' => $coupon_data['success'] === false ? null : $data['coupon_title'] ?? null,
+            'coupon_title' => $coupon_data['success'] === false ? null : $coupon_data['coupon_title'] ?? null,
             'coupon_discount_amount_admin' => 0,
             'product_discount_amount' => 0,
             'flash_discount_amount_admin' => 0,
@@ -380,7 +380,7 @@ class OrderService
                         if ($coupon_discount_type === 'percentage') {
                             // Percentage-based discount - distribute
                             $per_item_coupon_discount_amount = round($after_flash_sale_discount_final_price * ($coupon_discount_rate / 100), 2);
-                        } elseif ($coupon_discount_type === 'fixed') {
+                        } elseif ($coupon_discount_type === 'amount') {
                             // Fixed amount discount - distribute
                             $item_contribution_ratio = $after_flash_sale_discount_final_price / $main_order_amount_after_discount;
                             $per_item_coupon_discount_amount = round($item_contribution_ratio * $coupon_discount_amount, 2);

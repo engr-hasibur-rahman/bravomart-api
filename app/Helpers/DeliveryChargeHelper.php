@@ -77,12 +77,13 @@ class DeliveryChargeHelper
                 ->addBinding("POINT({$customerLng} {$customerLat})", 'select')
                 ->first();
 
-            // new add  Ensure the query result is not null before accessing 'is_inside'
-            $is_inside_area = $is_out_of_area ? (bool)$is_out_of_area->is_inside : false;
+// Ensure the query result is not null and extract the actual "inside" flag
+            $is_inside_area = $is_out_of_area ? (bool) $is_out_of_area->is_inside : false;
 
-            // If the customer is out of area, add out-of-area charge
-            $out_of_area_delivery_charge = $is_out_of_area ? 0 : $settings->out_of_area_delivery_charge ?? 0;
-            $out_of_area_delivery_info = $is_out_of_area ? 'in area' : 'out of area';
+// Now use the correct condition
+            $out_of_area_delivery_charge = $is_inside_area ? 0 : ($settings->out_of_area_delivery_charge ?? 0);
+            $out_of_area_delivery_info = $is_inside_area ? 'in area' : 'out of area';
+
 
 
             // Initialize delivery charge
