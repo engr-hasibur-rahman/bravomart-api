@@ -191,6 +191,21 @@ class MenuSeeder extends Seeder
                 'created_at' => '2025-04-07 02:50:01',
                 'updated_at' => '2025-04-08 06:31:03',
             ],
+            [
+                'id' => 13,
+                'name' => 'Categories',
+                'url' => 'product-category/list',
+                'icon' => null,
+                'position' => 9,
+                'parent_id' => null,
+                'parent_path' => null,
+                'menu_level' => 0,
+                'menu_path' => null,
+                'is_visible' => true,
+                'status' => 0,
+                'created_at' => '2025-04-07 02:50:01',
+                'updated_at' => '2025-04-08 06:31:03',
+            ],
         ]);
     }
 }
