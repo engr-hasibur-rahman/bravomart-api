@@ -163,11 +163,11 @@ class WalletManageAdminController extends Controller
         ]);
     }
 
-    public function transactionStatus($id)
+    public function transactionStatus(Request $request)
     {
         // specific transaction
-        $transaction = WalletTransaction::findOrFail($id);
-        $transaction->status = $transaction->status == 1 ? 0 : 1;
+        $transaction = WalletTransaction::findOrFail($request->id);
+        $transaction->status = !$transaction->status;
         $transaction->save();
         return response()->json(['message' => 'Transaction status changed successfully']);
     }
