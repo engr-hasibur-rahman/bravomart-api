@@ -17,7 +17,7 @@ class OrderMaster extends Model
         'flash_discount_amount_admin',
         'shipping_charge',
         'additional_charge_name',
-        'additional_charge',
+        'additional_charge_amount',
         'additional_charge_commission',
         'order_amount',
         'paid_amount',

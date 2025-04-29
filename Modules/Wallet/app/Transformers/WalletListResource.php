@@ -17,7 +17,7 @@ class WalletListResource extends JsonResource
             'owner_id' => $this->owner_id,
             'owner_type' => $this->owner_type,
             'balance' => $this->balance,
-            'status' => $this->status == 1 ? 'active' : 'inactive',
+            'status' => $this->status,
         ];
     }
 }

@@ -11,6 +11,8 @@ use App\Http\Resources\Order\PlaceOrderDetailsResource;
 use App\Http\Resources\Order\PlaceOrderMasterResource;
 use App\Models\Order;
 use App\Models\OrderMaster;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\UniversalNotification;
 use App\Models\User;
 use App\Notifications\NewOrderNotification;
@@ -35,6 +37,8 @@ class PlaceOrderController extends Controller
     {
 
         $data = $request->validated();
+
+
 
 //        $user = User::with('pushSubscriptions')->find(1);
 //        // Get subscription data from the request
@@ -61,6 +65,12 @@ class PlaceOrderController extends Controller
         }
 
         $orders = $this->orderService->createOrder($data);
+        foreach ($data['packages'] as $package) {
+            foreach ($package['items'] as $item) {
+                $this->updateProductData($item['product_id']);
+                $this->updateVariantData($item['variant_id'], $item['quantity']);
+            }
+        }
         // if return false
         if($orders === false || empty($orders)) {
             return response()->json([
@@ -138,5 +148,22 @@ class PlaceOrderController extends Controller
 
         return response()->json(json_decode($response->getBody(), true));
     }
+    private function updateProductData(int $productId): bool
+    {
+        return Product::where('id', $productId)->increment('order_count') > 0;
+    }
 
+    private function updateVariantData(int $variantId, int $quantity): bool
+    {
+        $variant = ProductVariant::find($variantId);
+
+        if (!$variant) {
+            return false;
+        }
+
+        $variant->increment('order_count');
+        $variant->decrement('stock_quantity', $quantity);
+
+        return true;
+    }
 }

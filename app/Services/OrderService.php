@@ -82,6 +82,9 @@ class OrderService
                     $variant = ProductVariant::where('id', $itemData['variant_id'])
                         ->where('product_id', $product->id)
                         ->first();
+                    if ($variant->stock_quantity < $itemData['quantity']) {
+                        return false;
+                    }
                     // Add to total order amount
                     if (!empty($variant) && isset($variant->price)) {
                         $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
@@ -114,6 +117,12 @@ class OrderService
                 'coupon_title' => null,
             ];
         }
+        $system_commission = SystemCommission::latest()->first();
+        $additional_charge = $system_commission->order_additional_charge_amount ?? 0;
+        $additional_charge_admin_commission = $system_commission->order_additional_charge_commission ?? 0;
+        $additional_charge_enabled = $system_commission->order_additional_charge_enable_disable;
+
+        $additional_charge_name = $system_commission->order_additional_charge_name ?? null;
 
         // create order master
         $order_master = OrderMaster::create([
@@ -126,9 +135,9 @@ class OrderService
             'product_discount_amount' => 0,
             'flash_discount_amount_admin' => 0,
             'shipping_charge' => 0,
-            'additional_charge_name' => null,
-            'additional_charge_amount' => 0,
-            'additional_charge_commission' => 0,
+            'additional_charge_name' => $additional_charge_enabled ? $additional_charge_name : null,
+            'additional_charge_amount' => $additional_charge_enabled ? $additional_charge : 0,
+            'additional_charge_commission' => $additional_charge_enabled ? $additional_charge_admin_commission : 0,
             'order_amount' => 0,
             'paid_amount' => 0,
             'payment_gateway' => $data['payment_gateway'],
@@ -211,9 +220,9 @@ class OrderService
 
 
         // system commission
-        $system_commission = SystemCommission::latest()->first();
         // shipping charge calculate
         $order_shipping_charge = $system_commission->order_shipping_charge;
+
 
         //  packages and details
         $shipping_charge = 0;
@@ -222,6 +231,7 @@ class OrderService
 
         $coupon_discount_amount_admin_final = 0;
         $product_discount_amount_master = 0;
+        $order_amount_master = 0;
 
         foreach ($data['packages'] as $packageData) {
             // find store wise area id
@@ -287,7 +297,6 @@ class OrderService
                 'is_reviewed' => false,
                 'status' => 'pending',
             ]);
-
 
             // set order package discount info
             $order_package_total_amount = 0;
@@ -478,7 +487,7 @@ class OrderService
             } // item loops end order details
 
             // update order package details
-            $package->order_amount = $order_package_total_amount; //order package total amount
+            $package->order_amount = $order_package_total_amount + $package->shipping_charge; //order package total amount
             $package->product_discount_amount += $product_discount_amount_package; // product coupon  discount
             $package->flash_discount_amount_admin = $flash_discount_amount_admin;  // flash sale discount
             $package->coupon_discount_amount_admin = $coupon_discount_amount_admin; // admin coupon  discount
@@ -487,7 +496,7 @@ class OrderService
             $package->save();
             // Accumulate package values for the main order
 //            $product_discount_amount += $product_discount_amount;
-
+            $order_amount_master += $package->order_amount;
             $flash_discount_amount_admin += $flash_discount_amount_admin;
             $coupon_discount_amount_admin_final += $coupon_discount_amount_admin;
             $shipping_charge += $package->shipping_charge;
@@ -499,7 +508,8 @@ class OrderService
         $order_master->flash_discount_amount_admin = $flash_discount_amount_admin;
         $order_master->coupon_discount_amount_admin = $coupon_discount_amount_admin_final;
         $order_master->shipping_charge = $shipping_charge;
-        $order_master->order_amount = $order_package_total_amount + $shipping_charge;
+//        $order_master->order_amount = $order_package_total_amount + $shipping_charge;
+        $order_master->order_amount = $order_amount_master;
         $order_master->save();
 
         // return all order id
@@ -523,7 +533,6 @@ class OrderService
         $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
 //            // Dispatch the email job asynchronously
 //            dispatch(new DispatchOrderEmails($order_master->id));
-
         return [
             $all_orders,
             $order_master,
@@ -546,5 +555,7 @@ class OrderService
         $order = Order::with(['orderItems', 'sellerStore'])->findOrFail($orderId);
         return $order;
     }
+
+
 
 }

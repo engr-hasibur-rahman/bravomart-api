@@ -67,10 +67,10 @@ class WalletManageAdminController extends Controller
         ]);
     }
 
-    public function status($id = null)
+    public function status(Request $request)
     {
         $wallet = Wallet::findOrFail($id);
-        $wallet->status = $wallet->status == 1 ? 0 : 1;
+        $wallet->status = !$wallet->status;
         $wallet->save();
 
         return response()->json([
