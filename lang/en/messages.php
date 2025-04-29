@@ -139,6 +139,8 @@ return [
     'commission_option_is_not_available' => 'Commission option is not available!',
     'subscription_option_is_not_available' => 'Subscription option is not available!',
 
+    'out_of_stock' => ':variant is out of stock!',
+
 ];
 
 
