@@ -69,7 +69,7 @@ class WalletManageAdminController extends Controller
 
     public function status(Request $request)
     {
-        $wallet = Wallet::findOrFail($id);
+        $wallet = Wallet::findOrFail($request->id);
         $wallet->status = !$wallet->status;
         $wallet->save();
 
