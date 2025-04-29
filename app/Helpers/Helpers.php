@@ -447,7 +447,6 @@ if (!function_exists('translate')) {
         // Find the coupon by its code
 
         $coupon = CouponLine::where('coupon_code', $couponCode)->first();
-
         // Check if the coupon exists
         if (!$coupon) {
             return [
@@ -473,10 +472,9 @@ if (!function_exists('translate')) {
         $discount = 0;
         if ($coupon->discount_type === 'percentage') {
             $discount = ($orderAmount * $coupon->discount) / 100;
-        } elseif ($coupon->discount_type === 'fixed') {
+        } elseif ($coupon->discount_type === 'amount') {
             $discount = $coupon->discount;
         }
-
         // Ensure the discount does not exceed the order amount
         $discount = min($discount, $orderAmount);
 
@@ -488,6 +486,7 @@ if (!function_exists('translate')) {
             'final_order_amount' => $orderAmount - $discount,
             'coupon_type' => $coupon->discount_type,
             'discount_rate' => $coupon->discount,
+            'coupon_title' => $coupon->coupon->title,
         ];
     }
 
