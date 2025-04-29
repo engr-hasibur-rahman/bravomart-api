@@ -427,7 +427,7 @@ class OrderService
 
                                 // Calculate admin commission based on type
                                 if ($system_commission_type === 'percentage') {
-                                    $admin_commission_amount = ($line_total_excluding_tax * $system_commission_amount) / 100.00;
+                                    $admin_commission_amount = round(($line_total_excluding_tax * $system_commission_amount) / 100.00, 2);
                                 } elseif ($system_commission_type === 'fixed') {
                                     $admin_commission_amount = $system_commission_amount;
                                 }
@@ -555,7 +555,6 @@ class OrderService
         $order = Order::with(['orderItems', 'sellerStore'])->findOrFail($orderId);
         return $order;
     }
-
 
 
 }
