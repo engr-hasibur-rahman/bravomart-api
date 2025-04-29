@@ -15,7 +15,7 @@ class WalletListResource extends JsonResource
         return [
             'id' => $this->id,
             'owner_id' => $this->owner_id,
-            'owner_type' => $this->owner_type,
+            'owner_type' => $this->owner_type == 'App\Models\Customer' ? 'Customer' : 'User',
             'balance' => $this->balance,
             'status' => $this->status,
         ];
