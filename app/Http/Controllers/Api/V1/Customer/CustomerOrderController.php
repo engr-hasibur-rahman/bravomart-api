@@ -159,31 +159,31 @@ class CustomerOrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => __('messages.coupon_inactive'),
-            ]);
+            ], 422);
         }
 
         if ($coupon->end_date && $coupon->end_date < now()) {
             return response()->json([
                 'message' => __('messages.coupon_expired'),
-            ]);
+            ], 422);
         }
 
         // Check if the coupon usage limit has been reached
         if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
             return response()->json([
                 'message' => __('messages.coupon_limit_reached'),
-            ]);
+            ], 422);
         }
         if ($coupon->coupon->status !== 1 && $coupon->status !== 1) {
             return response()->json([
                 'message' => __('messages.coupon_inactive'),
-            ]);
+            ], 422);
         }
         // check min_order status
         if ($request->sub_total < $coupon->min_order_value) {
             return response()->json([
                 'message' => __('messages.coupon_min_order_amount', ['amount' => $coupon->min_order_value]),
-            ]);
+            ], 422);
         }
         $sub_total = $request->sub_total;
         $final_amount_after_removing_coupon_discount = 0;
@@ -197,7 +197,7 @@ class CustomerOrderController extends Controller
         } else {
             return response()->json([
                 'message' => __('messages.something_wrong'),
-            ]);
+            ], 500);
         }
         // check max discount amount
         if ($discount_amount > $coupon->max_discount) {
@@ -217,6 +217,6 @@ class CustomerOrderController extends Controller
                 'discounted_amount' => $discount_amount,
                 'final_amount' => $final_amount_after_removing_coupon_discount,
             ]
-        ], 200);
+        ]);
     }
 }
