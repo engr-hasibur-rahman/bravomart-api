@@ -169,7 +169,7 @@ class CustomerOrderController extends Controller
         }
 
         // Check if the coupon usage limit has been reached
-        if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
+        if ($coupon->usage_limit == 0) {
             return response()->json([
                 'message' => __('messages.coupon_limit_reached'),
             ], 422);

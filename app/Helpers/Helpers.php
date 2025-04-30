@@ -462,7 +462,7 @@ if (!function_exists('translate')) {
             ];
         }
 
-        if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
+        if ($coupon->usage_limit == 0) {
             return [
                 'success' => false,
                 'message' => 'Coupon usage limit reached.',
