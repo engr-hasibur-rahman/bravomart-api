@@ -78,12 +78,13 @@ class DeliveryChargeHelper
                 ->first();
 
 // Ensure the query result is not null and extract the actual "inside" flag
-            $is_inside_area = $is_out_of_area ? (bool) $is_out_of_area->is_inside : false;
+
+            $is_inside_area = $is_out_of_area ? (bool)$is_out_of_area->is_inside : false;
 
 // Now use the correct condition
+
             $out_of_area_delivery_charge = $is_inside_area ? 0 : ($settings->out_of_area_delivery_charge ?? 0);
             $out_of_area_delivery_info = $is_inside_area ? 'in area' : 'out of area';
-
 
 
             // Initialize delivery charge
@@ -151,7 +152,7 @@ class DeliveryChargeHelper
                 'distance_km' => round($distance, 2),
                 'info' => $out_of_area_delivery_info,
             ];
-        }else{
+        } else {
             return [
                 'status' => false,
                 'message' => 'Calculation failed',

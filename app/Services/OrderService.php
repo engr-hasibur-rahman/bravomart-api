@@ -87,7 +87,10 @@ class OrderService
                     }
                     // Add to total order amount
                     if (!empty($variant) && isset($variant->price)) {
-                        $basePrice += ($variant->special_price > 0) ? $variant->special_price : $variant->price;
+                        $basePrice += ($variant->special_price > 0) ||
+                        ($variant->special_price > $variant->price) ?
+                            $variant->special_price :
+                            $variant->price;
                     }
                 }
             }
@@ -95,28 +98,20 @@ class OrderService
 
 
         // calculate order coupon
-        if (isset($data['coupon_code'])) {
-            $coupon_data = applyCoupon($data['coupon_code'], $basePrice);
-            if (isset($coupon_data['final_order_amount'])) {
-                $total_order_amount = $coupon_data['final_order_amount'];
-                $total_discount_amount = $coupon_data['discount_amount'];
-
-                // Only set success to true if coupon is valid
-                $coupon_data['success'] = true;
-            } else {
-                $coupon_data = [
-                    'success' => false,
-                    'coupon_code' => null,
-                    'coupon_title' => null,
-                ];
+        $coupon_data = [
+            'success' => false,
+            'coupon_code' => null,
+            'coupon_title' => null,
+        ];
+        if (!empty($data['coupon_code'])) {
+            $applied = applyCoupon($data['coupon_code'], $basePrice);
+            if ($applied['success']) {
+                $total_order_amount = $applied['final_order_amount'];
+                $total_discount_amount = $applied['discount_amount'];
+                $coupon_data = $applied;
             }
-        } else {
-            $coupon_data = [
-                'success' => false,
-                'coupon_code' => null,
-                'coupon_title' => null,
-            ];
         }
+
         $system_commission = SystemCommission::latest()->first();
         $additional_charge = $system_commission->order_additional_charge_amount ?? 0;
         $additional_charge_admin_commission = $system_commission->order_additional_charge_commission ?? 0;

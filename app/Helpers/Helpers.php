@@ -442,53 +442,75 @@ if (!function_exists('translate')) {
     }
 
     // coupon manage
-    function applyCoupon(string $couponCode, $orderAmount)
+    function applyCoupon(string $couponCode, float $orderAmount): array
     {
-        // Find the coupon by its code
+        $coupon = CouponLine::with('coupon')->where('coupon_code', $couponCode)->first();
 
-        $coupon = CouponLine::where('coupon_code', $couponCode)->first();
-        // Check if the coupon exists
         if (!$coupon) {
             return [
                 'success' => false,
                 'message' => 'Coupon not found.',
             ];
         }
-        // Check if the coupon has expired
-        if ($coupon->expires_at && $coupon->expires_at < now()) {
+
+        if ($coupon->expires_at && $coupon->expires_at->isPast()) {
             return [
                 'success' => false,
                 'message' => 'Coupon has expired.',
             ];
         }
-        // Check if the coupon usage limit has been reached
+
         if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
             return [
                 'success' => false,
                 'message' => 'Coupon usage limit reached.',
             ];
         }
-        // Calculate the discount based on the discount type
-        $discount = 0;
-        if ($coupon->discount_type === 'percentage') {
-            $discount = ($orderAmount * $coupon->discount) / 100;
-        } elseif ($coupon->discount_type === 'amount') {
-            $discount = $coupon->discount;
-        }
-        // Ensure the discount does not exceed the order amount
-        $discount = min($discount, $orderAmount);
 
-        // Increment the usage count of the coupon
+        if ($orderAmount < $coupon->min_order_value) {
+            return [
+                'success' => false,
+                'message' => __('messages.coupon_min_order_amount', ['amount' => $coupon->min_order_value]),
+            ];
+        }
+
+        $discountAmount = 0;
+
+        if ($coupon->discount_type === 'percentage') {
+            $discountAmount = $orderAmount * ($coupon->discount / 100);
+        } elseif ($coupon->discount_type === 'amount') {
+            $discountAmount = $coupon->discount;
+        } else {
+            return [
+                'success' => false,
+                'message' => __('messages.something_wrong'),
+            ];
+        }
+
+        // Apply max discount limit
+        $discountAmount = min($discountAmount, $coupon->max_discount ?? $discountAmount);
+
+        // Ensure the discount does not exceed the order total
+        $discountAmount = min($discountAmount, $orderAmount);
+        $finalOrderAmount = $orderAmount - $discountAmount;
+
+        // Update usage stats (optional, could also be deferred until after order success)
         $coupon->increment('usage_count');
-        // Return the discount and success response
+        if ($coupon->usage_limit) {
+            $coupon->decrement('usage_limit');
+        }
+
         return [
-            'discount_amount' => $discount,
-            'final_order_amount' => $orderAmount - $discount,
+            'success' => true,
+            'discount_amount' => round($discountAmount, 2),
+            'final_order_amount' => round($finalOrderAmount, 2),
             'coupon_type' => $coupon->discount_type,
             'discount_rate' => $coupon->discount,
-            'coupon_title' => $coupon->coupon->title,
+            'coupon_title' => $coupon->coupon->title ?? null,
+            'coupon_code' => $coupon->coupon_code,
         ];
     }
+
 
     function calculateStoreShareWithDiscount($storeOrderAmount, $totalOrderAmount, $totalDiscount)
     {
