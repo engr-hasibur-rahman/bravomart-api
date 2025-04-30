@@ -33,6 +33,7 @@ class SellerProductManageController extends Controller
     public function index(Request $request)
     {
         $storeId = $request->store_id;
+        $status = $request->status ?? '';
         $limit = $request->per_page ?? 10;
         $page = $request->page ?? 1;
         $locale = $request->language ?? 'en';
@@ -44,6 +45,7 @@ class SellerProductManageController extends Controller
 
         $products = $this->productRepo->getPaginatedProduct(
             $storeId,
+            $status,
             $limit,
             $page,
             $locale,
@@ -66,6 +68,7 @@ class SellerProductManageController extends Controller
         $request['slug'] = $slug;
         $request['type'] = Store::where('id', $request['store_id'])->first()->store_type;
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
+        $request['warranty'] = json_encode($request['warranty']);
         $request['status'] = 'pending';
         $product = $this->productRepo->store($request->all());
         createOrUpdateTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
