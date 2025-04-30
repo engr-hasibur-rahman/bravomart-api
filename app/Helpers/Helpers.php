@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers;
+use App\Models\ProductVariant;
 use App\Models\SettingOption;
 use App\Models\Coupon;
 use App\Models\CouponLine;
@@ -440,6 +441,7 @@ if (!function_exists('translate')) {
         }
         return false;
     }
+
 
     // coupon manage
     function applyCoupon(string $couponCode, float $orderAmount): array
