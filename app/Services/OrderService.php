@@ -107,6 +107,7 @@ class OrderService
             'success' => false,
             'coupon_code' => null,
             'coupon_title' => null,
+            'discount_amount' => 0
         ];
         if (!empty($data['coupon_code'])) {
             $applied = applyCoupon($data['coupon_code'], $basePrice);
@@ -130,7 +131,7 @@ class OrderService
             'shipping_address_id' => $data['shipping_address_id'],
             'coupon_code' => $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
             'coupon_title' => $coupon_data['success'] === false ? null : $coupon_data['coupon_title'] ?? null,
-            'coupon_discount_amount_admin' => 0,
+            'coupon_discount_amount_admin' => $coupon_data['discount_amount'],
             'product_discount_amount' => 0,
             'flash_discount_amount_admin' => 0,
             'shipping_charge' => 0,
@@ -199,8 +200,10 @@ class OrderService
                         // Check if current time is within the flash sale period
                         $current_time = now(); // Get the current time
                         $is_expired = $current_time->gt($flash_sale_end_time); // Check if current time is greater than the end time
+                        $out_of_limit = $product->flashSale->purchase_limit == 0;
+                        $is_inactive = $product->flashSale->status == 0;
 
-                        if ($is_expired) {
+                        if ($is_expired || $out_of_limit || $is_inactive) {
                             // Flash sale has expired
                             $product_flash_sale_id = null;
                             $flash_sale_discount_type = null;
@@ -291,7 +294,7 @@ class OrderService
                 'delivery_type' => 'standard',
                 'delivery_time' => $delivery_time,
                 'order_amount' => 0,
-                'coupon_discount_amount_admin' => 0,
+//                'coupon_discount_amount_admin' => 0,
                 'product_discount_amount' => 0,
                 'flash_discount_amount_admin' => 0,
                 'shipping_charge' => $final_shipping_charge,
@@ -344,8 +347,10 @@ class OrderService
                         // Check if current time is within the flash sale period
                         $current_time = now(); // Get the current time
                         $is_expired = $current_time->gt($flash_sale_end_time); // Check if current time is greater than the end time
+                        $out_of_limit = $product->flashSale->purchase_limit == 0;
+                        $is_inactive = $product->flashSale->status == 0;
 
-                        if ($is_expired) {
+                        if ($is_expired || $out_of_limit || $is_inactive) {
                             // Flash sale has expired
                             $product_flash_sale_id = null;
                             $flash_sale_discount_type = null;
@@ -457,7 +462,7 @@ class OrderService
                         'admin_discount_amount' => $flash_sale_admin_discount,
 
                         // coupon discount amount
-                        'coupon_discount_amount' => $total_discount_amount / $total_items,
+//                        'coupon_discount_amount' => $total_discount_amount / $total_items,
 
                         // price and qty
                         'base_price' => $basePrice,
@@ -475,6 +480,8 @@ class OrderService
                         'admin_commission_rate' => $system_commission_amount,
                         'admin_commission_amount' => $admin_commission_amount,
                     ]);
+                    $this->distributeCouponDiscount($order_master);
+
 
                     // set order package discount info
                     $order_package_total_amount += $orderDetails->line_total_price;
@@ -487,6 +494,7 @@ class OrderService
                     $package_order_amount_store_value += $orderDetails->line_total_price - $orderDetails->admin_commission_amount;
                     $package_order_amount_admin_commission += $orderDetails->admin_commission_amount;
                 }
+                $product->flashSale?->decrement('purchase_limit', $itemData['quantity']);
 
             } // item loops end order details
 
@@ -494,7 +502,7 @@ class OrderService
             $package->order_amount = $order_package_total_amount + $package->shipping_charge; //order package total amount
             $package->product_discount_amount += $product_discount_amount_package; // product coupon  discount
             $package->flash_discount_amount_admin = $flash_discount_amount_admin;  // flash sale discount
-            $package->coupon_discount_amount_admin = $total_discount_amount / $total_package; // admin coupon  discount
+//            $package->coupon_discount_amount_admin = $total_discount_amount / $total_package; // admin coupon  discount
             $package->order_amount_store_value = $package_order_amount_store_value; // order_amount_admin_commission
             $package->order_amount_admin_commission = $package_order_amount_admin_commission; // order_amount_admin_commission
             $package->save();
@@ -510,13 +518,13 @@ class OrderService
         // Update Order Master
         $order_master->product_discount_amount = $product_discount_amount_master;
         $order_master->flash_discount_amount_admin = $order_master->orders->sum('flash_discount_amount_admin');
-        $order_master->coupon_discount_amount_admin = $total_discount_amount;
+//        $order_master->coupon_discount_amount_admin = $total_discount_amount;
 //        $order_master->coupon_discount_amount_admin = $coupon_discount_amount_admin_final;
         $order_master->shipping_charge = $shipping_charge;
 //        $order_master->order_amount = $order_package_total_amount + $shipping_charge;
         $order_master->order_amount = $order_amount_master;
         $order_master->save();
-
+        $this->distributeCouponDiscount($order_master);
         // return all order id
         $all_orders = Order::with('store.seller')->where('order_master_id', $order_master->id)->get();
         $order_master = OrderMaster::with('orderAddress', 'customer')->find($order_master->id);
@@ -559,6 +567,55 @@ class OrderService
     {
         $order = Order::with(['orderItems', 'sellerStore'])->findOrFail($orderId);
         return $order;
+    }
+
+    public function distributeCouponDiscount(OrderMaster $orderMaster): void
+    {
+        DB::transaction(function () use ($orderMaster) {
+            $totalLineAmount = 0;
+
+            // Step 1: Gather all OrderDetails with their totals
+            $orderDetails = $orderMaster->orders()->with('orderDetail')->get()->flatMap->orderDetail;
+
+            // Calculate total line amount
+            $totalLineAmount = $orderDetails->sum('line_total_price_with_qty');
+
+            if ($totalLineAmount <= 0 || $orderMaster->coupon_discount_amount_admin <= 0) {
+                return; // Nothing to distribute
+            }
+
+            $remainingDiscount = $orderMaster->coupon_discount_amount_admin;
+            $distributedTotal = 0;
+
+            // Step 2: Distribute coupon discount to each OrderDetail
+            foreach ($orderDetails as $index => $detail) {
+                $lineTotal = $detail->line_total_price_with_qty;
+
+                // Last item gets the remaining to avoid rounding errors
+                if ($index === $orderDetails->count() - 1) {
+                    $discount = round($remainingDiscount - $distributedTotal, 2);
+                } else {
+                    $discount = round(($lineTotal / $totalLineAmount) * $orderMaster->coupon_discount_amount_admin, 2);
+                    $distributedTotal += $discount;
+                }
+
+                $detail->update([
+                    'coupon_discount_amount' => $discount,
+                    'line_total_excluding_tax' => $detail->line_total_price_with_qty - $detail->coupon_discount_amount,
+                    'tax_amount' => ($detail->line_total_price_with_qty / 100 * $detail->tax_rate) / $detail->quantity,
+                    'total_tax_amount' => $detail->line_total_price_with_qty / 100 * $detail->tax_rate,
+                    'line_total_price' => ($detail->line_total_price_with_qty - $detail->coupon_discount_amount) + ($detail->line_total_price_with_qty / 100 * $detail->tax_rate),
+                    'admin_commission_amount' => $detail->admin_commission_type == 'percentage' ? $detail->line_total_price_with_qty / 100 * $detail->admin_commission_rate : $detail->admin_commission_rate,
+                ]);
+            }
+
+            // Step 3: Distribute per Order
+            foreach ($orderMaster->orders as $order) {
+                $orderDiscount = $order->orderDetail->sum('coupon_discount_amount');
+                $order->update(['coupon_discount_amount_admin' => $orderDiscount]);
+            }
+            // Done
+        });
     }
 
 
