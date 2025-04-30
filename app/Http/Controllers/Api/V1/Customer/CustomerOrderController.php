@@ -159,31 +159,31 @@ class CustomerOrderController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => __('messages.coupon_inactive'),
-            ], 400);
+            ]);
         }
 
         if ($coupon->end_date && $coupon->end_date < now()) {
             return response()->json([
                 'message' => __('messages.coupon_expired'),
-            ], 410);
+            ]);
         }
 
         // Check if the coupon usage limit has been reached
         if ($coupon->usage_limit && $coupon->usage_count >= $coupon->usage_limit) {
             return response()->json([
                 'message' => __('messages.coupon_limit_reached'),
-            ], 400);
+            ]);
         }
         if ($coupon->coupon->status !== 1 && $coupon->status !== 1) {
             return response()->json([
                 'message' => __('messages.coupon_inactive'),
-            ], 400);
+            ]);
         }
         // check min_order status
         if ($request->sub_total < $coupon->min_order_value) {
             return response()->json([
                 'message' => __('messages.coupon_min_order_amount', ['amount' => $coupon->min_order_value]),
-            ], 400);
+            ]);
         }
         $sub_total = $request->sub_total;
         $final_amount_after_removing_coupon_discount = 0;
