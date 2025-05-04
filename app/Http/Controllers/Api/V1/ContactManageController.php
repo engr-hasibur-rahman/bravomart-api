@@ -22,7 +22,7 @@ class ContactManageController extends Controller
         if ($success) {
             return $this->success(__('messages.save_success', ['name' => 'Your message']),200);
         } else {
-            return $this->failed(__('messages.save_failed', ['name' => 'Your message']),500);
+            return $this->failed(__('messages.currently_not_available'),500);
         }
     }
 }
