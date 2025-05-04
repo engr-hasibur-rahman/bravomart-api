@@ -76,6 +76,7 @@ use App\Models\ProductAttribute;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\ProductView;
+use App\Models\Review;
 use App\Models\Slider;
 use App\Models\Store;
 use App\Models\StoreArea;
@@ -138,6 +139,17 @@ class FrontendController extends Controller
         // Apply featured stores filter if provided
         if ($request->filled('is_featured')) {
             $query->where('is_featured', $request->is_featured);
+        }
+        // Order by rating if top_rated requested
+        if ($request->filled('top_rated') && $request->top_rated) {
+            // Join rating subquery
+            $query->addSelect([
+                'rating' => Review::selectRaw('ROUND(AVG(rating), 2)')
+                    ->whereColumn('store_id', 'stores.id')
+                    ->where('reviewable_type', Product::class)
+                    ->where('status', 'approved')
+            ]);
+            $query->having('rating', '>=', 2); // Set your threshold
         }
 
         // Pagination

@@ -28,6 +28,7 @@ class StorePublicListResource extends JsonResource
                 ? $translation->where('key', 'name')->first()?->value
                 : $this->name,
             'slug' => $this->slug,
+            'description' => $this->description,
             'phone' => $this->phone,
             'email' => $this->email,
             'logo' => $this->logo,
@@ -42,6 +43,7 @@ class StorePublicListResource extends JsonResource
             'closing_time' => $this->closing_time,
             'veg_status' => $this->veg_status,
             'off_day' => $this->off_day,
+            'rating' => $this->rating
         ];
     }
 }
