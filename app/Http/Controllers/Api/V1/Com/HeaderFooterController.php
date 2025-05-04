@@ -26,7 +26,7 @@ class  HeaderFooterController extends Controller
             foreach ($translations as $language => $items) {
                 $languageInfo = ['language' => $language];
                 /* iterate all Column to Assign Language Value */
-                foreach ($this->get_com_option->translationKeys as $columnName) {
+                foreach ($com_option->translationKeys as $columnName) {
                     $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
                 }
                 $transformedData[] = $languageInfo;
