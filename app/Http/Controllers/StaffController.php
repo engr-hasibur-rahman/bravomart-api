@@ -157,7 +157,7 @@ class StaffController extends Controller
                     'message' => __('messages.staff_not_assign_to_stores'),
                 ], 422);
             }
-            $user_stores = json_decode($user->stores, true);
+            $user_stores = $user->stores; // Already an array like ["1", "2"]
 
             $user_is_your_staff = !empty(array_intersect($seller_stores, $user_stores));
 
