@@ -64,8 +64,10 @@ class StoreManageRepository implements StoreManageInterface
                 $query->where(DB::raw("CONCAT_WS(' ', stores.name, name_translations.value)"), 'like', "%{$search}%");
             });
         }
+        if ($status){
+            $store->where('status', $status);
+        }
         return $store->with(['seller', 'area', 'related_translations'])
-            ->where('status', $status)
             ->orderBy($sortField ?? 'created_at', $sort ?? 'asc')
             ->paginate($limit);
     }
