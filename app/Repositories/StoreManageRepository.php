@@ -66,7 +66,7 @@ class StoreManageRepository implements StoreManageInterface
         }
         return $store->with(['seller', 'area', 'related_translations'])
             ->where('status', $status)
-            ->orderBy($sortField, $sort)
+            ->orderBy($sortField ?? 'created_at', $sort ?? 'asc')
             ->paginate($limit);
     }
 
