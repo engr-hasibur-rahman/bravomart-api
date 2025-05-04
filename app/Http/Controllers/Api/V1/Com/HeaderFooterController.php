@@ -11,13 +11,14 @@ use Illuminate\Http\Request;
 
 class  HeaderFooterController extends Controller
 {
-    public function siteFooterInfo(){
+    public function siteFooterInfo()
+    {
         // Create an instance of ImageModifier
         $imageModifier = new MultipleImageModifier();
         // multiple image get
         $com_payment_methods_image_urls = $imageModifier->multipleImageModifier(com_option_get('com_payment_methods_image'));
         $ComOptionGet = SettingOption::with('translations')
-            ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'])
+            ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags', 'com_og_title', 'com_og_description'])
             ->get();
         // transformed data
         $transformedData = [];
@@ -58,7 +59,7 @@ class  HeaderFooterController extends Controller
         ];
 
         return response()->json([
-           'data' => new FooterInfoResource($footer_info),
+            'data' => new FooterInfoResource($footer_info),
         ]);
     }
 }

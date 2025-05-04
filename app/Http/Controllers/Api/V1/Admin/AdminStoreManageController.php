@@ -44,6 +44,7 @@ class AdminStoreManageController extends Controller
 
     public function store(AdminStoreRequest $request): JsonResponse
     {
+        $request['status'] = 1;
         $store = $this->storeRepo->store($request->all());
         createOrUpdateTranslation($request, $store, 'App\Models\Store', $this->storeRepo->translationKeys());
         if ($store) {
