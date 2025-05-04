@@ -107,9 +107,13 @@ class OrderService
             'success' => false,
             'coupon_code' => null,
             'coupon_title' => null,
-            'discount_amount' => 0
+            'discount_amount' => 0,
+            'coupon_type' => null,
+            'discount_rate' => 0,
+            'final_order_amount' => $basePrice,
         ];
-        if (!empty($data['coupon_code'])) {
+        $total_discount_amount = 0;
+        if (!empty($data['coupon_code']) && isset($data['coupon_code'])) {
             $applied = applyCoupon($data['coupon_code'], $basePrice);
             if ($applied['success']) {
                 $total_order_amount = $applied['final_order_amount'];
