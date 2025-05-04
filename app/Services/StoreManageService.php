@@ -43,19 +43,18 @@ class StoreManageService
                 // get system commission
                 $system_commission = SystemCommission::first();
 
-            // Ensure the commission type is valid
-            $commission_type = $system_commission->commission_type;
-            if ($commission_type !== 'commission' && $commission_type !== 'fixed') {
-                $commission_type = 'commission'; // Default value
+                // Ensure the commission type is valid
+                $commission_type = $system_commission->commission_type;
+                if ($commission_type !== 'commission' && $commission_type !== 'fixed') {
+                    $commission_type = 'commission'; // Default value
+                }
+
+                // Update store commission
+                $store->admin_commission_type = $commission_type;
+                $store->admin_commission_amount = $system_commission->commission_amount;
+                $store->save();
             }
-
-            // Update store commission
-            $store->admin_commission_type = $commission_type;
-            $store->admin_commission_amount = $system_commission->commission_amount;
-            $store->save();
-        }
             $seller = auth('api')->user();
-
             // Send email to seller register in background
             try {
 
@@ -69,14 +68,14 @@ class StoreManageService
 
                 // template
                 $email_template_seller = EmailTemplate::where('type', 'store-creation')->where('status', 1)->first();
-                $email_template_admin =  EmailTemplate::where('type', 'store-creation-admin')->where('status', 1)->first();
+                $email_template_admin = EmailTemplate::where('type', 'store-creation-admin')->where('status', 1)->first();
 
                 // seller
-                $seller_subject = $email_template_seller->subject;
-                $seller_message = $email_template_seller->body;
+                $seller_subject = $email_template_seller?->subject;
+                $seller_message = $email_template_seller?->body;
                 // admin
-                $admin_subject = $email_template_admin->subject;
-                $admin_message = $email_template_admin->body;
+                $admin_subject = $email_template_admin?->subject;
+                $admin_message = $email_template_admin?->body;
 
                 $seller_message = str_replace(["@seller_name", "@store_name"], [$seller_name, $store_name], $seller_message);
                 $admin_message = str_replace(["@seller_name", "@store_name"], [$seller_name, $store_name], $admin_message);
@@ -86,22 +85,21 @@ class StoreManageService
                     // mail to seller
                     dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
                     dispatch(new SendDynamicEmailJob($system_global_email, $admin_subject, $admin_message));
+
                 }
             } catch (\Exception $th) {
             }
 
-            return false;
         }
         // Store Subscription handle logic
         // check subscription system_commission settings
-        if ($subscription_enabled){
+        if ($data['subscription_type'] == 'subscription' && $subscription_enabled) {
             if (moduleExistsAndStatus('Subscription')) {
                 $this->subscriptionService->buySubscriptionPackage($store, $data);
             }
             DB::commit();
         } else {
             DB::rollBack();
-            return false;
         }
         return $store;
     }
