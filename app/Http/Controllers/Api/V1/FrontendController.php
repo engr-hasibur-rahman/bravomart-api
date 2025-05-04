@@ -969,8 +969,6 @@ class FrontendController extends Controller
             ], 500);
         }
     }
-
-
     public function categoryWiseProducts(Request $request)
     {
         try {
