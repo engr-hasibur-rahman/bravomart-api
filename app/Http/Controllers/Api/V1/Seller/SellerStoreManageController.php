@@ -54,6 +54,7 @@ class SellerStoreManageController extends Controller
             ],422);
         }
         $store = $this->storeManageService->storeForAuthSeller($request->all());
+        dd($store);
         if ($store) {
             createOrUpdateTranslation($request, $store->id, 'App\Models\Store', $this->storeRepo->translationKeys());
             return $this->success(
@@ -62,7 +63,7 @@ class SellerStoreManageController extends Controller
                 ['store_id' => $store->id] // Data payload
             );
         } else {
-            return $this->failed(translate('messages.save_failed', ['name' => 'Store']));
+            return $this->failed(translate('messages.save_failed', ['name' => 'Store'],500));
         }
     }
 
