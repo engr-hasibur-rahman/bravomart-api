@@ -110,9 +110,11 @@ class Store extends Model
             ->where('status', 'approved')
             ->avg('rating');
 
-        // Clamp between 1 and 5
-        $clamped = max(1, min(5, round($average ?? 0, 2)));
+        if (is_null($average)) {
+            return 0; // No reviews
+        }
 
-        return $clamped;
+        // Clamp between 1 and 5 only if there's an actual rating
+        return max(1, min(5, round($average, 2)));
     }
 }
