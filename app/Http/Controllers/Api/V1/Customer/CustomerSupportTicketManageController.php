@@ -36,9 +36,7 @@ class CustomerSupportTicketManageController extends Controller
             'data' => SupportTicketResource::collection($tickets),
             'meta' => new PaginationResource($tickets)
         ], 200);
-
     }
-
     public function show(Request $request)
     {
 

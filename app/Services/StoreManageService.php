@@ -107,7 +107,9 @@ class StoreManageService
                 'code' => 'subscription_option_is_not_available'
             ];
         }
-        return $store;
+        return [
+            'store' => $store
+        ];
     }
 
 
