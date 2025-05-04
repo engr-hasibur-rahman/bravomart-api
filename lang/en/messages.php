@@ -141,6 +141,8 @@ return [
 
     'out_of_stock' => ':variant is out of stock!',
 
+    'currently_not_available' => 'Sorry! We are currently not available!',
+
 ];
 
 
