@@ -54,7 +54,6 @@ class SellerStoreManageController extends Controller
             ],422);
         }
         $store = $this->storeManageService->storeForAuthSeller($request->all());
-        dd($store);
         if ($store) {
             createOrUpdateTranslation($request, $store->id, 'App\Models\Store', $this->storeRepo->translationKeys());
             return $this->success(
