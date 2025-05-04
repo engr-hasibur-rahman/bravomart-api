@@ -498,7 +498,9 @@ class OrderService
                     $package_order_amount_store_value += $orderDetails->line_total_price - $orderDetails->admin_commission_amount;
                     $package_order_amount_admin_commission += $orderDetails->admin_commission_amount;
                 }
-                $product->flashSale?->decrement('purchase_limit', $itemData['quantity']);
+                if ($product->flashSale && $product->flashSale->purchase_limit >= $itemData['quantity']) {
+                    $product->flashSale->decrement('purchase_limit', $itemData['quantity']);
+                }
 
             } // item loops end order details
 
