@@ -52,6 +52,7 @@ class StoreDetailsPublicResource extends JsonResource
             'started_from' => $this->created_at->format('M d, Y'),
             'veg_status' => $this->veg_status,
             'off_day' => $this->off_day,
+            'rating' => $this->rating,
             'total_product' => $this->products()->where('deleted_at', null)->where('status', 'approved')->count(),
             'all_products' => StoreProductListPublicResource::collection($this->products()
                 ->where('deleted_at', null)

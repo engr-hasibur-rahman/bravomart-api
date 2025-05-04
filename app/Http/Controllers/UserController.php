@@ -418,7 +418,7 @@ class UserController extends Controller
             'password' => 'required|string|min:8|max:12|confirmed',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
 
         try {
@@ -463,15 +463,15 @@ class UserController extends Controller
                 $system_global_email = com_option_get('com_site_email');
 
                 $email_template_seller = EmailTemplate::where('type', 'seller-register')->where('status', 1)->first();
-                $email_template_admin =  EmailTemplate::where('type', 'seller-register-for-admin')->where('status', 1)->first();
+                $email_template_admin = EmailTemplate::where('type', 'seller-register-for-admin')->where('status', 1)->first();
                 $seller_subject = $email_template_seller->subject;
                 $admin_subject = $email_template_admin->subject;
                 $seller_message = $email_template_seller->body;
                 $admin_message = $email_template_admin->body;
 
                 $seller_subject = str_replace(["@name"], [$seller_name], $seller_subject);
-                $seller_message = str_replace(["@name", "@site_name", "@email", "@phone"], [$seller_name, $system_global_title,$seller_email,$seller_phone], $seller_message);
-                $admin_message = str_replace(["@name", "@email", "@phone"], [$seller_name, $seller_email,$seller_phone], $admin_message);
+                $seller_message = str_replace(["@name", "@site_name", "@email", "@phone"], [$seller_name, $system_global_title, $seller_email, $seller_phone], $seller_message);
+                $admin_message = str_replace(["@name", "@email", "@phone"], [$seller_name, $seller_email, $seller_phone], $admin_message);
 
                 // Check if template exists and email is valid and // Send the email using queued job
                 if ($email_template_seller) {
@@ -959,7 +959,7 @@ class UserController extends Controller
                     'status' => false,
                     'status_code' => 401,
                     'message' => __('messages.old_password_invalid'),
-                ],401);
+                ], 401);
             }
 
             // Update the password with the new one
