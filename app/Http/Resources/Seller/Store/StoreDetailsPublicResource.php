@@ -35,6 +35,7 @@ class StoreDetailsPublicResource extends JsonResource
                 : $this->slug,
             'phone' => $this->phone,
             'email' => $this->email,
+            'description' => $this->meta_description,
             'logo' => $this->logo,
             'tax' => $this->tax,
             'tax_number' => $this->tax_number,
