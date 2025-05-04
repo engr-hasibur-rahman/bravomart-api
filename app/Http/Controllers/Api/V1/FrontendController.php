@@ -945,6 +945,7 @@ class FrontendController extends Controller
             // Apply sorting and pagination
             if ($all) {
                 $categories = $categories
+                    ->where('status', 1)
                     ->orderBy($sortField, $sort)
                     ->paginate($per_page);
                 return response()->json([
@@ -954,6 +955,7 @@ class FrontendController extends Controller
                 ], 200);
             }
             $categories = $categories->whereNull('parent_id')
+                ->where('status', 1)
                 ->orderBy($sortField, $sort)
                 ->paginate($per_page);
             return response()->json([
