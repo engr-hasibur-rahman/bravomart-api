@@ -20,9 +20,9 @@ class ContactManageController extends Controller
     {
         $success = $this->contactRepo->sendContactMessage($request->all());
         if ($success) {
-            return $this->success(__('messages.save_success', ['name' => 'Your message']));
+            return $this->success(__('messages.save_success', ['name' => 'Your message']),200);
         } else {
-            return $this->failed(__('messages.save_failed', ['name' => 'Your message']));
+            return $this->failed(__('messages.save_failed', ['name' => 'Your message']),500);
         }
     }
 }

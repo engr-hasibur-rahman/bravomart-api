@@ -71,7 +71,7 @@ class Store extends Model
 
     public function seller()
     {
-        return $this->belongsTo(User::class,  'store_seller_id');
+        return $this->belongsTo(User::class, 'store_seller_id');
     }
 
     public function related_translations()
@@ -101,5 +101,18 @@ class Store extends Model
     public function scopePendingStores($query)
     {
         return $query->where('status', 0);
+    }
+
+    public function getRatingAttribute(): float
+    {
+        $average = Review::where('store_id', $this->id)
+            ->where('reviewable_type', Product::class)
+            ->where('status', 'approved')
+            ->avg('rating');
+
+        // Clamp between 1 and 5
+        $clamped = max(1, min(5, round($average ?? 0, 2)));
+
+        return $clamped;
     }
 }
