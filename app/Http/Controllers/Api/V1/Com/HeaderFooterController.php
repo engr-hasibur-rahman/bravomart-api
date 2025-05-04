@@ -18,7 +18,7 @@ class  HeaderFooterController extends Controller
         $com_payment_methods_image_urls = $imageModifier->multipleImageModifier(com_option_get('com_payment_methods_image'));
         $ComOptionGet = SettingOption::with('translations')
             ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'])
-            ->get(['id']);
+            ->get();
         // transformed data
         $transformedData = [];
         foreach ($ComOptionGet as $com_option) {
