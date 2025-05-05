@@ -25,21 +25,10 @@ class PermissionStoreSeeder extends Seeder
         $shop_menu = [
             [
                 // Dashboard
-//                [
-////                    'PermissionName' => PermissionKey::SELLER_DASHBOARD->value,
-//                    'PermissionName' => 'seller/dashboard',
-//                    'PermissionTitle' => 'Seller Dashboard',
-//                    'activity_scope' => 'store_level',
-//                    'icon' => 'LayoutDashboard',
-//                    'options' => ['view'],
-//                    'translations' => [
-//                        'en' => 'Dashboard',
-//                        'ar' => 'قائمة المناطق'
-//                    ]
-//                ],
                 [
-                    'PermissionName' => PermissionKey::SELLER_STORE_DASHBOARD->value,
-                    'PermissionTitle' => 'Store Dashboard',
+//                    'PermissionName' => PermissionKey::SELLER_DASHBOARD->value,
+                    'PermissionName' => 'dashboard',
+                    'PermissionTitle' => 'Seller Dashboard',
                     'activity_scope' => 'store_level',
                     'icon' => 'LayoutDashboard',
                     'options' => ['view'],
@@ -48,6 +37,17 @@ class PermissionStoreSeeder extends Seeder
                         'ar' => 'قائمة المناطق'
                     ]
                 ],
+//                [
+//                    'PermissionName' => PermissionKey::SELLER_STORE_DASHBOARD->value,
+//                    'PermissionTitle' => 'Store Dashboard',
+//                    'activity_scope' => 'store_level',
+//                    'icon' => 'LayoutDashboard',
+//                    'options' => ['view'],
+//                    'translations' => [
+//                        'en' => 'Dashboard',
+//                        'ar' => 'قائمة المناطق'
+//                    ]
+//                ],
 
                 // order manage
                 [
