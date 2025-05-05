@@ -65,7 +65,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Orders',
                             'activity_scope' => 'store_level',
-                            'icon' => 'BringToFront',
+                            'icon' => 'Boxes',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Orders',
@@ -244,7 +244,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Flash Sale',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'Zap',
                             'options' => ['View'],
                             'translations' => [
                                 'en' => 'Flash Sale',
@@ -316,7 +316,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value,
                             'PermissionTitle' => 'Support Tickets',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'Headset',
                             'options' => ['view', 'insert', 'update', 'delete', 'others'],
                             'translations' => [
                                 'en' => 'Support Ticket',
@@ -476,7 +476,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => PermissionKey::SELLER_NOTIFICATION_MANAGEMENT->value,
                             'PermissionTitle' => 'Notifications',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'Bell',
                             'translations' => [
                                 'en' => 'Notifications',
                                 'ar' => 'رسالة'
