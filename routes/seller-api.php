@@ -51,7 +51,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
             Route::get('/deactivate', [SellerManageController::class, 'deactivateAccount']);
             Route::get('/delete', [SellerManageController::class, 'deleteAccount']);
         });
-        Route::group(['prefix' => 'dashboard/'], function () {
+        Route::group(['prefix' => 'dashboard/','middleware' => ['permission:' . PermissionKey::SELLER_DASHBOARD->value]], function () {
             Route::get('/', [SellerStoreDashboardManageController::class, 'summaryData']);
             Route::get('sales-summary', [SellerStoreDashboardManageController::class, 'salesSummaryData']);
             Route::get('other-summary', [SellerStoreDashboardManageController::class, 'otherSummaryData']);
