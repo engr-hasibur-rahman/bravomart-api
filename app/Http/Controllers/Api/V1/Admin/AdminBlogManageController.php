@@ -58,6 +58,7 @@ class AdminBlogManageController extends Controller
                     'message' => $validator->errors()
                 ]);
             }
+            $request['status'] = isset($request->status) ? $request->status : 1;
             $category = $this->blogRepo->store($request->all(), BlogCategory::class);
             createOrUpdateTranslation($request, $category, 'App\Models\BlogCategory', $this->blogRepo->translationKeysForCategory());
 

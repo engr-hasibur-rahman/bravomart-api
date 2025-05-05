@@ -127,6 +127,7 @@ class OrderService
         $additional_charge_admin_commission = $system_commission->order_additional_charge_commission ?? 0;
         $additional_charge_enabled = $system_commission->order_additional_charge_enable_disable;
         $additional_charge_name = $system_commission->order_additional_charge_name ?? null;
+        $tax_disabled = $system_commission->order_include_tax_amount == 0;
 
         /*------------------------------------------------------------>Create OrderMaster<------------------------------------------------------------------------*/
         $order_master = OrderMaster::create([
@@ -413,12 +414,16 @@ class OrderService
                     $line_total_excluding_tax = $after_discount_final_price_with_qty - $total_discount_amount / $total_items;
 
                     // vat/tax calculate
+
                     $store_tax_amount = $product->store?->tax;
                     $taxAmount = $after_any_discount_final_price * ($store_tax_amount / 100.00);
-
                     // Total tax amount based on quantity
                     $total_tax_amount = $taxAmount * $itemData['quantity'];
-
+                    if ($tax_disabled){
+                        $store_tax_amount = 0;
+                        $taxAmount = 0;
+                        $total_tax_amount = 0;
+                    }
                     // Final line total price based on quantity
                     $line_total_price = $line_total_excluding_tax + $total_tax_amount;
 
