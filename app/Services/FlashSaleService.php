@@ -260,10 +260,8 @@ class FlashSaleService
         if (!empty($filters['end_date']) && isset($filters['end_date'])) {
             $query->whereDate('end_time', '<=', $filters['end_date']);
         }
-
         $perPage = (!empty($filters['per_page']) && isset($filters['per_page'])) ? $filters['per_page'] : 10;
-
-        return $query->paginate($perPage);
+        return $query->latest()->paginate($perPage);
     }
 
 
