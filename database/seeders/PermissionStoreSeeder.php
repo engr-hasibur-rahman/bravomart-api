@@ -180,9 +180,9 @@ class PermissionStoreSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => PermissionKey::SELLER_PRODUCT_ATTRIBUTE_ADD->value,
-                            'PermissionTitle' => 'Attribute List',
+                            'PermissionTitle' => 'Attributes',
                             'activity_scope' => 'store_level',
-                            'icon' => 'Ratio',
+                            'icon' => 'Layers2',
                             'translations' => [
                                 'en' => 'Attribute List',
                                 'ar' => 'قائمة السمات'
@@ -190,9 +190,9 @@ class PermissionStoreSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_AUTHORS_MANAGE->value,
-                            'PermissionTitle' => 'Author List',
+                            'PermissionTitle' => 'Authors',
                             'activity_scope' => 'store_level',
-                            'icon' => 'BookText',
+                            'icon' => 'BookOpenCheck',
                             'options' => ['View', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Author List',
@@ -218,7 +218,7 @@ class PermissionStoreSeeder extends Seeder
                             'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value,
                             'PermissionTitle' => 'Inventory',
                             'activity_scope' => 'store_level',
-                            'icon' => '',
+                            'icon' => 'PackageOpen',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Inventory',
