@@ -15,9 +15,15 @@ class StoreDetailsForOrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
-            "name" => $this->name,
+            "name" => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
+                : $this->name, // If language is empty or not provided attribute
             "area_id" => $this->area_id,
             "slug" => $this->slug,
             "phone" => $this->phone,
