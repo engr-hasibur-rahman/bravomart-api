@@ -16,11 +16,11 @@ class PageTranslationResource extends JsonResource
     {
         return [
             "language_code" => $this->first()->language,
-            "title" => $this->where('key', 'title')->first()?->value,
-            "content" => $this->where('key', 'content')->first()?->value,
-            "meta_title" => $this->where('key', 'meta_title')->first()?->value,
-            "meta_description" => $this->where('key', 'meta_description')->first()?->value,
-            "meta_keywords" => $this->where('key', 'meta_keywords')->first()?->value,
+            "title" => json_decode($this->where('key', 'title')->first()?->value,true),
+            "content" => json_decode($this->where('key', 'content')->first()?->value,true),
+            "meta_title" => json_decode($this->where('key', 'meta_title')->first()?->value,true),
+            "meta_description" => json_decode($this->where('key', 'meta_description')->first()?->value,true),
+            "meta_keywords" => json_decode($this->where('key', 'meta_keywords')->first()?->value,true),
         ];
     }
 }
