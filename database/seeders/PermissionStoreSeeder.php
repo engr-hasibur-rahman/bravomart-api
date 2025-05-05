@@ -26,7 +26,7 @@ class PermissionStoreSeeder extends Seeder
             [
                 // Dashboard
                 [
-                    'PermissionName' => 'dashboard',
+                    'PermissionName' => PermissionKey::SELLER_DASHBOARD->value,
                     'PermissionTitle' => 'Dashboard',
                     'activity_scope' => 'store_level',
                     'icon' => 'LayoutDashboard',
@@ -260,31 +260,31 @@ class PermissionStoreSeeder extends Seeder
                                         'en' => 'My Deals',
                                         'ar' => 'منتجاتي في العروض'
                                     ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value,
-                                    'PermissionTitle' => 'Join Deals',
-                                    'activity_scope' => 'store_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'delete'],
-                                    'translations' => [
-                                        'en' => 'Join Deals',
-                                        'ar' => 'اطلب التسجيل'
-                                    ]
                                 ]
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value,
-                            'PermissionTitle' => 'Banners',
-                            'activity_scope' => 'store_level',
-                            'icon' => 'AlignJustify',
-                            'options' => ['view', 'insert', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Banners',
-                                'ar' => 'لافتات'
+//                                [
+//                                    'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value,
+//                                    'PermissionTitle' => 'Join Deals',
+//                                    'activity_scope' => 'store_level',
+//                                    'icon' => '',
+//                                    'options' => ['view', 'insert', 'delete'],
+//                                    'translations' => [
+//                                        'en' => 'Join Deals',
+//                                        'ar' => 'اطلب التسجيل'
+//                                    ]
+//                                ]
                             ]
                         ]
+//                        [
+//                            'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value,
+//                            'PermissionTitle' => 'Banners',
+//                            'activity_scope' => 'store_level',
+//                            'icon' => 'AlignJustify',
+//                            'options' => ['view', 'insert', 'update', 'delete'],
+//                            'translations' => [
+//                                'en' => 'Banners',
+//                                'ar' => 'لافتات'
+//                            ]
+//                        ]
                     ]
                 ],
 
@@ -424,29 +424,29 @@ class PermissionStoreSeeder extends Seeder
                 ],
 
                 // Message Settings
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Message',
-                    'activity_scope' => 'store_level',
-                    'icon' => 'MessageCircleMore',
-                    'options' => ['View'],
-                    'translations' => [
-                        'en' => 'Message',
-                        'ar' => 'إعدادات المتجر'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::STORE_STORE_MESSAGE->value,
-                            'PermissionTitle' => 'Message',
-                            'activity_scope' => 'store_level',
-                            'icon' => '',
-                            'translations' => [
-                                'en' => 'Message',
-                                'ar' => 'رسالة'
-                            ]
-                        ]
-                    ]
-                ],
+//                [
+//                    'PermissionName' => '',
+//                    'PermissionTitle' => 'Message',
+//                    'activity_scope' => 'store_level',
+//                    'icon' => 'MessageCircleMore',
+//                    'options' => ['View'],
+//                    'translations' => [
+//                        'en' => 'Message',
+//                        'ar' => 'إعدادات المتجر'
+//                    ],
+//                    'submenu' => [
+//                        [
+//                            'PermissionName' => PermissionKey::STORE_STORE_MESSAGE->value,
+//                            'PermissionTitle' => 'Message',
+//                            'activity_scope' => 'store_level',
+//                            'icon' => '',
+//                            'translations' => [
+//                                'en' => 'Message',
+//                                'ar' => 'رسالة'
+//                            ]
+//                        ]
+//                    ]
+//                ],
 
                 // Notifications Settings
                 [

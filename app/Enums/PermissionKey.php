@@ -252,6 +252,10 @@ enum PermissionKey: string
 
 
     // ############################## Seller PermissionKey Start ################################
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    //                                  Admin Dashboard Management                                          //
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+    case SELLER_DASHBOARD = '/seller/dashboard';
     //-----------Store Settings----------
     case SELLER_STORE_MY_SHOP = '/seller/store/list';
     case SELLER_STORE_BUSINESS_PLAN = '/seller/store/settings/business-plan';
