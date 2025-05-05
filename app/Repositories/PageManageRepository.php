@@ -37,7 +37,6 @@ class PageManageRepository implements PageManageInterface
     {
         try {
             $page = Page::with('related_translations')->find($id);
-
             if (!$page) {
                 return response()->json([
                     "message" => __('messages.data_not_found')
