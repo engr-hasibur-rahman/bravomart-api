@@ -26,11 +26,23 @@ class PermissionStoreSeeder extends Seeder
             [
                 // Dashboard
                 [
-                    'PermissionName' => PermissionKey::SELLER_DASHBOARD->value,
-                    'PermissionTitle' => 'Dashboard',
+//                    'PermissionName' => PermissionKey::SELLER_DASHBOARD->value,
+                    'PermissionName' => 'dashboard',
+                    'PermissionTitle' => 'Seller Dashboard',
                     'activity_scope' => 'store_level',
                     'icon' => 'LayoutDashboard',
-                    'options' => ['View'],
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Dashboard',
+                        'ar' => 'قائمة المناطق'
+                    ]
+                ],
+                [
+                    'PermissionName' => PermissionKey::SELLER_DASHBOARD->value,
+                    'PermissionTitle' => 'Store Dashboard',
+                    'activity_scope' => 'store_level',
+                    'icon' => 'LayoutDashboard',
+                    'options' => ['view'],
                     'translations' => [
                         'en' => 'Dashboard',
                         'ar' => 'قائمة المناطق'
