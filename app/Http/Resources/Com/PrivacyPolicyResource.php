@@ -20,15 +20,15 @@ class PrivacyPolicyResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "content" => !empty($translation) && $translation->where('key', 'content')->first()
-                ? $translation->where('key', 'content')->first()->value : $this->content,
+                ? safeJsonDecode($translation->where('key', 'content')->first()->value) : $this->content,
             'meta_title' => !empty($translation) && $translation->where('key', 'meta_title')->first()
-                ? $translation->where('key', 'meta_title')->first()->value
+                ? safeJsonDecode($translation->where('key', 'meta_title')->first()->value)
                 : $this->meta_title, // If language is empty or not provided attribute
             'meta_description' => !empty($translation) && $translation->where('key', 'meta_description')->first()
-                ? $translation->where('key', 'meta_description')->first()->value
+                ? safeJsonDecode($translation->where('key', 'meta_description')->first()->value)
                 : $this->meta_description, // If language is empty or not provided attribute
             'meta_keywords' => !empty($translation) && $translation->where('key', 'meta_keywords')->first()
-                ? $translation->where('key', 'meta_keywords')->first()->value
+                ? safeJsonDecode($translation->where('key', 'meta_keywords')->first()->value)
                 : $this->meta_keywords, // If language is empty or not provided attribute
         ];
     }
