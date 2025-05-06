@@ -12,6 +12,7 @@ use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Http\Resources\Order\OrderSummaryResource;
 use App\Models\Order;
 use App\Models\OrderActivity;
+use App\Models\SystemCommission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -181,6 +182,13 @@ class AdminOrderManageController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
+        }
+        $systemSettings = SystemCommission::first();
+        $store_handle_delivery = $systemSettings->order_confirmation_by;
+        if ($store_handle_delivery){
+            return response()->json([
+                'message' => __('messages.order_confirmation_store')
+            ],422);
         }
         $order = Order::find($request->order_id);
         if (!$order) {
