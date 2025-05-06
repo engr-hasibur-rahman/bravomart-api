@@ -142,18 +142,11 @@ class WalletManageAdminController extends Controller
         }
 
         // Paginate
-        $transactions = $query->paginate(10);
+        $transactions = $query->paginate($request->per_page ?? 10);
 
         return response()->json([
             'wallets' => WalletTransactionListResource::collection($transactions),
-            'pagination' => [
-                'total' => $transactions->total(),
-                'per_page' => $transactions->perPage(),
-                'current_page' => $transactions->currentPage(),
-                'last_page' => $transactions->lastPage(),
-                'from' => $transactions->firstItem(),
-                'to' => $transactions->lastItem(),
-            ],
+            'pagination' => new PaginationResource($transactions),
         ]);
     }
 
