@@ -133,6 +133,7 @@ return [
     'order_already_cancelled_or_ignored_or_delivered' => 'This order is already either cancelled or ignored or delivered!',
     'order_is_not_accepted' => 'This order is not accepted yet!',
     'order_is_not_cash_on_delivery' => 'This order is not cash on delivery!',
+    'order_is_not_shipped' => 'This order is not shipped yet!',
     'order_confirmation_store' => 'Order delivery confirmation setting is set to store!',
     'received_amount_can\'t_be_greater' => 'The received amount is greater than collected amount!',
 

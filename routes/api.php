@@ -134,6 +134,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/get-check-out-page-extra-info', [FrontendController::class, 'getCheckOutPageExtraInfo']);
     Route::get('/menu', [MenuManageController::class, 'index']);
     Route::post('/update-location',[LiveLocationController::class, 'update']);
+    Route::post('/track-order-location',[LiveLocationController::class, 'trackOrder']);
 
 
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);
