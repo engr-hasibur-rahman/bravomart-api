@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('live_locations', function (Blueprint $table) {
             $table->id();
             $table->morphs('trackable');
-            $table->string('ref');
+            $table->string('ref')->nullable();
             $table->foreignId('order_id')->nullable();
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
