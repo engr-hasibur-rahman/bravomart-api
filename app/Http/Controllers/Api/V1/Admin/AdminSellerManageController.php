@@ -10,6 +10,7 @@ use App\Http\Resources\Seller\SellerResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use phpseclib3\Crypt\Hash;
 
 class AdminSellerManageController extends Controller
 {
@@ -96,6 +97,7 @@ class AdminSellerManageController extends Controller
         $user->save();
         return $this->success(translate('messages.update_success', ['name' => 'User']));
     }
+
     public function destroy(Request $request)
     {
         $validator = Validator::make(['seller_id' => $request->seller_id], [
@@ -113,6 +115,33 @@ class AdminSellerManageController extends Controller
         $seller->delete();
         return response()->json([
             'message' => __('messages.delete_success', ['name' => 'Seller']),
+        ]);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:users,id',
+            'password' => 'required|min:8|max:12'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $user = User::find($request->id);
+        if (!$user) {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ],404);
+        }
+        if ($user->store_owner == 0){
+            return response()->json([
+                'message' => __('messages.user_invalid',['user' => 'Seller'])
+            ],422);
+        }
+        $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        $user->save();
+        return response()->json([
+            'message' => __('messages.update_success', ['name' => 'Password']),
         ]);
     }
 }

@@ -263,6 +263,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('approve', [AdminSellerManageController::class, 'approveSeller']);
             Route::post('suspend', [AdminSellerManageController::class, 'rejectSeller']);
             Route::post('change-status', [AdminSellerManageController::class, 'changeStatus']);
+            Route::post('change-password', [AdminSellerManageController::class, 'changePassword']);
             Route::delete('remove/{seller_id}', [AdminSellerManageController::class, 'destroy']);
         });
         // Department manage
