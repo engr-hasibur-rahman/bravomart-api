@@ -68,7 +68,7 @@ class SubscriberManageRepository implements SubscriberManageInterface
             $subscribers->where('email', 'like', "%{$filters['email']}%");
         }
 
-        $subscribersList = $subscribers->orderBy('created_at', $filters['sortOrder'] ?? 'desc')->paginate($filters['perPage'] ?? 10);
+        $subscribersList = $subscribers->orderBy('created_at', $filters['sortOrder'] ?? 'desc')->paginate($filters['per_page'] ?? 10);
 
         return $subscribersList;
     }
