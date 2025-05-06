@@ -157,7 +157,7 @@ class AdminSellerManageController extends Controller
             'id' => 'required|exists:users,id',
             'first_name' => 'required|string|max:255',
             'last_name' => 'nullable|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
             'phone' => 'nullable|string',
         ]);
         if ($validator->fails()) {
