@@ -11,6 +11,7 @@ return [
     'email.resend.success' => 'Email resend successfully',
     'old_password_invalid' => 'Old password is invalid',
     'suspended' => ':name account suspended!',
+    'user_invalid' => 'User is not :user !',
 
     'something_went_wrong' => 'Something went wrong',
 
