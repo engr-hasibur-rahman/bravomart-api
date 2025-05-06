@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
 use App\Http\Controllers\Api\V1\Com\ComSiteGeneralController;
 use App\Http\Controllers\Api\V1\Com\FrontendPageSettingsController;
 use App\Http\Controllers\Api\V1\Com\HeaderFooterController;
+use App\Http\Controllers\Api\V1\Com\LiveLocationController;
 use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\ContactManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
@@ -132,6 +133,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/store-wise-products', [FrontendController::class, 'getStoreWiseProducts']);
     Route::get('/get-check-out-page-extra-info', [FrontendController::class, 'getCheckOutPageExtraInfo']);
     Route::get('/menu', [MenuManageController::class, 'index']);
+    Route::post('/update-location',[LiveLocationController::class, 'update']);
 
 
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);

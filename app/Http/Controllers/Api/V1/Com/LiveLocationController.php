@@ -22,15 +22,17 @@ class LiveLocationController extends Controller
             'order_id'       => 'nullable|integer|exists:orders,id',
         ]);
 
+        $trackableType= null;
+        if ($request->trackable_type)
         $location = LiveLocation::updateOrCreate(
             [
                 'trackable_type' => $request->trackable_type,
                 'trackable_id'   => $request->trackable_id,
+                'order_id'     => $request->order_id,
             ],
             [
                 'latitude'     => $request->latitude,
                 'longitude'    => $request->longitude,
-                'order_id'     => $request->order_id,
                 'last_updated' => Carbon::now(),
             ]
         );
