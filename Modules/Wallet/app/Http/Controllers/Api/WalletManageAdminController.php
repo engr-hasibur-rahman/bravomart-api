@@ -3,6 +3,7 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -52,18 +53,11 @@ class WalletManageAdminController extends Controller
         }
 
         // Paginate the results with a default of 10 per page
-        $wallets = $wallets->latest()->paginate(10);
+        $wallets = $wallets->latest()->paginate($request->per_page ?? 10);
 
         return response()->json([
             'wallets' => WalletListResource::collection($wallets),
-            'pagination' => [
-                'total' => $wallets->total(),
-                'per_page' => $wallets->perPage(),
-                'current_page' => $wallets->currentPage(),
-                'last_page' => $wallets->lastPage(),
-                'from' => $wallets->firstItem(),
-                'to' => $wallets->lastItem(),
-            ],
+            'pagination' => new PaginationResource($wallets)
         ]);
     }
 
