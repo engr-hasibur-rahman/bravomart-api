@@ -47,10 +47,16 @@ class AdminSellerManageController extends Controller
         return response()->json(SellerListForDropdownResource::collection($sellers));
     }
 
-    public function getSellerDetails($slug)
+    public function getSellerDetails(Request $request)
     {
-        $seller = User::isSeller()->where('slug', $slug)->first();
-        return response()->json(new SellerDetailsResource($seller));
+        $seller = User::isSeller()->where('id', $request->id)->first();
+        if ($seller) {
+            return response()->json(new SellerDetailsResource($seller));
+        } else {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ]);
+        }
     }
 
     // Approve Seller
@@ -131,17 +137,51 @@ class AdminSellerManageController extends Controller
         if (!$user) {
             return response()->json([
                 'message' => __('messages.data_not_found'),
-            ],404);
+            ], 404);
         }
-        if ($user->store_owner == 0){
+        if ($user->store_owner == 0) {
             return response()->json([
-                'message' => __('messages.user_invalid',['user' => 'Seller'])
-            ],422);
+                'message' => __('messages.user_invalid', ['user' => 'Seller'])
+            ], 422);
         }
         $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
         $user->save();
         return response()->json([
             'message' => __('messages.update_success', ['name' => 'Password']),
         ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:users,id',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'phone' => 'nullable|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+
+        $user = User::find($request->id);
+        if (!$user) {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ], 404);
+        }
+        if ($user->store_owner == 0) {
+            return response()->json([
+                'message' => __('messages.user_invalid', ['user' => 'Seller'])
+            ], 422);
+        }
+
+        $user->update($request->only('first_name', 'last_name', 'phone', 'email'));
+        return response()->json([
+            'message' => __('messages.update_success', ['name' => 'Seller'])
+        ]);
+
+
     }
 }
