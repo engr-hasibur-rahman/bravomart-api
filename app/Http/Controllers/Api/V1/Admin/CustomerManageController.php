@@ -30,7 +30,7 @@ class CustomerManageController extends Controller
         if (isset($request->status)) {
             $query->where("status", $request->status);
         }
-        $customers = $query->paginate($request->perPage ?? 10);
+        $customers = $query->latest()->paginate($request->perPage ?? 10);
         return response()->json([
             'customers' => CustomerResource::collection($customers),
             'meta' => new PaginationResource($customers)
