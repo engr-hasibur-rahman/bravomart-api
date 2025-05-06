@@ -61,7 +61,7 @@ class StaffController extends Controller
                     ->orWhere('email', 'like', '%' . $request->search . '%'); // add other fields if needed
             });
         }
-        $roles = $query->paginate($per_page);
+        $roles = $query->latest()->paginate($per_page);
 
         return response()->json([
             'data' => UserResource::collection($roles),
@@ -221,7 +221,6 @@ class StaffController extends Controller
         // Update user data
         $user->first_name = $validatedData['first_name'];
         $user->last_name = $validatedData['last_name'];
-        $user->slug = username_slug_generator($validatedData['first_name'], $validatedData['last_name']);
         $user->email = $validatedData['email'];
         $user->phone = $validatedData['phone'];
         $user->stores = $isAdmin ? null : $validatedData['stores'];
