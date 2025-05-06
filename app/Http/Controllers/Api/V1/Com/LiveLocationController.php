@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Com\LiveLocationResource;
 use App\Models\DeliveryMan;
 use App\Models\LiveLocation;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class LiveLocationController extends Controller
 {
@@ -18,14 +21,18 @@ class LiveLocationController extends Controller
         if (!auth('api')->check()) {
             unauthorized_response();
         }
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'trackable_type' => 'required|string',  // e.g. App\Models\Deliveryman
-            'trackable_id' => 'required|integer',
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
-            'order_id' => 'nullable|integer|exists:orders,id',
+            'trackable_id'   => 'required|integer',
+            'latitude'       => 'required|numeric|between:-90,90',
+            'longitude'      => 'required|numeric|between:-180,180',
+            'order_id'       => 'nullable|integer|exists:orders,id',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json($validator->errors(),422);
+        }
+        $this->orderStatus($request->order_id);
         $trackableType = null;
         if ($request->trackable_type == 'deliveryman') {
             $trackableType = DeliveryMan::class;
@@ -46,5 +53,56 @@ class LiveLocationController extends Controller
         return response()->json([
             'message' => __('messages.update_success', ['name' => 'Location']),
         ]);
+    }
+
+    /**
+     * Show the current live location of a trackable entity.
+     */
+    public function trackOrder(Request $request)
+    {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required|integer|exists:orders,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(),422);
+        }
+        $this->orderStatus($request->order_id);
+        $location = LiveLocation::where('order_id', $request->order_id)
+            ->first();
+
+        if (!$location) {
+            return response()->json([
+                'message' => __('messages.data_not_found'),
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => new LiveLocationResource($location),
+        ]);
+    }
+
+    private function orderStatus($order_id)
+    {
+        $order = Order::where('id', $order_id)->first();
+        if ($order->cancelled_at !== null) {
+            return response()->json([
+                'message' => __('messages.order_already_cancelled')
+            ]);
+        }
+        if ($order->status != 'shipped') {
+            return response()->json([
+                'message' => __('messages.order_is_not_shipped')
+            ]);
+        }
+        if ($order->status == 'delivered') {
+            return response()->json([
+                'message' => __('messages.order_already_delivered')
+            ]);
+        }
+        return true;
     }
 }
