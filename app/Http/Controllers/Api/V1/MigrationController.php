@@ -14,74 +14,95 @@ class MigrationController extends Controller
     public function migrateRefresh(Request $request)
     {
         $request->validate([
-            'table' => 'required|string'
+            'table' => 'required|string',
+            'type' => 'required|in:refresh,rollback,reset,fresh,migrate'
         ]);
 
         $table = $request->input('table');
+        $type = $request->input('type');
 
-        // Check if table exists
-        if (!Schema::hasTable($table)) {
+        // Check if table exists (for operations needing it)
+        if (in_array($type, ['refresh', 'rollback', 'reset']) && !Schema::hasTable($table)) {
             return response()->json(['error' => "Table '$table' does not exist"], 400);
         }
 
         try {
-            // Step 1: Backup existing table data
-            $existingData = DB::table($table)->get();
+            $migrationName = null;
+            $existingData = collect();
 
-// Step 2: Get migration file name for the table
-            $migration = DB::table('migrations')->where('migration', 'like', "%{$table}%")->first();
+            if (in_array($type, ['refresh', 'rollback'])) {
+                // Backup data
+                $existingData = DB::table($table)->get();
 
-            if (!$migration) {
-                return response()->json(['error' => "No migration found for table '$table'"], 400);
+                // Find migration
+                $migration = DB::table('migrations')->where('migration', 'like', "%{$table}%")->first();
+                if (!$migration) {
+                    return response()->json(['error' => "No migration found for table '$table'"], 400);
+                }
+                $migrationName = $migration->migration;
+
+                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             }
 
-            $migrationName = $migration->migration;
+            // Run Artisan migration commands based on type
+            switch ($type) {
+                case 'refresh':
+                    $migrationPath = base_path("Modules/Subscription/database/migrations/{$migrationName}.php");
+                    $pathOption = File::exists($migrationPath)
+                        ? 'Modules/Subscription/database/migrations'
+                        : "database/migrations/{$migrationName}.php";
 
-             // Step 3: Disable foreign key checks before migration
-            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+                    Artisan::call('migrate:refresh', [
+                        '--path' => $pathOption,
+                        '--force' => true,
+                    ]);
+                    break;
 
-            $singleMigrationPath = base_path("Modules/Subscription/database/migrations/{$migrationName}.php");
+                case 'rollback':
+                    Artisan::call('migrate:rollback', ['--force' => true]);
+                    break;
 
-               // Step 4: Rollback and re-run the migration
-            if ($migrationName && File::exists($singleMigrationPath)) {
-                Artisan::call('migrate:refresh', [
-                    '--path' => 'Modules/Subscription/database/migrations',
-                    '--force' => true
-                ]);
-            } else {
-                Artisan::call('migrate:refresh', [
-                    '--path' => "database/migrations/{$migrationName}.php",
-                    '--force' => true
-                ]);
+                case 'reset':
+                    Artisan::call('migrate:reset', ['--force' => true]);
+                    break;
+
+                case 'fresh':
+                    Artisan::call('migrate:fresh', ['--force' => true]);
+                    break;
+
+                case 'migrate':
+                    Artisan::call('migrate', ['--force' => true]);
+                    break;
             }
 
+            // Restore data for rollback/refresh
+            if (in_array($type, ['refresh', 'rollback']) && $existingData->isNotEmpty()) {
+                $columns = Schema::getColumnListing($table);
 
-            // Step 5: Get the current columns of the table after migration
-            $columns = Schema::getColumnListing($table);
+                $filteredData = $existingData->map(function ($row) use ($columns) {
+                    return array_intersect_key((array) $row, array_flip($columns));
+                });
 
-            // Step 6: Filter out any columns that are no longer in the table
-            $filteredData = $existingData->map(function ($row) use ($columns) {
-                $rowArray = (array) $row;
-
-                // Remove any column that doesn't exist in the new schema
-                return array_intersect_key($rowArray, array_flip($columns));
-            });
-
-            // Step 7: Restore the backed-up data
-            foreach ($filteredData as $row) {
-                DB::table($table)->insert($row);
+                foreach ($filteredData as $row) {
+                    DB::table($table)->insert($row);
+                }
             }
 
-            // Step 8: Enable foreign key checks after restoring data
-            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            if (in_array($type, ['refresh', 'rollback'])) {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            }
 
             return response()->json([
-                'success' => "Migration refreshed for table '$table' without deleting existing data.",
-                'migration' => $migrationName
+                'success' => "Migration `$type` executed successfully for table '$table'.",
+                'migration' => $migrationName,
             ]);
         } catch (\Exception $e) {
-            DB::statement('SET FOREIGN_KEY_CHECKS=1;'); // Ensure foreign key checks are re-enabled
-            return response()->json(['error' => 'Migration refresh failed', 'message' => $e->getMessage()], 500);
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            return response()->json([
+                'error' => "Migration `$type` failed",
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
+
 }

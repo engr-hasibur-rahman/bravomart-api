@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Http\Controllers\Controller;
+use App\Models\DeliveryMan;
 use App\Models\LiveLocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -14,31 +15,36 @@ class LiveLocationController extends Controller
      */
     public function update(Request $request)
     {
+        if (!auth('api')->check()) {
+            unauthorized_response();
+        }
         $request->validate([
             'trackable_type' => 'required|string',  // e.g. App\Models\Deliveryman
-            'trackable_id'   => 'required|integer',
-            'latitude'       => 'required|numeric|between:-90,90',
-            'longitude'      => 'required|numeric|between:-180,180',
-            'order_id'       => 'nullable|integer|exists:orders,id',
+            'trackable_id' => 'required|integer',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'order_id' => 'nullable|integer|exists:orders,id',
         ]);
 
-        $trackableType= null;
-        if ($request->trackable_type)
+        $trackableType = null;
+        if ($request->trackable_type == 'deliveryman') {
+            $trackableType = DeliveryMan::class;
+        }
         $location = LiveLocation::updateOrCreate(
             [
-                'trackable_type' => $request->trackable_type,
-                'trackable_id'   => $request->trackable_id,
-                'order_id'     => $request->order_id,
+                'trackable_type' => $trackableType,
+                'trackable_id' => $request->trackable_id,
+                'order_id' => $request->order_id,
             ],
             [
-                'latitude'     => $request->latitude,
-                'longitude'    => $request->longitude,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
                 'last_updated' => Carbon::now(),
             ]
         );
 
         return response()->json([
-            'message'  => __('messages.update_success',['name' => 'Location']),
+            'message' => __('messages.update_success', ['name' => 'Location']),
         ]);
     }
 }
