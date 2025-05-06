@@ -33,6 +33,23 @@ if (!function_exists('translate')) {
     }
 
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
+    if (!function_exists('safeJsonDecode')){
+        function safeJsonDecode($value)
+        {
+            // Handle case where value is already a clean string
+            if (is_null($value) || !is_string($value)) {
+                return $value;
+            }
+
+            // Try decoding, but fallback if not a valid JSON
+            $decoded = json_decode($value, true);
+
+            return json_last_error() === JSON_ERROR_NONE ? $decoded : $value;
+        }
+    }
+
+
+
     if (!function_exists('createOrUpdateTranslationJson')) {
         function createOrUpdateTranslationJson(Request $request, int|string $refid, string $refPath, array $colNames): bool
         {
