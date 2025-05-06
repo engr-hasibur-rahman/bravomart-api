@@ -256,7 +256,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         // Seller Manage
         Route::group(['prefix' => 'seller/', 'middleware' => ['permission:' . PermissionKey::ADMIN_SELLER_MANAGEMENT->value]], function () {
             Route::post('registration', [UserController::class, 'StoreOwnerRegistration'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_REGISTRATION->value);
-            Route::post('edit', [AdminSellerManageController::class, 'updateProfile']);
+            Route::post('update', [AdminSellerManageController::class, 'updateProfile']);
             Route::get('list', [AdminSellerManageController::class, 'getSellerList']);
             Route::get('active', [AdminSellerManageController::class, 'getActiveSellerList']);
             Route::get('details/{id}', [AdminSellerManageController::class, 'getSellerDetails']);
