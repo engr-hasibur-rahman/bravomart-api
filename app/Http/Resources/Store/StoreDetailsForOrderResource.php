@@ -35,6 +35,7 @@ class StoreDetailsForOrderResource extends JsonResource
             "address" => $this->address,
             "latitude" => $this->area?->center_latitude,
             "longitude" => $this->area?->center_longitude,
+            "rating" => $this->rating
         ];
     }
 }
