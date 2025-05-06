@@ -22,17 +22,17 @@ class PageResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => !empty($translation) && $translation->where('key', 'title')->first()
-                ? $translation->where('key', 'title')->first()->value
+                ? json_decode($translation->where('key', 'title')->first()->value, true)
                 : $this->title, // If language is empty or not provided attribute
             'slug' => $this->slug,
             'meta_title' => !empty($translation) && $translation->where('key', 'meta_title')->first()
-                ? $translation->where('key', 'meta_title')->first()->value
+                ? json_decode($translation->where('key', 'meta_title')->first()->value, true)
                 : $this->meta_title, // If language is empty or not provided attribute
             'meta_description' => !empty($translation) && $translation->where('key', 'meta_description')->first()
-                ? $translation->where('key', 'meta_description')->first()->value
+                ? json_decode($translation->where('key', 'meta_description')->first()->value, true)
                 : $this->meta_description, // If language is empty or not provided attribute
             'meta_keywords' => !empty($translation) && $translation->where('key', 'meta_keywords')->first()
-                ? $translation->where('key', 'meta_keywords')->first()->value
+                ? json_decode($translation->where('key', 'meta_keywords')->first()->value, true)
                 : $this->meta_keywords, // If language is empty or not provided attribute
             'status' => $this->status,
         ];
