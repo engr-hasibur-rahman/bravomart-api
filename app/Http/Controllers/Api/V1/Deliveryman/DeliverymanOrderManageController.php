@@ -43,7 +43,7 @@ class DeliverymanOrderManageController extends Controller
 
         }
         $validator = Validator::make($request->all(), [
-            'status' => 'nullable|in:shipped,delivered'
+            'status' => 'nullable|in:accepted'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
