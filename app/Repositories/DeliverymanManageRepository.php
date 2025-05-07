@@ -449,14 +449,23 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     }
 
     // -------------------------------------------------------- Delivery man order manage ---------------------------------------------------
-    public function deliverymanOrders()
+    public function deliverymanOrders($filters)
     {
         $deliveryman = auth('api')->user();
-        $orders = OrderDeliveryHistory::with(['order.orderMaster.orderAddress', 'order.orderDetail', 'order.store', 'order.orderMaster.customer'])
+
+        $orders = OrderDeliveryHistory::with([
+            'order.orderMaster.orderAddress',
+            'order.orderDetail',
+            'order.store',
+            'order.orderMaster.customer'
+        ])
             ->where('deliveryman_id', $deliveryman->id)
-            ->where('status', 'accepted')
+            ->when(!empty($filters['status']), function ($query) use ($filters) {
+                $query->where('status', $filters['status']);
+            })
             ->latest()
             ->paginate(10);
+
         return $orders;
     }
 
