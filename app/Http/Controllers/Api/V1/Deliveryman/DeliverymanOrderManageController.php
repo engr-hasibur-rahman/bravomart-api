@@ -23,15 +23,7 @@ class DeliverymanOrderManageController extends Controller
 
     public function getMyOrders(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'status' => 'nullable|in:shipped,delivered'
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-        $filters = [
-            'status' => $request->status
-        ];
+
         $order_id = $request->order_id;
         if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
             unauthorized_response();
@@ -50,6 +42,15 @@ class DeliverymanOrderManageController extends Controller
             }
 
         }
+        $validator = Validator::make($request->all(), [
+            'status' => 'nullable|in:shipped,delivered'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $filters = [
+            'status' => $request->status
+        ];
         $orders = $this->deliverymanRepo->deliverymanOrders($filters);
         if ($orders) {
             return response()->json([
