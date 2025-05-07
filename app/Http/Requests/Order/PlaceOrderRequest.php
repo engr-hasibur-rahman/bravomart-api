@@ -106,7 +106,28 @@ class PlaceOrderRequest extends FormRequest
             'packages.*.items.*.tax_rate' => 'nullable',
             'packages.*.items.*.tax_amount' => 'nullable|numeric',
             // qty and price
-            'packages.*.items.*.quantity' => 'required|integer|min:1',
+            'packages.*.items.*.quantity' => [
+                'required',
+                'integer',
+                'min:1',
+                function ($attribute, $value, $fail) {
+                    // Extract the variant_id path from this attribute
+                    $variantAttribute = str_replace('.quantity', '.variant_id', $attribute);
+                    $variantId = data_get(request()->all(), $variantAttribute);
+
+                    if ($variantId) {
+                        $variant = \App\Models\ProductVariant::find($variantId);
+
+                        if (!$variant) {
+                            return $fail("Invalid variant.");
+                        }
+
+                        if ($variant->stock_quantity < $value) {
+                            return $fail("Only {$variant->stock_quantity} units available for this variant.");
+                        }
+                    }
+                }
+            ],
             'packages.*.items.*.line_total_price' => 'nullable|numeric',
         ];
     }

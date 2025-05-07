@@ -45,8 +45,6 @@ class LiveLocationController extends Controller
 
             LiveLocation::updateOrCreate(
                 [
-                    'trackable_type' => $trackableType,
-                    'trackable_id'   => $request->trackable_id,
                     'order_id'       => $orderId,
                 ],
                 [

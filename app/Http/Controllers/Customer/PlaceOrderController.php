@@ -39,7 +39,6 @@ class PlaceOrderController extends Controller
         $data = $request->validated();
 
 
-
 //        $user = User::with('pushSubscriptions')->find(1);
 //        // Get subscription data from the request
 //        $endpoint = $request->input('endpoint');
@@ -72,12 +71,12 @@ class PlaceOrderController extends Controller
             }
         }
         // if return false
-        if($orders === false || empty($orders)) {
+        if ($orders === false || empty($orders)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to place order. Please try again.',
             ], 400);
-        }else{
+        } else {
             $all_orders = $orders[0];
             $order_master = $orders[1];
         }
@@ -90,12 +89,11 @@ class PlaceOrderController extends Controller
                     'orders' => PlaceOrderDetailsResource::collection($all_orders),
                     'order_master' => new PlaceOrderMasterResource($order_master),
                 ]);
-            }
-            else{
+            } else {
                 return response()->json([
                     'success' => false,
                     'message' => 'An error occurred while placing the order.',
-                ],500);
+                ], 500);
             }
 
         } catch (\Exception $e) {
@@ -120,7 +118,7 @@ class PlaceOrderController extends Controller
 
         $notification = [
             'title' => $title,
-            'body'  => $body,
+            'body' => $body,
             'click_action' => 'FLUTTER_NOTIFICATION_CLICK',  // This can be adjusted based on your requirements
         ];
 
@@ -137,7 +135,7 @@ class PlaceOrderController extends Controller
 
         $headers = [
             'Authorization' => 'key=' . $serverKey,
-            'Content-Type'  => 'application/json',
+            'Content-Type' => 'application/json',
         ];
 
         $client = new Client();
@@ -148,6 +146,7 @@ class PlaceOrderController extends Controller
 
         return response()->json(json_decode($response->getBody(), true));
     }
+
     private function updateProductData(int $productId): bool
     {
         return Product::where('id', $productId)->increment('order_count') > 0;
@@ -162,7 +161,12 @@ class PlaceOrderController extends Controller
         }
 
         $variant->increment('order_count');
-        $variant->decrement('stock_quantity', $quantity);
+        if ($variant->stock_quantity >= $quantity) {
+            $variant->decrement('stock_quantity', $quantity);
+        } else {
+            // Optional: handle out-of-stock or insufficient quantity case
+            return false;
+        }
 
         return true;
     }
