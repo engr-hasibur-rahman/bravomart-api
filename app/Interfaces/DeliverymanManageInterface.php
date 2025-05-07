@@ -41,7 +41,7 @@ interface DeliverymanManageInterface
 
     public function deleteVehicle(int $id);
 
-    public function deliverymanOrders();
+    public function deliverymanOrders($filters);
 
     public function deliverymanOrderDetails(int $order_id);
 

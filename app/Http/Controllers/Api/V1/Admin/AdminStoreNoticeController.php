@@ -39,17 +39,15 @@ class AdminStoreNoticeController extends Controller
     {
         if ($request->type == 'general' && (isset($request->store_id) || isset($request->seller_id))) {
             return response()->json([
-                'status' => false,
-                'status_code' => 400,
                 'message' => 'General notices are not allowed to assign specific store or seller'
-            ]);
+            ],400);
         }
         $success = $this->noticeRepo->createNotice($request->all());
         createOrUpdateTranslation($request, $success, 'App\Models\StoreNotice', $this->noticeRepo->translationKeys());
         if ($success) {
-            return $this->success(__('messages.save_success', ['name' => 'Notice']));
+            return $this->success(__('messages.save_success', ['name' => 'Notice']),200);
         } else {
-            return $this->failed(__('messages.save_failed', ['name' => 'Notice']));
+            return $this->failed(__('messages.save_failed', ['name' => 'Notice']),500);
         }
     }
 
@@ -63,17 +61,15 @@ class AdminStoreNoticeController extends Controller
     {
         if ($request->type == 'general' && (isset($request->store_id) || isset($request->seller_id))) {
             return response()->json([
-                'status' => false,
-                'status_code' => 400,
                 'message' => 'General notices are not allowed to assign specific store or seller'
-            ]);
+            ],400);
         }
         $success = $this->noticeRepo->updateNotice($request->all());
         createOrUpdateTranslation($request, $success, 'App\Models\StoreNotice', $this->noticeRepo->translationKeys());
         if ($success) {
-            return $this->success(__('messages.update_success', ['name' => 'Notice']));
+            return $this->success(__('messages.update_success', ['name' => 'Notice']),200);
         } else {
-            return $this->failed(__('messages.update_failed', ['name' => 'Notice']));
+            return $this->failed(__('messages.update_failed', ['name' => 'Notice']),500);
         }
     }
 
@@ -89,7 +85,7 @@ class AdminStoreNoticeController extends Controller
         if ($success) {
             return $this->success(__('messages.update_success', ['name' => 'Notice status']));
         } else {
-            return $this->failed(__('messages.update_failed', ['name' => 'Notice status']));
+            return $this->failed(__('messages.update_failed', ['name' => 'Notice status']),500);
         }
     }
 
@@ -99,7 +95,7 @@ class AdminStoreNoticeController extends Controller
         if ($success) {
             return $this->success(__('messages.delete_success', ['name' => 'Notice']));
         } else {
-            return $this->failed(__('messages.delete_failed', ['name' => 'Notice']));
+            return $this->failed(__('messages.delete_failed', ['name' => 'Notice']),500);
         }
     }
 }
