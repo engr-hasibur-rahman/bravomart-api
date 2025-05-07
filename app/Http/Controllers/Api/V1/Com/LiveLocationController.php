@@ -22,7 +22,7 @@ class LiveLocationController extends Controller
             unauthorized_response();
         }
         $validator = Validator::make($request->all(), [
-            'trackable_type' => 'required|string',  // e.g. App\Models\Deliveryman
+            'trackable_type' => 'required|string|in:deliveryman',  // e.g. App\Models\Deliveryman
             'trackable_id'   => 'required|integer',
             'latitude'       => 'required|numeric|between:-90,90',
             'longitude'      => 'required|numeric|between:-180,180',
