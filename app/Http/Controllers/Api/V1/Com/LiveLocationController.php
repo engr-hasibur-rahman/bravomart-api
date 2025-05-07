@@ -77,7 +77,7 @@ class LiveLocationController extends Controller
         if (!$location) {
             return response()->json([
                 'message' => __('messages.data_not_found'),
-            ], 404);
+            ]);
         }
 
         return response()->json([
