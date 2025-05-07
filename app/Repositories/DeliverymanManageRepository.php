@@ -460,8 +460,13 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'order.orderMaster.customer'
         ])
             ->where('deliveryman_id', $deliveryman->id)
+            // 1. Filter by local status (if provided)
             ->when(!empty($filters['status']), function ($query) use ($filters) {
                 $query->where('status', $filters['status']);
+            })
+            // 2. Always exclude delivered orders (from related orders table)
+            ->whereHas('order', function ($query) {
+                $query->where('status', '!=', 'delivered');
             })
             ->latest()
             ->paginate(10);
