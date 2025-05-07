@@ -55,7 +55,7 @@ class AdminAreaSetupManageController extends Controller
 
             return $this->success(translate('messages.save_success', ['name' => 'Area']));
         } catch (\Exception $e) {
-            return $this->failed(translate('messages.save_failed', ['name' => 'Area']));
+            return $this->failed(translate('messages.save_failed', ['name' => 'Area']),500);
         }
     }
 
@@ -72,7 +72,7 @@ class AdminAreaSetupManageController extends Controller
             createOrUpdateTranslation($request, $area->id, 'App\Models\StoreArea', $this->areaRepo->translationKeys());
             return $this->success(translate('messages.update_success', ['name' => 'Area']));
         } catch (\Exception $e) {
-            return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
+            return $this->failed(translate('messages.update_failed', ['name' => 'Area']),500);
         }
     }
 
@@ -84,7 +84,7 @@ class AdminAreaSetupManageController extends Controller
             $area->save();
             return $this->success(translate('messages.status_change_success'));
         } catch (\Exception $e) {
-            return $this->failed(translate('messages.update_failed', ['name' => 'Area']));
+            return $this->failed(translate('messages.update_failed', ['name' => 'Area']),500);
         }
     }
 
@@ -147,7 +147,7 @@ class AdminAreaSetupManageController extends Controller
             return response()->json(new AdminAreaSettingsDetailsResource($storeAreaSettings), 200);
         }  else {
 
-            return response()->json(['message' => __('messages.settings_not_created_yet')], 200);
+            return response()->json(['message' => __('messages.settings_not_created_yet')], 422);
         }
     }
 
