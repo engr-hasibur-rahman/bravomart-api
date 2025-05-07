@@ -19,36 +19,43 @@ class LiveLocationController extends Controller
     public function update(Request $request)
     {
         if (!auth('api')->check()) {
-            unauthorized_response();
+            return unauthorized_response();
         }
+
         $validator = Validator::make($request->all(), [
-            'trackable_type' => 'required|string|in:deliveryman',  // e.g. App\Models\Deliveryman
+            'trackable_type' => 'required|string|in:deliveryman',
             'trackable_id'   => 'required|integer',
             'latitude'       => 'required|numeric|between:-90,90',
             'longitude'      => 'required|numeric|between:-180,180',
-            'order_id'       => 'nullable|integer|exists:orders,id',
+            'order_id'       => 'required|array',
+            'order_id.*'     => 'integer|exists:orders,id',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(),422);
+            return response()->json($validator->errors(), 422);
         }
-        $this->orderStatus($request->order_id);
+
         $trackableType = null;
-        if ($request->trackable_type == 'deliveryman') {
+        if ($request->trackable_type === 'deliveryman') {
             $trackableType = DeliveryMan::class;
         }
-        $location = LiveLocation::updateOrCreate(
-            [
-                'trackable_type' => $trackableType,
-                'trackable_id' => $request->trackable_id,
-                'order_id' => $request->order_id,
-            ],
-            [
-                'latitude' => $request->latitude,
-                'longitude' => $request->longitude,
-                'last_updated' => Carbon::now(),
-            ]
-        );
+
+        foreach ($request->order_id as $orderId) {
+            $this->orderStatus($orderId); // Optional - depends on your logic
+
+            LiveLocation::updateOrCreate(
+                [
+                    'trackable_type' => $trackableType,
+                    'trackable_id'   => $request->trackable_id,
+                    'order_id'       => $orderId,
+                ],
+                [
+                    'latitude'      => $request->latitude,
+                    'longitude'     => $request->longitude,
+                    'last_updated'  => now(),
+                ]
+            );
+        }
 
         return response()->json([
             'message' => __('messages.update_success', ['name' => 'Location']),
