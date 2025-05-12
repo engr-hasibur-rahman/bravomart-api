@@ -573,8 +573,8 @@ class StoreManageRepository implements StoreManageInterface
         $query = Order::whereIn('store_id', $storeIds);
 
         // Handle time period filter
-        $startDate = null;
-        $endDate = null;
+        $startDate = $filters['start_date'];
+        $endDate = $filters['end_date'];
 
         if (!empty($filters['time_period'])) {
             switch ($filters['time_period']) {
