@@ -184,6 +184,7 @@ class WalletManageAdminController extends Controller
         }
 
         // Update transaction status
+        $transaction->payment_status = $request->payment_status;
         $transaction->status = 1;
         $transaction->save();
 
