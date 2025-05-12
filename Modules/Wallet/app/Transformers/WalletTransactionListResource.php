@@ -20,6 +20,8 @@ class WalletTransactionListResource extends JsonResource
             'amount' => $this->amount,
             'type' => $this->type,
             'purpose' => $this->purpose,
+            'payment_gateway' => $this->payment_gateway,
+            'payment_status' => $this->payment_status,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
