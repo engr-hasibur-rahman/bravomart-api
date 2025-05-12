@@ -1454,7 +1454,18 @@ class PermissionAdminSeeder extends Seeder
                                     'options' => ['view', 'update'],
                                     'translations' => [
                                         'en' => 'Social Login Settings',
-                                        'ar' => 'إعدادات تسجيل الدخول الاجتماعية'
+                                        'ar' => 'إعدادات تسجيل الدخول الاجتماعي'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::RECAPTCHA_SETTINGS->value,
+                                    'PermissionTitle' => 'Recaptcha Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Recaptcha Settings',
+                                        'ar' => 'إعدادات ريكابتشا'
                                     ]
                                 ]
                             ]
