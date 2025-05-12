@@ -24,11 +24,11 @@ class LiveLocationController extends Controller
 
         $validator = Validator::make($request->all(), [
             'trackable_type' => 'required|string|in:deliveryman',
-            'trackable_id'   => 'required|integer',
-            'latitude'       => 'required|numeric|between:-90,90',
-            'longitude'      => 'required|numeric|between:-180,180',
-            'order_id'       => 'required|array',
-            'order_id.*'     => 'integer|exists:orders,id',
+            'trackable_id' => 'required|integer',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'order_id' => 'required|array',
+            'order_id.*' => 'integer|exists:orders,id',
         ]);
 
         if ($validator->fails()) {
@@ -45,12 +45,14 @@ class LiveLocationController extends Controller
 
             LiveLocation::updateOrCreate(
                 [
-                    'order_id'       => $orderId,
+                    'order_id' => $orderId,
                 ],
                 [
-                    'latitude'      => $request->latitude,
-                    'longitude'     => $request->longitude,
-                    'last_updated'  => now(),
+                    'trackable_type' => $trackableType,
+                    'trackable_id' => $request->trackable_id,
+                    'latitude' => $request->latitude,
+                    'longitude' => $request->longitude,
+                    'last_updated' => now(),
                 ]
             );
         }
@@ -73,7 +75,7 @@ class LiveLocationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(),422);
+            return response()->json($validator->errors(), 422);
         }
         $this->orderStatus($request->order_id);
         $location = LiveLocation::where('order_id', $request->order_id)
