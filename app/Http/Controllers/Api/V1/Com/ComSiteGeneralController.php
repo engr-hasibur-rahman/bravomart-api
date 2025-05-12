@@ -38,6 +38,9 @@ class ComSiteGeneralController extends Controller
                 'com_maintenance_mode' => com_option_get('com_maintenance_mode'),
                 'com_user_login_otp' => com_option_get('com_user_login_otp'),
                 'com_user_email_verification' => com_option_get('com_user_email_verification'),
+                'com_google_recaptcha_v3_site_key' => com_option_get('com_google_recaptcha_v3_site_key'),
+                'com_google_recaptcha_v3_secret_key' => com_option_get('com_google_recaptcha_v3_secret_key'),
+                'com_google_recaptcha_enable_disable' => com_option_get('com_google_recaptcha_enable_disable'),
             ];
         }
 
