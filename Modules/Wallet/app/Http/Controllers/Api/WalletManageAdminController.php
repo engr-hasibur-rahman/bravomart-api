@@ -141,6 +141,9 @@ class WalletManageAdminController extends Controller
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
+        // Order by latest first
+        $query->orderBy('created_at', 'DESC');
+
         // Paginate
         $transactions = $query->paginate($request->per_page ?? 10);
 
