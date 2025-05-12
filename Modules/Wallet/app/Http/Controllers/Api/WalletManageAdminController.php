@@ -131,7 +131,7 @@ class WalletManageAdminController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $query = WalletTransaction::query();
+        $query = WalletTransaction::with('wallet.owner');
 
         // transactions by date range
         if ($startDate && $endDate) {
