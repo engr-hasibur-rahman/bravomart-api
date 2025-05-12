@@ -568,6 +568,36 @@ class SystemManagementController extends Controller
         ]);
     }
 
+    public function recaptchaSettings(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $validator = Validator::make($request->all(), [
+                'com_google_recaptcha_v3_site_key' => 'nullable|string',
+                'com_google_recaptcha_v3_secret_key' => 'nullable|string',
+                'com_google_recaptcha_enable_disable' => 'nullable|string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+             com_option_update('com_google_recaptcha_v3_site_key', $request->com_google_recaptcha_v3_site_key);
+             com_option_update('com_google_recaptcha_v3_secret_key', $request->com_google_recaptcha_v3_secret_key);
+             com_option_update('com_google_recaptcha_enable_disable', $request->com_google_recaptcha_enable_disable);
+            return $this->success(translate('messages.update_success', ['name' => 'Recaptcha Settings']));
+        }
+
+        $com_google_recaptcha_v3_site_key = com_option_get('com_google_recaptcha_v3_site_key');
+        $com_google_recaptcha_v3_secret_key = com_option_get('com_google_recaptcha_v3_secret_key');
+        $com_google_recaptcha_enable_disable = com_option_get('com_google_recaptcha_enable_disable');
+
+        return $this->success([
+            'site_key' => $com_google_recaptcha_v3_site_key,
+            'secret_key' => $com_google_recaptcha_v3_secret_key,
+            'recaptcha_enable_disable' => $com_google_recaptcha_enable_disable,
+        ]);
+    }
+
     public function cacheManagement(Request $request)
     {
         $validatedData = $request->validate([
