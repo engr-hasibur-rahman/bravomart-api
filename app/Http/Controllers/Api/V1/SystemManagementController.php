@@ -568,8 +568,11 @@ class SystemManagementController extends Controller
         ]);
     }
 
+
+
     public function recaptchaSettings(Request $request)
     {
+
         if ($request->isMethod('POST')) {
             $validator = Validator::make($request->all(), [
                 'com_google_recaptcha_v3_site_key' => 'nullable|string',
