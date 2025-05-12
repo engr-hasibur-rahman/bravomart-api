@@ -14,6 +14,8 @@ class WalletTransactionListResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'owner_name' => $this->wallet?->owner?->name
+                ?? trim($this->wallet?->owner?->first_name . ' ' . $this->wallet?->owner?->last_name),
             'wallet_id' => $this->wallet_id,
             'transaction_ref' => $this->transaction_ref,
             'transaction_details' => $this->transaction_details,
