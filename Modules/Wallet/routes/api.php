@@ -45,10 +45,11 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         Route::get('/', [WalletCommonController::class, 'myWallet']);
         Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
         Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
+        // wallet payment status update for common
+        Route::post('payment-status-update', [WalletCommonController::class, 'paymentStatusUpdate']);
     });
 
-    // wallet payment status update for common
-    Route::post('wallet/payment-status-update', [WalletCommonController::class, 'paymentStatusUpdate']);
+
 
     // withdraw all method lists
     Route::get('withdraw/gateway-method-list', [SellerAndDeliverymanWithdrawController::class, 'withdrawGatewayList']);
