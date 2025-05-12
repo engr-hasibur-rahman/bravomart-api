@@ -28,7 +28,7 @@ class AdminCashCollectionController extends Controller
                 'order_id' => 'required|exists:orders,id',
                 'deliveryman_id' => 'required|exists:users,id',
                 'reference' => 'nullable|string|max:500',
-                'activity_value' => 'required|numeric',
+                'activity_value' => 'required|numeric|min:0',
             ]);
 
             if ($validator->fails()) {
