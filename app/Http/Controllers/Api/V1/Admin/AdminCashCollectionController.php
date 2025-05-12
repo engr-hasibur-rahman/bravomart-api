@@ -55,7 +55,10 @@ class AdminCashCollectionController extends Controller
             if ($request->activity_value > $cash_collection->activity_value) {
                 return response()->json(['message' => __('messages.received_amount_can\'t_be_greater')], 422);
             }
-
+            $remainingAmount = $this->remainingAmount($order);
+            if ($remainingAmount < $request->activity_value) {
+                return response()->json(['message' => __('messages.total_amount_exceed', ['remainingAmount' => $remainingAmount])], 422);
+            }
 
             $orderActivity = OrderActivity::create([
                 'order_id' => $request->order_id,
@@ -93,6 +96,19 @@ class AdminCashCollectionController extends Controller
     private function isCashOnDelivery($order)
     {
         return $order->orderMaster->payment_gateway == 'cash_on_delivery';
+    }
+
+    private function remainingAmount($order)
+    {
+        $totalCollected = OrderActivity::where('order_id', $order->id)
+            ->where('activity_type', OrderActivityType::CASH_COLLECTION->value)
+            ->sum('activity_value');
+
+        $totalDeposited = OrderActivity::where('order_id', $order->id)
+            ->where('activity_type', OrderActivityType::CASH_DEPOSIT->value)
+            ->sum('activity_value');
+
+        return $totalCollected - $totalDeposited;
     }
 
 
