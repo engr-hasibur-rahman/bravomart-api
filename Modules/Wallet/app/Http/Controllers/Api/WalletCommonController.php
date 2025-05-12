@@ -302,9 +302,13 @@ class WalletCommonController extends Controller
         if (!in_array($user->activity_scope, ['store_level', 'delivery_level'])) {
             return unauthorized_response();
         }
+        $ownerType = 'App\Models\User';
+        if ($user->activity_scope == 'store_level') {
+            $ownerType = 'App\Models\Store';
+        }
 
         // Fetch wallet data
-        $user_wallet = Wallet::where('owner_id', $user->id)->first();
+        $user_wallet = Wallet::where('owner_id', $user->id)->where('owner_type',$ownerType)->first();
         if (!$user_wallet) {
             return response()->json([
                 'status' => false,
