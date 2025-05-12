@@ -136,6 +136,7 @@ return [
     'order_is_not_shipped' => 'This order is not shipped yet!',
     'order_confirmation_store' => 'Order delivery confirmation setting is set to store!',
     'received_amount_can\'t_be_greater' => 'The received amount is greater than collected amount!',
+    'total_amount_exceed' => 'Total collected amount exceeds total order amount! Remaining amount is :remainingAmount!',
 
     'can\'t_modify' => 'You can\'t modify this :name!',
 
