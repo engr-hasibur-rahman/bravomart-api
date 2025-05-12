@@ -158,4 +158,46 @@ class WalletManageAdminController extends Controller
         $transaction->save();
         return response()->json(['message' => 'Transaction status changed successfully']);
     }
+
+    public function transactionPaymentStatusChange(Request $request)
+    {
+
+        $validated = Validator::make($request->all(), [
+            'transaction_id' => 'required|exists:wallet_transactions,id',
+            'payment_status' => 'required|in:pending,paid,failed',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validated->errors(),
+            ], 422);
+        }
+
+        $transaction = WalletTransaction::findOrFail($request->transaction_id);
+
+        // Avoid re-processing already paid transactions
+        if ($transaction->status === 'paid' && $request->payment_status === 'paid') {
+            return response()->json([
+                'message' => 'Transaction is already marked as paid.',
+            ], 200);
+        }
+
+        // Update transaction status
+        $transaction->status = 1;
+        $transaction->save();
+
+        // Update wallet balance only if status is now "paid" and wasn't already
+        if ($request->payment_status === 'paid') {
+            $wallet = Wallet::findOrFail($transaction->wallet_id);
+            $wallet->balance += $transaction->amount;
+            $wallet->save();
+        }
+
+
+        return response()->json([
+            'message' => 'Transaction payment status updated successfully',
+            'transaction' => $transaction,
+        ]);
+    }
 }
