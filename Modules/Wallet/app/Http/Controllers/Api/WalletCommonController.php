@@ -316,7 +316,7 @@ class WalletCommonController extends Controller
         $earningHistory = WalletTransaction::where('wallet_id', $user_wallet->id)
             ->where('type', 'credit')
             ->where('status', 1)
-            ->latest()
+//            ->latest()
             ->get();
         // Fetch latest withdrawal history
         $withdrawHistory = WalletWithdrawalsTransaction::where('wallet_id', $user_wallet->id)->latest()->get();
