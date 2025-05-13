@@ -8,6 +8,7 @@ use App\Http\Resources\Customer\CustomerDashboardResource;
 use App\Http\Resources\Customer\CustomerProfileResource;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Interfaces\CustomerManageInterface;
+use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
 use App\Models\CustomerDeactivationReason;
 use App\Models\UniversalNotification;
@@ -15,6 +16,7 @@ use App\Models\User;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -120,37 +122,37 @@ class CustomerManageController extends Controller
     }
     /* ---------------------------------------------------------- Reset and Verification -------------------------------------------------------- */
     // Send verification email
-    public function sendVerificationEmail(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                "status" => false,
-                "status_code" => 500,
-                "message" => $validator->errors()
-            ]);
-        }
-        try {
-            $result = $this->customerRepo->sendVerificationEmail($request->email);
-
-            if (!$result) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 500,
-                    'message' => __('messages.data_not_found')
-                ], 404);
-            }
-            return response()->json(['status' => true, 'message' => 'Verification email sent.']);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
+//    public function sendVerificationEmail(Request $request)
+//    {
+//        $validator = Validator::make($request->all(), [
+//            'email' => 'required|string|email|max:255',
+//        ]);
+//        if ($validator->fails()) {
+//            return response()->json([
+//                "status" => false,
+//                "status_code" => 500,
+//                "message" => $validator->errors()
+//            ]);
+//        }
+//        try {
+//            $result = $this->customerRepo->sendVerificationEmail($request->email);
+//
+//            if (!$result) {
+//                return response()->json([
+//                    'status' => false,
+//                    'status_code' => 500,
+//                    'message' => __('messages.data_not_found')
+//                ], 404);
+//            }
+//            return response()->json(['status' => true, 'message' => 'Verification email sent.']);
+//        } catch (\Exception $e) {
+//            return response()->json([
+//                'status' => false,
+//                'status_code' => 500,
+//                'message' => $e->getMessage()
+//            ]);
+//        }
+//    }
 
     // Verify email with token
     public function verifyEmail(Request $request)
@@ -446,9 +448,11 @@ class CustomerManageController extends Controller
             ]);
         }
     }
-
-    public function updateEmail(Request $request)
+    public function sendVerificationEmail(Request $request)
     {
+        if (!auth('api_customer')->check()) {
+            return unauthorized_response();
+        }
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:customers,email',
         ]);
@@ -457,14 +461,48 @@ class CustomerManageController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
+        $user = auth('api_customer')->user();
+
         try {
-            if (!auth('sanctum')->check()) {
-                return unauthorized_response();
-            }
-            $userId = auth('sanctum')->id();
+            $token = rand(100000, 999999);
+            $user->email_verify_token = $token;
+            $user->save();
+            // Send email verification
+            Mail::to($request->email)->send(new EmailVerificationMail($user));
+
+            return response()->json(['status' => true, 'message' => 'Verification email sent.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => false,
+                "status_code" => 500,
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function updateEmail(Request $request)
+    {
+        if (!auth('sanctum')->check()) {
+            return unauthorized_response();
+        }
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:customers,email',
+            'token' => 'required|string'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        try {
+
+            $userId = auth('api_customer')->id();
             $user = Customer::findOrFail($userId);
-            if ($user && !$user->email_verify_token) {
-                $user->update($request->only('email'));
+            if ($user && $user->email_verify_token == $request->token) {
+                $user->update([
+                    'email' => $request->email,
+                    'email_verify_token' => null,
+                ]);
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,

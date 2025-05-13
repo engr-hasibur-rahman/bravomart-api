@@ -489,7 +489,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
         $deliveryman = auth('api')->user();
         $order_requests = Order::with(['orderDeliveryHistory', 'orderMaster.orderAddress', 'store', 'orderDetail'])
-//            ->where('confirmed_by', $deliveryman->id)
+            ->where('confirmed_by', $deliveryman->id)
             ->whereDoesntHave('orderDeliveryHistory', function ($query) use ($deliveryman) {
                 $query->where('deliveryman_id', $deliveryman->id);
             })
@@ -506,7 +506,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         try {
             $order = Order::find($order_id);
             if ($status === 'accepted') {
-                if ($order->confirmed_by !== $deliveryman->id) {
+                if ($order->confirmed_by != $deliveryman->id) {
                     return 'already confirmed';
                 }
                 $already_accepted = OrderDeliveryHistory::where('order_id', $order_id)

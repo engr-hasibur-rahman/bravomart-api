@@ -369,7 +369,7 @@ class DeliverymanManageController extends Controller
             $user->email_verify_token = $token;
             $user->save();
             // Send email verification
-            Mail::to($user->email)->send(new EmailVerificationMail($user));
+            Mail::to($request->email)->send(new EmailVerificationMail($user));
 
             return response()->json(['status' => true, 'message' => 'Verification email sent.']);
         } catch (\Exception $e) {
