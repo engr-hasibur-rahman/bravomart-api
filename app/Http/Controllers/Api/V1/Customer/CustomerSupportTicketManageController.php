@@ -51,7 +51,7 @@ class CustomerSupportTicketManageController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $ticket = Ticket::find($request->ticket_id);
-        if ($ticket->customer_id == null || $ticket->customer_id !== $customer->id) {
+        if ($ticket->customer_id == null || $ticket->customer_id != $customer->id) {
             return response()->json([
                 'message' => __('messages.ticket_does_not_belongs_to_this_customer')
             ], 422);
