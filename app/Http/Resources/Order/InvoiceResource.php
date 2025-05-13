@@ -53,6 +53,7 @@ class InvoiceResource extends JsonResource
                     'amount' => $item->line_total_price_with_qty,
                     'tax_rate' => $item->tax_rate,
                     'tax_amount' => $item->tax_amount,
+                    'coupon_discount' => $item->coupon_discount_amount,
                     'total_tax_amount' => $item->total_tax_amount,
                 ];
             }),
