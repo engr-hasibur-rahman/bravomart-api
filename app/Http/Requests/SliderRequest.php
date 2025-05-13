@@ -45,6 +45,19 @@ class SliderRequest extends FormRequest
         ];
 
     }
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $hasBgImage = $this->hasFile('bg_image') || $this->filled('bg_image');
+            $hasBgColor = $this->filled('bg_color');
+
+            if ($hasBgImage && $hasBgColor) {
+                $validator->errors()->add('bg_color', 'You cannot use both background image and background color at the same time.');
+                $validator->errors()->add('bg_image', 'You cannot use both background image and background color at the same time.');
+            }
+
+        });
+    }
 
     public function messages(): array
     {
