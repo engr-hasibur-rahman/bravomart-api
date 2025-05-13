@@ -23,7 +23,7 @@ class InvoiceResource extends JsonResource
         $additional_charge = round(optional($this->orderMaster)->additional_charge, 2) ?? 0;
 
         // Total Amount Calculation
-        $total_amount = $subtotal + $total_tax_amount + $shipping_charge + $additional_charge;
+        $total_amount = ($subtotal + $total_tax_amount + $shipping_charge + $additional_charge) - $coupon_discount;
 
         return [
             'customer' => $this->orderMaster->customer ? [
