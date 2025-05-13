@@ -506,7 +506,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         try {
             $order = Order::find($order_id);
             if ($status === 'accepted') {
-                if ($order->confirmed_by !== $deliveryman->id) {
+                if ($order->confirmed_by != $deliveryman->id) {
                     return 'already confirmed';
                 }
                 $already_accepted = OrderDeliveryHistory::where('order_id', $order_id)
