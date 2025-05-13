@@ -50,7 +50,7 @@ class InvoiceResource extends JsonResource
                     'price' => $item->price,
                     'quantity' => $item->quantity,
                     'variant' => json_decode($item->variant_details),
-                    'amount' => $item->price,
+                    'amount' => $item->line_total_price_with_qty,
                     'tax_rate' => $item->tax_rate,
                     'tax_amount' => $item->tax_amount,
                     'total_tax_amount' => $item->total_tax_amount,
