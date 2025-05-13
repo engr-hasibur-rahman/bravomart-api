@@ -31,6 +31,7 @@ class SliderRequest extends FormRequest
             'description' => 'nullable|string',
             'description_color' => 'nullable|string|max:7', // Assuming HEX color code
             'image' => 'nullable', // Validating image upload
+            'bg_image' => 'nullable', // Validating image upload
             'button_text' => 'nullable|string|max:50',
             'bg_color' => 'nullable|string|max:7', // Assuming HEX color code
             'button_bg_color' => 'nullable|string|max:7', // Assuming HEX color code
