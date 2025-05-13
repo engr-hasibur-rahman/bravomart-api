@@ -174,7 +174,7 @@ class CustomerOrderController extends Controller
                 'message' => __('messages.coupon_limit_reached'),
             ], 422);
         }
-        if ($coupon->coupon->status !== 1 && $coupon->status !== 1) {
+        if ($coupon->coupon->status != 1 && $coupon->status != 1) {
             return response()->json([
                 'message' => __('messages.coupon_inactive'),
             ], 422);
