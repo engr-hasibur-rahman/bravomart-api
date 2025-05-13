@@ -1053,7 +1053,7 @@ class FrontendController extends Controller
     /* -----------------------------------------------------------> Slider List <---------------------------------------------------------- */
     public function allSliders()
     {
-        $sliders = Slider::where('status', 1)->latest()->paginate(50);
+        $sliders = Slider::where('status', 1)->orderBy('order','asc')->paginate(50);
         // Check if sliders exist
         if ($sliders->isEmpty()) {
             return response()->json([
