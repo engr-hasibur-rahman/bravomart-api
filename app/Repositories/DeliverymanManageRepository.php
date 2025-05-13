@@ -596,20 +596,43 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     'activity_value' => $order->order_amount
                 ]);
             }
+
+
+            // Store wallet update
+            $store_wallet = Wallet::where('owner_id', $deliveryman->id)
+                ->where('owner_type', WalletOwnerType::STORE->value)
+                ->first();
+
             // Deliveryman wallet update
-            $wallet = Wallet::where('owner_id', $deliveryman->id)
+            $deliveryman_wallet = Wallet::where('owner_id', $deliveryman->id)
                 ->where('owner_type', WalletOwnerType::DELIVERYMAN->value)
                 ->first();
 
-            if ($wallet) {
-                // Update wallet balance
-                $wallet->balance += $order->delivery_charge_admin; // Add earnings to the balance
-                $wallet->earnings += $order->delivery_charge_admin;
-                $wallet->save();
+            if ($deliveryman_wallet || $store_wallet) {
 
-                // Create wallet transaction history
+                // Store Update wallet balance
+                $store_wallet->balance += $order->order_amount_store_value; // Add earnings to the balance
+                $store_wallet->earnings += $order->order_amount_store_value;
+                $store_wallet->save();
+
+                // Store Create wallet transaction history
                 WalletTransaction::create([
-                    'wallet_id' => $wallet->id,
+                    'wallet_id' => $store_wallet->id,
+                    'amount' => $order->order_amount_store_value,
+                    'type' => 'credit',
+                    'purpose' => 'Order  Earnings',
+                    'status' => 1,
+                ]);
+
+
+                // Deliveryman Update wallet balance
+                $deliveryman_wallet->balance += $order->delivery_charge_admin; // Add earnings to the balance
+                $deliveryman_wallet->earnings += $order->delivery_charge_admin;
+                $deliveryman_wallet->save();
+
+                // Deliveryman Create wallet transaction history
+                WalletTransaction::create([
+                    'wallet_id' => $deliveryman_wallet->id,
                     'amount' => $order->delivery_charge_admin,
                     'type' => 'credit',
                     'purpose' => 'Delivery Earnings',
@@ -630,21 +653,27 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     // order notification
                     $email_template_deliveryman = EmailTemplate::where('type', 'deliveryman-earning')->where('status', 1)->first();
                     $email_template_order_delivered = EmailTemplate::where('type', 'order-status-delivered')->where('status', 1)->first();
+
                     // customer, store and admin
                     $customer_subject = $email_template_order_delivered->subject;
                     $store_subject = $email_template_order_delivered->subject;
                     $admin_subject = $email_template_order_delivered->subject;
+
                     $customer_message = $email_template_order_delivered->body;
                     $store_message = $email_template_order_delivered->body;
                     $admin_message = $email_template_order_delivered->body;
+
                     // deliveryman
                     $deliveryman_subject = $email_template_deliveryman->subject;
                     $deliveryman_message = $email_template_deliveryman->body;
+
                     $customer_message = str_replace(["@customer_name", "@order_id", "@order_amount"], [$order->orderMaster?->customer?->full_name, $order->id, $order->order_amount, $order->delivery_charge_admin], $customer_message);
                     $store_message = str_replace(["@name", "@order_id", "@order_amount"], [$order->store?->name, $order->id, $order->order_amount, $order->delivery_charge_admin], $store_message);
                     $admin_message = str_replace(["@order_id", "@order_amount", "@earnings_amount"], [$order->id, $order->order_amount, $order->delivery_charge_admin], $admin_message);
                     $deliveryman_message = str_replace(["@name", "@order_id", "@order_amount", "@earnings_amount"], [auth('api')->user()->full_name, $order->id, $order->order_amount, $order->delivery_charge_admin], $deliveryman_message);
-//                    // customer
+
+
+ //                  // customer
 //                    Mail::to($customer_email)->send(new DynamicEmail(['subject' => $customer_subject, 'message' => $customer_message]));
 //                    // store
 //                    Mail::to($store_email)->send(new DynamicEmail(['subject' => $store_subject, 'message' => $store_message]));
