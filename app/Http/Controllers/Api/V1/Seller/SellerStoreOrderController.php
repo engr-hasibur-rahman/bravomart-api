@@ -150,7 +150,9 @@ class SellerStoreOrderController extends Controller
             return response()->json(['message' => __('messages.order_does_not_belong_to_seller')], 422);
         }
         if ($order->status === 'pending' || $order->status === 'confirmed' || $order->status === 'processing') {
-
+            if ($order->status === 'processing') {
+                return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
+            }
             $success = $order->update([
                 'status' => $request->status
             ]);
