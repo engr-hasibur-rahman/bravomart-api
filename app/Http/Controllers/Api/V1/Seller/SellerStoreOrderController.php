@@ -80,6 +80,9 @@ class SellerStoreOrderController extends Controller
             if (isset($request->status)) {
                 $orders->where('status', $request->status);
             }
+            if (isset($request->start_date) && isset($request->end_date)) {
+                $orders->whereBetween('created_at', [$request->start_date, $request->end_date]);
+            }
 
             // Apply payment_status filter
             if (isset($request->payment_status)) {
