@@ -15,7 +15,7 @@ class InvoiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $subtotal = round($this->orderDetail->sum('line_total_excluding_tax'), 2);
+        $subtotal = round($this->orderDetail->sum('line_total_price_with_qty'), 2);
         $coupon_discount = round($this->orderDetail->sum('coupon_discount_amount'), 2);
         $total_tax_amount = round($this->orderDetail->sum('total_tax_amount'), 2);
         $product_discount_amount = round(abs($this->product_discount_amount), 2);
@@ -23,7 +23,7 @@ class InvoiceResource extends JsonResource
         $additional_charge = round(optional($this->orderMaster)->additional_charge, 2) ?? 0;
 
         // Total Amount Calculation
-        $total_amount = $subtotal + $total_tax_amount + $shipping_charge + $additional_charge;
+        $total_amount = ($subtotal + $total_tax_amount + $shipping_charge + $additional_charge) - $coupon_discount;
 
         return [
             'customer' => $this->orderMaster->customer ? [
@@ -53,7 +53,6 @@ class InvoiceResource extends JsonResource
                     'amount' => $item->line_total_price_with_qty,
                     'tax_rate' => $item->tax_rate,
                     'tax_amount' => $item->tax_amount,
-                    'coupon_discount' => $item->coupon_discount_amount,
                     'total_tax_amount' => $item->total_tax_amount,
                 ];
             }),

@@ -53,7 +53,9 @@ class AdminOrderManageController extends Controller
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
 
-        $ordersQuery->when($request->created_at, fn($query) => $query->whereDate('created_at', $request->created_at));
+        $ordersQuery->when($request->start_date && $request->end_date, function ($query) use ($request) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        });
 
         $ordersQuery->when($request->payment_status, function ($query) use ($request) {
             $query->whereHas('orderMaster', function ($q) use ($request) {
