@@ -38,7 +38,6 @@ class PlaceOrderController extends Controller
 
         $data = $request->validated();
 
-
 //        $user = User::with('pushSubscriptions')->find(1);
 //        // Get subscription data from the request
 //        $endpoint = $request->input('endpoint');

@@ -55,17 +55,22 @@ class OrderService
         foreach ($data['packages'] as $package) {
             $total_items += count($package['items']);
         }
-        /*------------------------------------------------------------>Subscription Check<------------------------------------------------------------------------*/
-        // check package | if store subscription system check | if store subscription expire or order limit end this store product not create order
+
+        /*---------------------- Subscription Check ----------------------------*/
+        // check package
+        // if store subscription system check
+        // if store subscription expire or order limit end this store product not create order   
         foreach ($data['packages'] as $packageData) {
             // if type subscription
             $store = Store::find($packageData['store_id']);
+
             // subscription check start
             if ($store->subscription_type === 'subscription') {
                 // check store subscription package
                 $store_subscription = StoreSubscription::where('store_id', $store->id)
                     ->whereDate('expire_date', '>=', now())
                     ->first();
+
                 // if expire subscription
                 if (empty($store_subscription)) {
                     return false;
@@ -76,7 +81,7 @@ class OrderService
                     return false;
                 }
             } // subscription check end
-            /*------------------------------------------------------------>Subscription Check<------------------------------------------------------------------------*/
+            /*------------------------------------- Subscription Check -------------------------------------*/
 
             foreach ($packageData['items'] as $itemData) {
                 // find the product
@@ -128,6 +133,7 @@ class OrderService
         $additional_charge_enabled = $system_commission->order_additional_charge_enable_disable;
         $additional_charge_name = $system_commission->order_additional_charge_name ?? null;
         $tax_disabled = $system_commission->order_include_tax_amount == 0;
+
 
         /*------------------------------------------------------------>Create OrderMaster<------------------------------------------------------------------------*/
         $order_master = OrderMaster::create([
@@ -554,14 +560,20 @@ class OrderService
 //            }
 
 
+        // notification send
         $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
-//            // Dispatch the email job asynchronously
-//            dispatch(new DispatchOrderEmails($order_master->id));
+
+       // mail send Dispatch the email job asynchronously
+        dispatch(new DispatchOrderEmails($order_master->id));
+
+
         return [
             $all_orders,
             $order_master,
             'customer' => $customer,
         ];
+
+
 //        } catch (\Exception $e) {
 //        }
     }
