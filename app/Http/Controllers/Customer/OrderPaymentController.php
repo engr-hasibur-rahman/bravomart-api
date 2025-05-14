@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\OrderMaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -55,10 +56,10 @@ class OrderPaymentController extends Controller
         }
 
         // Find the order
-        $order = Order::where('id', $request->order_id)->first();
+        $orderMaster = OrderMaster::where('id', $request->order_id)->first();
 
         // Check if the subscription history exists
-        if (empty($order)) {
+        if (empty($orderMaster)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order not found'
@@ -66,7 +67,7 @@ class OrderPaymentController extends Controller
         }
 
         // Update the subscription history
-        $order->update([
+        $orderMaster->update([
             'payment_status' => 'paid',
             'transaction_ref' => $request->transaction_ref ?? null,
             'transaction_details' => $request->transaction_details ?? null,
