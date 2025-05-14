@@ -105,8 +105,8 @@ class CustomerSupportTicketManageController extends Controller
             ], 422);
         }
         $ticket = Ticket::find($request->id);
-        $isClosed = $ticket->status === 0;
-        if ($ticket->customer_id == null || $ticket->customer_id !== $customer->id) {
+        $isClosed = $ticket->status == 0;
+        if ($ticket->customer_id == null || $ticket->customer_id != $customer->id) {
             return response()->json([
                 'message' => __('messages.ticket_does_not_belongs_to_this_customer')
             ], 422);

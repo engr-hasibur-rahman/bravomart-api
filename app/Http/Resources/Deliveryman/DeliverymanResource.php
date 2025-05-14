@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Deliveryman;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,6 +18,7 @@ class DeliverymanResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->first_name . ' ' . $this->last_name,
+            "image_url" => ImageModifier::generateImageUrl($this->image),
             "phone" => $this->phone,
             "email" => $this->email,
             "total_delivered" => $this->total_delivered,
