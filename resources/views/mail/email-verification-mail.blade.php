@@ -102,8 +102,8 @@
             </a>
         </div>
         <div class="email-body">
-            <h2>Hello, {{ $customer->first_name }}!</h2>
-            <p>We have received a request to verify your email address. Here is your verification code:</p>
+            <h2>{{ __('Hello') }}, {{ $customer->full_name }}!</h2>
+            <p>{{ __('We have received a request to verify your email address. Here is your verification code:') }}</p>
             <strong style="margin-top: 10px">   {{ $customer->email_verify_token }}</strong>
         </div>
         <div class="footer">
