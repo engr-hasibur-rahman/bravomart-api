@@ -616,5 +616,55 @@ if (!function_exists('getOrderStatusMessage')) {
 
         return $messages;
     }
+
+
+    if (!function_exists('get_currency_symbol')) {
+        function get_currency_symbol(bool $asCode = false): string
+        {
+            // Define a local currency-symbol map
+            $currencies = [
+                'USD' => '$',
+                'EUR' => '€',
+                'GBP' => '£',
+                'BDT' => '৳',
+                'INR' => '₹',
+                'JPY' => '¥',
+                'CAD' => 'C$',
+                'AUD' => 'A$',
+                'MYR' => 'RM',
+                'BRL' => 'R$',
+                'ZAR' => 'R',
+                'NGN' => '₦',
+                'IDR' => 'Rp',
+            ];
+
+            $globalCurrency = com_option_get('com_site_global_currency') ?? '$';
+            $symbol = $currencies[$globalCurrency] ?? '$';
+
+            if ($asCode) {
+                $symbol = $globalCurrency;
+            }
+
+            $addSpace = com_option_get('com_site_space_between_amount_and_symbol') === 'yes';
+
+            return $addSpace ? " {$symbol} " : $symbol;
+        }
+    }
+
+
+    if (!function_exists('format_currency')) {
+        function amount_with_symbol_format($amount, $text = false)
+        {
+            $symbol = get_currency_symbol($text);
+            $position = com_option_get('com_site_currency_symbol_position');
+            $use_comma = com_option_get('com_site_comma_form_adjustment_amount') === 'yes';
+
+            $formatted = number_format((float) $amount, 2, '.', $use_comma ? ',' : '');
+
+            return $position === 'right' ? $formatted . $symbol : $symbol . $formatted;
+        }
+    }
+
+
 }
 
