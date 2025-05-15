@@ -118,8 +118,8 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                                  User Permissions                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    case USERS_ROLE_ADD = '/admin/roles/add-role';
-    case USERS_ROLE_LIST = '/admin/roles';
+    case USERS_ROLE_ADD = '/admin/roles/add';
+    case USERS_ROLE_LIST = '/admin/roles/list';
     case USERS_LIST_ADMIN = '/admin/users';
     case USERS_ADD_ADMIN = '/admin/users/add-user';
 
