@@ -37,7 +37,7 @@ class WalletCommonController extends Controller
             if (!$request->store_id && empty($request->store_id)) {
                 return response()->json([
                     'message' => 'Store ID is required'
-                ],422);
+                ], 422);
             }
             $store = Store::find($request->store_id);
 
@@ -308,7 +308,7 @@ class WalletCommonController extends Controller
         }
 
         // Fetch wallet data
-        $user_wallet = Wallet::where('owner_id', $user->id)->where('owner_type',$ownerType)->first();
+        $user_wallet = Wallet::where('owner_id', $user->id)->where('owner_type', $ownerType)->first();
         if (!$user_wallet) {
             return response()->json([
                 'status' => false,
@@ -323,7 +323,7 @@ class WalletCommonController extends Controller
             ->latest()
             ->get();
         // Fetch latest withdrawal history
-        $withdrawHistory = WalletWithdrawalsTransaction::where('wallet_id', $user_wallet->id)->latest()->get();
+        $withdrawHistory = WalletWithdrawalsTransaction::where('wallet_id', $user_wallet->id)->orderBy('approved_at', 'asc')->get();
 
         return response()->json([
             'status' => true,
