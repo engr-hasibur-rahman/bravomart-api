@@ -13,8 +13,8 @@ class AdminWithdrawSettingsController extends Controller
     {
             if ($request->isMethod('POST')) {
                 $this->validate($request, [
-                    'minimum_withdrawal_limit' => 'nullable|numeric',
-                    'maximum_withdrawal_limit' => 'nullable|numeric',
+                    'minimum_withdrawal_limit' => 'nullable|numeric|lte:maximum_withdrawal_limit',
+                    'maximum_withdrawal_limit' => 'nullable|numeric|gte:minimum_withdrawal_limit',
                 ]);
 
                 $fields = [
