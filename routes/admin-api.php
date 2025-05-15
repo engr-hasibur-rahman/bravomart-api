@@ -537,10 +537,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
 
             // withdrawals manage
             Route::group(['prefix' => 'withdraw/'], function () {
+
                 // settings
                 Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_FINANCIAL_WITHDRAW_MANAGE_SETTINGS->value], function () {
                     Route::match(['get', 'post'], 'settings', [AdminWithdrawSettingsController::class, 'withdrawSettings']);
                 });
+
                 // gateway manage
                 Route::group(['middleware' => 'permission:' . PermissionKey::ADMIN_WITHDRAW_METHOD_MANAGEMENT->value], function () {
                     Route::get('gateway-list', [AdminWithdrawGatewayManageController::class, 'withdrawGatewayList']);
@@ -653,8 +655,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('permissions', [PermissionController::class, 'index']);
         Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
         Route::get('module-wise-permissions', [PermissionController::class, 'moduleWisePermissions']);
-        Route::group(['prefix' => 'roles/'], function () {
-            Route::get('list', [RoleController::class, 'index']);
+        Route::group(['prefix' => 'roles/','middleware' => 'permission:' . PermissionKey::USERS_ROLE_ADD->value], function () {
+            Route::get('list', [RoleController::class, 'index'])->middleware('permission:' . PermissionKey::USERS_ROLE_LIST->value);
             Route::post('add', [RoleController::class, 'store']);
             Route::get('details/{id}', [RoleController::class, 'show']);
             Route::post('update', [RoleController::class, 'update']);
