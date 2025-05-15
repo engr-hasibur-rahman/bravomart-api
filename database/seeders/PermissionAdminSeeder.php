@@ -158,17 +158,6 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
-                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_TEMPLATE->value,
-                                    'PermissionTitle' => 'Product Template',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => 'LayoutPanelTop',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'Product Template',
-                                        'ar' => 'قالب المنتج'
-                                    ]
-                                ],
-                                [
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_PRODUCT_BULK_IMPORT->value,
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'system_level',
