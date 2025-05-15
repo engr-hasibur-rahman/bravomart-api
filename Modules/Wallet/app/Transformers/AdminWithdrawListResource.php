@@ -5,6 +5,7 @@ namespace Modules\Wallet\app\Transformers;
 use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Store\StoreShortDetailsResource;
 use App\Http\Resources\User\UserDetailsResource;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +32,7 @@ class AdminWithdrawListResource extends JsonResource
             "created_at" => $this->created_at,
             "wallet" => $this->wallet ? new WalletBalanceInfoResource($this->wallet) : null,
             "owner" => $this->owner
-                ? (isset($this->owner->store_seller_id)
+                ? (($this->owner_type == Store::class)
                     ? new StoreShortDetailsResource($this->owner)
                     : new UserDetailsResource($this->owner))
                 : null,
