@@ -245,6 +245,14 @@ class SystemManagementController extends Controller
                 'com_our_info.*.url'=> 'nullable|string',
                 'com_our_info_title'=> 'nullable|string',
 
+                // Help Center
+                'com_help_center' => 'nullable|array',
+                'com_help_center_enable_disable' => 'nullable|string',
+                'com_help_center.*.title'=> 'nullable|string',
+                'com_help_center.*.name'=> 'nullable|string',
+                'com_help_center.*.url'=> 'nullable|string',
+                'com_help_center_title'=> 'nullable|string',
+
                 // Social Links Section
                 'com_social_links_enable_disable' => 'nullable|string',
                 'com_social_links_title' => 'nullable|string',
@@ -268,6 +276,7 @@ class SystemManagementController extends Controller
             $fields = [
                 'com_quick_access_enable_disable',
                 'com_our_info_enable_disable',
+                'com_help_center_enable_disable',
                 'com_quick_access_title',
                 'com_our_info_title',
                 'com_social_links_enable_disable',
@@ -300,6 +309,10 @@ class SystemManagementController extends Controller
                 'com_our_info.*.title',
                 'com_our_info.*.name',
                 'com_our_info.*.url',
+                'com_help_center',
+                'com_help_center.*.title',
+                'com_help_center.*.name',
+                'com_help_center.*.url',
             ];
 
             // Basic processing for fields
@@ -366,6 +379,7 @@ class SystemManagementController extends Controller
                 'com_our_info' => json_decode(com_option_get('com_our_info'), true) ?? [],
                 'com_quick_access_enable_disable' => com_option_get('com_quick_access_enable_disable') ?? '',
                 'com_our_info_enable_disable' => com_option_get('com_our_info_enable_disable') ?? '',
+                'com_help_center_enable_disable' => com_option_get('com_help_center_enable_disable') ?? '',
                 'com_quick_access_title' => com_option_get('com_quick_access_title') ?? '',
                 'com_our_info_title' => com_option_get('com_our_info_title') ?? '',
                 'com_social_links_enable_disable' => com_option_get('com_social_links_enable_disable') ?? '',
