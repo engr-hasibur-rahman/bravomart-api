@@ -671,14 +671,24 @@ class FrontendController extends Controller
             switch ($request->sort) {
                 case 'price_low_high':
                     $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
-                        ->orderBy('product_variants.price', 'asc')
-                        ->select('products.*'); // Select only product fields to avoid conflicts
+                        ->select('products.id', \DB::raw('MIN(product_variants.price) as variant_price'))
+                        ->groupBy('products.id')
+                        ->orderBy('variant_price', 'asc');
+//                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+//                        ->orderBy('product_variants.price', 'asc')
+//                        ->select('products.*') // Select only product fields to avoid conflicts
+//                        ->groupBy('products.id'); // Ensure distinct products
                     break;
 
                 case 'price_high_low':
                     $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
-                        ->orderBy('product_variants.price', 'desc')
-                        ->select('products.*'); // Select only product fields to avoid conflicts
+                        ->select('products.id', \DB::raw('MIN(product_variants.price) as variant_price'))
+                        ->groupBy('products.id')
+                        ->orderBy('variant_price', 'desc');
+//                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+//                        ->orderBy('product_variants.price', 'desc')
+//                        ->select('products.*') // Select only product fields to avoid conflicts
+//                        ->groupBy('products.id'); // Ensure distinct products
                     break;
 
                 case 'newest':
@@ -981,6 +991,7 @@ class FrontendController extends Controller
             ], 500);
         }
     }
+
     public function categoryWiseProducts(Request $request)
     {
         try {
@@ -1053,7 +1064,7 @@ class FrontendController extends Controller
     /* -----------------------------------------------------------> Slider List <---------------------------------------------------------- */
     public function allSliders()
     {
-        $sliders = Slider::where('status', 1)->orderBy('order','asc')->paginate(50);
+        $sliders = Slider::where('status', 1)->orderBy('order', 'asc')->paginate(50);
         // Check if sliders exist
         if ($sliders->isEmpty()) {
             return response()->json([
