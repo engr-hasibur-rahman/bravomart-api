@@ -25,6 +25,9 @@ class AdminSubscriptionSellerController extends Controller
     public function index(Request $request)
     {
         $query = StoreSubscription::query();
+        if (!empty($request->search)) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
         if (!empty($request->status)) {
             $query->where('status', $request->status);
         }
@@ -87,7 +90,7 @@ class AdminSubscriptionSellerController extends Controller
             ], 404);
         }
 
-        $storeSubscription->update(['status' => $storeSubscription->status == 0 ? 1 : 0 ]);
+        $storeSubscription->update(['status' => $storeSubscription->status == 0 ? 1 : 0]);
 
         return response()->json([
             'status' => 'success',
