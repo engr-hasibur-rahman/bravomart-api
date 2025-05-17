@@ -166,7 +166,7 @@
         <div class="logo">
             @php
                 if (!empty(com_option_get_id_wise_url(com_option_get('com_site_logo')))){
-                     $logo = !empty(com_option_get_id_wise_url(com_option_get('com_site_logo')));
+                     $logo = com_option_get_id_wise_url(com_option_get('com_site_logo'));
                 }else{
                      $logo = asset('storage/images/no-image.png');
                 }
