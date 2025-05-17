@@ -15,8 +15,13 @@ class WalletListResource extends JsonResource
         return [
             'id' => $this->id,
             'owner_id' => $this->owner_id,
-            'owner_name' => $this->owner?->first_name . ' ' . $this->owner?->last_name,
-            'owner_type' => $this->owner_type == 'App\Models\Customer' ? 'Customer' : 'User',
+            'owner_name' => $this->owner_type === 'App\Models\Store' ?  $this->owner?->name : $this->owner?->full_name,
+            'owner_type' => match ($this->owner_type) {
+                'App\Models\Customer' => 'Customer',
+                'App\Models\User' => 'User',
+                'App\Models\Store' => 'Store',
+                default => 'Unknown',
+            },
             'balance' => $this->balance,
             'status' => $this->status,
         ];
