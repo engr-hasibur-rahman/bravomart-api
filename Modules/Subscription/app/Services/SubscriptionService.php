@@ -15,9 +15,9 @@ class SubscriptionService
     public function buySubscriptionPackage($data)
     {
 
-       $store_id = $data['store_id'];
-       $subscription_id = $data['subscription_id'];
-       $payment_gateway = $data['payment_gateway'];
+        $store_id = $data['store_id'];
+        $subscription_id = $data['subscription_id'];
+        $payment_gateway = $data['payment_gateway'];
 
         // Find the store
         $store = Store::find($store_id);
@@ -97,15 +97,15 @@ class SubscriptionService
                 'product_featured_limit' => $subscription_package->product_featured_limit,
                 'payment_gateway' => $payment_gateway ?? null,
                 'payment_status' => $payment_status ?? null,
-                'transaction_ref' =>  null,
-                'manual_image' =>  null,
+                'transaction_ref' => null,
+                'manual_image' => null,
                 'expire_date' => $new_expire_date,
                 'status' => $subscription_status,
             ]);
 
         } else {
             // Create a new subscription if no existing one found
-       $store_sub = StoreSubscription::create([
+            $store_sub = StoreSubscription::create([
                 'store_id' => $store_id,
                 'subscription_id' => $subscription_package->id,
                 'name' => $subscription_package->name,
@@ -144,9 +144,9 @@ class SubscriptionService
                 'product_featured_limit' => $subscription_package->product_featured_limit,
                 'payment_gateway' => $payment_gateway ?? null,
                 'payment_status' => $payment_status ?? null,
-                'transaction_ref' =>  null,
-                'manual_image' =>  null,
-                'expire_date' => now()->addDays($subscription_package->validity),
+                'transaction_ref' => null,
+                'manual_image' => null,
+                'expire_date' => now()->addDays((int)$subscription_package->validity),
                 'status' => $subscription_status,
             ]);
         }
@@ -278,8 +278,6 @@ class SubscriptionService
     }
 
 
-
-
     public function adminAssignStoreSubscription($data)
     {
         // Authenticate user
@@ -367,8 +365,8 @@ class SubscriptionService
                 'product_featured_limit' => $subscription_package->product_featured_limit,
                 'payment_gateway' => $payment_gateway ?? null,
                 'payment_status' => $payment_status ?? null,
-                'transaction_ref' =>  null,
-                'manual_image' =>  null,
+                'transaction_ref' => null,
+                'manual_image' => null,
                 'expire_date' => now()->addDays($subscription_package->validity),
                 'status' => $subscription_status,
             ]);
@@ -378,7 +376,7 @@ class SubscriptionService
                 'message' => 'Subscription successfully purchased.',
                 'status_code' => 201
             ];
-        }else{
+        } else {
             return [
                 'success' => false,
                 'message' => 'Subscription already exists.',
