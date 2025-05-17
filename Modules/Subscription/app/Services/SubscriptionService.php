@@ -69,7 +69,7 @@ class SubscriptionService
             $existing_expiry_date = \Carbon\Carbon::parse($existing_subscription->expire_date);
 
             // Extend the subscription validity by adding the new validity to the current expire date
-            $new_expire_date = $existing_expiry_date->addDays($new_validity);
+            $new_expire_date = $existing_expiry_date->addDays((int)$new_validity);
 
             // Update the existing subscription
             $existing_subscription->type = $subscription_package->type;
