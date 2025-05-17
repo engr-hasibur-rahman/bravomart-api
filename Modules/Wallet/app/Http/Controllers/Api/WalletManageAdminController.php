@@ -48,12 +48,12 @@ class WalletManageAdminController extends Controller
         }
 
         // Filter by status if provided
-        if ($request->status !== 'all') {
-            $wallets->where('status', $request->input('status'));
+        if (!empty($request->status)) {
+            $wallets->where('status', (int)$request->status);
         }
 
         // Paginate the results with a default of 10 per page
-        $wallets = $wallets->latest()->paginate($request->per_page ?? 10);
+        $wallets = $wallets->latest()->paginate($request->per_page ?? 500);
 
         return response()->json([
             'wallets' => WalletListResource::collection($wallets),
