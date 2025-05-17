@@ -31,6 +31,18 @@ class SystemCommission extends Model
         'order_additional_charge_enable_disable' => 'boolean',
     ];
 
+    public static function booted()
+    {
+        static::updated(function (SystemCommission $systemCommission) {
+            if ($systemCommission->isDirty(['commission_type', 'commission_amount'])) {
+                Store::where('subscription_type', 'commission')->update([
+                    'admin_commission_type' => $systemCommission->commission_type,
+                    'admin_commission_amount' => $systemCommission->commission_amount ?? $systemCommission->default_order_commission_rate,
+                ]);
+            }
+        });
+    }
+
     public function calculateCommission(float $amount): float
     {
         if (!$this->commission_enabled) {
