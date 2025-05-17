@@ -28,8 +28,9 @@ class SubscriberManageRepository implements SubscriberManageInterface
             ]
         );
 
+        $message = __('Thank you for subscribing!');
         // Send custom subscription mail
-        Mail::to($subscriber->email)->send(new SubscribedMail($subscriber));
+        Mail::to($subscriber->email)->send(new SubscribedMail($subscriber, $message));
 
         return $subscriber;
     }
