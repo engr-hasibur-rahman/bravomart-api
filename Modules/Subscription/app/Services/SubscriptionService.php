@@ -123,7 +123,7 @@ class SubscriptionService
                 'payment_status' => $payment_status ?? null,
                 'transaction_ref' => null,
                 'manual_image' => null,
-                'expire_date' => now()->addDays($subscription_package->validity),
+                'expire_date' => now()->addDays((int)$subscription_package->validity),
                 'status' => $subscription_status,
             ]);
             // Create subscription history
