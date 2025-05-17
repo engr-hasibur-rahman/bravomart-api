@@ -50,6 +50,9 @@ class AdminOrderResource extends JsonResource
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
             'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetail')),
+            'admin_commission' => $this->order_amount_admin_commission + $this->delivery_charge_admin_commission,
+            'store_amount' => $this->order_amount_store_value,
+            'deliveryman_commission' => $this->delivery_charge_admin
         ];
     }
 }

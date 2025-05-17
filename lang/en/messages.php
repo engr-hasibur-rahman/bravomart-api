@@ -147,6 +147,8 @@ return [
 
     'currently_not_available' => 'Sorry! We are currently not available!',
 
+    'wallet_not_found' => 'Wallet not found!'
+
 ];
 
 

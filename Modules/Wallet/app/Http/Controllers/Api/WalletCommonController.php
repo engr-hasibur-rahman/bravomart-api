@@ -165,8 +165,14 @@ class WalletCommonController extends Controller
             }
             $store = Store::find($request->store_id);
             $wallet = Wallet::forOwner($store)->first();
+
         } else {
             $wallet = Wallet::forOwner($user)->first();
+        }
+        if (!$wallet) {
+            return response()->json([
+                'message' => __('messages.wallet_not_found')
+            ],404);
         }
 
         $query = WalletTransaction::query();
