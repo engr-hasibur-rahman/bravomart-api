@@ -7,8 +7,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -48,6 +47,7 @@ return new class extends Migration
             $table->timestamp('available_time_ends')->nullable(); // Only for Food Item
             $table->date('manufacture_date')->nullable(); // Items like medicine
             $table->date('expiry_date')->nullable(); // Items like medicine
+            $table->boolean('is_featured')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });

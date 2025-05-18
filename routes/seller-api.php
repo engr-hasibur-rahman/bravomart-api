@@ -140,6 +140,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
                     Route::get('list', [SellerProductManageController::class, 'index']);
                     Route::get('details/{slug}', [SellerProductManageController::class, 'show']);
                     Route::post('add', [SellerProductManageController::class, 'store'])->middleware('permission:' . PermissionKey::SELLER_STORE_PRODUCT_ADD->value);
+                    Route::post('add-to-featured', [SellerProductManageController::class, 'addToFeatured']);
                     Route::post('update', [SellerProductManageController::class, 'update']);
                     Route::delete('remove/{id}', [SellerProductManageController::class, 'destroy']);
                     Route::get('deleted/records', [SellerProductManageController::class, 'deleted_records']);

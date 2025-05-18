@@ -148,7 +148,11 @@ return [
 
     'currently_not_available' => 'Sorry! We are currently not available!',
 
-    'wallet_not_found' => 'Wallet not found!'
+    'wallet_not_found' => 'Wallet not found!',
+    'insufficient_limit' => 'Insufficient limit!',
+    'product_featured_added_successfully' => 'Product featured added successfully!',
+    'product_featured_removed_successfully' => 'Product featured removed successfully!',
+    'already_featured' => 'This :name is already featured!',
 
 ];
 
