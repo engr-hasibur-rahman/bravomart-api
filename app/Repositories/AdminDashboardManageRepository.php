@@ -73,7 +73,10 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
         $total_withdrawals = WalletWithdrawalsTransaction::where('status', 'approved')->sum('amount');
         $total_subscription_earnings = SubscriptionHistory::where('status', 1)->where('payment_status', 'paid')->sum('price');
         $total_tax = OrderDetail::whereHas('order', function ($orderQuery) {
-            $orderQuery->where('refund_status', '!=', 'refunded')
+            $orderQuery->where(function ($q) {
+                $q->where('refund_status', '!=', 'refunded')
+                    ->orWhereNull('refund_status');
+            })
                 ->whereHas('orderMaster', function ($masterQuery) {
                     $masterQuery->where('payment_status', 'paid');
                 });
@@ -81,7 +84,10 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
         $total_admin_commission_amount = Order::whereHas('orderMaster', function ($q) {
             $q->where('payment_status', 'paid');
         })
-            ->where('refund_status', '!=', 'refunded')
+            ->where(function ($q) {
+                $q->where('refund_status', '!=', 'refunded')
+                    ->orWhereNull('refund_status');
+            })
             ->sum('order_amount_admin_commission');
         $total_order_revenue = $total_earnings - $total_refunds;
         $total_revenue = ($total_order_revenue + $total_admin_commission_amount + $total_subscription_earnings) - $total_tax;
@@ -111,6 +117,7 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             'total_refunded_orders' => $refunded_orders,
 
             'total_earnings' => $total_earnings,
+            'total_order_commission' => $total_admin_commission_amount,
             'total_refunds' => $total_refunds,
             'total_order_revenue' => $total_order_revenue,
             'total_withdrawals' => $total_withdrawals,
