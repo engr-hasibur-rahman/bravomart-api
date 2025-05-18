@@ -2,12 +2,16 @@
 
 namespace Modules\Subscription\app\Services;
 
+use App\Mail\DynamicEmail;
+use App\Models\EmailTemplate;
 use App\Models\Store;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
+use Modules\Wallet\app\Models\Wallet;
 
 
 class SubscriptionService
@@ -47,12 +51,32 @@ class SubscriptionService
 
         // Check payment gateway (wallet or others)
         if ($payment_gateway == 'wallet') {
-            // Update store status if paid through wallet
-            $store->status = 1;
-            $store->save();
+            // wallet balance check
+            $store_wallet_balance = Wallet::where('owner_type', 'App\Models\Store')
+                ->where('owner_id', $store->id)
+                ->first();
 
-            $subscription_status = 1;
-            $payment_status = 'paid';
+            if (!empty($store_wallet_balance) && $store_wallet_balance->balance >= $subscription_package->price) {
+                // Proceed with subscription purchase
+                $subscription_status = 1;
+                $payment_status = 'paid';
+
+                // Update store status
+                $store->status = 1;
+                $store->save();
+
+                // Decrement wallet balance
+                $store_wallet_balance->balance -= $subscription_package->price;
+                $store_wallet_balance->save();
+
+
+            }else{
+                return [
+                    'success' => true,
+                    'message' => 'Insufficient wallet balance. Please deposit funds to continue.',
+                ];
+            }
+
         }
 
         // Check for existing subscription and update if found
@@ -154,6 +178,62 @@ class SubscriptionService
         $store->update(['subscription_type' => 'subscription']);
 
 
+        // send mail and notification
+        $store_email = $store->email;
+        $system_global_email = com_option_get('com_site_email');
+
+        // subscription buy mail send
+        try {
+            $email_template_subscription_store = EmailTemplate::where('type', 'subscription-buy-store')->where('status', 1)->first();
+            $email_template_subscription_admin = EmailTemplate::where('type', 'subscription-buy-admin')->where('status', 1)->first();
+
+            //subject
+            $store_subject = $email_template_subscription_store->subject;
+            $admin_subject = $email_template_subscription_admin->subject;
+            //body
+            $store_message = $email_template_subscription_store->body;
+            $admin_message = $email_template_subscription_admin->body;
+
+            $store_name = $store->name;
+            $seller_name = auth()->guard('api')->user()->full_name;
+
+            $subscription_status_label = match($subscription_status) {
+                0 => 'Pending',
+                1 => 'Active',
+                2 => 'Cancelled',
+                default => 'Unknown',
+            };
+
+            $store_message = str_replace(["@seller_name", "@store_name", "@subscription_name", "@validity_days", "@expiry_date", "@payment_status", "@subscription_status"],
+                [
+                    $seller_name,
+                    $store_name,
+                    $subscription_package->name,
+                    $subscription_package->validity,
+                   $new_expire_date ?? now()->addDays((int)$subscription_package->validity),
+                    $payment_status,
+                    $subscription_status_label
+                ], $store_message);
+
+            $admin_message = str_replace(["@seller_name", "@store_name", "@subscription_name", "@validity_days", "@expiry_date", "@payment_status", "@subscription_status"],
+                [
+                    $seller_name,
+                    $store_name,
+                    $subscription_package->name,
+                    $subscription_package->validity,
+                    $new_expire_date ?? now()->addDays((int)$subscription_package->validity),
+                    $payment_status,
+                    $subscription_status_label
+                ], $admin_message);
+
+            // store
+            Mail::to($store_email)->send(new DynamicEmail($store_subject, (string) $store_message));
+            // admin
+            Mail::to($system_global_email)->send(new DynamicEmail($admin_subject, (string) $admin_message));
+        } catch (\Exception $th) {
+        }
+
+
         return [
             'success' => true,
             'message' => 'Subscription successfully purchased.',
@@ -223,55 +303,164 @@ class SubscriptionService
             : now()->addDays($subscriptionPackage->validity);
 
 
-        // Create subscription history
-        SubscriptionHistory::create([
-            'store_subscription_id' => $currentSubscription->id,
-            'store_id' => $store_id,
-            'subscription_id' => $subscriptionPackage->id,
-            'name' => $subscriptionPackage->name,
-            'type' => $subscriptionPackage->type,
-            'validity' => $subscriptionPackage->validity,
-            'price' => $subscriptionPackage->price,
-            'pos_system' => $subscriptionPackage->pos_system,
-            'self_delivery' => $subscriptionPackage->self_delivery,
-            'mobile_app' => $subscriptionPackage->mobile_app,
-            'live_chat' => $subscriptionPackage->live_chat,
-            'order_limit' => $subscriptionPackage->order_limit,
-            'product_limit' => $subscriptionPackage->product_limit,
-            'product_featured_limit' => $subscriptionPackage->product_featured_limit,
-            'payment_gateway' => $payment_gateway,
-            'payment_status' => $payment_status,
-            'transaction_ref' => null,
-            'manual_image' => null,
-            'expire_date' => $newExpireDate,
-            'status' => $subscription_status,
-        ]);
 
-        // Update or create the current subscription
-        $currentSubscription->update([
-            'subscription_id' => $subscriptionPackage->id,
-            'name' => $subscriptionPackage->name,
-            'type' => $subscriptionPackage->type,
-            'validity' => $subscriptionPackage->validity,
-            'price' => $subscriptionPackage->price,
-            'pos_system' => $subscriptionPackage->pos_system,
-            'self_delivery' => $subscriptionPackage->self_delivery,
-            'mobile_app' => $subscriptionPackage->mobile_app,
-            'live_chat' => $subscriptionPackage->live_chat,
-            'order_limit' => $subscriptionPackage->order_limit,
-            'product_limit' => $subscriptionPackage->product_limit,
-            'product_featured_limit' => $subscriptionPackage->product_featured_limit,
-            'payment_gateway' => $payment_gateway,
-            'payment_status' => $payment_status,
-            'transaction_ref' => null,
-            'manual_image' => null,
-            'expire_date' => $newExpireDate,
-            'status' => $subscription_status,
-        ]);
+        // Check payment gateway (wallet)
+        if ($payment_gateway === 'wallet') {
+            // wallet balance check
+            $store_wallet_balance = Wallet::where('owner_type', 'App\Models\Store')
+                ->where('owner_id', $store->id)
+                ->first();
 
+            if (!empty($store_wallet_balance) && $store_wallet_balance->balance >= $subscriptionPackage->price) {
+                // Proceed with subscription purchase
+                // Update store status
+                $store->status = 1;
+                $store->save();
+
+                // Decrement wallet balance
+                $store_wallet_balance->balance -= $subscriptionPackage->price;
+                $store_wallet_balance->save();
+
+
+                // Create subscription history
+                SubscriptionHistory::create([
+                    'store_subscription_id' => $currentSubscription->id,
+                    'store_id' => $store_id,
+                    'subscription_id' => $subscriptionPackage->id,
+                    'name' => $subscriptionPackage->name,
+                    'type' => $subscriptionPackage->type,
+                    'validity' => $subscriptionPackage->validity,
+                    'price' => $subscriptionPackage->price,
+                    'pos_system' => $subscriptionPackage->pos_system,
+                    'self_delivery' => $subscriptionPackage->self_delivery,
+                    'mobile_app' => $subscriptionPackage->mobile_app,
+                    'live_chat' => $subscriptionPackage->live_chat,
+                    'order_limit' => $subscriptionPackage->order_limit,
+                    'product_limit' => $subscriptionPackage->product_limit,
+                    'product_featured_limit' => $subscriptionPackage->product_featured_limit,
+                    'payment_gateway' => $payment_gateway,
+                    'payment_status' => $payment_status,
+                    'transaction_ref' => null,
+                    'manual_image' => null,
+                    'expire_date' => $newExpireDate,
+                    'status' => $subscription_status,
+                ]);
+
+                // Update or create the current subscription
+                $currentSubscription->update([
+                    'subscription_id' => $subscriptionPackage->id,
+                    'name' => $subscriptionPackage->name,
+                    'type' => $subscriptionPackage->type,
+                    'validity' => $currentSubscription->validity + $subscriptionPackage->validity,
+                    'price' => $subscriptionPackage->price,
+                    'pos_system' => $subscriptionPackage->pos_system,
+                    'self_delivery' => $subscriptionPackage->self_delivery,
+                    'mobile_app' => $subscriptionPackage->mobile_app,
+                    'live_chat' => $subscriptionPackage->live_chat,
+                    'order_limit' => $currentSubscription->order_limit + $subscriptionPackage->order_limit,
+                    'product_limit' => $currentSubscription->product_limit + $subscriptionPackage->product_limit,
+                    'product_featured_limit' => $currentSubscription->product_featured_limit + $subscriptionPackage->product_featured_limit,
+                    'payment_gateway' => $payment_gateway,
+                    'payment_status' => $payment_status,
+                    'transaction_ref' => null,
+                    'manual_image' => null,
+                    'expire_date' => $newExpireDate,
+                    'status' => $subscription_status,
+                ]);
+
+            }else{
+                return [
+                    'success' => false,
+                    'message' =>  __('messages.store_subscription_insufficient_balance'),
+                ];
+            }
+
+        }else{
+            // others payment gateway
+            // Create subscription history
+            SubscriptionHistory::create([
+                'store_subscription_id' => $currentSubscription->id,
+                'store_id' => $store_id,
+                'subscription_id' => $subscriptionPackage->id,
+                'name' => $subscriptionPackage->name,
+                'type' => $subscriptionPackage->type,
+                'validity' => $subscriptionPackage->validity,
+                'price' => $subscriptionPackage->price,
+                'pos_system' => $subscriptionPackage->pos_system,
+                'self_delivery' => $subscriptionPackage->self_delivery,
+                'mobile_app' => $subscriptionPackage->mobile_app,
+                'live_chat' => $subscriptionPackage->live_chat,
+                'order_limit' => $subscriptionPackage->order_limit,
+                'product_limit' => $subscriptionPackage->product_limit,
+                'product_featured_limit' => $subscriptionPackage->product_featured_limit,
+                'payment_gateway' => $payment_gateway,
+                'payment_status' => $payment_status,
+                'transaction_ref' => null,
+                'manual_image' => null,
+                'expire_date' => $newExpireDate,
+                'status' => $subscription_status,
+            ]);
+        }
+
+
+
+        // send mail and notification
+        $store_email = $store->email;
+        $system_global_email = com_option_get('com_site_email');
+
+        // subscription buy mail send
+        try {
+            $email_template_subscription_store = EmailTemplate::where('type', 'subscription-renewed-store')->where('status', 1)->first();
+            $email_template_subscription_admin = EmailTemplate::where('type', 'subscription-renewed-admin')->where('status', 1)->first();
+
+            //subject
+            $store_subject = $email_template_subscription_store->subject;
+            $admin_subject = $email_template_subscription_admin->subject;
+            //body
+            $store_message = $email_template_subscription_store->body;
+            $admin_message = $email_template_subscription_admin->body;
+
+            $store_name = $store->name;
+            $seller_name = auth()->guard('api')->user()->full_name;
+
+            $subscription_status_label = match($subscription_status) {
+                0 => 'Pending',
+                1 => 'Active',
+                2 => 'Cancelled',
+                default => 'Unknown',
+            };
+
+            $store_message = str_replace(["@seller_name", "@store_name", "@subscription_name", "@validity_days", "@expiry_date", "@payment_status", "@subscription_status"],
+                [
+                    $seller_name,
+                    $store_name,
+                    $subscriptionPackage->name,
+                    $subscriptionPackage->validity,
+                    $newExpireDate,
+                    $payment_status,
+                    $subscription_status_label
+                ], $store_message);
+
+            $admin_message = str_replace(["@seller_name", "@store_name", "@subscription_name", "@validity_days", "@expiry_date", "@payment_status", "@subscription_status"],
+                [
+                    $seller_name,
+                    $store_name,
+                    $subscriptionPackage->name,
+                    $subscriptionPackage->validity,
+                    $newExpireDate,
+                    $payment_status,
+                    $subscription_status_label
+                ], $admin_message);
+
+            // store
+            Mail::to($store_email)->send(new DynamicEmail($store_subject, (string) $store_message));
+            // admin
+            Mail::to($system_global_email)->send(new DynamicEmail($admin_subject, (string) $admin_message));
+        } catch (\Exception $th) {
+        }
 
         return [
-            'success' => false,
+            'success' => true,
             'message' => 'Subscription renewed successfully.',
         ];
 
@@ -317,7 +506,7 @@ class SubscriptionService
         }
 
         // Set default values for payment status
-        $subscription_status = 0;
+        $subscription_status = 1;
         $payment_status = $data['payment_status'];
 
         // Check for existing subscription and update if found
@@ -373,7 +562,7 @@ class SubscriptionService
             $store->update(['subscription_type' => 'subscription']);
             return [
                 'success' => true,
-                'message' => 'Subscription successfully purchased.',
+                'message' => 'Subscription successfully assigned.',
                 'status_code' => 201
             ];
         } else {
