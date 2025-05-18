@@ -94,6 +94,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/product/{product_slug}', [FrontendController::class, 'productDetails']);
     Route::post('/new-arrivals', [FrontendController::class, 'getNewArrivals']);
     Route::post('/best-selling-products', [FrontendController::class, 'getBestSellingProduct']);
+    Route::post('/featured-products', [FrontendController::class, 'getFeaturedProduct']);
     Route::get('/week-best-products', [FrontendController::class, 'getWeekBestProducts']);
     Route::get('/trending-products', [FrontendController::class, 'getTrendingProducts']);
     Route::get('/popular-products', [FrontendController::class, 'getPopularProducts']);
