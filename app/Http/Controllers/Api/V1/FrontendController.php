@@ -485,6 +485,21 @@ class FrontendController extends Controller
         ], 200);
     }
 
+    public function getFeaturedProduct(Request $request)
+    {
+        $bestSellingProducts = Product::with(['variants', 'store'])
+            ->where('status', 'approved')
+            ->where('deleted_at', null)
+            ->where('is_featured', 1)
+            ->paginate($request->per_page ?? 10);
+
+        return response()->json([
+            'message' => __('messages.data_found'),
+            'data' => BestSellingPublicResource::collection($bestSellingProducts),
+            'meta' => new PaginationResource($bestSellingProducts)
+        ], 200);
+    }
+
     public function getTrendingProducts(Request $request)
     {
 
@@ -703,6 +718,10 @@ class FrontendController extends Controller
         if (!empty($request->search)) {
             $query->where('name', 'like', '%' . $request->search . '%')
                 ->orWhere('description', 'like', '%' . $request->search . '%');
+        }
+
+        if (isset($request->is_featured) && $request->is_featured) {
+            $query->where('is_featured', true);
         }
 
         // Pagination

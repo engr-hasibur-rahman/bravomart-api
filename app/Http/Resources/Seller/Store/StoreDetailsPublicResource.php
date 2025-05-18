@@ -54,6 +54,9 @@ class StoreDetailsPublicResource extends JsonResource
             'veg_status' => $this->veg_status,
             'off_day' => $this->off_day,
             'rating' => $this->rating,
+            'meta_title' => $this->meta_title,
+            'meta_description' => $this->meta_description,
+            'meta_image_url' => ImageModifier::generateImageUrl($this->meta_image),
             'total_product' => $this->products()->where('deleted_at', null)->where('status', 'approved')->count(),
             'all_products' => StoreProductListPublicResource::collection($this->products()
                 ->where('deleted_at', null)
