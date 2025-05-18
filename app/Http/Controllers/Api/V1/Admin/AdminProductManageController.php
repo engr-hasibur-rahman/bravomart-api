@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use Modules\Subscription\app\Models\StoreSubscription;
+use Modules\Subscription\app\Models\Subscription;
 
 class AdminProductManageController extends Controller
 {
@@ -285,5 +287,55 @@ class AdminProductManageController extends Controller
                 'message' => __('messages.update_failed', ['name' => 'Products status']),
             ], 500);
         }
+    }
+
+    public function addToFeatured(Request $request)
+    {
+        $product = Product::where('id', $request->product_id)
+            ->where('status', 'approved')
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (!$product) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+
+        $store = Store::find($product->store_id);
+
+        if (!$store) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+
+        $validSubscription = $store->getValidSubscriptionByFeatureLimits(['product_featured_limit' => 1]);
+
+        if (!$validSubscription) {
+            return response()->json([
+                'message' => __('messages.insufficient_limit')
+            ], 422);
+        }
+
+        $storeSubscription = StoreSubscription::find($validSubscription['subscription_id']);
+
+        if (!$storeSubscription) {
+            return response()->json([
+                'message' => __('messages.store_subscription_no_active_not_found')
+            ], 422);
+        }
+
+        // Proceed with update
+        $product->update(['is_featured' => true]);
+
+        // Safe decrement without going below zero
+        $storeSubscription->update([
+            'product_featured_limit' => max(0, $storeSubscription->product_featured_limit - 1)
+        ]);
+
+        return response()->json([
+            'message' => __('messages.product_featured_added_successfully')
+        ], 200);
     }
 }

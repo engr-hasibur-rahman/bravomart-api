@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
 use Modules\Subscription\app\Models\StoreSubscription;
+use Modules\Subscription\app\Models\SubscriptionHistory;
 
 class Store extends Model
 {
@@ -85,6 +86,11 @@ class Store extends Model
         return $this->hasMany(StoreSubscription::class, 'store_id', 'id');
     }
 
+    public function subscriptionHistories()
+    {
+        return $this->hasMany(SubscriptionHistory::class, 'store_id', 'id');
+    }
+
     public function activeSubscription()
     {
         return $this->hasOne(StoreSubscription::class, 'store_id', 'id')
@@ -117,4 +123,46 @@ class Store extends Model
         // Clamp between 1 and 5 only if there's an actual rating
         return max(1, min(5, round($average, 2)));
     }
+    public function getValidSubscriptionByFeatureLimits(array $requiredLimits): ?array
+    {
+        $subscriptions = $this->subscriptions()
+            ->whereDate('expire_date', '>=', now())  // Only non-expired subscriptions
+            ->where('status', 1)                     // Only active ones
+            ->orderBy('expire_date')                 // Soonest to expire first
+            ->get();
+
+        foreach ($subscriptions as $subscription) {
+            $isValid = true;
+
+            foreach ($requiredLimits as $key => $requiredValue) {
+                $subscriptionValue = $subscription->$key;
+
+                // If it's a boolean feature (like pos_system, self_delivery, etc.)
+                if (in_array($key, ['pos_system', 'self_delivery', 'mobile_app', 'live_chat'])) {
+                    if (!$subscriptionValue) {
+                        $isValid = false;
+                        break;
+                    }
+                }
+
+                // If it's a numeric limit (like order_limit, product_limit, etc.)
+                if (in_array($key, ['order_limit', 'product_limit', 'product_featured_limit'])) {
+                    if ($requiredValue > $subscriptionValue) {
+                        $isValid = false;
+                        break;
+                    }
+                }
+            }
+
+            if ($isValid) {
+                return [
+                    'subscription_id' => $subscription->id,
+                    'matched_features' => $subscription->only(array_keys($requiredLimits)),
+                ];
+            }
+        }
+
+        return null; // No matching subscription found
+    }
+
 }

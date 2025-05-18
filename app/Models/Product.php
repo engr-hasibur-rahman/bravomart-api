@@ -46,7 +46,8 @@ class Product extends Model
         "available_time_starts",
         "available_time_ends",
         "manufacture_date",
-        "expiry_date"
+        "expiry_date",
+        "is_featured",
     ];
     public $translationKeys = [
         'name',
