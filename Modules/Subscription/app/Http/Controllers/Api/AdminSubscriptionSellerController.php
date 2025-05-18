@@ -28,8 +28,8 @@ class AdminSubscriptionSellerController extends Controller
         if (!empty($request->search)) {
             $query->where('name', 'LIKE', '%' . $request->search . '%');
         }
-        if (!empty($request->status)) {
-            $query->where('status', $request->status);
+        if (isset($request->status)) {
+            $query->where('status', $request->status ?? 1);
         }
 
         if ($request->has('expire_date') && !empty($request->expire_date)) {
