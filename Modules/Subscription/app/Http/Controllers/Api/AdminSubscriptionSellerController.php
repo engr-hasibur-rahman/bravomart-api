@@ -50,7 +50,7 @@ class AdminSubscriptionSellerController extends Controller
             $query->where('store_id', $request->store_id);
         }
 
-        $subscriptions = $query->paginate(10);
+        $subscriptions = $query->paginate($request->per_page ?? 10);
         return response()->json([
             'success' => true,
 //            'data' => AdminSubscriptionPackageResource::collection($subscriptions),
