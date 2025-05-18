@@ -61,6 +61,7 @@ return [
     'store_subscription_invalid_type' => 'Invalid subscription type for the store',
     'store_subscription_no_active_not_found' => 'No active subscription found for the store.',
     'store_subscription_not_found' => 'subscription not found.',
+    'store_subscription_insufficient_balance' => 'Insufficient wallet balance. Please deposit funds to continue.',
 
     'default.address' => 'Default address can\'t be deleted!',
     'invalid.address' => 'Invalid address!',
