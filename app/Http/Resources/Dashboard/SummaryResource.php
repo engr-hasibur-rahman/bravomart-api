@@ -40,7 +40,8 @@ class SummaryResource extends JsonResource
                 'refunded_orders' => $this->buildItem('refunded-icon', 'Refunded Orders', $this->total_refunded_orders),
             ],
             'financial_summary' => [
-                'total_earnings' => $this->buildItem('earnings-icon', 'Total Earnings', $this->total_earnings),
+                'total_order_amount' => $this->buildItem('earnings-icon', 'Total Order Amount', $this->total_earnings),
+                'total_order_commission' => $this->buildItem('earnings-icon', 'Total Order Commission', $this->total_order_commission),
                 'total_refunds' => $this->buildItem('refunds-icon', 'Total Refunds', $this->total_refunds),
                 'total_tax' => $this->buildItem('tax-icon', 'Total Tax', $this->total_tax),
                 'total_withdrawals' => $this->buildItem('withdrawal-icon', 'Total Withdrawals', $this->total_withdrawals),

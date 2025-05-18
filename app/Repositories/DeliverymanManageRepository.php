@@ -609,24 +609,24 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 ->first();
 
             if ($deliveryman_wallet || $store_wallet) {
-               if(!empty($store_wallet)){
-                   // Store Update wallet balance
-                   $store_wallet->balance += $order->order_amount_store_value; // Add earnings to the balance
-                   $store_wallet->earnings += $order->order_amount_store_value;
-                   $store_wallet->save();
+                if (!empty($store_wallet)) {
+                    // Store Update wallet balance
+                    $store_wallet->balance += $order->order_amount_store_value; // Add earnings to the balance
+                    $store_wallet->earnings += $order->order_amount_store_value;
+                    $store_wallet->save();
 
-                   // Store Create wallet transaction history
-                   WalletTransaction::create([
-                       'wallet_id' => $store_wallet->id,
-                       'amount' => $order->order_amount_store_value,
-                       'type' => 'credit',
-                       'purpose' => 'Order  Earnings',
-                       'status' => 1,
-                   ]);
-               }
+                    // Store Create wallet transaction history
+                    WalletTransaction::create([
+                        'wallet_id' => $store_wallet->id,
+                        'amount' => $order->order_amount_store_value,
+                        'type' => 'credit',
+                        'purpose' => 'Order  Earnings',
+                        'status' => 1,
+                    ]);
+                }
 
 
-                if(!empty($deliveryman_wallet)){
+                if (!empty($deliveryman_wallet)) {
                     // Deliveryman Update wallet balance
                     $deliveryman_wallet->balance += $order->delivery_charge_admin; // Add earnings to the balance
                     $deliveryman_wallet->earnings += $order->delivery_charge_admin;
@@ -703,13 +703,13 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
 
                     // customer
-                    Mail::to($customer_email)->send(new DynamicEmail($customer_subject, (string) $customer_message));
+                    Mail::to($customer_email)->send(new DynamicEmail($customer_subject, (string)$customer_message));
                     // store
-                    Mail::to($store_email)->send(new DynamicEmail($store_subject, (string) $store_message));
+                    Mail::to($store_email)->send(new DynamicEmail($store_subject, (string)$store_message));
                     // admin
-                    Mail::to($system_global_email)->send(new DynamicEmail($admin_subject, (string) $admin_message));
+                    Mail::to($system_global_email)->send(new DynamicEmail($admin_subject, (string)$admin_message));
                     // deliveryman
-                    Mail::to($delivery_man)->send(new DynamicEmail($deliveryman_subject, (string) $deliveryman_message));
+                    Mail::to($delivery_man)->send(new DynamicEmail($deliveryman_subject, (string)$deliveryman_message));
                 } catch (\Exception $th) {
                 }
 
@@ -861,6 +861,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 $query->where('deliveryman_id', $this->deliveryman->id)
                     ->where('status', 'accepted');
             })
+            ->where('status', '!=', 'delivered')
             ->count();
     }
 
@@ -930,7 +931,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         }
 
         return $query->get()->sum(function ($history) {
-            return $history->order->delivery_charge_admin ?? 0; // Sum admin delivery charge
+            return round($history->order->delivery_charge_admin, 2) ?? 0; // Sum admin delivery charge
         });
     }
 }

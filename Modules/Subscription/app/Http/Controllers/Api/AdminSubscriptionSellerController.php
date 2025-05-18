@@ -25,18 +25,33 @@ class AdminSubscriptionSellerController extends Controller
     public function index(Request $request)
     {
         $query = StoreSubscription::query();
-        if (!empty($request->status)) {
-            $query->where('status', $request->status);
+
+        if (!empty($request->search)) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhereHas('store', function ($storeQuery) use ($request) {
+                        $storeQuery->where('name', 'LIKE', '%' . $request->search . '%');
+                    });
+            });
         }
 
-        if ($request->has('expire_date') && !empty($request->expire_date)) {
-            $query->whereDate('expire_date', $request->expire_date);
+        if (isset($request->status)) {
+            $query->where('status', $request->status ?? 1);
         }
 
-        if ($request->has('created_at') && !empty($request->created_at)) {
-            $query->whereDate('created_at', $request->created_at);
+        if ($request->has('start_date') && !empty($request->start_date) && $request->has('end_date') && !empty($request->end_date)) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
-        $subscriptions = $query->paginate(10);
+
+        if ($request->has('start_expire_date') && !empty($request->start_expire_date) && $request->has('end_expire_date') && !empty($request->end_expire_date)) {
+            $query->whereBetween('expire_date', [$request->start_expire_date, $request->end_expire_date]);
+        }
+
+        if (isset($request->store_id)) {
+            $query->where('store_id', $request->store_id);
+        }
+
+        $subscriptions = $query->paginate($request->per_page ?? 10);
         return response()->json([
             'success' => true,
 //            'data' => AdminSubscriptionPackageResource::collection($subscriptions),
@@ -87,7 +102,7 @@ class AdminSubscriptionSellerController extends Controller
             ], 404);
         }
 
-        $storeSubscription->update(['status' => $storeSubscription->status == 0 ? 1 : 0 ]);
+        $storeSubscription->update(['status' => $storeSubscription->status == 0 ? 1 : 0]);
 
         return response()->json([
             'status' => 'success',

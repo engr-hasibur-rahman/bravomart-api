@@ -22,10 +22,14 @@ class AdminSubscriptionPackageController extends Controller
         return $this->subscription->translationKeys;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         // Paginate the packages, 10 items per page
-        $packages = Subscription::with('related_translations')->paginate(10);
+        $query = Subscription::with('related_translations');
+        if ($request->has('search')) {
+            $query->where('name', 'LIKE', '%' . $request->get('search') . '%');
+        }
+        $packages = $query->paginate($request->per_page ?? 10);
         return response()->json([
             'success' => true,
             'packages' => AdminSubscriptionPackageResource::collection($packages),
