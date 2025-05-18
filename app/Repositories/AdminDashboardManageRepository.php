@@ -64,7 +64,10 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
         $total_earnings = Order::whereHas('orderMaster', function ($q) {
             $q->where('payment_status', 'paid');
         })
-            ->where('refund_status', '!=', 'refunded')
+            ->where(function ($q) {
+                $q->where('refund_status', '!=', 'refunded')
+                    ->orWhereNull('refund_status');
+            })
             ->sum('order_amount');
         $total_refunds = Order::where('refund_status', 'refunded')->sum('order_amount');
         $total_withdrawals = WalletWithdrawalsTransaction::where('status', 'approved')->sum('amount');

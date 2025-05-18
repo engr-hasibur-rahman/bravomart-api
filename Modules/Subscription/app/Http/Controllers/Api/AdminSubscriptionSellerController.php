@@ -34,6 +34,7 @@ class AdminSubscriptionSellerController extends Controller
                     });
             });
         }
+
         if (isset($request->status)) {
             $query->where('status', $request->status ?? 1);
         }
