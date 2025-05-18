@@ -1112,7 +1112,7 @@ class PermissionAdminSeeder extends Seeder
                         // Subscription Management
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => 'Subscription Management',
+                            'PermissionTitle' => 'Subscription',
                             'activity_scope' => 'system_level',
                             'icon' => 'PackageCheck',
                             'options' => ['view'],
@@ -1141,17 +1141,6 @@ class PermissionAdminSeeder extends Seeder
                                     'translations' => [
                                         'en' => 'Store Subscription',
                                         'ar' => 'قائمة المشتركين'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_SUBSCRIPTION_SETTINGS->value,
-                                    'PermissionTitle' => 'Subscription Settings',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'update'],
-                                    'translations' => [
-                                        'en' => 'Subscription Settings',
-                                        'ar' => 'إعدادات'
                                     ]
                                 ]
                             ]

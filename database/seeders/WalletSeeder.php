@@ -14,134 +14,51 @@ class WalletSeeder extends Seeder
      */
     public function run(): void
     {
-//        Wallet::create([
-//            "owner_id" => 1,
-//            "owner_type" => 'App\Models\Store',
-//            "balance" => 100,
-//            "status" => 1,
-//            "created_at" => Carbon::now(),
-//            "updated_at" => Carbon::now(),
-//        ]);
-//
-//        WalletTransaction::create([
-//            "wallet_id" => 2,
-//            "transaction_ref" => '123456789',
-//            "transaction_details" => 'test info',
-//            "amount" => 100,
-//            "type" => 'credit',
-//            "purpose" => 'check amount',
-//            "status" => 1,
-//            "created_at" => Carbon::now(),
-//            "updated_at" => Carbon::now(),
-//        ]);
-//
-//        Wallet::create([
-//            "owner_id" => 2,
-//            "owner_type" => 'App\Models\Store',
-//            "balance" => 100,
-//            "status" => 1,
-//            "created_at" => Carbon::now(),
-//            "updated_at" => Carbon::now(),
-//        ]);
-//
-//        WalletTransaction::create([
-//            "wallet_id" => 2,
-//            "transaction_ref" => '123456789',
-//            "transaction_details" => 'test info',
-//            "amount" => 100,
-//            "type" => 'credit',
-//            "purpose" => 'check amount',
-//            "status" => 1,
-//            "created_at" => Carbon::now(),
-//            "updated_at" => Carbon::now(),
-//        ]);
-//        Wallet::create([
-//            "owner_id" => 6,
-//            "owner_type" => 'App\Models\User',
-//            "balance" => 0.00,
-//            "status" => 1,
-//            "created_at" => Carbon::now(),
-//            "updated_at" => Carbon::now(),
-//        ]);
-
-
-
         Wallet::create([
-            "owner_id" => 3,
+            "owner_id" => 1,
             "owner_type" => 'App\Models\Store',
-            "balance" => 0,
+            "balance" => 100,
+            "status" => 1,
+            "created_at" => Carbon::now(),
+            "updated_at" => Carbon::now(),
+        ]);
+
+        WalletTransaction::create([
+            "wallet_id" => 2,
+            "transaction_ref" => '123456789',
+            "transaction_details" => 'test info',
+            "amount" => 100,
+            "type" => 'credit',
+            "purpose" => 'check amount',
             "status" => 1,
             "created_at" => Carbon::now(),
             "updated_at" => Carbon::now(),
         ]);
 
         Wallet::create([
-            "owner_id" => 4,
+            "owner_id" => 2,
             "owner_type" => 'App\Models\Store',
-            "balance" => 0,
+            "balance" => 100,
             "status" => 1,
             "created_at" => Carbon::now(),
             "updated_at" => Carbon::now(),
         ]);
 
-        Wallet::create([
-            "owner_id" => 5,
-            "owner_type" => 'App\Models\Store',
-            "balance" => 0,
+        WalletTransaction::create([
+            "wallet_id" => 2,
+            "transaction_ref" => '123456789',
+            "transaction_details" => 'test info',
+            "amount" => 100,
+            "type" => 'credit',
+            "purpose" => 'check amount',
             "status" => 1,
             "created_at" => Carbon::now(),
             "updated_at" => Carbon::now(),
         ]);
-
         Wallet::create([
             "owner_id" => 6,
-            "owner_type" => 'App\Models\Store',
-            "balance" => 0,
-            "status" => 1,
-            "created_at" => Carbon::now(),
-            "updated_at" => Carbon::now(),
-        ]);
-
-        Wallet::create([
-            "owner_id" => 8,
-            "owner_type" => 'App\Models\Store',
-            "balance" => 0,
-            "status" => 1,
-            "created_at" => Carbon::now(),
-            "updated_at" => Carbon::now(),
-        ]);
-
-        Wallet::create([
-            "owner_id" => 9,
-            "owner_type" => 'App\Models\Store',
-            "balance" => 0,
-            "status" => 1,
-            "created_at" => Carbon::now(),
-            "updated_at" => Carbon::now(),
-        ]);
-
-        Wallet::create([
-            "owner_id" => 10,
-            "owner_type" => 'App\Models\Store',
-            "balance" => 0,
-            "status" => 1,
-            "created_at" => Carbon::now(),
-            "updated_at" => Carbon::now(),
-        ]);
-
-        Wallet::create([
-            "owner_id" => 11,
-            "owner_type" => 'App\Models\Store',
-            "balance" => 0,
-            "status" => 1,
-            "created_at" => Carbon::now(),
-            "updated_at" => Carbon::now(),
-        ]);
-
-        Wallet::create([
-            "owner_id" => 12,
-            "owner_type" => 'App\Models\Store',
-            "balance" => 0,
+            "owner_type" => 'App\Models\User',
+            "balance" => 0.00,
             "status" => 1,
             "created_at" => Carbon::now(),
             "updated_at" => Carbon::now(),

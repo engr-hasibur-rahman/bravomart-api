@@ -27,8 +27,6 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/business-operations/subscr
         Route::post('assign', [AdminSubscriptionSellerController::class, 'assignStoreSubscription']);
         Route::post('change-status', [AdminSubscriptionSellerController::class, 'statusChange']);
     });
-    // settings
-    Route::get('settings', [AdminSubscriptionSettingsController::class, 'index'])->middleware(['permission:' . PermissionKey::ADMIN_SUBSCRIPTION_SETTINGS->value]);
 });
 
 

@@ -162,7 +162,6 @@ enum PermissionKey: string
     case ADMIN_GEO_AREA_MANAGE = '/admin/business-operations/area/list';
     case ADMIN_SUBSCRIPTION_PACKAGE_MANAGE = '/admin/business-operations/subscription/package/list';
     case ADMIN_SUBSCRIPTION_STORE_PACKAGE_MANAGE = '/admin/business-operations/subscription/store/list';
-    case ADMIN_SUBSCRIPTION_SETTINGS = '/admin/business-operations/subscription/settings';
     case ADMIN_COMMISSION_SETTINGS = '/admin/business-operations/commission/settings';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//

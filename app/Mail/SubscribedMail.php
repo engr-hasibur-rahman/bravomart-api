@@ -15,10 +15,12 @@ class SubscribedMail extends Mailable
     use Queueable, SerializesModels;
 
     public $subscriber;
+    public $data;
 
-    public function __construct(Subscriber $subscriber)
+    public function __construct(Subscriber $subscriber, $data)
     {
         $this->subscriber = $subscriber;
+        $this->data = $data;
     }
 
     public function build()
@@ -27,6 +29,7 @@ class SubscribedMail extends Mailable
             ->view('emails.subscribed')
             ->with([
                 'email' => $this->subscriber->email,
+                'data' => $this->data,
             ]);
     }
 }

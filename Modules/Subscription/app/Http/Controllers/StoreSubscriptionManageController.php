@@ -8,6 +8,7 @@ use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Subscription\app\Models\StoreSubscription;
+use Modules\Subscription\app\Models\SubscriptionHistory;
 use Modules\Subscription\app\Transformers\StoreSubscriptionHistoryResource;
 
 class StoreSubscriptionManageController extends Controller
@@ -28,7 +29,7 @@ class StoreSubscriptionManageController extends Controller
             ], 404);
         }
 
-        $store_subscription_history = StoreSubscription::where('store_id', $store_id)->paginate(10);
+        $store_subscription_history = SubscriptionHistory::where('store_id', $store_id)->paginate(50);
 
         return response()->json([
             'success' => true,

@@ -291,25 +291,36 @@ class AdminProductManageController extends Controller
 
     public function addToFeatured(Request $request)
     {
+        // check product exists
         $product = Product::where('id', $request->product_id)
             ->where('status', 'approved')
             ->whereNull('deleted_at')
             ->first();
-
         if (!$product) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
         }
 
-        $store = Store::find($product->store_id);
+        // check if the product is already featured
+        if ($product->is_featured){
+            $product->update([
+                'is_featured' => false
+            ]);
+            return response()->json([
+                'messages' => __('messages.product_featured_removed_successfully')
+            ]);
+        }
 
+        // check store
+        $store = Store::find($product->store_id);
         if (!$store) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
         }
 
+        // check the valid subscription limit for the store
         $validSubscription = $store->getValidSubscriptionByFeatureLimits(['product_featured_limit' => 1]);
 
         if (!$validSubscription) {
@@ -318,6 +329,7 @@ class AdminProductManageController extends Controller
             ], 422);
         }
 
+        // check store subscription
         $storeSubscription = StoreSubscription::find($validSubscription['subscription_id']);
 
         if (!$storeSubscription) {

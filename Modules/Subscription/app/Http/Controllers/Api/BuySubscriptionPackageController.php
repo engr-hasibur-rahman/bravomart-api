@@ -5,6 +5,7 @@ namespace Modules\Subscription\app\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
 use App\Models\SystemCommission;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -113,36 +114,51 @@ class BuySubscriptionPackageController extends Controller
         ]);
 
         //subscription history get after update
-        $subscription = SubscriptionHistory::where('store_id', $request->store_id)->first();
+        $subscription_history = SubscriptionHistory::where('store_id', $request->store_id)
+            ->where('status', 0)
+            ->latest('created_at')
+            ->first();
+
         // update com store subscription data
-        $com_store_subscription = StoreSubscription::where('store_id', $request->store_id)->first();
-        if (!$com_store_subscription) {
+        $currentSubscription = StoreSubscription::where('store_id', $request->store_id)->first();
+
+        if (!$currentSubscription) {
             return response()->json([
                 'success' => false,
                 'message' => 'Store subscription not found'
             ], 404);
         }
 
-        // update com store subscription data exiting data update
-        $com_store_subscription->update($subscription->only([
-            'store_id',
-            'subscription_id',
-            'name',
-            'validity',
-            'price',
-            'pos_system',
-            'self_delivery',
-            'mobile_app',
-            'live_chat',
-            'order_limit',
-            'product_limit',
-            'product_featured_limit',
-            'payment_gateway',
-            'payment_status',
-            'transaction_ref',
-            'expire_date',
-            'status',
-        ]));
+        // Calculate the new expiration date
+        $newExpireDate = Carbon::parse($currentSubscription->expire_date)->gt(now())
+            ? Carbon::parse($currentSubscription->expire_date)->addDays($currentSubscription->validity)
+            : now()->addDays($currentSubscription->validity);
+
+        $currentSubscription->update([
+            'subscription_id' => $subscription_history->id,
+            'name' => $subscription_history->name,
+            'type' => $subscription_history->type,
+            'validity' => $currentSubscription->validity + $subscription_history->validity,
+            'price' => $subscription_history->price,
+            'pos_system' => $subscription_history->pos_system,
+            'self_delivery' => $subscription_history->self_delivery,
+            'mobile_app' => $subscription_history->mobile_app,
+            'live_chat' => $subscription_history->live_chat,
+            'order_limit' => $currentSubscription->order_limit + $subscription_history->order_limit,
+            'product_limit' => $currentSubscription->product_limit + $subscription_history->product_limit,
+            'product_featured_limit' => $currentSubscription->product_featured_limit + $subscription_history->product_featured_limit,
+            'payment_gateway' => $subscription_history->payment_gateway,
+            'payment_status' => $subscription_history->payment_status,
+            'transaction_ref' => null,
+            'manual_image' => null,
+            'expire_date' => $newExpireDate,
+            'status' => $currentSubscription->status,
+        ]);
+
+        // update subscription history status if already using history
+        $subscription_history->update([
+            'status' => 1
+        ]);
 
 
         // update store type
