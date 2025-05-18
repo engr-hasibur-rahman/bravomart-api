@@ -91,7 +91,8 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             ->sum('order_amount_admin_commission');
         $total_order_revenue = $total_earnings - $total_refunds;
         $total_revenue = ($total_order_revenue + $total_admin_commission_amount + $total_subscription_earnings) - $total_tax;
-        return ['total_customers' => $total_customer,
+        return [
+            'total_customers' => $total_customer,
             'total_sellers' => $total_seller,
             'total_stores' => $total_store,
             'total_products' => $total_product,
