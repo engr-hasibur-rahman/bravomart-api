@@ -50,7 +50,10 @@ class SubscriptionService
         $payment_status = 'pending';
         // check if the package is trial
         if ($subscription_package->price == 0) {
-            $already_claimed_trial_package = SubscriptionHistory::where('store_id', $store_id)->where('subscription_id', $subscription_package->id)->first();
+            $already_claimed_trial_package = SubscriptionHistory::where('store_id', $store_id)
+                ->where('subscription_id', $subscription_package->id)
+                ->where('payment_status', 'paid')
+                ->first();
             if ($already_claimed_trial_package) {
                 return [
                     'success' => false,
