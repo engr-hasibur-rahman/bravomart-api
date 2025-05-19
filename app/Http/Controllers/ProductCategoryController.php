@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductCategoryRequest;
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Com\Product\ProductCategoryListResource;
 use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\ProductCategoryByIdResource;
 use App\Models\ProductCategory;
@@ -58,16 +60,27 @@ class ProductCategoryController extends Controller
             $categories = $categories->whereNull('parent_id')
                 ->orderBy($sortField, $sortOrder)
                 ->get();
+            return response()->json([
+                'data' => ProductCategoryResource::collection($categories)
+            ]);
+        } elseif ($request->list) {
+            $categories = $categories->whereNull('parent_id')
+                ->orderBy($sortField, $sortOrder)
+                ->paginate($per_page);
+            return response()->json([
+                'data' => ProductCategoryListResource::collection($categories),
+                'meta' => new PaginationResource($categories)
+            ]);
         } else {
             $categories = $categories
                 ->orderBy($sortField, $sortOrder)
                 ->paginate($per_page);
+            return response()->json([
+                'data' => ProductCategoryResource::collection($categories),
+                'meta' => new PaginationResource($categories)
+            ]);
         }
-
-        // Return the collection of categories
-        return ProductCategoryResource::collection($categories);
     }
-
 
     public function show(Request $request)
     {

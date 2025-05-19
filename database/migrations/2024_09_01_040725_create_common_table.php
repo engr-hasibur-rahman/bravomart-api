@@ -90,16 +90,6 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('store_types', function (Blueprint $table) {
-            $table->id();
-            $table->string('name'); // Store type name (e.g., Grocery, Pharmacy)
-            $table->string('type');
-            $table->string('image')->nullable();
-            $table->text('description')->nullable();
-            $table->bigInteger('total_stores')->default(0);
-            $table->boolean('status')->default(0)->comment('0=Inactive, 1=Active');
-            $table->timestamps();
-        });
 
         Schema::create('store_areas', function (Blueprint $table) {
             $table->id();
@@ -124,7 +114,7 @@ return new class extends Migration {
             $table->integer('delivery_time_per_km');
             $table->decimal('min_order_delivery_fee', 10, 2)->nullable();
             $table->string('delivery_charge_method')->nullable()->comment('fixed, per_km, range_wise');
-            $table->decimal('out_of_area_delivery_charge',10, 2)->nullable();
+            $table->decimal('out_of_area_delivery_charge', 10, 2)->nullable();
             $table->decimal('fixed_charge_amount', 10, 2)->nullable();
             $table->decimal('per_km_charge_amount', 10, 2)->nullable();
             $table->timestamps();

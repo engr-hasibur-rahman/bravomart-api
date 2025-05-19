@@ -29,9 +29,9 @@ class DeliverymanDashboardResource extends JsonResource
             'active_orders' => $this->active_orders,
             'wallet' => $this->wallet,
             'earning_overview' => [
-                'this_week' => $this->weekly_earnings,
-                'this_month' => $this->monthly_earnings,
-                'this_year' => $this->yearly_earnings
+                'this_week' => round($this->weekly_earnings, 2),
+                'this_month' => round($this->monthly_earnings, 2),
+                'this_year' => round($this->yearly_earnings, 2)
             ]
         ];
     }
