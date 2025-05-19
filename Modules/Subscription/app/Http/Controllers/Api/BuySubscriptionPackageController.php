@@ -31,9 +31,12 @@ class BuySubscriptionPackageController extends Controller
         if (!$subscription_enabled) {
             return response()->json([
                 'message' => __('messages.subscription_option_is_not_available')
-            ],422);
+            ], 422);
         }
         $result = $this->subscriptionService->buySubscriptionPackage($request->all());
+        if ($result['success'] == false) {
+            return response()->json($result, 422);
+        }
         return response()->json($result);
     }
 
@@ -44,7 +47,7 @@ class BuySubscriptionPackageController extends Controller
         if (!$subscription_enabled) {
             return response()->json([
                 'message' => __('messages.subscription_option_is_not_available')
-            ],422);
+            ], 422);
         }
         $store_id = $request->store_id;
         $subscription_id = $request->subscription_id;
