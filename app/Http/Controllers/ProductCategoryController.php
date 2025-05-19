@@ -64,7 +64,7 @@ class ProductCategoryController extends Controller
                 'data' => ProductCategoryResource::collection($categories)
             ]);
         } elseif ($request->list) {
-            $categories = $categories
+            $categories = $categories->whereNull('parent_id')
                 ->orderBy($sortField, $sortOrder)
                 ->paginate($per_page);
             return response()->json([
@@ -80,10 +80,7 @@ class ProductCategoryController extends Controller
                 'meta' => new PaginationResource($categories)
             ]);
         }
-
-
     }
-
 
     public function show(Request $request)
     {
