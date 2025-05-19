@@ -37,10 +37,13 @@ class  HeaderFooterController extends Controller
         $footer_info[] = [
             'com_quick_access' => json_decode(com_option_get('com_quick_access'), true) ?? [],
             'com_our_info' => json_decode(com_option_get('com_our_info'), true) ?? [],
+            'com_help_center' => json_decode(com_option_get('com_help_center'), true) ?? [],
             'com_quick_access_enable_disable' => com_option_get('com_quick_access_enable_disable') ?? '',
+            'com_help_center_enable_disable' => com_option_get('com_quick_access_enable_disable') ?? '',
             'com_our_info_enable_disable' => com_option_get('com_our_info_enable_disable') ?? '',
             'com_quick_access_title' => com_option_get('com_quick_access_title') ?? '',
             'com_our_info_title' => com_option_get('com_our_info_title') ?? '',
+            'com_help_center_title' => com_option_get('com_our_info_title') ?? '',
             'com_social_links_enable_disable' => com_option_get('com_social_links_enable_disable') ?? '',
             'com_social_links_title' => com_option_get('com_social_links_title') ?? '',
             'com_social_links_facebook_url' => com_option_get('com_social_links_facebook_url') ?? '',
