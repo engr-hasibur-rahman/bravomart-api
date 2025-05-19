@@ -71,7 +71,41 @@ class SellerProductManageController extends Controller
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $request['warranty'] = json_encode($request['warranty']);
         $request['status'] = 'pending';
-        $product = $this->productRepo->store($request->all());
+        $store = Store::find($request->store_id);
+        if (!$store) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+        if ($store->subscription_type == 'commission') {
+            $product = $this->productRepo->store($request->all());
+        } else {
+            // check the valid subscription limit for the store
+            $validSubscription = $store->getValidSubscriptionByFeatureLimits(['product_limit' => 1]);
+
+            if (!$validSubscription) {
+                return response()->json([
+                    'message' => __('messages.insufficient_limit')
+                ], 422);
+            }
+
+            // check store subscription
+            $storeSubscription = StoreSubscription::find($validSubscription['subscription_id']);
+
+            if (!$storeSubscription) {
+                return response()->json([
+                    'message' => __('messages.store_subscription_no_active_not_found')
+                ], 422);
+            }
+
+            // Proceed with update
+            $product = $this->productRepo->store($request->all());
+
+            // Safe decrement without going below zero
+            $storeSubscription->update([
+                'product_limit' => max(0, $storeSubscription->product_featured_limit - 1)
+            ]);
+        }
         createOrUpdateTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
             return $this->success(translate('messages.save_success', ['name' => 'Product']));
