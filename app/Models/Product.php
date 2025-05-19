@@ -120,6 +120,7 @@ class Product extends Model
             ->get();
     }
 
+
     public function scopeWithTrendingScore($query)
     {
         return $query->selectRaw("
