@@ -62,7 +62,7 @@ class ProductListResource extends JsonResource
             'available_time_ends' => $this->available_time_ends,
             "manufacture_date" => $this->manufacture_date,
             "expiry_date" => $this->expiry_date,
-            "is_featured" => $this->is_featured
+            "is_featured" => (int)$this->is_featured
         ];
     }
 }
