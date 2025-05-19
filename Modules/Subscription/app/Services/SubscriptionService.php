@@ -90,7 +90,7 @@ class SubscriptionService
 
             } else {
                 return [
-                    'success' => true,
+                    'success' => false,
                     'message' => 'Insufficient wallet balance. Please deposit funds to continue.',
                 ];
             }
