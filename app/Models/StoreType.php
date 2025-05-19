@@ -18,7 +18,17 @@ class StoreType extends Model
         'name',
         'description',
     ];
+    // everytime checks the count of stores of the type when data fetching
+    protected static function booted()
+    {
+        static::retrieved(function ($storeType) {
+            $count = Store::where('store_type', $storeType->type)->count();
 
+            if ($storeType->total_stores !== $count) {
+                $storeType->updateQuietly(['total_stores' => $count]);
+            }
+        });
+    }
     public function areaDetails()
     {
         return $this->belongsToMany(StoreAreaSetting::class, 'store_area_setting_store_types', 'store_type_id', 'store_area_setting_id')
