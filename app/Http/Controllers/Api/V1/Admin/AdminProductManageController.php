@@ -292,7 +292,7 @@ class AdminProductManageController extends Controller
     public function addToFeatured(Request $request)
     {
         // check product exists
-        $product = Product::where('id', $request->product_id)
+        $product = Product::where('id', $request->id)
             ->where('status', 'approved')
             ->whereNull('deleted_at')
             ->first();
