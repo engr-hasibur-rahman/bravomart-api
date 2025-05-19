@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAreaSettingsRequest;
 use App\Http\Resources\Admin\AdminStoreTypeDetailsResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Store\StoreTypePublicResource;
+use App\Http\Resources\Com\Store\StoreTypeResource;
 use App\Interfaces\StoreTypeManageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +30,7 @@ class AdminStoreTypeManageController extends Controller
         ];
         $store_types = $this->storeTypeRepo->getAllStoreTypes($filters);
         return response()->json([
-            'data' => StoreTypePublicResource::collection($store_types),
+            'data' => StoreTypeResource::collection($store_types),
             'meta' => new PaginationResource($store_types)
         ], 200);
     }

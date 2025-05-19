@@ -29,7 +29,7 @@ class AdminStoreTypeDetailsResource extends JsonResource
             "image_url" => ImageModifier::generateImageUrl($this->image),
             "description" => $this->description,
             "total_stores" => $this->total_stores,
-            "status" => $this->status,
+            "status" => (int)$this->status,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
             "translations" => StoreTypeTranslationResource::collection($this->related_translations->groupBy('language')),
