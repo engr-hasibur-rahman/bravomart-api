@@ -487,16 +487,17 @@ class FrontendController extends Controller
 
     public function getFeaturedProduct(Request $request)
     {
-        $bestSellingProducts = Product::with(['variants', 'store'])
+        $featuredProducts = Product::with(['variants', 'store'])
             ->where('status', 'approved')
-            ->where('deleted_at', null)
+            ->whereNull('deleted_at')
             ->where('is_featured', 1)
+            ->inRandomOrder()
             ->paginate($request->per_page ?? 10);
 
         return response()->json([
             'message' => __('messages.data_found'),
-            'data' => BestSellingPublicResource::collection($bestSellingProducts),
-            'meta' => new PaginationResource($bestSellingProducts)
+            'data' => BestSellingPublicResource::collection($featuredProducts),
+            'meta' => new PaginationResource($featuredProducts)
         ], 200);
     }
 
