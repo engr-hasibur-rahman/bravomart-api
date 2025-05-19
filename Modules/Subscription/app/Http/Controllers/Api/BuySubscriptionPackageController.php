@@ -134,8 +134,8 @@ class BuySubscriptionPackageController extends Controller
 
         // Calculate the new expiration date
         $newExpireDate = Carbon::parse($currentSubscription->expire_date)->gt(now())
-            ? Carbon::parse($currentSubscription->expire_date)->addDays($currentSubscription->validity)
-            : now()->addDays($currentSubscription->validity);
+            ? Carbon::parse($currentSubscription->expire_date)->addDays((int)$currentSubscription->validity)
+            : now()->addDays((int)$currentSubscription->validity);
 
         $currentSubscription->update([
             'subscription_id' => $subscription_history->id,
