@@ -1559,15 +1559,18 @@ class FrontendController extends Controller
         $perPage = $request->per_page ?? 20;
         if ($request->filled('per_page')) {
             $products = $query->paginate($perPage);
+            return response()->json([
+                'status' => true,
+                'data' => StoreWiseProductDropdownResource::collection($products),
+                'meta' => new PaginationResource($products),
+            ]);
         } else {
             $products = $query->get();
+            return response()->json([
+                'status' => true,
+                'data' => StoreWiseProductDropdownResource::collection($products),
+            ]);
         }
-
-        return response()->json([
-            'status' => true,
-            'data' => StoreWiseProductDropdownResource::collection($products),
-            'meta' => new PaginationResource($products),
-        ]);
     }
 
     public function getCheckOutPageExtraInfo(Request $request)
