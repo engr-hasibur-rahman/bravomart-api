@@ -48,6 +48,21 @@ class SubscriptionService
         // Set default values for payment status
         $subscription_status = 0;
         $payment_status = 'pending';
+        // check if the package is trial
+        if ($subscription_package->price == 0) {
+            $already_claimed_trial_package = SubscriptionHistory::where('store_id', $store_id)->where('subscription_id', $subscription_package->id)->first();
+            if ($already_claimed_trial_package) {
+                return [
+                    'success' => false,
+                    'message' => 'Already claimed trial package!',
+                ];
+            }
+            $subscription_status = 1;
+            $payment_status = 'paid';
+            // Update store status
+            $store->status = 1;
+            $store->save();
+        }
 
         // Check payment gateway (wallet or others)
         if ($payment_gateway == 'wallet') {
@@ -70,7 +85,7 @@ class SubscriptionService
                 $store_wallet_balance->save();
 
 
-            }else{
+            } else {
                 return [
                     'success' => true,
                     'message' => 'Insufficient wallet balance. Please deposit funds to continue.',
@@ -197,7 +212,7 @@ class SubscriptionService
             $store_name = $store->name;
             $seller_name = auth()->guard('api')->user()->full_name;
 
-            $subscription_status_label = match($subscription_status) {
+            $subscription_status_label = match ($subscription_status) {
                 0 => 'Pending',
                 1 => 'Active',
                 2 => 'Cancelled',
@@ -210,7 +225,7 @@ class SubscriptionService
                     $store_name,
                     $subscription_package->name,
                     $subscription_package->validity,
-                   $new_expire_date ?? now()->addDays((int)$subscription_package->validity),
+                    $new_expire_date ?? now()->addDays((int)$subscription_package->validity),
                     $payment_status,
                     $subscription_status_label
                 ], $store_message);
@@ -227,12 +242,11 @@ class SubscriptionService
                 ], $admin_message);
 
             // store
-            Mail::to($store_email)->send(new DynamicEmail($store_subject, (string) $store_message));
+            Mail::to($store_email)->send(new DynamicEmail($store_subject, (string)$store_message));
             // admin
-            Mail::to($system_global_email)->send(new DynamicEmail($admin_subject, (string) $admin_message));
+            Mail::to($system_global_email)->send(new DynamicEmail($admin_subject, (string)$admin_message));
         } catch (\Exception $th) {
         }
-
 
         return [
             'success' => true,
@@ -303,7 +317,6 @@ class SubscriptionService
             : now()->addDays($subscriptionPackage->validity);
 
 
-
         // Check payment gateway (wallet)
         if ($payment_gateway === 'wallet') {
             // wallet balance check
@@ -368,14 +381,14 @@ class SubscriptionService
                     'status' => $subscription_status,
                 ]);
 
-            }else{
+            } else {
                 return [
                     'success' => false,
-                    'message' =>  __('messages.store_subscription_insufficient_balance'),
+                    'message' => __('messages.store_subscription_insufficient_balance'),
                 ];
             }
 
-        }else{
+        } else {
             // others payment gateway
             // Create subscription history
             SubscriptionHistory::create([
@@ -403,7 +416,6 @@ class SubscriptionService
         }
 
 
-
         // send mail and notification
         $store_email = $store->email;
         $system_global_email = com_option_get('com_site_email');
@@ -423,7 +435,7 @@ class SubscriptionService
             $store_name = $store->name;
             $seller_name = auth()->guard('api')->user()->full_name;
 
-            $subscription_status_label = match($subscription_status) {
+            $subscription_status_label = match ($subscription_status) {
                 0 => 'Pending',
                 1 => 'Active',
                 2 => 'Cancelled',
@@ -453,9 +465,9 @@ class SubscriptionService
                 ], $admin_message);
 
             // store
-            Mail::to($store_email)->send(new DynamicEmail($store_subject, (string) $store_message));
+            Mail::to($store_email)->send(new DynamicEmail($store_subject, (string)$store_message));
             // admin
-            Mail::to($system_global_email)->send(new DynamicEmail($admin_subject, (string) $admin_message));
+            Mail::to($system_global_email)->send(new DynamicEmail($admin_subject, (string)$admin_message));
         } catch (\Exception $th) {
         }
 
