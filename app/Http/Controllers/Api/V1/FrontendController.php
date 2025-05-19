@@ -1557,7 +1557,11 @@ class FrontendController extends Controller
 
         // Paginate results dynamically
         $perPage = $request->per_page ?? 20;
-        $products = $query->paginate($perPage);
+        if ($request->filled('per_page')) {
+            $products = $query->paginate($perPage);
+        } else {
+            $products = $query->get();
+        }
 
         return response()->json([
             'status' => true,
