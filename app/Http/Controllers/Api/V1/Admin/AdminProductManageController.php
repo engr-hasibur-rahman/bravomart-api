@@ -303,7 +303,7 @@ class AdminProductManageController extends Controller
         }
 
         // check if the product is already featured
-        if ($product->is_featured){
+        if ($product->is_featured) {
             $product->update([
                 'is_featured' => false
             ]);
@@ -320,31 +320,36 @@ class AdminProductManageController extends Controller
             ], 404);
         }
 
-        // check the valid subscription limit for the store
-        $validSubscription = $store->getValidSubscriptionByFeatureLimits(['product_featured_limit' => 1]);
+        if ($store->subscription_type == 'commission') {
+            // Proceed with update
+            $product->update(['is_featured' => true]);
+        } else {
+            // check the valid subscription limit for the store
+            $validSubscription = $store->getValidSubscriptionByFeatureLimits(['product_featured_limit' => 1]);
 
-        if (!$validSubscription) {
-            return response()->json([
-                'message' => __('messages.insufficient_limit')
-            ], 422);
+            if (!$validSubscription) {
+                return response()->json([
+                    'message' => __('messages.insufficient_limit')
+                ], 422);
+            }
+
+            // check store subscription
+            $storeSubscription = StoreSubscription::find($validSubscription['subscription_id']);
+
+            if (!$storeSubscription) {
+                return response()->json([
+                    'message' => __('messages.store_subscription_no_active_not_found')
+                ], 422);
+            }
+
+            // Proceed with update
+            $product->update(['is_featured' => true]);
+
+            // Safe decrement without going below zero
+            $storeSubscription->update([
+                'product_featured_limit' => max(0, $storeSubscription->product_featured_limit - 1)
+            ]);
         }
-
-        // check store subscription
-        $storeSubscription = StoreSubscription::find($validSubscription['subscription_id']);
-
-        if (!$storeSubscription) {
-            return response()->json([
-                'message' => __('messages.store_subscription_no_active_not_found')
-            ], 422);
-        }
-
-        // Proceed with update
-        $product->update(['is_featured' => true]);
-
-        // Safe decrement without going below zero
-        $storeSubscription->update([
-            'product_featured_limit' => max(0, $storeSubscription->product_featured_limit - 1)
-        ]);
 
         return response()->json([
             'message' => __('messages.product_featured_added_successfully')
