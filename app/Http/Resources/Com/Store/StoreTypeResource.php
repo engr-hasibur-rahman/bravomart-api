@@ -6,7 +6,7 @@ use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class StoreTypePublicResource extends JsonResource
+class StoreTypeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -29,6 +29,13 @@ class StoreTypePublicResource extends JsonResource
             "description" => !empty($translation) && $translation->where('key', 'description')->first()
                 ? $translation->where('key', 'description')->first()->value
                 : $this->description,
+            "additional_charge_enable_disable" => $this->additional_charge_enable_disable,
+            "additional_charge_name" => !empty($translation) && $translation->where('key', 'additional_charge_name')->first()
+                ? $translation->where('key', 'additional_charge_name')->first()->value
+                : $this->additional_charge_name,
+            "additional_charge_amount" => $this->additional_charge_amount,
+            "additional_charge_type" => $this->additional_charge_type,
+            "additional_charge_commission" => $this->additional_charge_commission,
             "total_stores" => $this->total_stores,
             "status" => (int)$this->status,
             "created_at" => $this->created_at,
