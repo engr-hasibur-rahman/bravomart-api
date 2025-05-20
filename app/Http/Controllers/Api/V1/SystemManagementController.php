@@ -347,9 +347,11 @@ class SystemManagementController extends Controller
                 }
             }
 
+
             // Define the fields that need to be translated
             $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'];
             $setting_options = SettingOption::whereIn('option_name', $fields)->get(['id']);
+
 
             foreach ($setting_options as $com_option) {
                 $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', [$com_option->option_name]);
