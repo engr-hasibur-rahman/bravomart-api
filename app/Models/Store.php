@@ -86,6 +86,7 @@ class Store extends Model
         return $this->hasMany(StoreSubscription::class, 'store_id', 'id');
     }
 
+
     public function subscriptionHistories()
     {
         return $this->hasMany(SubscriptionHistory::class, 'store_id', 'id');
