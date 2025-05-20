@@ -29,7 +29,7 @@ class TaxInfoController extends Controller
             ], 422);
         }
 
-        $data = Store::whereIn('id', $store_ids)->select('id', 'tax')->get();
+        $data = Store::whereIn('id', $store_ids)->select('id', 'tax','store_type')->get();
         return response()->json([
            'success' => true,
             'tax_info' => StoreTaxInfoResource::collection($data)
