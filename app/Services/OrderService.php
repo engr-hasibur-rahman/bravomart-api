@@ -3,6 +3,7 @@
 namespace App\Services;
 
 
+use App\Enums\StoreType;
 use App\Events\OrderPlaced;
 use App\Helpers\DeliveryChargeHelper;
 use App\Jobs\DispatchOrderEmails;
@@ -255,6 +256,20 @@ class OrderService
             $store_info = Store::find($packageData['store_id']);
             $store_area_id = $store_info->area_id;
 
+            /// store type wise additional charge
+            $store_type = $store_info->type;
+            $store_type_info = \App\Models\StoreType::where('type', $store_type)->first();
+
+            $order_additional_charge_name = null;
+            $order_additional_charge_amount = null;
+            $order_additional_charge_store_amount = null;
+            $order_admin_additional_charge_commission = null;
+
+            if ($store_type_info->additional_charge_enable_disable) {
+                $order_additional_charge_name = $store_info->additional_charge_name;
+                $order_additional_charge_amount = $store_info->additional_charge_amount;
+            }
+
             // area wise calculate delivery charge
             $deliveryChargeData = DeliveryChargeHelper::calculateDeliveryCharge($store_area_id, $customer_lat, $customer_lng);
 
@@ -425,7 +440,7 @@ class OrderService
                     $taxAmount = $after_any_discount_final_price * ($store_tax_amount / 100.00);
                     // Total tax amount based on quantity
                     $total_tax_amount = $taxAmount * $itemData['quantity'];
-                    if ($tax_disabled){
+                    if ($tax_disabled) {
                         $store_tax_amount = 0;
                         $taxAmount = 0;
                         $total_tax_amount = 0;
@@ -563,7 +578,7 @@ class OrderService
         // notification send
         $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
 
-       // mail send Dispatch the email job asynchronously
+        // mail send Dispatch the email job asynchronously
         dispatch(new DispatchOrderEmails($order_master->id));
 
 

@@ -69,6 +69,7 @@ class PlaceOrderController extends Controller
                 $this->updateVariantData($item['variant_id'], $item['quantity']);
             }
         }
+
         // if return false
         if ($orders === false || empty($orders)) {
             return response()->json([
