@@ -57,6 +57,7 @@ class Product extends Model
         "meta_keywords",
     ];
 
+    // Only fetch those products which store have subscription_type commission and if subscription then within the order limit for frontend
     protected static function booted(): void
     {
         if (!request()->is('api/v1/admin/*') && !request()->is('api/v1/seller/*')) {
@@ -256,10 +257,10 @@ class Product extends Model
             ->first();
         if ($flashSaleProduct && $flashSaleProduct->flashSale) {
             return [
-                'flash_sale_id'   => $flashSaleProduct->flashSale->id,
-                'discount_type'   => $flashSaleProduct->flashSale->discount_type,
+                'flash_sale_id' => $flashSaleProduct->flashSale->id,
+                'discount_type' => $flashSaleProduct->flashSale->discount_type,
                 'discount_amount' => $flashSaleProduct->flashSale->discount_amount,
-                'purchase_limit'  => $flashSaleProduct->flashSale->purchase_limit,
+                'purchase_limit' => $flashSaleProduct->flashSale->purchase_limit,
             ];
         }
 

@@ -12,6 +12,28 @@ class FlashSaleProduct extends Model
     protected $fillable = [
         'flash_sale_id', 'product_id', 'store_id', 'created_by', 'updated_by',
     ];
+    protected static function booted(): void
+    {
+        if (!request()->is('api/v1/admin/*') && !request()->is('api/v1/seller/*')) {
+            static::addGlobalScope('validFlashSaleProduct', function ($builder) {
+                $builder->whereHas('store', function ($storeQuery) {
+                    $storeQuery->where(function ($q) {
+                        // Allow all products for commission-based stores
+                        $q->where('subscription_type', 'commission')
+                            ->orWhere(function ($q2) {
+                                // For subscription-based stores, apply subscription conditions
+                                $q2->where('subscription_type', 'subscription')
+                                    ->whereHas('subscriptions', function ($subQuery) {
+                                        $subQuery->where('status', 1)
+                                            ->whereDate('expire_date', '>=', now())
+                                            ->where('order_limit', '>', 0);
+                                    });
+                            });
+                    });
+                });
+            });
+        }
+    }
 
     public function flashSale()
     {

@@ -59,6 +59,8 @@ class Store extends Model
         'meta_title',
         'meta_description',
     ];
+
+    // Only fetch those stores which have subscription_type commission and if subscription then within the order limit for frontend
     protected static function booted(): void
     {
         if (!request()->is('api/v1/admin/*') && !request()->is('api/v1/seller/*')) {
@@ -145,6 +147,7 @@ class Store extends Model
         // Clamp between 1 and 5 only if there's an actual rating
         return max(1, min(5, round($average, 2)));
     }
+
     public function getValidSubscriptionByFeatureLimits(array $requiredLimits): ?array
     {
         $subscriptions = $this->subscriptions()
