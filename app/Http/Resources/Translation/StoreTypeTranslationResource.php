@@ -18,6 +18,7 @@ class StoreTypeTranslationResource extends JsonResource
             "language_code" => $this->first()->language,
             "name" => $this->where('key', 'name')->first()?->value,
             "description" => $this->where('key', 'description')->first()?->value,
+            "additional_charge_name" => $this->where('key', 'additional_charge_name')->first()?->value,
         ];
     }
 }

@@ -29,6 +29,12 @@ class StoreTypeRequest extends FormRequest
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|integer',
             'status' => 'nullable|in:0,1',
+
+            'additional_charge_enable_disable' => 'nullable',
+            'additional_charge_name' => 'nullable|string|max:255',
+            'additional_charge_amount' => 'nullable|integer|min:0',
+            'additional_charge_type' => 'nullable|in:fixed,percentage',
+            'additional_charge_commission' => 'nullable',
         ];
     }
 
@@ -46,6 +52,11 @@ class StoreTypeRequest extends FormRequest
             'description.string' => __('validation.string', ['attribute' => 'Description']),
 
             'image.integer' => __('validation.integer', ['attribute' => 'Image']),
+
+            'additional_charge_name.string' => __('validation.string', ['attribute' => 'Additional Charge Name']),
+            'additional_charge_name.max' => __('validation.max.string', ['attribute' => 'Additional Charge Name', 'max' => '255']),
+            'additional_charge_amount.min' =>__('validation.min.integer', ['attribute' => 'Additional Charge Amount', 'min' => 0]),
+            'additional_charge_type.in' => __('validation.in', ['attribute' => 'Fixed or Percentage']),
 
             'status.integer' => __('validation.integer', ['attribute' => 'Status']),
             'status.in' => __('validation.in', ['attribute' => 'Status']),

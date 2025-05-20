@@ -74,7 +74,42 @@ class AdminProductManageController extends Controller
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $request['warranty'] = json_encode($request['warranty']);
         $request['status'] = 'approved';
-        $product = $this->productRepo->store($request->all());
+        // check store
+        $store = Store::find($request->store_id);
+        if (!$store) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+        if ($store->subscription_type == 'commission') {
+            $product = $this->productRepo->store($request->all());
+        } else {
+            // check the valid subscription limit for the store
+            $validSubscription = $store->getValidSubscriptionByFeatureLimits(['product_limit' => 1]);
+
+            if (!$validSubscription) {
+                return response()->json([
+                    'message' => __('messages.insufficient_limit')
+                ], 422);
+            }
+
+            // check store subscription
+            $storeSubscription = StoreSubscription::find($validSubscription['subscription_id']);
+
+            if (!$storeSubscription) {
+                return response()->json([
+                    'message' => __('messages.store_subscription_no_active_not_found')
+                ], 422);
+            }
+
+            // Proceed with update
+            $product = $this->productRepo->store($request->all());
+
+            // Safe decrement without going below zero
+            $storeSubscription->update([
+                'product_limit' => max(0, $storeSubscription->product_featured_limit - 1)
+            ]);
+        }
         createOrUpdateTranslation($request, $product, 'App\Models\Product', $this->productRepo->translationKeys());
         if ($product) {
             return $this->success(translate('messages.save_success', ['name' => 'Product']));
@@ -292,7 +327,7 @@ class AdminProductManageController extends Controller
     public function addToFeatured(Request $request)
     {
         // check product exists
-        $product = Product::where('id', $request->product_id)
+        $product = Product::where('id', $request->id)
             ->where('status', 'approved')
             ->whereNull('deleted_at')
             ->first();
@@ -303,7 +338,7 @@ class AdminProductManageController extends Controller
         }
 
         // check if the product is already featured
-        if ($product->is_featured){
+        if ($product->is_featured) {
             $product->update([
                 'is_featured' => false
             ]);
@@ -320,31 +355,36 @@ class AdminProductManageController extends Controller
             ], 404);
         }
 
-        // check the valid subscription limit for the store
-        $validSubscription = $store->getValidSubscriptionByFeatureLimits(['product_featured_limit' => 1]);
+        if ($store->subscription_type == 'commission') {
+            // Proceed with update
+            $product->update(['is_featured' => true]);
+        } else {
+            // check the valid subscription limit for the store
+            $validSubscription = $store->getValidSubscriptionByFeatureLimits(['product_featured_limit' => 1]);
 
-        if (!$validSubscription) {
-            return response()->json([
-                'message' => __('messages.insufficient_limit')
-            ], 422);
+            if (!$validSubscription) {
+                return response()->json([
+                    'message' => __('messages.insufficient_limit')
+                ], 422);
+            }
+
+            // check store subscription
+            $storeSubscription = StoreSubscription::find($validSubscription['subscription_id']);
+
+            if (!$storeSubscription) {
+                return response()->json([
+                    'message' => __('messages.store_subscription_no_active_not_found')
+                ], 422);
+            }
+
+            // Proceed with update
+            $product->update(['is_featured' => true]);
+
+            // Safe decrement without going below zero
+            $storeSubscription->update([
+                'product_featured_limit' => max(0, $storeSubscription->product_featured_limit - 1)
+            ]);
         }
-
-        // check store subscription
-        $storeSubscription = StoreSubscription::find($validSubscription['subscription_id']);
-
-        if (!$storeSubscription) {
-            return response()->json([
-                'message' => __('messages.store_subscription_no_active_not_found')
-            ], 422);
-        }
-
-        // Proceed with update
-        $product->update(['is_featured' => true]);
-
-        // Safe decrement without going below zero
-        $storeSubscription->update([
-            'product_featured_limit' => max(0, $storeSubscription->product_featured_limit - 1)
-        ]);
 
         return response()->json([
             'message' => __('messages.product_featured_added_successfully')

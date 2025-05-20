@@ -1557,13 +1557,20 @@ class FrontendController extends Controller
 
         // Paginate results dynamically
         $perPage = $request->per_page ?? 20;
-        $products = $query->paginate($perPage);
-
-        return response()->json([
-            'status' => true,
-            'data' => StoreWiseProductDropdownResource::collection($products),
-            'meta' => new PaginationResource($products),
-        ]);
+        if ($request->filled('per_page')) {
+            $products = $query->paginate($perPage);
+            return response()->json([
+                'status' => true,
+                'data' => StoreWiseProductDropdownResource::collection($products),
+                'meta' => new PaginationResource($products),
+            ]);
+        } else {
+            $products = $query->get();
+            return response()->json([
+                'status' => true,
+                'data' => StoreWiseProductDropdownResource::collection($products),
+            ]);
+        }
     }
 
     public function getCheckOutPageExtraInfo(Request $request)

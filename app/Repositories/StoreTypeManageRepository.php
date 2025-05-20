@@ -63,6 +63,11 @@ class StoreTypeManageRepository implements StoreTypeManageInterface
             'description' => $data['description'],
             'status' => $data['status'] ?? $storeType->status,
             'image' => $data['image'] ?? $storeType->image,
+            'additional_charge_enable_disable' => $data['additional_charge_enable_disable'] ?? $storeType->additional_charge_enable_disable,
+            'additional_charge_name' => $data['additional_charge_name'] ?? $storeType->additional_charge_name,
+            'additional_charge_amount' => $data['additional_charge_amount'] ?? $storeType->additional_charge_amount,
+            'additional_charge_type' => $data['additional_charge_type'] ?? $storeType->additional_charge_type,
+            'additional_charge_commission' => $data['additional_charge_commission'] ?? $storeType->additional_charge_commission,
         ]);
         return $storeType->id;
     }

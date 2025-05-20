@@ -17,10 +17,6 @@ class AdminStoreTypeDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // Get the requested language from the query parameter
-        $language = $request->input('language', 'en');
-        // Get the translation for the requested language
-        $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
             "name" => $this->name,
@@ -29,7 +25,12 @@ class AdminStoreTypeDetailsResource extends JsonResource
             "image_url" => ImageModifier::generateImageUrl($this->image),
             "description" => $this->description,
             "total_stores" => $this->total_stores,
-            "status" => $this->status,
+            "additional_charge_enable_disable" => (int)$this->additional_charge_enable_disable,
+            "additional_charge_name" =>  $this->additional_charge_name,
+            "additional_charge_amount" => $this->additional_charge_amount,
+            "additional_charge_type" => $this->additional_charge_type,
+            "additional_charge_commission" => $this->additional_charge_commission,
+            "status" => (int)$this->status,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
             "translations" => StoreTypeTranslationResource::collection($this->related_translations->groupBy('language')),

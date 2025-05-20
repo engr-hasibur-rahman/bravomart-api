@@ -31,6 +31,8 @@ class StoreManageService
         DB::beginTransaction();
         $store = Store::create($data);
 
+        $data['store_id'] = $store->id;
+
         // store create after commission set
         $store = Store::find($store->id);
         $store_id = $store->id;
@@ -38,6 +40,7 @@ class StoreManageService
         $systemCommission = SystemCommission::first();
         $commission_enabled = $systemCommission->commission_enabled;
         $subscription_enabled = $systemCommission->subscription_enabled;
+
         if ($commission_enabled) {
             if (isset($store->subscription_type) && $store->subscription_type === 'commission') {
                 // get system commission
@@ -95,7 +98,7 @@ class StoreManageService
         // check subscription system_commission settings
         if ($data['subscription_type'] == 'subscription' && $subscription_enabled) {
             if (moduleExistsAndStatus('Subscription')) {
-                $this->subscriptionService->buySubscriptionPackage($store, $data);
+                $this->subscriptionService->buySubscriptionPackage($data);
             }
             DB::commit();
         } else {
