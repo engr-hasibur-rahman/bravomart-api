@@ -18,13 +18,13 @@ class SubscriptionService
 {
     public function buySubscriptionPackage($data)
     {
-
         $store_id = $data['store_id'];
         $subscription_id = $data['subscription_id'];
         $payment_gateway = $data['payment_gateway'];
 
         // Find the store
         $store = Store::find($store_id);
+
         if (!$store) {
             return [
                 'success' => false,
@@ -48,16 +48,17 @@ class SubscriptionService
         // Set default values for payment status
         $subscription_status = 0;
         $payment_status = 'pending';
+
         // check if the package is trial
-        if ($subscription_package->price == 0) {
+        if ((float) $subscription_package->price === 0.0) {
             $already_claimed_trial_package = SubscriptionHistory::where('store_id', $store_id)
                 ->where('subscription_id', $subscription_package->id)
-                ->where('payment_status', 'paid')
                 ->first();
+
             if ($already_claimed_trial_package) {
                 return [
                     'success' => false,
-                    'message' => 'Already claimed trial package!',
+                    'message' => 'Trial already used. Upgrade now to continue enjoying premium features!',
                 ];
             }
             $subscription_status = 1;
@@ -298,13 +299,14 @@ class SubscriptionService
 
         // Fetch the subscription package
         $subscriptionPackage = Subscription::where('id', $subscription_id)
+            ->where('price', '>', 0)
             ->where('status', 1)
             ->first();
 
         if (!$subscriptionPackage) {
             return [
                 'success' => false,
-                'message' => __('messages.subscription_not_found'),
+                'message' => __('messages.store_subscription_not_found'),
             ];
         }
 
