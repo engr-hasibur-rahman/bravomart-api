@@ -147,9 +147,9 @@ class OrderService
             'product_discount_amount' => 0,
             'flash_discount_amount_admin' => 0,
             'shipping_charge' => 0,
-            'additional_charge_name' => $additional_charge_enabled ? $additional_charge_name : null,
-            'additional_charge_amount' => $additional_charge_enabled ? $additional_charge : 0,
-            'additional_charge_commission' => $additional_charge_enabled ? $additional_charge_admin_commission : 0,
+            'additional_charge_name' => null,
+            'additional_charge_amount' => null,
+            'additional_charge_commission' => null,
             'order_amount' => 0,
             'paid_amount' => 0,
             'payment_gateway' => $data['payment_gateway'],
@@ -257,7 +257,7 @@ class OrderService
             $store_area_id = $store_info->area_id;
 
             /// store type wise additional charge
-            $store_type = $store_info->type;
+            $store_type = $store_info->store_type;
             $store_type_info = \App\Models\StoreType::where('type', $store_type)->first();
 
             $order_additional_charge_name = null;
@@ -265,9 +265,17 @@ class OrderService
             $order_additional_charge_store_amount = null;
             $order_admin_additional_charge_commission = null;
 
-            if ($store_type_info->additional_charge_enable_disable) {
-                $order_additional_charge_name = $store_info->additional_charge_name;
-                $order_additional_charge_amount = $store_info->additional_charge_amount;
+            if ($store_type_info && $store_type_info->additional_charge_enable_disable) {
+                $order_additional_charge_name = $store_type_info->additional_charge_name;
+                $order_additional_charge_amount = $store_type_info->additional_charge_type === 'percentage' ?
+                    ($main_order_amount_after_discount / 100) * $store_type_info->additional_charge_amount
+                    : $store_type_info->additional_charge_amount;
+                $order_admin_additional_charge_commission = round(($order_additional_charge_amount / 100) * $store_type_info->additional_charge_commission, 2);
+                $order_additional_charge_store_amount = round(($order_additional_charge_amount - $order_admin_additional_charge_commission), 2);
+                /// Update Order Master
+                $order_master->additional_charge_amount += $order_additional_charge_amount;
+                $order_master->additional_charge_commission += $order_admin_additional_charge_commission;
+                $order_master->save();
             }
 
             // area wise calculate delivery charge
@@ -326,6 +334,10 @@ class OrderService
                 'shipping_charge' => $final_shipping_charge,
                 'delivery_charge_admin' => $delivery_charge_delivery_man_commission, // Full delivery charge
                 'delivery_charge_admin_commission' => $delivery_charge_admin_commission, // Admin commission on delivery charge
+                'order_additional_charge_name' => $order_additional_charge_name,
+                'order_additional_charge_amount' => $order_additional_charge_amount,
+                'order_admin_additional_charge_commission' => $order_admin_additional_charge_commission,
+                'order_additional_charge_store_amount' => $order_additional_charge_store_amount,
                 'is_reviewed' => false,
                 'status' => 'pending',
             ]);
