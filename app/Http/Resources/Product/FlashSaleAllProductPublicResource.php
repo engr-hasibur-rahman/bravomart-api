@@ -21,11 +21,11 @@ class FlashSaleAllProductPublicResource extends JsonResource
                 ? $translation->where('key', 'name')->first()->value
                 : $this->product?->name, // If language is empty or not provided attribute
             'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
-            "slug" => $this->product->slug,
+            "slug" => $this->product?->slug,
             "description" => !empty($translation) && $translation->where('key', 'name')->first()
                 ? $translation->where('key', 'name')->first()->value
                 : $this->product?->description,// If language is empty or not provided attribute
-            'image' => $this->product->image,
+            'image' => $this->product?->image,
             'image_url' => ImageModifier::generateImageUrl($this->product?->image),
             'stock' => $this->product?->variants->isNotEmpty() ? $this->product?->variants->sum('stock_quantity') : null,
             'price' => optional($this->product?->variants->first())->price,
