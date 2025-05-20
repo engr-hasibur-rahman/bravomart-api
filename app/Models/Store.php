@@ -59,6 +59,27 @@ class Store extends Model
         'meta_title',
         'meta_description',
     ];
+    protected static function booted(): void
+    {
+        if (!request()->is('api/v1/admin/*') && !request()->is('api/v1/seller/*')) {
+            static::addGlobalScope('validStoreSubscription', function ($builder) {
+                $builder->where(function ($q) {
+                    // Allow all commission-based stores
+                    $q->where('subscription_type', 'commission')
+                        ->orWhere(function ($q2) {
+                            // For subscription-based stores, ensure valid subscription
+                            $q2->where('subscription_type', 'subscription')
+                                ->whereHas('subscriptions', function ($subQuery) {
+                                    $subQuery->where('status', 1)
+                                        ->whereDate('expire_date', '>=', now())
+                                        ->where('order_limit', '>', 0);
+                                });
+                        });
+                });
+            });
+        }
+    }
+
 
     public function translations()
     {
