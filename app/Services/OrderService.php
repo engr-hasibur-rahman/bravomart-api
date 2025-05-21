@@ -531,7 +531,7 @@ class OrderService
                 }
 
             } // item loops end order details
-            //todo: additional charge calculation
+            /// additional charge calculation
             if ($store_type_info && $store_type_info->additional_charge_enable_disable) {
 
                 $order_additional_charge_name = $store_type_info->additional_charge_name;
@@ -557,7 +557,7 @@ class OrderService
             }
 
             // update order package details
-            $package->order_amount = $order_package_total_amount + $package->shipping_charge; //order package total amount
+            $package->order_amount = $order_package_total_amount + $package->shipping_charge + $package->order_additional_charge_amount; //order package total amount
             $package->product_discount_amount += $product_discount_amount_package; // product coupon  discount
             $package->flash_discount_amount_admin = $flash_discount_amount_admin;  // flash sale discount
 //            $package->coupon_discount_amount_admin = $total_discount_amount / $total_package; // admin coupon  discount
