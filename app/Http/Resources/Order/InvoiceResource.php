@@ -20,7 +20,7 @@ class InvoiceResource extends JsonResource
         $total_tax_amount = round($this->orderDetail->sum('total_tax_amount'), 2);
         $product_discount_amount = round(abs($this->product_discount_amount), 2);
         $shipping_charge = round($this->shipping_charge, 2);
-        $additional_charge = round(optional($this->orderMaster)->additional_charge, 2) ?? 0;
+        $additional_charge = round($this->order_additional_charge_amount, 2) ?? 0;
 
         // Total Amount Calculation
         $total_amount = ($subtotal + $total_tax_amount + $shipping_charge + $additional_charge) - $coupon_discount;
@@ -62,6 +62,7 @@ class InvoiceResource extends JsonResource
             'total_tax_amount' => $total_tax_amount,
             'product_discount_amount' => $product_discount_amount,
             'shipping_charge' => $shipping_charge,
+            'additional_charge_name' => $this->order_additional_charge_name,
             'additional_charge' => $additional_charge,
             'total_amount' => round($total_amount, 2), // Final total amount
         ];

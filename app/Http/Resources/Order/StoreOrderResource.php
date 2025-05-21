@@ -37,6 +37,8 @@ class StoreOrderResource extends JsonResource
             'order_amount' => $this->order_amount,
             'product_discount_amount' => $this->product_discount_amount,
             'shipping_charge' => $this->shipping_charge,
+            'additional_charge_name' => $this->order_additional_charge_name,
+            'additional_charge_amount' => $this->order_additional_charge_amount,
             'is_reviewed' => $this->is_reviewed,
             'confirmed_by' => $this->confirmed_by,
             'confirmed_at' => $this->confirmed_at,
