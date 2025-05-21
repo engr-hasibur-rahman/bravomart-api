@@ -37,6 +37,7 @@ class ProductPublicResource extends JsonResource
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
         $translation = $this->related_translations->where('language', $language);
+
         return [
             'id' => $this->id,
             'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),

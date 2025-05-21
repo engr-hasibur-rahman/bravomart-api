@@ -180,6 +180,10 @@ class OrderService
 
         $calculate_total_order_amount_base_price = 0; // To accumulate the total price
         $main_order_amount_after_discount = 0; // To accumulate the total price
+        $order_additional_charge_name = null;
+        $order_additional_charge_amount = null;
+        $order_additional_charge_store_amount = null;
+        $order_admin_additional_charge_commission = null;
 
         // this calculations only for main order base price calculate
         foreach ($data['packages'] as $packageData) {
@@ -251,6 +255,8 @@ class OrderService
         $product_discount_amount_master = 0;
         $order_amount_master = 0;
 
+
+
         foreach ($data['packages'] as $packageData) {
             // find store wise area id
             $store_info = Store::find($packageData['store_id']);
@@ -260,10 +266,6 @@ class OrderService
             $store_type = $store_info->store_type;
             $store_type_info = \App\Models\StoreType::where('type', $store_type)->first();
 
-            $order_additional_charge_name = null;
-            $order_additional_charge_amount = null;
-            $order_additional_charge_store_amount = null;
-            $order_admin_additional_charge_commission = null;
 
             if ($store_type_info && $store_type_info->additional_charge_enable_disable) {
                 $order_additional_charge_name = $store_type_info->additional_charge_name;
