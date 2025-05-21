@@ -61,7 +61,7 @@ class Store extends Model
     ];
     protected static function booted(): void
     {
-        if (!request()->is('api/v1/admin/*') && !request()->is('api/v1/seller/*')) {
+        if (!request()->is('api/v1/admin/*') && !request()->is('api/v1/seller/*') && !request()->is('api/v1/subscription/*')) {
             static::addGlobalScope('validStoreSubscription', function ($builder) {
                 $builder->where(function ($q) {
                     // Allow all commission-based stores
