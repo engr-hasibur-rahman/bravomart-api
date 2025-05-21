@@ -50,7 +50,6 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     });
 
 
-
     // withdraw all method lists
     Route::get('withdraw/gateway-method-list', [SellerAndDeliverymanWithdrawController::class, 'withdrawGatewayList']);
 

@@ -6,8 +6,14 @@ use App\Enums\WalletOwnerType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\WithdrawGatewayPublicListResource;
+use App\Mail\DynamicEmail;
+use App\Models\EmailTemplate;
+use App\Models\Store;
+use App\Models\User;
 use App\Models\WithdrawGateway;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletTransaction;
@@ -195,7 +201,42 @@ class SellerAndDeliverymanWithdrawController extends Controller
             'gateways_options' => json_encode($request->gateways),
         ]);
 
+
         if ($success) {
+            // mail send to admin
+            try {
+                $email_template_store_withdrawal_approved = EmailTemplate::where('type', 'store-withdrawal-request-to-admin')
+                    ->where('status', 1)
+                    ->first();
+
+                $seller_info = User::where('id', auth()->guard('api')->user()->id)->first();
+                $store_info = Store::where('id', $request->store_id)->first();
+                // store info
+                $store_email = $store_info->email;
+                $store_owner_name = $seller_info->full_name ?? '';
+                $store_name = $store_info->name;
+                $request_date = $success->created
+                    ? Carbon::parse($success->created_at)->format('F d, Y')
+                    : 'N/A';
+
+                $store_subject = $email_template_store_withdrawal_approved->subject;
+                $store_message = $email_template_store_withdrawal_approved->body;
+                $withdraw_amount = amount_with_symbol_format((int)$request->amount);
+
+                $store_message = str_replace(["@seller_name", "@store_name", "@amount", "@request_date"],
+                    [
+                        $store_owner_name,
+                        $store_name,
+                        $withdraw_amount,
+                        $request_date,
+                    ], $store_message);
+
+                // customer
+                Mail::to($store_email)->send(new DynamicEmail($store_subject, (string)$store_message));
+
+            } catch (\Exception $th) {
+            }
+
             return response()->json([
                 'message' => __('messages.request_success', ['name' => 'Withdrawal']),
             ], 200);

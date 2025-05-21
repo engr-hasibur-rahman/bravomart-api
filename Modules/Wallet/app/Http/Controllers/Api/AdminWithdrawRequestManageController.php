@@ -4,9 +4,14 @@ namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Mail\DynamicEmail;
+use App\Models\EmailTemplate;
+use App\Models\Store;
+use App\Models\User;
 use App\Models\WithdrawalRecord;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
@@ -88,7 +93,7 @@ class AdminWithdrawRequestManageController extends Controller
         }
 
         // Process each withdrawal request
-        $wallet = Wallet::where([
+        $wallet = Wallet::with('owner')->where([
             'id' => $withdraw->wallet_id,
             'owner_id' => $withdraw->owner_id,
             'owner_type' => $withdraw->owner_type,
@@ -120,6 +125,56 @@ class AdminWithdrawRequestManageController extends Controller
             'approved_at' => now(),
             'attachment' => $filePath,
         ]);
+
+                // mail send to store
+                try {
+                    $email_template_store_withdrawal_approved = EmailTemplate::where('type', 'withdrawal-approved-for-deliveryman')
+                        ->where('status', 1)
+                        ->first();
+
+                    // if store and deliveryman
+                    if ($withdraw->owner_type === 'App\Models\Store'){
+                        $seller_info = User::where('id', $wallet->owner?->store_seller_id)->first();
+                        // store info
+                        $store_email = $wallet->owner?->email;
+                        $store_owner_name = $seller_info->full_name ?? '';
+                        $store_name = $wallet->owner?->name;
+                        $store_subject = $email_template_store_withdrawal_approved->subject;
+                        $store_message = $email_template_store_withdrawal_approved->body;
+                        $withdraw_amount = amount_with_symbol_format($withdraw->amount);
+
+                        $store_message = str_replace(["@seller_name", "@store_name", "@amount"],
+                            [
+                                $store_owner_name,
+                                $store_name,
+                                $withdraw_amount,
+                            ], $store_message);
+
+                        // customer
+                        Mail::to($store_email)->send(new DynamicEmail($store_subject, (string)$store_message));
+
+                    }else {
+                        $deliveryman_info = User::where('id', $wallet->owner?->id)->first();
+                        // store info
+                        $email = $deliveryman_info->email;
+                        $name = $deliveryman_info->full_name ?? '';
+
+                        $store_subject = $email_template_store_withdrawal_approved->subject;
+                        $store_message = $email_template_store_withdrawal_approved->body;
+                        $withdraw_amount = amount_with_symbol_format($withdraw->amount);
+
+                        $store_message = str_replace(["@deliveryman_name", "@email", "@amount"],
+                            [
+                                $name,
+                                $email,
+                                $withdraw_amount,
+                            ], $store_message);
+
+                        // customer
+                        Mail::to($email)->send(new DynamicEmail($store_subject, (string)$store_message));
+                    }
+                } catch (\Exception $th) {
+                }
 
         return response()->json([
             'status' => true,
@@ -158,6 +213,36 @@ class AdminWithdrawRequestManageController extends Controller
                 'status' => 'rejected',
                 'reject_reason' => $request->reject_reason,
             ]);
+
+
+        // mail send to store
+        try {
+            $email_template_store_withdrawal_approved = EmailTemplate::where('type', 'store-withdrawal-declined')
+                ->where('status', 1)
+                ->first();
+
+            $store_info = Store::where('id', $updated->owner_id)->first();
+            $seller_info = User::where('id', $store_info->store_seller_id)->first();
+            // store info
+            $store_email = $store_info->email;
+            $store_owner_name = $seller_info->full_name ?? '';
+            $store_name = $store_info->name;
+            $store_subject = $email_template_store_withdrawal_approved->subject;
+            $store_message = $email_template_store_withdrawal_approved->body;
+            $withdraw_amount = amount_with_symbol_format($updated->amount);
+
+            $store_message = str_replace(["@seller_name", "@store_name", "@amount"],
+                [
+                    $store_owner_name,
+                    $store_name,
+                    $withdraw_amount,
+                ], $store_message);
+
+            // customer
+            Mail::to($store_email)->send(new DynamicEmail($store_subject, (string)$store_message));
+
+        } catch (\Exception $th) {
+        }
 
         return response()->json([
             'status' => true,
