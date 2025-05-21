@@ -129,7 +129,11 @@ class FrontendController extends Controller
     /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
     public function getStores(Request $request)
     {
-        $query = Store::query();
+        if (auth('api')->check()) {
+            $query = Store::query();
+        } else {
+            $query = Store::validForCustomerView();
+        }
 
         // Apply store type filter if provided
         if ($request->filled('store_type')) {
@@ -176,8 +180,14 @@ class FrontendController extends Controller
 
     public function getStoresDropdown(Request $request)
     {
-        $query = Store::where('status', 1)
-            ->whereNull('deleted_at');
+        if (auth('api')->check()) {
+            $query = Store::where('status', 1)
+                ->whereNull('deleted_at');
+        } else {
+            $query = Store::validForCustomerView()->where('status', 1)
+                ->whereNull('deleted_at');
+        }
+
         if ($request->has('store_type') && !empty($request->store_type)) {
             $query->where('store_type', $request->store_type);
         }
@@ -197,7 +207,11 @@ class FrontendController extends Controller
 
     public function getStoreDetails(Request $request)
     {
-        $query = Store::query();
+        if (auth('api')->check()) {
+            $query = Store::query();
+        } else {
+            $query = Store::validForCustomerView();
+        }
 
         $store = $query->with(['area', 'seller', 'related_translations', 'products.variants'])
             ->where('slug', $request->slug)->first();
@@ -815,6 +829,8 @@ class FrontendController extends Controller
             'category',
             'related_translations'
         ])
+            ->where('status', 'approved')
+            ->whereNull('deleted_at')
             ->where('slug', $product_slug)
             ->first();
         if ($product) {
