@@ -137,7 +137,6 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::post('/update-location',[LiveLocationController::class, 'update']);
     Route::post('/track-order-location',[LiveLocationController::class, 'trackOrder']);
 
-
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);
 
     // home page footer api route
