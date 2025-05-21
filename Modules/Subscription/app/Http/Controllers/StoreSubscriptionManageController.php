@@ -29,7 +29,7 @@ class StoreSubscriptionManageController extends Controller
             ], 404);
         }
 
-        $store_subscription_history = SubscriptionHistory::where('store_id', $store_id)->paginate(50);
+        $store_subscription_history = SubscriptionHistory::where('store_id', $store_id)->paginate($request->per_page ?? 50);
 
         return response()->json([
             'success' => true,

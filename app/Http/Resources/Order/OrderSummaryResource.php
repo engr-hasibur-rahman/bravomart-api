@@ -19,7 +19,7 @@ class OrderSummaryResource extends JsonResource
         $total_tax_amount = round($this->orderDetail->sum('total_tax_amount'), 2);
         $product_discount_amount = round(abs($this->product_discount_amount), 2);
         $shipping_charge = round($this->shipping_charge, 2);
-        $additional_charge = round(optional($this->orderMaster)->additional_charge, 2) ?? 0;
+        $additional_charge = round($this->order_additional_charge_amount, 2) ?? 0;
 
         // Total Amount Calculation
 //        $total_amount = ($subtotal - $coupon_discount - $product_discount_amount)
