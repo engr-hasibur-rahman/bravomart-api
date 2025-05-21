@@ -12,12 +12,14 @@ use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 use Modules\Wallet\app\Models\Wallet;
+use function Laravel\Prompts\select;
 
 
 class SubscriptionService
 {
     public function buySubscriptionPackage($data)
     {
+
         $store_id = $data['store_id'];
         $subscription_id = $data['subscription_id'];
         $payment_gateway = $data['payment_gateway'];
@@ -99,12 +101,24 @@ class SubscriptionService
         }
 
         // Check for existing subscription and update if found
-        $existing_subscription = StoreSubscription::where('store_id', $store_id)
-            ->where('subscription_id', $subscription_package->id)
-            ->first();
+        $existing_subscription = StoreSubscription::where('store_id', $store_id)->first();
 
+        if (isset($existing_subscription->store_id) && !empty($existing_subscription)) {
+            // if subscription not expire add old value
+            if ($existing_subscription->expire_date > now()) {
+                // Not expired – accumulate limits
+               $order_limit = $existing_subscription->order_limit + $subscription_package->order_limit;
+               $product_limit = $existing_subscription->product_limit + $subscription_package->product_limit;
+               $product_featured_limit = $existing_subscription->product_featured_limit + $subscription_package->product_featured_limit;
+               $validity = $existing_subscription->validity + $subscription_package->validity;
+            }else{
+                // Expired or no subscription – reset to new package limits
+                $order_limit = $subscription_package->order_limit;
+                $product_limit = $subscription_package->product_limit;
+                $product_featured_limit = $subscription_package->product_featured_limit;
+                $validity = $subscription_package->validity;
+            }
 
-        if ($existing_subscription) {
             // Calculate new validity based on current expire date
             $new_validity = $subscription_package->validity;
 
@@ -115,7 +129,17 @@ class SubscriptionService
             $new_expire_date = $existing_expiry_date->addDays((int)$new_validity);
 
             // Update the existing subscription
+            $existing_subscription->subscription_id = $subscription_package->id;
+            $existing_subscription->name = $subscription_package->name;
             $existing_subscription->type = $subscription_package->type;
+            $existing_subscription->pos_system = $subscription_package->pos_system;
+            $existing_subscription->self_delivery = $subscription_package->self_delivery;
+            $existing_subscription->mobile_app = $subscription_package->mobile_app;
+            $existing_subscription->live_chat = $subscription_package->live_chat;
+            $existing_subscription->order_limit = $order_limit;
+            $existing_subscription->product_limit = $product_limit;
+            $existing_subscription->product_featured_limit = $product_featured_limit;
+            $existing_subscription->validity = $validity;
             $existing_subscription->expire_date = $new_expire_date;
             $existing_subscription->status = $subscription_status;
             $existing_subscription->payment_status = $payment_status;

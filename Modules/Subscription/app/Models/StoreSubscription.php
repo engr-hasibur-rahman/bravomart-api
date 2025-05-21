@@ -31,6 +31,11 @@ class StoreSubscription extends Model
         'status',
     ];
 
+    public function scopeNotExpired($query)
+    {
+        return $query->where('expire_date', '>', now());
+    }
+
     public function subscriptionHistories()
     {
         return $this->hasMany(SubscriptionHistory::class, 'store_subscription_id');
