@@ -26,7 +26,7 @@ class OrderSummaryResource extends JsonResource
 //            + $total_tax_amount
 //            + $shipping_charge
 //            + $additional_charge;
-        $total_amount = round($this->orderDetail->sum('line_total_price'), 2) + $shipping_charge;
+        $total_amount = round($this->orderDetail->sum('line_total_price'), 2) + $shipping_charge + $additional_charge;
 
         return [
             'subtotal' => $subtotal,
