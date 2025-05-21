@@ -31,6 +31,10 @@ return new class extends Migration
             $table->decimal('shipping_charge')->nullable(); // separate store wise shipping charge amount but total shipping amount in main order table
             $table->decimal('delivery_charge_admin')->nullable(); // If central Delivery then Value will be here
             $table->decimal('delivery_charge_admin_commission')->nullable(); // If Store delivery then admin will receive commission
+            $table->string('order_additional_charge_name')->nullable();
+            $table->decimal('order_additional_charge_amount')->nullable();
+            $table->decimal('order_additional_charge_store_amount')->nullable();
+            $table->decimal('order_admin_additional_charge_commission')->nullable();
             $table->boolean('is_reviewed')->nullable(); // customer review for order wise product reviews check
             $table->unsignedBigInteger('confirmed_by')->nullable();
             $table->timestamp('confirmed_at')->nullable();

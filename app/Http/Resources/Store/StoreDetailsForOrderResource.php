@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Store;
 
 use App\Actions\ImageModifier;
+use App\Models\StoreType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +20,7 @@ class StoreDetailsForOrderResource extends JsonResource
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
         $translation = $this->related_translations->where('language', $language);
+        $store_type_info = StoreType::where('type', $this->store_type)->first();
         return [
             "id" => $this->id,
             "name" => !empty($translation) && $translation->where('key', 'name')->first()
@@ -35,7 +37,10 @@ class StoreDetailsForOrderResource extends JsonResource
             "address" => $this->address,
             "latitude" => $this->area?->center_latitude,
             "longitude" => $this->area?->center_longitude,
-            "rating" => $this->rating
+            "rating" => $this->rating,
+            "additional_charge_name" => $store_type_info ? $store_type_info->additional_charge_name : null,
+            "additional_charge_amount" => $store_type_info ? $store_type_info->additional_charge_amount : null,
+            "additional_charge_type" => $store_type_info ? $store_type_info->additional_charge_type : null,
         ];
     }
 }

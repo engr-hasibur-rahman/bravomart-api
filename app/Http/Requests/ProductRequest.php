@@ -30,7 +30,7 @@ class ProductRequest extends FormRequest
             "image" => "nullable|string|max:255",
             "class" => "nullable|string|max:255",
             "warranty" => "nullable|array",
-            "warranty.*.warranty_period" => "nullable|integer|min:1",
+            "warranty.*.warranty_period" => "nullable|integer",
             "warranty.*.warranty_text" => "nullable|string|max:255",
             "return_in_days" => "nullable|string|max:255",
             "return_text" => "nullable|string|max:255",

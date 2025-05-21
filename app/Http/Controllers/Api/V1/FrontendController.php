@@ -683,28 +683,48 @@ class FrontendController extends Controller
                 ->where('product_ratings.average_rating', '>=', $minRating);
         }
         // Apply sorting
+//        if (isset($request->sort)) {
+//            switch ($request->sort) {
+//                case 'price_low_high':
+//                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+//                        ->select('products.id,', \DB::raw('MIN(product_variants.price) as variant_price'))
+//                        ->groupBy('products.id')
+//                        ->orderBy('variant_price', 'asc');
+////                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+////                        ->orderBy('product_variants.price', 'asc')
+////                        ->select('products.*') // Select only product fields to avoid conflicts
+////                        ->groupBy('products.id'); // Ensure distinct products
+//                    break;
+//
+//                case 'price_high_low':
+//                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+//                        ->select('products.id', \DB::raw('MIN(product_variants.price) as variant_price'))
+//                        ->groupBy('products.id')
+//                        ->orderBy('variant_price', 'desc');
+////                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+////                        ->orderBy('product_variants.price', 'desc')
+////                        ->select('products.*') // Select only product fields to avoid conflicts
+////                        ->groupBy('products.id'); // Ensure distinct products
+//                    break;
+//
+//                case 'newest':
+//                    $query->orderBy('products.created_at', 'desc');
+//                    break;
+//
+//                default:
+//                    $query->latest('products.created_at');
+//            }
+//        }
+//
         if (isset($request->sort)) {
             switch ($request->sort) {
                 case 'price_low_high':
-                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
-                        ->select('products.id', \DB::raw('MIN(product_variants.price) as variant_price'))
-                        ->groupBy('products.id')
-                        ->orderBy('variant_price', 'asc');
-//                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
-//                        ->orderBy('product_variants.price', 'asc')
-//                        ->select('products.*') // Select only product fields to avoid conflicts
-//                        ->groupBy('products.id'); // Ensure distinct products
-                    break;
-
                 case 'price_high_low':
-                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
-                        ->select('products.id', \DB::raw('MIN(product_variants.price) as variant_price'))
-                        ->groupBy('products.id')
-                        ->orderBy('variant_price', 'desc');
-//                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
-//                        ->orderBy('product_variants.price', 'desc')
-//                        ->select('products.*') // Select only product fields to avoid conflicts
-//                        ->groupBy('products.id'); // Ensure distinct products
+                    $query->addSelect([
+                        'variant_price' => \DB::table('product_variants')
+                            ->selectRaw('MIN(price)')
+                            ->whereColumn('product_variants.product_id', 'products.id')
+                    ])->orderBy('variant_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
                     break;
 
                 case 'newest':
@@ -715,7 +735,6 @@ class FrontendController extends Controller
                     $query->latest('products.created_at');
             }
         }
-
         if (!empty($request->search)) {
             $query->where('name', 'like', '%' . $request->search . '%')
                 ->orWhere('description', 'like', '%' . $request->search . '%');
@@ -729,9 +748,9 @@ class FrontendController extends Controller
         $perPage = $request->per_page ?? 10;
         $products = $query->with(['category', 'unit', 'tags', 'store', 'brand',
             'variants' => function ($query) use ($request) {
-                if ($request->sort === 'price_low_high') {
+                if ($request->sort === "price_low_high") {
                     $query->orderBy('price', 'asc')->limit(1);
-                } elseif ($request->sort === 'price_high_low') {
+                } elseif ($request->sort === "price_high_low") {
                     $query->orderBy('price', 'desc')->limit(1);
                 }
             }
