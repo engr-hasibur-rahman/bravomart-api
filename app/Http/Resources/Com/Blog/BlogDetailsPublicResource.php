@@ -15,11 +15,6 @@ class BlogDetailsPublicResource extends JsonResource
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
         $translation = $this->related_translations->where('language', $language);
-
-        $descriptionTranslation = $translation?->where('key', 'description')->first();
-        $details = $descriptionTranslation?->value ?? $this->description;
-        $description = html_entity_decode($details);
-
         return [
             "id" => $this->id,
             "category" => $this->category?->name,
@@ -27,7 +22,9 @@ class BlogDetailsPublicResource extends JsonResource
                 ? $translation->where('key', 'title')->first()->value
                 : $this->title,
             "slug" => $this->slug,
-            "description" => $description,
+            "description" => !empty($translation) && $translation->where('key', 'description')->first()
+                ? $translation->where('key', 'description')->first()->value
+                : $this->description,
             "image_url" => ImageModifier::generateImageUrl($this->image),
             "views" => $this->views,
             "tag_name" => $this->tag_name,
@@ -41,7 +38,7 @@ class BlogDetailsPublicResource extends JsonResource
                 ? $translation->where('key', 'meta_keywords')->first()->value
                 : $this->meta_keywords,
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
-            "created_at" => optional($this->created_at)->format('F d, Y'),
+            "created_at" => optional($this->created_at)->format('F d, Y')
         ];
     }
 }
