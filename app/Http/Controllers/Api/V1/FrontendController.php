@@ -52,6 +52,7 @@ use App\Http\Resources\Product\WeekBestProductPublicResource;
 use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
+use App\Http\Resources\User\PageListResource;
 use App\Interfaces\AreaManageInterface;
 use App\Interfaces\BannerManageInterface;
 use App\Interfaces\CityManageInterface;
@@ -1581,7 +1582,7 @@ class FrontendController extends Controller
             ->take(500)->get();
 
         return response()->json([
-            'all_pages' => PageResource::collection($pages),
+            'all_pages' => PageListResource::collection($pages),
         ]);
     }
 
