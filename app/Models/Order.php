@@ -71,7 +71,11 @@ class Order extends Model
     protected static function booted()
     {
         static::creating(function ($order) {
-            $order->invoice_number = now()->year . '-' . time() . '-' . uniqid();
+            // 6 chars from date: YYMMDD
+            $datePart = now()->format('ymd');
+            // 9 chars from unique ID (alphanumeric, base36)
+            $uniquePart = strtoupper(substr(base_convert(uniqid(), 16, 36), -9));
+            $order->invoice_number = $datePart . $uniquePart; // Total: 15 characters
             $order->invoice_date = now();
         });
     }

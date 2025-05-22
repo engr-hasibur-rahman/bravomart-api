@@ -42,7 +42,7 @@ class OrderService
 
     public function createOrder($data)
     {
-//        try {
+        try {
         $customer = auth()->guard('api_customer')->user();
         //  check authenticated
         if (!$customer) {
@@ -82,7 +82,7 @@ class OrderService
                     return false;
                 }
             } // subscription check end
-            /*------------------------------------- Subscription Check -------------------------------------*/
+            /*-------------------------- Subscription Check ------------------------*/
 
             foreach ($packageData['items'] as $itemData) {
                 // find the product
@@ -108,7 +108,7 @@ class OrderService
 
 
         // calculate order coupon
-        /*------------------------------------------------------------>Coupon OrderMaster<------------------------------------------------------------------------*/
+        /*----------------------->Coupon OrderMaster<----------------------------------------*/
         $coupon_data = [
             'success' => false,
             'coupon_code' => null,
@@ -127,7 +127,7 @@ class OrderService
                 $coupon_data = $applied;
             }
         }
-        /*------------------------------------------------------------>Coupon OrderMaster<------------------------------------------------------------------------*/
+        /*------------------->Coupon OrderMaster<---------------------------------*/
         $system_commission = SystemCommission::latest()->first();
         $additional_charge = $system_commission->order_additional_charge_amount ?? 0;
         $additional_charge_admin_commission = $system_commission->order_additional_charge_commission ?? 0;
@@ -136,7 +136,7 @@ class OrderService
         $tax_disabled = $system_commission->order_include_tax_amount == 0;
 
 
-        /*------------------------------------------------------------>Create OrderMaster<------------------------------------------------------------------------*/
+        /*------------->Create OrderMaster<-------------------------------*/
         $order_master = OrderMaster::create([
             'customer_id' => $customer_id,
             'area_id' => 0, // main zone id
@@ -156,9 +156,9 @@ class OrderService
             'payment_status' => 'pending',
             'order_notes' => $data['order_notes'] ?? null,
         ]);
-        /*------------------------------------------------------------>Create OrderMaster<------------------------------------------------------------------------*/
+        /*---------------->Create OrderMaster<----------------------------*/
 
-        /*------------------------------------------------------------>Create OrderAddress<------------------------------------------------------------------------*/
+        /*--------------->Create OrderAddress<-------------------------*/
 
         $customer_address = CustomerAddress::find($data['shipping_address_id']);
         OrderAddress::create([
@@ -176,7 +176,7 @@ class OrderService
             'floor' => $customer_address->floor,
             'postal_code' => $customer_address->postal_code,
         ]);
-        /*------------------------------------------------------------>Create OrderAddress<------------------------------------------------------------------------*/
+        /*------------------>Create OrderAddress<------------------------------*/
 
         $calculate_total_order_amount_base_price = 0; // To accumulate the total price
         $main_order_amount_after_discount = 0; // To accumulate the total price
@@ -316,16 +316,11 @@ class OrderService
                 'delivery_type' => 'standard',
                 'delivery_time' => $delivery_time,
                 'order_amount' => 0,
-//                'coupon_discount_amount_admin' => 0,
                 'product_discount_amount' => 0,
                 'flash_discount_amount_admin' => 0,
                 'shipping_charge' => $final_shipping_charge,
                 'delivery_charge_admin' => $delivery_charge_delivery_man_commission, // Full delivery charge
                 'delivery_charge_admin_commission' => $delivery_charge_admin_commission, // Admin commission on delivery charge
-//                'order_additional_charge_name' => $order_additional_charge_name,
-//                'order_additional_charge_amount' => $order_additional_charge_amount,
-//                'order_admin_additional_charge_commission' => $order_admin_additional_charge_commission,
-//                'order_additional_charge_store_amount' => $order_additional_charge_store_amount,
                 'is_reviewed' => false,
                 'status' => 'pending',
             ]);
@@ -491,9 +486,6 @@ class OrderService
                         'admin_discount_rate' => $product_flash_sale_discount_rate,
                         'admin_discount_amount' => $flash_sale_admin_discount,
 
-                        // coupon discount amount
-//                        'coupon_discount_amount' => $total_discount_amount / $total_items,
-
                         // price and qty
                         'base_price' => $basePrice,
                         'price' => $after_any_discount_final_price,
@@ -518,7 +510,6 @@ class OrderService
 
                     $flash_discount_amount_admin += $orderDetails->admin_discount_amount * $itemData['quantity'];
                     $coupon_discount_amount_admin += $orderDetails->coupon_discount_amount * $itemData['quantity'];
-//                    $coupon_discount_amount_admin += $orderDetails->coupon_discount_amount;
 
                     // order package update other info
                     $package_order_amount_store_value += $orderDetails->line_total_price - $orderDetails->admin_commission_amount;
@@ -576,10 +567,8 @@ class OrderService
         // Update Order Master
         $order_master->product_discount_amount = $product_discount_amount_master;
         $order_master->flash_discount_amount_admin = $order_master->orders->sum('flash_discount_amount_admin');
-//        $order_master->coupon_discount_amount_admin = $total_discount_amount;
-//        $order_master->coupon_discount_amount_admin = $coupon_discount_amount_admin_final;
+
         $order_master->shipping_charge = $shipping_charge;
-//        $order_master->order_amount = $order_package_total_amount + $shipping_charge;
         $order_master->order_amount = $order_amount_master;
         $order_master->save();
         $this->distributeCouponDiscount($order_master);
@@ -590,23 +579,11 @@ class OrderService
         // order notification
         $all_orders_ids = Order::where('order_master_id', $order_master->id)->pluck('id')->toArray();
 
-
-        // Call the service to handle notifications
-//        $this->firebaseNotificationService->sendOrderNotifications($orderMaster);
-
-        // Fire the event to broadcast the order creation
-//            event(new OrderPlaced($all_orders));
-//            foreach ($all_orders as $order) {
-//                event(new OrderPlaced($order));
-//            }
-
-
         // notification send
         $this->orderManageNotificationService->createOrderNotification($all_orders_ids, 'new-order');
 
         // mail send Dispatch the email job asynchronously
         dispatch(new DispatchOrderEmails($order_master->id));
-
 
         return [
             $all_orders,
@@ -614,9 +591,8 @@ class OrderService
             'customer' => $customer,
         ];
 
-
-//        } catch (\Exception $e) {
-//        }
+        } catch (\Exception $e) {
+        }
     }
 
     public function updateOrderStatus($orderId, $status)
