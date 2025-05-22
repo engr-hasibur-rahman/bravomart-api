@@ -93,7 +93,9 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         if (isset($filters['created_by'])) {
             $query->where('created_by', $filters['created_by']);
         }
-        $deliverymen = $query->paginate($filters['per_page'] ?? 10);
+        $deliverymen = $query
+            ->whereHas('user', fn ($q) => $q->whereNull('deleted_at'))
+            ->paginate($filters['per_page'] ?? 10);
 
         return $deliverymen;
     }
