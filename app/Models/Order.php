@@ -82,6 +82,10 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class, 'order_id', 'id');
     }
 
+    public function area()
+    {
+        return $this->belongsTo(StoreArea::class, 'area_id');
+    }
 
     public function customer()
     {
