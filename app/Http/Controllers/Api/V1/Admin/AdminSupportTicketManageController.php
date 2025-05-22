@@ -9,6 +9,7 @@ use App\Http\Resources\Com\SupportTicket\SupportTicketMessageResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
 use App\Interfaces\SupportTicketManageInterface;
 use App\Models\Ticket;
+use App\Models\TicketMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -197,7 +198,7 @@ class AdminSupportTicketManageController extends Controller
         }
     }
 
-    public function getTicketMessages(Request $request,$ticket_id)
+    public function getTicketMessages(Request $request, $ticket_id)
     {
         if (!auth('api')->check()) {
             unauthorized_response();
@@ -219,4 +220,24 @@ class AdminSupportTicketManageController extends Controller
             ], 403);
         }
     }
+
+    public function destroy(Request $request)
+    {
+        $ticket = Ticket::find($request->id);
+
+        if (!$ticket) {
+            return response()->json([
+                'message' => __('messages.delete_failed', ['name' => 'Support Ticket']),
+            ], 404);
+        }
+
+        // Use relationship-based deletion if defined
+        $ticket->messages()->delete(); // Assuming hasMany('messages') relationship exists
+        $ticket->delete();
+
+        return response()->json([
+            'message' => __('messages.delete_success', ['name' => 'Support Ticket']),
+        ]);
+    }
+
 }
