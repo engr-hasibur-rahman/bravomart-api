@@ -521,6 +521,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('resolve', [AdminSupportTicketManageController::class, 'resolve']);
             Route::post('message/reply', [AdminSupportTicketManageController::class, 'replyMessage']);
             Route::get('get-ticket-messages/{ticket_id}', [AdminSupportTicketManageController::class, 'getTicketMessages']);
+            Route::delete('remove/{ticket_id}', [AdminSupportTicketManageController::class, 'destroy']);
         });
 
         // FINANCIAL WITHDRAWALS management
@@ -656,7 +657,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::get('permissions', [PermissionController::class, 'index']);
         Route::post('permissions-for-store-owner', [PermissionController::class, 'permissionForStoreOwner']);
         Route::get('module-wise-permissions', [PermissionController::class, 'moduleWisePermissions']);
-        Route::group(['prefix' => 'roles/','middleware' => 'permission:' . PermissionKey::USERS_ROLE_ADD->value], function () {
+        Route::group(['prefix' => 'roles/', 'middleware' => 'permission:' . PermissionKey::USERS_ROLE_ADD->value], function () {
             Route::get('list', [RoleController::class, 'index'])->middleware('permission:' . PermissionKey::USERS_ROLE_LIST->value);
             Route::post('add', [RoleController::class, 'store']);
             Route::get('details/{id}', [RoleController::class, 'show']);

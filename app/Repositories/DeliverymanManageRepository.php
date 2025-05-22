@@ -817,8 +817,12 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         return $query->paginate(10);
     }
 
-    public function getDeliverymanDashboard()
+    public function getDeliverymanDashboard(?int $deliveryman_id)
     {
+        if ($deliveryman_id) {
+            $deliveryman = User::where('id', $deliveryman_id)->where('activity_scope', 'delivery_level')->first();
+            $this->deliveryman = $deliveryman;
+        }
         $total_completed_orders = $this->getTotalCompletedOrders();
         $ongoing_orders = $this->getOngoingOrders();
         $pending_orders = $this->getPendingOrders();

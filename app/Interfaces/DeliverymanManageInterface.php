@@ -55,7 +55,7 @@ interface DeliverymanManageInterface
 
     public function deliverymanListDropdown(array $filter);
 
-    public function getDeliverymanDashboard();
+    public function getDeliverymanDashboard(?int $deliveryman_id);
 
     public function storeTranslation(Request $request, int|string $refid, string $refPath, array $colNames);
 
