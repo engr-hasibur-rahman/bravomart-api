@@ -37,7 +37,7 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
     }
 
     /* <-------------------------------------------------------- User Analytics Start --------------------------------------------------------> */
-    public function getSummaryData(?int $store_id)
+    public function getSummaryData(?int $store_id = null)
     {
         $total_store = Store::count();
         $total_seller = User::where('store_owner', 1)->count();
