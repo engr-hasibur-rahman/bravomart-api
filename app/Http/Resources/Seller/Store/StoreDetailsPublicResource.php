@@ -5,6 +5,7 @@ namespace App\Http\Resources\Seller\Store;
 use App\Actions\ImageModifier;
 use App\Http\Resources\Com\Seller\SellerDetailsPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
+use App\Models\StoreType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +22,7 @@ class StoreDetailsPublicResource extends JsonResource
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
         $translation = $this->related_translations->where('language', $language);
+        $store_type_info = StoreType::where('type', $this->store_type)->first();
         return [
             'id' => $this->id,
             'area' => $this->area->name ?? null,
@@ -57,6 +59,9 @@ class StoreDetailsPublicResource extends JsonResource
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'meta_image_url' => ImageModifier::generateImageUrl($this->meta_image),
+            "additional_charge_name" => $store_type_info ? $store_type_info->additional_charge_name : null,
+            "additional_charge_amount" => $store_type_info ? $store_type_info->additional_charge_amount : null,
+            "additional_charge_type" => $store_type_info ? $store_type_info->additional_charge_type : null,
             'total_product' => $this->products()->where('deleted_at', null)->where('status', 'approved')->count(),
             'all_products' => StoreProductListPublicResource::collection($this->products()
                 ->where('deleted_at', null)
