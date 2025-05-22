@@ -33,6 +33,7 @@ use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Order\OrderRefundReasonResource;
+use App\Http\Resources\PageResource;
 use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\FlashSaleAllProductPublicResource;
 use App\Http\Resources\Product\FlashSaleWithProductPublicResource;
@@ -1568,6 +1569,17 @@ class FrontendController extends Controller
             ], 404);
         }
         return response()->json(new PrivacyPolicyResource($page));
+    }
+
+    public function allPage(Request $request)
+    {
+        $pages = Page::with('related_translations')
+            ->where('status', 'publish')
+            ->take(500)->get();
+
+        return response()->json([
+            'all_pages' => PageResource::collection($pages),
+        ]);
     }
 
     public function getStoreWiseProducts(Request $request)
