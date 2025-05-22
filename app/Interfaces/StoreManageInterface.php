@@ -32,7 +32,7 @@ interface StoreManageInterface
 
     public function getOwnerStores();
 
-    public function getSummaryData(string $slug);
+    public function getSummaryData(string $slug, ?int $seller_id);
 
     public function getSalesSummaryData(array $filters, ?string $slug);
 
