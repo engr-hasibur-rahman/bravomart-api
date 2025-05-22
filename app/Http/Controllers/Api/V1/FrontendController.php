@@ -191,7 +191,10 @@ class FrontendController extends Controller
         if ($request->has('store_type') && !empty($request->store_type)) {
             $query->where('store_type', $request->store_type);
         }
-        $stores = $query->paginate(50);
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+        $stores = $query->paginate(500);
         if ($stores->isNotEmpty()) {
             return response()->json([
                 'message' => __('messages.data_found'),
