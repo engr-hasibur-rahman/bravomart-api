@@ -37,7 +37,7 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
     }
 
     /* <-------------------------------------------------------- User Analytics Start --------------------------------------------------------> */
-    public function getSummaryData(?int $store_id)
+    public function getSummaryData(?int $store_id = null)
     {
         $total_store = Store::count();
         $total_seller = User::where('store_owner', 1)->count();
@@ -48,7 +48,7 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             ->count();
 
         if ($store_id) {
-            $total_order = Order::count();
+            $total_order = Order::where('store_id', $store_id)->count();
             $pending_orders = Order::where('store_id', $store_id)->where('status', 'pending')->count();
             $confirmed_orders = Order::where('store_id', $store_id)->where('status', 'confirmed')->count();
             $processing_orders = Order::where('store_id', $store_id)->where('status', 'processing')->count();
