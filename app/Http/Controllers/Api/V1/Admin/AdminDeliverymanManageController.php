@@ -210,13 +210,12 @@ class AdminDeliverymanManageController extends Controller
 
     public function storeVehicle(VehicleTypeRequest $request)
     {
-
         $vehicle = $this->deliverymanRepo->addVehicle($request->all());
         createOrUpdateTranslation($request, $vehicle, 'App\Models\VehicleType', $this->deliverymanRepo->translationKeys());
         if ($vehicle) {
             return $this->success(__('messages.save_success', ['name' => 'Vehicle type']));
         } else {
-            return $this->failed(__('messages.save_failed', ['name' => 'Vehicle type']));
+            return $this->failed(__('messages.save_failed', ['name' => 'Vehicle type']),500);
         }
     }
 
