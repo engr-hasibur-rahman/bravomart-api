@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Com;
 
+use App\Actions\ImageModifier;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\SiteGeneralInfoFilterFavResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterLogoResource;
@@ -46,6 +47,19 @@ class ComSiteGeneralController extends Controller
 
         return response()->json([
             'site_settings' => New SiteGeneralInfoResource($site_settings),
+        ]);
+    }
+
+    public function siteMaintenancePage(Request $request){
+            $settings = [
+                'com_maintenance_title' => com_option_get('com_maintenance_title'),
+                'com_maintenance_description' => com_option_get('com_maintenance_description'),
+                'com_maintenance_start_date' => com_option_get('com_maintenance_end_date'),
+                'com_maintenance_end_date' => com_option_get('com_maintenance_end_date'),
+                'com_maintenance_image' => ImageModifier::generateImageUrl(com_option_get('com_maintenance_image'))
+            ];
+        return response()->json([
+            'maintenance_settings' => $settings,
         ]);
     }
 }
