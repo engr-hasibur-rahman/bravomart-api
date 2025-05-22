@@ -494,7 +494,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
                 Route::post('approve', [AdminDeliverymanManageController::class, 'approveRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
-                Route::get('history', [AdminDeliverymanManageController::class, 'deliverymanDashboard']);
+                Route::get('history/{id}', [AdminDeliverymanManageController::class, 'deliverymanDashboard']);
             });
             //vehicle-types
             Route::prefix('vehicle-types/')->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_VEHICLE_TYPE->value])->group(function () {
