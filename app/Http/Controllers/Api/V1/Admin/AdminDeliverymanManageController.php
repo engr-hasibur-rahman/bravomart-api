@@ -17,6 +17,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Dashboard\DeliverymanDashboardResource;
 use App\Http\Resources\Deliveryman\DeliverymanDropdownResource;
 use App\Interfaces\DeliverymanManageInterface;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -334,6 +335,12 @@ class AdminDeliverymanManageController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
+        }
+        $deliveryman = User::where('id', $request->id)->where('activity_scope', 'delivery_level')->first();
+        if (!$deliveryman) {
+            return response()->json([
+                'message' => __('messages.user_invalid', ['user' => 'deliveryman'])
+            ], 422);
         }
         $data = $this->deliverymanRepo->getDeliverymanDashboard($request->id);
         return response()->json(new DeliverymanDashboardResource((object)$data));
