@@ -16,26 +16,15 @@ class PageResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // Get the requested language from the query parameter
+
         $language = $request->input('language', 'en');
-        // Get the translation for the requested language
         $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
             'title' => !empty($translation) && $translation->where('key', 'title')->first()
                 ? safeJsonDecode($translation->where('key', 'title')->first()->value)
-                : $this->title, // If language is empty or not provided attribute
-            'slug' => $this->slug,
-            'meta_title' => !empty($translation) && $translation->where('key', 'meta_title')->first()
-                ? safeJsonDecode($translation->where('key', 'meta_title')->first()->value, true)
-                : $this->meta_title, // If language is empty or not provided attribute
-            'meta_description' => !empty($translation) && $translation->where('key', 'meta_description')->first()
-                ? safeJsonDecode($translation->where('key', 'meta_description')->first()->value, true)
-                : $this->meta_description, // If language is empty or not provided attribute
-            'meta_keywords' => !empty($translation) && $translation->where('key', 'meta_keywords')->first()
-                ? safeJsonDecode($translation->where('key', 'meta_keywords')->first()->value, true)
-                : $this->meta_keywords, // If language is empty or not provided attribute
-            'status' => $this->status,
+                : $this->title,
+            'slug' => $this->slug
         ];
     }
 
