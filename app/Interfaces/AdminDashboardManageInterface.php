@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 interface AdminDashboardManageInterface
 {
-    public function getSummaryData();
+    public function getSummaryData(?int $store_id);
 
     public function getSalesSummaryData(array $filters);
 

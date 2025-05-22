@@ -37,21 +37,38 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
     }
 
     /* <-------------------------------------------------------- User Analytics Start --------------------------------------------------------> */
-    public function getSummaryData()
+    public function getSummaryData(?int $store_id)
     {
         $total_store = Store::count();
         $total_seller = User::where('store_owner', 1)->count();
-        $total_order = Order::count();
         $total_product = Product::count();
         $total_customer = Customer::count();
         $total_staff = User::where('activity_scope', 'store_level')
             ->where('store_owner', '!=', 1)
             ->count();
-        $pending_orders = Order::where('status', 'pending')->count();
-        $completed_orders = Order::where('status', 'delivered')->count();
-        $cancelled_orders = Order::where('status', 'cancelled')->count();
-        $deliveryman_not_assigned_orders = Order::where('status', 'processing')->whereNull('confirmed_by')->count();
-        $refunded_orders = Order::where('refund_status', 'refunded')->count();
+
+        if ($store_id) {
+            $total_order = Order::count();
+            $pending_orders = Order::where('store_id', $store_id)->where('status', 'pending')->count();
+            $confirmed_orders = Order::where('store_id', $store_id)->where('status', 'confirmed')->count();
+            $processing_orders = Order::where('store_id', $store_id)->where('status', 'processing')->count();
+            $shipped_orders = Order::where('store_id', $store_id)->where('status', 'shipped')->count();
+            $completed_orders = Order::where('store_id', $store_id)->where('status', 'delivered')->count();
+            $cancelled_orders = Order::where('store_id', $store_id)->where('status', 'cancelled')->count();
+            $deliveryman_not_assigned_orders = Order::where('store_id', $store_id)->where('status', 'processing')->whereNull('confirmed_by')->count();
+            $refunded_orders = Order::where('store_id', $store_id)->where('refund_status', 'refunded')->count();
+        } else {
+            $total_order = Order::count();
+            $pending_orders = Order::where('status', 'pending')->count();
+            $confirmed_orders = Order::where('status', 'confirmed')->count();
+            $processing_orders = Order::where('status', 'processing')->count();
+            $shipped_orders = Order::where('status', 'shipped')->count();
+            $completed_orders = Order::where('status', 'delivered')->count();
+            $cancelled_orders = Order::where('status', 'cancelled')->count();
+            $deliveryman_not_assigned_orders = Order::where('status', 'processing')->whereNull('confirmed_by')->count();
+            $refunded_orders = Order::where('refund_status', 'refunded')->count();
+        }
+
         $total_areas = StoreArea::count();
         $total_deliverymen = User::where('activity_scope', 'delivery_level')->count();
         $total_categories = ProductCategory::count();
@@ -91,6 +108,7 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             ->sum('order_amount_admin_commission');
         $total_order_revenue = $total_earnings - $total_refunds;
         $total_revenue = ($total_order_revenue + $total_admin_commission_amount + $total_subscription_earnings) - $total_tax;
+
         return [
             'total_customers' => $total_customer,
             'total_sellers' => $total_seller,
@@ -109,9 +127,9 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
 
             'total_orders' => $total_order,
             'total_pending_orders' => $pending_orders,
-            'total_confirmed_orders' => $pending_orders,
-            'total_processing_orders' => $pending_orders,
-            'total_shipped_orders' => $pending_orders,
+            'total_confirmed_orders' => $confirmed_orders,
+            'total_processing_orders' => $processing_orders,
+            'total_shipped_orders' => $shipped_orders,
             'total_delivered_orders' => $completed_orders,
             'total_cancelled_orders' => $cancelled_orders,
             'deliveryman_not_assigned_orders' => $deliveryman_not_assigned_orders,

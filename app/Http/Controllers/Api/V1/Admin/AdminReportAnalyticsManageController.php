@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Exports\OrderReportExport;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminOrderDashboardReportResource;
 use App\Http\Resources\Admin\AdminOrderReportResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Interfaces\AdminDashboardManageInterface;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
@@ -13,6 +15,11 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class AdminReportAnalyticsManageController extends Controller
 {
+    public function __construct(protected AdminDashboardManageInterface $adminRepo)
+    {
+
+    }
+
     public function reportList(Request $request)
     {
         $reports = [
@@ -56,6 +63,7 @@ class AdminReportAnalyticsManageController extends Controller
         ];
 
         $query = OrderDetail::query();
+        $store_id = null;
 
         if (isset($filters['search'])) {
             $query->whereHas('order', function ($q) use ($filters) {
@@ -94,6 +102,7 @@ class AdminReportAnalyticsManageController extends Controller
 
         if (isset($filters['store_id'])) {
             $query->where('store_id', $filters['store_id']);
+            $store_id = $request->store_id;
         }
 
         if (isset($filters['customer_id'])) {
@@ -119,6 +128,7 @@ class AdminReportAnalyticsManageController extends Controller
         $orderDetails = $query->with(['order.orderMaster.customer', 'order.orderMaster', 'store', 'area'])
             ->latest()
             ->paginate($filters['per_page'] ?? 20);
+        $dashboard = $this->adminRepo->getSummaryData($store_id);
         // Check if export option is requested (either csv or xlsx)
         if ($request->has('export') && in_array($request->export, ['csv', 'xlsx'])) {
             // Export to CSV or XLSX using the filtered data
@@ -126,6 +136,7 @@ class AdminReportAnalyticsManageController extends Controller
         }
 
         return response()->json([
+            'dashboard' => new AdminOrderDashboardReportResource((object)$dashboard),
             'data' => AdminOrderReportResource::collection($orderDetails),
             'meta' => new PaginationResource($orderDetails)
         ]);

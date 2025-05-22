@@ -215,7 +215,7 @@ class AdminDeliverymanManageController extends Controller
         if ($vehicle) {
             return $this->success(__('messages.save_success', ['name' => 'Vehicle type']));
         } else {
-            return $this->failed(__('messages.save_failed', ['name' => 'Vehicle type']),500);
+            return $this->failed(__('messages.save_failed', ['name' => 'Vehicle type']), 500);
         }
     }
 
@@ -329,7 +329,7 @@ class AdminDeliverymanManageController extends Controller
 
     public function deliverymanDashboard(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(['id' => $request->id], [
             'id' => 'required|exists:users,id',
         ]);
         if ($validator->fails()) {
