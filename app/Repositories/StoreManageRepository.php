@@ -64,7 +64,7 @@ class StoreManageRepository implements StoreManageInterface
                 $query->where(DB::raw("CONCAT_WS(' ', stores.name, name_translations.value)"), 'like', "%{$search}%");
             });
         }
-        if (isset($status)){
+        if (isset($status)) {
             $store->where('status', $status);
         }
         return $store->with(['seller', 'area', 'related_translations'])
@@ -485,9 +485,14 @@ class StoreManageRepository implements StoreManageInterface
     }
 
     /*-------------------------------------------------------------------------------------------------------------------*/
-    public function getSummaryData(?string $slug = null)
+    public function getSummaryData(?string $slug = null, ?int $seller_id = null)
     {
-        $user = auth('api')->user();
+        if ($seller_id) {
+            $seller = User::where('id', $seller_id)->first();
+            $user = $seller;
+        } else {
+            $user = auth('api')->user();
+        }
         $summary = [
             'store_details' => [],
             'total_earnings' => 0,

@@ -259,6 +259,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('registration', [UserController::class, 'StoreOwnerRegistration'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_REGISTRATION->value);
             Route::post('update', [AdminSellerManageController::class, 'updateProfile']);
             Route::get('list', [AdminSellerManageController::class, 'getSellerList']);
+            Route::get('history/{id}', [AdminSellerManageController::class, 'sellerDashboard']);
             Route::get('active', [AdminSellerManageController::class, 'getActiveSellerList']);
             Route::get('details/{id}', [AdminSellerManageController::class, 'getSellerDetails']);
             Route::get('list/pending', [AdminSellerManageController::class, 'pendingSellers']);

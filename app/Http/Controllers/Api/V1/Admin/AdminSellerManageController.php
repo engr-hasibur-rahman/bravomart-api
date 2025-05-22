@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\SellerListForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Dashboard\DeliverymanDashboardResource;
+use App\Http\Resources\Dashboard\SellerStoreSummaryResource;
 use App\Http\Resources\Seller\SellerDetailsResource;
 use App\Http\Resources\Seller\SellerResource;
+use App\Interfaces\StoreManageInterface;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,6 +17,11 @@ use phpseclib3\Crypt\Hash;
 
 class AdminSellerManageController extends Controller
 {
+    public function __construct(protected StoreManageInterface $storeRepo)
+    {
+
+    }
+
     public function getSellerList(Request $request)
     {
         $query = User::isSeller();
@@ -181,7 +189,24 @@ class AdminSellerManageController extends Controller
         return response()->json([
             'message' => __('messages.update_success', ['name' => 'Seller'])
         ]);
+    }
 
-
+    public function sellerDashboard(Request $request)
+    {
+        $validator = Validator::make(['id' => $request->id, 'slug' => $request->slug], [
+            'id' => 'required|exists:users,id',
+            'slug' => 'nullable|exists:stores,slug',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $seller = User::where('id', $request->id)->where('activity_scope', 'store_level')->first();
+        if (!$seller) {
+            return response()->json([
+                'message' => __('messages.user_invalid', ['user' => 'seller'])
+            ], 422);
+        }
+        $data = $this->storeRepo->getSummaryData($request->slug, $request->id);
+        return response()->json(new SellerStoreSummaryResource((object)$data));
     }
 }
