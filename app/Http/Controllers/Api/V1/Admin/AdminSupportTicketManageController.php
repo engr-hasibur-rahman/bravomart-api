@@ -223,7 +223,7 @@ class AdminSupportTicketManageController extends Controller
 
     public function destroy(Request $request)
     {
-        $ticket = Ticket::find($request->id);
+        $ticket = Ticket::find($request->ticket_id);
 
         if (!$ticket) {
             return response()->json([
