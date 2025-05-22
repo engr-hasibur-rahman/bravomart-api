@@ -14,6 +14,7 @@ use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
 use App\Http\Resources\Admin\AdminVehicleTypeDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Dashboard\DeliverymanDashboardResource;
 use App\Http\Resources\Deliveryman\DeliverymanDropdownResource;
 use App\Interfaces\DeliverymanManageInterface;
 use Illuminate\Http\Request;
@@ -209,13 +210,12 @@ class AdminDeliverymanManageController extends Controller
 
     public function storeVehicle(VehicleTypeRequest $request)
     {
-
         $vehicle = $this->deliverymanRepo->addVehicle($request->all());
         createOrUpdateTranslation($request, $vehicle, 'App\Models\VehicleType', $this->deliverymanRepo->translationKeys());
         if ($vehicle) {
             return $this->success(__('messages.save_success', ['name' => 'Vehicle type']));
         } else {
-            return $this->failed(__('messages.save_failed', ['name' => 'Vehicle type']));
+            return $this->failed(__('messages.save_failed', ['name' => 'Vehicle type']), 500);
         }
     }
 
@@ -325,5 +325,17 @@ class AdminDeliverymanManageController extends Controller
             'data' => DeliverymanDropdownResource::collection($deliverymen),
             'meta' => new PaginationResource($deliverymen)
         ], 200);
+    }
+
+    public function deliverymanDashboard(Request $request)
+    {
+        $validator = Validator::make(['id' => $request->id], [
+            'id' => 'required|exists:users,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $data = $this->deliverymanRepo->getDeliverymanDashboard($request->id);
+        return response()->json(new DeliverymanDashboardResource((object)$data));
     }
 }

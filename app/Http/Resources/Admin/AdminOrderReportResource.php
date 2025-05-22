@@ -20,7 +20,7 @@ class AdminOrderReportResource extends JsonResource
             "invoice" => $this->order?->invoice_number,
             "store" => $this->store?->name,
             "area" => $this->area?->name,
-            "customer" => $this->order?->orderMaster?->customer->full_name,
+            "customer" => $this->order?->orderMaster?->customer?->full_name,
             "payment_gateway" => $this->order?->orderMaster?->payment_gateway,
             "payment_status" => $this->order?->orderMaster?->payment_status,
             "order_amount" => $this->order?->order_amount,
@@ -28,7 +28,6 @@ class AdminOrderReportResource extends JsonResource
             "product_discount_amount" => $this->order?->product_discount_amount,
             "flash_discount_amount_admin" => $this->order?->flash_discount_amount_admin,
             "shipping_charge" => $this->order?->shipping_charge,
-            "additional_charge_amount" => $this->order?->orderMaster?->additional_charge_amount,
             "refund_status" => $this->order?->refund_status,
             "status" => $this->order?->status,
             "base_price" => $this->base_price,
@@ -43,6 +42,10 @@ class AdminOrderReportResource extends JsonResource
             "admin_commission_type" => $this->admin_commission_type,
             "admin_commission_rate" => $this->admin_commission_rate,
             "admin_commission_amount" => $this->admin_commission_amount,
+            "additional_charge_name" => $this->order?->order_additional_charge_name,
+            "additional_charge_amount" => $this->order?->order_additional_charge_amount,
+            "additional_charge_store_amount" => $this->order?->order_additional_charge_store_amount,
+            "admin_additional_charge_commission" => $this->order?->order_admin_additional_charge_commission,
         ];
     }
 }
