@@ -20,7 +20,7 @@ class AdminOrderReportResource extends JsonResource
             "invoice" => $this->order?->invoice_number,
             "store" => $this->store?->name,
             "area" => $this->area?->name,
-            "customer" => $this->order?->orderMaster?->customer->full_name,
+            "customer" => $this->order?->orderMaster?->customer?->full_name,
             "payment_gateway" => $this->order?->orderMaster?->payment_gateway,
             "payment_status" => $this->order?->orderMaster?->payment_status,
             "order_amount" => $this->order?->order_amount,
