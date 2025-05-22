@@ -817,7 +817,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         return $query->paginate(10);
     }
 
-    public function getDeliverymanDashboard(?int $deliveryman_id)
+    public function getDeliverymanDashboard(?int $deliveryman_id = null)
     {
         if ($deliveryman_id) {
             $deliveryman = User::where('id', $deliveryman_id)->where('activity_scope', 'delivery_level')->first();
