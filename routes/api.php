@@ -143,6 +143,7 @@ Route::group(['prefix' => 'v1/'], function () {
     // home page footer api route
     Route::get('/footer', [HeaderFooterController::class, 'siteFooterInfo']);
     Route::get('/site-general-info', [ComSiteGeneralController::class, 'siteGeneralInfo']);
+    Route::get('/maintenance-page-settings', [ComSiteGeneralController::class, 'siteMaintenancePage']);
 
     // pages settings routes
     Route::get('/about-page-settings', [FrontendPageSettingsController::class, 'AboutPageSettings']);
