@@ -422,9 +422,8 @@ class OrderService
                         $after_discount_final_price_with_qty = $after_any_discount_final_price * $itemData['quantity'];
 
                         // without tax line total price  and - coupon total discount
-
 //                        $line_total_excluding_tax = $after_discount_final_price_with_qty - $total_discount_amount / $total_items;
-                        $line_total_excluding_tax = $after_discount_final_price_with_qty - $total_discount_amount / $total_items;
+                        $line_total_excluding_tax = $after_discount_final_price_with_qty;
 
                         // vat/tax calculate
                         $store_tax_amount = $product->store?->tax;
@@ -636,10 +635,10 @@ class OrderService
 
                 $detail->update([
                     'coupon_discount_amount' => $discount,
-                    'line_total_excluding_tax' => $detail->line_total_price_with_qty - $detail->coupon_discount_amount,
+                    'line_total_excluding_tax' => $detail->line_total_price_with_qty - $discount,
                     'tax_amount' => ($detail->line_total_price_with_qty / 100 * $detail->tax_rate) / $detail->quantity,
                     'total_tax_amount' => $detail->line_total_price_with_qty / 100 * $detail->tax_rate,
-                    'line_total_price' => ($detail->line_total_price_with_qty - $detail->coupon_discount_amount) + ($detail->line_total_price_with_qty / 100 * $detail->tax_rate),
+                    'line_total_price' => ($detail->line_total_price_with_qty - $discount) + ($detail->line_total_price_with_qty / 100 * $detail->tax_rate),
                     'admin_commission_amount' => $detail->admin_commission_type == 'percentage' ? $detail->line_total_price_with_qty / 100 * $detail->admin_commission_rate : $detail->admin_commission_rate,
                 ]);
             }
@@ -647,7 +646,13 @@ class OrderService
             // Step 3: Distribute per Order
             foreach ($orderMaster->orders as $order) {
                 $orderDiscount = $order->orderDetail->sum('coupon_discount_amount');
-                $order->update(['coupon_discount_amount_admin' => $orderDiscount]);
+                $orderAmount = $order->orderDetail->sum('line_total_price') + $order->shipping_charge + $order->order_additional_charge_amount;
+                $orderAmountStoreValue = $order->orderDetail->sum('line_total_price') - $order->order_amount_admin_commission;
+                $order->update([
+                    'order_amount_store_value' => $orderAmountStoreValue,
+                    'order_amount' => $orderAmount,
+                    'coupon_discount_amount_admin' => $orderDiscount
+                ]);
             }
             // Done
         });
