@@ -396,23 +396,23 @@ class OrderService
 
                         // **Calculate Coupon Discount Per Item**
                         $per_item_coupon_discount_amount = 0;
-                        if (isset($coupon_data['discount_amount'])) {
-                            $coupon_discount_type = $coupon_data['coupon_type'];
-                            $coupon_discount_rate = $coupon_data['discount_rate'];
-                            $coupon_discount_amount = $coupon_data['discount_amount'];
-
-                            if ($coupon_discount_type === 'percentage') {
-                                // Percentage-based discount - distribute
-                                $per_item_coupon_discount_amount = round($after_flash_sale_discount_final_price * ($coupon_discount_rate / 100), 2);
-                            } elseif ($coupon_discount_type === 'amount') {
-                                // Fixed amount discount - distribute
-                                $item_contribution_ratio = $after_flash_sale_discount_final_price / $main_order_amount_after_discount;
-                                $per_item_coupon_discount_amount = round($item_contribution_ratio * $coupon_discount_amount, 2);
-
-                            } else {
-                                $per_item_coupon_discount_amount = 0;
-                            }
-                        }
+//                        if (isset($coupon_data['discount_amount'])) {
+//                            $coupon_discount_type = $coupon_data['coupon_type'];
+//                            $coupon_discount_rate = $coupon_data['discount_rate'];
+//                            $coupon_discount_amount = $coupon_data['discount_amount'];
+//
+//                            if ($coupon_discount_type === 'percentage') {
+//                                // Percentage-based discount - distribute
+//                                $per_item_coupon_discount_amount = round($after_flash_sale_discount_final_price * ($coupon_discount_rate / 100), 2);
+//                            } elseif ($coupon_discount_type === 'amount') {
+//                                // Fixed amount discount - distribute
+//                                $item_contribution_ratio = $after_flash_sale_discount_final_price / $main_order_amount_after_discount;
+//                                $per_item_coupon_discount_amount = round($item_contribution_ratio * $coupon_discount_amount, 2);
+//
+//                            } else {
+//                                $per_item_coupon_discount_amount = 0;
+//                            }
+//                        }
 
 
                         // Calculate final price after all discounts (flash sale + coupon)
@@ -422,6 +422,8 @@ class OrderService
                         $after_discount_final_price_with_qty = $after_any_discount_final_price * $itemData['quantity'];
 
                         // without tax line total price  and - coupon total discount
+
+//                        $line_total_excluding_tax = $after_discount_final_price_with_qty - $total_discount_amount / $total_items;
                         $line_total_excluding_tax = $after_discount_final_price_with_qty - $total_discount_amount / $total_items;
 
                         // vat/tax calculate
@@ -437,7 +439,6 @@ class OrderService
                         }
                         // Final line total price based on quantity
                         $line_total_price = $line_total_excluding_tax + $total_tax_amount;
-
 
                         // Initialize commission variables
                         $system_commission_type = null;
@@ -497,7 +498,6 @@ class OrderService
                             'admin_commission_rate' => $system_commission_amount,
                             'admin_commission_amount' => $admin_commission_amount,
                         ]);
-//                    $this->distributeCouponDiscount($order_master);
 
 
                         // set order package discount info
@@ -561,14 +561,12 @@ class OrderService
             } // end order package
             // Update Order Master
             $this->distributeCouponDiscount($order_master);
-
             $order_master->product_discount_amount = $product_discount_amount_master;
             $order_master->flash_discount_amount_admin = $order_master->orders->sum('flash_discount_amount_admin');
 
             $order_master->shipping_charge = $shipping_charge;
             $order_master->order_amount = $order_amount_master;
             $order_master->save();
-            $this->distributeCouponDiscount($order_master);
             // return all order id
             $all_orders = Order::with('store.seller')->where('order_master_id', $order_master->id)->get();
             $order_master = OrderMaster::with('orderAddress', 'customer')->find($order_master->id);

@@ -34,14 +34,14 @@ class EmailTemplateManageController extends Controller
             $query->where('status', $request->status);
         }
 
-        if (!empty($request->name)) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if (!empty($request->search)) {
+            $query->where('name', 'like', '%' . $request->search . '%');
         }
 
         if (!empty($request->subject)) {
             $query->where('subject', 'like', '%' . $request->subject . '%');
         }
-        $emailTemplates = $query->with('related_translations')->paginate(10);
+        $emailTemplates = $query->with('related_translations')->paginate($request->per_page ?? 10);
 
         return response()->json([
             'data' => AdminEmailResource::collection($emailTemplates),
@@ -119,7 +119,6 @@ class EmailTemplateManageController extends Controller
             'message' => 'Email template updated successfully',
         ], 201);
     }
-
 
 
     public function deleteEmailTemplate(Request $request)
