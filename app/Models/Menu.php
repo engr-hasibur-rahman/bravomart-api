@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     protected $fillable = [
+        'page_id',
         'name',
         'url',
         'icon',
@@ -42,5 +43,10 @@ class Menu extends Model
     public function childrenRecursive()
     {
         return $this->children()->with('childrenRecursive');
+    }
+
+    public function page()
+    {
+        return $this->belongsTo(Page::class, 'page_id');
     }
 }
