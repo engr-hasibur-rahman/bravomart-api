@@ -25,11 +25,10 @@ class SellerStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subscription_type' => 'nullable',
+            'subscription_type' => 'required|in:subscription,commission',
             'subscription_id' => 'nullable|exists:subscriptions,id',
             'payment_gateway' => 'nullable',
-            //'area_id' => 'nullable|exists:areas,id',
-            //'store_seller_id' => 'nullable|exists:sellers,id',
+            'area_id' => 'nullable|exists:areas,id',
             'id' => 'nullable|exists:store_sellers,id',
             'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class),
             'name' => 'required|string|max:255',
