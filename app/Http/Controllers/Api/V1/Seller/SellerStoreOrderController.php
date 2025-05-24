@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminOrderStatusResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\InvoiceResource;
 use App\Http\Resources\Order\OrderSummaryResource;
@@ -92,10 +93,13 @@ class SellerStoreOrderController extends Controller
             }
 
             $orders = $orders->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
+            // === Order Status Buttons (From Full Order Table, Unfiltered) ===
+            $orderStatusCounts = new AdminOrderStatusResource(Order::where('store_id', $request->store_id)->get());
 
             return response()->json([
                 'order_masters' => StoreOrderResource::collection($orders),
-                'meta' => new PaginationResource($orders)
+                'meta' => new PaginationResource($orders),
+                'status' => $orderStatusCounts,
             ]);
         } else {
             return response()->json([
