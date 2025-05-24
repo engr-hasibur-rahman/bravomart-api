@@ -36,7 +36,7 @@ class AdminWithdrawListResource extends JsonResource
                     ? new StoreShortDetailsResource($this->owner)
                     : new UserDetailsResource($this->owner))
                 : null,
-            "owner_type" => $this->owner_type == Store::class ? 'Store' : 'User'
+            "owner_type" => $this->owner_type == Store::class ? 'Store' : 'Deliveryman'
         ];
     }
 }
