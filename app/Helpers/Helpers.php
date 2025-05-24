@@ -413,29 +413,25 @@ if (!function_exists('translate')) {
     }
 
 
-    function updateEnvValues(array $values)
+    function updateEnvValues(array $get_data)
     {
-        $envFile = app()->environmentFilePath();
-        $str = file_get_contents($envFile);
-        if (count($values) > 0) {
-            foreach ($values as $envKey => $envValue) {
-
-                $str .= "\n"; // In case the searched variable is in the last line without \n
-                $keyPosition = strpos($str, "{$envKey}=");
-                $endOfLinePosition = strpos($str, "\n", $keyPosition);
-                $oldLine = substr($str, $keyPosition, $endOfLinePosition - $keyPosition);
-
-                // If key does not exist, add it
-                if (!$keyPosition || !$endOfLinePosition || !$oldLine) {
-                    $str .= "{$envKey}={$envValue}\n";
+        $env_data_file = app()->environmentFilePath();
+        $string_data = file_get_contents($env_data_file);
+        if (count($get_data) > 0) {
+            foreach ($get_data as $envKey => $envValue) {
+                $string_data .= "\n";
+                $keyPosition = strpos($string_data, "{$envKey}=");
+                $position_end_line = strpos($string_data, "\n", $keyPosition);
+                $line_old_value = substr($string_data, $keyPosition, $position_end_line - $keyPosition);
+                if (!$keyPosition || !$position_end_line || !$line_old_value) {
+                    $string_data .= "{$envKey}={$envValue}\n";
                 } else {
-                    $str = str_replace($oldLine, "{$envKey}={$envValue}", $str);
+                    $string_data = str_replace($line_old_value, "{$envKey}={$envValue}", $string_data);
                 }
             }
         }
-
-        $str = substr($str, 0, -1);
-        if (!file_put_contents($envFile, $str)) return false;
+        $string_data = substr($string_data, 0, -1);
+        if (!file_put_contents($env_data_file, $string_data)) return false;
         return true;
     }
 
