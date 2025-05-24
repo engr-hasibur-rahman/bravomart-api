@@ -48,7 +48,7 @@ class OrderDetailsResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'review_status' => auth('api_customer')->check() &&
-                Order::isReviewedByCustomer(
+                $this->order?->isReviewedByCustomer(
                     auth('api_customer')->user()->id,
                     $this->order_id,
                     $this->product_id,
