@@ -3,6 +3,8 @@
 namespace App\Http\Resources\Order;
 
 use App\Actions\ImageModifier;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -45,6 +47,12 @@ class OrderDetailsResource extends JsonResource
             'admin_commission_amount' => $this->admin_commission_amount,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'review_status' => auth('api_customer')->check() &&
+                $this->order?->isReviewedByCustomer(
+                    auth('api_customer')->user()->id,
+                    $this->order_id,
+                    $this->product_id,
+                    Product::class),
         ];
     }
 }

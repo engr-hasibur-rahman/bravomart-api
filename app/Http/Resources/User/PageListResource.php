@@ -21,9 +21,10 @@ class PageListResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
-            'title' => !empty($translation) && $translation->where('key', 'title')->first()
+            'label' => !empty($translation) && $translation->where('key', 'title')->first()
                 ? safeJsonDecode($translation->where('key', 'title')->first()->value)
                 : $this->title,
+            'value' => $this->id,
             'slug' => $this->slug
         ];
     }

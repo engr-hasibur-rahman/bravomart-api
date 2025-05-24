@@ -618,9 +618,8 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 "status" => false,
-                "status_code" => 500,
                 "message" => $validator->errors()
-            ]);
+            ],422);
         }
         try {
             $result = $this->sendVerificationEmail($request->email);
@@ -636,9 +635,8 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'status_code' => 500,
                 'message' => $e->getMessage()
-            ]);
+            ],500);
         }
     }
 
