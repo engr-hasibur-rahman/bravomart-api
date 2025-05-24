@@ -652,37 +652,23 @@ class SystemManagementController extends Controller
 
     public function databaseUpdateControl(Request $request)
     {
+
         try {
+
             // Store original environment
             $originalEnv = env('APP_ENV');
-
-            // Set environment to local
-            if (!updateEnvValues(['APP_ENV' => 'local'])) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Failed to update environment to local.',
-                ], 500);
-            }
-
-            Artisan::call('config:clear');
-            // Run database migrations and seeding
+          //  update environment to local
+           updateEnvValues(['APP_ENV' => 'local']);
+            // Run migration and seeder forcefully
             Artisan::call('migrate', ['--force' => true]);
             Artisan::call('db:seed', ['--force' => true]);
-            // Clear cache
+            // Clear other caches
             Artisan::call('cache:clear');
-            // Restore original environment
-            if (!updateEnvValues(['APP_ENV' => $originalEnv])) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Failed to restore original environment.',
-                ], 500);
-            }
-            Artisan::call('config:clear');
+           updateEnvValues(['APP_ENV' => 'production']);
             return response()->json([
                 'status' => true,
                 'message' => 'Database and cache operations completed successfully!',
             ]);
-
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,

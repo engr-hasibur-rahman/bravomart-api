@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('live_locations', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('trackable');
-            $table->string('ref')->nullable();
-            $table->foreignId('order_id')->nullable();
-            $table->decimal('latitude', 10, 7);
-            $table->decimal('longitude', 10, 7);
-            $table->timestamp('last_updated');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('live_locations')) {
+            Schema::create('live_locations', function (Blueprint $table) {
+                $table->id();
+                $table->morphs('trackable');
+                $table->string('ref')->nullable();
+                $table->foreignId('order_id')->nullable();
+                $table->decimal('latitude', 10, 7);
+                $table->decimal('longitude', 10, 7);
+                $table->timestamp('last_updated');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
