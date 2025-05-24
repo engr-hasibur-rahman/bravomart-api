@@ -62,18 +62,16 @@ class CustomerReviewManageController extends Controller
         if (!$order_belongs_to_customer) {
             return response()->json([
                 'status' => false,
-                'status_code' => 404,
                 'message' => 'This order does not belongs to this customer'
-            ]);
+            ],422);
         }
 
         $order_is_delivered = $order->status == 'delivered';
         if (!$order_is_delivered) {
             return response()->json([
                 'status' => false,
-                'status_code' => 422,
                 'message' => 'This order is not delivered yet!'
-            ]);
+            ],422);
         }
 
         $review_already_exists = Review::where('order_id', $request->order_id)
@@ -83,9 +81,8 @@ class CustomerReviewManageController extends Controller
         if ($review_already_exists) {
             return response()->json([
                 'status' => false,
-                'status_code' => 422,
                 'message' => 'This review already exists!'
-            ]);
+            ],422);
         }
         if ($request->reviewable_type == 'product') {
 
@@ -93,9 +90,8 @@ class CustomerReviewManageController extends Controller
             if (!$product) {
                 return response()->json([
                     'status' => false,
-                    'status_code' => 404,
                     'message' => 'Product not found!'
-                ]);
+                ],404);
             }
         }
         if ($request->reviewable_type == 'delivery_man') {
@@ -105,9 +101,8 @@ class CustomerReviewManageController extends Controller
             if (!$is_deliveryman && $user) {
                 return response()->json([
                     'status' => false,
-                    'status_code' => 403,
                     'message' => 'This user is not a delivery man!'
-                ]);
+                ],403);
             }
         }
 
@@ -115,15 +110,13 @@ class CustomerReviewManageController extends Controller
         if ($success) {
             return response()->json([
                 'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.save_success', ['name' => 'Review'])
             ]);
         } else {
             return response()->json([
                 'status' => false,
-                'status_code' => 400,
                 'message' => __('messages.save_failed', ['name' => 'Review'])
-            ]);
+            ],500);
         }
     }
 
