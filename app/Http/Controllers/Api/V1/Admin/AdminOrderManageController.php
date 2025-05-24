@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Enums\OrderActivityType;
 use App\Enums\OrderStatusType;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminOrderStatusResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\AdminOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
@@ -52,6 +53,7 @@ class AdminOrderManageController extends Controller
         $ordersQuery = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store.related_translations', 'deliveryman', 'orderMaster.shippingAddress']);
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
+        $ordersQuery->when($request->refund_status, fn($query) => $query->where('refund_status', $request->refund_status));
 
         $ordersQuery->when($request->start_date && $request->end_date, function ($query) use ($request) {
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
@@ -69,7 +71,8 @@ class AdminOrderManageController extends Controller
 
         return response()->json([
             'orders' => AdminOrderResource::collection($orders),
-            'meta' => new PaginationResource($orders)
+            'meta' => new PaginationResource($orders),
+            'status' => new AdminOrderStatusResource($orders),
         ]);
     }
 
