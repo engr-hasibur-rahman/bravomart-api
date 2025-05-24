@@ -54,7 +54,6 @@ class AdminSubscriptionSellerController extends Controller
         $subscriptions = $query->paginate($request->per_page ?? 10);
         return response()->json([
             'success' => true,
-//            'data' => AdminSubscriptionPackageResource::collection($subscriptions),
             'data' => StoreSubscriptionHistoryResource::collection($subscriptions),
             'meta' => new PaginationResource($subscriptions),
         ]);

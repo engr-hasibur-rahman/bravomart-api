@@ -131,18 +131,19 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/about-us', [FrontendController::class, 'aboutUs']);
     Route::get('/contact-us', [FrontendController::class, 'contactUs']);
     Route::get('/pages/{slug}', [FrontendController::class, 'getPage']);
+    Route::get('/all/pages', [FrontendController::class, 'allPage']);
     Route::get('/store-wise-products', [FrontendController::class, 'getStoreWiseProducts']);
     Route::get('/get-check-out-page-extra-info', [FrontendController::class, 'getCheckOutPageExtraInfo']);
     Route::get('/menu', [MenuManageController::class, 'index']);
     Route::post('/update-location',[LiveLocationController::class, 'update']);
     Route::post('/track-order-location',[LiveLocationController::class, 'trackOrder']);
 
-
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);
 
     // home page footer api route
     Route::get('/footer', [HeaderFooterController::class, 'siteFooterInfo']);
     Route::get('/site-general-info', [ComSiteGeneralController::class, 'siteGeneralInfo']);
+    Route::get('/maintenance-page-settings', [ComSiteGeneralController::class, 'siteMaintenancePage']);
 
     // pages settings routes
     Route::get('/about-page-settings', [FrontendPageSettingsController::class, 'AboutPageSettings']);

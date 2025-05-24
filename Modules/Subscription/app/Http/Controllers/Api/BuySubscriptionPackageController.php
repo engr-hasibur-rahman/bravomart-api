@@ -118,6 +118,7 @@ class BuySubscriptionPackageController extends Controller
 
         //subscription history get after update
         $subscription_history = SubscriptionHistory::where('store_id', $request->store_id)
+            ->where('payment_status', 'paid')
             ->where('status', 0)
             ->latest('created_at')
             ->first();

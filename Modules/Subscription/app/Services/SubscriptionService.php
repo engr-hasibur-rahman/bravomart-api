@@ -339,11 +339,11 @@ class SubscriptionService
         $payment_status = $payment_gateway === 'wallet' ? 'paid' : 'pending';
         $subscription_status = $payment_gateway === 'wallet' ? 1 : 0;
 
-
+        $days = (int) $subscriptionPackage->validity;
         // Calculate the new expiration date
         $newExpireDate = Carbon::parse($currentSubscription->expire_date)->gt(now())
-            ? Carbon::parse($currentSubscription->expire_date)->addDays($subscriptionPackage->validity)
-            : now()->addDays($subscriptionPackage->validity);
+            ? Carbon::parse($currentSubscription->expire_date)->addDays($days)
+            : now()->addDays($days);
 
 
         // Check payment gateway (wallet)

@@ -38,7 +38,7 @@ class BlogDetailsPublicResource extends JsonResource
                 ? $translation->where('key', 'meta_keywords')->first()->value
                 : $this->meta_keywords,
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
-            "created_at" => $this->created_at->format('F d, Y')
+            "created_at" => optional($this->created_at)->format('F d, Y')
         ];
     }
 }
