@@ -69,8 +69,7 @@ class AdminOrderManageController extends Controller
 
         $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
         // === Order Status Buttons (From Full Order Table, Unfiltered) ===
-        $allOrdersQuery = Order::query(); // Raw query without filters
-        $orderStatusCounts = new AdminOrderStatusResource($allOrdersQuery);
+        $orderStatusCounts = new AdminOrderStatusResource(Order::all());
         return response()->json([
             'orders' => AdminOrderResource::collection($orders),
             'meta' => new PaginationResource($orders),
