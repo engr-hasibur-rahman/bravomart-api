@@ -216,7 +216,7 @@ class UserController extends Controller
         $name = $user->user()->name;
         // Retrieve the role from the OAuth state parameter
         $role = $request->input('state', 'user'); // Default to 'user'
-
+        $frontendUrl = 'https://bravomart.bravo-soft.com/';
         // Find or create a user in the database
         if ($role == 'customer') {
             $existingUser = Customer::where('google_id', $google_id)
@@ -244,13 +244,20 @@ class UserController extends Controller
 //                'marketing_email' => (bool)$existingUser->marketing_email,
 //                'activity_notification' => (bool)$existingUser->activity_notification,
 //            ], 200);
-            return redirect()->route('social.response', [
-                'token' => $token,
-                'verified' => $existingUser->email_verified,
-                'status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
-                'marketing_email' => $existingUser->marketing_email,
-                'activity_notification' => $existingUser->activity_notification,
-            ]);
+//            return redirect()->route('social.response', [
+//                'token' => $token,
+//                'verified' => $existingUser->email_verified,
+//                'status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+//                'marketing_email' => $existingUser->marketing_email,
+//                'activity_notification' => $existingUser->activity_notification,
+//            ]);
+            return redirect()->away($frontendUrl . '?' . http_build_query([
+                    'token' => $token,
+                    'verified' => $existingUser->email_verified,
+                    'status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+                    'marketing_email' => $existingUser->marketing_email,
+                    'activity_notification' => $existingUser->activity_notification,
+                ]));
         } else {
             // Create a new user in the database
             if ($role == 'customer') {
@@ -309,13 +316,20 @@ class UserController extends Controller
 //                'marketing_email' => $newUser->marketing_email,
 //                'activity_notification' => $newUser->activity_notification,
 //            ], 201);
-            return redirect()->route('social.response', [
-                'token' => $token,
-                'verified' => $newUser->email_verified,
-                'status' => $newUser->deactivated_at ? 'deactivated' : 'active',
-                'marketing_email' => $newUser->marketing_email,
-                'activity_notification' => $newUser->activity_notification,
-            ]);
+//            return redirect()->route('social.response', [
+//                'token' => $token,
+//                'verified' => $newUser->email_verified,
+//                'status' => $newUser->deactivated_at ? 'deactivated' : 'active',
+//                'marketing_email' => $newUser->marketing_email,
+//                'activity_notification' => $newUser->activity_notification,
+//            ]);
+            return redirect()->away($frontendUrl . '?' . http_build_query([
+                    'token' => $token,
+                    'verified' => $existingUser->email_verified,
+                    'status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
+                    'marketing_email' => $existingUser->marketing_email,
+                    'activity_notification' => $existingUser->activity_notification,
+                ]));
         }
     }
 
