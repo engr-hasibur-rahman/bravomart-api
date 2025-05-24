@@ -48,12 +48,12 @@ class CustomerOrderResource extends JsonResource
             'refund_status' => $this->refund_status,
             'store_details' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
-            'deliveryman_review_status' => auth('api_customer')->check() &&
-                Order::isReviewedByCustomer(
+            'deliveryman_review_status' => auth('api_customer')->check() && $this->confirmed_by ?
+                $this->isReviewedByCustomer(
                     auth('api_customer')->user()->id,
-                    $this->order_id,
+                    $this->id,
                     $this->confirmed_by,
-                    User::class),
+                    User::class) : false,
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
             'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetail')),
         ];
