@@ -59,7 +59,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
             Route::get('order-growth-summary', [SellerStoreDashboardManageController::class, 'orderGrowthData']);
         });
 
-        // Store manage
+        // Seller Store manage
         Route::group(['prefix' => 'store/'], function () {
             Route::group(['prefix' => 'dashboard'], function () {
                 Route::get('/{slug?}', [SellerStoreDashboardManageController::class, 'summaryData']);

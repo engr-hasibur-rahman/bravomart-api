@@ -9,6 +9,7 @@ use App\Http\Resources\Com\SiteGeneralInfoFilterLogoResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterResource;
 use App\Http\Resources\Com\SiteGeneralInfoResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ComSiteGeneralController extends Controller
 {
@@ -62,4 +63,15 @@ class ComSiteGeneralController extends Controller
             'maintenance_settings' => $settings,
         ]);
     }
+
+    public function googleMapSettings(Request $request)
+    {
+        $com_google_map_enable_disable = com_option_get('com_google_map_enable_disable');
+        $com_google_map_api_key = com_option_get('com_google_map_api_key');
+        return $this->success([
+            'com_google_map_enable_disable' => $com_google_map_enable_disable,
+            'com_google_map_api_key' => $com_google_map_api_key,
+        ]);
+    }
+
 }

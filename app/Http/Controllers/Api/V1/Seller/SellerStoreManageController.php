@@ -59,7 +59,7 @@ class SellerStoreManageController extends Controller
             return $this->success(
                 translate('messages.save_success', ['name' => 'Store']),
                 200,
-                ['store_id' => $store->id] // Data payload
+                ['store_id' => $store->id]
             );
         } else {
             return $this->failed(translate('messages.save_failed', ['name' => 'Store'],500));
