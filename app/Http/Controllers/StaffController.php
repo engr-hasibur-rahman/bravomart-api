@@ -81,15 +81,7 @@ class StaffController extends Controller
             throw new AuthorizationException(__('messages.authorization_invalid'));
         }
 
-//        // Fetch default roles
-//        $roles = Role::where('available_for', 'store_level')
-//            ->where('name', '!=', 'Store Admin')
-//            ->where('status', 1)
-//            ->pluck('name')
-//            ->toArray();
-
         // Add role from request if provided
-
         if (isset($request->roles)) {
             $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
         }

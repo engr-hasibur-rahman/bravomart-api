@@ -144,6 +144,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/footer', [HeaderFooterController::class, 'siteFooterInfo']);
     Route::get('/site-general-info', [ComSiteGeneralController::class, 'siteGeneralInfo']);
     Route::get('/maintenance-page-settings', [ComSiteGeneralController::class, 'siteMaintenancePage']);
+    Route::get('/google-map-settings', [ComSiteGeneralController::class, 'googleMapSettings']);
 
     // pages settings routes
     Route::get('/about-page-settings', [FrontendPageSettingsController::class, 'AboutPageSettings']);
