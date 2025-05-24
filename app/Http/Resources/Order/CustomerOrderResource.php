@@ -7,6 +7,8 @@ use App\Http\Resources\Deliveryman\DeliverymanResource;
 use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Seller\Store\StoreDetailsResource;
 use App\Http\Resources\Store\StoreDetailsForOrderResource;
+use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -43,12 +45,15 @@ class CustomerOrderResource extends JsonResource
             'delivery_completed_at' => $this->delivery_completed_at,
             'payment_status' => $this->orderMaster->payment_status,
             'status' => $this->status,
-            'review_status' => auth('api_customer')->check()
-                ? $this->isReviewedByCustomer(auth('api_customer')->user()->id, $this->id) // Pass the order ID!
-                : false,
             'refund_status' => $this->refund_status,
             'store_details' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
+            'deliveryman_review_status' => auth('api_customer')->check() &&
+                Order::isReviewedByCustomer(
+                    auth('api_customer')->user()->id,
+                    $this->order_id,
+                    $this->confirmed_by,
+                    User::class),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
             'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetail')),
         ];
