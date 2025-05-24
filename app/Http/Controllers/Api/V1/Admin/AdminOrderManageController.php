@@ -68,11 +68,13 @@ class AdminOrderManageController extends Controller
         $ordersQuery->when($request->search, fn($query) => $query->where('id', 'like', '%' . $request->search . '%'));
 
         $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
-
+        // === Order Status Buttons (From Full Order Table, Unfiltered) ===
+        $allOrdersQuery = Order::query(); // Raw query without filters
+        $orderStatusCounts = new AdminOrderStatusResource($allOrdersQuery);
         return response()->json([
             'orders' => AdminOrderResource::collection($orders),
             'meta' => new PaginationResource($orders),
-            'status' => new AdminOrderStatusResource($orders),
+            'status' => $orderStatusCounts,
         ]);
     }
 
