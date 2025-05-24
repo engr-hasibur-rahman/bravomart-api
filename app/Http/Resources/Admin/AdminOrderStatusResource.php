@@ -16,6 +16,11 @@ class AdminOrderStatusResource extends JsonResource
     {
         return [
             [
+                'label' => 'All',
+                'value' => '',
+                'count' => $this->count(),
+            ],
+            [
                 'label' => 'Pending',
                 'value' => 'pending',
                 'count' => $this->where('status', 'pending')->count(),
