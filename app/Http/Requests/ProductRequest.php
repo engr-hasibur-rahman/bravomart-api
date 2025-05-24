@@ -20,7 +20,7 @@ class ProductRequest extends FormRequest
     {
         $rules = [
             "store_id" => "required|exists:stores,id",
-            "category_id" => "nullable|exists:product_category,id",
+            "category_id" => "required|exists:product_category,id",
             "brand_id" => "nullable|exists:product_brand,id",
             "unit_id" => "nullable|exists:units,id",
             "type" => "nullable|in:" . implode(',', array_column(StoreType::cases(), 'value')),
@@ -79,6 +79,7 @@ class ProductRequest extends FormRequest
         return [
             "store_id.required" => "The shop ID is required.",
             "store_id.exists" => "The selected store does not exist.",
+            "category_id.required" => "Category is required.",
             "category_id.exists" => "The selected category does not exist.",
             "brand_id.exists" => "The selected brand does not exist.",
             "unit_id.exists" => "The selected unit does not exist.",

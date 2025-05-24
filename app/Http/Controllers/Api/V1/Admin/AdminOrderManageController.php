@@ -65,7 +65,9 @@ class AdminOrderManageController extends Controller
             });
         });
 
-        $ordersQuery->when($request->search, fn($query) => $query->where('id', 'like', '%' . $request->search . '%'));
+        $ordersQuery->when($request->search, fn($query) =>
+        $query->where('id', 'LIKE', '%' . $request->search . '%')
+            ->orWhere('invoice_number', 'LIKE', '%' . $request->search . '%'));
 
         $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
         // === Order Status Buttons (From Full Order Table, Unfiltered) ===
@@ -191,10 +193,10 @@ class AdminOrderManageController extends Controller
         }
         $systemSettings = SystemCommission::first();
         $store_handle_delivery = $systemSettings->order_confirmation_by == 'store';
-        if ($store_handle_delivery){
+        if ($store_handle_delivery) {
             return response()->json([
                 'message' => __('messages.order_confirmation_store')
-            ],422);
+            ], 422);
         }
         $order = Order::find($request->order_id);
         if (!$order) {
