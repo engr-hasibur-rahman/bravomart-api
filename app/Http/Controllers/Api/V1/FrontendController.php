@@ -823,23 +823,102 @@ class FrontendController extends Controller
 
     public function flashDealProducts(Request $request)
     {
-        $filters = [
-            "store_id" => $request->store_id,
-            "flash_sale_id" => $request->flash_sale_id,
-            "status" => $request->status,
-            "start_date" => $request->start_date,
-            "end_date" => $request->end_date,
-            "per_page" => $request->per_page,
-        ];
-        $flashSaleProducts = $this->flashSaleService->getAllFlashSaleProducts($filters);
+        // If a specific flash deal product ID is requested
+        if (isset($request->id)) {
+            $flashDealProduct = FlashSaleProduct::with(['product.variants', 'product.store', 'product.related_translations', 'flashSale.related_translations'])
+                ->where('product_id',$request->product_id)->first();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => new FlashSaleAllProductPublicResource($flashDealProduct)
+            ]);
+        }
+
+        $query = FlashSaleProduct::query()->with([
+            'product.category',
+            'product.unit',
+            'product.tags',
+            'product.store',
+            'product.brand',
+            'product.related_translations',
+            'product.variants',
+            'flashSale.related_translations'
+        ]);
+
+        // Store filter
+        if (!empty($request->store_id)) {
+            $query->where('store_id', $request->store_id);
+        }
+
+        // Flash Sale ID filter
+        if (!empty($request->flash_sale_id)) {
+            $query->where('flash_sale_id', $request->flash_sale_id);
+        }
+
+        // Status filter
+        if (isset($request->status)) {
+            $query->where('status', $request->status);
+        }
+
+        // Search by product name or SKU
+        if (!empty($request->search)) {
+            $query->whereHas('product', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('sku', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Filter by minimum rating
+        if (isset($request->min_rating)) {
+            $avgRatingSub = DB::table('reviews')
+                ->select('reviewable_id', DB::raw('AVG(rating) as average_rating'))
+                ->where('reviewable_type', Product::class)
+                ->where('status', 'approved')
+                ->groupBy('reviewable_id');
+
+            $query->whereHas('product', function ($q) use ($avgRatingSub, $request) {
+                $q->joinSub($avgRatingSub, 'product_ratings', function ($join) {
+                    $join->on('products.id', '=', 'product_ratings.reviewable_id');
+                })->where('product_ratings.average_rating', '>=', $request->min_rating);
+            });
+        }
+
+        // Sort options
+        if (isset($request->sort)) {
+            switch ($request->sort) {
+                case 'price_low_high':
+                case 'price_high_low':
+                    $query->with(['product.variants' => function ($q) use ($request) {
+                        $q->orderBy('price', $request->sort === 'price_low_high' ? 'asc' : 'desc')->limit(1);
+                    }]);
+                    break;
+
+                case 'newest':
+                    $query->orderByDesc('created_at');
+                    break;
+
+                default:
+                    $query->latest();
+            }
+        }
+
+        // Pagination
+        $perPage = $request->per_page ?? 10;
+        $flashSaleProducts = $query->paginate($perPage);
+
+        // Collect unique attributes from the variants (if needed)
+        $uniqueAttributes = $this->getUniqueAttributesFromVariants($flashSaleProducts->pluck('product'));
+
         return response()->json([
             'message' => __('messages.data_found'),
             'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
-            'meta' => new PaginationResource($flashSaleProducts)
+            'meta' => new PaginationResource($flashSaleProducts),
+            'filters' => $uniqueAttributes
         ], 200);
-
-
     }
+
 
     public function productList(Request $request)
     {
