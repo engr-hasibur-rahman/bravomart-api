@@ -93,9 +93,9 @@ class MenuManageController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        DB::beginTransaction();
         try {
             $menu = Menu::create([
+                'page_id' => $request->page_id,
                 'name' => $request->name,
                 'url' => $request->url,
                 'icon' => $request->icon,
@@ -112,12 +112,10 @@ class MenuManageController extends Controller
                 createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
             }
 
-            DB::commit();
             return response()->json([
                 'message' => __('messages.save_success', ['name' => 'Menu']),
             ]);
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json(['message' => 'Something went wrong', 'error' => $e->getMessage()], 500);
         }
     }
@@ -171,9 +169,10 @@ class MenuManageController extends Controller
                 'errors' => $validator->messages()
             ], 422);
         }
-        DB::beginTransaction();
+
         try {
             $menu->update([
+                'page_id' => $request->page_id,
                 'name' => $request->name,
                 'url' => $menu->status == 0 ? $menu->url : $request->url,
                 'icon' => $request->icon,
@@ -187,12 +186,11 @@ class MenuManageController extends Controller
             if ($request->has('translations')) {
                 createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
             }
-            DB::commit();
+
             return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Menu']),
             ]);
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json(['message' => 'Something went wrong', 'error' => $e->getMessage()], 500);
         }
 

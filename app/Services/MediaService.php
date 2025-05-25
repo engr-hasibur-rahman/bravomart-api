@@ -61,7 +61,7 @@ class MediaService
             // Save to the database and return the Media instance
             return Media::create([
                 'name' => $image_name_with_ext,
-                'format' => $type,
+                'format' =>  strtolower($image_extenstion),
                 'file_size' => formatBytes($image_size_for_db),
                 'path' => "{$folder_path}/{$image_db}",
                 'dimensions' => $image_dimension_for_db,
@@ -156,6 +156,54 @@ class MediaService
         $image_find = Media::where('user_id', auth('sanctum')->id())
             ->where('id', $request->image_id)
             ->delete();
+
+        if ($image_find) {
+            return [
+                'msg' => 'Image and its variants deleted successfully',
+                'success' => true,
+            ];
+        } else {
+            return [
+                'msg' => 'Failed to delete the image',
+                'success' => false,
+            ];
+        }
+    }
+
+
+    public function admin_delete_media_image($request)
+    {
+        $get_image_details = Media::find($request->id);
+
+        // Check if the image exists
+        if (!$get_image_details) {
+            return [
+                'msg' => 'Image not found',
+                'success' => false,
+            ];
+        }
+
+        $folder_path = dirname($get_image_details->path);
+        $base_path = storage_path('app/public/uploads/media-uploader/');
+
+        $image_path = $base_path . $get_image_details->path;
+        $image_variants = ['grid-', 'large-', 'semi-large-', 'thumb-'];
+
+        // Delete image variants if they exist
+        foreach ($image_variants as $variant) {
+            $variant_path = $base_path . $folder_path . '/' . $variant . basename($get_image_details->path);
+            if (file_exists($variant_path)) {
+                unlink($variant_path);
+            }
+        }
+
+        // Delete the main image if it exists
+        if (file_exists($image_path)) {
+            unlink($image_path);
+        }
+
+        // Delete the image record from the database
+        $image_find = Media::where('id', $request->id)->delete();
 
         if ($image_find) {
             return [

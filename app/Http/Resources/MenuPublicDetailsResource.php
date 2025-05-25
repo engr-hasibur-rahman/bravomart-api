@@ -18,6 +18,7 @@ class MenuPublicDetailsResource extends JsonResource
     {
         return [
             "id" => $this->id,
+            "page_id" => $this->page_id,
             "name" => $this->name,
             "url" => $this->url,
             "icon" => $this->icon,

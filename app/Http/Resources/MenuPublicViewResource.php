@@ -20,6 +20,7 @@ class MenuPublicViewResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             'id' => $this->id,
+            'page_id' => $this->page_id,
             'value' => $this->id,
             'name' => !empty($translation) && $translation->where('key', 'name')->first()
                 ? $translation->where('key', 'name')->first()->value

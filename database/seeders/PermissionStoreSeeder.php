@@ -303,18 +303,18 @@ class PermissionStoreSeeder extends Seeder
                 // Support ticket  Management
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Support Ticket Management',
+                    'PermissionTitle' => 'Support Ticket',
                     'activity_scope' => 'store_level',
                     'icon' => 'Headphones',
                     'options' => ['view', 'insert', 'update', 'delete', 'others'],
                     'translations' => [
-                        'en' => 'Support Ticket Management',
+                        'en' => 'Ticket',
                         'ar' => 'تذكرة الدعم'
                     ],
                     'submenu' => [
                         [
                             'PermissionName' => PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value,
-                            'PermissionTitle' => 'Support Tickets',
+                            'PermissionTitle' => 'Tickets',
                             'activity_scope' => 'store_level',
                             'icon' => 'Headset',
                             'options' => ['view', 'insert', 'update', 'delete', 'others'],
