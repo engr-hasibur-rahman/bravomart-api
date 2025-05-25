@@ -29,7 +29,7 @@ class FlashSaleAllProductPublicResource extends JsonResource
             "name" => !empty($translation) && $translation->where('key', 'name')->first()
                 ? $translation->where('key', 'name')->first()->value
                 : $this->product?->name, // If language is empty or not provided attribute
-            'store' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
+            'store' => new StoreDetailsForOrderResource($this->product?->store),
             "slug" => $this->product?->slug,
             "description" => !empty($translation) && $translation->where('key', 'name')->first()
                 ? $translation->where('key', 'name')->first()->value
