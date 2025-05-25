@@ -57,8 +57,12 @@ class CustomerReviewManageController extends Controller
         $customer_id = auth('api_customer')->user()->id;
         $order = Order::findorfail($request->order_id);
 
-
-        $order_belongs_to_customer = $order->orderMaster?->where('customer_id', $customer_id)->exists();
+        $reviewableType = match ($request->reviewable_type) {
+            'delivery_man' => User::class,
+            'product' => Product::class,
+            default => 'undefined'
+        };
+        $order_belongs_to_customer = $order->orderMaster?->customer_id === $customer_id;
         if (!$order_belongs_to_customer) {
             return response()->json([
                 'status' => false,
@@ -76,7 +80,7 @@ class CustomerReviewManageController extends Controller
 
         $review_already_exists = Review::where('order_id', $request->order_id)
             ->where('reviewable_id', $request->reviewable_id)
-            ->where('reviewable_type', $request->reviewable_type)
+            ->where('reviewable_type', $reviewableType)
             ->exists();
         if ($review_already_exists) {
             return response()->json([
@@ -95,7 +99,6 @@ class CustomerReviewManageController extends Controller
             }
         }
         if ($request->reviewable_type == 'delivery_man') {
-
             $user = User::find($request->reviewable_id);
             $is_deliveryman = $user->isDeliveryman();
             if (!$is_deliveryman && $user) {
