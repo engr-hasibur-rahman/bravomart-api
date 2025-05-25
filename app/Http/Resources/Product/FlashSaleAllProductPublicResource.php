@@ -11,6 +11,15 @@ class FlashSaleAllProductPublicResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        // Filter variants by price range in the resource
+        $filteredVariants = $this->product?->variants->filter(function ($variant) use ($request) {
+            // Apply the price range filter
+            return (!$request->min_price || $variant->price >= $request->min_price) &&
+                (!$request->max_price || $variant->price <= $request->max_price);
+        });
+
+        // Get the first filtered variant, or null if no variants match the price range
+        $firstVariant = $filteredVariants->first();
         // Get the requested language from the query parameter
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
@@ -28,12 +37,6 @@ class FlashSaleAllProductPublicResource extends JsonResource
             'image' => $this->product?->image,
             'image_url' => ImageModifier::generateImageUrl($this->product?->image),
             'stock' => $this->product?->variants->isNotEmpty() ? $this->product?->variants->sum('stock_quantity') : null,
-            'price' => optional($this->product?->variants->first())->price,
-            'special_price' => optional($this->product?->variants->first())->special_price,
-            'singleVariant' => $this->product?->variants->count() === 1 ? [$this->product?->variants->first()] : [],
-            'discount_percentage' => $this->product?->variants->isNotEmpty() && optional($this->product?->variants->first())->price > 0 && optional($this->product?->variants->first())->special_price > 0
-                ? round(((optional($this->product?->variants->first())->price - optional($this->product?->variants->first())->special_price) / optional($this->product?->variants->first())->price) * 100, 2)
-                : 0,
             'wishlist' => auth('api_customer')->check() ? $this->product?->wishlist : false, // Check if the customer is logged in,
             'rating' => number_format((float)$this->product?->rating, 2, '.', ''),
             'review_count' => $this->product?->review_count,
@@ -41,6 +44,18 @@ class FlashSaleAllProductPublicResource extends JsonResource
             'discount_amount' => $this->flashSale?->discount_amount,
             'purchase_limit' => $this->flashSale?->purchase_limit,
             'flash_sale_id' => $this->flashSale?->id,
+            'price' => optional($firstVariant)->price,
+            'special_price' => optional($firstVariant)->special_price,
+            'singleVariant' => $filteredVariants->count() === 1 ? [$firstVariant] : [],
+            'discount_percentage' => $firstVariant && $firstVariant->price > 0 && $firstVariant->special_price > 0
+                ? round((($firstVariant->price - $firstVariant->special_price) / $firstVariant->price) * 100, 2)
+                : 0,
+//            'price' => optional($this->product?->variants->first())->price,
+//            'special_price' => optional($this->product?->variants->first())->special_price,
+//            'singleVariant' => $this->product?->variants->count() === 1 ? [$this->product?->variants->first()] : [],
+//            'discount_percentage' => $this->product?->variants->isNotEmpty() && optional($this->product?->variants->first())->price > 0 && optional($this->product?->variants->first())->special_price > 0
+//                ? round(((optional($this->product?->variants->first())->price - optional($this->product?->variants->first())->special_price) / optional($this->product?->variants->first())->price) * 100, 2)
+//                : 0,
         ];
     }
 }
