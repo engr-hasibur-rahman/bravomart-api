@@ -320,6 +320,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 });
             });
         });
+
         // Slider manage
         Route::group(['prefix' => 'slider/', 'middleware' => ['permission:' . PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value]], function () {
             Route::get('list', [SliderManageController::class, 'index']);
@@ -329,6 +330,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('change-status', [SliderManageController::class, 'changeStatus']);
             Route::delete('remove/{id}', [SliderManageController::class, 'destroy']);
         });
+
+        // media manage
+        Route::get('/media-manage', [MediaController::class, 'allMediaManage'])->middleware('permission:' . PermissionKey::ADMIN_MEDIA_MANAGE->value);
+
         // Product Brand Routing
         Route::group(['prefix' => 'brand/'], function () {
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_BRAND_LIST->value]], function () {
@@ -636,6 +641,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::match(['get', 'post'], '/social-login-settings', [SystemManagementController::class, 'socialLoginSettings'])->middleware('permission:' . PermissionKey::SOCIAL_LOGIN_SETTINGS->value);
             Route::match(['get', 'post'], '/google-map-settings', [SystemManagementController::class, 'googleMapSettings'])->middleware('permission:' . PermissionKey::GOOGLE_MAP_SETTINGS->value);
             Route::match(['get', 'post'], '/recaptcha-settings', [SystemManagementController::class, 'recaptchaSettings'])->middleware('permission:' . PermissionKey::RECAPTCHA_SETTINGS->value);
+
             // database and cache settings
             Route::post('/cache-management', [SystemManagementController::class, 'cacheManagement'])->middleware('permission:' . PermissionKey::CACHE_MANAGEMENT->value);
             Route::post('/database-update-controls', [SystemManagementController::class, 'databaseUpdateControl'])->middleware('permission:' . PermissionKey::DATABASE_UPDATE_CONTROLS->value);

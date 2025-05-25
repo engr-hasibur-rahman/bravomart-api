@@ -391,6 +391,33 @@ class PermissionAdminSeeder extends Seeder
                 ], //  slider management end
 
 
+                //  media management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Media Management',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Media Management',
+                        'ar' => 'إدارة المدونة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_MEDIA_MANAGE->value,
+                            'PermissionTitle' => 'Media',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'SlidersHorizontal',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Media',
+                                'ar' => ' قوائم الصفحات'
+                            ]
+                        ],
+                    ]
+                ],
+
+
                 // Promotional control
                 [
                     'PermissionName' => '',

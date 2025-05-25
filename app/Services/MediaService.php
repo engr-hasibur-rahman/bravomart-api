@@ -61,7 +61,7 @@ class MediaService
             // Save to the database and return the Media instance
             return Media::create([
                 'name' => $image_name_with_ext,
-                'format' => $type,
+                'format' =>  strtolower($image_extenstion),
                 'file_size' => formatBytes($image_size_for_db),
                 'path' => "{$folder_path}/{$image_db}",
                 'dimensions' => $image_dimension_for_db,

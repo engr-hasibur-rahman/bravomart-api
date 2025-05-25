@@ -589,7 +589,7 @@ class SystemManagementController extends Controller
 
         return $this->success([
             'com_google_map_enable_disable' => $com_google_map_enable_disable,
-            'com_google_map_api_key' => $com_google_map_api_key,
+            'com_google_map_api_key' => $com_google_map_enable_disable === 'on' ?  $com_google_map_api_key : '',
         ]);
     }
 

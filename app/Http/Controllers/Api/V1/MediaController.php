@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Models\Media;
 use App\Services\MediaService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -75,6 +77,32 @@ class MediaController extends Controller
             'message' => $response['msg'],
             'success' => $response['success'],
         ], $response['success'] ? 200 : 500);
+    }
+
+    public function allMediaManage(Request $request){
+        $query = Media::query();
+        // Filter by media name
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $all_media = $query->orderBy('created_at', 'desc')->paginate(20);
+
+        return response()->json([
+            'success' => true,
+            'data' => $all_media->map(function ($item) {
+                return [
+                    'id'       => $item->id,
+                    'name'     => $item->name,
+                    'format'   => $item->format,
+                    'size'     => $item->file_size,
+                    'dimensions'  => $item->dimensions,
+                    'type'     => $item->format,
+                    'path'     => $item->path,
+                ];
+            }),
+            'meta' => new PaginationResource($all_media)
+        ]);
     }
 
 }
