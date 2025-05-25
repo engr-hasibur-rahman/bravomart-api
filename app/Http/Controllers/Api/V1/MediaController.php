@@ -121,7 +121,7 @@ class MediaController extends Controller
     public function mediaFileDelete(Request $request)
     {
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(['id' => $request->id], [
             'id' => 'required|integer|exists:media,id',
         ]);
 
