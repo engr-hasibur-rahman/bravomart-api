@@ -69,9 +69,17 @@ class MediaController extends Controller
     }
 
     public function delete_media(Request $request){
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'image_id' => 'required|integer|exists:media,id',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
         $response = $this->mediaService->delete_media_image($request);
         return response()->json([
             'message' => $response['msg'],
@@ -103,6 +111,27 @@ class MediaController extends Controller
             }),
             'meta' => new PaginationResource($all_media)
         ]);
+    }
+
+    public function mediaFileDelete(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'image_id' => 'required|integer|exists:media,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $response = $this->mediaService->admin_delete_media_image($request);
+
+        return response()->json([
+            'message' => $response['msg'],
+            'success' => $response['success'],
+        ], $response['success'] ? 200 : 500);
     }
 
 }

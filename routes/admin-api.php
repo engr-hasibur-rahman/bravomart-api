@@ -332,7 +332,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         });
 
         // media manage
-        Route::get('/media-manage', [MediaController::class, 'allMediaManage'])->middleware('permission:' . PermissionKey::ADMIN_MEDIA_MANAGE->value);
+        Route::group(['prefix' => 'media-manage/', 'middleware' => ['permission:' . PermissionKey::ADMIN_MEDIA_MANAGE->value]], function () {
+            Route::get('/', [MediaController::class, 'allMediaManage']);
+            Route::delete('delete', [MediaController::class, 'mediaFileDelete']);
+        });
 
         // Product Brand Routing
         Route::group(['prefix' => 'brand/'], function () {
