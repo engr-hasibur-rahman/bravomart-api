@@ -107,7 +107,6 @@ class MediaController extends Controller
                     'format'   => $item->format,
                     'size'     => $item->file_size,
                     'dimensions'  => $item->dimensions,
-                    'type'     => $item->format,
                     'path'     => $item->path,
                 ];
             }),
