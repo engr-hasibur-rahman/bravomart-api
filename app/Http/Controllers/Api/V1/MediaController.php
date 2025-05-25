@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\ImageModifier;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\Media;
 use App\Services\MediaService;
@@ -101,11 +102,11 @@ class MediaController extends Controller
             'data' => $all_media->map(function ($item) {
                 return [
                     'id'       => $item->id,
+                    'img_url'  => ImageModifier::generateImageUrl($item->id),
                     'name'     => $item->name,
                     'format'   => $item->format,
                     'size'     => $item->file_size,
                     'dimensions'  => $item->dimensions,
-                    'type'     => $item->format,
                     'path'     => $item->path,
                 ];
             }),
@@ -116,7 +117,7 @@ class MediaController extends Controller
     public function mediaFileDelete(Request $request){
 
         $validator = Validator::make($request->all(), [
-            'image_id' => 'required|integer|exists:media,id',
+            'id' => 'required|integer|exists:media,id',
         ]);
 
         if ($validator->fails()) {
