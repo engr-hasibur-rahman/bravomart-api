@@ -351,8 +351,7 @@ class FrontendController extends Controller
 
         // Availability filter
         if (isset($request->availability)) {
-            $query->whereHas('variants', fn($q) =>
-            $q->where('stock_quantity', $request->availability ? '>' : '=', 0)
+            $query->whereHas('variants', fn($q) => $q->where('stock_quantity', $request->availability ? '>' : '=', 0)
             );
         }
 
@@ -630,8 +629,7 @@ class FrontendController extends Controller
 
         // Availability filter
         if (isset($request->availability)) {
-            $query->whereHas('variants', fn($q) =>
-            $q->where('stock_quantity', $request->availability ? '>' : '=', 0)
+            $query->whereHas('variants', fn($q) => $q->where('stock_quantity', $request->availability ? '>' : '=', 0)
             );
         }
 
@@ -826,7 +824,7 @@ class FrontendController extends Controller
         // If a specific flash deal product ID is requested
         if (isset($request->id)) {
             $flashDealProduct = FlashSaleProduct::with(['product.variants', 'product.store', 'product.related_translations', 'flashSale.related_translations'])
-                ->where('product_id',$request->product_id)->first();
+                ->where('product_id', $request->product_id)->first();
 
             return response()->json([
                 'status' => true,
@@ -927,6 +925,9 @@ class FrontendController extends Controller
         }
         if ($request->best_selling) {
             return $this->getBestSellingProduct($request);
+        }
+        if ($request->flash_sale) {
+            return $this->flashDealProducts($request);
         }
 
         /* ===========================================================Product================================================= */
