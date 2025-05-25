@@ -62,7 +62,7 @@ class CustomerReviewManageController extends Controller
             'product' => Product::class,
             default => 'undefined'
         };
-        $order_belongs_to_customer = $order->orderMaster?->customer_id === $customer_id;
+        $order_belongs_to_customer = $order->orderMaster?->customer_id == $customer_id;
         if (!$order_belongs_to_customer) {
             return response()->json([
                 'status' => false,
