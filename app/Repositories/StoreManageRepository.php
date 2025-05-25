@@ -46,7 +46,7 @@ class StoreManageRepository implements StoreManageInterface
         return Store::class;
     }
 
-    public function getAllStores(int|string $limit, ?int $status, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getAllStores(int|string $limit, int|string $status, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
         $store = Store::leftJoin('translations as name_translations', function ($join) use ($language) {
             $join->on('stores.id', '=', 'name_translations.translatable_id')
