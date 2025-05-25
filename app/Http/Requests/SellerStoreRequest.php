@@ -30,7 +30,7 @@ class SellerStoreRequest extends FormRequest
             'payment_gateway' => 'nullable',
             'area_id' => 'nullable|exists:areas,id',
             'id' => 'nullable|exists:store_sellers,id',
-            'store_type' => 'nullable|in:' . $this->getEnumValues(StoreType::class),
+            'store_type' => 'required|in:' . $this->getEnumValues(StoreType::class),
             'name' => 'required|string|max:255',
             'slug' => ($this->id ? 'nullable' : 'required') . '|string|unique:stores,slug,' . $this->id,
             'phone' => 'nullable|string|max:15',
@@ -64,6 +64,7 @@ class SellerStoreRequest extends FormRequest
         return [
             //'area_id.exists' => 'The selected area does not exist.',
             //'store_seller_id.exists' => 'The selected seller does not exist.',
+            'store_type.required' => 'Store type is required.',
             'store_type.in' => 'The store type must be one of the following: ' . $this->getEnumValues(StoreType::class),
             'name.required' => 'The name field is required.',
             'name.max' => 'The name may not be greater than 255 characters.',
