@@ -151,7 +151,7 @@ class ReviewService
         if (isset($filters['start_date']) && isset($filters['end_date'])) {
             $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
         }
-        return $query->where('status', 'approved')->latest()->paginate($filters['per_page'] ?? 10);
+        return $query->latest()->paginate($filters['per_page'] ?? 10);
     }
 
     public function getDeliverymanReviews($filters, $deliverymanId)
