@@ -173,7 +173,7 @@ class MediaService
 
     public function admin_delete_media_image($request)
     {
-        $get_image_details = Media::find($request->image_id);
+        $get_image_details = Media::find($request->id);
 
         // Check if the image exists
         if (!$get_image_details) {
@@ -203,7 +203,7 @@ class MediaService
         }
 
         // Delete the image record from the database
-        $image_find = Media::where('id', $request->image_id)->delete();
+        $image_find = Media::where('id', $request->id)->delete();
 
         if ($image_find) {
             return [
