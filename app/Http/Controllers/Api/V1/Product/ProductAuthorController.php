@@ -167,7 +167,7 @@ class ProductAuthorController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        if ($author->created_by !== auth('api')->id()) {
+        if ($author->created_by != auth('api')->id()) {
             return response()->json([
                 'message' => __('messages.delete_failed', ['name' => 'Author'])
             ], 500);
