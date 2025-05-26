@@ -129,7 +129,7 @@ class SellerAndDeliverymanWithdrawController extends Controller
             "customer_id" => "nullable|exists:customers,id",
             "withdraw_gateway_id" => "required|integer|exists:withdraw_gateways,id",
             "amount" => "required",
-            "details" => "nullable|string|max:255",
+            "details" => "nullable|string|max:2000",
         ]);
 
         if ($validator->fails()) {

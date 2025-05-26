@@ -273,30 +273,8 @@ class PermissionStoreSeeder extends Seeder
                                         'ar' => 'منتجاتي في العروض'
                                     ]
                                 ]
-//                                [
-//                                    'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_FLASH_SALE_JOIN_DEALS->value,
-//                                    'PermissionTitle' => 'Join Deals',
-//                                    'activity_scope' => 'store_level',
-//                                    'icon' => '',
-//                                    'options' => ['view', 'insert', 'delete'],
-//                                    'translations' => [
-//                                        'en' => 'Join Deals',
-//                                        'ar' => 'اطلب التسجيل'
-//                                    ]
-//                                ]
                             ]
                         ]
-//                        [
-//                            'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value,
-//                            'PermissionTitle' => 'Banners',
-//                            'activity_scope' => 'store_level',
-//                            'icon' => 'AlignJustify',
-//                            'options' => ['view', 'insert', 'update', 'delete'],
-//                            'translations' => [
-//                                'en' => 'Banners',
-//                                'ar' => 'لافتات'
-//                            ]
-//                        ]
                     ]
                 ],
 
@@ -463,23 +441,23 @@ class PermissionStoreSeeder extends Seeder
                 // Notifications Settings
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Notifications Management',
+                    'PermissionTitle' => 'Notifications',
                     'activity_scope' => 'store_level',
                     'icon' => 'MessageCircleMore',
                     'options' => ['View'],
                     'translations' => [
-                        'en' => 'Notifications Management',
+                        'en' => 'Notifications',
                         'ar' => 'إعدادات المتجر'
                     ],
                     'submenu' => [
                         [
                             'PermissionName' => PermissionKey::SELLER_NOTIFICATION_MANAGEMENT->value,
-                            'PermissionTitle' => 'Notifications',
+                            'PermissionTitle' => 'All Notifications',
                             'activity_scope' => 'store_level',
                             'icon' => 'Bell',
                             'translations' => [
-                                'en' => 'Notifications',
-                                'ar' => 'رسالة'
+                                'en' => 'All Notifications',
+                                'ar' => 'كل الإشعارات'
                             ]
                         ]
                     ]
