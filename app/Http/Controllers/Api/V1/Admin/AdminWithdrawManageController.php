@@ -25,6 +25,9 @@ class AdminWithdrawManageController extends Controller
         if (isset($request->owner_type)) {
             $query->where('owner_type', $ownerType);
         }
+        if (!empty($request->amount)) {
+            $query->where('amount', $request->amount);
+        }
         if (!empty($request->status)) {
             $query->where('status', $request->status);
         }
