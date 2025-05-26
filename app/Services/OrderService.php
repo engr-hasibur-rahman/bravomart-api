@@ -521,7 +521,7 @@ class OrderService
 
                     $order_additional_charge_name = $store_type_info->additional_charge_name;
                     $order_additional_charge_amount = round(
-                        $store_type_info->additional_charge_type === 'percentage'
+                        $store_type_info->additional_charge_type == 'percentage'
                             ? ($item_amount_for_additional_charge_calculation / 100) * $store_type_info->additional_charge_amount
                             : $store_type_info->additional_charge_amount,
                         2 // number of decimal places
@@ -647,7 +647,7 @@ class OrderService
             foreach ($orderMaster->orders as $order) {
                 $orderDiscount = $order->orderDetail->sum('coupon_discount_amount');
                 $orderAmount = $order->orderDetail->sum('line_total_price') + $order->shipping_charge + $order->order_additional_charge_amount;
-                $orderAmountStoreValue = $order->orderDetail->sum('line_total_price') - $order->order_amount_admin_commission;
+                $orderAmountStoreValue = $order->orderDetail->sum('line_total_price') - $order->order_amount_admin_commission + $order->order_additional_charge_store_amount;
                 $order->update([
                     'order_amount_store_value' => $orderAmountStoreValue,
                     'order_amount' => $orderAmount,

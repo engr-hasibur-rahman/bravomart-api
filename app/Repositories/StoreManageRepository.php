@@ -496,6 +496,7 @@ class StoreManageRepository implements StoreManageInterface
         $summary = [
             'store_details' => [],
             'total_earnings' => 0,
+            'total_additional_charge_earnings' => 0,
             'total_refunds' => 0,
             'total_stores' => 0,
             'total_product' => 0,
@@ -510,7 +511,6 @@ class StoreManageRepository implements StoreManageInterface
             'deliveryman_not_assigned_orders' => 0,
             'refunded_orders' => 0,
         ];
-
         if ($slug) {
             // Fetch data for a specific store
             if ($user->store_owner == 0) {
@@ -523,8 +523,6 @@ class StoreManageRepository implements StoreManageInterface
             // Fetch data for all stores of the seller
             $stores = Store::where('store_seller_id', $user->id)->get();
         }
-
-
         foreach ($stores as $store) {
             $summary['total_earnings'] += Order::where('store_id', $store->id)
                 ->whereHas('orderMaster', function ($query) {
@@ -532,6 +530,12 @@ class StoreManageRepository implements StoreManageInterface
                 })
                 ->whereNull('refund_status')
                 ->sum('order_amount_store_value');
+            $summary['total_additional_charge_earnings'] += Order::where('store_id', $store->id)
+                ->whereHas('orderMaster', function ($query) {
+                    $query->where('payment_status', 'paid');
+                })
+                ->whereNull('refund_status')
+                ->sum('order_additional_charge_store_amount');
             $summary['total_refunds'] += Order::where('store_id', $store->id)
                 ->where('refund_status', 'refunded')
                 ->sum('order_amount');
@@ -555,7 +559,6 @@ class StoreManageRepository implements StoreManageInterface
                 ->count();
             $summary['refunded_orders'] += Order::where('refund_status', 'refunded')->where('store_id', $store->id)->count();
         }
-
         return $summary;
     }
 
