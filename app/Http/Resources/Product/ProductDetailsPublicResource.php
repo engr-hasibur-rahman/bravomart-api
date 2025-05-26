@@ -70,7 +70,8 @@ class ProductDetailsPublicResource extends JsonResource
             'rating' => number_format((float)$this->rating, 2, '.', ''),
             'review_count' => $this->review_count,
             'reviews' => ProductReviewPublicResource::collection($this->reviews),
-            'flash_sale' => $this->isInFlashDeal()
+            'flash_sale' => $this->isInFlashDeal(),
+            'is_featured' => $this->is_featured
         ];
     }
 }

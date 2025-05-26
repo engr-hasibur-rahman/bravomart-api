@@ -49,14 +49,16 @@ class MediaController extends Controller
         ], 201);
     }
 
-    public function load_more(Request $request){
+    public function load_more(Request $request)
+    {
         $all_images = $this->mediaService->load_more_images($request);
         return response()->json([
             'images' => $all_images,
         ]);
     }
 
-    public function alt_change(Request $request){
+    public function alt_change(Request $request)
+    {
         $request->validate([
             'image_id' => 'required|integer|exists:media,id',
             'alt' => 'nullable|string|max:255',
@@ -69,7 +71,8 @@ class MediaController extends Controller
         ], 200);
     }
 
-    public function delete_media(Request $request){
+    public function delete_media(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'image_id' => 'required|integer|exists:media,id',
         ]);
@@ -88,35 +91,37 @@ class MediaController extends Controller
         ], $response['success'] ? 200 : 500);
     }
 
-    public function allMediaManage(Request $request){
+    public function allMediaManage(Request $request)
+    {
         $query = Media::query();
         // Filter by media name
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $all_media = $query->orderBy('created_at', 'desc')->paginate(20);
+        $all_media = $query->orderBy('created_at', 'desc')->paginate($request->per_page ?? 20);
 
         return response()->json([
             'success' => true,
             'data' => $all_media->map(function ($item) {
                 return [
-                    'id'       => $item->id,
-                    'img_url'  => ImageModifier::generateImageUrl($item->id),
-                    'name'     => $item->name,
-                    'format'   => $item->format,
-                    'size'     => $item->file_size,
-                    'dimensions'  => $item->dimensions,
-                    'path'     => $item->path,
+                    'id' => $item->id,
+                    'img_url' => ImageModifier::generateImageUrl($item->id),
+                    'name' => $item->name,
+                    'format' => $item->format,
+                    'size' => $item->file_size,
+                    'dimensions' => $item->dimensions,
+                    'path' => $item->path,
                 ];
             }),
             'meta' => new PaginationResource($all_media)
         ]);
     }
 
-    public function mediaFileDelete(Request $request){
+    public function mediaFileDelete(Request $request)
+    {
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(['id' => $request->id], [
             'id' => 'required|integer|exists:media,id',
         ]);
 

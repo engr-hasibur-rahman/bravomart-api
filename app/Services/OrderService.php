@@ -564,7 +564,7 @@ class OrderService
             $order_master->flash_discount_amount_admin = $order_master->orders->sum('flash_discount_amount_admin');
 
             $order_master->shipping_charge = $shipping_charge;
-            $order_master->order_amount = $order_amount_master;
+            $order_master->order_amount = $order_master->orders->sum('order_amount');
             $order_master->save();
             // return all order id
             $all_orders = Order::with('store.seller')->where('order_master_id', $order_master->id)->get();
