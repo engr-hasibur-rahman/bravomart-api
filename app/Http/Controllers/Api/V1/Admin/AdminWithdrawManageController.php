@@ -32,7 +32,8 @@ class AdminWithdrawManageController extends Controller
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
 
-        $withdraws = $query->paginate($request->per_page ?? 10);
+        $withdraws = $query->orderBy('created_at', "desc")
+            ->paginate($request->per_page ?? 10);
 
         if ($withdraws->isNotEmpty()) {
             return response()->json([

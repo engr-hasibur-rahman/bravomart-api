@@ -23,7 +23,9 @@ class AdminWithdrawRequestManageController extends Controller
 {
     public function withdrawRequestList(Request $request)
     {
-        $query = WalletWithdrawalsTransaction::with('owner')->where('status', 'pending');
+        $query = WalletWithdrawalsTransaction::with('owner')
+            ->where('status', 'pending');
+
         // Apply filters if provided
         if (!empty($request->owner_id)) {
             $query->where('owner_id', $request->owner_id);
@@ -35,7 +37,8 @@ class AdminWithdrawRequestManageController extends Controller
             $query->whereBetween('created_at', [$request->from_date, $request->to_date]);
         }
 
-        $withdraws = $query->paginate(10);
+        $withdraws = $query->orderBy('created_at', "desc")
+            ->paginate(10);
 
         if ($withdraws->isNotEmpty()) {
             return response()->json([
