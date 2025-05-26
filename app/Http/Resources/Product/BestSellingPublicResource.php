@@ -47,7 +47,7 @@ class BestSellingPublicResource extends JsonResource
             'rating' => number_format((float)$this->rating, 2, '.', ''),
             'review_count' => $this->review_count,
             'flash_sale' => $this->isInFlashDeal(),
-            'is_featured' => $this->is_featured
+            'is_featured' => (bool)$this->is_featured
         ];
 
     }
