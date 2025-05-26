@@ -38,9 +38,9 @@ class ProductStorePublicResource extends JsonResource
             "meta_image" => ImageModifier::generateImageUrl($this->meta_image),
             "total_product" => $this->products_count ?? 0,
             "rating" => $this->rating,
-            "additional_charge_name" => $store_type_info ? $store_type_info->additional_charge_name : null,
-            "additional_charge_amount" => $store_type_info ? $store_type_info->additional_charge_amount : null,
-            "additional_charge_type" => $store_type_info ? $store_type_info->additional_charge_type : null,
+            "additional_charge_name" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_name : null,
+            "additional_charge_amount" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_amount : 0,
+            "additional_charge_type" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_type : 'fixed',
         ];
     }
 }
