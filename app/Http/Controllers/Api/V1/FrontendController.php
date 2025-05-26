@@ -721,18 +721,143 @@ class FrontendController extends Controller
 
     public function getFeaturedProduct(Request $request)
     {
-        $featuredProducts = Product::with(['variants', 'store'])
-            ->where('status', 'approved')
-            ->whereNull('deleted_at')
-            ->where('is_featured', 1)
-            ->inRandomOrder()
-            ->paginate($request->per_page ?? 10);
+        // If product ID is passed, return a single featured product with details
+        if (isset($request->id)) {
+            $product = Product::with(['variants', 'store', 'related_translations'])
+                ->where('status', 'approved')
+                ->whereNull('deleted_at')
+                ->where('is_featured', true)
+                ->findOrFail($request->id);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => new ProductDetailsPublicResource($product),
+                'related_products' => RelatedProductPublicResource::collection(
+                    $product->relatedProductsWithCategoryFallback()
+                )
+            ]);
+        }
+
+        $query = Product::query();
+
+        // Category filter (including child categories)
+        if (!empty($request->category_id) && is_array($request->category_id)) {
+            $allCategoryIds = [];
+
+            foreach ($request->category_id as $categoryId) {
+                $category = ProductCategory::find($categoryId);
+                if ($category) {
+                    if ($category->parent_id === null) {
+                        $childIds = ProductCategory::where('parent_id', $category->id)->pluck('id')->toArray();
+                        $allCategoryIds = array_merge($allCategoryIds, $childIds);
+                    }
+                    $allCategoryIds[] = $category->id;
+                }
+            }
+
+            if (!empty($allCategoryIds)) {
+                $query->whereIn('category_id', $allCategoryIds);
+            }
+        }
+
+        // Brand filter
+        if (!empty($request->brand_id) && is_array($request->brand_id)) {
+            $query->whereIn('brand_id', $request->brand_id);
+        }
+
+        // Price range filter
+        if (isset($request->min_price) && isset($request->max_price)) {
+            $query->whereHas('variants', function ($q) use ($request) {
+                $q->whereBetween('price', [$request->min_price, $request->max_price]);
+            });
+        }
+
+        // Availability filter
+        if (isset($request->availability)) {
+            $query->whereHas('variants', fn($q) => $q->where('stock_quantity', $request->availability ? '>' : '=', 0));
+        }
+
+        // Type filter
+        if (!empty($request->type)) {
+            if (is_array($request->type)) {
+                $query->whereIn('type', $request->type);
+            } else {
+                $query->where('type', $request->type);
+            }
+        }
+
+        // Minimum rating filter
+        if (isset($request->min_rating)) {
+            $avgRatingSub = DB::table('reviews')
+                ->select('reviewable_id', DB::raw('AVG(rating) as average_rating'))
+                ->where('reviewable_type', Product::class)
+                ->where('status', 'approved')
+                ->groupBy('reviewable_id');
+
+            $query->joinSub($avgRatingSub, 'product_ratings', function ($join) {
+                $join->on('products.id', '=', 'product_ratings.reviewable_id');
+            })->where('product_ratings.average_rating', '>=', $request->min_rating);
+        }
+
+        // Search filter
+        if (!empty($request->search)) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Sorting logic
+        if (isset($request->sort)) {
+            switch ($request->sort) {
+                case 'price_low_high':
+                case 'price_high_low':
+                    $query->addSelect([
+                        'variant_price' => DB::table('product_variants')
+                            ->selectRaw('MIN(price)')
+                            ->whereColumn('product_variants.product_id', 'products.id')
+                    ])->orderBy('variant_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
+                    break;
+
+                case 'newest':
+                    $query->orderBy('products.created_at', 'desc');
+                    break;
+
+                default:
+                    $query->latest('products.created_at');
+            }
+        } else {
+            // Default: random order
+            $query->inRandomOrder();
+        }
+
+        // Base conditions
+        $query->where('status', 'approved')->whereNull('deleted_at')->where('is_featured', true);
+
+        // Pagination
+        $perPage = $request->per_page ?? 10;
+
+        $products = $query->with([
+            'category', 'unit', 'tags', 'store', 'brand', 'related_translations',
+            'variants' => function ($q) use ($request) {
+                if ($request->sort === "price_low_high") {
+                    $q->orderBy('price', 'asc')->limit(1);
+                } elseif ($request->sort === "price_high_low") {
+                    $q->orderBy('price', 'desc')->limit(1);
+                }
+            }
+        ])->paginate($perPage);
+
+        $uniqueAttributes = $this->getUniqueAttributesFromVariants($products);
 
         return response()->json([
             'message' => __('messages.data_found'),
-            'data' => BestSellingPublicResource::collection($featuredProducts),
-            'meta' => new PaginationResource($featuredProducts)
-        ], 200);
+            'data' => ProductPublicResource::collection($products),
+            'meta' => new PaginationResource($products),
+            'filters' => $uniqueAttributes
+        ]);
     }
 
     public function getTrendingProducts(Request $request)
@@ -929,7 +1054,9 @@ class FrontendController extends Controller
         if ($request->flash_sale) {
             return $this->flashDealProducts($request);
         }
-
+        if ($request->is_featured) {
+            return $this->getFeaturedProduct($request);
+        }
         /* ===========================================================Product================================================= */
         $query = Product::query();
         // Apply category filter (multiple categories)
@@ -1029,10 +1156,6 @@ class FrontendController extends Controller
         if (!empty($request->search)) {
             $query->where('name', 'like', '%' . $request->search . '%')
                 ->orWhere('description', 'like', '%' . $request->search . '%');
-        }
-
-        if (isset($request->is_featured) && $request->is_featured) {
-            $query->where('is_featured', true);
         }
 
         // Pagination

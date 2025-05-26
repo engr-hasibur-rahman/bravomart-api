@@ -65,7 +65,7 @@ class ProductPublicResource extends JsonResource
                 ? round((($firstVariant->price - $firstVariant->special_price) / $firstVariant->price) * 100, 2)
                 : 0,
             'flash_sale' => $this->isInFlashDeal(),
-            'is_featured' => $this->is_featured
+            'is_featured' => (bool)$this->is_featured
 
         ];
     }
