@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\StoreArea;
+use App\Models\SystemCommission;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use MatanYadaev\EloquentSpatial\Objects\LineString;
@@ -17,6 +18,7 @@ class DeliveryChargeHelper
 
         // Get the store area and settings
         $store_area = StoreArea::with('storeTypeSettings')->find($areaId);
+        $systemSettings = SystemCommission::first();
 
         // If not found, try to find the nearest store area based on latitude & longitude
         if (!$store_area) {
@@ -38,7 +40,7 @@ class DeliveryChargeHelper
                 'status' => false,
                 'message' => 'Calculation failed',
                 'delivery_method' => 'failed',
-                'delivery_charge' => 0,
+                'delivery_charge' => round($systemSettings->order_shipping_charge, 2),
                 'distance_km' => 0,
                 'info' => 'area settings not found or empty',
             ];
@@ -157,7 +159,7 @@ class DeliveryChargeHelper
                 'status' => false,
                 'message' => 'Calculation failed',
                 'delivery_method' => 'failed',
-                'delivery_charge' => 0,
+                'delivery_charge' => round($systemSettings->order_shipping_charge, 2),
                 'distance_km' => 0,
                 'info' => 'area not found',
             ];

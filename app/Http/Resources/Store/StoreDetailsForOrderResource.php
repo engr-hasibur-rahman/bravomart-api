@@ -38,9 +38,9 @@ class StoreDetailsForOrderResource extends JsonResource
             "latitude" => $this->area?->center_latitude,
             "longitude" => $this->area?->center_longitude,
             "rating" => $this->rating,
-            "additional_charge_name" => $store_type_info ? $store_type_info->additional_charge_name : null,
-            "additional_charge_amount" => $store_type_info ? $store_type_info->additional_charge_amount : null,
-            "additional_charge_type" => $store_type_info ? $store_type_info->additional_charge_type : null,
+            "additional_charge_name" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_name : null,
+            "additional_charge_amount" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_amount : 0,
+            "additional_charge_type" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_type : 'fixed',
         ];
     }
 }
