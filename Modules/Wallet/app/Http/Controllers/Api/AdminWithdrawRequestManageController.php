@@ -136,7 +136,7 @@ class AdminWithdrawRequestManageController extends Controller
             // create wallet history amount debit
             WalletTransaction::create([
                 'wallet_id' => $wallet->id,
-                'amount' => $wallet->amount,
+                'amount' => $withdraw->amount,
                 'type' => 'debit',
                 'purpose' => 'withdrawal',
                 'status' => 1,
