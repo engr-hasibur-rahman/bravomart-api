@@ -42,7 +42,8 @@ class StoreProductListPublicResource extends JsonResource
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
             'rating' => number_format((float) $this->rating, 2, '.', ''),
             'review_count'=>$this->review_count,
-            'flash_sale' => $this->isInFlashDeal()
+            'flash_sale' => $this->isInFlashDeal(),
+            'is_featured' => $this->is_featured
         ];
     }
 }

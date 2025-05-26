@@ -64,7 +64,8 @@ class ProductPublicResource extends JsonResource
             'discount_percentage' => $firstVariant && $firstVariant->price > 0 && $firstVariant->special_price > 0
                 ? round((($firstVariant->price - $firstVariant->special_price) / $firstVariant->price) * 100, 2)
                 : 0,
-            'flash_sale' => $this->isInFlashDeal()
+            'flash_sale' => $this->isInFlashDeal(),
+            'is_featured' => $this->is_featured
 
         ];
     }
