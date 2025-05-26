@@ -33,6 +33,9 @@ class AdminWithdrawRequestManageController extends Controller
         if (!empty($request->status)) {
             $query->where('status', $request->status);
         }
+        if (!empty($request->amount)) {
+            $query->where('amount', $request->amount);
+        }
         if (!empty($request->from_date) && !empty($request->to_date)) {
             $query->whereBetween('created_at', [$request->from_date, $request->to_date]);
         }
