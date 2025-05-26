@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
+use Modules\Wallet\app\Models\WalletTransaction;
 use Modules\Wallet\app\Models\WalletWithdrawalsTransaction;
 use Modules\Wallet\app\Transformers\AdminWithdrawListResource;
 use Modules\Wallet\app\Transformers\AdminWithdrawRequestResource;
@@ -131,6 +132,16 @@ class AdminWithdrawRequestManageController extends Controller
             'approved_at' => now(),
             'attachment' => $filePath,
         ]);
+
+            // create wallet history amount debit
+            WalletTransaction::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $wallet->amount,
+                'type' => 'debit',
+                'purpose' => 'withdrawal',
+                'status' => 1,
+            ]);
+
 
                 // mail send to store
                 try {
