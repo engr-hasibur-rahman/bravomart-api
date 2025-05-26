@@ -41,9 +41,10 @@ class ProductSuggestionPublicResource extends JsonResource
                 ? round(((optional($this->variants->first())->price - optional($this->variants->first())->special_price) / optional($this->variants->first())->price) * 100, 2)
                 : 0,
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
-            'rating' => number_format((float) $this->rating, 2, '.', ''),
-            'review_count'=>$this->review_count,
-            'flash_sale' => $this->isInFlashDeal()
+            'rating' => number_format((float)$this->rating, 2, '.', ''),
+            'review_count' => $this->review_count,
+            'flash_sale' => $this->isInFlashDeal(),
+            'is_featured' => (bool)$this->is_featured
         ];
     }
 }
