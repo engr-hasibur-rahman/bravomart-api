@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class MenuManageController extends Controller
+class  MenuManageController extends Controller
 {
     public function __construct(protected Menu $menu, protected Translation $translation)
     {
@@ -79,7 +79,7 @@ class MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'nullable|integer',
+            'position' => 'required|integer|exists:menus,position',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id',
             'parent_path' => 'nullable|string',
@@ -140,7 +140,7 @@ class MenuManageController extends Controller
         // Prevent updating URL if status is 0
         if ($menu->status == 0 && $request->has('url') && $request->url !== $menu->url) {
             return response()->json([
-                'message' => __('messages.can\'t_modify',['name' => 'Menu url'])
+                'message' => __('messages.can\'t_modify', ['name' => 'Menu url'])
             ], 403);
         }
 
@@ -153,7 +153,7 @@ class MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'nullable|integer',
+            'position' => 'required|integer|exists:menus,position,' . $this->id,
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id|not_in:' . $request->id,
             'parent_path' => 'nullable|string',
@@ -194,6 +194,29 @@ class MenuManageController extends Controller
             return response()->json(['message' => 'Something went wrong', 'error' => $e->getMessage()], 500);
         }
 
+    }
+
+    public function updatePosition(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer|exists:menus,id',
+            'position' => 'required|integer|exists:menus,position,' . $request->id,
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $menu = Menu::find($request->id);
+        if (!$menu) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+        $menu->update([
+            'position' => $request->position,
+        ]);
+        return response()->json([
+            'message' => __('messages.update_success', ['name' => 'Menu']),
+        ]);
     }
 
     // Delete a menu item
