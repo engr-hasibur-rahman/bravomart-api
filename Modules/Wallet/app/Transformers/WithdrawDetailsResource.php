@@ -21,7 +21,7 @@ class WithdrawDetailsResource extends JsonResource
             "status" => $this->status,
             "details" => $this->details,
             "reject_reason" => $this->reject_reason,
-            "attachment" => ImageModifier::generateImageUrl($this->attachment),
+            "attachment" => $this->attachment ? asset("storage/uploads/withdraw/" . basename($this->attachment)) : null,
             "approved_by" => $this->approved_by,
             "approved_at" => $this->approved_at,
             "gateways" => json_decode($this->gateways_options),
