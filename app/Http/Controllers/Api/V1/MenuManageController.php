@@ -79,7 +79,7 @@ class  MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'required|integer|exists:menus,position',
+            'position' => 'required|integer|unique:menus,position',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id',
             'parent_path' => 'nullable|string',
@@ -153,7 +153,7 @@ class  MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'required|integer|exists:menus,position,' . $this->id,
+            'position' => 'required|integer|unique:menus,position,' . $request->id,
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id|not_in:' . $request->id,
             'parent_path' => 'nullable|string',
@@ -200,7 +200,7 @@ class  MenuManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|integer|exists:menus,id',
-            'position' => 'required|integer|exists:menus,position,' . $request->id,
+            'position' => 'required|integer|unique:menus,position,' . $request->id,
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
