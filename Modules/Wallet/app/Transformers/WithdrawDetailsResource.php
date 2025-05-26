@@ -24,7 +24,9 @@ class WithdrawDetailsResource extends JsonResource
             "attachment" => ImageModifier::generateImageUrl($this->attachment),
             "approved_by" => $this->approved_by,
             "approved_at" => $this->approved_at,
-            "gateways" => json_decode($this->gateways_options)
+            "gateways" => json_decode($this->gateways_options),
+            "created_at" => $this->created_at,
+            "updated_at" => $this->updated_at,
         ];
     }
 }
