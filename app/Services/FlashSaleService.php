@@ -186,10 +186,11 @@ class FlashSaleService
             ->first();
 
         if ($flashSale) {
+            $productNames = $existingProducts->pluck('product.name')->filter()->implode(', ');
             return [
                 'status' => false,
                 'status_code' => 422,
-                'message' => 'Some products are already associated with an active flash sale.',
+                'message' => 'The following products are already in an active flash sale: ' . $productNames,
                 'existing_products' => $existingProducts->map(function ($item) {
                     return [
                         'product_id' => $item->product_id,
@@ -213,8 +214,6 @@ class FlashSaleService
         $missingProducts = array_diff($productIds, $existingProducts);
         if (!empty($missingProducts)) {
             return [
-                'status' => false,
-                'status_code' => 422,
                 'message' => 'Some products do not exist in the given store.',
             ];
         }
