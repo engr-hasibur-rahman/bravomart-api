@@ -24,7 +24,7 @@ class SliderManageController extends Controller
             $request->search ?? "",
             $request->sortField ?? 'id',
             $request->sort ?? 'asc',
-            []
+            $request->platform ?? ""
         );
         return response()->json([
             'data' => AdminSliderResource::collection($sliders),
