@@ -817,7 +817,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 $query->orWhere('last_name', 'like', '%' . $search . '%');
             });
         }
-        return $query->limit(500);
+        return $query->limit(500)->get();
     }
 
     public function getDeliverymanDashboard(?int $deliveryman_id = null)
