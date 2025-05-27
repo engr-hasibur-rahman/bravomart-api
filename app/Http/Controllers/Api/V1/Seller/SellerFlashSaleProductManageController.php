@@ -81,7 +81,11 @@ class SellerFlashSaleProductManageController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $flashSaleProducts = $this->flashSaleService->getSellerFlashSaleProducts($request->store_id);
+        $filters = [
+            'search' => $request->search,
+            'per_page' => $request->per_page
+        ];
+        $flashSaleProducts = $this->flashSaleService->getSellerFlashSaleProducts($request->store_id, $filters);
         if (!empty($flashSaleProducts)) {
             return response()->json([
                 'data' => FlashSaleProductResource::collection($flashSaleProducts),
