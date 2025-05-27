@@ -968,7 +968,9 @@ class FrontendController extends Controller
             'product.related_translations',
             'product.variants',
             'flashSale.related_translations'
-        ]);
+        ])->whereHas('flashSale', function ($query) {
+            $query->where('status', 1);
+        });
 
         // Store filter
         if (!empty($request->store_id)) {
