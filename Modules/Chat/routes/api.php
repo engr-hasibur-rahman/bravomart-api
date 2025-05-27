@@ -1,19 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Chat\Http\Controllers\ChatController;
+use Modules\Chat\app\Http\Controllers\Api\ChatController;
 
-/*
- *--------------------------------------------------------------------------
- * API Routes
- *--------------------------------------------------------------------------
- *
- * Here is where you can register API routes for your application. These
- * routes are loaded by the RouteServiceProvider within a group which
- * is assigned the "api" middleware group. Enjoy building your API!
- *
-*/
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('chat', ChatController::class)->names('chat');
+    Route::post('chat/start', [ChatController::class, 'startChat']);
+    Route::post('chat/send', [ChatController::class, 'sendMessage']);
+    Route::get('chat/messages/{chatId}', [ChatController::class, 'fetchMessages']);
+    Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
 });
