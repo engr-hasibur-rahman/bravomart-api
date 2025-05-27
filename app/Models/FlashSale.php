@@ -37,7 +37,15 @@ class FlashSale extends Model
         'description',
         'button_text'
     ];
-
+    protected static function booted()
+    {
+        static::retrieved(function ($model) {
+            // Check if the flash sale / offer is expired
+            if ($model->end_time && now()->gt($model->end_time) && $model->status != 0) {
+                $model->updateQuietly(['status' => 0]);
+            }
+        });
+    }
     public function approvedProducts()
     {
         return $this->hasMany(FlashSaleProduct::class)->where('status', 'approved');
