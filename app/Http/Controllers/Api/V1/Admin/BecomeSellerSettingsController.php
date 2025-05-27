@@ -35,13 +35,16 @@ class BecomeSellerSettingsController extends Controller
                 'data' => new AdminBecomeSellerResource($settings),
             ]);
         }
+
         $validatedData = $request->validate([
             'content' => 'required|array'
         ]);
+
         $settings = BecomeSellerSetting::updateOrCreate(
             ['id' => $request->id],
             ['content' => $validatedData['content']]
         );
+
         createOrUpdateTranslationJson($request, $settings->id, 'App\Models\BecomeSellerSetting', $this->translationKeys());
 
         return response()->json([

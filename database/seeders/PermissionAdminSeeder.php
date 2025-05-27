@@ -1420,6 +1420,17 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' => PermissionKey::GDPR_COOKIE_SETTINGS->value,
+                            'PermissionTitle' => 'GDPR & Cookie Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'SearchCheck',
+                            'options' => ['view', 'update'],
+                            'translations' => [
+                                'en' => 'GDPR & Cookie Settings',
+                                'ar' => 'إعدادات حماية البيانات وملفات تعريف الارتباط'
+                            ]
+                        ],
+                        [
                             'PermissionName' => '',
                             'PermissionTitle' => 'Third-Party Integrations',
                             'activity_scope' => 'system_level',

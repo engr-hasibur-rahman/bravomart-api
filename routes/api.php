@@ -145,6 +145,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/site-general-info', [ComSiteGeneralController::class, 'siteGeneralInfo']);
     Route::get('/maintenance-page-settings', [ComSiteGeneralController::class, 'siteMaintenancePage']);
     Route::get('/google-map-settings', [ComSiteGeneralController::class, 'googleMapSettings']);
+    Route::get('/gdpr-cookie-settings', [ComSiteGeneralController::class, 'gdprCookieSettings']);
 
     // pages settings routes
     Route::get('/about-page-settings', [FrontendPageSettingsController::class, 'AboutPageSettings']);

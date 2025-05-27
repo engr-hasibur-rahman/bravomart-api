@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Actions\ImageModifier;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminBecomeSellerResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterFavResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterLogoResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterResource;
 use App\Http\Resources\Com\SiteGeneralInfoResource;
+use App\Models\GeneralSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -71,6 +73,28 @@ class ComSiteGeneralController extends Controller
         return $this->success([
             'com_google_map_enable_disable' => $com_google_map_enable_disable,
             'com_google_map_api_key' => $com_google_map_api_key,
+        ]);
+    }
+
+    public function gdprCookieSettings(Request $request)
+    {
+
+        $settings = GeneralSetting::with('related_translations')
+            ->where('status', 1)
+            ->where('type', 'gdpr')
+            ->first();
+
+        if (!$settings) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ],404);
+        }
+
+        $content = jsonImageModifierFormatter($settings->content);
+        $settings->content = $content;
+
+        return response()->json([
+            'data' => new AdminBecomeSellerResource($settings),
         ]);
     }
 
