@@ -43,7 +43,6 @@ class AdminTransactionReportResource extends JsonResource
             "payment_status" => $this->orderMaster?->payment_status,
             "refund_status" => $this->refund_status,
             "status" => $this->status,
-
         ];
     }
 }

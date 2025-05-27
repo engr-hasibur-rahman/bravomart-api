@@ -35,7 +35,7 @@ class RolesSeeder extends Seeder
                 'available_for' => 'store_level',
                 'name' => 'Store Admin',
                 'guard_name' => 'api',
-                'locked' => false,
+                'locked' => true,
                 'created_at' => '2023-08-11 11:57:33',
                 'updated_at' => '2023-08-11 11:57:33',
             ]
@@ -66,24 +66,12 @@ class RolesSeeder extends Seeder
         );
 
         DB::table('roles')->updateOrInsert(
-            ['name' => 'Customer', 'guard_name' => 'api'],
-            [
-                'available_for' => 'customer_level',
-                'name' => 'Customer',
-                'guard_name' => 'api',
-                'locked' => false,
-                'created_at' => '2023-08-11 11:57:33',
-                'updated_at' => '2023-08-11 11:57:33',
-            ]
-        );
-
-        DB::table('roles')->updateOrInsert(
             ['name' => 'Delivery Man', 'guard_name' => 'api'],
             [
                 'available_for' => 'delivery_level',
                 'name' => 'Delivery Man',
                 'guard_name' => 'api',
-                'locked' => false,
+                'locked' => true,
                 'created_at' => '2023-08-11 11:57:33',
                 'updated_at' => '2023-08-11 11:57:33',
             ]
