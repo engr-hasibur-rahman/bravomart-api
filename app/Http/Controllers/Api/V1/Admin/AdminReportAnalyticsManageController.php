@@ -6,6 +6,7 @@ use App\Exports\OrderReportExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\AdminOrderDashboardReportResource;
 use App\Http\Resources\Admin\AdminOrderReportResource;
+use App\Http\Resources\Admin\AdminTransactionDashboardReportResource;
 use App\Http\Resources\Admin\AdminTransactionReportResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\AdminDashboardManageInterface;
@@ -125,7 +126,6 @@ class AdminReportAnalyticsManageController extends Controller
                 $q->whereDate('created_at', '<=', $filters['end_date']);
             });
         }
-
         $orderDetails = $query->with(['order.orderMaster.customer', 'order.orderMaster', 'store', 'area'])
             ->latest()
             ->paginate($filters['per_page'] ?? 20);
@@ -142,6 +142,7 @@ class AdminReportAnalyticsManageController extends Controller
             'meta' => new PaginationResource($orderDetails)
         ]);
     }
+
     public function transactionReport(Request $request)
     {
         $filters = [
@@ -197,7 +198,6 @@ class AdminReportAnalyticsManageController extends Controller
 
         if (isset($filters['store_id'])) {
             $query->where('store_id', $filters['store_id']);
-            $store_id = $request->store_id;
         }
 
         if (isset($filters['customer_id'])) {
@@ -219,7 +219,7 @@ class AdminReportAnalyticsManageController extends Controller
                 $q->whereDate('created_at', '<=', $filters['end_date']);
             });
         }
-
+        $filteredQuery = (clone $query); // Clone for the dashboard summary
         $orderDetails = $query->with(['orderMaster.customer', 'orderDetail', 'store', 'area'])
             ->latest()
             ->paginate($filters['per_page'] ?? 20);
@@ -230,6 +230,7 @@ class AdminReportAnalyticsManageController extends Controller
         }
 
         return response()->json([
+            'dashboard' => new AdminTransactionDashboardReportResource($filteredQuery),
             'data' => AdminTransactionReportResource::collection($orderDetails),
             'meta' => new PaginationResource($orderDetails)
         ]);
