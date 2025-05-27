@@ -79,7 +79,7 @@ class  MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'required|integer|unique:menus,position',
+            'position' => 'required|integer',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id',
             'parent_path' => 'nullable|string',
@@ -153,7 +153,7 @@ class  MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'required|integer|unique:menus,position,' . $request->id,
+            'position' => 'required|integer',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id|not_in:' . $request->id,
             'parent_path' => 'nullable|string',
@@ -200,7 +200,7 @@ class  MenuManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|integer|exists:menus,id',
-            'position' => 'required|integer|unique:menus,position,' . $request->id,
+            'position' => 'required|integer',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -208,14 +208,14 @@ class  MenuManageController extends Controller
         $menu = Menu::find($request->id);
         if (!$menu) {
             return response()->json([
-                'message' => __('messages.data_not_found')
+                'message' => __('messages . data_not_found')
             ], 404);
         }
         $menu->update([
             'position' => $request->position,
         ]);
         return response()->json([
-            'message' => __('messages.update_success', ['name' => 'Menu']),
+            'message' => __('messages . update_success', ['name' => 'Menu']),
         ]);
     }
 
@@ -225,21 +225,22 @@ class  MenuManageController extends Controller
         $menu = Menu::find($id);
         if ($menu->status == 0) {
             return response()->json(
-                ['message' => __('messages.can\'t_modify', ['name' => 'Menu'])]
+                ['message' => __('messages . can\'t_modify', ['name' => 'Menu'])]
             );
         }
-        if (!$menu) {
-            return response()->json(['message' => 'Menu not found'], 404);
-        }
+if (!$menu)
+{
+return response()->json(['message' => 'Menu not found'], 404);
+}
 
-        // Check if has children
-        if ($menu->children()->count() > 0) {
-            return response()->json(['message' => 'Cannot delete a menu that has child menus'], 400);
-        }
+// Check if has children
+if ($menu->children()->count() > 0) {
+    return response()->json(['message' => 'Cannot delete a menu that has child menus'], 400);
+}
 
-        $menu->related_translations()->delete();
-        $menu->delete();
+$menu->related_translations()->delete();
+$menu->delete();
 
-        return response()->json(['message' => 'Menu deleted successfully']);
-    }
+return response()->json(['message' => 'Menu deleted successfully']);
+}
 }
