@@ -22,6 +22,7 @@ class AdminSliderResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "id" => $this->id,
+            "platform" => $this->platform,
             "title" => !empty($translation) && $translation->where('key', 'title')->first()
                 ? $translation->where('key', 'title')->first()->value
                 : $this->title ?? null, // If language is empty or not provided attribute

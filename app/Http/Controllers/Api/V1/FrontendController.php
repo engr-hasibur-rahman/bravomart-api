@@ -968,7 +968,9 @@ class FrontendController extends Controller
             'product.related_translations',
             'product.variants',
             'flashSale.related_translations'
-        ]);
+        ])->whereHas('flashSale', function ($query) {
+            $query->where('status', 1);
+        });
 
         // Store filter
         if (!empty($request->store_id)) {
@@ -1517,9 +1519,18 @@ class FrontendController extends Controller
 
 
     /* -----------------------------------------------------------> Slider List <---------------------------------------------------------- */
-    public function allSliders()
+    public function allSliders(Request $request)
     {
-        $sliders = Slider::where('status', 1)->orderBy('order', 'asc')->paginate(50);
+        $validator = Validator::make($request->all(), [
+            'platform' => 'required|in:web,mobile',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $sliders = Slider::where('status', 1)
+            ->where('platform', $request->platform)
+            ->orderBy('order', 'asc')
+            ->paginate(50);
         // Check if sliders exist
         if ($sliders->isEmpty()) {
             return response()->json([

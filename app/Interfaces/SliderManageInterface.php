@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface SliderManageInterface
 {
-    public function getPaginatedSlider(int|string $limit, string $language, string $search, string $sortField, string $sort, array $filters);
+    public function getPaginatedSlider(int|string $limit, string $language, string $search, string $sortField, string $sort, string $platform);
 
     public function store(array $data);
 

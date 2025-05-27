@@ -24,6 +24,7 @@ class SliderRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'platform' => 'required|in:web,mobile',
             'title' => 'required|string|max:255',
             'title_color' => 'nullable|string|max:7', // Assuming HEX color code
             'sub_title' => 'nullable|string|max:255',
@@ -38,17 +39,19 @@ class SliderRequest extends FormRequest
             'button_hover_color' => 'nullable|string|max:7', // Assuming HEX color code
             'button_url' => 'nullable|url|max:255',
             'redirect_url' => 'nullable|url|max:255',
-            'order' => 'nullable|integer|min:1|unique:sliders,order,' . $this->id,
+            'order' => 'nullable|integer|min:0',
             'status' => 'nullable|integer|in:0,1',
             'created_by' => 'nullable|string|max:255',
             'updated_by' => 'nullable|string|max:255',
         ];
-
     }
 
     public function messages(): array
     {
         return [
+            'platform.required' => __('validation.required'),
+            'platform.in' => __('validation.in', ['enum' => 'web,mobile']),
+
             'title.required' => __('validation.required'),
             'title.string' => __('validation.string'),
             'title.max' => __('validation.max.string'),

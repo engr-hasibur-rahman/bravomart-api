@@ -23,7 +23,7 @@ class SliderManageRepository implements SliderManageInterface
         return $this->slider->translationKeys;
     }
 
-    public function getPaginatedSlider(int|string $limit, string $language, string $search, string $sortField, string $sort, array $filters)
+    public function getPaginatedSlider(int|string $limit, string $language, string $search, string $sortField, string $sort, string $platform)
     {
         $slider = Slider::leftJoin('translations as title_translations', function ($join) use ($language) {
             $join->on('sliders.id', '=', 'title_translations.translatable_id')
@@ -57,7 +57,7 @@ class SliderManageRepository implements SliderManageInterface
                 DB::raw('COALESCE(button_text_translations.value, sliders.button_text) as button_text')
             );
         // Apply search filter if search parameter exists
-        if ($search) {
+        if (!empty($search)) {
             $slider->where(function ($query) use ($search) {
                 $query->where(DB::raw("CONCAT_WS(' ', 
                 sliders.title, title_translations.value, 
@@ -65,6 +65,9 @@ class SliderManageRepository implements SliderManageInterface
                 sliders.sub_title, sub_title_translations.value, 
                 sliders.button_text, button_text_translations.value)"), 'like', "%{$search}%");
             });
+        }
+        if (!empty($platform)) {
+            $slider->where('platform', $platform);
         }
         // Apply sorting and pagination
         // Return the result
