@@ -283,6 +283,7 @@ class FlashSaleService
             return null;
         }
     }
+
     public function getSellerFlashSaleProducts(int $store_id, array $filters)
     {
         $seller_stores = Store::where('store_seller_id', auth('api')->id())->pluck('id')->toArray();
@@ -305,6 +306,7 @@ class FlashSaleService
         }
         return $query->paginate($filters['per_page'] ?? 10);
     }
+
     public function getAllFlashSaleProducts(array $filters)
     {
         $query = FlashSaleProduct::query()->with(['product.related_translations', 'store.related_translations', 'flashSale.related_translations']);
@@ -324,7 +326,7 @@ class FlashSaleService
         return $query->paginate($perPage);
     }
 
-    public function getValidFlashSales(?array $filters)
+    public function getValidFlashSales(?array $filters = [])
     {
         $query = FlashSale::with(['approvedProducts.product', 'approvedProducts.product.store', 'related_translations'])
             ->where('status', true)
