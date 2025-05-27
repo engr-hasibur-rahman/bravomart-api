@@ -641,6 +641,7 @@ class SystemManagementController extends Controller
         if ($request->isMethod('GET')) {
             $settings = GeneralSetting::with('related_translations')
                 ->where('status', 1)
+                ->where('type', 'gdpr')
                 ->first();
 
             if (!$settings) {

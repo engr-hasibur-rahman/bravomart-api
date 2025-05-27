@@ -976,8 +976,8 @@ class FrontendController extends Controller
         }
 
         // Flash Sale ID filter
-        if (!empty($request->flash_sale_id)) {
-            $query->where('flash_sale_id', $request->flash_sale_id);
+        if (filter_var($request->flash_sale_id, FILTER_VALIDATE_INT) && (int)$request->flash_sale_id !== 0) {
+            $query->where('flash_sale_id', (int)$request->flash_sale_id);
         }
 
         // Status filter

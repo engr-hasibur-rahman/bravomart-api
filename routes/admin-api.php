@@ -634,6 +634,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('store', [MenuManageController::class, 'store']);
                 Route::get('details/{id}', [MenuManageController::class, 'show']);
                 Route::post('update', [MenuManageController::class, 'update']);
+                Route::post('update-position', [MenuManageController::class, 'updatePosition']);
                 Route::delete('remove/{id?}', [MenuManageController::class, 'destroy']);
             });
 

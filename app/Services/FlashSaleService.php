@@ -186,10 +186,11 @@ class FlashSaleService
             ->first();
 
         if ($flashSale) {
+            $productNames = $existingProducts->pluck('product.name')->filter()->implode(', ');
             return [
                 'status' => false,
                 'status_code' => 422,
-                'message' => 'Some products are already associated with an active flash sale.',
+                'message' => 'The following products are already in an active flash sale: ' . $productNames,
                 'existing_products' => $existingProducts->map(function ($item) {
                     return [
                         'product_id' => $item->product_id,
@@ -213,8 +214,6 @@ class FlashSaleService
         $missingProducts = array_diff($productIds, $existingProducts);
         if (!empty($missingProducts)) {
             return [
-                'status' => false,
-                'status_code' => 422,
                 'message' => 'Some products do not exist in the given store.',
             ];
         }
@@ -316,14 +315,25 @@ class FlashSaleService
         return $query->paginate($perPage);
     }
 
-    public function getValidFlashSales()
+    public function getValidFlashSales(array $filters)
     {
-        return FlashSale::with(['approvedProducts.product', 'approvedProducts.product.store', 'related_translations'])
-            ->where('status', true) // Ensure the flash sale is active
-            ->where('start_time', '<=', now()) // Valid only after the start time
-            ->where('end_time', '>=', now()) // Valid only before the end time
-            ->orderBy('start_time', 'asc') // Order by the start time
-            ->paginate(10);
+        $query = FlashSale::with(['approvedProducts.product', 'approvedProducts.product.store', 'related_translations'])
+            ->where('status', true)
+            ->where('start_time', '<=', now())
+            ->where('end_time', '>=', now());
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                    ->orWhereHas('related_translations', function ($q2) use ($search) {
+                        $q2->where('title', 'LIKE', "%{$search}%");
+                    });
+            });
+        }
+
+        return $query->orderBy('start_time', 'asc')->paginate($filters['per_page'] ?? 10);
     }
 
     public function toggleStatus(int $id): FlashSale

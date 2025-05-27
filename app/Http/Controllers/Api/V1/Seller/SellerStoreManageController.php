@@ -51,7 +51,7 @@ class SellerStoreManageController extends Controller
         if (!$subscription_enabled && isset($request->subscription_type) && $request->subscription_type === 'subscription') {
             return response()->json([
                 'message' => __('messages.subscription_option_is_not_available')
-            ],422);
+            ], 422);
         }
         $store = $this->storeManageService->storeForAuthSeller($request->all());
         if ($store) {
@@ -59,10 +59,10 @@ class SellerStoreManageController extends Controller
             return $this->success(
                 translate('messages.save_success', ['name' => 'Store']),
                 200,
-                ['store_id' => $store->id]
+                ['store_id' => $store->id, 'slug' => $store->slug, 'store_type' => $store->store_type]
             );
         } else {
-            return $this->failed(translate('messages.save_failed', ['name' => 'Store'],500));
+            return $this->failed(translate('messages.save_failed', ['name' => 'Store'], 500));
         }
     }
 

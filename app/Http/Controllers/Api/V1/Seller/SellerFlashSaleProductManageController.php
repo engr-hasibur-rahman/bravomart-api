@@ -25,27 +25,23 @@ class SellerFlashSaleProductManageController extends Controller
         // check the products exists in store or not
         $productsNotInStore = $this->flashSaleService->checkProductsExistInStore($request->store_id, $request->products);
         if ($productsNotInStore) {
-            return response()->json($productsNotInStore);
+            return response()->json($productsNotInStore, 422);
         }
         // check if the products are already in flash sale
         $existingProducts = $this->flashSaleService->getExistingFlashSaleProducts($request->products);
 
         if ($existingProducts) {
-            return response()->json($existingProducts);
+            return response()->json($existingProducts, $existingProducts['status_code']);
         }
         $data = $this->flashSaleService->associateProductsToFlashSale($request->flash_sale_id, $request->products, $request->store_id);
         if ($data) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
                 'message' => __('messages.request_success', ['name' => 'Products'])
             ]);
         } else {
             return response()->json([
-                'status' => false,
-                'status_code' => 400,
                 'message' => __('messages.request_failed', ['name' => 'Products'])
-            ]);
+            ], 400);
         }
     }
 
@@ -99,9 +95,13 @@ class SellerFlashSaleProductManageController extends Controller
 
     }
 
-    public function getValidFlashSales()
+    public function getValidFlashSales(Request $request)
     {
-        $flashSales = $this->flashSaleService->getValidFlashSales();
+        $filters = [
+            'search' => $request->search,
+            'per_page' => $request->per_page
+        ];
+        $flashSales = $this->flashSaleService->getValidFlashSales($filters);
         return response()->json([
             'data' => AdminFlashSaleResource::collection($flashSales),
             'meta' => new PaginationResource($flashSales)

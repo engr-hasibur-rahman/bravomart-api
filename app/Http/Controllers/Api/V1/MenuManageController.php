@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class MenuManageController extends Controller
+class  MenuManageController extends Controller
 {
     public function __construct(protected Menu $menu, protected Translation $translation)
     {
@@ -79,7 +79,7 @@ class MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'nullable|integer',
+            'position' => 'required|integer',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id',
             'parent_path' => 'nullable|string',
@@ -140,7 +140,7 @@ class MenuManageController extends Controller
         // Prevent updating URL if status is 0
         if ($menu->status == 0 && $request->has('url') && $request->url !== $menu->url) {
             return response()->json([
-                'message' => __('messages.can\'t_modify',['name' => 'Menu url'])
+                'message' => __('messages.can\'t_modify', ['name' => 'Menu url'])
             ], 403);
         }
 
@@ -153,7 +153,7 @@ class MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'nullable|integer',
+            'position' => 'required|integer',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id|not_in:' . $request->id,
             'parent_path' => 'nullable|string',
@@ -196,27 +196,51 @@ class MenuManageController extends Controller
 
     }
 
+    public function updatePosition(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer|exists:menus,id',
+            'position' => 'required|integer',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $menu = Menu::find($request->id);
+        if (!$menu) {
+            return response()->json([
+                'message' => __('messages . data_not_found')
+            ], 404);
+        }
+        $menu->update([
+            'position' => $request->position,
+        ]);
+        return response()->json([
+            'message' => __('messages . update_success', ['name' => 'Menu']),
+        ]);
+    }
+
     // Delete a menu item
     public function destroy($id)
     {
         $menu = Menu::find($id);
         if ($menu->status == 0) {
             return response()->json(
-                ['message' => __('messages.can\'t_modify', ['name' => 'Menu'])]
+                ['message' => __('messages . can\'t_modify', ['name' => 'Menu'])]
             );
         }
-        if (!$menu) {
-            return response()->json(['message' => 'Menu not found'], 404);
-        }
+if (!$menu)
+{
+return response()->json(['message' => 'Menu not found'], 404);
+}
 
-        // Check if has children
-        if ($menu->children()->count() > 0) {
-            return response()->json(['message' => 'Cannot delete a menu that has child menus'], 400);
-        }
+// Check if has children
+if ($menu->children()->count() > 0) {
+    return response()->json(['message' => 'Cannot delete a menu that has child menus'], 400);
+}
 
-        $menu->related_translations()->delete();
-        $menu->delete();
+$menu->related_translations()->delete();
+$menu->delete();
 
-        return response()->json(['message' => 'Menu deleted successfully']);
-    }
+return response()->json(['message' => 'Menu deleted successfully']);
+}
 }
