@@ -284,16 +284,27 @@ class FlashSaleService
         }
     }
 
-    public function getSellerFlashSaleProducts(int $store_id)
+    public function getSellerFlashSaleProducts(int $store_id, array $filters)
     {
         $seller_stores = Store::where('store_seller_id', auth('api')->id())->pluck('id')->toArray();
         // Check if the provided store_id belongs to the authenticated seller
         if (!in_array($store_id, $seller_stores)) {
             return [];
         }
-        return FlashSaleProduct::with(['product', 'flashSale'])
-            ->where('store_id', $store_id)
-            ->paginate(10);
+        $query = FlashSaleProduct::with(['product', 'flashSale'])
+            ->where('store_id', $store_id);
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('flashSale', function ($q1) use ($search) {
+                    $q1->where('title', 'like', "%{$search}%");
+                })->orWhereHas('product', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+        return $query->paginate($filters['per_page'] ?? 10);
     }
 
     public function getAllFlashSaleProducts(array $filters)
