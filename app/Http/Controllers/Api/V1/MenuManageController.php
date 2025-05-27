@@ -34,11 +34,10 @@ class  MenuManageController extends Controller
                 ->where('translations.translatable_type', '=', Menu::class)
                 ->where('translations.language', '=', $language)
                 ->where('translations.key', '=', 'name');
-        })
-            ->select(
-                'menus.*',
-                DB::raw('COALESCE(translations.value, menus.name) as name')
-            );
+                })->select(
+                        'menus.*',
+                        DB::raw('COALESCE(translations.value, menus.name) as name')
+                    );
 
         // Apply search filter if search parameter exists
         if ($search) {
@@ -55,6 +54,7 @@ class  MenuManageController extends Controller
         if ($isPaginationDisabled) {
             $menus = $menus->with('childrenRecursive')
                 ->whereNull('parent_id')
+                ->where('is_visible', 1)
                 ->orderBy($sortField, $sortOrder)
                 ->get();
             return response()->json([
@@ -62,6 +62,7 @@ class  MenuManageController extends Controller
             ]);
         } else {
             $menus = $menus
+                ->where('is_visible', 1)
                 ->orderBy($sortField, $sortOrder)
                 ->paginate($per_page);
             return response()->json([
