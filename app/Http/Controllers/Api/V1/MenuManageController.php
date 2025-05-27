@@ -228,19 +228,18 @@ class  MenuManageController extends Controller
                 ['message' => __('messages . can\'t_modify', ['name' => 'Menu'])]
             );
         }
-if (!$menu)
-{
-return response()->json(['message' => 'Menu not found'], 404);
-}
+        if (!$menu) {
+            return response()->json(['message' => 'Menu not found'], 404);
+        }
 
 // Check if has children
-if ($menu->children()->count() > 0) {
-    return response()->json(['message' => 'Cannot delete a menu that has child menus'], 400);
-}
+        if ($menu->children()->count() > 0) {
+            return response()->json(['message' => 'Cannot delete a menu that has child menus'], 400);
+        }
 
-$menu->related_translations()->delete();
-$menu->delete();
+        $menu->related_translations()->delete();
+        $menu->delete();
 
-return response()->json(['message' => 'Menu deleted successfully']);
-}
+        return response()->json(['message' => 'Menu deleted successfully']);
+    }
 }
