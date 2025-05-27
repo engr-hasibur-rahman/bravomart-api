@@ -41,7 +41,7 @@ class SellerFlashSaleProductManageController extends Controller
         } else {
             return response()->json([
                 'message' => __('messages.request_failed', ['name' => 'Products'])
-            ],400);
+            ], 400);
         }
     }
 
@@ -95,9 +95,13 @@ class SellerFlashSaleProductManageController extends Controller
 
     }
 
-    public function getValidFlashSales()
+    public function getValidFlashSales(Request $request)
     {
-        $flashSales = $this->flashSaleService->getValidFlashSales();
+        $filters = [
+            'search' => $request->search,
+            'per_page' => $request->per_page
+        ];
+        $flashSales = $this->flashSaleService->getValidFlashSales($filters);
         return response()->json([
             'data' => AdminFlashSaleResource::collection($flashSales),
             'meta' => new PaginationResource($flashSales)
