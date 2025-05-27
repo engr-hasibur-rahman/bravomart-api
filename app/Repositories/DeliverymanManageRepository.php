@@ -94,7 +94,8 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             $query->where('created_by', $filters['created_by']);
         }
         $deliverymen = $query
-            ->whereHas('user', fn ($q) => $q->whereNull('deleted_at'))
+            ->whereHas('user', fn($q) => $q->whereNull('deleted_at'))
+            ->latest()
             ->paginate($filters['per_page'] ?? 10);
 
         return $deliverymen;
@@ -816,7 +817,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 $query->orWhere('last_name', 'like', '%' . $search . '%');
             });
         }
-        return $query->paginate(10);
+        return $query->limit(500);
     }
 
     public function getDeliverymanDashboard(?int $deliveryman_id = null)
