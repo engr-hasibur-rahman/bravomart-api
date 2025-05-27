@@ -286,17 +286,6 @@ class PermissionStoreSeeder extends Seeder
 //                                ]
                             ]
                         ]
-//                        [
-//                            'PermissionName' => PermissionKey::SELLER_STORE_PROMOTIONAL_BANNER_MANAGE->value,
-//                            'PermissionTitle' => 'Banners',
-//                            'activity_scope' => 'store_level',
-//                            'icon' => 'AlignJustify',
-//                            'options' => ['view', 'insert', 'update', 'delete'],
-//                            'translations' => [
-//                                'en' => 'Banners',
-//                                'ar' => 'لافتات'
-//                            ]
-//                        ]
                     ]
                 ],
 
