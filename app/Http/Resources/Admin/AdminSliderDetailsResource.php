@@ -18,6 +18,7 @@ class AdminSliderDetailsResource extends JsonResource
     {
         return [
             "id" => $this->id,
+            "platform" => $this->platform,
             "title" =>$this->title,
             "title_color" => $this->title_color,
             "sub_title" => $this->sub_title,
