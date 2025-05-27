@@ -54,7 +54,6 @@ class  MenuManageController extends Controller
         if ($isPaginationDisabled) {
             $menus = $menus->with('childrenRecursive')
                 ->whereNull('parent_id')
-                ->where('is_visible', 1)
                 ->orderBy($sortField, $sortOrder)
                 ->get();
             return response()->json([
@@ -62,7 +61,6 @@ class  MenuManageController extends Controller
             ]);
         } else {
             $menus = $menus
-                ->where('is_visible', 1)
                 ->orderBy($sortField, $sortOrder)
                 ->paginate($per_page);
             return response()->json([
