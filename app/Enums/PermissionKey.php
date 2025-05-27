@@ -197,6 +197,7 @@ enum PermissionKey: string
     case SMTP_SETTINGS = '/admin/system-management/email-settings/smtp';
     case EMAIL_TEMPLATES = '/admin/system-management/email-settings/email-template/list';
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
+    case GDPR_COOKIE_SETTINGS = '/admin/system-management/gdpr-cookie-settings';
     case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
     case DATABASE_UPDATE_CONTROLS = '/admin/system-management/database-update-controls';
 

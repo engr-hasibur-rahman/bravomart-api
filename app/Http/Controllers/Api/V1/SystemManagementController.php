@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminBecomeSellerResource;
 use App\Interfaces\TranslationInterface;
+use App\Models\BecomeSellerSetting;
+use App\Models\GeneralSetting;
 use App\Models\SettingOption;
 use App\Models\SystemManagement;
 use Illuminate\Http\Request;
@@ -21,11 +24,17 @@ class SystemManagementController extends Controller
     public function __construct(
         protected TranslationInterface $transRepo,
         protected SettingOption        $get_com_option,
+        protected GeneralSetting      $general_settings,
     ) {}
 
     public function translationKeys(): mixed
     {
         return $this->get_com_option->translationKeys;
+    }
+    
+    public function translationKeysGdpr(): mixed
+    {
+        return $this->general_settings->translationKeys;
     }
 
     public function generalSettings(Request $request){
@@ -626,6 +635,56 @@ class SystemManagementController extends Controller
         ]);
     }
 
+    public function gdprCookieSettings(Request $request)
+    {
+
+        if ($request->isMethod('GET')) {
+            $settings = GeneralSetting::with('related_translations')
+                ->where('status', 1)
+                ->first();
+
+            if (!$settings) {
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ],404);
+            }
+
+            $content = jsonImageModifierFormatter($settings->content);
+            $settings->content = $content;
+
+            return response()->json([
+                'data' => new AdminBecomeSellerResource($settings),
+            ]);
+        }
+
+        $validatedData = $request->validate([
+            'content' => 'required|array'
+        ]);
+
+
+
+        $settings = GeneralSetting::where('type', 'gdpr')->first();
+
+        if(!empty($settings)){
+            $settings->update([
+                'content' => $validatedData['content']
+            ]);
+        }else{
+            $settings =  GeneralSetting::updateOrCreate([
+                'id' => $request->id,
+                'type' => 'gdpr',
+                'content' => $validatedData['content']
+            ]);
+        }
+
+        createOrUpdateTranslationJson($request, $settings->id, 'App\Models\GeneralSetting', $this->translationKeysGdpr());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Settings saved successfully',
+        ]);
+    }
+
     public function cacheManagement(Request $request)
     {
         $validatedData = $request->validate([
@@ -652,9 +711,7 @@ class SystemManagementController extends Controller
 
     public function databaseUpdateControl(Request $request)
     {
-
         try {
-
             // Store original environment
             $originalEnv = env('APP_ENV');
           //  update environment to local

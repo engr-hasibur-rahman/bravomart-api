@@ -74,4 +74,14 @@ class ComSiteGeneralController extends Controller
         ]);
     }
 
+    public function gdprCookieSettings(Request $request)
+    {
+        $com_google_map_enable_disable = com_option_get('com_google_map_enable_disable');
+        $com_google_map_api_key = com_option_get('com_google_map_api_key');
+        return $this->success([
+            'com_google_map_enable_disable' => $com_google_map_enable_disable,
+            'com_google_map_api_key' => $com_google_map_api_key,
+        ]);
+    }
+
 }
