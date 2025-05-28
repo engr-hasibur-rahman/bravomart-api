@@ -4,6 +4,7 @@ namespace Modules\Chat\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Modules\Chat\app\Models\Chat;
 use Modules\Chat\app\Models\ChatMessage;
 
@@ -12,10 +13,17 @@ class ChatController extends Controller
     // Get or create chat between two parties
     public function startChat(Request $request)
     {
-        $request->validate([
+       $validator =   Validator::make($request->all(), [
             'user_id'     => 'required|integer',
             'user_type'   => 'required|string',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors(),
+            ]);
+        }
 
         $authUser = auth()->user();
         $authType = class_basename($authUser);

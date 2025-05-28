@@ -9,6 +9,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Modules\Chat\app\Traits\ChatSeederMenu;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Permission as ModelsPermission;
 use Spatie\Permission\Models\Role;
@@ -22,8 +23,11 @@ class PermissionAdminSeeder extends Seeder
      *
      * @return void
      */
+
+
     public function run()
     {
+
         DB::table('permissions')->where('available_for','system_level')->delete();
         $admin_main_menu = [
             [
@@ -796,6 +800,7 @@ class PermissionAdminSeeder extends Seeder
                     ]
                 ],
 
+
                 // Employee Management
                 [
                     'PermissionName' => '',
@@ -878,15 +883,118 @@ class PermissionAdminSeeder extends Seeder
                 ],
 
 
-                // Support Ticket Management
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Support Ticket Management',
+                    'PermissionTitle' => 'Chat Management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Support Ticket Management',
+                        'en' => 'Chat Management',
+                        'ar' => 'إدارة الدردشة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Chat',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'MessageSquareMore',
+                            'options' => ['view', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Chat',
+                                'ar' => 'إعدادات الدردشة'
+                            ],
+
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_CHAT_SETTINGS->value,
+                                    'PermissionTitle' => 'Chat Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Chat Settings',
+                                        'ar' => 'إعدادات الدردشة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_CHAT_MANAGE->value,
+                                    'PermissionTitle' => 'Chat List',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Chat List',
+                                        'ar' => 'قائمة الدردشة'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+
+
+                // Support Ticket Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Support Ticket',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Support Ticket',
+                        'ar' => 'إدارة المدونة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Tickets',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Headphones',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Tickets',
+                                'ar' => 'التذاكر'
+                            ],
+
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_TICKETS_DEPARTMENT->value,
+                                    'PermissionTitle' => 'Department',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'Department',
+                                        'ar' => ' الموظفين'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value,
+                                    'PermissionTitle' => 'All Tickets',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'All Tickets',
+                                        'ar' => 'دعامات'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+
+
+                // Support Ticket Management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Support Ticket',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Support Ticket',
                         'ar' => 'إدارة المدونة'
                     ],
                     'submenu' => [
@@ -1049,12 +1157,12 @@ class PermissionAdminSeeder extends Seeder
                 // Notifications Management
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Notifications Management',
+                    'PermissionTitle' => 'Notifications',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Notifications Management',
+                        'en' => 'Notifications',
                         'ar' => 'إدارة الأعمال'
                     ],
                     'submenu' => [
