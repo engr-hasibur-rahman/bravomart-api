@@ -71,10 +71,21 @@
             color: #fff;
         }
 
-        .green { background-color: #28a745; }
-        .blue { background-color: #007bff; }
-        .orange { background-color: #fd7e14; }
-        .purple { background-color: #6f42c1; }
+        .green {
+            background-color: #28a745;
+        }
+
+        .blue {
+            background-color: #007bff;
+        }
+
+        .orange {
+            background-color: #fd7e14;
+        }
+
+        .purple {
+            background-color: #6f42c1;
+        }
 
         .right img {
             width: 100%;
@@ -112,7 +123,7 @@
 
 <div class="steps">
     <div class="step active"></div>
-    <div class="step"></div>
+    <a class="step" href="?step=requirements"></a>
     <div class="step"></div>
     <div class="step"></div>
     <div class="step"></div>
@@ -131,7 +142,8 @@
     </div>
 
     <div class="right">
-        <img src="https://cdni.iconscout.com/illustration/premium/thumb/software-installation-6771357-5627174.png" alt="Install Illustration">
+        <img src="https://cdni.iconscout.com/illustration/premium/thumb/software-installation-6771357-5627174.png"
+             alt="Install Illustration">
         <div class="cta">
             <p>Ready to begin the installation?</p>
             <a class="button" href="?step=requirements">Get Started</a>
