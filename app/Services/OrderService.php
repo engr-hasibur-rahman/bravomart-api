@@ -159,7 +159,7 @@ class OrderService
             }
             $deliveryOption = $data['packages'][1]['delivery_option'] ?? 'home_delivery';
 
-            if ($deliveryOption === 'takeaway') {
+            if ($deliveryOption == 'takeaway') {
                 $shipping_address = OrderAddress::create([
                     'order_master_id' => $order_master->id,
                     'area_id' => 0, // main zone id
