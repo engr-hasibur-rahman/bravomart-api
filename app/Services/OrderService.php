@@ -135,7 +135,7 @@ class OrderService
             $order_master = OrderMaster::create([
                 'customer_id' => $customer_id,
                 'area_id' => 0, // main zone id
-                'shipping_address_id' => $data['shipping_address_id'],
+                'shipping_address_id' => 0,
                 'coupon_code' => $coupon_data['success'] === false ? null : $data['coupon_code'] ?? null,
                 'coupon_title' => $coupon_data['success'] === false ? null : $coupon_data['coupon_title'] ?? null,
                 'coupon_discount_amount_admin' => $coupon_data['discount_amount'],
@@ -152,25 +152,42 @@ class OrderService
                 'order_notes' => $data['order_notes'] ?? null,
             ]);
             /*---------------->Create OrderMaster<----------------------------*/
-
             /*--------------->Create OrderAddress<-------------------------*/
 
-            $customer_address = CustomerAddress::find($data['shipping_address_id']);
-            OrderAddress::create([
-                'order_master_id' => $order_master->id,
-                'area_id' => 0, // main zone id
-                'shipping_address_id' => $customer_address->id,
-                'type' => $customer_address->type,
-                'email' => $customer_address->email,
-                'contact_number' => $customer_address->contact_number,
-                'address' => $customer_address->address,
-                'latitude' => $customer_address->latitude,
-                'longitude' => $customer_address->longitude,
-                'road' => $customer_address->road,
-                'house' => $customer_address->house,
-                'floor' => $customer_address->floor,
-                'postal_code' => $customer_address->postal_code,
-            ]);
+            if (array_key_exists("shipping_address_id", $data)) {
+                $customer_address = CustomerAddress::find($data['shipping_address_id']);
+            }
+            $deliveryOption = $data['packages'][1]['delivery_option'] ?? 'home_delivery';
+
+            if ($deliveryOption === 'takeaway') {
+                $shipping_address = OrderAddress::create([
+                    'order_master_id' => $order_master->id,
+                    'area_id' => 0, // main zone id
+                    'name' => array_key_exists("name", $data) ? $data['name'] : null,
+                    'email' => array_key_exists("email", $data) ? $data['email'] : null,
+                    'contact_number' => array_key_exists("contact_number", $data) ? $data['contact_number'] : null,
+                    'type' => 'others'
+                ]);
+            } else {
+                $shipping_address = OrderAddress::create([
+                    'order_master_id' => $order_master->id,
+                    'area_id' => 0, // main zone id
+                    'shipping_address_id' => $customer_address->id,
+                    'type' => $customer_address->type,
+                    'email' => $customer_address->email,
+                    'contact_number' => $customer_address->contact_number,
+                    'address' => $customer_address->address,
+                    'latitude' => $customer_address->latitude,
+                    'longitude' => $customer_address->longitude,
+                    'road' => $customer_address->road,
+                    'house' => $customer_address->house,
+                    'floor' => $customer_address->floor,
+                    'postal_code' => $customer_address->postal_code,
+                ]);
+            }
+
+            $order_master->shipping_address_id = $shipping_address->id;
+
             /*------------------>Create OrderAddress<------------------------------*/
 
             $calculate_total_order_amount_base_price = 0; // To accumulate the total price
@@ -313,9 +330,9 @@ class OrderService
                     'order_amount' => 0,
                     'product_discount_amount' => 0,
                     'flash_discount_amount_admin' => 0,
-                    'shipping_charge' => $final_shipping_charge,
-                    'delivery_charge_admin' => $delivery_charge_delivery_man_commission, // Full delivery charge
-                    'delivery_charge_admin_commission' => $delivery_charge_admin_commission, // Admin commission on delivery charge
+                    'shipping_charge' => $packageData['delivery_option'] === 'home_delivery' ? $final_shipping_charge : 0,
+                    'delivery_charge_admin' => $packageData['delivery_option'] === 'home_delivery' ? $delivery_charge_delivery_man_commission : 0, // Full delivery charge
+                    'delivery_charge_admin_commission' => $packageData['delivery_option'] === 'home_delivery' ? $delivery_charge_admin_commission : 0, // Admin commission on delivery charge
                     'is_reviewed' => false,
                     'status' => 'pending',
                 ]);
@@ -394,27 +411,6 @@ class OrderService
                         // after flash sale discount
                         $after_flash_sale_discount_final_price = $finalPrice;
 
-                        // **Calculate Coupon Discount Per Item**
-                        $per_item_coupon_discount_amount = 0;
-//                        if (isset($coupon_data['discount_amount'])) {
-//                            $coupon_discount_type = $coupon_data['coupon_type'];
-//                            $coupon_discount_rate = $coupon_data['discount_rate'];
-//                            $coupon_discount_amount = $coupon_data['discount_amount'];
-//
-//                            if ($coupon_discount_type === 'percentage') {
-//                                // Percentage-based discount - distribute
-//                                $per_item_coupon_discount_amount = round($after_flash_sale_discount_final_price * ($coupon_discount_rate / 100), 2);
-//                            } elseif ($coupon_discount_type === 'amount') {
-//                                // Fixed amount discount - distribute
-//                                $item_contribution_ratio = $after_flash_sale_discount_final_price / $main_order_amount_after_discount;
-//                                $per_item_coupon_discount_amount = round($item_contribution_ratio * $coupon_discount_amount, 2);
-//
-//                            } else {
-//                                $per_item_coupon_discount_amount = 0;
-//                            }
-//                        }
-
-
                         // Calculate final price after all discounts (flash sale + coupon)
                         $after_any_discount_final_price = $after_flash_sale_discount_final_price;
 
@@ -427,7 +423,7 @@ class OrderService
 
                         // vat/tax calculate
                         $store_tax_amount = $product->store?->tax;
-                        $taxAmount = $after_any_discount_final_price * ($store_tax_amount / 100.00);
+                        $taxAmount = ($after_any_discount_final_price / 100) * $store_tax_amount;
 
                         // Total tax amount based on quantity
                         $total_tax_amount = $taxAmount * $itemData['quantity'];
@@ -462,8 +458,6 @@ class OrderService
                                 }
                             }
                         }
-
-
                         // create order details add
                         $orderDetails = OrderDetail::create([
                             'order_id' => $package->id,

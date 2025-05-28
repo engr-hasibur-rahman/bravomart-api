@@ -208,7 +208,6 @@ class FrontendController extends Controller
         ], 404);
     }
 
-
     public function getStoreDetails(Request $request)
     {
         if (auth('api')->check()) {

@@ -167,45 +167,37 @@ class AdminReportAnalyticsManageController extends Controller
                     ->orWhere('invoice_number', 'LIKE', '%' . $filters['search'] . '%');
             });
         }
-
         if (isset($filters['type'])) {
             $query->whereHas('store', function ($q) use ($filters) {
                 $q->where('store_type', $filters['type']);
             });
         }
-
         if (isset($filters['area_id'])) {
             $query->where('area_id', $filters['area_id']);
         }
-
         if (isset($filters['payment_gateway'])) {
             $query->whereHas('order.orderMaster', function ($q) use ($filters) {
                 $q->where('payment_gateway', $filters['payment_gateway']);
             });
         }
-
         if (isset($filters['payment_status'])) {
             $query->whereHas('order.orderMaster', function ($q) use ($filters) {
                 $q->where('payment_status', $filters['payment_status']);
             });
         }
-
         if (isset($filters['order_status'])) {
             $query->whereHas('order', function ($q) use ($filters) {
                 $q->where('status', $filters['order_status']);
             });
         }
-
         if (isset($filters['store_id'])) {
             $query->where('store_id', $filters['store_id']);
         }
-
         if (isset($filters['customer_id'])) {
             $query->whereHas('order.orderMaster', function ($q) use ($filters) {
                 $q->where('customer_id', $filters['customer_id']);
             });
         }
-
         if (isset($filters['start_date']) && isset($filters['end_date'])) {
             $query->whereHas('order', function ($q) use ($filters) {
                 $q->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);

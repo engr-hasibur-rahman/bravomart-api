@@ -10,6 +10,7 @@ class OrderAddress extends Model
         'order_master_id',
         'area_id',
         'type',
+        'name',
         'email',
         'contact_number',
         'address',

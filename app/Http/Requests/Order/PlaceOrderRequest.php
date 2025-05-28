@@ -36,13 +36,16 @@ class PlaceOrderRequest extends FormRequest
             'guest_info.phone' => 'required_if:guest_info.guest_order,true|string|regex:/^(\+?\d{1,3})?\d{7,15}$/|unique:customers,phone',
             'guest_info.password' => 'required_if:guest_info.guest_order,true|string|min:6|max:32',
 
-            'customer_latitude' => 'required',
-            'customer_longitude' => 'required',
+            'customer_latitude' => 'nullable',
+            'customer_longitude' => 'nullable',
 
             // Shipping Address Validation (required only for logged-in users)
-            'shipping_address_id' => auth('api_customer')->check()
-                ? 'required|exists:customer_addresses,id'
-                : 'nullable|exists:customer_addresses,id',
+            'shipping_address_id' => 'nullable|exists:customer_addresses,id',
+
+            // takeaway
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'contact_number' => 'nullable|max:255',
 
             'shipping_time_preferred' => 'nullable|string|max:255',
             'payment_gateway' => 'required|string|in:paypal,stripe,cash_on_delivery,razorpay,paytm,wallet',
@@ -52,7 +55,7 @@ class PlaceOrderRequest extends FormRequest
             'coupon_title' => 'nullable|string|max:255',
             'coupon_discount_amount_admin' => 'nullable|numeric|min:0',
             'product_discount_amount' => 'nullable|numeric|min:0',
-            'flash_discount_amount_admin' => 'nullable|numeric|min:0',        
+            'flash_discount_amount_admin' => 'nullable|numeric|min:0',
             'shipping_charge' => 'nullable|numeric|min:0',
             'additional_charge_name' => 'nullable|string',
             'additional_charge_amount' => 'nullable|numeric|min:0',
@@ -63,7 +66,7 @@ class PlaceOrderRequest extends FormRequest
             'packages.*.delivery_time' => 'nullable',
             'packages.*.coupon_discount_amount_admin' => 'nullable|numeric',
             'packages.*.product_discount_amount' => 'nullable|numeric',
-            'packages.*.flash_discount_amount_admin' => 'nullable|numeric',      
+            'packages.*.flash_discount_amount_admin' => 'nullable|numeric',
             'packages.*.shipping_charge' => 'nullable|numeric',
             'packages.*.additional_charge' => 'nullable|numeric',
             // items
@@ -74,7 +77,7 @@ class PlaceOrderRequest extends FormRequest
                 'required',
                 'integer',
                 function ($attribute, $value, $fail) {
-                    $productId = request()->input(str_replace('.variant_id', '.product_id', $attribute));                
+                    $productId = request()->input(str_replace('.variant_id', '.product_id', $attribute));
                     $variantExists = \App\Models\ProductVariant::where('id', $value)->where('product_id', $productId)->exists();
                     if (!$variantExists) {
                         $fail("The selected variant does not belong to the given product.");
@@ -90,8 +93,8 @@ class PlaceOrderRequest extends FormRequest
                     $productIds = request()->input($storeKey, []);
                     // Check if all products in the package belong to the given store
                     $productExists = \App\Models\Product::whereIn('id', $productIds)
-                            ->where('store_id', $value)
-                            ->exists();
+                        ->where('store_id', $value)
+                        ->exists();
                     if (!$productExists) {
                         $fail("Invalid product for store.");
                     }
