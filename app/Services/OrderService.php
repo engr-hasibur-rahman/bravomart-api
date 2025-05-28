@@ -105,7 +105,6 @@ class OrderService
                     }
                 }
             }
-
             // calculate order coupon
             /*----------------------->Coupon OrderMaster<----------------------------------------*/
             $coupon_data = [
@@ -132,6 +131,7 @@ class OrderService
 
 
             /*------------->Create OrderMaster<-------------------------------*/
+
             $order_master = OrderMaster::create([
                 'customer_id' => $customer_id,
                 'area_id' => 0, // main zone id
@@ -157,9 +157,10 @@ class OrderService
             if (array_key_exists("shipping_address_id", $data)) {
                 $customer_address = CustomerAddress::find($data['shipping_address_id']);
             }
-            $deliveryOption = $data['packages'][1]['delivery_option'] ?? 'home_delivery';
+            $deliveryOption = $data['packages'][0]['delivery_option'] ?? 'home_delivery';
 
-            if ($deliveryOption == 'takeaway') {
+            if ($deliveryOption === "takeaway") {
+
                 $shipping_address = OrderAddress::create([
                     'order_master_id' => $order_master->id,
                     'area_id' => 0, // main zone id
@@ -168,6 +169,7 @@ class OrderService
                     'contact_number' => array_key_exists("contact_number", $data) ? $data['contact_number'] : null,
                     'type' => 'others'
                 ]);
+
             } else {
                 $shipping_address = OrderAddress::create([
                     'order_master_id' => $order_master->id,
