@@ -154,10 +154,9 @@ class FrontendController extends Controller
                     ->whereColumn('store_id', 'stores.id')
                     ->where('reviewable_type', Product::class)
                     ->where('status', 'approved')
-            ]);
+            ])->orderByDesc('rating');
             $query->having('rating', '>=', 2); // Set your threshold
         }
-
         // Pagination
         $perPage = $request->get('per_page', 10);
         $stores = $query
