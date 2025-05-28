@@ -37,8 +37,9 @@ class StoreOrderResource extends JsonResource
             'order_amount' => $this->order_amount,
             'product_discount_amount' => $this->product_discount_amount,
             'shipping_charge' => $this->shipping_charge,
-            'additional_charge_name' => $this->order_additional_charge_name,
             'additional_charge_amount' => $this->order_additional_charge_amount,
+            'additional_charge_store_amount' => $this->order_additional_charge_store_amount,
+            'admin_additional_charge_commission' => $this->order_admin_additional_charge_commission,
             'is_reviewed' => $this->is_reviewed,
             'confirmed_by' => $this->confirmed_by,
             'confirmed_at' => $this->confirmed_at,
@@ -52,6 +53,8 @@ class StoreOrderResource extends JsonResource
             'deliveryman' => new DeliverymanResource($this->whenLoaded('deliveryman')),
             'order_master' => new OrderMasterResource($this->whenLoaded('orderMaster')),
             'order_details' => OrderDetailsResource::collection($this->whenLoaded('orderDetail')),
+            'admin_commission' => $this->order_amount_admin_commission,
+            'store_amount' => $this->order_amount_store_value,
         ];
     }
 }

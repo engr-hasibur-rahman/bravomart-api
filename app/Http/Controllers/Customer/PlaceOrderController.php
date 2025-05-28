@@ -9,6 +9,7 @@ use App\Http\Requests\Order\PlaceOrderRequest;
 use App\Http\Resources\Order\OrderMasterResource;
 use App\Http\Resources\Order\PlaceOrderDetailsResource;
 use App\Http\Resources\Order\PlaceOrderMasterResource;
+use App\Models\CustomerAddress;
 use App\Models\Order;
 use App\Models\OrderMaster;
 use App\Models\Product;
