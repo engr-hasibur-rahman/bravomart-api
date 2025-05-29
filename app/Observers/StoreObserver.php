@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Store;
 use App\Models\StoreType;
+use Modules\Chat\app\Models\Chat;
 
 class StoreObserver
 {

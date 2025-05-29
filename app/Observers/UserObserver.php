@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User;
+use Modules\Chat\app\Models\Chat;
 use Modules\Wallet\app\Models\Wallet;
 
 class UserObserver
@@ -20,6 +21,24 @@ class UserObserver
                 'balance' => 0,  // Set initial balance
                 'status' => 1,   // Set the wallet as active
             ]);
+
+            // Create live chat data
+            if (moduleExists('Chat')) {
+                Chat::create([
+                    'user_id' => $user->id,
+                    'user_type' => 'deliveryman',
+                ]);
+            }
+        }
+
+        if ($user->activity_scope === 'system_level'){
+            // Create live chat data
+            if (moduleExists('Chat')) {
+                Chat::create([
+                    'user_id' => $user->id,
+                    'user_type' => 'admin',
+                ]);
+            }
         }
 
     }
