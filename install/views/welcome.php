@@ -2,28 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Installation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: Inter, sans-serif;
             background-color: #002366;
             color: #333;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 60px auto;
             background-color: #fff;
             border-radius: 10px;
-            padding: 40px;
+            padding: 100px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: stretch; /* Make both children equal height */
+            gap: 20px;
         }
 
         .left, .right {
-            width: 48%;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         h1 {
@@ -61,31 +67,41 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
+            max-width: 500px;
+            margin: auto;
         }
 
         .info-box {
+            background: #fff;
+            border-radius: 12px;
             padding: 20px;
-            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .info-box .icon {
+            display: block;
+            margin: 0 auto 4px auto;
+            width: 125px; /* Adjust this size as needed */
+            height: auto;
+        }
+
+        .info-box .label {
             font-weight: bold;
-            color: #fff;
+            font-size: 16px;
         }
 
-        .green {
-            background-color: #28a745;
+
+        .right {
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
         }
 
-        .blue {
-            background-color: #007bff;
-        }
-
-        .orange {
-            background-color: #fd7e14;
-        }
-
-        .purple {
-            background-color: #6f42c1;
-        }
 
         .right img {
             width: 100%;
@@ -99,12 +115,13 @@
 
         .cta a.button {
             display: inline-block;
-            background-color: #007bff;
+            background-color: #1A73E8;
             color: #fff;
             padding: 12px 24px;
             border-radius: 6px;
             text-decoration: none;
-            font-weight: bold;
+            font-size: large;
+            font-weight: normal;
         }
 
         .cta a.source {
@@ -122,7 +139,7 @@
 <p class="subtitle">Follow the step-by-step instructions and input the required details accurately</p>
 
 <div class="steps">
-    <div class="step active"></div>
+    <a class="step active" href="?step=welcome"></a>
     <a class="step" href="?step=requirements"></a>
     <div class="step"></div>
     <div class="step"></div>
@@ -134,15 +151,30 @@
         <h2>Database Setup Information</h2>
         <p>Ensure the following information is ready before installation. It’s required to complete the process.</p>
         <div class="info-boxes">
-            <div class="info-box green">Database Name</div>
-            <div class="info-box blue">Database Username</div>
-            <div class="info-box orange">Database Host Name</div>
-            <div class="info-box purple">Database Password</div>
+            <div class="info-box">
+                <img class="icon" src="assets/images/database.svg"
+                     alt="Install Illustration">
+                <div class="label">Database Name</div>
+            </div>
+            <div class="info-box">
+                <img class="icon" src="assets/images/database_user_name.svg"
+                     alt="Install Illustration">
+                <div class="label">Database Username</div>
+            </div>
+            <div class="info-box">
+                <img class="icon" src="assets/images/database_host_name.svg"
+                     alt="Install Illustration">
+                <div class="label">Database Host Name</div>
+            </div>
+            <div class="info-box">
+                <img class="icon" src="assets/images/database_password.svg"
+                     alt="Install Illustration">
+                <div class="label">Database Password</div>
+            </div>
         </div>
     </div>
-
     <div class="right">
-        <img src="https://cdni.iconscout.com/illustration/premium/thumb/software-installation-6771357-5627174.png"
+        <img src="assets/images/ready_to_begin.png"
              alt="Install Illustration">
         <div class="cta">
             <p>Ready to begin the installation?</p>
@@ -154,5 +186,7 @@
 
 </body>
 </html>
+
+
 
 
