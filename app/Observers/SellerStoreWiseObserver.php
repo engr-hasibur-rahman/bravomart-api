@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Store;
+use Modules\Chat\app\Models\Chat;
 use Modules\Wallet\app\Models\Wallet;
 
 class SellerStoreWiseObserver
@@ -19,6 +20,14 @@ class SellerStoreWiseObserver
             'balance' => 0,  // Set initial balance
             'status' => 1,   // Set the wallet as active
         ]);
+
+        // Create live chat data
+        if (moduleExists('Chat')) {
+            Chat::create([
+                'user_id' => $store->id,
+                'user_type' => 'store',
+            ]);
+        }
     }
 
 }

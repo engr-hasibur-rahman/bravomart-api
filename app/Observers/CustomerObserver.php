@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Customer;
+use Modules\Chat\app\Models\Chat;
 use Modules\Wallet\app\Models\Wallet;
 
 class CustomerObserver
@@ -19,6 +20,15 @@ class CustomerObserver
             'balance' => 0,  // Set initial balance
             'status' => 1,   // Set the wallet as active
         ]);
+
+        // Create live chat data
+        if (moduleExists('Chat')) {
+            Chat::create([
+                'user_id' => $customer->id,
+                'user_type' => 'customer',
+            ]);
+        }
+
     }
 
     /**

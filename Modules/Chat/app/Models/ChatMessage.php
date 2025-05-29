@@ -13,6 +13,17 @@ class ChatMessage extends Model
 {
     use HasFactory;
 
+      protected $table = 'chat_messages';
+
+      protected $fillable = [
+          'chat_id',
+          'sender_id',
+          'sender_type',
+          'receiver_id',
+          'receiver_type',
+          'message',
+          'file',
+      ];
 
     public function chat(): BelongsTo
     {

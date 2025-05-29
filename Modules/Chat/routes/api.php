@@ -4,6 +4,7 @@ use App\Enums\PermissionKey;
 use Illuminate\Support\Facades\Route;
 use Modules\Chat\app\Http\Controllers\Api\AdminChatManageController;
 use Modules\Chat\app\Http\Controllers\Api\ChatController;
+use Modules\Chat\app\Http\Controllers\ChatManageController;
 
 
 //  Admin Chat manage
@@ -22,4 +23,10 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/')->group(function () {
     Route::post('chat/send', [ChatController::class, 'sendMessage']);
     Route::get('chat/messages/{chatId}', [ChatController::class, 'fetchMessages']);
     Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
+});
+
+
+// pusher info
+Route::middleware(['auth:sanctum'])->prefix('v1/')->group(function () {
+    Route::get('/chat-credentials', [ChatManageController::class, 'getChatCredentials']);
 });
