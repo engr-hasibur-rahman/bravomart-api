@@ -216,7 +216,11 @@ class UserController extends Controller
         $name = $user->user()->name;
         // Retrieve the role from the OAuth state parameter
         $role = $request->input('state', 'user'); // Default to 'user'
-        $frontendUrl = 'https://bravomart.bravo-soft.com/';
+        if ($role == 'customer') {
+            $frontendUrl = 'https://bravomart.bravo-soft.com/';
+        } elseif ($role == 'seller') {
+            $frontendUrl = 'https://bravomart.bravo-soft.com/seller/dashboard';
+        }
         // Find or create a user in the database
         if ($role == 'customer') {
             $existingUser = Customer::where('google_id', $google_id)
@@ -619,7 +623,7 @@ class UserController extends Controller
             return response()->json([
                 "status" => false,
                 "message" => $validator->errors()
-            ],422);
+            ], 422);
         }
         try {
             $result = $this->sendVerificationEmail($request->email);
@@ -636,7 +640,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage()
-            ],500);
+            ], 500);
         }
     }
 

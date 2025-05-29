@@ -11,8 +11,8 @@ class InstallController
     {
         // PHP version and extensions
         $requirements = [
-            'php' => version_compare(PHP_VERSION, '8.1.0', '>='),
             'extensions' => [
+                'php' => version_compare(PHP_VERSION, '8.1.0', '>='),
                 'openssl' => extension_loaded('openssl'),
                 'pdo' => extension_loaded('pdo'),
                 'mbstring' => extension_loaded('mbstring'),
@@ -24,10 +24,9 @@ class InstallController
                 'bcmath' => extension_loaded('bcmath'),
             ]
         ];
-//        // This makes $requirements available in the view
-//        extract(['requirements' => $requirements]);
         include __DIR__ . '/../views/requirements.php';
     }
+
     public function environment()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -58,8 +57,8 @@ class InstallController
     public function permissions()
     {
         $folders = [
-            'storage/' => is_writable(__DIR__ . '/../../../storage'),
-            'bootstrap/cache/' => is_writable(__DIR__ . '/../../../bootstrap/cache'),
+            'Storage' => is_writable(__DIR__ . '/../../../storage'),
+            'Bootstrap cache' => is_writable(__DIR__ . '/../../../bootstrap/cache'),
         ];
         include __DIR__ . '/../views/permissions.php';
     }
@@ -83,10 +82,13 @@ class InstallController
             echo "DB Error: " . $e->getMessage();
         }
     }
+
     public function admin()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = $_POST['name'];
+            $first_name = $_POST['first_name'];
+            $last_name = $_POST['last_name'];
+            $phone = $_POST['phone'];
             $email = $_POST['email'];
             $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
@@ -96,8 +98,8 @@ class InstallController
                 $_ENV['DB_PASSWORD']
             );
 
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-            $stmt->execute([$name, $email, $password]);
+            $stmt = $pdo->prepare("INSERT INTO users (first_name,last_name,phone, email, password) VALUES (?, ?, ?,?,?)");
+            $stmt->execute([$first_name, $last_name, $phone, $email, $password]);
 
             header('Location: index.php?step=complete');
             exit;
@@ -105,6 +107,7 @@ class InstallController
 
         include __DIR__ . '/../views/admin.php';
     }
+
     public function finish()
     {
         file_put_contents(__DIR__ . '/../../../storage/installed', date('Y-m-d H:i:s'));
