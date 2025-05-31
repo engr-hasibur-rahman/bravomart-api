@@ -12,57 +12,11 @@ use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Modules\Chat\app\Models\Chat;
 use Modules\Chat\app\Models\ChatMessage;
+use Modules\Chat\app\Transformers\ChatListResource;
+use Modules\Chat\app\Transformers\ChatMessageDetailsResource;
 
 class ChatController extends Controller
 {
-    // Get or create chat between two parties
-    public function startChat(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'user_id'   => 'required|integer|exists:users,id',
-            'user_type' => 'required|string|in:customer,store,admin,deliveryman',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors'  => $validator->errors(),
-            ], 422);
-        }
-
-        $authUser = auth()->user();
-
-        $user_check = Chat::find($authUser->id);
-
-        // check user
-        if ($authUser->activity_scope === 'system_level'){
-            $authType = 'admin';
-        }elseif($authUser->activity_scope === 'store_level'){
-            $authType = 'store';
-        }elseif($authUser->activity_scope === 'delivery_level'){
-            $authType = 'deliveryman';
-        }else{
-            $authType = 'customer';
-        }
-
-        // user chat data create
-        if ($user_check) {
-            return response()->json([
-                'success' => true,
-                'message' => 'your already have chat create'
-            ]);
-        }else{
-            $chat = Chat::firstOrCreate([
-                'user_id'   => $authUser->id,
-                'user_type' => $authType
-            ]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'chat_id' => $chat->id,
-        ]);
-    }
 
     // Send a message
     public function sendMessage(Request $request)
@@ -166,9 +120,11 @@ class ChatController extends Controller
 
         $message = ChatMessage::create($data);
 
-        // Optionally broadcast with Laravel Echo or Pusher
-        event(new \App\Events\MessageSent($message));
-        \Log::info('Broadcasting message', ['message_id' => $message->id]);
+        try {
+            //  broadcast with Pusher
+            event(new \App\Events\MessageSent($message));
+        }catch (\Exception $e){}
+
         return response()->json([
             'success' => true,
             'message_id' => $message->id,
@@ -176,16 +132,58 @@ class ChatController extends Controller
         ]);
     }
 
-    // Fetch messages of a chat
-    public function fetchMessages(Request $request, $chatId)
+    public function chatList(Request $request)
     {
-        $messages = ChatMessage::where('chat_id', $chatId)
-            ->orderBy('created_at', 'asc')
-            ->get();
+        $user_id = auth()->guard('api')->user()->id;
+        $chat = Chat::where('user_id',$user_id)
+            ->first();
+
+        if (empty($chat)) {
+            return response()->json([
+                'success' => false,
+                'message'  => 'Chats not found',
+            ]);
+        }
+
+        // chat message get receiver ids
+        $receiver_ids = ChatMessage::where('chat_id', $chat->id)
+            ->where('sender_id', $user_id)
+            ->pluck('receiver_id')
+            ->unique()
+            ->toArray();
+
+        // find chat with user info
+        $conversion_user_list =  Chat::with('user')->whereIn('user_id', $receiver_ids)
+            ->paginate(20);
+dd($conversion_user_list);
+        return response()->json([
+            'success'  => true,
+            'data' => ChatListResource::collection($conversion_user_list)
+        ]);
+    }
+
+    public function chatWiseFetchMessages($chat_id)
+    {
+        $user_id = auth()->guard('api')->user()->id;
+        $chat = Chat::where('user_id',$user_id)->first();
+
+        if (empty($chat)) {
+            return response()->json([
+                'success' => false,
+                'message'  => 'Chats not found',
+            ]);
+        }
+
+        $message_query = ChatMessage::where('chat_id', $chat_id);
+        $unread_message = $message_query->where('is_seen', 0)->count();
+
+        $messages = $message_query->orderBy('created_at', 'desc')
+            ->paginate(20);
 
         return response()->json([
             'success'  => true,
-            'messages' => $messages,
+            'unread_message' => $unread_message,
+            'data' => ChatMessageDetailsResource::collection($messages)
         ]);
     }
 
