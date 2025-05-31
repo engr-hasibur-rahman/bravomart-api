@@ -102,8 +102,7 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             $q->where('payment_status', 'paid');
         })
             ->where(function ($q) {
-                $q->where('refund_status', '!=', 'refunded')
-                    ->orWhereNull('refund_status');
+                $q->WhereNull('refund_status');
             })
             ->sum('order_amount_admin_commission');
         $total_order_revenue = $total_earnings - $total_refunds;
