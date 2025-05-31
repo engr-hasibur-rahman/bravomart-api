@@ -501,11 +501,11 @@ if (!function_exists('translate')) {
             ];
         }
 
-//        // Apply max discount limit
-//        $discountAmount = min($discountAmount, $coupon->max_discount ?? $discountAmount);
-//
-//        // Ensure the discount does not exceed the order total
-//        $discountAmount = min($discountAmount, $orderAmount);
+        // Apply max discount limit
+        $discountAmount = min($discountAmount, $coupon->max_discount ?? $discountAmount);
+
+        // Ensure the discount does not exceed the order total
+        $discountAmount = min($discountAmount, $orderAmount);
         $finalOrderAmount = $orderAmount - $discountAmount;
 
         // Update usage stats (optional, could also be deferred until after order success)
