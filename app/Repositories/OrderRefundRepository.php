@@ -57,9 +57,14 @@ class OrderRefundRepository implements OrderRefundInterface
             $query->where('status', $filters['status']);
         }
         if (isset($filters['search'])) {
-            $query->whereHas('customer', function ($query) use ($filters) {
-                $query->where('first_name', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('last_name', 'like', '%' . $filters['search'] . '%');
+            $query->where(function ($q) use ($filters) {
+                $q->whereHas('customer', function ($q) use ($filters) {
+                    $q->where('first_name', 'like', '%' . $filters['search'] . '%')
+                        ->orWhere('last_name', 'like', '%' . $filters['search'] . '%');
+                })
+                    ->orWhereHas('order', function ($q) use ($filters) {
+                        $q->where('invoice_number', 'like', '%' . $filters['search'] . '%');
+                    });
             });
         }
         if (isset($filters['order_refund_reason_id'])) {
