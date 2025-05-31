@@ -29,7 +29,7 @@ class CustomerManageController extends Controller
     public function register(CustomerRequest $request)
     {
         try {
-            $customer = $this->customerRepo->register($request->all());
+            $customer = Customer::create($request->all());
             $token = $customer->createToken('customer_auth_token')->plainTextToken;
             // Return a successful response with the token and permissions
             return response()->json([
@@ -372,7 +372,7 @@ class CustomerManageController extends Controller
                 ->where('status', 'unread')
                 ->count();
 
-           $wishlist_count = Wishlist::where('customer_id', $userId)->count();
+            $wishlist_count = Wishlist::where('customer_id', $userId)->count();
 
             $user->unread_notifications = $unreadNotifications;
             $user->wishlist_count = $wishlist_count;
@@ -448,6 +448,7 @@ class CustomerManageController extends Controller
             ]);
         }
     }
+
     public function sendVerificationEmail(Request $request)
     {
         if (!auth('api_customer')->check()) {
@@ -552,7 +553,7 @@ class CustomerManageController extends Controller
             if ($alreadyDeactivated) {
                 return response()->json([
                     'message' => __('messages.account_already_deactivated')
-                ],422);
+                ], 422);
             }
             $reason = CustomerDeactivationReason::create([
                 'customer_id' => $customer->id,
@@ -574,7 +575,7 @@ class CustomerManageController extends Controller
             if ($alreadyActivated) {
                 return response()->json([
                     'message' => __('messages.account_already_activated')
-                ],422);
+                ], 422);
             }
             $activate = $this->customerRepo->activateAccount();
             if ($activate) {
