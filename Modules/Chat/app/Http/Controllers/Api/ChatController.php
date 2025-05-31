@@ -21,6 +21,51 @@ class ChatController extends Controller
     // Send a message
     public function sendMessage(Request $request)
     {
+
+        $existingChatUserIds = Chat::pluck('user_id')->toArray();
+
+// 1. System/Admin/Deliveryman users
+        $all_users = User::all();
+        foreach ($all_users as $user) {
+            if (!in_array($user->id, $existingChatUserIds)) {
+                $type = 'admin';
+                if ($user->activity_scope === 'delivery_level') {
+                    $type = 'deliveryman';
+                }
+
+                Chat::create([
+                    'user_id' => $user->id,
+                    'user_type' => $type,
+                ]);
+            }
+        }
+
+// 2. Stores
+        $all_stores = Store::all();
+        foreach ($all_stores as $store) {
+            if (!in_array($store->id, $existingChatUserIds)) {
+                Chat::create([
+                    'user_id' => $store->id,
+                    'user_type' => 'store',
+                ]);
+            }
+        }
+
+// 3. Customers
+        $all_customers = Customer::all();
+        foreach ($all_customers as $customer) {
+            if (!in_array($customer->id, $existingChatUserIds)) {
+                Chat::create([
+                    'user_id' => $customer->id,
+                    'user_type' => 'customer',
+                ]);
+            }
+        }
+
+
+
+
+
         $validator = Validator::make($request->all(), [
             'chat_id' => 'required|integer|exists:chats,id',
             'receiver_id' => 'required|integer',
