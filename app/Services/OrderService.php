@@ -97,10 +97,9 @@ class OrderService
                         }
                         // Add to total order amount
                         if (!empty($variant) && isset($variant->price)) {
-                            $basePrice += ($variant->special_price > 0) ||
-                            ($variant->special_price < $variant->price) ?
-                                $variant->special_price :
-                                $variant->price;
+                            $basePrice += ($variant->special_price !== null && $variant->special_price > 0.00)
+                                ? $variant->special_price
+                                : $variant->price;
                         }
                     }
                 }
