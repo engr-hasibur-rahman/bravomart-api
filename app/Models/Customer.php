@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Modules\Chat\app\Models\Chat;
+use Modules\Chat\app\Models\ChatMessage;
 
 //class Customer extends Model
 class Customer extends Authenticatable // Extend Authenticatable instead of Model
@@ -40,6 +42,7 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         'email_verified_at',
         'deactivated_at'
     ];
+
 
     protected $hidden = [
         'password',
@@ -101,4 +104,20 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
     {
         return $this->hasOne(CustomerAddress::class)->where('is_default', 1);
     }
+
+    public function chats()
+    {
+        return $this->morphMany(Chat::class, 'user');
+    }
+
+    public function sentMessages()
+    {
+        return $this->morphMany(ChatMessage::class, 'sender');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->morphMany(ChatMessage::class, 'receiver');
+    }
+
 }

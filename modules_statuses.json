@@ -1,5 +1,6 @@
 {
     "PaymentGateways": true,
     "Wallet": true,
-    "Subscription": true
+    "Subscription": true,
+    "Chat": true
 }
