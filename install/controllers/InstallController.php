@@ -96,7 +96,7 @@ class InstallController
             exec('php ../../../artisan migrate --force');
             exec('php ../../../artisan db:seed --force');
 
-            header('Location: ?step=admin');
+            header('Location: index.php?step=admin');
             exit;
         } catch (Exception $e) {
             echo "DB Error: " . $e->getMessage();
@@ -111,11 +111,11 @@ class InstallController
             $phone = $_POST['phone'];
             $email = $_POST['email'];
             $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-
+            $env = parse_ini_file(__DIR__ . '/../../../.env');
             $pdo = new PDO(
-                'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_DATABASE'],
-                $_ENV['DB_USERNAME'],
-                $_ENV['DB_PASSWORD']
+                'mysql:host=' . $env['DB_HOST'] . ';dbname=' . $env['DB_DATABASE'],
+                $env['DB_USERNAME'],
+                $env['DB_PASSWORD']
             );
 
             $stmt = $pdo->prepare("INSERT INTO users (first_name,last_name,phone, email, password) VALUES (?, ?, ?,?,?)");
