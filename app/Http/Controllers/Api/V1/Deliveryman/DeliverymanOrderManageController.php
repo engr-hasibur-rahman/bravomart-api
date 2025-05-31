@@ -23,7 +23,6 @@ class DeliverymanOrderManageController extends Controller
 
     public function getMyOrders(Request $request)
     {
-
         $order_id = $request->order_id;
         if (!auth('api')->user() && auth('api')->user()->activity_scope !== 'delivery_level') {
             unauthorized_response();

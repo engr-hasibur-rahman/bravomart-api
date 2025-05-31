@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Installation - Database Setup</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -50,15 +51,6 @@
             background-color: #fff;
         }
 
-        .card {
-            background-color: #fff;
-            border-radius: 10px;
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 100px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
-
         .form-row {
             display: flex;
             gap: 20px;
@@ -101,6 +93,7 @@
             background-color: #eee;
             margin: 30px 0;
         }
+
         .button-container {
             margin-top: 40px;
             text-align: center;
@@ -133,7 +126,7 @@
 </head>
 <body>
 <h1>Step 3: Enter Database Information</h1>
-<p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details For Database Accurately</p>
+<p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
 
 <div class="steps">
     <a class="step" href="?step=welcome"></a>
@@ -141,14 +134,15 @@
     <a class="step" href="?step=permissions"></a>
     <a class="step active" href="?step=environment"></a>
     <a class="step" href="?step=admin"></a>
+    <a class="step"></a>
 </div>
 
 <div class="card">
     <h2>Provide your database information</h2>
-    <form method="POST">
+    <form class="form" method="POST">
         <div class="form-row">
             <div class="form-group">
-                <label for="app_name">App Name</label>
+                <label for="app_name">Site Name</label>
                 <input type="text" id="app_name" name="app_name" placeholder="Bravo Mart" required>
             </div>
             <div class="form-group">
@@ -177,7 +171,7 @@
 
             <div class="form-group">
                 <label for="db_password">Database Password</label>
-                <input type="password" id="db_password">
+                <input type="password" id="db_password" placeholder="db_password" value="Password">
             </div>
         </div>
 

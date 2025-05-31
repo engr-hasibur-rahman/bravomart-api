@@ -91,6 +91,9 @@ class SellerStoreOrderController extends Controller
                     $query->where('payment_status', $request->payment_status);
                 });
             }
+            $orders->when($request->search, fn($query) =>
+            $query->where('id', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('invoice_number', 'LIKE', '%' . $request->search . '%'));
 
             $orders = $orders->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
             // === Order Status Buttons (From Full Order Table, Unfiltered) ===
