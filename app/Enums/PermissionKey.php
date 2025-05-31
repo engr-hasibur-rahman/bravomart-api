@@ -225,7 +225,7 @@ enum PermissionKey: string
     //              Chat Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_CHAT_SETTINGS = '/admin/chat/settings';
-    case ADMIN_CHAT_MANAGE = '/admin/chat/list';
+    case ADMIN_CHAT_MANAGE = '/admin/chat/manage';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //              Support Tickets Management                                                        //
