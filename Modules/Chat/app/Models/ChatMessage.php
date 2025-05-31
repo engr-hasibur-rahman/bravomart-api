@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-// use Modules\Chat\Database\Factories\ChatMessageFactory;
-
 class ChatMessage extends Model
 {
     use HasFactory;

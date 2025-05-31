@@ -19,9 +19,9 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/chat/')->group(function ()
 
 // admin, store, customer, deliveryman common routes
 Route::middleware(['auth:sanctum'])->prefix('v1/admin/')->group(function () {
-    Route::post('chat/start', [ChatController::class, 'startChat']);
     Route::post('chat/send', [ChatController::class, 'sendMessage']);
-    Route::get('chat/messages/{chatId}', [ChatController::class, 'fetchMessages']);
+    Route::get('chat/list', [ChatController::class, 'chatList']);
+    Route::get('chat/messages-details/{chatId}', [ChatController::class, 'chatWiseFetchMessages']);
     Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
 });
 

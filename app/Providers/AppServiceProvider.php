@@ -11,6 +11,7 @@ use App\Observers\SellerStoreWiseObserver;
 use App\Observers\CustomerObserver;
 use App\Observers\StoreObserver;
 use App\Observers\UserObserver;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,5 +34,11 @@ class AppServiceProvider extends ServiceProvider
         Store::observe(SellerStoreWiseObserver::class);
         Store::observe(StoreObserver::class);
         Order::observe(OrderObserver::class);
+        // relationship add
+        Relation::morphMap([
+            'customer'     => \App\Models\Customer::class,
+            'admin'        => \App\Models\User::class,
+            'store'        => \App\Models\Store::class,
+        ]);
     }
 }
