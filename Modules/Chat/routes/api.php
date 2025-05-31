@@ -22,11 +22,13 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/chat/')->group(function ()
 });
 
 //  Seller Chat manage
-Route::middleware(['auth:sanctum'])->prefix('v1/seller/store/chat/')->group(function () {
-    Route::get('list/', [ChatController::class, 'chatList']);
-    Route::post('send', [ChatController::class, 'sendMessage']);
-    Route::get('messages-details/{chatId}', [ChatController::class, 'chatWiseFetchMessages']);
-    Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
+Route::middleware(['auth:sanctum'])->prefix('v1/seller/store/')->group(function () {
+    Route::prefix('chat/')->middleware(['permission:' . PermissionKey::SELLER_CHAT_MANAGE->value])->group(function () {
+        Route::get('list/', [ChatController::class, 'chatList']);
+        Route::post('send', [ChatController::class, 'sendMessage']);
+        Route::get('messages-details/{chatId}', [ChatController::class, 'chatWiseFetchMessages']);
+        Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
+    });
 });
 
 //  Customer Chat manage

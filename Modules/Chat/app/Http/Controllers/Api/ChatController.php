@@ -93,6 +93,10 @@ class ChatController extends Controller
         ];
 
 
+        // sender chat id
+        $sender_chat_id = Chat::where('user_id', $authUser->id)->first()->id;
+        $data['chat_id'] = $sender_chat_id;
+
         // upload file
         if ($request->hasFile('file')) {
             $file = $request->file('file');
