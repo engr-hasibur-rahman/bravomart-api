@@ -969,6 +969,43 @@ class FrontendController extends Controller
         ])->whereHas('flashSale', function ($query) {
             $query->where('status', 1);
         });
+        // Apply category filter (multiple categories)
+        if (!empty($request->category_id) && is_array($request->category_id)) {
+            // Fetch all child categories for the given category IDs
+            $allCategoryIds = [];
+
+            foreach ($request->category_id as $categoryId) {
+                // Check if the category is a parent category
+                $category = ProductCategory::where('id', $categoryId)->first();
+
+                if ($category) {
+                    if ($category->parent_id === null) {
+                        // Fetch all child category IDs of this parent category
+                        $childCategoryIds = ProductCategory::where('parent_id', $category->id)->pluck('id')->toArray();
+                        $allCategoryIds = array_merge($allCategoryIds, $childCategoryIds);
+                    }
+
+                    // Add the original category ID
+                    $allCategoryIds[] = $category->id;
+                }
+            }
+
+            // Apply the category filter
+            $query->whereHas('product', function ($q1) use ($allCategoryIds) {
+                $q1->whereIn('category_id', $allCategoryIds);
+            });
+        }
+        if (!empty($request->type)) {
+            if (is_array($request->type)) {
+                $query->whereHas('product', function ($q1) use ($request) {
+                    $q1->whereIn('type', $request->type);
+                });
+            } else {
+                $query->whereHas('product', function ($q1) use ($request) {
+                    $q1->where('type', $request->type);
+                });
+            }
+        }
 
         // Store filter
         if (!empty($request->store_id)) {
