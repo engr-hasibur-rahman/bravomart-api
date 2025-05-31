@@ -49,6 +49,7 @@ class SellerStoreOrderRefundManageController extends Controller
             'meta' => new PaginationResource($requests)
         ], 200);
     }
+
     public function handleRefundRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -60,7 +61,7 @@ class SellerStoreOrderRefundManageController extends Controller
         }
         $seller = auth('api')->user();
         $seller_stores = Store::where('store_seller_id', $seller->id)->pluck('id');
-        $store = OrderRefund::where('id',$request->id)->pluck('store_id')->first();
+        $store = OrderRefund::where('id', $request->id)->pluck('store_id')->first();
         if (!$seller_stores->contains($store)) {
             return response()->json([
                 'message' => __('messages.order_does_not_belong_to_seller')
@@ -79,7 +80,13 @@ class SellerStoreOrderRefundManageController extends Controller
             }
         }
         if ($request->status === 'rejected') {
-            $success = $this->orderRefundRepo->reject_refund_request($request->id, $request->status);
+            $validator = Validator::make($request->all(), [
+                'reject_reason' => 'required|string|max:500'
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
+            $success = $this->orderRefundRepo->reject_refund_request($request->id, $request->status, $request->reject_reason);
             if ($success) {
                 return response()->json([
                     'message' => __('messages.reject.success', ['name' => 'Order Refund Request']),

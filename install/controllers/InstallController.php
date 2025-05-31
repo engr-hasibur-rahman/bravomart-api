@@ -92,6 +92,9 @@ class InstallController
                 $env['DB_USERNAME'],
                 $env['DB_PASSWORD']
             );
+            if (empty($env['APP_KEY'])) {
+                exec('php artisan key:generate --force');
+            }
             // Run SQL or artisan migrate
             exec('php ../../../artisan migrate --force');
             exec('php ../../../artisan db:seed --force');
