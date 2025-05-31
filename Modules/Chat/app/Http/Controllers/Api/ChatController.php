@@ -155,7 +155,7 @@ class ChatController extends Controller
         // find chat with user info
         $conversion_user_list =  Chat::with('user')->whereIn('user_id', $receiver_ids)
             ->paginate(20);
-dd($conversion_user_list);
+
         return response()->json([
             'success'  => true,
             'data' => ChatListResource::collection($conversion_user_list)
