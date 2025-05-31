@@ -33,7 +33,7 @@ if (!function_exists('translate')) {
     }
 
     //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
-    if (!function_exists('safeJsonDecode')){
+    if (!function_exists('safeJsonDecode')) {
         function safeJsonDecode($value)
         {
             // Handle case where value is already a clean string
@@ -47,7 +47,6 @@ if (!function_exists('translate')) {
             return json_last_error() === JSON_ERROR_NONE ? $decoded : $value;
         }
     }
-
 
 
     if (!function_exists('createOrUpdateTranslationJson')) {
@@ -492,7 +491,7 @@ if (!function_exists('translate')) {
         $discountAmount = 0;
 
         if ($coupon->discount_type === 'percentage') {
-            $discountAmount = $orderAmount * ($coupon->discount / 100);
+            $discountAmount = ($orderAmount / 100) * $coupon->discount;
         } elseif ($coupon->discount_type === 'amount') {
             $discountAmount = $coupon->discount;
         } else {
@@ -655,7 +654,7 @@ if (!function_exists('getOrderStatusMessage')) {
             $position = com_option_get('com_site_currency_symbol_position');
             $use_comma = com_option_get('com_site_comma_form_adjustment_amount') === 'yes';
 
-            $formatted = number_format((float) $amount, 2, '.', $use_comma ? ',' : '');
+            $formatted = number_format((float)$amount, 2, '.', $use_comma ? ',' : '');
 
             return $position === 'right' ? $formatted . $symbol : $symbol . $formatted;
         }

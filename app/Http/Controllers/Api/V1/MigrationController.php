@@ -80,7 +80,7 @@ class MigrationController extends Controller
                 $columns = Schema::getColumnListing($table);
 
                 $filteredData = $existingData->map(function ($row) use ($columns) {
-                    return array_intersect_key((array) $row, array_flip($columns));
+                    return array_intersect_key((array)$row, array_flip($columns));
                 });
 
                 foreach ($filteredData as $row) {
@@ -103,6 +103,58 @@ class MigrationController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+
+
+    public function truncateTables()
+    {
+        // Define your target tables here
+        $tables = [
+            'customers',
+            'customer_addresses',
+            'customer_deactivation_reasons',
+            'delivery_men',
+            'delivery_man_reviews',
+            'deliveryman_deactivation_reasons',
+            'orders',
+            'order_activities',
+            'order_addresses',
+            'order_delivery_histories',
+            'order_details',
+            'order_masters',
+            'order_refunds',
+            'order_refund_reasons',
+            'reviews',
+            'review_reactions',
+            'store_subscriptions',
+            'subscription_histories',
+            'tickets',
+            'ticket_messages',
+            'universal_notifications',
+            'wallets',
+            'wallet_transactions',
+            'wallet_withdrawals_transactions',
+        ];
+
+        $errors = [];
+
+        foreach ($tables as $table) {
+            if (Schema::hasTable($table)) {
+                try {
+                    DB::table($table)->truncate();
+                } catch (\Exception $e) {
+                    $errors[$table] = $e->getMessage();
+                }
+            } else {
+                $errors[$table] = 'Table does not exist.';
+            }
+        }
+
+        return response()->json([
+            'status' => empty($errors),
+            'message' => empty($errors) ? 'All tables truncated successfully.' : 'Some tables could not be truncated.',
+            'errors' => $errors
+        ]);
     }
 
 }
