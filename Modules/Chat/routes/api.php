@@ -13,17 +13,13 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/chat/')->group(function ()
         Route::match(['get', 'post'], '/', [AdminChatManageController::class, 'chatPusherSettings']);
     });
     Route::prefix('list')->middleware(['permission:' . PermissionKey::ADMIN_CHAT_MANAGE->value])->group(function () {
-        Route::get('/', [AdminChatManageController::class, 'index']);
+    Route::get('/', [ChatController::class, 'chatList']);
+    Route::post('send', [ChatController::class, 'sendMessage']);
+    Route::get('messages-details/{chatId}', [ChatController::class, 'chatWiseFetchMessages']);
+    Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
     });
 });
 
-// admin, store, customer, deliveryman common routes
-Route::middleware(['auth:sanctum'])->prefix('v1/admin/')->group(function () {
-    Route::post('chat/send', [ChatController::class, 'sendMessage']);
-    Route::get('chat/list', [ChatController::class, 'chatList']);
-    Route::get('chat/messages-details/{chatId}', [ChatController::class, 'chatWiseFetchMessages']);
-    Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
-});
 
 
 // pusher info
