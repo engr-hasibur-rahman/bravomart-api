@@ -15,10 +15,10 @@ class ChatListResource extends JsonResource
     {
         return [
             'id'         => $this->id,
-            'chat_id'    => $this->chat_id,
-            'name'      => $this->receiver?->full_name,
-            'image'      => ImageModifier::generateImageUrl($this->receiver?->image_id),
+            'chat_id'    => $this->user_id,
+            'user_type'    => $this->user_type,
             'created_at' => $this->created_at->toDateTimeString(),
+            'user' => $this->user,
         ];
     }
 }
