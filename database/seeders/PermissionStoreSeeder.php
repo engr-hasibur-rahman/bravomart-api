@@ -278,6 +278,32 @@ class PermissionStoreSeeder extends Seeder
                     ]
                 ],
 
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Chat',
+                    'activity_scope' => 'store_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Chat',
+                        'ar' => 'إدارة الدردشة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::SELLER_CHAT_MANAGE->value,
+                            'PermissionTitle' => 'Chat List',
+                            'activity_scope' => 'store_level',
+                            'icon' => 'MessageSquareMore',
+                            'options' => ['view', 'insert', 'update'],
+                            'translations' => [
+                                'en' => 'Chat',
+                                'ar' => 'إعدادات الدردشة'
+                            ]
+                        ]
+                    ]
+                ],
+
+
                 // Support ticket  Management
                 [
                     'PermissionName' => '',
