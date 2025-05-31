@@ -40,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'customer'     => Customer::class,
             'admin'        => User::class,
+            'deliveryman'  => User::class,
             'store'        => Store::class,
         ]);
     }
