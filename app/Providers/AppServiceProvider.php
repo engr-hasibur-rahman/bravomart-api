@@ -36,9 +36,9 @@ class AppServiceProvider extends ServiceProvider
         Order::observe(OrderObserver::class);
         // relationship add
         Relation::morphMap([
-            'customer'     => \App\Models\Customer::class,
-            'admin'        => \App\Models\User::class,
-            'store'        => \App\Models\Store::class,
+            'customer'     => Customer::class,
+            'admin'        => User::class,
+            'store'        => Store::class,
         ]);
     }
 }
