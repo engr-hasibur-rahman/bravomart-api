@@ -1,3 +1,12 @@
+<?php
+$allMet = false;
+foreach ($requirements['extensions'] as $key => $isLoaded) {
+    if (!$isLoaded) {
+        $allMet = true;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Installation - Step 1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -44,21 +54,6 @@
             background-color: #fff;
         }
 
-        .card {
-            background-color: #fff;
-            border-radius: 10px;
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 100px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
         .permission-box {
             background-color: #f8f9fa;
             border-radius: 8px;
@@ -83,22 +78,48 @@
             font-size: 18px;
         }
 
-        .button-container {
-            margin-top: 40px;
-            text-align: center;
-        }
 
         .button-container p {
             margin-bottom: 12px;
         }
 
         .button-container .button {
+            max-width: 250px;
             background-color: #1A73E8;
             color: white;
             padding: 12px 24px;
             border-radius: 6px;
             text-decoration: none;
             font-size: 16px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #e74c3c;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            z-index: 9999;
+            font-size: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* When visible */
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        .button.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            pointer-events: auto; /* ensures JS can still intercept click */
         }
     </style>
 </head>
@@ -110,8 +131,9 @@
     <a class="step" href="?step=welcome"></a>
     <a class="step active" href="?step=requirements"></a>
     <a class="step" href="?step=permissions"></a>
-    <div class="step"></div>
-    <div class="step"></div>
+    <a class="step"></a>
+    <a class="step"></a>
+    <a class="step"></a>
 </div>
 
 <div class="card">
@@ -124,8 +146,35 @@
 
     <div class="button-container">
         <p>All set with the permissions?</p>
-        <a href="?step=permissions" class="button">Get Started</a>
+        <a id="nextBtn"
+           class="button"
+           href="<?= $allMet ? '?step=permissions' : '#' ?>"
+           data-all-met="<?= $allMet ? '1' : '0' ?>">
+            Get Started
+        </a>
     </div>
-</div>
+
+    <div class="toast" id="toast">
+        <p>Please enable all required extensions to proceed.</p>
+    </div>
+
+    <script>
+        const nextBtn = document.getElementById('nextBtn');
+        const toast = document.getElementById('toast');
+
+        nextBtn.addEventListener('click', function (e) {
+            const allMet = this.dataset.allMet === '1';
+
+            if (!allMet) {
+                e.preventDefault();
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000);
+            }
+        });
+    </script>
 </body>
 </html>
+

@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Installation - Admin Setup</title>
+    <title>Installation - Database Setup</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -50,14 +51,6 @@
             background-color: #fff;
         }
 
-        .card {
-            background-color: #fff;
-            border-radius: 10px;
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 100px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
 
         .form-row {
             display: flex;
@@ -101,7 +94,6 @@
             background-color: #eee;
             margin: 30px 0;
         }
-
         .button-container {
             margin-top: 40px;
             text-align: center;
@@ -133,7 +125,7 @@
     </style>
 </head>
 <body>
-<h1>Step 3: Setup Your Admin Account</h1>
+<h1>Step 4: Enter Admin Information</h1>
 <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details For Database Accurately</p>
 
 <div class="steps">
@@ -142,48 +134,49 @@
     <a class="step" href="?step=permissions"></a>
     <a class="step" href="?step=environment"></a>
     <a class="step active" href="?step=admin"></a>
+    <a class="step" href="?step=finish"></a>
 </div>
 
 <div class="card">
-    <h2>Provide your database information</h2>
-    <form method="POST">
+    <h2>Provide your admin information</h2>
+    <form class="form" method="POST">
         <div class="form-row">
             <div class="form-group">
-                <label for="app_name">App Name</label>
-                <input type="text" id="app_name" name="app_name" placeholder="Bravo Mart" required>
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" placeholder="Enter Your First Name" required>
             </div>
             <div class="form-group">
-                <label for="db_host">Database Host</label>
-                <input type="text" id="db_host" name="db_host" placeholder="Localhost" required>
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" placeholder="Enter Your Last Name">
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
-                <label for="db_port">Database Port</label>
-                <input type="text" id="db_port" name="db_port" placeholder="3306" required>
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" name="phone" placeholder="Enter Your Phone Number">
             </div>
 
             <div class="form-group">
-                <label for="db_database">Database Name</label>
-                <input type="text" id="db_database" name="db_database" placeholder="Project-name-db" required>
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" placeholder="Enter Your Email" required>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
-                <label for="db_username">Database Username</label>
-                <input type="text" id="db_username" name="db_username" placeholder="root" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
 
             <div class="form-group">
-                <label for="db_password">Database Password</label>
-                <input type="password" id="db_password">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" placeholder="Confirm Password">
             </div>
         </div>
 
         <div class="button-container">
-            <button type="submit" class="submit-btn">Complete Installation</button>
+            <button type="submit" class="submit-btn">Create Admin</button>
         </div>
     </form>
 </div>

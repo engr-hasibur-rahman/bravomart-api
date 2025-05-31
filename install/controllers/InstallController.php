@@ -110,7 +110,17 @@ class InstallController
 
     public function finish()
     {
-        file_put_contents(__DIR__ . '/../../../storage/installed', date('Y-m-d H:i:s'));
-        echo "Installation complete. <a href='/admin/login'>Go to Admin Panel</a>";
+        $path = __DIR__ . '/../../../storage';
+        $installedFile = $path . '/installed';
+
+        // Create the directory if it doesn't exist
+        if (!file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+
+        // Now write the installed file
+        file_put_contents($installedFile, date('Y-m-d H:i:s'));
+
+        include __DIR__ . '/../views/finish.php';
     }
 }

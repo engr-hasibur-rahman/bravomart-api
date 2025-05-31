@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Installation - Step 1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -42,15 +43,6 @@
 
         .step.active {
             background-color: #fff;
-        }
-
-        .card {
-            background-color: #fff;
-            border-radius: 10px;
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 100px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .grid {
@@ -103,7 +95,7 @@
     </style>
 </head>
 <body>
-<h1>Step 1: Get Your File Permissions Ready</h1>
+<h1>Step 2: Get Your File Permissions Ready</h1>
 <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
 
 <div class="steps">
@@ -111,7 +103,8 @@
     <a class="step" href="?step=requirements"></a>
     <a class="step active" href="?step=permissions"></a>
     <a class="step" href="?step=environment"></a>
-    <div class="step"></div>
+    <a class="step"></a>
+    <a class="step"></a>
 </div>
 
 <div class="card">
