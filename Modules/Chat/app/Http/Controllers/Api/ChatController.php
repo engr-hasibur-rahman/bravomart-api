@@ -156,14 +156,13 @@ class ChatController extends Controller
         $search = $request->search;
 
         // find chat with user info
-        $chats =  Chat::with('user')
-            ->whereIn('user_id', $receiver_ids);
+        $chats =  Chat::with('user')->whereIn('user_id', $receiver_ids);
 
         if (isset($request->type) && !empty($request->type)) {
             $chats->where('user_type', $request->type);
         }
 
-        $conversion_user_list =  $chats->paginate(20);
+        $conversion_user_list =  $chats->paginate(50);
 
         return response()->json([
             'success'  => true,

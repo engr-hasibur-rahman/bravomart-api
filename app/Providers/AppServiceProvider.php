@@ -29,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // change
         User::observe(UserObserver::class);
         Customer::observe(CustomerObserver::class);
         Store::observe(SellerStoreWiseObserver::class);

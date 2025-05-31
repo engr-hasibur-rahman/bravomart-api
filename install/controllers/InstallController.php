@@ -74,7 +74,7 @@ class InstallController
                 $envString .= "$key=\"$value\"\n";
             }
 
-            file_put_contents(__DIR__ . '/../../../.env', $envString);
+            parse_ini_file(__DIR__ . '/../../../.env', $envString);
 
             header('Location: index.php?step=admin');
             exit;
@@ -92,6 +92,9 @@ class InstallController
                 $env['DB_USERNAME'],
                 $env['DB_PASSWORD']
             );
+            if (empty($env['APP_KEY'])) {
+                exec('php artisan key:generate --force');
+            }
             // Run SQL or artisan migrate
             exec('php ../../../artisan migrate --force');
             exec('php ../../../artisan db:seed --force');
@@ -118,7 +121,7 @@ class InstallController
                 $env['DB_PASSWORD']
             );
 
-            $stmt = $pdo->prepare("INSERT INTO users (first_name,last_name,phone, email, password) VALUES (?, ?, ?,?,?)");
+            $stmt = $pdo->prepare("INSERT INTO users (first_name,last_name,phone, email, password) VALUES (?,?,?,?,?)");
             $stmt->execute([$first_name, $last_name, $phone, $email, $password]);
 
             header('Location: index.php?step=complete');
