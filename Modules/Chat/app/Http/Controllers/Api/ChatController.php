@@ -151,7 +151,7 @@ class ChatController extends Controller
             ->pluck('receiver_id')
             ->unique()
             ->toArray();
-dd($receiver_ids);
+
         // find chat with user info
         $conversion_user_list =  Chat::with('user:id,first_name,last_name,image,email,phone')
             ->whereIn('user_id', $receiver_ids)
