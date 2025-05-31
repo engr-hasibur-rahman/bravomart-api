@@ -35,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         Store::observe(SellerStoreWiseObserver::class);
         Store::observe(StoreObserver::class);
         Order::observe(OrderObserver::class);
+
         // relationship add
         Relation::morphMap([
             'customer'     => Customer::class,
