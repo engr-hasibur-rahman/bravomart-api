@@ -826,9 +826,6 @@ class FrontendController extends Controller
                 default:
                     $query->latest('products.created_at');
             }
-        } else {
-            // Default: random order
-            $query->inRandomOrder();
         }
 
         // Base conditions
@@ -846,7 +843,7 @@ class FrontendController extends Controller
                     $q->orderBy('price', 'desc')->limit(1);
                 }
             }
-        ])->paginate($perPage);
+        ])->latest()->paginate($perPage);
 
         $uniqueAttributes = $this->getUniqueAttributesFromVariants($products);
 
