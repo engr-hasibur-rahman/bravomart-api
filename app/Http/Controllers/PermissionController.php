@@ -82,8 +82,8 @@ class PermissionController extends Controller
                     'dashboard',
                     'Store Settings',
                     PermissionKey::SELLER_STORE_MY_SHOP->value,
-//                    'Staff control',
-//                    PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
+                    'Staff control',
+                    PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
                 ];
 
                 // Get specific permissions for non-store level users
@@ -119,8 +119,8 @@ class PermissionController extends Controller
                 'dashboard',
                 'Store Settings',
                 PermissionKey::SELLER_STORE_MY_SHOP->value,
-//                'Staff control',
-//                PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
+                'Staff control',
+                PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
             ];
 
             // Get specific permissions for non-store level users

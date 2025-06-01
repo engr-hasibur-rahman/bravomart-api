@@ -22,12 +22,14 @@ class ChatController extends Controller
     public function sendMessage(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'chat_id' => 'required|integer|exists:chats,id',
+            'sender_id' => 'required|integer',
             'receiver_id' => 'required|integer',
             'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
             'message' => 'nullable|string',
             'file'   => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
         ]);
+
+
 
         if ($validator->fails()) {
             return response()->json([
@@ -36,8 +38,14 @@ class ChatController extends Controller
             ], 422);
         }
 
-
+        // Check if the sender_id in request matches the authenticated user
         $authUser = auth()->user();
+        if ((int) $request->sender_id !== $authUser->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sender mismatch: You are not authorized.',
+            ], 403);
+        }
 
         // receiver type check
         $receiver_id = $request->receiver_id;
