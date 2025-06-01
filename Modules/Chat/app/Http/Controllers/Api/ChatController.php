@@ -205,13 +205,21 @@ class ChatController extends Controller
     public function chatWiseFetchMessages(Request $request, $receiver_id)
     {
 
-        $request->validate([
-            'receiver_type' => [
-                'required', 'string',
-                'in:admin,deliveryman,customer,store'
-            ],
-            'search' => 'nullable|string',
+        // Inject route param into validation data
+        $data = array_merge($request->all(), ['receiver_id' => $receiver_id]);
+
+        $validator = Validator::make($data, [
+            'receiver_id'   => 'required|integer',
+            'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
+            'search'        => 'nullable|string',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
 
         $user_id = auth()->guard('api')->user()->id;
         $chat = Chat::where('user_id',$user_id)->first();
@@ -230,6 +238,7 @@ class ChatController extends Controller
             ->where('receiver_type', $request->receiver_type);
 
         $unread_message = (clone $message_query)->where('is_seen', 0)->count();
+        (clone $message_query)->where('is_seen', 1)->update(['is_seen' => 1]);
 
         $messages = $message_query
             ->orderBy('created_at', 'asc')
