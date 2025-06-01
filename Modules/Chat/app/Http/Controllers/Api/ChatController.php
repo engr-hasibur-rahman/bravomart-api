@@ -202,13 +202,9 @@ class ChatController extends Controller
         ]);
     }
 
-    public function chatWiseFetchMessages(Request $request, $receiver_id)
+    public function chatWiseFetchMessages(Request $request)
     {
-
-        // Inject route param into validation data
-        $data = array_merge($request->all(), ['receiver_id' => $receiver_id]);
-
-        $validator = Validator::make($data, [
+        $validator = Validator::make($request->all(), [
             'receiver_id'   => 'required|integer',
             'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
             'search'        => 'nullable|string',
@@ -234,7 +230,7 @@ class ChatController extends Controller
         // get message
         $message_query = ChatMessage::where('chat_id', $chat->id)
             ->where('sender_id', $user_id)
-            ->where('receiver_id', $receiver_id)
+            ->where('receiver_id', $request->receiver_id)
             ->where('receiver_type', $request->receiver_type);
 
         $unread_message = (clone $message_query)->where('is_seen', 0)->count();

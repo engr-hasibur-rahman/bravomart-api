@@ -1,0 +1,305 @@
+[33mcommit 02c06ef4bfa42ae95c2dc039366b7df2336463d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mhasib[m[33m, [m[1;31morigin/hasib[m[33m)[m
+Merge: 6f274491 0e5fd813
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sun Jun 1 15:39:29 2025 +0600
+
+    merge to develop
+
+[33mcommit 6f2744912cae41e590924e997e52cebb4c365420[m
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sun Jun 1 15:39:08 2025 +0600
+
+    live chat issue fixed
+
+[33mcommit 0e5fd813892135eb79c3ed08174fcd009d63882a[m[33m ([m[1;31morigin/develop[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 07b8accc 59e24dc1
+Author: Faysal Ibnea Hasan Jesan <jesan@disystem.net>
+Date:   Sun Jun 1 09:36:39 2025 +0000
+
+    Merge branch 'faysal' into 'develop'
+    
+    MODIFIED :FrontendController
+    
+    See merge request disystem/biva-mart!1592
+
+[33mcommit 59e24dc1092ab16ffac3679ef681b8a6a1ed1f4a[m
+Author: Faysal <jesan@disystem.net>
+Date:   Sun Jun 1 15:36:23 2025 +0600
+
+    MODIFIED :FrontendController
+
+[33mcommit 07b8accc8bb3b287665414c42b8c7b5cc824ffe8[m
+Merge: 5704ac67 d2f1580e
+Author: Faysal Ibnea Hasan Jesan <jesan@disystem.net>
+Date:   Sun Jun 1 09:13:12 2025 +0000
+
+    Merge branch 'faysal' into 'develop'
+    
+    MODIFIED: FrontendController
+    
+    See merge request disystem/biva-mart!1591
+
+[33mcommit d2f1580e6a73536f5b6f87652edbfb5c0f4988ba[m
+Author: Faysal <jesan@disystem.net>
+Date:   Sun Jun 1 15:12:44 2025 +0600
+
+    MODIFIED: FrontendController
+
+[33mcommit 5704ac6759dffcbb99d657fb0ef157531b7c7046[m
+Merge: ab5975a4 2c0713c7
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sun Jun 1 08:35:55 2025 +0000
+
+    Merge branch 'hasib' into 'develop'
+    
+    Hasib
+    
+    See merge request disystem/biva-mart!1590
+
+[33mcommit 2c0713c7ddeb2c5e746ca29200888ceb370cd53b[m
+Merge: f61cb941 ab5975a4
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sun Jun 1 14:35:06 2025 +0600
+
+    merge to develop
+
+[33mcommit f61cb941ac1fd40aa9a37eff879c96a95f3dde4c[m
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sun Jun 1 14:34:41 2025 +0600
+
+    live chat issue fix
+
+[33mcommit ab5975a4704cf528ed04610039e435d3903c0357[m
+Merge: 3dbfbfd6 69106a85
+Author: Faysal Ibnea Hasan Jesan <jesan@disystem.net>
+Date:   Sun Jun 1 06:47:54 2025 +0000
+
+    Merge branch 'faysal' into 'develop'
+    
+    MODIFIED: PermissionController
+    
+    See merge request disystem/biva-mart!1589
+
+[33mcommit 69106a854cd1abce5f421838cf4061a1d575c1a4[m
+Author: Faysal <jesan@disystem.net>
+Date:   Sun Jun 1 12:47:31 2025 +0600
+
+    MODIFIED: PermissionController
+
+[33mcommit 3dbfbfd62358df19ee13c1856287e9d63cf103d7[m
+Merge: 5daada03 1b3d14a9
+Author: Faysal Ibnea Hasan Jesan <jesan@disystem.net>
+Date:   Sun Jun 1 06:08:49 2025 +0000
+
+    Merge branch 'faysal' into 'develop'
+    
+    Merge
+    
+    See merge request disystem/biva-mart!1588
+
+[33mcommit 1b3d14a9f4f3ebbee4565db59620c66ed21ab935[m
+Merge: dfd0cdfc 5daada03
+Author: Faysal <jesan@disystem.net>
+Date:   Sun Jun 1 12:08:20 2025 +0600
+
+    Merge branch 'develop' of 192.168.88.123:disystem/biva-mart into faysal
+
+[33mcommit dfd0cdfc9111856ead0de9e919ee244ad21b7746[m
+Author: Faysal <jesan@disystem.net>
+Date:   Sun Jun 1 12:05:19 2025 +0600
+
+    Merge
+
+[33mcommit 5daada0310d92944e1bc3e498a8e56c1180de896[m
+Merge: 8c89905f fbb3c7b4
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sun Jun 1 05:07:13 2025 +0000
+
+    Merge branch 'hasib' into 'develop'
+    
+    live chat issue fix
+    
+    See merge request disystem/biva-mart!1587
+
+[33mcommit fbb3c7b419253988298a855afbb06a959b4eadf3[m
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sun Jun 1 11:06:44 2025 +0600
+
+    live chat issue fix
+
+[33mcommit 8c89905faa5638216c0a919f989f2fa2306c5816[m
+Merge: 3443169c e079f720
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sun Jun 1 04:21:58 2025 +0000
+
+    Merge branch 'hasib' into 'develop'
+    
+    role issue fix
+    
+    See merge request disystem/biva-mart!1586
+
+[33mcommit e079f7200355b52db59ab3bfd2b92a54cac9e89b[m
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sun Jun 1 10:21:28 2025 +0600
+
+    role issue fix
+
+[33mcommit 3443169c7421e7d4deba659f4270e5ba8a828e6b[m
+Merge: 405fb780 6addb1ec
+Author: Faysal Ibnea Hasan Jesan <jesan@disystem.net>
+Date:   Sun Jun 1 03:57:28 2025 +0000
+
+    Merge branch 'faysal' into 'develop'
+    
+    Fixed Flash Deal Coupon Calculation
+    
+    See merge request disystem/biva-mart!1585
+
+[33mcommit 6addb1ecce0fffa67786060b4cf85ed7f0852ac1[m
+Author: Faysal <jesan@disystem.net>
+Date:   Sun Jun 1 09:56:53 2025 +0600
+
+    Fixed Flash Deal Coupon Calculation
+
+[33mcommit 405fb780be23593d6a040643c8ede834a1f05e6f[m
+Merge: ed355ba5 47b420c3
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 12:14:55 2025 +0000
+
+    Merge branch 'hasib' into 'develop'
+    
+    Hasib
+    
+    See merge request disystem/biva-mart!1584
+
+[33mcommit 47b420c3c001cd19e71476fc3a0d7fd4436b574c[m
+Merge: 29a6dc5d ed355ba5
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 18:14:17 2025 +0600
+
+    merge to develop
+
+[33mcommit 29a6dc5d3afc29f38bf53cc16f013884699a876a[m
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 18:13:50 2025 +0600
+
+    send api issue fix
+
+[33mcommit ed355ba5e6c06eb30d8dc9983d080c76c3c8a67d[m
+Merge: f52cc2c1 434883a0
+Author: Faysal Ibnea Hasan Jesan <jesan@disystem.net>
+Date:   Sat May 31 11:16:00 2025 +0000
+
+    Merge branch 'faysal' into 'develop'
+    
+    Fixed Coupon calculation
+    
+    See merge request disystem/biva-mart!1583
+
+[33mcommit 434883a0dc54f3f028b5cee19be36ddd7040c066[m
+Author: Faysal <jesan@disystem.net>
+Date:   Sat May 31 17:15:13 2025 +0600
+
+    Fixed Coupon calculation
+
+[33mcommit f52cc2c147d9dc62751268e49c4d84b2287c6949[m
+Merge: 5cd613ba 08c8483a
+Author: Faysal Ibnea Hasan Jesan <jesan@disystem.net>
+Date:   Sat May 31 10:36:56 2025 +0000
+
+    Merge branch 'faysal' into 'develop'
+    
+    Merge
+    
+    See merge request disystem/biva-mart!1582
+
+[33mcommit 08c8483a4d1919f63f8f43d1c72ef7252c25a124[m
+Author: Faysal <jesan@disystem.net>
+Date:   Sat May 31 16:36:31 2025 +0600
+
+    Merge
+
+[33mcommit 5cd613ba0799d9adb1415ad32572947ff5f6c52b[m
+Merge: bc68296a 23e716f9
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 10:35:57 2025 +0000
+
+    Merge branch 'hasib' into 'develop'
+    
+    Hasib
+    
+    See merge request disystem/biva-mart!1581
+
+[33mcommit 23e716f965a97479ba293177a1c51c38317e8107[m
+Merge: 33146d8e bc68296a
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 16:34:46 2025 +0600
+
+    merge to develop
+
+[33mcommit 33146d8e684b24fcbee3db2069cd76c83f06f5d3[m
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 16:33:27 2025 +0600
+
+    git add .
+
+[33mcommit bc68296a056f4af779324773548516d3e55c7498[m
+Merge: 33c985d1 fc8576be
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 09:46:30 2025 +0000
+
+    Merge branch 'hasib' into 'develop'
+    
+    chat list data set added
+    
+    See merge request disystem/biva-mart!1580
+
+[33mcommit fc8576be72609acefc10a3f91277cb88abe003a6[m
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 15:45:57 2025 +0600
+
+    chat list data set added
+
+[33mcommit 33c985d11c985e74712d57979a3d40b2217966de[m
+Merge: f92fa83c 545119e1
+Author: Faysal Ibnea Hasan Jesan <jesan@disystem.net>
+Date:   Sat May 31 09:11:55 2025 +0000
+
+    Merge branch 'faysal' into 'develop'
+    
+    Faysal
+    
+    See merge request disystem/biva-mart!1579
+
+[33mcommit 545119e1fc52fd056c38b58eb1c43eebe01fa765[m
+Merge: f82f83ba f92fa83c
+Author: Faysal <jesan@disystem.net>
+Date:   Sat May 31 15:11:32 2025 +0600
+
+    Merge
+
+[33mcommit f92fa83c237a052a2a9332b9619af279f727ffb8[m
+Merge: 2fa11253 7a2238c5
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 09:07:47 2025 +0000
+
+    Merge branch 'hasib' into 'develop'
+    
+    old user chat create
+    
+    See merge request disystem/biva-mart!1578
+
+[33mcommit 7a2238c5c9f4b851e9956013e3e7c8337b5199c7[m
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 15:07:24 2025 +0600
+
+    old user chat create
+
+[33mcommit 2fa112537cce0df3cd9586362bba07afca896bc5[m
+Merge: 21bcefa1 4f511c62
+Author: Hasibur <hasibur@disystem.net>
+Date:   Sat May 31 09:03:23 2025 +0000
+
+    Merge branch 'hasib' into 'develop'
+    
+    old
