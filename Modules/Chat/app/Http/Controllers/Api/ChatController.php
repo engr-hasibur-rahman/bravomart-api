@@ -22,7 +22,6 @@ class ChatController extends Controller
     public function sendMessage(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'sender_id' => 'required|integer',
             'receiver_id' => 'required|integer',
             'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
             'message' => 'nullable|string',
@@ -38,12 +37,12 @@ class ChatController extends Controller
             ], 422);
         }
 
-        // Check if the sender_id in request matches the authenticated user
+        // Check authenticated user
         $authUser = auth()->user();
-        if ((int) $request->sender_id !== $authUser->id) {
+        if (!$authUser) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sender mismatch: You are not authorized.',
+                'message' => 'You are not authorized.',
             ], 403);
         }
 
@@ -158,17 +157,36 @@ class ChatController extends Controller
         }
 
         // chat message get receiver ids
-        $receiver_ids = ChatMessage::where('chat_id', $chat->id)
+//        $receiver_ids = ChatMessage::where('chat_id', $chat->id)
+//            ->where('sender_id', $user_id)
+//            ->pluck('receiver_id')
+//            ->unique()
+//            ->toArray();
+
+        // Get receiver_id + receiver_type from messages
+        $receiverData = ChatMessage::where('chat_id', $chat->id)
             ->where('sender_id', $user_id)
-            ->pluck('receiver_id')
-            ->unique()
-            ->toArray();
+            ->get(['receiver_id', 'receiver_type'])
+            ->unique(fn ($item) => $item['receiver_id'] . $item['receiver_type'])
+            ->values();
+
+        // Build conditions for each unique receiver
+        $chats = Chat::with('user')->where(function ($query) use ($receiverData) {
+            foreach ($receiverData as $item) {
+                $query->orWhere(function ($sub) use ($item) {
+                    $sub->where('user_id', $item['receiver_id'])
+                        ->where('user_type', $item['receiver_type']);
+                });
+            }
+        });
+
 
         // Optional: search filter
         $search = $request->search;
-
-        // find chat with user info
-        $chats =  Chat::with('user')->whereIn('user_id', $receiver_ids);
+//
+//        // find chat with user info
+//        $chats =  Chat::with('user')
+//            ->whereIn('user_id', $receiver_ids);
 
         if (isset($request->type) && !empty($request->type)) {
             $chats->where('user_type', $request->type);
@@ -184,8 +202,17 @@ class ChatController extends Controller
         ]);
     }
 
-    public function chatWiseFetchMessages($chat_id)
+    public function chatWiseFetchMessages(Request $request, $receiver_id)
     {
+
+        $request->validate([
+            'receiver_type' => [
+                'required', 'string',
+                'in:admin,deliveryman,customer,store'
+            ],
+            'search' => 'nullable|string',
+        ]);
+
         $user_id = auth()->guard('api')->user()->id;
         $chat = Chat::where('user_id',$user_id)->first();
 
@@ -196,10 +223,16 @@ class ChatController extends Controller
             ]);
         }
 
-        $message_query = ChatMessage::where('chat_id', $chat_id);
-        $unread_message = $message_query->where('is_seen', 0)->count();
+        // get message
+        $message_query = ChatMessage::where('chat_id', $chat->id)
+            ->where('sender_id', $user_id)
+            ->where('receiver_id', $receiver_id)
+            ->where('receiver_type', $request->receiver_type);
 
-        $messages = $message_query->orderBy('created_at', 'asc')
+        $unread_message = (clone $message_query)->where('is_seen', 0)->count();
+
+        $messages = $message_query
+            ->orderBy('created_at', 'asc')
             ->paginate(20);
 
         return response()->json([
