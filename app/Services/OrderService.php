@@ -84,22 +84,54 @@ class OrderService
                 } // subscription check end
                 /*-------------------------- Subscription Check ------------------------*/
 
+                $totalBasePrice = 0;
+
                 foreach ($packageData['items'] as $itemData) {
-                    // find the product
-                    $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')->find($itemData['product_id']);
-                    // Validate product variant
+
+                    // Find the product with flash sale & variants
+                    $product = Product::with('variants', 'store', 'flashSaleProduct', 'flashSale')
+                        ->find($itemData['product_id']);
+
                     if (!empty($product)) {
+                        // Validate product variant
                         $variant = ProductVariant::where('id', $itemData['variant_id'])
                             ->where('product_id', $product->id)
                             ->first();
-                        if ($variant->stock_quantity < $itemData['quantity']) {
+
+                        if ($variant && $variant->stock_quantity < $itemData['quantity']) {
                             return false;
                         }
-                        // Add to total order amount
+
                         if (!empty($variant) && isset($variant->price)) {
-                            $basePrice += ($variant->special_price !== null && $variant->special_price > 0.00)
+
+                            // Step 1: Get unit base price (considering special price)
+                            $unitBasePrice = ($variant->special_price !== null && $variant->special_price > 0.00)
                                 ? $variant->special_price
                                 : $variant->price;
+
+                            // Step 2: Check if flash sale applies
+                            $discount = 0;
+                            if (!empty($product->flashSale)) {
+                                $flashSale = $product->flashSale;
+                                $isExpired = now()->gt($flashSale->end_time);
+                                $isInactive = $flashSale->status == 0;
+                                $isOutOfLimit = $flashSale->purchase_limit == 0;
+
+                                if (!$isExpired && !$isInactive && !$isOutOfLimit) {
+                                    $discount = ($flashSale->discount_type === 'percentage')
+                                        ? ($unitBasePrice * $flashSale->discount_amount / 100)
+                                        : $flashSale->discount_amount;
+                                }
+                            }
+
+                            // Step 3: Final price after discount
+                            $unitFinalPrice = $unitBasePrice - $discount;
+
+                            // Step 4: Multiply by quantity
+                            $totalItemPrice = $unitFinalPrice * $itemData['quantity'];
+
+                            // Step 5: Add to order total
+                            $totalBasePrice += $totalItemPrice;
                         }
                     }
                 }
@@ -113,11 +145,11 @@ class OrderService
                 'discount_amount' => 0,
                 'coupon_type' => null,
                 'discount_rate' => 0,
-                'final_order_amount' => $basePrice,
+                'final_order_amount' => $totalBasePrice,
             ];
             $total_discount_amount = 0;
             if (!empty($data['coupon_code']) && isset($data['coupon_code'])) {
-                $applied = applyCoupon($data['coupon_code'], $basePrice);
+                $applied = applyCoupon($data['coupon_code'], $totalBasePrice);
                 if ($applied['success']) {
                     $total_order_amount = $applied['final_order_amount'];
                     $total_discount_amount = $applied['discount_amount'];
