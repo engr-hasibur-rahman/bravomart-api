@@ -944,6 +944,7 @@ class FrontendController extends Controller
 
     public function flashDealProducts(Request $request)
     {
+
         // If a specific flash deal product ID is requested
         if (isset($request->id)) {
             $flashDealProduct = FlashSaleProduct::with(['product.variants', 'product.store', 'product.related_translations', 'flashSale.related_translations'])
@@ -995,6 +996,7 @@ class FrontendController extends Controller
                 $q1->whereIn('category_id', $allCategoryIds);
             });
         }
+
         if (!empty($request->type)) {
             if (is_array($request->type)) {
                 $query->whereHas('product', function ($q1) use ($request) {
