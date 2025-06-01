@@ -425,44 +425,9 @@ class PermissionStoreSeeder extends Seeder
                                 'ar' => 'قائمة'
                             ]
                         ],
-//                        [
-//                            'PermissionName' => PermissionKey::SELLER_STAFF_ROLES_STORE->value,
-//                            'PermissionTitle' => 'Staff Roles',
-//                            'activity_scope' => 'store_level',
-//                            'icon' => 'LockKeyholeOpen',
-//                            'translations' => [
-//                                'en' => 'Staff Roles',
-//                                'ar' => 'أدوار الموظفين'
-//                            ]
-//                        ],
 
                     ]
                 ],
-
-                // Message Settings
-//                [
-//                    'PermissionName' => '',
-//                    'PermissionTitle' => 'Message',
-//                    'activity_scope' => 'store_level',
-//                    'icon' => 'MessageCircleMore',
-//                    'options' => ['View'],
-//                    'translations' => [
-//                        'en' => 'Message',
-//                        'ar' => 'إعدادات المتجر'
-//                    ],
-//                    'submenu' => [
-//                        [
-//                            'PermissionName' => PermissionKey::STORE_STORE_MESSAGE->value,
-//                            'PermissionTitle' => 'Message',
-//                            'activity_scope' => 'store_level',
-//                            'icon' => '',
-//                            'translations' => [
-//                                'en' => 'Message',
-//                                'ar' => 'رسالة'
-//                            ]
-//                        ]
-//                    ]
-//                ],
 
                 // Notifications Settings
                 [

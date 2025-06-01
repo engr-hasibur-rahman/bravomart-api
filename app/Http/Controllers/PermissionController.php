@@ -37,9 +37,7 @@ class PermissionController extends Controller
 
         if ($shop_count > 0) {
             // Handle permissions for any route under "seller/store/"
-//            if ($user->activity_scope=='store_level' && !empty($request->store_slug) && $request->is('seller/store/*') && !$request->is('seller/store/list')) {
             if ($user->activity_scope == 'store_level' && !empty($request->store_slug)) {
-//                $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
                 $permissions = $user->rolePermissionsQuery() // Start from permissions assigned to the user's roles
                 ->whereNull('parent_id') // Fetch only top-level (root) permissions (i.e., no parent)
                 ->with([
@@ -60,7 +58,6 @@ class PermissionController extends Controller
                 ])
                     ->get(); // Finally, execute the query and get the results
             } elseif ($user->activity_scope == 'system_level') {
-//                $permissions = $user->rolePermissionsQuery()->whereNull('parent_id')->with('childrenRecursive')->get();
                 $permissions = $user->rolePermissionsQuery() // Start from permissions assigned to the user's roles
                 ->whereNull('parent_id') // Fetch only top-level (root) permissions (i.e., no parent)
                 ->with([
@@ -78,16 +75,15 @@ class PermissionController extends Controller
                                 });
                             }]);
                     }
-                ])
-                    ->get(); // Finally, execute the query and get the results
+                ])->get(); // Finally, execute the query and get the results
             } else {
-                // Define the permissions array for non-store level seller
+                 //1 Define the permissions array for non-store level seller
                 $permissionsArray = [
                     'dashboard',
                     'Store Settings',
                     PermissionKey::SELLER_STORE_MY_SHOP->value,
-                    'Staff control',
-                    PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
+//                    'Staff control',
+//                    PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
                 ];
 
                 // Get specific permissions for non-store level users
@@ -118,13 +114,13 @@ class PermissionController extends Controller
             }
 
         } else {
-            // Define the permissions array for non-store level seller
+            //  Define the permissions array for non-store level seller
             $permissionsArray = [
                 'dashboard',
                 'Store Settings',
                 PermissionKey::SELLER_STORE_MY_SHOP->value,
-                'Staff control',
-                PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
+//                'Staff control',
+//                PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
             ];
 
             // Get specific permissions for non-store level users
