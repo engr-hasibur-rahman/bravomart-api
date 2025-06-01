@@ -278,6 +278,32 @@ class PermissionStoreSeeder extends Seeder
                     ]
                 ],
 
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'Chat',
+                    'activity_scope' => 'store_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'Chat',
+                        'ar' => 'إدارة الدردشة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::SELLER_CHAT_MANAGE->value,
+                            'PermissionTitle' => 'Chat List',
+                            'activity_scope' => 'store_level',
+                            'icon' => 'MessageSquareMore',
+                            'options' => ['view', 'insert', 'update'],
+                            'translations' => [
+                                'en' => 'Chat',
+                                'ar' => 'إعدادات الدردشة'
+                            ]
+                        ]
+                    ]
+                ],
+
+
                 // Support ticket  Management
                 [
                     'PermissionName' => '',
@@ -399,44 +425,9 @@ class PermissionStoreSeeder extends Seeder
                                 'ar' => 'قائمة'
                             ]
                         ],
-//                        [
-//                            'PermissionName' => PermissionKey::SELLER_STAFF_ROLES_STORE->value,
-//                            'PermissionTitle' => 'Staff Roles',
-//                            'activity_scope' => 'store_level',
-//                            'icon' => 'LockKeyholeOpen',
-//                            'translations' => [
-//                                'en' => 'Staff Roles',
-//                                'ar' => 'أدوار الموظفين'
-//                            ]
-//                        ],
 
                     ]
                 ],
-
-                // Message Settings
-//                [
-//                    'PermissionName' => '',
-//                    'PermissionTitle' => 'Message',
-//                    'activity_scope' => 'store_level',
-//                    'icon' => 'MessageCircleMore',
-//                    'options' => ['View'],
-//                    'translations' => [
-//                        'en' => 'Message',
-//                        'ar' => 'إعدادات المتجر'
-//                    ],
-//                    'submenu' => [
-//                        [
-//                            'PermissionName' => PermissionKey::STORE_STORE_MESSAGE->value,
-//                            'PermissionTitle' => 'Message',
-//                            'activity_scope' => 'store_level',
-//                            'icon' => '',
-//                            'translations' => [
-//                                'en' => 'Message',
-//                                'ar' => 'رسالة'
-//                            ]
-//                        ]
-//                    ]
-//                ],
 
                 // Notifications Settings
                 [

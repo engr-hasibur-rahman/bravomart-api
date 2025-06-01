@@ -22,12 +22,14 @@ class ChatController extends Controller
     public function sendMessage(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'chat_id' => 'required|integer|exists:chats,id',
+            'sender_id' => 'required|integer',
             'receiver_id' => 'required|integer',
             'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
             'message' => 'nullable|string',
             'file'   => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
         ]);
+
+
 
         if ($validator->fails()) {
             return response()->json([
@@ -36,8 +38,14 @@ class ChatController extends Controller
             ], 422);
         }
 
-
+        // Check if the sender_id in request matches the authenticated user
         $authUser = auth()->user();
+        if ((int) $request->sender_id !== $authUser->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sender mismatch: You are not authorized.',
+            ], 403);
+        }
 
         // receiver type check
         $receiver_id = $request->receiver_id;
@@ -92,6 +100,10 @@ class ChatController extends Controller
             'message'      => $request->message,
         ];
 
+
+        // sender chat id
+        $sender_chat_id = Chat::where('user_id', $authUser->id)->first()->id;
+        $data['chat_id'] = $sender_chat_id;
 
         // upload file
         if ($request->hasFile('file')) {
@@ -152,10 +164,19 @@ class ChatController extends Controller
             ->unique()
             ->toArray();
 
+        // Optional: search filter
+        $search = $request->search;
+
         // find chat with user info
-        $conversion_user_list =  Chat::with('user:id,first_name,last_name,image,email,phone')
-            ->whereIn('user_id', $receiver_ids)
-            ->paginate(20);
+        $chats =  Chat::with('user')->whereIn('user_id', $receiver_ids);
+
+        if (isset($request->type) && !empty($request->type)) {
+            $chats->where('user_type', $request->type);
+        }
+
+        $conversion_user_list =  $chats
+            ->orderBy('id', 'asc')
+            ->paginate(50);
 
         return response()->json([
             'success'  => true,
@@ -178,7 +199,7 @@ class ChatController extends Controller
         $message_query = ChatMessage::where('chat_id', $chat_id);
         $unread_message = $message_query->where('is_seen', 0)->count();
 
-        $messages = $message_query->orderBy('created_at', 'desc')
+        $messages = $message_query->orderBy('created_at', 'asc')
             ->paginate(20);
 
         return response()->json([

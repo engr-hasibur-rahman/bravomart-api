@@ -320,6 +320,8 @@ enum PermissionKey: string
     case SELLER_STORE_PRODUCT_AUTHORS_MANAGE = '/seller/store/product/author/list';
     //~~~~~~~~~~~~~~~~~Wallet Manage~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
+    //~~~~~~~~~~~~~~~~~Chat ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    case SELLER_CHAT_MANAGE = '/seller/store/chat/list';
     //~~~~~~~~~~~~~~~~~Seller Support Ticket~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     case SELLER_STORE_SUPPORT_TICKETS_MANAGE = '/seller/store/support-ticket/list';
     // ######################## Seller PermissionKey End ###########################
