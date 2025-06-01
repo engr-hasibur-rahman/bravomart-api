@@ -826,9 +826,6 @@ class FrontendController extends Controller
                 default:
                     $query->latest('products.created_at');
             }
-        } else {
-            // Default: random order
-            $query->inRandomOrder();
         }
 
         // Base conditions
@@ -846,7 +843,7 @@ class FrontendController extends Controller
                     $q->orderBy('price', 'desc')->limit(1);
                 }
             }
-        ])->paginate($perPage);
+        ])->latest()->paginate($perPage);
 
         $uniqueAttributes = $this->getUniqueAttributesFromVariants($products);
 
@@ -1766,7 +1763,7 @@ class FrontendController extends Controller
         // Check for sort filter (sort by created_at only)
         if ($request->has('sort') && $request->sort) {
             // Ensure the sort direction is either 'asc' or 'desc'
-            $sortDirection = strtolower($request->sort) === 'asc' ? 'asc' : 'desc'; // Default to 'desc' if not 'asc'
+            $sortDirection = strtolower($request->sort) == 'asc' ? 'asc' : 'desc'; // Default to 'desc' if not 'asc'
             $blogsQuery->orderBy('created_at', $sortDirection);  // Sort only by 'created_at'
         }
 
