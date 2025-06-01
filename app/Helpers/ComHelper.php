@@ -265,6 +265,7 @@ class ComHelper
                 //'is_assigned' =>(bool) ($data_item->is_assigned?? false),
                 'perm_title' => $data_item->perm_title,
                 'perm_name' => $data_item->name,
+                'type' => $data_item->type ?? null,
                 'icon' => $data_item->icon,
                 'translations' => $transformedData,
                 'options' => $options,

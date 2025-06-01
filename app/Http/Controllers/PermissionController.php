@@ -63,31 +63,39 @@ class PermissionController extends Controller
                     PermissionKey::SELLER_STORE_MY_SHOP->value,
                 ];
 
-                // Get only the permissions exactly listed in the array
+                // Get only the permissions listed
                 $permissions = $user->rolePermissionsQuery()
                     ->whereIn('name', $permissionsArray)
                     ->get()
                     ->map(function ($permission) {
-                        // Decode options
+                        // Decode options if it's a string
                         if (is_string($permission->options)) {
                             $permission->options = json_decode($permission->options, true);
                         }
+
+                        // Add type info
+                        $permission->type = $permission->parent_id === null ? 'parent' : 'child';
+
                         return $permission;
                     });
 
-                // Rebuild parent-child relationship if both exist in the list
-                $grouped = $permissions->groupBy('parent_id');
+                // Identify parent and child
+                $parents = $permissions->filter(fn($p) => $p->parent_id === null)->keyBy('id');
+                $children = $permissions->filter(fn($p) => $p->parent_id !== null);
 
-                $final = collect();
-
-                foreach ($grouped as $parentId => $group) {
-                    if ($parentId === null) {
-                        foreach ($group as $parentPermission) {
-                            $parentPermission->children = $grouped->get($parentPermission->id, collect())->values();
-                            $final->push($parentPermission);
-                        }
+                // Attach children only if their parent exists in the list
+                foreach ($children as $child) {
+                    if ($parents->has($child->parent_id)) {
+                        $child->type = 'child';
+                        $parents[$child->parent_id]->children[] = $child;
                     }
                 }
+
+                // Result: parent with children (if both in array), and also track type
+                $result = $permissions->map(function ($permission) use ($parents) {
+                    $permission->type = $permission->parent_id === null ? 'parent' : 'child';
+                    return $permission;
+                });
 
             } elseif ($user->activity_scope == 'system_level') {
                 $permissions = $user->rolePermissionsQuery() // Start from permissions assigned to the user's roles
@@ -109,7 +117,7 @@ class PermissionController extends Controller
                     }
                 ])->get(); // Finally, execute the query and get the results
             } else {
-                 //1 Define the permissions array for non-store level seller
+                //1 Define the permissions array for non-store level seller
                 $permissionsArray = [
                     'dashboard',
                     'Store Settings',
@@ -159,9 +167,7 @@ class PermissionController extends Controller
                 ->whereNull('parent_id') // Top-level permissions
                 ->with(['children' => function ($query) use ($permissionsArray) {
                     $query->whereIn('name', $permissionsArray);
-                }])
-                ->
-                get();
+                }])->get();
 
             $permissions = $permissions->map(function ($permission) {
                 // Check if options is a string and decode it into an array
