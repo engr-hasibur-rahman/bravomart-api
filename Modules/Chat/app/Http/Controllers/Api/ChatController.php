@@ -166,7 +166,9 @@ class ChatController extends Controller
             $chats->where('user_type', $request->type);
         }
 
-        $conversion_user_list =  $chats->paginate(50);
+        $conversion_user_list =  $chats
+            ->orderBy('id', 'asc')
+            ->paginate(50);
 
         return response()->json([
             'success'  => true,
@@ -189,7 +191,7 @@ class ChatController extends Controller
         $message_query = ChatMessage::where('chat_id', $chat_id);
         $unread_message = $message_query->where('is_seen', 0)->count();
 
-        $messages = $message_query->orderBy('created_at', 'desc')
+        $messages = $message_query->orderBy('created_at', 'asc')
             ->paginate(20);
 
         return response()->json([
