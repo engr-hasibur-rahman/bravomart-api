@@ -57,6 +57,46 @@ class PermissionController extends Controller
                     }
                 ])
                     ->get(); // Finally, execute the query and get the results
+            } elseif ($user->activity_scope == 'store_level' && empty($request->store_slug)) {
+                $permissionsArray = [
+                    'dashboard',
+                    PermissionKey::SELLER_STORE_MY_SHOP->value,
+                ];
+
+                // Get only the permissions listed
+                $permissions = $user->rolePermissionsQuery()
+                    ->whereIn('name', $permissionsArray)
+                    ->get()
+                    ->map(function ($permission) {
+                        // Decode options if it's a string
+                        if (is_string($permission->options)) {
+                            $permission->options = json_decode($permission->options, true);
+                        }
+
+                        // Add type info
+                        $permission->type = $permission->parent_id === null ? 'parent' : 'child';
+
+                        return $permission;
+                    });
+
+                // Identify parent and child
+                $parents = $permissions->filter(fn($p) => $p->parent_id === null)->keyBy('id');
+                $children = $permissions->filter(fn($p) => $p->parent_id !== null);
+
+                // Attach children only if their parent exists in the list
+                foreach ($children as $child) {
+                    if ($parents->has($child->parent_id)) {
+                        $child->type = 'child';
+                        $parents[$child->parent_id]->children[] = $child;
+                    }
+                }
+
+                // Result: parent with children (if both in array), and also track type
+                $result = $permissions->map(function ($permission) use ($parents) {
+                    $permission->type = $permission->parent_id === null ? 'parent' : 'child';
+                    return $permission;
+                });
+
             } elseif ($user->activity_scope == 'system_level') {
                 $permissions = $user->rolePermissionsQuery() // Start from permissions assigned to the user's roles
                 ->whereNull('parent_id') // Fetch only top-level (root) permissions (i.e., no parent)
@@ -77,7 +117,7 @@ class PermissionController extends Controller
                     }
                 ])->get(); // Finally, execute the query and get the results
             } else {
-                 //1 Define the permissions array for non-store level seller
+                //1 Define the permissions array for non-store level seller
                 $permissionsArray = [
                     'dashboard',
                     'Store Settings',
@@ -114,14 +154,12 @@ class PermissionController extends Controller
             }
 
         } else {
-            //  Define the permissions array for non-store level seller
-            $permissionsArray = [
-                'dashboard',
+            // Define the permissions array for non-store level seller
+            $permissionsArray = ['dashboard',
                 'Store Settings',
                 PermissionKey::SELLER_STORE_MY_SHOP->value,
                 'Staff control',
-                PermissionKey::SELLER_STORE_STAFF_MANAGE->value,
-            ];
+                PermissionKey::SELLER_STORE_STAFF_MANAGE->value,];
 
             // Get specific permissions for non-store level users
             $permissions = $user->rolePermissionsQuery()
@@ -129,8 +167,7 @@ class PermissionController extends Controller
                 ->whereNull('parent_id') // Top-level permissions
                 ->with(['children' => function ($query) use ($permissionsArray) {
                     $query->whereIn('name', $permissionsArray);
-                }])
-                ->get();
+                }])->get();
 
             $permissions = $permissions->map(function ($permission) {
                 // Check if options is a string and decode it into an array
@@ -162,7 +199,8 @@ class PermissionController extends Controller
         ];
     }
 
-    public function getRoles(Request $request)
+    public
+    function getRoles(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
         $roles = collect();
@@ -178,7 +216,8 @@ class PermissionController extends Controller
         ];
     }
 
-    public function index(Request $request)
+    public
+    function index(Request $request)
     {
 
         $limit = $request->limit ?? 10;
@@ -190,7 +229,8 @@ class PermissionController extends Controller
         return PermissionResource::collection($permissions);
     }
 
-    public function moduleWisePermissions(Request $request)
+    public
+    function moduleWisePermissions(Request $request)
     {
 //        $permissions = QueryBuilder::for(PermissionKey::class)
 //            ->when($request->filled('available_for'), function ($query) use ($request) {
@@ -210,7 +250,8 @@ class PermissionController extends Controller
 //        return PermissionResource::collection($permissions);
     }
 
-    public function permissionForStoreOwner(Request $request)
+    public
+    function permissionForStoreOwner(Request $request)
     {
         $permission = PermissionKey::findOrFail($request->id);
         $permission->available_for = $permission->available_for === 'system_level' ? 'store_level' : 'system_level';
