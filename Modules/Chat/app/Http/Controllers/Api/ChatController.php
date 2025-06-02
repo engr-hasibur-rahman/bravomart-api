@@ -3,6 +3,7 @@
 namespace Modules\Chat\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\PageListResource;
 use App\Models\Customer;
 use App\Models\Store;
 use App\Models\User;
@@ -23,12 +24,9 @@ class ChatController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'receiver_id' => 'required|integer',
-            'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
             'message' => 'nullable|string',
             'file'   => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
         ]);
-
-
 
         if ($validator->fails()) {
             return response()->json([
@@ -38,7 +36,7 @@ class ChatController extends Controller
         }
 
         // Check authenticated user
-        $authUser = auth()->user();
+        $authUser = auth()->guard('api')->user();
         if (!$authUser) {
             return response()->json([
                 'success' => false,
@@ -46,13 +44,32 @@ class ChatController extends Controller
             ], 403);
         }
 
-        // receiver type check
-        $receiver_id = $request->receiver_id;
+        // if sender type (store) and receiver type (customer or deliveryman) not send message
+        if ($authUser->activity_scope === 'store_level' && $request->receiver_type === 'customer') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Store cannot send messages only send to admin.',
+            ], 422);
+        }
 
-        // check user
+        // receiver info check
+        $receiver_id = $request->receiver_id;
+        $receiver_type = $request->receiver_type;
+
+
+
+        // Get Receiver info
+        if ($receiver_type === 'customer') {
+            $receiver = Customer::find($receiver_id);
+        }elseif($receiver_type === 'store') {
+            $receiver = Store::find($receiver_id);
+        }elseif(in_array($receiver_type, ['admin', 'store', 'deliveryman'])){
+            $receiver = User::find($receiver_id);
+        }
+        // Check  sender type
         if ($authUser->activity_scope === 'system_level'){
             $authType = 'admin';
-        }elseif(isset($receiver->store_type) && !empty($receiver->store_type)){
+        }elseif($authUser->activity_scope === 'store_level'){
             $authType = 'store';
         }elseif($authUser->activity_scope === 'delivery_level'){
             $authType = 'deliveryman';
@@ -60,12 +77,162 @@ class ChatController extends Controller
             $authType = 'customer';
         }
 
-        if ($request->receiver_type === 'customer') {
+        // if receiver exits
+        if (empty($receiver)) {
+            return response()->json([
+                'success' => false,
+                'message'  => 'Receiver not found',
+            ], 404);
+        }
+
+        // Receiver Type Set
+        if (!empty($receiver)) {
+            if ($receiver->activity_scope === 'system_level'){
+                $receiver_type = 'admin';
+            }elseif(isset($receiver->store_type) && !empty($receiver->store_type)){
+                // store check and store not exits activity_scope check only store_type
+                $receiver_type = 'store';
+            }elseif($receiver->activity_scope === 'delivery_level'){
+                $receiver_type = 'deliveryman';
+            }else{
+                $receiver_type = 'customer';
+            }
+        }
+
+       // if sender and receiver type same  message not send
+        if ($authType === $receiver_type) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Sender and receiver cannot be of the same type.',
+            ]);
+        }
+
+        // if sender type (store) and receiver type (customer or deliveryman) not send message
+        $sender_type = $authType;
+        if ($sender_type === 'store' && $request->receiver_type === 'customer' || $sender_type === 'store' && $request->receiver_type === 'deliveryman') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Store cannot send messages only send to admin.',
+            ], 422);
+        }
+
+
+        $data = [
+            'sender_id'    => $authUser->id,
+            'sender_type'  => $authType,
+            'receiver_id'  => $receiver->id,
+            'receiver_type'=> $receiver_type,
+            'message'      => $request->message,
+        ];
+
+
+        // sender chat id
+        $sender_chat_id = Chat::where('user_id', $authUser->id)->first()->id;
+        $data['chat_id'] = $sender_chat_id;
+
+        // upload file
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $extension = strtolower($file->getClientOriginalExtension());
+            $filename = time() . '_' . Str::random(10) . '.' . $extension;
+            $uploadPath = 'uploads/chat/' . $filename;
+            $fullPath = storage_path('app/public/' . $uploadPath);
+
+            // Image files
+            if (in_array($extension, ['png', 'jpg', 'jpeg', 'webp', 'gif'])) {
+                $image = Image::make($file)->resize(1000, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+
+                $image->save($fullPath);
+            }
+            // PDF or other allowed non-image
+            elseif ($extension === 'pdf') {
+                $file->storeAs('uploads/chat', $filename, 'public');
+            }
+
+            $data['file'] = $uploadPath;
+        }
+
+        $message = ChatMessage::create($data);
+
+        try {
+            //  broadcast with Pusher
+            event(new \App\Events\MessageSent($message));
+        }catch (\Exception $e){}
+
+        return response()->json([
+            'success' => true,
+            'message_id' => $message->id,
+            'message' => 'Message sent Successfully',
+        ]);
+    }
+
+    public function customerSendMessage(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'receiver_type' => 'required|string|in:admin,deliveryman,store',
+            'receiver_id' => 'required|integer',
+            'message' => 'nullable|string',
+            'file'   => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        // Check authenticated user
+        $authUser = auth()->guard('api_customer')->user();
+        if (!$authUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorized.',
+            ], 403);
+        }
+
+        // if sender type (store) and receiver type (customer or deliveryman) not send message
+        if (isset($authUser->activity_scope) && $authUser->activity_scope === 'store_level' && $request->receiver_type === 'customer') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Store cannot send messages only send to admin.',
+            ], 422);
+        }
+
+        // receiver info check
+        $receiver_id = $request->receiver_id;
+        $receiver_type = $request->receiver_type;
+
+
+        // Get Receiver info
+        if ($receiver_type === 'customer') {
             $receiver = Customer::find($receiver_id);
-        }elseif($request->receiver_type === 'store') {
+        }elseif($receiver_type === 'store') {
             $receiver = Store::find($receiver_id);
-        }elseif(in_array($request->receiver_type, ['admin', 'store', 'deliveryman'])){
-            $receiver = User::find($receiver_id);
+        }elseif(in_array($receiver_type, ['admin', 'deliveryman'])){
+            if ($receiver_type === 'admin'){
+                $receiver = User::where('id', $receiver_id)
+                    ->where('activity_scope', 'system_level')
+                    ->first();
+            }else{
+                $receiver = User::where('id', $receiver_id)
+                    ->where('activity_scope', 'delivery_level')
+                    ->first();
+            }
+        }
+
+        // Check  sender type
+        if ($authUser->activity_scope === 'system_level'){
+            $authType = 'admin';
+        }elseif($authUser->activity_scope === 'store_level'){
+            $authType = 'store';
+        }elseif($authUser->activity_scope === 'delivery_level'){
+            $authType = 'deliveryman';
+        }else{
+            $authType = 'customer';
         }
 
         // if receiver exits
@@ -77,11 +244,12 @@ class ChatController extends Controller
         }
 
 
-        if (isset($request->receiver_id) && !empty($receiver)) {
-            // check user
+        // Receiver Type Set
+        if (!empty($receiver)) {
             if ($receiver->activity_scope === 'system_level'){
                 $receiver_type = 'admin';
             }elseif(isset($receiver->store_type) && !empty($receiver->store_type)){
+                // store check and store not exits activity_scope check only store_type
                 $receiver_type = 'store';
             }elseif($receiver->activity_scope === 'delivery_level'){
                 $receiver_type = 'deliveryman';
@@ -90,8 +258,25 @@ class ChatController extends Controller
             }
         }
 
+       // if sender and receiver type same  message not send
+        if ($authType === $receiver_type) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Sender and receiver cannot be of the same type.',
+            ]);
+        }
+
+        // if sender type (store) and receiver type (customer or deliveryman) not send message
+        $sender_type = $authType;
+        if ($sender_type === 'store' && $request->receiver_type === 'customer' || $sender_type === 'store' && $request->receiver_type === 'deliveryman') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Store cannot send messages only send to admin.',
+            ], 422);
+        }
+
+
         $data = [
-            'chat_id'      => $request->chat_id,
             'sender_id'    => $authUser->id,
             'sender_type'  => $authType,
             'receiver_id'  => $receiver->id,
@@ -145,60 +330,102 @@ class ChatController extends Controller
 
     public function chatList(Request $request)
     {
-        $user_id = auth()->guard('api')->user()->id;
-        $chat = Chat::where('user_id',$user_id)
-            ->first();
 
-        if (empty($chat)) {
+        $auth_user = auth()->guard('api')->user();
+        $chat = Chat::where('user_id', $auth_user->id)->first();
+
+        if (!$chat) {
             return response()->json([
                 'success' => false,
-                'message'  => 'Chats not found',
+                'message' => 'Chats not found',
             ]);
         }
 
-        // chat message get receiver ids
-//        $receiver_ids = ChatMessage::where('chat_id', $chat->id)
-//            ->where('sender_id', $user_id)
-//            ->pluck('receiver_id')
-//            ->unique()
-//            ->toArray();
+        $auth_id = $auth_user->id;
+        $auth_type = $auth_user->activity_scope ?? 'admin';
 
-        // Get receiver_id + receiver_type from messages
-        $receiverData = ChatMessage::where('chat_id', $chat->id)
-            ->where('sender_id', $user_id)
-            ->get(['receiver_id', 'receiver_type'])
-            ->unique(fn ($item) => $item['receiver_id'] . $item['receiver_type'])
-            ->values();
-
-        // Build conditions for each unique receiver
-        $chats = Chat::with('user')->where(function ($query) use ($receiverData) {
-            foreach ($receiverData as $item) {
-                $query->orWhere(function ($sub) use ($item) {
-                    $sub->where('user_id', $item['receiver_id'])
-                        ->where('user_type', $item['receiver_type']);
-                });
-            }
-        });
-
-
-        // Optional: search filter
-        $search = $request->search;
-//
-//        // find chat with user info
-//        $chats =  Chat::with('user')
-//            ->whereIn('user_id', $receiver_ids);
-
-        if (isset($request->type) && !empty($request->type)) {
-            $chats->where('user_type', $request->type);
+        // admin lists
+        if ($auth_type === 'system_level') {
+            // get admin sent message chat_ids
+            $admin_sent_chat_ids = ChatMessage::where('sender_id', $auth_id)
+                ->where('sender_type', 'admin')
+                ->pluck('chat_id');
+            // get admin received message chat_ids
+            $admin_received_chat_ids = ChatMessage::where('receiver_id', $auth_id)
+                ->where('receiver_type', 'admin')
+                ->pluck('chat_id');
+            // Merge both collections and get unique chat_ids
+            $all_admin_chat_ids = $admin_sent_chat_ids->merge($admin_received_chat_ids)->unique();
+            $all_chat_lists = Chat::with('user')->whereIn('id', $all_admin_chat_ids)->paginate(20);
         }
 
-        $conversion_user_list =  $chats
-            ->orderBy('id', 'asc')
-            ->paginate(50);
+        // store lists
+        if ($auth_type === 'store_level') {
+            // get admin sent message chat_ids
+            $admin_sent_chat_ids = ChatMessage::where('sender_id', $auth_id)
+                ->where('sender_type', 'store')
+                ->pluck('chat_id');
+            // get admin received message chat_ids
+            $admin_received_chat_ids = ChatMessage::where('receiver_id', $auth_id)
+                ->where('receiver_type', 'store')
+                ->pluck('chat_id');
+            // Merge both collections and get unique chat_ids
+            $all_admin_chat_ids = $admin_sent_chat_ids->merge($admin_received_chat_ids)->unique();
+            $all_chat_lists = Chat::with('user')->whereIn('id', $all_admin_chat_ids)->paginate(20);
+        }
+
 
         return response()->json([
             'success'  => true,
-            'data' => ChatListResource::collection($conversion_user_list)
+            'data' => ChatListResource::collection($all_chat_lists)
+        ]);
+    }
+
+    public function customerChatList(Request $request)
+    {
+
+        $auth_user = auth()->guard('api_customer')->user();
+        $auth_id = $auth_user->id;
+        $auth_type = 'customer';
+
+        $chat = Chat::with(['messages.sender', 'messages.receiver'])
+            ->where('user_id', $auth_id)
+            ->first();
+
+        if (!$chat) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Chats not found',
+            ]);
+        }
+
+        $users = collect();
+
+        foreach ($chat->messages as $message) {
+            if ($message->sender_id != $auth_id || $message->sender_type != $auth_type) {
+                $users->push((object)[
+                    'id' => $message->sender_id,
+                    'type' => $message->sender_type,
+                    'user' => $message->sender
+                ]);
+            }
+
+            if ($message->receiver_id != $auth_id || $message->receiver_type != $auth_type) {
+                $users->push((object)[
+                    'id' => $message->receiver_id,
+                    'type' => $message->receiver_type,
+                    'user' => $message->receiver
+                ]);
+            }
+        }
+
+        $unique_users = $users
+            ->unique(fn ($item) => $item->id . '_' . $item->type)
+            ->values();
+
+        return response()->json([
+            'success'  => true,
+            'data' => ChatListResource::collection($unique_users)
         ]);
     }
 

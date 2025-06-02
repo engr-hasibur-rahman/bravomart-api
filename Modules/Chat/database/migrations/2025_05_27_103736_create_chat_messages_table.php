@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('chat_messages', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('chat_id');
+            $table->unsignedBigInteger('receiver_chat_id');
             $table->unsignedBigInteger('sender_id');
             $table->string('sender_type'); // 'customer', 'deliveryman', 'admin', 'store'
             $table->unsignedBigInteger('receiver_id');
