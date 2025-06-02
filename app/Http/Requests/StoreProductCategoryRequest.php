@@ -29,7 +29,7 @@ class StoreProductCategoryRequest extends FormRequest
             'type' => 'required|string|in:' . implode(',', array_column(StoreType::cases(), 'value')),
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
-            'display_order' => 'nullable|integer',
+            'display_order' => 'nullable',
         ];
     }
 
