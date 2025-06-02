@@ -33,8 +33,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1/seller/store/')->group(function 
 
 //  Customer Chat manage
 Route::middleware(['auth:sanctum'])->prefix('v1/customer/chat/')->group(function () {
-    Route::get('list/', [ChatController::class, 'chatList']);
-    Route::post('send', [ChatController::class, 'sendMessage']);
+    Route::get('list/', [ChatController::class, 'customerChatList']);
+    Route::post('send', [ChatController::class, 'customerSendMessage']);
     Route::get('messages-details', [ChatController::class, 'chatWiseFetchMessages']);
     Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
 });
