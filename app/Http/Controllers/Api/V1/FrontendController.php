@@ -1176,7 +1176,7 @@ class FrontendController extends Controller
                 case 'price_high_low':
                     $query->addSelect([
                         'effective_price' => \DB::table('product_variants')
-                            ->selectRaw('MIN(CASE WHEN special_price IS NOT NULL AND special_price > 0 THEN special_price ELSE price END)')
+                            ->selectRaw('MIN(LEAST(COALESCE(NULLIF(special_price, 0), price), price))')
                             ->whereColumn('product_variants.product_id', 'products.id')
                     ])->orderBy('effective_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
                     break;
@@ -1189,6 +1189,7 @@ class FrontendController extends Controller
                     $query->latest('products.created_at');
             }
         }
+
 
         if (!empty($request->search)) {
             $query->where('name', 'like', '%' . $request->search . '%')
