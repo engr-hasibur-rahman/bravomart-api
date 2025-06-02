@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Com;
 use App\Actions\ImageModifier;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\AdminBecomeSellerResource;
+use App\Http\Resources\Com\GdprPublicResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterFavResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterLogoResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterResource;
@@ -78,7 +79,6 @@ class ComSiteGeneralController extends Controller
 
     public function gdprCookieSettings(Request $request)
     {
-
         $settings = GeneralSetting::with('related_translations')
             ->where('status', 1)
             ->where('type', 'gdpr')
@@ -94,8 +94,7 @@ class ComSiteGeneralController extends Controller
         $settings->content = $content;
 
         return response()->json([
-            'data' => new AdminBecomeSellerResource($settings),
+            'data' => new GdprPublicResource($settings),
         ]);
     }
-
 }
