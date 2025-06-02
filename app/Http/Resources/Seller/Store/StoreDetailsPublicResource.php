@@ -76,11 +76,10 @@ class StoreDetailsPublicResource extends JsonResource
             'featured_products' => StoreProductListPublicResource::collection($this->products()
                 ->where('deleted_at', null)
                 ->where('status', 'approved')
+                ->where('is_featured', 1)
                 ->with(['variants' => function ($query) {
                     $query->take(1);
                 }])
-                ->inRandomOrder()
-                ->take(10)
                 ->get()),
         ];
     }

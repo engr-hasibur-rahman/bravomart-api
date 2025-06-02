@@ -194,7 +194,7 @@ p.subtitle {
 
 /* Mobile-first styles (320px and up are already covered by default layout) */
 
-@media (max-width: 1199px) {
+@media (max-width: 1339px) {
     .container {
         align-items: center;
         flex-direction: column;
@@ -230,6 +230,44 @@ p.subtitle {
         gap: 20px;
     }
 }
+
+@media (max-width: 1023px) {
+    .container {
+        align-items: center;
+        flex-direction: column;
+        padding: 60px;
+    }
+
+    .left {
+        align-items: center;
+        width: 100%;
+    }
+
+    .right {
+        align-items: center;
+        width: 75%;
+    }
+
+    .info-boxes {
+        grid-template-columns: repeat(2, 1fr);
+        justify-content: center;
+    }
+
+    .right img {
+        padding: 25px;
+        max-width: 40%;
+    }
+
+    .right .cta {
+        padding: 25px;
+        text-align: center;
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
 
 @media (max-width: 767px) {
 
@@ -304,7 +342,7 @@ p.subtitle {
 @media (max-width: 479px) {
     .info-box .icon {
         width: 80px;
-        height: 80px;
+        height: 50px;
     }
 
     .info-box .label {
