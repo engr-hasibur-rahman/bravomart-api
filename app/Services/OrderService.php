@@ -137,7 +137,6 @@ class OrderService
                     }
                 }
             }
-            dd($totalBasePrice);
             // calculate order coupon
             /*----------------------->Coupon OrderMaster<----------------------------------------*/
             $coupon_data = [
