@@ -47,7 +47,7 @@ class PermissionAdminSeeder extends Seeder
                 // Orders & Refunds
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Orders & Refunds',
+                    'PermissionTitle' => 'Order Management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],

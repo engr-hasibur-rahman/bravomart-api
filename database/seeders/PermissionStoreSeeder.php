@@ -52,7 +52,7 @@ class PermissionStoreSeeder extends Seeder
                 // order manage
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Orders & Reviews',
+                    'PermissionTitle' => 'Order Management',
                     'activity_scope' => 'store_level',
                     'icon' => '',
                     'options' => ['View'],
