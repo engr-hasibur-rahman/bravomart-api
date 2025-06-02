@@ -1174,11 +1174,17 @@ class FrontendController extends Controller
             switch ($request->sort) {
                 case 'price_low_high':
                 case 'price_high_low':
+                    $aggregateFunction = $request->sort === 'price_low_high' ? 'MIN' : 'MAX';
+
                     $query->addSelect([
-                        'variant_price' => \DB::table('product_variants')
-                            ->selectRaw('MIN(price)')
+                        'effective_price' => \DB::table('product_variants')
+                            ->selectRaw("{$aggregateFunction}(CASE 
+                        WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
+                            THEN special_price 
+                        ELSE price 
+                    END)")
                             ->whereColumn('product_variants.product_id', 'products.id')
-                    ])->orderBy('variant_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
+                    ])->orderBy('effective_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
                     break;
 
                 case 'newest':
@@ -1189,6 +1195,7 @@ class FrontendController extends Controller
                     $query->latest('products.created_at');
             }
         }
+
         if (!empty($request->search)) {
             $query->where('name', 'like', '%' . $request->search . '%')
                 ->orWhere('description', 'like', '%' . $request->search . '%');
@@ -1198,10 +1205,19 @@ class FrontendController extends Controller
         $perPage = $request->per_page ?? 10;
         $products = $query->with(['category', 'unit', 'tags', 'store', 'brand',
             'variants' => function ($query) use ($request) {
+                $query->select('*')
+                    ->addSelect(DB::raw('
+            CASE 
+                WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
+                    THEN special_price 
+                ELSE price 
+            END as effective_price
+        '));
+
                 if ($request->sort === "price_low_high") {
-                    $query->orderBy('price', 'asc')->limit(1);
+                    $query->orderBy('effective_price', 'asc')->limit(1);
                 } elseif ($request->sort === "price_high_low") {
-                    $query->orderBy('price', 'desc')->limit(1);
+                    $query->orderBy('effective_price', 'desc')->limit(1);
                 }
             }
             , 'related_translations'])
