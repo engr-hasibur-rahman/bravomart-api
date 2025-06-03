@@ -14,7 +14,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/chat/')->group(function ()
     });
     // prefix manage
     Route::prefix('manage/')->middleware(['permission:' . PermissionKey::ADMIN_CHAT_MANAGE->value])->group(function () {
-        Route::get('list', [ChatController::class, 'chatList']);
+        Route::get('list', [ChatController::class, 'adminChatList']);
         Route::post('send', [ChatController::class, 'sendMessage']);
         Route::get('messages-details', [ChatController::class, 'chatWiseFetchMessages']);
         Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
@@ -41,9 +41,9 @@ Route::middleware(['auth:sanctum'])->prefix('v1/customer/chat/')->group(function
 
 //  deliveryman Chat manage
 Route::middleware(['auth:sanctum'])->prefix('v1/deliveryman/chat/')->group(function () {
-    Route::get('list/', [ChatController::class, 'chatList']);
+    Route::get('list/', [ChatController::class, 'deliverymanChatList']);
     Route::post('send', [ChatController::class, 'sendMessage']);
-    Route::get('messages-details', [ChatController::class, 'chatWiseFetchMessages']);
+    Route::get('messages-details', [ChatController::class, 'deliverymanChatWiseFetchMessages']);
     Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
 });
 
