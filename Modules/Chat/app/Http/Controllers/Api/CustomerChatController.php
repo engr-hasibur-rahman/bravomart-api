@@ -286,7 +286,7 @@ class CustomerChatController extends Controller
 
         $messages = $message_query
             ->orderBy('created_at', 'asc')
-            ->paginate(20);
+            ->paginate(500);
 
         return response()->json([
             'success'  => true,

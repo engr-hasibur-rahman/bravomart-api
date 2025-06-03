@@ -15,6 +15,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/chat/')->group(function ()
     Route::prefix('settings')->middleware(['permission:' . PermissionKey::ADMIN_CHAT_SETTINGS->value])->group(function () {
         Route::match(['get', 'post'], '/', [AdminChatManageController::class, 'chatPusherSettings']);
     });
+
     // prefix manage
     Route::prefix('manage/')->middleware(['permission:' . PermissionKey::ADMIN_CHAT_MANAGE->value])->group(function () {
         Route::get('list', [ChatController::class, 'adminChatList']);
