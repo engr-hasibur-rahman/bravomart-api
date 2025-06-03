@@ -199,7 +199,7 @@ class DeliverymanOrderManageController extends Controller
         } elseif ($success === 'cancelled') {
             return response()->json([
                 'message' => __('messages.order_cancel_successful')
-            ],422);
+            ],200);
         } else {
             return response()->json([
                 'message' => __('messages.something_went_wrong')
