@@ -593,8 +593,7 @@ class ChatController extends Controller
     }
 
 
-     public function deliverymanChatWiseFetchMessages(Request $request)
-        {
+     public function deliverymanChatWiseFetchMessages(Request $request) {
             $validator = Validator::make($request->all(), [
                 'receiver_id'   => 'required|integer',
                 'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
