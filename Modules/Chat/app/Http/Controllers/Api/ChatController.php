@@ -418,27 +418,7 @@ class ChatController extends Controller
             ]);
         }
 
-
-        $sender_chat_ids = ChatMessage::where('sender_id', $auth_id)
-            ->where('sender_type', 'admin')
-            ->pluck('receiver_chat_id');
-
-        $receiver_chat_ids = ChatMessage::where('receiver_id', $auth_id)
-            ->where('receiver_type', 'admin')
-            ->pluck('chat_id');
-
-        // Merge and get chat IDs
-        $all_chat_ids = $sender_chat_ids->merge($receiver_chat_ids)->unique();
-
-        // Remove current chat ID if necessary
-        $currentChat = $chat;
-
-        if ($currentChat) {
-            $all_chat_ids = $all_chat_ids->filter(fn ($id) => $id != $currentChat->id)->values();
-        }
-
         $chats = Chat::with('user')
-            ->whereIn('id', $all_chat_ids)
             ->where('user_type', '!=', 'admin')
             ->paginate(20);
 
