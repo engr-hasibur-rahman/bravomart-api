@@ -116,8 +116,18 @@ class ChatController extends Controller
             ], 422);
         }
 
+        // receiver chat id
+        $receiver_chat = Chat::select('id')->where('user_id', $receiver->id)->where('user_type', $receiver_type)->first();
+        if (empty($receiver_chat)){
+            return response()->json([
+                'success' => false,
+                'message' => 'Receiver chat not found',
+            ], 422);
+        }
+
 
         $data = [
+            'receiver_chat_id'    => $receiver_chat->id,
             'sender_id'    => $authUser->id,
             'sender_type'  => $authType,
             'receiver_id'  => $receiver->id,
@@ -275,8 +285,17 @@ class ChatController extends Controller
             ], 422);
         }
 
+        // receiver chat id
+        $receiver_chat = Chat::where('user_id', $receiver->id)->where('user_type', $receiver_type)->first();
+        if (empty($receiver_chat)){
+            return response()->json([
+                'success' => false,
+                'message' => 'Receiver chat not found',
+            ], 422);
+        }
 
         $data = [
+            'receiver_chat_id'    => $receiver_chat->id,
             'sender_id'    => $authUser->id,
             'sender_type'  => $authType,
             'receiver_id'  => $receiver->id,
@@ -381,15 +400,15 @@ class ChatController extends Controller
         ]);
     }
 
-    public function customerChatList(Request $request)
+    public function adminChatList(Request $request)
     {
 
-        $auth_user = auth()->guard('api_customer')->user();
+        $auth_user = auth()->guard('api')->user();
         $auth_id = $auth_user->id;
-        $auth_type = 'customer';
+        $auth_type = 'admin';
 
-        $chat = Chat::with(['messages.sender', 'messages.receiver'])
-            ->where('user_id', $auth_id)
+        $chat = Chat::where('user_id', $auth_id)
+            ->where('user_type', $auth_type)
             ->first();
 
         if (!$chat) {
@@ -399,33 +418,136 @@ class ChatController extends Controller
             ]);
         }
 
-        $users = collect();
 
-        foreach ($chat->messages as $message) {
-            if ($message->sender_id != $auth_id || $message->sender_type != $auth_type) {
-                $users->push((object)[
-                    'id' => $message->sender_id,
-                    'type' => $message->sender_type,
-                    'user' => $message->sender
-                ]);
-            }
+        $sender_chat_ids = ChatMessage::where('sender_id', $auth_id)
+            ->where('sender_type', 'admin')
+            ->pluck('receiver_chat_id');
 
-            if ($message->receiver_id != $auth_id || $message->receiver_type != $auth_type) {
-                $users->push((object)[
-                    'id' => $message->receiver_id,
-                    'type' => $message->receiver_type,
-                    'user' => $message->receiver
-                ]);
-            }
+        $receiver_chat_ids = ChatMessage::where('receiver_id', $auth_id)
+            ->where('receiver_type', 'admin')
+            ->pluck('chat_id');
+
+        // Merge and get chat IDs
+        $all_chat_ids = $sender_chat_ids->merge($receiver_chat_ids)->unique();
+
+        // Remove current chat ID if necessary
+        $currentChat = $chat;
+
+        if ($currentChat) {
+            $all_chat_ids = $all_chat_ids->filter(fn ($id) => $id != $currentChat->id)->values();
         }
 
-        $unique_users = $users
-            ->unique(fn ($item) => $item->id . '_' . $item->type)
-            ->values();
+        $chats = Chat::with('user')
+            ->whereIn('id', $all_chat_ids)
+            ->where('user_type', '!=', 'admin')
+            ->paginate(20);
+
 
         return response()->json([
             'success'  => true,
-            'data' => ChatListResource::collection($unique_users)
+            'data' => ChatListResource::collection($chats)
+        ]);
+    }
+
+    public function customerChatList(Request $request)
+    {
+
+        $auth_user = auth()->guard('api_customer')->user();
+        $auth_id = $auth_user->id;
+        $auth_type = 'customer';
+
+//        $chat = Chat::with(['messages.sender', 'messages.receiver'])
+//            ->where('user_id', $auth_id)
+//            ->first();
+
+        $chat = Chat::where('user_id', $auth_id)
+            ->where('user_type', $auth_type)
+            ->first();
+
+        if (!$chat) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Chats not found',
+            ]);
+        }
+
+
+        $sender_chat_ids = ChatMessage::where('sender_id', $auth_id)
+            ->where('sender_type', 'customer')
+            ->pluck('receiver_chat_id');
+
+        $receiver_chat_ids = ChatMessage::where('receiver_id', $auth_id)
+            ->where('receiver_type', 'customer')
+            ->pluck('receiver_chat_id');
+
+        // Merge and get chat IDs
+        $all_chat_ids = $sender_chat_ids->merge($receiver_chat_ids)->unique();
+
+        // Remove current chat ID if necessary
+        $currentChat = $chat;
+
+        if ($currentChat) {
+            $all_chat_ids = $all_chat_ids->filter(fn ($id) => $id != $currentChat->id)->values();
+        }
+
+        $chats = Chat::with('user')
+            ->whereIn('id', $all_chat_ids)
+            ->where('id', '!=', $chat->id)
+            ->get();
+
+
+        return response()->json([
+            'success'  => true,
+            'data' => ChatListResource::collection($chats)
+        ]);
+    }
+
+    public function deliverymanChatList(Request $request)
+    {
+
+        $auth_user = auth()->guard('api')->user();
+        $auth_id = $auth_user->id;
+        $auth_type = 'deliveryman';
+
+        $chat = Chat::where('user_id', $auth_id)
+            ->where('user_type', $auth_type)
+            ->first();
+
+        if (!$chat) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Chats not found',
+            ]);
+        }
+
+
+        $sender_chat_ids = ChatMessage::where('sender_id', $auth_id)
+            ->where('sender_type', 'deliveryman')
+            ->pluck('receiver_chat_id');
+
+        $receiver_chat_ids = ChatMessage::where('receiver_id', $auth_id)
+            ->where('receiver_type', 'deliveryman')
+            ->pluck('chat_id');
+
+        // Merge and get chat IDs
+        $all_chat_ids = $sender_chat_ids->merge($receiver_chat_ids)->unique();
+
+        // Remove current chat ID if necessary
+        $currentChat = $chat;
+
+        if ($currentChat) {
+            $all_chat_ids = $all_chat_ids->filter(fn ($id) => $id != $currentChat->id)->values();
+        }
+
+        $chats = Chat::with('user')
+            ->whereIn('id', $all_chat_ids)
+            ->where('user_type', '!=', 'store')
+            ->get();
+
+
+        return response()->json([
+            'success'  => true,
+            'data' => ChatListResource::collection($chats)
         ]);
     }
 
@@ -444,8 +566,8 @@ class ChatController extends Controller
             ], 422);
         }
 
-        $user_id = auth()->guard('api')->user()->id;
-        $chat = Chat::where('user_id',$user_id)->first();
+        $auth_id = auth()->guard('api')->user()->id;
+        $chat = Chat::where('user_id',$auth_id)->first();
 
         if (empty($chat)) {
             return response()->json([
@@ -454,11 +576,27 @@ class ChatController extends Controller
             ]);
         }
 
+
+        $auth_type = 'admin';
+
+        $receiver_id = $request->receiver_id;
+        $receiver_type = $request->receiver_type;
+
         // get message
-        $message_query = ChatMessage::where('chat_id', $chat->id)
-            ->where('sender_id', $user_id)
-            ->where('receiver_id', $request->receiver_id)
-            ->where('receiver_type', $request->receiver_type);
+        $message_query = ChatMessage::query()
+            ->where(function ($query) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
+                $query->where(function ($q) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
+                    $q->where('sender_id', $auth_id)
+                        ->where('sender_type', $auth_type)
+                        ->where('receiver_id', $receiver_id)
+                        ->where('receiver_type', $receiver_type);
+                })->orWhere(function ($q) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
+                    $q->where('sender_id', $receiver_id)
+                        ->where('sender_type', $receiver_type)
+                        ->where('receiver_id', $auth_id)
+                        ->where('receiver_type', $auth_type);
+                });
+            });
 
         $unread_message = (clone $message_query)->where('is_seen', 0)->count();
         (clone $message_query)->where('is_seen', 1)->update(['is_seen' => 1]);
@@ -473,6 +611,68 @@ class ChatController extends Controller
             'data' => ChatMessageDetailsResource::collection($messages)
         ]);
     }
+
+
+     public function deliverymanChatWiseFetchMessages(Request $request)
+        {
+            $validator = Validator::make($request->all(), [
+                'receiver_id'   => 'required|integer',
+                'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
+                'search'        => 'nullable|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+
+            $auth_id = auth()->guard('api')->user()->id;
+            $chat = Chat::where('user_id',$auth_id)->first();
+
+            if (empty($chat)) {
+                return response()->json([
+                    'success' => false,
+                    'message'  => 'Chats not found',
+                ]);
+            }
+
+
+            $auth_type = 'deliveryman';
+
+            $receiver_id = $request->receiver_id;
+            $receiver_type = $request->receiver_type;
+
+            // get message
+            $message_query = ChatMessage::query()
+                ->where(function ($query) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
+                    $query->where(function ($q) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
+                        $q->where('sender_id', $auth_id)
+                            ->where('sender_type', $auth_type)
+                            ->where('receiver_id', $receiver_id)
+                            ->where('receiver_type', $receiver_type);
+                    })->orWhere(function ($q) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
+                        $q->where('sender_id', $receiver_id)
+                            ->where('sender_type', $receiver_type)
+                            ->where('receiver_id', $auth_id)
+                            ->where('receiver_type', $auth_type);
+                    });
+                });
+
+            $unread_message = (clone $message_query)->where('is_seen', 0)->count();
+            (clone $message_query)->where('is_seen', 1)->update(['is_seen' => 1]);
+
+            $messages = $message_query
+                ->orderBy('created_at', 'asc')
+                ->paginate(20);
+
+            return response()->json([
+                'success'  => true,
+                'unread_message' => $unread_message,
+                'data' => ChatMessageDetailsResource::collection($messages)
+            ]);
+        }
 
     // Mark messages as seen
     public function markAsSeen(Request $request)
