@@ -61,6 +61,8 @@ class OrderService
             // check package
             // if store subscription system check
             // if store subscription expire or order limit end this store product not create order
+            $totalBasePrice = 0;
+
             foreach ($data['packages'] as $packageData) {
                 // if type subscription
                 $store = Store::find($packageData['store_id']);
@@ -84,7 +86,6 @@ class OrderService
                 } // subscription check end
                 /*-------------------------- Subscription Check ------------------------*/
 
-                $totalBasePrice = 0;
 
                 foreach ($packageData['items'] as $itemData) {
 

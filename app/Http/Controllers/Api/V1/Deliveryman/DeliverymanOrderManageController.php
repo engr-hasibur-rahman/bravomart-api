@@ -183,7 +183,6 @@ class DeliverymanOrderManageController extends Controller
         // update order delivery history
         $success = $this->deliverymanRepo->orderChangeStatus($request->status, $request->id);
 
-
         if ($success === 'order_is_not_accepted') {
             return response()->json([
                 'message' => __('messages.order_is_not_accepted')
@@ -197,6 +196,10 @@ class DeliverymanOrderManageController extends Controller
             return response()->json([
                 'message' => __('messages.deliveryman_order_already_taken')
             ], 422);
+        } elseif ($success === 'cancelled') {
+            return response()->json([
+                'message' => __('messages.order_cancel_successful')
+            ],422);
         } else {
             return response()->json([
                 'message' => __('messages.something_went_wrong')

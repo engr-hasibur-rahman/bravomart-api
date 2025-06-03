@@ -570,6 +570,21 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             })
             ->exists();
 
+        if ($status == 'cancelled') {
+            if ($order->status === 'delivered') {
+                return 'already delivered';
+            }
+            if (!$order_is_accepted) {
+                return 'order_is_not_accepted';
+            }
+            OrderDeliveryHistory::create([
+                'order_id' => $order_id,
+                'deliveryman_id' => $deliveryman->id,
+                'status' => $status,
+            ]);
+            return 'cancelled';
+        }
+
         if ($status == 'delivered') {
             if ($order->status === 'delivered') {
                 return 'already delivered';
@@ -715,7 +730,6 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     Mail::to($delivery_man)->send(new DynamicEmail($deliveryman_subject, (string)$deliveryman_message));
                 } catch (\Exception $th) {
                 }
-
                 return 'delivered';
             }
 

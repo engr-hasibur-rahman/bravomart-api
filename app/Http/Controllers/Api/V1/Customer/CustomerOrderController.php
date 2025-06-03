@@ -47,7 +47,9 @@ class CustomerOrderController extends Controller
             });
         });
 
-        $ordersQuery->when($request->search, fn($query) => $query->where('id', 'like', '%' . $request->search . '%'));
+        $ordersQuery->when($request->search, fn($query) => $query
+            ->where('id', 'like', '%' . $request->search . '%')
+            ->orwhere('invoice_number', 'like', '%' . $request->search . '%'));
 
         $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
 
