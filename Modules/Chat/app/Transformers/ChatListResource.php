@@ -17,6 +17,7 @@ class ChatListResource extends JsonResource
             'id'         => $this->id,
             'chat_id'    => $this->user_id,
             'user_type'    => $this->user_type,
+            'sender_id'    => auth()->guard('api')->user()->id,
             'user' => new UserInfoForChatResource($this->whenLoaded('user'), $this->user_type),
         ];
     }
