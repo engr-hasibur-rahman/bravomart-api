@@ -35,6 +35,7 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         'facebook_id',
         'apple_id',
         'status',
+        'online_at',
         'def_lang',
         'password_changed_at',
         'email_verify_token',
