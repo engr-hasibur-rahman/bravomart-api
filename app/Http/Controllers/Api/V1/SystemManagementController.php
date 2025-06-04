@@ -715,14 +715,10 @@ class SystemManagementController extends Controller
         try {
             // Store original environment
             $originalEnv = env('APP_ENV');
-          //  update environment to local
-           updateEnvValues(['APP_ENV' => 'local']);
-            // Run migration and seeder forcefully
+            updateEnvValues(['APP_ENV' => $originalEnv]);
             Artisan::call('migrate', ['--force' => true]);
-            Artisan::call('db:seed', ['--force' => true]);
-            // Clear other caches
             Artisan::call('cache:clear');
-           updateEnvValues(['APP_ENV' => 'production']);
+            updateEnvValues(['APP_ENV' => $originalEnv]);
             return response()->json([
                 'status' => true,
                 'message' => 'Database and cache operations completed successfully!',
