@@ -28,6 +28,7 @@ class ProductRequest extends FormRequest
             "name" => "required|string|max:255",
             "description" => "nullable|string",
             "image" => "nullable|string|max:255",
+            "video_url" => "nullable|string|max:500",
             "class" => "nullable|string|max:255",
             "warranty" => "nullable|array",
             "warranty.*.warranty_period" => "nullable|integer",
