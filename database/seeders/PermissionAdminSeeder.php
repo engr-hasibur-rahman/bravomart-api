@@ -1356,6 +1356,17 @@ class PermissionAdminSeeder extends Seeder
                             ],
                             'submenu' => [
                                 [
+                                    'PermissionName' => PermissionKey::HOME_PAGE_SETTINGS->value,
+                                    'PermissionTitle' => 'Home Page',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'Home Page',
+                                        'ar' => 'الصفحة الرئيسية'
+                                    ]
+                                ],
+                                [
                                     'PermissionName' => PermissionKey::REGISTER_PAGE_SETTINGS->value,
                                     'PermissionTitle' => 'Register Page',
                                     'activity_scope' => 'system_level',

@@ -66,7 +66,7 @@ class PageSettingsManageController extends Controller
                 'com_home_one_top_selling_section_title',
                 'com_home_one_latest_product_section_title',
                 'com_home_one_popular_product_section_title',
-                'com_home_one_top_store_section_title',
+                'com_home_one_top_store_section_title'
             ])->pluck('id', 'option_name');
 
             foreach ($settingOptions as $optionName => $optionId) {
