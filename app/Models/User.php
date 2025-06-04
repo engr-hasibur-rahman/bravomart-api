@@ -43,6 +43,7 @@ class User extends Authenticatable
         'deactivated_at',
         'firebase_token',
         'fcm_token',
+        'online_at',
     ];
     protected $guard_name = 'api';
     protected $hidden = [
@@ -53,7 +54,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'stores' => 'array',
+        'online_at' => 'datetime',
     ];
+
 
     public function routeNotificationForWebPush($notification)
     {
@@ -164,5 +167,13 @@ class User extends Authenticatable
     {
         return $this->roles->where('locked', 1)->isNotEmpty();
     }
+
+    public function getIsOnlineAttribute(): bool
+    {
+        if (!$this->online_at) return false;
+
+        return $this->online_at->gt(now()->subMinutes(5)); // 5-minute window
+    }
+
 
 }
