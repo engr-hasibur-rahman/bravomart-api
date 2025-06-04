@@ -1232,26 +1232,37 @@ class FrontendController extends Controller
                         'effective_price' => DB::table('product_variants')
                             ->selectRaw("{$aggregateFunction}(
                     CASE
-                    WHEN 
-                        flash_sale_products.id IS NOT NULL THEN
-                    CASE 
-                        flash_sales.discount_type
-                    WHEN 
-                        'amount' THEN product_variants.price - flash_sales.discount_amount
-                    WHEN 
-                        'percentage' THEN product_variants.price - (product_variants.price * flash_sales.discount_amount / 100)
-                    ELSE 
-                        product_variants.price
+                WHEN flash_sale_products.id IS NOT NULL THEN
+                    CASE flash_sales.discount_type
+                        WHEN 'amount' THEN 
+                            CASE 
+                                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                                    product_variants.special_price - flash_sales.discount_amount
+                                ELSE 
+                                    product_variants.price - flash_sales.discount_amount
+                            END
+                        WHEN 'percentage' THEN 
+                            CASE 
+                                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                                    product_variants.special_price - (product_variants.special_price * flash_sales.discount_amount / 100)
+                                ELSE 
+                                    product_variants.price - (product_variants.price * flash_sales.discount_amount / 100)
+                            END
+                        ELSE 
+                            CASE 
+                                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                                    product_variants.special_price
+                                ELSE 
+                                    product_variants.price
+                            END
                     END
-                    
-                    WHEN 
-                    product_variants.special_price IS NOT NULL AND 
-                    product_variants.special_price > 0 AND product_variants.special_price < product_variants.price 
-                    THEN 
+
+                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 AND product_variants.special_price < product_variants.price THEN 
                     product_variants.special_price
-                    ELSE 
+
+                ELSE 
                     product_variants.price
-                    END
+            END
         )")
                             ->leftJoin('flash_sale_products', function ($join) {
                                 $join->on('flash_sale_products.product_id', '=', 'product_variants.product_id');
@@ -1285,17 +1296,39 @@ class FrontendController extends Controller
                 $query->leftJoin('flash_sale_products as fsp1', 'fsp1.product_id', '=', 'product_variants.product_id')
                     ->leftJoin('flash_sales as fs1', 'fs1.id', '=', 'fsp1.flash_sale_id')
                     ->select('product_variants.*', DB::raw('
-            CASE
-                WHEN fsp1.id IS NOT NULL THEN
-                    CASE fs1.discount_type
-                        WHEN "amount" THEN product_variants.price - fs1.discount_amount
-                        WHEN "percentage" THEN product_variants.price - (product_variants.price * fs1.discount_amount / 100)
-                        ELSE product_variants.price
+    CASE
+        WHEN fsp1.id IS NOT NULL THEN
+            CASE fs1.discount_type
+                WHEN "amount" THEN 
+                    CASE 
+                        WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                            product_variants.special_price - fs1.discount_amount
+                        ELSE 
+                            product_variants.price - fs1.discount_amount
                     END
-                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 AND product_variants.special_price < product_variants.price THEN product_variants.special_price
-                ELSE product_variants.price
-            END as effective_price
-        '));
+                WHEN "percentage" THEN 
+                    CASE 
+                        WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                            product_variants.special_price - (product_variants.special_price * fs1.discount_amount / 100)
+                        ELSE 
+                            product_variants.price - (product_variants.price * fs1.discount_amount / 100)
+                    END
+                ELSE 
+                    CASE 
+                        WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                            product_variants.special_price
+                        ELSE 
+                            product_variants.price
+                    END
+            END
+
+        WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 AND product_variants.special_price < product_variants.price THEN 
+            product_variants.special_price
+
+        ELSE 
+            product_variants.price
+    END as effective_price
+'));
 
                 if ($request->sort === "price_low_high") {
                     $query->orderBy('effective_price', 'asc')->limit(1);
