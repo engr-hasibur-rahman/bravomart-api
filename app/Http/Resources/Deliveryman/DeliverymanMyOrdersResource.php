@@ -31,6 +31,7 @@ class DeliverymanMyOrdersResource extends JsonResource
             "delivery_type" => $this->order?->delivery_type,
             "order_amount" => $this->order?->order_amount,
             "status" => $this->order?->status,
+            "delivery_status" => $this->status,
             "created_at" => optional($this->order->created_at)->format('h:i A, F j, Y'), // Example: "8:00 AM, May 29, 2025"
         ];
     }

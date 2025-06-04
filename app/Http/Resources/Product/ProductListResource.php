@@ -42,6 +42,7 @@ class ProductListResource extends JsonResource
                 : $this->description, // If language is empty or not provided attribute
             'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
+            'video_url' => $this->video_url,
             'gallery_images' => $this->gallery_images,
             'gallery_images_urls' => MultipleImageModifier::multipleImageModifier($this->gallery_images),
             'warranty' => $this->warranty,

@@ -375,16 +375,21 @@ class FrontendController extends Controller
             })->where('product_ratings.average_rating', '>=', $request->min_rating);
         }
 
-        // Sorting logic
         if (isset($request->sort)) {
             switch ($request->sort) {
                 case 'price_low_high':
                 case 'price_high_low':
+                    $aggregateFunction = $request->sort === 'price_low_high' ? 'MIN' : 'MAX';
+
                     $query->addSelect([
-                        'variant_price' => DB::table('product_variants')
-                            ->selectRaw('MIN(price)')
+                        'effective_price' => \DB::table('product_variants')
+                            ->selectRaw("{$aggregateFunction}(CASE 
+                        WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
+                            THEN special_price 
+                        ELSE price 
+                    END)")
                             ->whereColumn('product_variants.product_id', 'products.id')
-                    ])->orderBy('variant_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
+                    ])->orderBy('effective_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
                     break;
 
                 case 'newest':
@@ -420,11 +425,20 @@ class FrontendController extends Controller
 
         $products = $query->with([
             'category', 'unit', 'tags', 'store', 'brand', 'related_translations',
-            'variants' => function ($q) use ($request) {
+            'variants' => function ($query) use ($request) {
+                $query->select('*')
+                    ->addSelect(DB::raw('
+            CASE 
+                WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
+                    THEN special_price 
+                ELSE price 
+            END as effective_price
+        '));
+
                 if ($request->sort === "price_low_high") {
-                    $q->orderBy('price', 'asc')->limit(1);
+                    $query->orderBy('effective_price', 'asc')->limit(1);
                 } elseif ($request->sort === "price_high_low") {
-                    $q->orderBy('price', 'desc')->limit(1);
+                    $query->orderBy('effective_price', 'desc')->limit(1);
                 }
             }
         ])->paginate($perPage);
@@ -658,11 +672,17 @@ class FrontendController extends Controller
             switch ($request->sort) {
                 case 'price_low_high':
                 case 'price_high_low':
+                    $aggregateFunction = $request->sort === 'price_low_high' ? 'MIN' : 'MAX';
+
                     $query->addSelect([
-                        'variant_price' => DB::table('product_variants')
-                            ->selectRaw('MIN(price)')
+                        'effective_price' => \DB::table('product_variants')
+                            ->selectRaw("{$aggregateFunction}(CASE 
+                        WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
+                            THEN special_price 
+                        ELSE price 
+                    END)")
                             ->whereColumn('product_variants.product_id', 'products.id')
-                    ])->orderBy('variant_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
+                    ])->orderBy('effective_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
                     break;
 
                 case 'newest':
@@ -698,11 +718,20 @@ class FrontendController extends Controller
 
         $products = $query->with([
             'category', 'unit', 'tags', 'store', 'brand', 'related_translations',
-            'variants' => function ($q) use ($request) {
+            'variants' => function ($query) use ($request) {
+                $query->select('*')
+                    ->addSelect(DB::raw('
+            CASE 
+                WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
+                    THEN special_price 
+                ELSE price 
+            END as effective_price
+        '));
+
                 if ($request->sort === "price_low_high") {
-                    $q->orderBy('price', 'asc')->limit(1);
+                    $query->orderBy('effective_price', 'asc')->limit(1);
                 } elseif ($request->sort === "price_high_low") {
-                    $q->orderBy('price', 'desc')->limit(1);
+                    $query->orderBy('effective_price', 'desc')->limit(1);
                 }
             }
         ])->paginate($perPage);
@@ -812,11 +841,17 @@ class FrontendController extends Controller
             switch ($request->sort) {
                 case 'price_low_high':
                 case 'price_high_low':
+                    $aggregateFunction = $request->sort === 'price_low_high' ? 'MIN' : 'MAX';
+
                     $query->addSelect([
-                        'variant_price' => DB::table('product_variants')
-                            ->selectRaw('MIN(price)')
+                        'effective_price' => \DB::table('product_variants')
+                            ->selectRaw("{$aggregateFunction}(CASE 
+                        WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
+                            THEN special_price 
+                        ELSE price 
+                    END)")
                             ->whereColumn('product_variants.product_id', 'products.id')
-                    ])->orderBy('variant_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
+                    ])->orderBy('effective_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
                     break;
 
                 case 'newest':
@@ -836,11 +871,20 @@ class FrontendController extends Controller
 
         $products = $query->with([
             'category', 'unit', 'tags', 'store', 'brand', 'related_translations',
-            'variants' => function ($q) use ($request) {
+            'variants' => function ($query) use ($request) {
+                $query->select('*')
+                    ->addSelect(DB::raw('
+            CASE 
+                WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
+                    THEN special_price 
+                ELSE price 
+            END as effective_price
+        '));
+
                 if ($request->sort === "price_low_high") {
-                    $q->orderBy('price', 'asc')->limit(1);
+                    $query->orderBy('effective_price', 'asc')->limit(1);
                 } elseif ($request->sort === "price_high_low") {
-                    $q->orderBy('price', 'desc')->limit(1);
+                    $query->orderBy('effective_price', 'desc')->limit(1);
                 }
             }
         ])->latest()->paginate($perPage);
@@ -1049,17 +1093,25 @@ class FrontendController extends Controller
             switch ($request->sort) {
                 case 'price_low_high':
                 case 'price_high_low':
-                    $query->with(['product.variants' => function ($q) use ($request) {
-                        $q->orderBy('price', $request->sort === 'price_low_high' ? 'asc' : 'desc')->limit(1);
-                    }]);
+                    $aggregateFunction = $request->sort === 'price_low_high' ? 'MIN' : 'MAX';
+
+                    $query->addSelect([
+                        'effective_price' => \DB::table('product_variants')
+                            ->selectRaw("{$aggregateFunction}(CASE 
+                        WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
+                            THEN special_price 
+                        ELSE price 
+                    END)")
+                            ->whereColumn('product_variants.product_id', 'products.id')
+                    ])->orderBy('effective_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
                     break;
 
                 case 'newest':
-                    $query->orderByDesc('created_at');
+                    $query->orderBy('products.created_at', 'desc');
                     break;
 
                 default:
-                    $query->latest();
+                    $query->latest('products.created_at');
             }
         }
 
@@ -1177,14 +1229,39 @@ class FrontendController extends Controller
                     $aggregateFunction = $request->sort === 'price_low_high' ? 'MIN' : 'MAX';
 
                     $query->addSelect([
-                        'effective_price' => \DB::table('product_variants')
-                            ->selectRaw("{$aggregateFunction}(CASE 
-                        WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
-                            THEN special_price 
-                        ELSE price 
-                    END)")
+                        'effective_price' => DB::table('product_variants')
+                            ->selectRaw("{$aggregateFunction}(
+                    CASE
+                    WHEN 
+                        flash_sale_products.id IS NOT NULL THEN
+                    CASE 
+                        flash_sales.discount_type
+                    WHEN 
+                        'amount' THEN product_variants.price - flash_sales.discount_amount
+                    WHEN 
+                        'percentage' THEN product_variants.price - (product_variants.price * flash_sales.discount_amount / 100)
+                    ELSE 
+                        product_variants.price
+                    END
+                    
+                    WHEN 
+                    product_variants.special_price IS NOT NULL AND 
+                    product_variants.special_price > 0 AND product_variants.special_price < product_variants.price 
+                    THEN 
+                    product_variants.special_price
+                    ELSE 
+                    product_variants.price
+                    END
+        )")
+                            ->leftJoin('flash_sale_products', function ($join) {
+                                $join->on('flash_sale_products.product_id', '=', 'product_variants.product_id');
+                            })
+                            ->leftJoin('flash_sales', function ($join) {
+                                $join->on('flash_sales.id', '=', 'flash_sale_products.flash_sale_id');
+                            })
                             ->whereColumn('product_variants.product_id', 'products.id')
-                    ])->orderBy('effective_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
+                    ])
+                        ->orderBy('effective_price', $request->sort === 'price_low_high' ? 'asc' : 'desc');
                     break;
 
                 case 'newest':
@@ -1205,12 +1282,18 @@ class FrontendController extends Controller
         $perPage = $request->per_page ?? 10;
         $products = $query->with(['category', 'unit', 'tags', 'store', 'brand',
             'variants' => function ($query) use ($request) {
-                $query->select('*')
-                    ->addSelect(DB::raw('
-            CASE 
-                WHEN special_price IS NOT NULL AND special_price > 0 AND special_price < price 
-                    THEN special_price 
-                ELSE price 
+                $query->leftJoin('flash_sale_products as fsp1', 'fsp1.product_id', '=', 'product_variants.product_id')
+                    ->leftJoin('flash_sales as fs1', 'fs1.id', '=', 'fsp1.flash_sale_id')
+                    ->select('product_variants.*', DB::raw('
+            CASE
+                WHEN fsp1.id IS NOT NULL THEN
+                    CASE fs1.discount_type
+                        WHEN "amount" THEN product_variants.price - fs1.discount_amount
+                        WHEN "percentage" THEN product_variants.price - (product_variants.price * fs1.discount_amount / 100)
+                        ELSE product_variants.price
+                    END
+                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 AND product_variants.special_price < product_variants.price THEN product_variants.special_price
+                ELSE product_variants.price
             END as effective_price
         '));
 

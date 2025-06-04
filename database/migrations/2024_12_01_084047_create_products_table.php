@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string('slug')->unique();
             $table->longText('description')->nullable();
             $table->string('image')->nullable();
+            $table->string('video_url')->nullable();
             $table->string('gallery_images')->nullable();
             $table->string('warranty')->nullable(); //[ { "warranty_period": 5,    "warranty_text": " Years for Compressor"  }, { "warranty_period": 2,    "warranty_text": " Years for Spare Parts"  }]
             $table->string('class')->nullable(); //This will control product attribute, different attribute for food/medicine/cloth

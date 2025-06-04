@@ -51,12 +51,6 @@ class FlashSaleAllProductPublicResource extends JsonResource
                 ? round((($firstVariant->price - $firstVariant->special_price) / $firstVariant->price) * 100, 2)
                 : 0,
             'flash_sale' => $this->product?->isInFlashDeal(),
-//            'price' => optional($this->product?->variants->first())->price,
-//            'special_price' => optional($this->product?->variants->first())->special_price,
-//            'singleVariant' => $this->product?->variants->count() === 1 ? [$this->product?->variants->first()] : [],
-//            'discount_percentage' => $this->product?->variants->isNotEmpty() && optional($this->product?->variants->first())->price > 0 && optional($this->product?->variants->first())->special_price > 0
-//                ? round(((optional($this->product?->variants->first())->price - optional($this->product?->variants->first())->special_price) / optional($this->product?->variants->first())->price) * 100, 2)
-//                : 0,
         ];
     }
 }
