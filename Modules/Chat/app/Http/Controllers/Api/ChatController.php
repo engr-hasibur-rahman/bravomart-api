@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -145,6 +146,12 @@ class ChatController extends Controller
             $filename = time() . '_' . Str::random(10) . '.' . $extension;
             $uploadPath = 'uploads/chat/' . $filename;
             $fullPath = storage_path('app/public/' . $uploadPath);
+            $directory = dirname($fullPath);
+
+            // Ensure the directory exists
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
 
             // Image files
             if (in_array($extension, ['png', 'jpg', 'jpeg', 'webp', 'gif'])) {
@@ -167,7 +174,7 @@ class ChatController extends Controller
 
         try {
             //  broadcast with Pusher
-            event(new \App\Events\MessageSent($message));
+           // event(new \App\Events\MessageSent($message));
         }catch (\Exception $e){}
 
         return response()->json([
@@ -176,153 +183,5 @@ class ChatController extends Controller
             'message' => 'Message sent Successfully',
         ]);
     }
-    public function chatList(Request $request)
-    {
 
-        $auth_user = auth()->guard('api')->user();
-        $chat = Chat::where('user_id', $auth_user->id)->first();
-
-        if (!$chat) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Chats not found',
-            ]);
-        }
-
-        $auth_id = $auth_user->id;
-        $auth_type = $auth_user->activity_scope ?? 'admin';
-
-        // admin lists
-        if ($auth_type === 'system_level') {
-            // get admin sent message chat_ids
-            $admin_sent_chat_ids = ChatMessage::where('sender_id', $auth_id)
-                ->where('sender_type', 'admin')
-                ->pluck('chat_id');
-            // get admin received message chat_ids
-            $admin_received_chat_ids = ChatMessage::where('receiver_id', $auth_id)
-                ->where('receiver_type', 'admin')
-                ->pluck('chat_id');
-            // Merge both collections and get unique chat_ids
-            $all_admin_chat_ids = $admin_sent_chat_ids->merge($admin_received_chat_ids)->unique();
-            $all_chat_lists = Chat::with('user')->whereIn('id', $all_admin_chat_ids)->paginate(20);
-        }
-
-        // store lists
-        if ($auth_type === 'store_level') {
-            // get admin sent message chat_ids
-            $admin_sent_chat_ids = ChatMessage::where('sender_id', $auth_id)
-                ->where('sender_type', 'store')
-                ->pluck('chat_id');
-            // get admin received message chat_ids
-            $admin_received_chat_ids = ChatMessage::where('receiver_id', $auth_id)
-                ->where('receiver_type', 'store')
-                ->pluck('chat_id');
-            // Merge both collections and get unique chat_ids
-            $all_admin_chat_ids = $admin_sent_chat_ids->merge($admin_received_chat_ids)->unique();
-            $all_chat_lists = Chat::with('user')->whereIn('id', $all_admin_chat_ids)->paginate(20);
-        }
-
-
-        return response()->json([
-            'success'  => true,
-            'data' => ChatListResource::collection($all_chat_lists)
-        ]);
-    }
-    public function adminChatList(Request $request)
-    {
-
-        $auth_user = auth()->guard('api')->user();
-        $auth_id = $auth_user->id;
-        $auth_type = 'admin';
-
-        $chat = Chat::where('user_id', $auth_id)
-            ->where('user_type', $auth_type)
-            ->first();
-
-        if (!$chat) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Chats not found',
-            ]);
-        }
-
-        $chats = Chat::with('user')
-            ->where('user_type', '!=', 'admin')
-            ->paginate(500);
-
-
-        return response()->json([
-            'success'  => true,
-            'data' => ChatListResource::collection($chats)
-        ]);
-    }
-    public function chatWiseFetchMessages(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'receiver_id'   => 'required|integer',
-            'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
-            'search'        => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors'  => $validator->errors(),
-            ], 422);
-        }
-
-        $auth_id = auth()->guard('api')->user()->id;
-        $chat = Chat::where('user_id',$auth_id)->first();
-
-        if (empty($chat)) {
-            return response()->json([
-                'success' => false,
-                'message'  => 'Chats not found',
-            ]);
-        }
-
-
-        $auth_type = 'admin';
-
-        $receiver_id = $request->receiver_id;
-        $receiver_type = $request->receiver_type;
-
-        // get message
-        $message_query = ChatMessage::query()
-            ->where(function ($query) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
-                $query->where(function ($q) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
-                    $q->where('sender_id', $auth_id)
-                        ->where('sender_type', $auth_type)
-                        ->where('receiver_id', $receiver_id)
-                        ->where('receiver_type', $receiver_type);
-                })->orWhere(function ($q) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
-                    $q->where('sender_id', $receiver_id)
-                        ->where('sender_type', $receiver_type)
-                        ->where('receiver_id', $auth_id)
-                        ->where('receiver_type', $auth_type);
-                });
-            });
-
-        $unread_message = (clone $message_query)->where('is_seen', 0)->count();
-        (clone $message_query)->where('is_seen', 1)->update(['is_seen' => 1]);
-
-        $messages = $message_query
-            ->orderBy('created_at', 'asc')
-            ->paginate(500);
-
-        return response()->json([
-            'success'  => true,
-            'unread_message' => $unread_message,
-            'data' => ChatMessageDetailsResource::collection($messages)
-        ]);
-    }
-    public function markAsSeen(Request $request)
-    {
-        ChatMessage::where('chat_id', $request->chat_id)
-            ->where('receiver_id', auth()->id())
-            ->where('is_seen', 0)
-            ->update(['is_seen' => 1]);
-
-        return response()->json(['success' => true]);
-    }
 }

@@ -2,6 +2,7 @@
 
 use App\Enums\PermissionKey;
 use Illuminate\Support\Facades\Route;
+use Modules\Chat\app\Http\Controllers\Api\AdminChatController;
 use Modules\Chat\app\Http\Controllers\Api\AdminChatManageController;
 use Modules\Chat\app\Http\Controllers\Api\ChatController;
 use Modules\Chat\app\Http\Controllers\Api\ChatManageController;
@@ -18,10 +19,10 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/chat/')->group(function ()
 
     // prefix manage
     Route::prefix('manage/')->middleware(['permission:' . PermissionKey::ADMIN_CHAT_MANAGE->value])->group(function () {
-        Route::get('list', [ChatController::class, 'adminChatList']);
+        Route::get('list', [AdminChatController::class, 'adminChatList']);
         Route::post('send', [ChatController::class, 'sendMessage']);
-        Route::get('messages-details', [ChatController::class, 'chatWiseFetchMessages']);
-        Route::post('chat/seen', [ChatController::class, 'markAsSeen']);
+        Route::get('messages-details', [AdminChatController::class, 'chatWiseFetchMessages']);
+        Route::post('chat/seen', [AdminChatController::class, 'markAsSeen']);
     });
 });
 
