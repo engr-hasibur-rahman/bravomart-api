@@ -28,6 +28,16 @@ class DeliverymanManageController extends Controller
 
     public function registration(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8|max12',
+            'phone' => 'required|unique:users,phone',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
         if (User::where('email', $request->email)->exists()) {
             return response()->json([
                 'status' => false,
@@ -294,7 +304,7 @@ class DeliverymanManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'old_password' => 'required|string|min:8|max:15',
-            'new_password' => 'required|string|min:8|max:15|confirmed'
+            'new_password' => 'required|string|min:8|max:15'
         ]);
 
         if ($validator->fails()) {
