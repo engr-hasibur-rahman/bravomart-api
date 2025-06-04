@@ -33,6 +33,7 @@ class RelatedProductPublicResource extends JsonResource
                 : $this->description, // If language is empty or not provided attribute
             'image' => $this->image,
             'image_url' => ImageModifier::generateImageUrl($this->image),
+            'max_cart_qty' => $this->max_cart_qty,
             'views' => $this->views,
             'singleVariant' => $this->variants->count() === 1 ? [$this->variants->first()] : [],
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,

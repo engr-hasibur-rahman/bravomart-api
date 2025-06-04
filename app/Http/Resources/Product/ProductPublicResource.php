@@ -55,6 +55,7 @@ class ProductPublicResource extends JsonResource
             'wishlist' => auth('api_customer')->check() ? $this->wishlist : false, // Check if the customer is logged in,
             'rating' => number_format((float)$this->rating, 2, '.', ''),
             'review_count' => $this->review_count,
+            'max_cart_qty' => $this->max_cart_qty,
             'stock' => $this->variants->isNotEmpty() ? $this->variants->sum('stock_quantity') : null,
             'attributes' => $this->variants->pluck('attributes')->map(function ($attribute) {
                 return json_decode($attribute, true);

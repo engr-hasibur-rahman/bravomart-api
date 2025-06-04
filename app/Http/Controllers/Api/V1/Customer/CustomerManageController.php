@@ -56,9 +56,8 @@ class CustomerManageController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 "status" => false,
-                "status_code" => 500,
                 "message" => $validator->errors()
-            ]);
+            ],422);
         }
 
         $customer = Customer::where('email', $request->email)
@@ -66,9 +65,8 @@ class CustomerManageController extends Controller
         if (!$customer) {
             return response()->json([
                 "status" => false,
-                "status_code" => 204,
                 "message" => __('messages.customer.not.found'),
-            ]);
+            ],204);
         }
 
         // update firebase device token
@@ -98,10 +96,9 @@ class CustomerManageController extends Controller
         if (!$authCustomer) {
             return response()->json([
                 "status" => false,
-                "status_code" => 204,
                 "message" => __('messages.wrong_credential'),
                 "token" => null,
-            ]);
+            ],204);
         } else {
             // Handle the "Remember Me" option
             $remember_me = $request->has('remember_me');
