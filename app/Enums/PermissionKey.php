@@ -183,6 +183,7 @@ enum PermissionKey: string
 
     case PAGE_SETTINGS = '/admin/system-management/page-settings';
     case REGISTER_PAGE_SETTINGS = '/admin/system-management/page-settings/register';
+    case HOME_PAGE_SETTINGS = '/admin/system-management/page-settings/home';
     case LOGIN_PAGE_SETTINGS = '/admin/system-management/page-settings/login';
     case PRODUCT_DETAILS_PAGE_SETTINGS = '/admin/system-management/page-settings/product-details';
     case BLOG_PAGE_SETTINGS = '/admin/system-management/page-settings/blog-details';

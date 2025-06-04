@@ -1,11 +1,8 @@
 <?php
 
-namespace Modules\Chat\app\Http\Controllers;
+namespace Modules\Chat\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use GPBMetadata\Google\Api\Auth;
-use Illuminate\Http\Request;
-use Modules\Chat\app\Models\Chat;
 
 class ChatManageController extends Controller
 {

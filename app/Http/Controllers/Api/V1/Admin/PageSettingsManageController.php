@@ -24,6 +24,111 @@ class PageSettingsManageController extends Controller
         return $this->get_com_option->translationKeys;
     }
 
+    public function homeSettings(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $validatedData = $request->validate([
+                'com_home_one_category_button_title' => 'nullable|string',
+                'com_home_one_store_button_title' => 'nullable|string',
+                'com_home_one_category_section_title' => 'nullable|string',
+                'com_home_one_flash_sale_section_title' => 'nullable|string',
+                'com_home_one_featured_section_title' => 'nullable|string',
+                'com_home_one_top_selling_section_title' => 'nullable|string',
+                'com_home_one_latest_product_section_title' => 'nullable|string',
+                'com_home_one_popular_product_section_title' => 'nullable|string',
+                'com_home_one_top_store_section_title' => 'nullable|string',
+            ]);
+
+            // Update settings in DB
+            $fields = [
+                'com_home_one_category_button_title',
+                'com_home_one_store_button_title',
+                'com_home_one_category_section_title',
+                'com_home_one_flash_sale_section_title',
+                'com_home_one_featured_section_title',
+                'com_home_one_top_selling_section_title',
+                'com_home_one_latest_product_section_title',
+                'com_home_one_popular_product_section_title',
+                'com_home_one_top_store_section_title',
+            ];
+
+            foreach ($fields as $field) {
+                com_option_update($field, $validatedData[$field] ?? null);
+            }
+
+            // Handle translations
+            $settingOptions = SettingOption::whereIn('option_name', [
+                'com_home_one_category_button_title',
+                'com_home_one_store_button_title',
+                'com_home_one_category_section_title',
+                'com_home_one_flash_sale_section_title',
+                'com_home_one_featured_section_title',
+                'com_home_one_top_selling_section_title',
+                'com_home_one_latest_product_section_title',
+                'com_home_one_popular_product_section_title',
+                'com_home_one_top_store_section_title',
+            ])->pluck('id', 'option_name');
+
+            foreach ($settingOptions as $optionName => $optionId) {
+                createOrUpdateTranslation($request, $optionId, 'App\Models\SettingOption', [$optionName]);
+            }
+
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Home Page Settings']),
+            ]);
+
+        } else {
+            // Create an instance of ImageModifier
+            $imageModifier = new ImageModifier();
+
+            $ComOptionGet = SettingOption::with('related_translations')
+                ->whereIn('option_name', [
+                    'com_home_one_category_button_title',
+                    'com_home_one_store_button_title',
+                    'com_home_one_category_section_title',
+                    'com_home_one_flash_sale_section_title',
+                    'com_home_one_featured_section_title',
+                    'com_home_one_top_selling_section_title',
+                    'com_home_one_latest_product_section_title',
+                    'com_home_one_popular_product_section_title',
+                    'com_home_one_top_store_section_title'
+                ])
+                ->get(['id']);
+            $translations = $ComOptionGet->flatMap(function ($settingOption) {
+                return $settingOption->related_translations->map(function ($translation) {
+                    return [
+                        'language' => $translation->language,
+                        'key' => $translation->key,
+                        'value' => trim($translation->value, '"'), // Removes extra quotes
+                    ];
+                });
+            })->groupBy('language')->map(function ($items, $language) {
+                return array_merge(
+                    ['language_code' => $language],
+                    $items->pluck('value', 'key')->toArray()
+                );
+            })->toArray();
+
+            $fields = [
+                'com_home_one_category_button_title' => com_option_get('com_home_one_category_button_title'),
+                'com_home_one_store_button_title' => com_option_get('com_home_one_store_button_title'),
+                'com_home_one_category_section_title' => com_option_get('com_home_one_category_section_title'),
+                'com_home_one_flash_sale_section_title' => com_option_get('com_home_one_flash_sale_section_title'),
+                'com_home_one_featured_section_title' => $imageModifier->generateImageUrl(com_option_get('com_home_one_featured_section_title')),
+                'com_home_one_top_selling_section_title' => com_option_get('com_home_one_top_selling_section_title'),
+                'com_home_one_latest_product_section_title' => com_option_get('com_home_one_latest_product_section_title'),
+                'com_home_one_popular_product_section_title' => com_option_get('com_home_one_popular_product_section_title'),
+                'com_home_one_top_store_section_title' => com_option_get('com_home_one_top_store_section_title'),
+                'translations' => $translations
+            ];
+
+            return response()->json([
+                'data' => $fields,
+            ]);
+        }
+
+    }
+
     public function registerSettings(Request $request)
     {
         if ($request->isMethod('POST')) {

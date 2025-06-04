@@ -619,6 +619,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::match(['get', 'post'], '/general-settings', [SystemManagementController::class, 'generalSettings'])->middleware('permission:' . PermissionKey::GENERAL_SETTINGS->value);
             // all pages settings
             Route::group(['prefix' => 'page-settings/', 'middleware' => 'permission:' . PermissionKey::PAGE_SETTINGS->value], function () {
+                Route::match(['get', 'post'], 'home', [PageSettingsManageController::class, 'homeSettings'])->middleware('permission:' . PermissionKey::HOME_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'register', [PageSettingsManageController::class, 'registerSettings'])->middleware('permission:' . PermissionKey::REGISTER_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'login', [PageSettingsManageController::class, 'loginSettings'])->middleware('permission:' . PermissionKey::LOGIN_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'product-details', [PageSettingsManageController::class, 'ProductDetailsSettings'])->middleware('permission:' . PermissionKey::PRODUCT_DETAILS_PAGE_SETTINGS->value);
