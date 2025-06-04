@@ -26,6 +26,7 @@ class Product extends Model
         "slug",
         "description",
         "image",
+        "video_url",
         "gallery_images",
         "warranty",
         "return_in_days",
