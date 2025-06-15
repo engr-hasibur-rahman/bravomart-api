@@ -16,7 +16,9 @@ class FrontendPageSettingsController extends Controller
     public function __construct(
         protected TranslationInterface $transRepo,
         protected SettingOption        $get_com_option,
-    ) {}
+    )
+    {
+    }
 
     public function translationKeys(): mixed
     {
@@ -59,6 +61,47 @@ class FrontendPageSettingsController extends Controller
     }
 
 
+    public function HomePageSettings(Request $request)
+    {
+        $language = $request->input('language', 'en'); // Default language is 'en'
+
+        $ComOptionGet = SettingOption::with('translations')
+            ->whereIn('option_name', [
+                'com_home_one_category_button_title',
+                'com_home_one_store_button_title',
+                'com_home_one_category_section_title',
+                'com_home_one_flash_sale_section_title',
+                'com_home_one_featured_section_title',
+                'com_home_one_top_selling_section_title',
+                'com_home_one_latest_product_section_title',
+                'com_home_one_popular_product_section_title',
+                'com_home_one_top_store_section_title',
+            ])->get();
+
+        // Default settings
+        $page_settings = [
+            'com_home_one_category_button_title' => com_option_get('com_home_one_category_button_title') ?? '',
+            'com_home_one_store_button_title' => com_option_get('com_home_one_store_button_title') ?? '',
+            'com_home_one_category_section_title' => com_option_get('com_home_one_category_section_title') ?? '',
+            'com_home_one_flash_sale_section_title' => com_option_get('com_home_one_flash_sale_section_title') ?? '',
+            'com_home_one_featured_section_title' => com_option_get('com_home_one_featured_section_title') ?? '',
+            'com_home_one_top_selling_section_title' => com_option_get('com_home_one_top_selling_section_title') ?? '',
+            'com_home_one_latest_product_section_title' => com_option_get('com_home_one_latest_product_section_title') ?? '',
+            'com_home_one_popular_product_section_title' => com_option_get('com_home_one_popular_product_section_title') ?? '',
+            'com_home_one_top_store_section_title' => com_option_get('com_home_one_top_store_section_title') ?? '',
+        ];
+
+        // Replace with translation values based on requested language
+        foreach ($ComOptionGet as $settingOption) {
+            $translation = $settingOption->translations->where('language', $language)->first();
+
+            if ($translation) {
+                $page_settings[$settingOption->option_name] = trim($translation->value, '"');
+            }
+        }
+        return response()->json(['data' => $page_settings]);
+    }
+
     public function LoginPageSettings(Request $request)
     {
         $language = $request->input('language', 'en'); // Default language is 'en'
@@ -95,6 +138,7 @@ class FrontendPageSettingsController extends Controller
         }
         return response()->json(['data' => $page_settings]);
     }
+
     public function productDetailsPageSettings(Request $request)
     {
         $language = $request->input('language', 'en'); // Default language is 'en'

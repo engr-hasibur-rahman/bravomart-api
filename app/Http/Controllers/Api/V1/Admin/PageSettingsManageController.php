@@ -78,9 +78,6 @@ class PageSettingsManageController extends Controller
             ]);
 
         } else {
-            // Create an instance of ImageModifier
-            $imageModifier = new ImageModifier();
-
             $ComOptionGet = SettingOption::with('related_translations')
                 ->whereIn('option_name', [
                     'com_home_one_category_button_title',
@@ -114,7 +111,7 @@ class PageSettingsManageController extends Controller
                 'com_home_one_store_button_title' => com_option_get('com_home_one_store_button_title'),
                 'com_home_one_category_section_title' => com_option_get('com_home_one_category_section_title'),
                 'com_home_one_flash_sale_section_title' => com_option_get('com_home_one_flash_sale_section_title'),
-                'com_home_one_featured_section_title' => $imageModifier->generateImageUrl(com_option_get('com_home_one_featured_section_title')),
+                'com_home_one_featured_section_title' => com_option_get('com_home_one_featured_section_title'),
                 'com_home_one_top_selling_section_title' => com_option_get('com_home_one_top_selling_section_title'),
                 'com_home_one_latest_product_section_title' => com_option_get('com_home_one_latest_product_section_title'),
                 'com_home_one_popular_product_section_title' => com_option_get('com_home_one_popular_product_section_title'),

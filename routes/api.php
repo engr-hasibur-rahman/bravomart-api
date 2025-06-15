@@ -152,6 +152,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/about-page-settings', [FrontendPageSettingsController::class, 'AboutPageSettings']);
     Route::get('/contact-page-settings', [FrontendPageSettingsController::class, 'ContactPageSettings']);
     Route::get('/register-page-settings', [FrontendPageSettingsController::class, 'RegisterPageSettings']);
+    Route::get('/home-page-settings', [FrontendPageSettingsController::class, 'HomePageSettings']);
     Route::get('/login-page-settings', [FrontendPageSettingsController::class, 'LoginPageSettings']);
     Route::get('/blog-page-settings', [FrontendPageSettingsController::class, 'BlogPageSettings']);
     Route::get('/product-details-page-settings', [FrontendPageSettingsController::class, 'productDetailsPageSettings']);

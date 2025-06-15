@@ -16,7 +16,7 @@ h1 {
 
 .container {
     max-width: 1440px;
-    margin: 60px auto;
+    margin: 100px;
     background-color: #fff;
     border-radius: 10px;
     padding: 100px;
@@ -24,6 +24,7 @@ h1 {
     justify-content: space-between;
     align-items: stretch; /* Make both children equal height */
     gap: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .card {
@@ -34,7 +35,7 @@ h1 {
     background-color: #fff;
     border-radius: 10px;
     max-width: 1440px;
-    margin: 100px;
+    margin: 60px auto;
     padding: 100px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
@@ -382,7 +383,7 @@ p.subtitle {
 
     .right {
         align-items: center;
-        width: 53%;
+        width: 70%;
     }
 
     .info-boxes {
@@ -391,17 +392,27 @@ p.subtitle {
     }
 
     .right img {
-        padding: 25px;
-        max-width: 40%;
+        padding: 12.5px;
+        max-width: 75%;
     }
 
     .right .cta {
-        padding: 25px;
+        align-items: center;
+        padding: 20px;
         text-align: center;
-        margin-top: 20px;
         display: flex;
         flex-direction: column;
         gap: 20px;
+    }
+
+    .cta a.button {
+        width: 50%;
+        font-size: 12px;
+        padding: 10px 16px;
+    }
+
+    .cta a.source {
+        font-size: 11.5px;
     }
     .success-message {
         height: 340px;
