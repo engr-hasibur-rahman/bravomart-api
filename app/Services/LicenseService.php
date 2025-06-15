@@ -22,9 +22,10 @@ class LicenseService
 
         // Unique signature hash (prevents fake requests)
         $signature = hash_hmac('sha256', $licenseKey . $envatoUsername . $siteUrl, 'bravosoft');
+        // Build the license activate URL properly
+        $apiUrl = $this->getMainApiUrl()."/license-activate/{$licenseKey}".$envatoUsername;
 
-        $response = Http::post(
-            $this->getMainApiUrl()."/license/activate/{$licenseKey}".$envatoUsername, [
+        $response = Http::post($apiUrl,[
             'signature'     => $signature,
             'agent'     => $user_agent,
             'site' => $siteUrl,
@@ -39,7 +40,7 @@ class LicenseService
         $result = $response->object();
         $message = "Activation failed. Please retry or contact support.";
 
-        // check data
+        // Check if HTTP response is OK
         if ($result->status() === 200) {
             if (property_exists($result, 'success') && $result->success === true) {
                 return [
@@ -82,7 +83,7 @@ class LicenseService
 
     private function getMainApiUrl()
     {
-        return 'https://barvosoft-license-server.com/api/';
+        return 'https://barvosoft-license-server.com/api';
     }
 
 }

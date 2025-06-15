@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Modules\Chat\app\Models\Chat;
+use Modules\Chat\app\Models\ChatMessage;
 use Modules\Wallet\app\Models\Wallet;
 
 //use NotificationChannels\WebPush\HasPushSubscriptions;
@@ -173,6 +175,21 @@ class User extends Authenticatable
         if (!$this->online_at) return false;
 
         return $this->online_at->gt(now()->subMinutes(5)); // 5-minute window
+    }
+
+    public function chats()
+    {
+        return $this->morphMany(Chat::class, 'user');
+    }
+
+    public function sentMessages()
+    {
+        return $this->morphMany(ChatMessage::class, 'sender');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->morphMany(ChatMessage::class, 'receiver');
     }
 
 
