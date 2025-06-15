@@ -8,80 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="assets/css/style.css" rel="stylesheet">
-    <style>
-        .form-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .form-group {
-            position: relative;
-            flex: 1;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #444;
-        }
-
-        .form-group input {
-            width: 100%;
-            height: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #1A73E8;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #1A73E8;
-        }
-
-        .divider {
-            height: 1px;
-            background-color: #eee;
-            margin: 30px 0;
-        }
-
-        .button-container {
-            margin-top: 40px;
-            text-align: center;
-        }
-
-        .submit-btn {
-            text-align: center;
-            background-color: #1A73E8;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 25%;
-            transition: background-color 0.3s;
-        }
-
-        .submit-btn:hover {
-            background-color: #0d5bba;
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                padding: 30px;
-                margin: 30px 20px;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -128,7 +54,7 @@
                     <label for="password">Password</label>
 
                     <div class="input-wrapper">
-                        <input type="password" id="password" name="password" placeholder="Password" required>
+                        <input type="password" id="password" name="password" placeholder="Password" min="8" max="12" required>
                         <span class="toggle-password-icon" onclick="togglePassword(this)">
                             <i class="fa-solid fa-eye-slash"></i>
                         </span>
@@ -147,7 +73,8 @@
             </div>
 
             <div class="button-container">
-                <button type="submit" class="submit-btn">
+                <p>Please fill up the correct admin details.</p>
+                <button type="submit" class="button">
                     Create Admin
                 </button>
             </div>

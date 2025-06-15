@@ -11,7 +11,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // customer and user
+        $this->call(UserSeeder::class);
+        $this->call(CustomerSeeder::class);
         // role & permission
+        $this->call(RolesSeeder::class);
         $this->call(ModelHasRolesSeeder::class);
         $this->call(PermissionAdminSeeder::class);
         $this->call(PermissionStoreSeeder::class);
@@ -27,9 +31,6 @@ class DatabaseSeeder extends Seeder
         $this->call(StoreAreaSettingRangeChargeSeeder::class);
         $this->call(StoreAreaSettingStoreTypeSeeder::class);
 
-        // customer and user
-        $this->call(UserSeeder::class);
-        $this->call(CustomerSeeder::class);
         // unit brand
         $this->call(BrandSeeder::class);
         $this->call(UnitSeeder::class);
@@ -49,7 +50,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DepartmentSeeder::class);
 //        $this->call(SliderSeeder::class);
         $this->call(BannerSeeder::class);
-        $this->call(RolesSeeder::class);
         $this->call(CouponSeeder::class);
         $this->call(ReviewSeeder::class);
         $this->call(EmailTemplateSeeder::class);
