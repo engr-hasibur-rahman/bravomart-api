@@ -1,3 +1,12 @@
+<?php
+$allMet = true;
+foreach ($folders as $key => $isWritable) {
+    if (!$isWritable) {
+        $allMet = false;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,21 +15,9 @@
     <title>Installation - Step 1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/toast.css" rel="stylesheet">
+    <?php include 'views/partials/toast.php'; ?>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: #002366;
-            color: #333;
-        }
-
-        h1 {
-            text-align: center;
-            color: #fff;
-            font-size: 28px;
-            margin-top: 40px;
-        }
-
         p.subtitle {
             text-align: center;
             color: #ddd;
@@ -113,28 +110,30 @@
             <div class="permission-box"><span class="permission-name"><?= $folder ?></span><span
                         class="permission-status"><?= $status ? '&#10003;' : '&#10060;' ?></span></div>
         <?php endforeach; ?>
-        <!--        <div class="permission-box"><span class="permission-name">Observer Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Repository Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Service Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Json Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Mbstring Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Openssl Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Xml Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Zip Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Tokenizer Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Intervention Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">File Info Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Pdo Mysql Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">RouteServiceProvider.Php File</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Storage Enabled</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">.Env File Permission</span><span class="permission-status">&#10003;</span></div>-->
-        <!--        <div class="permission-box"><span class="permission-name">Helper Enabled</span><span class="permission-status">&#10003;</span></div>-->
     </div>
 
     <div class="button-container">
         <p>All set with the permissions?</p>
-        <a href="?step=environment" class="button">Get Started</a>
+        <a id="nextBtnPermissions"
+                class="button"
+                href="<?= $allMet ? '?step=permissions' : '#' ?>"
+                data-all-met="<?= $allMet ? '1' : '0' ?>">
+                Next
+            </a>
     </div>
 </div>
+<script src="assets/js/toast.js"></script>
+        <script>
+            const nextBtn = document.getElementById('nextBtnPermissions');
+
+            nextBtn?.addEventListener('click', function(e) {
+                const allMet = this.dataset.allMet === '1';
+
+                if (!allMet) {
+                    e.preventDefault();
+                    showToast("Please give all the neccessary permissions to procceed further.");
+                }
+            });
+        </script>
 </body>
 </html>
