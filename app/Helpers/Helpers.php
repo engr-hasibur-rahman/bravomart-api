@@ -430,6 +430,7 @@ if (!function_exists('translate')) {
             }
         }
         $string_data = substr($string_data, 0, -1);
+
         if (!file_put_contents($env_data_file, $string_data)) return false;
         return true;
     }

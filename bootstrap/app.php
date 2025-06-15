@@ -33,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'verify_api_csrf_token' => \App\Http\Middleware\VerifyApiCsrfToken::class,
+            'online.track' => \App\Http\Middleware\UpdateOnlineAt::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

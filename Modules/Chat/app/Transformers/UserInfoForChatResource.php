@@ -26,6 +26,7 @@ class UserInfoForChatResource extends JsonResource
             'email'    => $this->email,
             'activity_scope'    => $this->activity_scope,
             'image'    => ImageModifier::generateImageUrl($this->image),
+            'is_online'    => $this->is_online,
         ];
     }
 }
