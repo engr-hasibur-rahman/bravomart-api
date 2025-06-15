@@ -5,6 +5,9 @@ body {
     font-family: "Inter", sans-serif;
     background-color: #002366;
     color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 h1 {
@@ -16,7 +19,7 @@ h1 {
 
 .container {
     max-width: 1440px;
-    margin: 100px;
+    margin: 100px 50px;
     background-color: #fff;
     border-radius: 10px;
     padding: 100px;
@@ -35,7 +38,7 @@ h1 {
     background-color: #fff;
     border-radius: 10px;
     max-width: 1440px;
-    margin: 60px auto;
+    margin: 100px 50px;
     padding: 100px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
@@ -373,7 +376,8 @@ p.subtitle {
     .container {
         align-items: center;
         flex-direction: column;
-        padding: 60px;
+        padding: 30px;
+        margin: 30px 30px;
     }
 
     .left {
@@ -621,14 +625,14 @@ p.subtitle {
     p.subtitle {
         text-align: center;
         color: #ddd;
-        margin: 6px 0;
-        font-size: 14px;
+        margin: 6px 24px;
+        font-size: 12px;
     }
 
     p {
         text-align: center;
         margin: 6px 0;
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .steps {
@@ -647,7 +651,7 @@ p.subtitle {
 
     .card {
         padding: 30px;
-        margin: 30px 20px;
+        margin: 30px 30px;
     }
 
     .card h2 {
@@ -784,5 +788,43 @@ p.subtitle {
     .option-item {
         font-size: 14px;
         height: 25px;
+    }
+    .right img{
+        display: none;
+    }
+
+    .container {
+        align-items: center;
+        flex-direction: column;
+        padding: 30px;
+        margin: 30px 30px;
+    }
+    .left h2{
+        font-size: large;
+    }
+    .left p{
+        font-size: small;
+    }
+    .info-box{
+        width: 100px;
+    }
+    .right{
+        width: 140px;
+    }
+    .right .cta {
+        align-items: center;
+        padding: 12.5px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .cta a.button {
+        width: 48%;
+        font-size: 10px;
+        padding: 8px 8px;
+    }
+    .cta a.source {
+        font-size: 8.5px;
     }
 }
