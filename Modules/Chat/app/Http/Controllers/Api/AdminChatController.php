@@ -34,7 +34,7 @@ class AdminChatController extends Controller
 
         $query = Chat::with('user') ->where('user_type', '!=', 'admin');
 
-        $name = $request->input('name');
+        $name = $request->input('search');
         if ($name) {
             $query->where(function ($q) use ($name) {
 
