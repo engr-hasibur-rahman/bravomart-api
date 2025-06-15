@@ -66,10 +66,9 @@ class OrderService
             foreach ($data['packages'] as $packageData) {
                 // if type subscription
                 $store = Store::find($packageData['store_id']);
-                dd(123);
 
                 // subscription check start
-                if ($store->subscription_type === 'subscription') {
+                if ($store->subscription_type == 'subscription') {
                     // check store subscription package
                     $store_subscription = StoreSubscription::where('store_id', $store->id)
                         ->whereDate('expire_date', '>=', now())
