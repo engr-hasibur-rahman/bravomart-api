@@ -21,7 +21,7 @@
     <a class="step"></a>
 </div>
 
-<div class="container">
+<div class="card">
     <div class="left">
         <h2>Database Setup Information</h2>
         <p>Ensure the following information is ready before installation. It’s required to complete the process.</p>

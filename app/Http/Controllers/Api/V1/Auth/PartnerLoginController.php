@@ -86,7 +86,10 @@ class PartnerLoginController extends Controller
 
         // Set token expiration dynamically
         config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
-
+        // update firebase device token
+        $user->update([
+            'firebase_token' => $request->firebase_device_token,
+        ]);
         return [
             "success" => true,
             "message" => __('messages.login_success', ['name' => 'Seller']),

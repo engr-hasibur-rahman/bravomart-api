@@ -41,10 +41,6 @@ class InstallController
 
         $folders = [
             'Storage (storage/)' => is_writable($storagePath),
-            'Storage Logs (storage/logs)' => is_writable($storagePath . '/logs'),
-            'Storage Framework (storage/framework)' => is_writable($storagePath . '/framework'),
-            'Storage Framework Cache (storage/framework/cache)' => is_writable($storagePath . '/framework/cache'),
-            'Storage Framework Views (storage/framework/views)' => is_writable($storagePath . '/framework/views'),
             'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
             'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
             'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),

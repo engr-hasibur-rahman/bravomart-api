@@ -19,44 +19,6 @@ foreach ($requirements['extensions'] as $key => $isLoaded) {
     <link href="assets/css/toast.css" rel="stylesheet">
     <?php include 'views/partials/toast.php'; ?>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: #002366;
-            color: #333;
-        }
-
-        h1 {
-            text-align: center;
-            color: #fff;
-            font-size: 28px;
-            margin-top: 40px;
-        }
-
-        p.subtitle {
-            text-align: center;
-            color: #ddd;
-            margin-bottom: 20px;
-        }
-
-        .steps {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .step {
-            width: 50px;
-            height: 20px;
-            background-color: #89a7e0;
-            margin: 0 5px;
-            border-radius: 10px;
-        }
-
-        .step.active {
-            background-color: #fff;
-        }
-
         .permission-box {
             background-color: #f8f9fa;
             border-radius: 8px;
@@ -81,20 +43,6 @@ foreach ($requirements['extensions'] as $key => $isLoaded) {
             font-size: 18px;
         }
 
-
-        .button-container p {
-            margin-bottom: 12px;
-        }
-
-        .button-container .button {
-            max-width: 250px;
-            background-color: #1A73E8;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 16px;
-        }
     </style>
 </head>
 

@@ -11,81 +11,6 @@
     <link href="assets/css/toast.css" rel="stylesheet">
     <link href="assets/css/loader.css" rel="stylesheet">
     <?php include 'views/partials/toast.php'; ?>
-    <style>
-        .form-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .form-group {
-            position: relative;
-            /* Needed for absolute icon positioning */
-            flex: 1;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #444;
-        }
-
-        .form-group input {
-            width: 100%;
-            height: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #1A73E8;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #1A73E8;
-        }
-
-        .divider {
-            height: 1px;
-            background-color: #eee;
-            margin: 30px 0;
-        }
-
-        .button-container {
-            margin-top: 40px;
-            text-align: center;
-        }
-
-        .submit-btn {
-            text-align: center;
-            background-color: #1A73E8;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 25%;
-            transition: background-color 0.3s;
-        }
-
-        .submit-btn:hover {
-            background-color: #0d5bba;
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                padding: 30px;
-                margin: 30px 20px;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -145,7 +70,8 @@
             </div>
 
             <div class="button-container">
-                <button type="submit" class="submit-btn">Next</button>
+                <p>Please fill up the correct environment details.</p>
+                <button type="submit" class="button">Next</button>
             </div>
         </form>
     </div>
