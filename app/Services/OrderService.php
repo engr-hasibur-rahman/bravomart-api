@@ -80,7 +80,7 @@ class OrderService
                     }
                     $total_store_order = Order::whereNotIn('status', ['pending', 'cancelled', 'on_hold'])->count();
                     // check order limit
-                    if (!empty($store_subscription) && $store_subscription->order_limit <= $total_store_order) {
+                    if (!empty($store_subscription) && $store_subscription->order_limit <= 0) {
                         return false;
                     }
                 } // subscription check end
