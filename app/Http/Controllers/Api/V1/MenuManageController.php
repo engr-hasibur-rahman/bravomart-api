@@ -231,7 +231,7 @@ class  MenuManageController extends Controller
             return response()->json(['message' => 'Menu not found'], 404);
         }
 
-// Check if has children
+        // Check if has children
         if ($menu->children()->count() > 0) {
             return response()->json(['message' => 'Cannot delete a menu that has child menus'], 400);
         }

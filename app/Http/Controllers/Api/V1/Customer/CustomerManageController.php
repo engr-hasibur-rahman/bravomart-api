@@ -118,38 +118,6 @@ class CustomerManageController extends Controller
         }
     }
     /* ---------------------------------------------------------- Reset and Verification -------------------------------------------------------- */
-    // Send verification email
-//    public function sendVerificationEmail(Request $request)
-//    {
-//        $validator = Validator::make($request->all(), [
-//            'email' => 'required|string|email|max:255',
-//        ]);
-//        if ($validator->fails()) {
-//            return response()->json([
-//                "status" => false,
-//                "status_code" => 500,
-//                "message" => $validator->errors()
-//            ]);
-//        }
-//        try {
-//            $result = $this->customerRepo->sendVerificationEmail($request->email);
-//
-//            if (!$result) {
-//                return response()->json([
-//                    'status' => false,
-//                    'status_code' => 500,
-//                    'message' => __('messages.data_not_found')
-//                ], 404);
-//            }
-//            return response()->json(['status' => true, 'message' => 'Verification email sent.']);
-//        } catch (\Exception $e) {
-//            return response()->json([
-//                'status' => false,
-//                'status_code' => 500,
-//                'message' => $e->getMessage()
-//            ]);
-//        }
-//    }
 
     // Verify email with token
     public function verifyEmail(Request $request)
@@ -648,6 +616,6 @@ class CustomerManageController extends Controller
         return response()->json([
             'message' => __('messages.account_marketing_notification_update_success'),
             'status' => $customer->marketing_email
-        ], 200);
+        ]);
     }
 }

@@ -23,7 +23,6 @@ use App\Enums\PermissionKey;
 
 class PermissionController extends Controller
 {
-
     public function getpermissions(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
@@ -117,7 +116,7 @@ class PermissionController extends Controller
                     }
                 ])->get(); // Finally, execute the query and get the results
             } else {
-                //1 Define the permissions array for non-store level seller
+                // Define the permissions array for non-store level seller
                 $permissionsArray = [
                     'dashboard',
                     'Store Settings',
@@ -232,13 +231,6 @@ class PermissionController extends Controller
     public
     function moduleWisePermissions(Request $request)
     {
-//        $permissions = QueryBuilder::for(PermissionKey::class)
-//            ->when($request->filled('available_for'), function ($query) use ($request) {
-//                $query->where('available_for', $request->available_for);
-//            })
-//            ->get()
-//            ->groupBy('module');
-
         $permissions = QueryBuilder::for(CustomPermission::class)
             ->when($request->filled('available_for'), function (Builder $query) use ($request) {
                 $query->where('available_for', $request->available_for);
@@ -247,7 +239,6 @@ class PermissionController extends Controller
             ->with('childrenRecursive') // Include recursive children
             ->get();
         return ComHelper::buildMenuTree([0], $permissions);
-//        return PermissionResource::collection($permissions);
     }
 
     public

@@ -178,7 +178,6 @@ class FrontendController extends Controller
             ], 404);
         }
     }
-
     public function getStoresDropdown(Request $request)
     {
         if (auth('api')->check()) {
@@ -270,8 +269,6 @@ class FrontendController extends Controller
                 'message' => 'Query parameter is required.',
             ], 200);
         }
-
-//        $maxSuggestions = 10;
         $productSuggestions = Product::query()
             ->where('status', 'approved')
             ->where(function ($productQuery) use ($query) {
@@ -286,7 +283,6 @@ class FrontendController extends Controller
                     });
             })
             ->with(['variants:id,product_id,sku,price,stock_quantity,special_price', 'store'])
-//            ->limit($maxSuggestions)
             ->get();
         return response()->json([
             'data' => ProductSuggestionPublicResource::collection($productSuggestions),
@@ -339,20 +335,17 @@ class FrontendController extends Controller
         if (!empty($request->brand_id) && is_array($request->brand_id)) {
             $query->whereIn('brand_id', $request->brand_id);
         }
-
         // Price range filter
         if (isset($request->min_price) && isset($request->max_price)) {
             $query->whereHas('variants', function ($q) use ($request) {
                 $q->whereBetween('price', [$request->min_price, $request->max_price]);
             });
         }
-
         // Availability filter
         if (isset($request->availability)) {
             $query->whereHas('variants', fn($q) => $q->where('stock_quantity', $request->availability ? '>' : '=', 0)
             );
         }
-
         // Type filter
         if (!empty($request->type)) {
             if (is_array($request->type)) {
@@ -361,7 +354,6 @@ class FrontendController extends Controller
                 $query->where('type', $request->type);
             }
         }
-
         // Minimum rating filter
         if (isset($request->min_rating)) {
             $avgRatingSub = DB::table('reviews')
@@ -901,20 +893,18 @@ class FrontendController extends Controller
 
     public function getTrendingProducts(Request $request)
     {
-
         $query = Product::query();
 
-        // If an ID is provided, fetch the specific product
         if (isset($request->id)) {
             $product = $query
                 ->with(['variants', 'store'])
-                ->findOrFail($request->id); // Throws 404 if product not found
+                ->findOrFail($request->id);
 
             return response()->json([
                 'message' => __('messages.data_found'),
                 'data' => new ProductDetailsPublicResource($product),
                 'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-            ], 200);
+            ]);
         }
 
         // Fetch trending products with scores
@@ -930,26 +920,25 @@ class FrontendController extends Controller
             'message' => __('messages.data_found'),
             'data' => TrendingProductPublicResource::collection($trendingProducts),
             'meta' => new PaginationResource($trendingProducts)
-        ], 200);
+        ]);
 
     }
 
 
     public function getWeekBestProducts(Request $request)
     {
-
         $query = Product::query();
-        // If an ID is provided, fetch the specific product
+
         if (isset($request->id)) {
             $product = $query
                 ->with(['variants', 'store'])
-                ->findOrFail($request->id); // Throws 404 if product not found
+                ->findOrFail($request->id);
 
             return response()->json([
                 'message' => __('messages.data_found'),
                 'data' => new ProductDetailsPublicResource($product),
                 'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
-            ], 200);
+            ]);
         }
         // Filter products created or updated in the last week
         $lastWeek = now()->subWeek();
@@ -962,7 +951,7 @@ class FrontendController extends Controller
                 $query->where('created_at', '>=', $lastWeek)
                     ->orWhere('updated_at', '>=', $lastWeek);
             })
-            ->orderByDesc('order_count') // Sort by order count (or rating if needed)
+            ->orderByDesc('order_count')
             ->paginate($request->per_page ?? 10);
 
         return response()->json([
@@ -970,7 +959,6 @@ class FrontendController extends Controller
             'data' => WeekBestProductPublicResource::collection($weekBestProducts),
             'meta' => new PaginationResource($weekBestProducts)
         ], 200);
-
     }
 
     public function flashDeals()
@@ -985,7 +973,6 @@ class FrontendController extends Controller
 
     public function flashDealProducts(Request $request)
     {
-
         // If a specific flash deal product ID is requested
         if (isset($request->id)) {
             $flashDealProduct = FlashSaleProduct::with(['product.variants', 'product.store', 'product.related_translations', 'flashSale.related_translations'])
@@ -1347,7 +1334,7 @@ class FrontendController extends Controller
             'data' => ProductPublicResource::collection($products),
             'meta' => new PaginationResource($products),
             'filters' => $uniqueAttributes
-        ], 200);
+        ]);
     }
 
     protected function getUniqueAttributesFromVariants($products)
@@ -2227,8 +2214,9 @@ class FrontendController extends Controller
                     'discount_amount' => $item->flashSale?->discount_amount,
                     'purchase_limit' => $item->flashSale?->purchase_limit,
                 ];
-            })->unique('flash_sale_id') // keep only unique flash sales
-            ->values(), // <--- this reindexes the collection,
+            })
+                ->unique('flash_sale_id') // keep only unique flash sales
+                ->values(), // <--- this reindexes the collection,
             'flash_sale_products' => FlashSaleAllProductPublicResource::collection($flashDealProducts),
             'additional_charge' => $additionalCharge,
             'order_include_tax_amount' => $systemCommissionSettings->order_include_tax_amount,
