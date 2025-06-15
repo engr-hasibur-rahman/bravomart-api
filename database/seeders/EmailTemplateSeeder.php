@@ -36,7 +36,7 @@ class EmailTemplateSeeder extends Seeder
                 "updated_at" => $now,
             ],
             [
-                "type" => 'register',
+                "type" => 'register-seller',
                 "name" => 'User Registration',
                 "subject" => 'Welcome to ' . config('app.name'),
                 "body" => "<h1>Hello Admin, A New Seller Just Joined BravoMart!</h1>
