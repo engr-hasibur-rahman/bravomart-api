@@ -3,6 +3,7 @@
 namespace Modules\Chat\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Chat\app\Models\Chat;
@@ -30,9 +31,45 @@ class AdminChatController extends Controller
             ]);
         }
 
-        $chats = Chat::with('user')
-            ->where('user_type', '!=', 'admin')
-            ->paginate(500);
+
+        $query = Chat::with('user') ->where('user_type', '!=', 'admin');
+
+        $name = $request->input('name');
+        if ($name) {
+            $query->where(function ($q) use ($name) {
+
+                // For user_type = customer (Customer model)
+                $q->orWhere(function ($q2) use ($name) {
+                    $q2->where('user_type', 'customer')
+                        ->whereHasMorph('user', ['customer'], function ($q3) use ($name) {
+                            $q3->where('first_name', 'like', "%{$name}%")
+                                ->orWhere('last_name', 'like', "%{$name}%");
+                        });
+                });
+
+
+                // Deliveryman (User model with first_name / last_name)
+                $q->orWhere(function ($q2) use ($name) {
+                    $q2->where('user_type', 'deliveryman')
+                        ->whereHasMorph('user', ['deliveryman'], function ($q3) use ($name) {
+                            $q3->where('first_name', 'like', "%{$name}%")
+                                ->orWhere('last_name', 'like', "%{$name}%");
+                        });
+                });
+
+                // For user_type = store (Store model)
+                $q->orWhere(function ($q2) use ($name) {
+                    $q2->where('user_type', 'store')
+                        ->whereHasMorph('user', ['store'], function ($q3) use ($name) {
+                            $q3->where('name', 'like', "%{$name}%");
+                        });
+                });
+            });
+
+        }
+
+        // Paginate
+        $chats = $query->paginate(500);
 
 
         return response()->json([

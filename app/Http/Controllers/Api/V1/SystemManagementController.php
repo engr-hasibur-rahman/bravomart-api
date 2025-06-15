@@ -26,6 +26,7 @@ class SystemManagementController extends Controller
         protected TranslationInterface $transRepo,
         protected SettingOption        $get_com_option,
         protected GeneralSetting      $general_settings,
+        protected LicenseService $licenseService
     ) {}
 
     public function translationKeys(): mixed
@@ -735,6 +736,7 @@ class SystemManagementController extends Controller
 
     public function licenseSystem(Request $request)
     {
+
        $validator = Validator::make($request->all(),[
           'site_license_key' => 'required|string|max:255',
           'envato_username' => 'required|string|max:255',
@@ -749,13 +751,13 @@ class SystemManagementController extends Controller
        }
 
         // api check
-        $result = app(LicenseService::class)->activateLicense(
+        $result = $this->licenseService->activate(
             $request->site_license_key,
             $request->envato_username
         );
 
         $type = "danger";
-        $message = "Could not verify license key. Please try again later. If the issue persists, contact support.";
+        $message = "License verification failed. Please try again later or contact support.";
 
         // If activation is successful
        if(!empty($result['status']) && $result['status']) {
