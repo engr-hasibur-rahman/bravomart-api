@@ -11,21 +11,6 @@ class DeliveryChargeCalculateController extends Controller
 {
     public function calculateDeliveryCharge(Request $request)
     {
-        // Hasib -->
-//        $validator = Validator::make($request->all(),[
-//            'area_id' => 'required|integer',
-//            'customer_latitude' => 'required|numeric',
-//            'customer_longitude' => 'required|numeric',
-//        ]);
-//
-//        if ($validator->fails()){
-//            return response()->json([
-//                'success' => false,
-//                'message' => 'Validation Error',
-//                'errors' => $validator->errors(),
-//            ], 422);
-//        }
-        // Faysal-->
         $validator = Validator::make($request->all(), [
             'area_ids' => 'required|array',
             'area_ids.*' => 'integer|distinct',
@@ -61,7 +46,6 @@ class DeliveryChargeCalculateController extends Controller
                 ];
             }
         }
-
         return response()->json($results);
     }
 }

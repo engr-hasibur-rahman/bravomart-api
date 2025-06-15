@@ -543,7 +543,7 @@ class UserController extends Controller
                 "token" => $user->createToken('auth_token')->plainTextToken,
                 "permissions" => $user->getPermissionNames(),
                 "role" => $user->getRoleNames()->first()
-            ], 200);
+            ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Handle validation errors
             return response()->json([
@@ -559,7 +559,6 @@ class UserController extends Controller
                 "status_code" => 500,
                 "message" => __('messages.error'),
                 "error" => $e->getMessage(),
-
             ], 500);
         }
     }
@@ -762,7 +761,6 @@ class UserController extends Controller
         if (!$user) {
             return false;
         }
-
         try {
             $user->update([
                 'password' => Hash::make($data['password']),
@@ -910,7 +908,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'old_password' => 'required|string',
-            'new_password' => 'required|string|min:8|max:12|different:old_password', // Ensure new password is different from old password
+            'new_password' => 'required|string|min:8|max:12|different:old_password',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -927,7 +925,6 @@ class UserController extends Controller
             $userId = auth('api')->id();
             $user = User::findOrFail($userId);
 
-            // Verify if the old password is correct
             if (!Hash::check($request->old_password, $user->password)) {
                 return response()->json([
                     'status' => false,
@@ -938,7 +935,7 @@ class UserController extends Controller
 
             // Update the password with the new one
             $user->update([
-                'password' => Hash::make($request->new_password), // Hash the new password before saving
+                'password' => Hash::make($request->new_password),
             ]);
 
             return response()->json([
@@ -956,8 +953,6 @@ class UserController extends Controller
             ]);
         }
     }
-
-
     public function deactivateAccount()
     {
         if (!auth('api')->check()) {
@@ -982,9 +977,7 @@ class UserController extends Controller
                 'message' => __('messages.account_deactivate_failed')
             ]);
         }
-
     }
-
     public function deleteAccount()
     {
         if (!auth('api')->check()) {
