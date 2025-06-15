@@ -78,9 +78,6 @@ class PageSettingsManageController extends Controller
             ]);
 
         } else {
-            // Create an instance of ImageModifier
-            $imageModifier = new ImageModifier();
-
             $ComOptionGet = SettingOption::with('related_translations')
                 ->whereIn('option_name', [
                     'com_home_one_category_button_title',
