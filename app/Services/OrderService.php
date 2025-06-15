@@ -84,6 +84,7 @@ class OrderService
                         return false;
                     }
                 } // subscription check end
+                dd(123);
                 /*-------------------------- Subscription Check ------------------------*/
 
 
