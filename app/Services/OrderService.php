@@ -66,6 +66,7 @@ class OrderService
             foreach ($data['packages'] as $packageData) {
                 // if type subscription
                 $store = Store::find($packageData['store_id']);
+                dd(123);
 
                 // subscription check start
                 if ($store->subscription_type === 'subscription') {
@@ -84,7 +85,6 @@ class OrderService
                         return false;
                     }
                 } // subscription check end
-                dd(123);
                 /*-------------------------- Subscription Check ------------------------*/
 
 
