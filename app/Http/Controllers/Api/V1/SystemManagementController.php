@@ -11,6 +11,7 @@ use App\Models\BecomeSellerSetting;
 use App\Models\GeneralSetting;
 use App\Models\SettingOption;
 use App\Models\SystemManagement;
+use App\Services\LicenseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
@@ -730,6 +731,47 @@ class SystemManagementController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function licenseSystem(Request $request)
+    {
+       $validator = Validator::make($request->all(),[
+          'site_license_key' => 'required|string|max:255',
+          'envato_username' => 'required|string|max:255',
+       ]);
+
+       if ($validator->fails()) {
+           return response()->json([
+               'success' => false,
+               'message' => 'Validation failed.',
+               'errors' => $validator->errors(),
+           ], 422);
+       }
+
+        // api check
+        $result = app(LicenseService::class)->activateLicense(
+            $request->site_license_key,
+            $request->envato_username
+        );
+
+        $type = "danger";
+        $message = "Could not verify license key. Please try again later. If the issue persists, contact support.";
+
+        // If activation is successful
+       if(!empty($result['status']) && $result['status']) {
+           // Save license data
+           com_option_update('application_license_key', $request->site_license_key);
+           com_option_update('application_license_status', $result['status']);
+           com_option_update('application_license_message', $result['message']);
+
+           $type = 'success';
+           $message = $result['message'];
+       }
+
+        return response()->json([
+            'type' => $type,
+            'message' => $message,
+        ]);
     }
 
 

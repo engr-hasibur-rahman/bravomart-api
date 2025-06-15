@@ -200,6 +200,7 @@ enum PermissionKey: string
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
     case GDPR_COOKIE_SETTINGS = '/admin/system-management/gdpr-cookie-settings';
     case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
+    case LICENSE_SYSTEM = '/admin/system-management/license-system';
     case DATABASE_UPDATE_CONTROLS = '/admin/system-management/database-update-controls';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//

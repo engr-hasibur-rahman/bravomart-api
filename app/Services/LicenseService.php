@@ -39,8 +39,28 @@ class LicenseService
         $result = $response->object();
         $message = "Activation failed. Please retry or contact support.";
 
+        // check data
+        if ($result->status() === 200) {
+            if (property_exists($result, 'success') && $result->success === true) {
+                return [
+                    "status" => "success",
+                    "message" => $message,
+                    "data" => $result->data
+                ];
+            }
+        }elseif ($result->status() === 422) {
+            return [
+              'status' => false,
+              "message" => $message,
+              "license_key" => $licenseKey,
+            ];
+        }
 
-
+        return [
+          'status' => false,
+          "message" => $message,
+          "license_key" => $licenseKey,
+        ];
 
     }
 

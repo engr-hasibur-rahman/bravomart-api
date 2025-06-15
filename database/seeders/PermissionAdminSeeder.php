@@ -1606,6 +1606,17 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' => PermissionKey::LICENSE_SYSTEM->value,
+                            'PermissionTitle' => 'License System',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'ShieldCheck',
+                            'options' => ['view', 'update'],
+                            'translations' => [
+                                'en' => 'License System',
+                                'ar' => 'نظام الترخيص'
+                            ]
+                        ],
+                        [
                             'PermissionName' => PermissionKey::CACHE_MANAGEMENT->value,
                             'PermissionTitle' => 'Cache Management',
                             'activity_scope' => 'system_level',
