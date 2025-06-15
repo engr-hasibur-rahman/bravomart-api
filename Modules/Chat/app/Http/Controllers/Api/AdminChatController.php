@@ -68,6 +68,12 @@ class AdminChatController extends Controller
 
         }
 
+        $type = $request->input('type');
+
+        if (!empty($type) && $type !== 'all') {
+            $query->where('user_type', $type);
+        }
+
         // Paginate
         $chats = $query->paginate(500);
 
