@@ -14,9 +14,6 @@ switch ($step) {
     case 'environment':
         $controller->environment();
         break;
-    case 'database':
-        $controller->database();
-        break;
     case 'admin':
         $controller->admin();
         break;
