@@ -1,20 +1,23 @@
 <?php
-$allMet = false;
+$allMet = true;
 foreach ($requirements['extensions'] as $key => $isLoaded) {
     if (!$isLoaded) {
-        $allMet = true;
+        $allMet = false;
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Installation - Step 1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/toast.css" rel="stylesheet">
+    <?php include 'views/partials/toast.php'; ?>
     <style>
         body {
             margin: 0;
@@ -92,89 +95,52 @@ foreach ($requirements['extensions'] as $key => $isLoaded) {
             text-decoration: none;
             font-size: 16px;
         }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #e74c3c;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            z-index: 9999;
-            font-size: 16px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-
-        /* When visible */
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-            pointer-events: auto;
-        }
-
-        .button.disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-            pointer-events: auto; /* ensures JS can still intercept click */
-        }
     </style>
 </head>
+
 <body>
-<h1>Step 1: Get Your File Requirements Ready</h1>
-<p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
+    <h1>Step 1: Get Your File Requirements Ready</h1>
+    <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
 
-<div class="steps">
-    <a class="step" href="?step=welcome"></a>
-    <a class="step active" href="?step=requirements"></a>
-    <a class="step" href="?step=permissions"></a>
-    <a class="step"></a>
-    <a class="step"></a>
-    <a class="step"></a>
-</div>
+    <div class="steps">
+        <a class="step" href="?step=welcome"></a>
+        <a class="step active" href="?step=requirements"></a>
+        <a class="step"  href="?step=permissions"></a>
+        <a class="step"></a>
+        <a class="step"></a>
+        <a class="step"></a>
+    </div>
 
-<div class="card">
-    <div class="grid">
-        <?php foreach ($requirements['extensions'] as $ext => $status): ?>
-            <div class="permission-box"><span class="permission-name"><?= strtoupper($ext) ?></span><span
+    <div class="card">
+        <div class="grid">
+            <?php foreach ($requirements['extensions'] as $ext => $status): ?>
+                <div class="permission-box"><span class="permission-name"><?= strtoupper($ext) ?></span><span
                         class="permission-status"><?= $status ? '&#10003;' : '&#10060;' ?></span></div>
-        <?php endforeach; ?>
-    </div>
+            <?php endforeach; ?>
+        </div>
 
-    <div class="button-container">
-        <p>All set with the permissions?</p>
-        <a id="nextBtn"
-           class="button"
-           href="<?= $allMet ? '?step=permissions' : '#' ?>"
-           data-all-met="<?= $allMet ? '1' : '0' ?>">
-            Get Started
-        </a>
-    </div>
+        <div class="button-container">
+            <p>All set with the permissions?</p>
+            <a id="nextBtn"
+                class="button"
+                href="<?= $allMet ? '?step=permissions' : '#' ?>"
+                data-all-met="<?= $allMet ? '1' : '0' ?>">
+                Get Started
+            </a>
+        </div>
+        <script src="assets/js/toast.js"></script>
+        <script>
+            const nextBtn = document.getElementById('nextBtn');
 
-    <div class="toast" id="toast">
-        <p>Please enable all required extensions to proceed.</p>
-    </div>
+            nextBtn?.addEventListener('click', function(e) {
+                const allMet = this.dataset.allMet === '1';
 
-    <script>
-        const nextBtn = document.getElementById('nextBtn');
-        const toast = document.getElementById('toast');
-
-        nextBtn.addEventListener('click', function (e) {
-            const allMet = this.dataset.allMet === '1';
-
-            if (!allMet) {
-                e.preventDefault();
-                toast.classList.add('show');
-
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 4000);
-            }
-        });
-    </script>
+                if (!allMet) {
+                    e.preventDefault();
+                    showToast("Please enable all required extensions to proceed.");
+                }
+            });
+        </script>
 </body>
-</html>
 
+</html>
