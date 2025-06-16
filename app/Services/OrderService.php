@@ -586,6 +586,7 @@ class OrderService
                 $shipping_charge += $package->shipping_charge;
                 $order_package_total_amount += $package->order_amount;
             } // end order package
+
             // Update Order Master
             $this->distributeCouponDiscount($order_master);
             $order_master->product_discount_amount = $product_discount_amount_master;

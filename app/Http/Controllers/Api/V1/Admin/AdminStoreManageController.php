@@ -127,7 +127,7 @@ class AdminStoreManageController extends Controller
             if ($success) {
                 return $this->success(__('messages.approve.success', ['name' => 'Stores']));
             } else {
-                return $this->failed(__('messages.approve.failed', ['name' => 'Stores']));
+                return $this->failed(__('messages.approve.failed', ['name' => 'Stores']),500);
             }
         } catch (\Exception $e) {
             throw $e;

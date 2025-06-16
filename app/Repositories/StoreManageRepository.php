@@ -839,7 +839,7 @@ class StoreManageRepository implements StoreManageInterface
                 try {
                     $seller = User::find($store->store_seller_id);
                     if (!$seller) {
-                        continue;
+                        return false;
                     }
 
                     $seller_email = $seller->email;
