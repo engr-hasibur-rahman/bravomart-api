@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('default_order_commission_rate', 8, 2)->nullable();
             $table->decimal('default_delivery_commission_charge', 8, 2)->nullable();
             $table->decimal('order_shipping_charge', 8, 2)->nullable();
-            $table->string('order_confirmation_by')->nullable(); // 'manual' or 'automatic'
+            $table->string('order_confirmation_by')->default('deliveryman');
             $table->boolean('order_include_tax_amount')->default(false);
              // Additional Charge Settings
             $table->boolean('order_additional_charge_enable_disable')->default(false);

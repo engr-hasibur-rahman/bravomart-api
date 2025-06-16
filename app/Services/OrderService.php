@@ -68,7 +68,7 @@ class OrderService
                 $store = Store::find($packageData['store_id']);
 
                 // subscription check start
-                if ($store->subscription_type === 'subscription') {
+                if ($store->subscription_type == 'subscription') {
                     // check store subscription package
                     $store_subscription = StoreSubscription::where('store_id', $store->id)
                         ->whereDate('expire_date', '>=', now())
@@ -80,7 +80,7 @@ class OrderService
                     }
                     $total_store_order = Order::whereNotIn('status', ['pending', 'cancelled', 'on_hold'])->count();
                     // check order limit
-                    if (!empty($store_subscription) && $store_subscription->order_limit <= $total_store_order) {
+                    if (!empty($store_subscription) && $store_subscription->order_limit <= 0) {
                         return false;
                     }
                 } // subscription check end
@@ -586,6 +586,7 @@ class OrderService
                 $shipping_charge += $package->shipping_charge;
                 $order_package_total_amount += $package->order_amount;
             } // end order package
+
             // Update Order Master
             $this->distributeCouponDiscount($order_master);
             $order_master->product_discount_amount = $product_discount_amount_master;

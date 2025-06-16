@@ -16,11 +16,17 @@ class ProductStorePublicResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Get the requested language from the query parameter
+        $language = $request->input('language', 'en');
+        // Get the translation for the requested language
+        $translation = $this->related_translations->where('language', $language);
         $store_type_info = StoreType::where('type', $this->store_type)->first();
         return [
             "id" => $this->id,
             "store_type" => $this->store_type,
-            "name" => $this->name,
+            "name" => !empty($translation) && $translation->where('key', 'name')->first()
+                ? $translation->where('key', 'name')->first()->value
+                : $this->name, // If language is empty or not provided attribute
             "slug" => $this->slug,
             "area_id" => $this->area_id,
             "phone" => $this->phone,

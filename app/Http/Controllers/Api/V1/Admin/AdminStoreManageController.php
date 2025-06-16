@@ -117,7 +117,8 @@ class AdminStoreManageController extends Controller
     public function approveStoreRequests(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ids*' => 'required|array|exists:stores,id',
+            'ids' => 'required|array',
+            'ids.*' => 'exists:stores,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
@@ -127,7 +128,7 @@ class AdminStoreManageController extends Controller
             if ($success) {
                 return $this->success(__('messages.approve.success', ['name' => 'Stores']));
             } else {
-                return $this->failed(__('messages.approve.failed', ['name' => 'Stores']));
+                return $this->failed(__('messages.approve.failed', ['name' => 'Stores']),500);
             }
         } catch (\Exception $e) {
             throw $e;
