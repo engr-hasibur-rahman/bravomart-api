@@ -117,7 +117,8 @@ class AdminStoreManageController extends Controller
     public function approveStoreRequests(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ids*' => 'required|array|exists:stores,id',
+            'ids' => 'required|array',
+            'ids.*' => 'exists:stores,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);

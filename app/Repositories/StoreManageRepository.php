@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
@@ -839,31 +840,31 @@ class StoreManageRepository implements StoreManageInterface
                 try {
                     $seller = User::find($store->store_seller_id);
                     if (!$seller) {
-                        return false;
+                        continue;
                     }
 
-                    $seller_email = $seller->email;
-                    $seller_name = $seller->first_name . ' ' . $seller->last_name;
-                    $store_name = $store->name;
-
-                    $email_template_seller = EmailTemplate::where('type', 'store-approved-seller')->where('status', 1)->first();
+                    $email_template_seller = EmailTemplate::where('type', 'store-approved-seller')
+                        ->where('status', 1)
+                        ->first();
 
                     if ($email_template_seller) {
                         $seller_subject = $email_template_seller->subject;
                         $seller_message = str_replace(
                             ["@seller_name", "@store_name"],
-                            [$seller_name, $store_name],
+                            [$seller->first_name . ' ' . $seller->last_name, $store->name],
                             $email_template_seller->body
                         );
 
-                        dispatch(new SendDynamicEmailJob($seller_email, $seller_subject, $seller_message));
+                        dispatch(new SendDynamicEmailJob($seller->email, $seller_subject, $seller_message));
                     }
                 } catch (\Exception $ex) {
+                    Log::error('Error sending store approval email: ' . $ex->getMessage());
                 }
             }
 
-            return $stores->count() > 0;
+            return true;
         } catch (\Exception $e) {
+            Log::error('approveStores error: ' . $e->getMessage());
             return false;
         }
     }
