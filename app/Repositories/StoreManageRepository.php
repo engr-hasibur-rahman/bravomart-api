@@ -837,29 +837,29 @@ class StoreManageRepository implements StoreManageInterface
                 $store->status = 1;
                 $store->save();
 
-                try {
-                    $seller = User::find($store->store_seller_id);
-                    if (!$seller) {
-                        continue;
-                    }
-
-                    $email_template_seller = EmailTemplate::where('type', 'store-approved-seller')
-                        ->where('status', 1)
-                        ->first();
-
-                    if ($email_template_seller) {
-                        $seller_subject = $email_template_seller->subject;
-                        $seller_message = str_replace(
-                            ["@seller_name", "@store_name"],
-                            [$seller->first_name . ' ' . $seller->last_name, $store->name],
-                            $email_template_seller->body
-                        );
-
-                        dispatch(new SendDynamicEmailJob($seller->email, $seller_subject, $seller_message));
-                    }
-                } catch (\Exception $ex) {
-                    Log::error('Error sending store approval email: ' . $ex->getMessage());
-                }
+//                try {
+//                    $seller = User::find($store->store_seller_id);
+//                    if (!$seller) {
+//                        continue;
+//                    }
+//
+//                    $email_template_seller = EmailTemplate::where('type', 'store-approved-seller')
+//                        ->where('status', 1)
+//                        ->first();
+//
+//                    if ($email_template_seller) {
+//                        $seller_subject = $email_template_seller->subject;
+//                        $seller_message = str_replace(
+//                            ["@seller_name", "@store_name"],
+//                            [$seller->first_name . ' ' . $seller->last_name, $store->name],
+//                            $email_template_seller->body
+//                        );
+//
+//                        dispatch(new SendDynamicEmailJob($seller->email, $seller_subject, $seller_message));
+//                    }
+//                } catch (\Exception $ex) {
+//                    Log::error('Error sending store approval email: ' . $ex->getMessage());
+//                }
             }
 
             return true;
