@@ -263,7 +263,7 @@ class SellerManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8|max:12|confirmed',
+            'password' => 'required|confirmed',
             'token' => 'required|string'
         ]);
         if ($validator->fails()) {

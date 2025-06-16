@@ -391,7 +391,7 @@ class UserController extends Controller
             'last_name' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:15',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|max:12|confirmed',
+            'password' => 'required|confirmed',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
