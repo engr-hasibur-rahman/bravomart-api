@@ -54,10 +54,50 @@ class DeliverymanChatController extends Controller
             $all_chat_ids = $all_chat_ids->filter(fn ($id) => $id != $currentChat->id)->values();
         }
 
-        $chats = Chat::with('user')
+        $query = Chat::with('user')
             ->whereIn('id', $all_chat_ids)
-            ->where('user_type', '!=', 'store')
-            ->get();
+            ->where('user_type', '!=', 'store');
+
+        $name = $request->input('search');
+        if ($name) {
+            $query->where(function ($q) use ($name) {
+                // For user_type = customer (Customer model)
+                $q->orWhere(function ($q2) use ($name) {
+                    $q2->where('user_type', 'customer')
+                        ->whereHasMorph('user', ['customer'], function ($q3) use ($name) {
+                            $q3->where('first_name', 'like', "%{$name}%")
+                                ->orWhere('last_name', 'like', "%{$name}%");
+                        });
+                });
+
+                // admin (User model with first_name / last_name)
+                $q->orWhere(function ($q2) use ($name) {
+                    $q2->where('user_type', 'admin')
+                        ->whereHasMorph('user', ['admin'], function ($q3) use ($name) {
+                            $q3->where('first_name', 'like', "%{$name}%")
+                                ->orWhere('last_name', 'like', "%{$name}%");
+                        });
+                });
+
+                // For user_type = store (Store model)
+                $q->orWhere(function ($q2) use ($name) {
+                    $q2->where('user_type', 'store')
+                        ->whereHasMorph('user', ['store'], function ($q3) use ($name) {
+                            $q3->where('name', 'like', "%{$name}%");
+                        });
+                });
+            });
+
+        }
+
+        $type = $request->input('type');
+
+        if (!empty($type) && $type !== 'all') {
+            $query->where('user_type', $type);
+        }
+
+        // Paginate
+        $chats = $query->paginate(500);
 
 
         return response()->json([

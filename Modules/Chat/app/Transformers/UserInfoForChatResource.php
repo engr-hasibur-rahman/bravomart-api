@@ -20,13 +20,13 @@ class UserInfoForChatResource extends JsonResource
      public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'name'           => in_array($this->userType, ['admin', 'deliveryman', 'customer']) ? $this->full_name : ($this->name ?? ''),
+            'id'       => $this->id,
+            'name'     => in_array($this->userType, ['admin', 'deliveryman', 'customer']) ? $this->full_name : ($this->name ?? ''),
             'phone'    => $this->phone,
             'email'    => $this->email,
             'activity_scope'    => $this->activity_scope,
             'image'    => ImageModifier::generateImageUrl($this->image),
-            'is_online'    => $this->is_online,
+            'is_online'    => $this->online_at ? \Carbon\Carbon::parse($this->online_at)->gt(now()->subMinutes(3)) : false,
         ];
     }
 }
