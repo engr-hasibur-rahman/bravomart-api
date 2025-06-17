@@ -32,7 +32,7 @@ class DeliverymanManageController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|max12',
+            'password' => 'required',
             'phone' => 'required|unique:users,phone',
         ]);
         if ($validator->fails()) {
@@ -303,8 +303,8 @@ class DeliverymanManageController extends Controller
     public function changePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'old_password' => 'required|string|min:8|max:15',
-            'new_password' => 'required|string|min:8|max:15'
+            'old_password' => 'required|string',
+            'new_password' => 'required|string'
         ]);
 
         if ($validator->fails()) {

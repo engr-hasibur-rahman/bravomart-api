@@ -28,7 +28,7 @@ class DeliverymanRequest extends FormRequest
             'last_name' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:15',
             'email' => 'required|string|email|max:255|unique:users,email,' . $this->id,
-            'password' => 'required|string|min:8|max:12',
+            'password' => 'required|string',
             'status' => 'nullable|integer',
             'vehicle_type_id' => 'nullable|exists:vehicle_types,id',
             'store_id' => 'nullable|exists:stores,id',
