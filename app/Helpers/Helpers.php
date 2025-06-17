@@ -123,7 +123,12 @@ if (!function_exists('translate')) {
                 foreach ($colNames as $key) {
                     $translatedValue = $translation[$key] ?? null;
 
-                    if ($translatedValue === null) {
+                    if ($translatedValue === null|| $translatedValue === '') {
+                        Translation::where('translatable_type', $refPath)
+                            ->where('translatable_id', $refid)
+                            ->where('language', $translation['language_code'])
+                            ->where('key', $key)
+                            ->delete();
                         continue;
                     }
 
