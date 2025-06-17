@@ -1463,7 +1463,6 @@ class FrontendController extends Controller
             'data' => new ProductDetailsPublicResource($product),
             'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
         ], 200);
-
     }
 
     public function getNewArrivals(Request $request)

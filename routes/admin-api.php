@@ -151,6 +151,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('add', [AdminProductManageController::class, 'store']);
                 Route::post('add-to-featured', [AdminProductManageController::class, 'addToFeatured']);
                 Route::get('details/{slug}', [AdminProductManageController::class, 'show']);
+                Route::get('{product_slug}', [AdminProductManageController::class, 'productDetails']);
                 Route::post('update', [AdminProductManageController::class, 'update']);
                 Route::delete('remove/{id?}', [AdminProductManageController::class, 'destroy']);
                 Route::post('approve', [AdminProductManageController::class, 'approveProductRequests']);
