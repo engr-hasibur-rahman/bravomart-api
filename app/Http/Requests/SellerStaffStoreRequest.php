@@ -29,7 +29,7 @@ class SellerStaffStoreRequest extends FormRequest
                 'max:255',
                 Rule::unique('users', 'email')->ignore($this->id),
             ],
-            'password' => 'nullable|string|min:8|max:12',
+            'password' => 'nullable|string',
             'phone' => 'nullable|string|max:15',
             'image' => 'nullable',
             'stores' => 'nullable|array',

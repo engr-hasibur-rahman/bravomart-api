@@ -276,7 +276,7 @@ class StaffController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
-            'password' => 'required|min:8|max:12',
+            'password' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());

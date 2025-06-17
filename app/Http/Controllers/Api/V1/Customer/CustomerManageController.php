@@ -51,7 +51,7 @@ class CustomerManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8|max:15',
+            'password' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -254,7 +254,7 @@ class CustomerManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8|max:15|confirmed',
+            'password' => 'required|string|confirmed',
             'token' => 'required|string'
         ]);
         if ($validator->fails()) {
@@ -283,8 +283,8 @@ class CustomerManageController extends Controller
     public function changePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'old_password' => 'required|string|min:8|max:15',
-            'new_password' => 'required|string|min:8|max:15|confirmed'
+            'old_password' => 'required|string',
+            'new_password' => 'required|string|confirmed'
         ]);
 
         if ($validator->fails()) {
