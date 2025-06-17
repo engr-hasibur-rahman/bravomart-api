@@ -49,9 +49,15 @@ class Store extends Model
         'meta_description',
         'meta_image',
         'status',
+        'online_at',
         'created_by',
         'updated_by',
     ];
+
+    protected $casts = [
+        'online_at' => 'datetime',
+    ];
+
     public $translationKeys = [
         'name',
         'slug',
