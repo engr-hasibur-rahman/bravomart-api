@@ -146,8 +146,7 @@ class AdminAreaSetupManageController extends Controller
         if ($storeAreaSettings) {
             return response()->json(new AdminAreaSettingsDetailsResource($storeAreaSettings), 200);
         }  else {
-
-            return response()->json(['message' => __('messages.settings_not_created_yet')], 422);
+            return response()->json(['message' => __('messages.settings_not_created_yet')], 200);
         }
     }
 
