@@ -177,7 +177,7 @@ class ChatController extends Controller
             $storeId =(int) $request->store_id;
             if ($storeId) {
                 Store::where('id', $storeId)
-                    ->where('user_id', $authUser->id)
+                    ->where('store_seller_id', $authUser->id)
                     ->update(['online_at' =>  (new \DateTime())->format("Y-m-d H:i:s")]);
             }
         }catch (\Exception $e){}
