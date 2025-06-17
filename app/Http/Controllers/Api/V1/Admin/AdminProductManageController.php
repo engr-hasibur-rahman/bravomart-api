@@ -144,6 +144,12 @@ class AdminProductManageController extends Controller
         ])
             ->where('slug', $product_slug)
             ->first();
+
+        if (!$product) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ],404);
+        }
         return response()->json([
             'messages' => __('messages.data_found'),
             'data' => new ProductDetailsPublicResource($product),
