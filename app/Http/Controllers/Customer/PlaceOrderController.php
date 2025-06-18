@@ -23,6 +23,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
+use Modules\Wallet\app\Models\Wallet;
 
 class PlaceOrderController extends Controller
 {
@@ -84,6 +85,13 @@ class PlaceOrderController extends Controller
 
         try {
             if ($orders) {
+                if ($order_master['payment_gateway'] === 'wallet') {
+                    $this->updateWallet($order_master['order_amount']);
+                    OrderMaster::where('id', $order_master['id'])->update([
+                        'payment_gateway' => 'wallet',
+                        'payment_status' => 'paid',
+                    ]);
+                }
                 return response()->json([
                     'success' => true,
                     'message' => 'Order placed successfully.',
@@ -169,6 +177,21 @@ class PlaceOrderController extends Controller
             return false;
         }
 
+        return true;
+    }
+
+    private function updateWallet($order_amount): bool
+    {
+        $customer = auth()->guard('api_customer')->user();
+        if (!$customer) {
+            return false;
+        }
+        $wallet = Wallet::where('owner_id', $customer->id)->first();
+        if (!$wallet) {
+            return false;
+        }
+        $wallet->balance = $wallet->balance - $order_amount;
+        $wallet->save();
         return true;
     }
 }
