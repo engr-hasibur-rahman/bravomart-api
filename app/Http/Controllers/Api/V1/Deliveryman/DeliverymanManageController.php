@@ -23,6 +23,7 @@ use Spatie\Permission\Models\Role;
 class DeliverymanManageController extends Controller
 {
     protected $mediaService;
+
     public function __construct(protected DeliverymanManageInterface $deliverymanRepo, MediaService $mediaService)
     {
         $this->mediaService = $mediaService;
@@ -63,8 +64,8 @@ class DeliverymanManageController extends Controller
                 $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
             }
 
-            $identification_photo_front = $this->mediaService->insert_media_image($request,null,'identification_photo_front');
-            $identification_photo_back = $this->mediaService->insert_media_image($request,null,'identification_photo_back');
+            $identification_photo_front = $this->mediaService->insert_media_image($request, 'deliveryman', 'identification_photo_front', 'verification');
+            $identification_photo_back = $this->mediaService->insert_media_image($request, 'deliveryman', 'identification_photo_back', 'verification');
 
             // Create the user
             $user = User::create([

@@ -53,6 +53,7 @@ class CustomerManageController extends Controller
             'email' => 'required|string|email|max:255',
             'password' => 'required',
         ]);
+
         if ($validator->fails()) {
             return response()->json([
                 "status" => false,
@@ -62,6 +63,7 @@ class CustomerManageController extends Controller
 
         $customer = Customer::where('email', $request->email)
             ->first();
+
         if (!$customer) {
             return response()->json([
                 "status" => false,
