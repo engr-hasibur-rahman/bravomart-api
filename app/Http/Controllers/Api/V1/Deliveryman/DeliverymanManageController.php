@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OrderActivity;
 use App\Models\OrderDeliveryHistory;
 use App\Models\User;
+use App\Services\MediaService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,9 +22,10 @@ use Spatie\Permission\Models\Role;
 
 class DeliverymanManageController extends Controller
 {
-    public function __construct(protected DeliverymanManageInterface $deliverymanRepo)
+    protected $mediaService;
+    public function __construct(protected DeliverymanManageInterface $deliverymanRepo, MediaService $mediaService)
     {
-
+        $this->mediaService = $mediaService;
     }
 
     public function registration(Request $request)
@@ -38,8 +40,8 @@ class DeliverymanManageController extends Controller
             'area_id' => 'required|exists:areas,id',
             'identification_type' => 'required|in:nid,passport,driving_license',
             'identification_number' => 'required|string',
-            'identification_photo_front' => 'nullable',
-            'identification_photo_back' => 'nullable',
+            'identification_photo_front' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:1024',
+            'identification_photo_back' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:1024',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -61,6 +63,8 @@ class DeliverymanManageController extends Controller
                 $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
             }
 
+            $identification_photo_front = $this->mediaService->insert_media_image($request,null,'identification_photo_front');
+            $identification_photo_back = $this->mediaService->insert_media_image($request,null,'identification_photo_back');
             // Create the user
             $user = User::create([
                 'first_name' => $request->first_name,
@@ -80,8 +84,8 @@ class DeliverymanManageController extends Controller
                 'area_id' => $request->area_id,
                 'identification_type' => $request->identification_type,
                 'identification_number' => $request->identification_number,
-                'identification_photo_front' => $request->identification_photo_front ?? null,
-                'identification_photo_back' => $request->identification_photo_back ?? null,
+                'identification_photo_front' => $identification_photo_front?->id,
+                'identification_photo_back' => $identification_photo_back?->id,
                 'status' => 'approved',
             ]);
 
