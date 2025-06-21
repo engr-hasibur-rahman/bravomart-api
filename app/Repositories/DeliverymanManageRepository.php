@@ -144,6 +144,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             DB::rollBack();
             return false;
         }
+
         DB::commit();
         return $deliveryman->id;
 

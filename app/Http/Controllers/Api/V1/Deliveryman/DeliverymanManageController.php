@@ -34,6 +34,12 @@ class DeliverymanManageController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'phone' => 'required|unique:users,phone',
+            'vehicle_type_id' => 'required|exists:vehicle_types,id',
+            'area_id' => 'required|exists:areas,id',
+            'identification_type' => 'required|in:nid,passport,driving_license',
+            'identification_number' => 'required|string',
+            'identification_photo_front' => 'nullable',
+            'identification_photo_back' => 'nullable',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -46,6 +52,7 @@ class DeliverymanManageController extends Controller
         }
 
         try {
+
             // By default role ---->
             $roles = Role::where('available_for', 'delivery_level')->pluck('name');
 
@@ -66,8 +73,15 @@ class DeliverymanManageController extends Controller
                 'store_owner' => 0,
                 'status' => 1,
             ]);
-            $user_details = Deliveryman::create([
+
+            $deliverymanDetails = Deliveryman::create([
                 'user_id' => $user->id,
+                'vehicle_type_id' => $request->vehicle_type_id,
+                'area_id' => $request->area_id,
+                'identification_type' => $request->identification_type,
+                'identification_number' => $request->identification_number,
+                'identification_photo_front' => $request->identification_photo_front ?? null,
+                'identification_photo_back' => $request->identification_photo_back ?? null,
                 'status' => 'approved',
             ]);
 
