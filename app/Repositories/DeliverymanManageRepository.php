@@ -165,6 +165,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'] ?? null,
             'slug' => username_slug_generator($data['first_name'], $data['last_name']),
+            'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
             'activity_scope' => 'delivery_level',
             'store_owner' => 0,
