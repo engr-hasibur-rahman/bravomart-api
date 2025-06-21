@@ -841,12 +841,22 @@ class UserController extends Controller
             $user = User::findOrFail($userId);
 
             if ($user) {
-                $user->update($request->only('first_name', 'last_name', 'phone', 'image', 'email'));
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => __('messages.update_success', ['name' => 'User']),
-                ]);
+                if ($user->isDeliveryman()) {
+                    $user->update($request->all());
+                    return response()->json([
+                        'status' => true,
+                        'status_code' => 200,
+                        'message' => __('messages.update_success', ['name' => 'Deliveryman']),
+                    ]);
+                } else {
+                    $user->update($request->only('first_name', 'last_name', 'phone', 'image', 'email'));
+                    return response()->json([
+                        'status' => true,
+                        'status_code' => 200,
+                        'message' => __('messages.update_success', ['name' => 'User']),
+                    ]);
+                }
+
             } else {
                 return response()->json([
                     'status' => true,
