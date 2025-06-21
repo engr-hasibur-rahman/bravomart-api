@@ -65,6 +65,7 @@ class DeliverymanManageController extends Controller
 
             $identification_photo_front = $this->mediaService->insert_media_image($request,null,'identification_photo_front');
             $identification_photo_back = $this->mediaService->insert_media_image($request,null,'identification_photo_back');
+
             // Create the user
             $user = User::create([
                 'first_name' => $request->first_name,
