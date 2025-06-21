@@ -187,6 +187,8 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'vehicle_type_id' => $data['vehicle_type_id'] ?? null,
             'store_id' => $data['store_id'] ?? null,
             'area_id' => $data['area_id'] ?? null,
+            'identification_type' => $data['identification_type'] ?? null,
+            'identification_number' => $data['identification_number'] ?? null,
             'identification_photo_front' => $data['identification_photo_front'] ?? null,
             'identification_photo_back' => $data['identification_photo_back'] ?? null,
             'address' => $data['address'] ?? null,

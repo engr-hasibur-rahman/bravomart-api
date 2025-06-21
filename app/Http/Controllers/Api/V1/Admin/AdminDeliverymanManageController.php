@@ -94,7 +94,7 @@ class AdminDeliverymanManageController extends Controller
             'vehicle_type_id' => 'nullable|exists:vehicle_types,id',
             'area_id' => 'nullable|exists:areas,id',
             'address' => 'nullable|string|max:255',
-            'identification_type' => 'nullable',
+            'identification_type' => 'nullable|in:nid,passport,driving_license',
             'identification_number' => 'nullable',
             'identification_photo_front' => 'nullable',
             'identification_photo_back' => 'nullable',
