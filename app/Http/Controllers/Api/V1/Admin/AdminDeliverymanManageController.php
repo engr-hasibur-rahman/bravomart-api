@@ -88,6 +88,7 @@ class AdminDeliverymanManageController extends Controller
             'user_id' => 'required|exists:users,id',
             'first_name' => 'required|string|max:255',
             'last_name' => 'nullable|string|max:255',
+            'email' => 'required|string|email|max:255',
             'phone' => 'nullable|string|max:15',
             'status' => 'nullable|integer',
             'vehicle_type_id' => 'nullable|exists:vehicle_types,id',
