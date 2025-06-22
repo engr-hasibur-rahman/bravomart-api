@@ -7,13 +7,13 @@ use Twilio\Rest\Client;
 
 class TwilioSmsService implements SmsInterface
 {
-    protected $client;
-    protected $from;
+    protected Client $client;
+    protected string $from;
 
-    public function __construct()
+    public function __construct(array $credentials)
     {
-        $this->client = new Client(config('sms.twilio.sid'), config('sms.twilio.token'));
-        $this->from = config('sms.twilio.from');
+        $this->client = new Client($credentials['TWILIO_SID'], $credentials['TWILIO_AUTH_TOKEN']);
+        $this->from = $credentials['from'] ?? 'AppName';
     }
 
     public function send(string $to, string $message): bool
@@ -24,7 +24,7 @@ class TwilioSmsService implements SmsInterface
                 'body' => $message,
             ]);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             logger()->error('Twilio SMS Error: ' . $e->getMessage());
             return false;
         }
