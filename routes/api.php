@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
 use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
 use App\Http\Controllers\Api\V1\Com\ComSiteGeneralController;
@@ -139,7 +138,6 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/menu', [MenuManageController::class, 'index']);
     Route::post('/update-location', [LiveLocationController::class, 'update']);
     Route::post('/track-order-location', [LiveLocationController::class, 'trackOrder']);
-    Route::get('/vehicle-types/list-dropdown', [AdminDeliverymanManageController::class, 'vehicleTypeDropdown']);
 
     Route::get('/product-query/search-question', [CustomerProductQueryController::class, 'searchQuestion']);
 

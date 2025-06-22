@@ -85,7 +85,6 @@ use App\Models\StoreArea;
 use App\Models\StoreType;
 use App\Models\SystemCommission;
 use App\Models\Tag;
-use App\Models\Translation;
 use App\Models\Unit;
 use App\Services\FlashSaleService;
 use Illuminate\Http\Request;
@@ -109,7 +108,6 @@ class FrontendController extends Controller
     }
 
 
-    /* -----------------------------------------------------------> Department List <---------------------------------------------------------- */
     public function departmentList()
     {
         $departments = Department::where('status', 1)->get();
@@ -129,7 +127,6 @@ class FrontendController extends Controller
         }
     }
 
-    /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
     public function getStores(Request $request)
     {
         if (auth('api')->check()) {
@@ -179,7 +176,6 @@ class FrontendController extends Controller
             ], 404);
         }
     }
-
     public function getStoresDropdown(Request $request)
     {
         if (auth('api')->check()) {
@@ -232,7 +228,6 @@ class FrontendController extends Controller
         ]);
     }
 
-    /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
     public function getKeywordSuggestions(Request $request)
     {
         // Validate the query input
@@ -1330,7 +1325,7 @@ class FrontendController extends Controller
             ->whereNull('products.deleted_at')
             ->paginate($perPage);
         // Extract unique attributes from variants
-        $uniqueAttributes = $this->getUniqueAttributesFromVariants($products, $request->input('language', 'en'));
+        $uniqueAttributes = $this->getUniqueAttributesFromVariants($products);
         return response()->json([
             'messages' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
@@ -1339,59 +1334,26 @@ class FrontendController extends Controller
         ]);
     }
 
-    protected function getUniqueAttributesFromVariants($products, string $languageCode = 'en')
+    protected function getUniqueAttributesFromVariants($products)
     {
         $attributes = [];
 
         foreach ($products as $product) {
             foreach ($product->variants as $variant) {
                 if (!empty($variant->attributes)) {
+                    // Decode the JSON attributes if they are stored as a JSON string
                     $variantAttributes = json_decode($variant->attributes, true);
 
                     if (is_array($variantAttributes)) {
                         foreach ($variantAttributes as $key => $value) {
-                            $translations = Translation::where('translatable_type', ProductAttribute::class)
-                                ->where('value', $key)
-                                ->get();
-
-                            // fallback to lowercase match if not found
-                            if ($translations->isEmpty()) {
-                                $translations = Translation::where('translatable_type', ProductAttribute::class)
-                                    ->whereRaw('LOWER(value) = ?', [strtolower($key)])
-                                    ->get();
+                            // Initialize the key if it doesn't exist
+                            if (!isset($attributes[$key])) {
+                                $attributes[$key] = [];
                             }
 
-                            $translatedKey = null;
-
-                            if ($translations->isNotEmpty()) {
-                                // get the first match for the requested language
-                                $matched = $translations->firstWhere('language', $languageCode);
-
-                                // if not found, fallback to default language (assume 'en')
-                                if (!$matched) {
-                                    $matched = $translations->firstWhere('language', 'en');
-                                }
-
-                                // now find translation of that key in requested language
-                                if ($matched) {
-                                    $translatedKey = Translation::where('translatable_type', ProductAttribute::class)
-                                        ->where('translatable_id', $matched->translatable_id)
-                                        ->where('key', $matched->key)
-                                        ->where('language', $languageCode)
-                                        ->value('value');
-                                }
-                            }
-
-                            $finalKey = $translatedKey ?? $key;
-
-                            // Initialize if not set
-                            if (!isset($attributes[$finalKey])) {
-                                $attributes[$finalKey] = [];
-                            }
-
-                            // Prevent duplicate values
-                            if (!in_array($value, $attributes[$finalKey])) {
-                                $attributes[$finalKey][] = $value;
+                            // Add the value to the key's array if it's not already present
+                            if (!in_array($value, $attributes[$key])) {
+                                $attributes[$key][] = $value;
                             }
                         }
                     }
@@ -1401,7 +1363,6 @@ class FrontendController extends Controller
 
         return $attributes;
     }
-
 
     public function productDetails(Request $request, $product_slug)
     {
@@ -1463,6 +1424,7 @@ class FrontendController extends Controller
             'data' => new ProductDetailsPublicResource($product),
             'related_products' => RelatedProductPublicResource::collection($product->relatedProductsWithCategoryFallback())
         ], 200);
+
     }
 
     public function getNewArrivals(Request $request)

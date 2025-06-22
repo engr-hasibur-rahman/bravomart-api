@@ -112,6 +112,7 @@ class ProductManageRepository implements ProductManageInterface
             if (!empty($data['variants']) && is_array($data['variants'])) {
                 $variants = array_map(function ($variant) use ($product) {
                     // Generate the variant slug
+//                    $variant_slug = generateVariantSlug($variant['variant']);
                     $variant['attributes'] = json_encode($variant['attributes']);
                     $variant['variant_slug'] = $variant['variant']; // Assign the generated slug
                     // Generate a SKU for the variant
@@ -121,6 +122,7 @@ class ProductManageRepository implements ProductManageInterface
                     return $variant;
                 }, $data['variants']);
                 // insert all variants at once
+                //ProductVariant::insert($variants);
                 foreach ($variants as $variant) {
                     ProductVariant::create($variant);
                 }

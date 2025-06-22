@@ -24,7 +24,6 @@ class AdminBlogManageController extends Controller
     {
     }
 
-    /* <---------------------------------------------------Blog category start-----------------------------------------------------> */
     public function blogCategoryIndex(Request $request)
     {
         $blog_categories = $this->blogRepo->getPaginatedCategory(
@@ -122,8 +121,7 @@ class AdminBlogManageController extends Controller
         $this->blogRepo->delete($id, BlogCategory::class);
         return $this->success(translate('messages.delete_success'));
     }
-    /* <---------------------------------------------------Blog category end-----------------------------------------------------> */
-    /* <---------------------------------------------------Blog start -----------------------------------------------------> */
+
     public function blogIndex(Request $request)
     {
         $blogs = $this->blogRepo->getPaginatedBlog(
@@ -249,5 +247,5 @@ class AdminBlogManageController extends Controller
         $category = BlogCategory::all();
         return response()->json(AdminBlogCategoryListResource::collection($category));
     }
-    /* <---------------------------------------------------Blog end-----------------------------------------------------> */
+
 }

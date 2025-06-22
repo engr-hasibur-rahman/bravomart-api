@@ -22,9 +22,7 @@ class StoreTypeDropdownPublicResource extends JsonResource
         return [
             'id' => $this->id,
             'value' => $this->type,
-            'label' => !empty($translation) && $translation->where('key', 'name')->first()
-                ? $translation->where('key', 'name')->first()->value
-                : $this->name,
+            'label' => ucfirst(strtolower($this->type)),
             'name' => !empty($translation) && $translation->where('key', 'name')->first()
                 ? $translation->where('key', 'name')->first()->value
                 : $this->name, // If language is empty or not provided attribute

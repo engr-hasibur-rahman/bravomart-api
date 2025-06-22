@@ -1,11 +1,10 @@
 <?php
 
-namespace Modules\PaymentGateways\app\Http\Controllers;
+namespace Modules\PaymentGateways\App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Modules\PaymentGateways\app\Models\PaymentGateway;
 use Modules\PaymentGateways\app\Transformers\PaymentGatewaysListPublicResource;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Currency;
 
 
 class PaymentGatewaysController extends Controller

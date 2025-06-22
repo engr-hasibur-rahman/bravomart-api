@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
-use App\Http\Resources\Deliveryman\DeliverymanDetailsResource;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
 use App\Jobs\SendDynamicEmailJob;
@@ -808,11 +807,6 @@ class UserController extends Controller
             $userId = auth('api')->id();
             $user = User::findOrFail($userId);
 
-            if ($user->isDeliveryman()) {
-                $user = User::with('deliveryman')->findOrFail($userId);
-                return response()->json(new DeliverymanDetailsResource($user));
-            }
-
             return response()->json(new UserDetailsResource($user));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
@@ -841,22 +835,12 @@ class UserController extends Controller
             $user = User::findOrFail($userId);
 
             if ($user) {
-                if ($user->isDeliveryman()) {
-                    $user->update($request->all());
-                    return response()->json([
-                        'status' => true,
-                        'status_code' => 200,
-                        'message' => __('messages.update_success', ['name' => 'Deliveryman']),
-                    ]);
-                } else {
-                    $user->update($request->only('first_name', 'last_name', 'phone', 'image', 'email'));
-                    return response()->json([
-                        'status' => true,
-                        'status_code' => 200,
-                        'message' => __('messages.update_success', ['name' => 'User']),
-                    ]);
-                }
-
+                $user->update($request->only('first_name', 'last_name', 'phone', 'image', 'email'));
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => __('messages.update_success', ['name' => 'User']),
+                ]);
             } else {
                 return response()->json([
                     'status' => true,
@@ -969,7 +953,6 @@ class UserController extends Controller
             ]);
         }
     }
-
     public function deactivateAccount()
     {
         if (!auth('api')->check()) {
@@ -995,7 +978,6 @@ class UserController extends Controller
             ]);
         }
     }
-
     public function deleteAccount()
     {
         if (!auth('api')->check()) {

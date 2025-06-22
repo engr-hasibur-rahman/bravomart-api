@@ -105,46 +105,9 @@ class SellerStoreOrderController extends Controller
                 'status' => $orderStatusCounts,
             ]);
         } else {
-            $stores = Store::where('store_seller_id', auth('api')->user()->id)
-                ->pluck('id');
-            // auth seller store check
-            if (empty($stores) || !$stores) {
-                return response()->json([
-                    'message' => __('messages.data_not_found'),
-                ], 404);
-            }
-
-            // Get store-wise order info
-            $orders = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
-                ->whereIn('store_id', $stores);
-
-            // Apply status filter
-            if (isset($request->status)) {
-                $orders->where('status', $request->status);
-            }
-            if (isset($request->start_date) && isset($request->end_date)) {
-                $orders->whereBetween('created_at', [$request->start_date, $request->end_date]);
-            }
-
-            // Apply payment_status filter
-            if (isset($request->payment_status)) {
-                $orders->whereHas('orderMaster', function ($query) use ($request) {
-                    $query->where('payment_status', $request->payment_status);
-                });
-            }
-            $orders->when($request->search, fn($query) =>
-            $query->where('id', 'LIKE', '%' . $request->search . '%')
-                ->orWhere('invoice_number', 'LIKE', '%' . $request->search . '%'));
-
-            $orders = $orders->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
-            // === Order Status Buttons (From Full Order Table, Unfiltered) ===
-            $orderStatusCounts = new AdminOrderStatusResource(Order::whereIn('store_id', $stores)->get());
-
             return response()->json([
-                'order_masters' => StoreOrderResource::collection($orders),
-                'meta' => new PaginationResource($orders),
-                'status' => $orderStatusCounts,
-            ]);
+                'messages' => __('messages.data_not_found'),
+            ], 404);
         }
     }
 

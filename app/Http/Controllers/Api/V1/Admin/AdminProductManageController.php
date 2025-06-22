@@ -12,14 +12,10 @@ use App\Http\Resources\Admin\ProductRequestResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\LowStockProductResource;
 use App\Http\Resources\Product\OutOfStockProductResource;
-use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductListResource;
-use App\Http\Resources\Product\RelatedProductPublicResource;
-use App\Http\Resources\Product\StoreWiseProductDropdownResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
-use App\Models\ProductView;
 use App\Models\Store;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +25,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Subscription\app\Models\StoreSubscription;
-use Modules\Subscription\app\Models\Subscription;
 
 class AdminProductManageController extends Controller
 {
@@ -124,36 +119,6 @@ class AdminProductManageController extends Controller
     public function show($slug)
     {
         return $this->productRepo->getProductBySlug($slug);
-    }
-    public function productDetails($product_slug)
-    {
-        $product = Product::with([
-            'store' => function ($query) {
-                $query->withCount(['products' => function ($q) {
-                    // Add conditions to filter approved products and those that are not deleted
-                    $q->where('status', 'approved')
-                        ->whereNull('deleted_at');
-                }]);
-            },
-            'tags',
-            'unit',
-            'variants',
-            'brand',
-            'category',
-            'related_translations'
-        ])
-            ->where('slug', $product_slug)
-            ->first();
-
-        if (!$product) {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ],404);
-        }
-        return response()->json([
-            'messages' => __('messages.data_found'),
-            'data' => new ProductDetailsPublicResource($product),
-        ], 200);
     }
 
     public function update(ProductRequest $request)
