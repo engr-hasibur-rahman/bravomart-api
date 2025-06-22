@@ -2,5 +2,6 @@
     "PaymentGateways": true,
     "Wallet": true,
     "Subscription": true,
-    "Chat": true
+    "Chat": true,
+    "SmsGateway": true
 }
