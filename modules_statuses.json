@@ -3,5 +3,6 @@
     "Wallet": true,
     "Subscription": true,
     "Chat": true,
-    "SmsProvider": true
+    "SmsProvider": true,
+    "SmsGateway": true
 }
