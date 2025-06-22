@@ -23,6 +23,8 @@ class PaymentGatewaysController extends Controller
         ]);
     }
 
+
+
     public function paymentGateways(){
         $paymentGateways = PaymentGateway::where('status', 1)->get();
         return response()->json([

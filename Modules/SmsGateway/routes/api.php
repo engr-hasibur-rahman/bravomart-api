@@ -9,7 +9,7 @@ use Modules\SmsGateway\app\Http\Controllers\Api\V1\UserOtpController;
 
 //  Admin Sms settings
 Route::middleware(['auth:sanctum','online.track'])->prefix('v1/admin/sms-provider/')->group(function () {
-    Route::prefix('settings')->middleware(['permission:' . PermissionKey::ADMIN_CHAT_SETTINGS->value])->group(function () {
+    Route::prefix('settings/')->middleware(['permission:' . PermissionKey::ADMIN_SMS_GATEWAY_SETTINGS->value])->group(function () {
         Route::post('update', [SmsProviderController::class, 'smsProviderSettingUpdate']);
         Route::post('status-update', [SmsProviderController::class, 'smsProviderStatusUpdate']);
         Route::post('otp-login-status', [SmsProviderController::class, 'smsProviderLoginStatus']);

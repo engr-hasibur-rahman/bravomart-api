@@ -13,10 +13,8 @@ class PaymentGatewaySettingsController extends Controller
 {
     public function settingsGetAndUpdate(Request $request, $gateway)
     {
-
         // update payment gateway  and currency settings
         if ($request->isMethod('POST')) {
-
             if (!empty($request->currency_settings) && $request->currency_settings === 'update') {
                 $validator = Validator::make($request->all(), [
                     'com_site_space_between_amount_and_symbol' => 'nullable|string',
@@ -41,6 +39,8 @@ class PaymentGatewaySettingsController extends Controller
                     'com_site_enable_disable_decimal_point',
                     'com_site_space_between_amount_and_symbol',
                 ]);
+
+
 
                 if ($validator->fails()) {
                     return response()->json([
