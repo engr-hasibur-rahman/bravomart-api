@@ -98,6 +98,7 @@ class ProductVariantRequest extends FormRequest
             'variant_slug.unique' => 'The variant slug must be unique.',
             'sku.unique' => 'The SKU must be unique.',
             'special_price.lte' => 'The special price must be less than or equal to the base price.',
+            //'unit_id.exists' => 'The selected unit does not exist.',
             'stock_quantity.required' => 'Stock quantity is required.',
             'status.in' => 'The status must be either 0 (inactive) or 1 (active).',
         ];

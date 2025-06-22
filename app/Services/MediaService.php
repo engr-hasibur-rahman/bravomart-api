@@ -21,16 +21,20 @@ class MediaService
      * @return Media
      */
 
-    public function insert_media_image($request,$type='admin',$file_field_name = 'file'){
-
+    public function insert_media_image($request, $type = 'admin', $file_field_name = 'file', $folder_type = 'default')
+    {
         if ($request->hasFile($file_field_name)) {
             $image = $request->$file_field_name;
 
-            $folder_type = 'default'; // 'folder_type' passed as a parameter to the request or use 'default'
 
             // Define the base path and subfolder path
             $base_path = 'uploads/media-uploader';
             $folder_path = "{$base_path}/{$folder_type}";
+
+            if ($type == 'deliveryman'){
+                $base_path = 'uploads/deliveryman';
+                $folder_path = "{$base_path}/{$folder_type}";
+            }
 
             // Create the directory if it doesn't exist
             if (!File::exists(storage_path("app/public/{$folder_path}"))) {
@@ -61,7 +65,7 @@ class MediaService
             // Save to the database and return the Media instance
             return Media::create([
                 'name' => $image_name_with_ext,
-                'format' =>  strtolower($image_extenstion),
+                'format' => strtolower($image_extenstion),
                 'file_size' => formatBytes($image_size_for_db),
                 'path' => "{$folder_path}/{$image_db}",
                 'dimensions' => $image_dimension_for_db,
@@ -71,7 +75,9 @@ class MediaService
 
         return null;
     }
-    public function load_more_images($request){
+
+    public function load_more_images($request)
+    {
         $image_query = Media::query();
         $image_query->where('user_id', auth('sanctum')->id());
         $offset = $request->get('offset') ?? 0;
@@ -83,9 +89,11 @@ class MediaService
             ->get();
 
         $all_image_files = [];
-        foreach ($all_images as $image){
+        foreach ($all_images as $image) {
+
             // Generate the public URL directly
             $image_url = asset("storage/{$image->path}");
+
             // Check if the grid version exists (without file_exists, use URL generation)
             $grid_image_url = asset("storage/uploads/media-uploader/default/" . basename($image->path));
 
@@ -104,12 +112,13 @@ class MediaService
                 'img_url' => $image_url,
                 'upload_at' => date_format($image->created_at, 'd M y')
             ];
-         }
+        }
 
         return $all_image_files;
     }
 
-    public function image_alt_change($request){
+    public function image_alt_change($request)
+    {
         $update = Media::where('id', $request->image_id)
             ->where('user_id', auth('sanctum')->id())
             ->update([
@@ -117,7 +126,7 @@ class MediaService
             ]);
         return [
             'msg' => $update ? 'Alt text updated successfully' : 'Failed to update alt text',
-            'success' => (bool) $update,
+            'success' => (bool)$update,
         ];
     }
 
@@ -217,7 +226,6 @@ class MediaService
             ];
         }
     }
-
 
 
 }

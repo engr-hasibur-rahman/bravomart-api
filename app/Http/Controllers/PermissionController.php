@@ -9,10 +9,17 @@ use App\Models\Store;
 use App\Models\CustomPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Models\Permission as SpatiePermission;
+
+// Alias the Spatie PermissionKey model
 use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use App\Enums\PermissionKey;
+
+// Ensure you are importing your custom PermissionKey enum
+
 
 class PermissionController extends Controller
 {

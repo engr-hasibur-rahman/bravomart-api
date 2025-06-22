@@ -13,7 +13,7 @@ class OrderObserver
     public function created(Order $order): void
     {
         // Dispatch the job to send emails when the order is created
-        dispatch(new DispatchOrderEmails($order->id, 'new-order'));
+//        dispatch(new DispatchOrderEmails($order->id, 'new-order'));
     }
 
     /**
