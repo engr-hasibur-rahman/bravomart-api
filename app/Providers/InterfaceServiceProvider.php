@@ -20,6 +20,8 @@ class InterfaceServiceProvider extends ServiceProvider
 
     private function bindInterfaces(): void
     {
+        //$this->app->bind(ControllerInterface::class, BaseController::class);
+
         $repositoriesDir = app_path('Repositories');
         $interfaceDir = app_path('Interfaces');
         $repositoryFiles = File::files($repositoriesDir);
@@ -34,6 +36,11 @@ class InterfaceServiceProvider extends ServiceProvider
                 $this->app->bind($interface, $repository);
             }
         }
+
+        //$this->app->bind('App\Interfaces\TranslationInterface', 'App\Repositories\TranslationRepository');
+
+        //$this->app->bind(ComAreaInterface::class, ComAreaRepository::class);
+        //$this->app->bind('App\Interfaces\ComAreaInterface', 'App\Repositories\ComAreaRepository');
     }
 
 

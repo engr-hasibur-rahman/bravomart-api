@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OrderActivity;
 use App\Models\OrderDeliveryHistory;
 use App\Models\User;
+use App\Services\MediaService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,9 +22,11 @@ use Spatie\Permission\Models\Role;
 
 class DeliverymanManageController extends Controller
 {
-    public function __construct(protected DeliverymanManageInterface $deliverymanRepo)
-    {
+    protected $mediaService;
 
+    public function __construct(protected DeliverymanManageInterface $deliverymanRepo, MediaService $mediaService)
+    {
+        $this->mediaService = $mediaService;
     }
 
     public function registration(Request $request)
@@ -34,6 +37,12 @@ class DeliverymanManageController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'phone' => 'required|unique:users,phone',
+            'vehicle_type_id' => 'required|exists:vehicle_types,id',
+            'area_id' => 'required|exists:areas,id',
+            'identification_type' => 'required|in:nid,passport,driving_license',
+            'identification_number' => 'required|string',
+            'identification_photo_front' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:1024',
+            'identification_photo_back' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:1024',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -46,6 +55,7 @@ class DeliverymanManageController extends Controller
         }
 
         try {
+
             // By default role ---->
             $roles = Role::where('available_for', 'delivery_level')->pluck('name');
 
@@ -53,6 +63,9 @@ class DeliverymanManageController extends Controller
             if (isset($request->roles)) {
                 $roles[] = isset($request->roles->value) ? $request->roles->value : $request->roles;
             }
+
+            $identification_photo_front = $this->mediaService->insert_media_image($request, 'deliveryman', 'identification_photo_front', 'verification');
+            $identification_photo_back = $this->mediaService->insert_media_image($request, 'deliveryman', 'identification_photo_back', 'verification');
 
             // Create the user
             $user = User::create([
@@ -66,8 +79,15 @@ class DeliverymanManageController extends Controller
                 'store_owner' => 0,
                 'status' => 1,
             ]);
-            $user_details = Deliveryman::create([
+
+            $deliverymanDetails = Deliveryman::create([
                 'user_id' => $user->id,
+                'vehicle_type_id' => $request->vehicle_type_id,
+                'area_id' => $request->area_id,
+                'identification_type' => $request->identification_type,
+                'identification_number' => $request->identification_number,
+                'identification_photo_front' => $identification_photo_front?->id,
+                'identification_photo_back' => $identification_photo_back?->id,
                 'status' => 'approved',
             ]);
 

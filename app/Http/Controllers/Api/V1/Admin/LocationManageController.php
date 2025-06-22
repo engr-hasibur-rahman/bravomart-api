@@ -29,6 +29,7 @@ class LocationManageController extends Controller
 
     }
 
+    /* ---------------------------------------------------------> Country Manage Start <------------------------------------------------------------------ */
     public function countriesList(Request $request)
     {
         // Extract filters from the request
@@ -84,7 +85,9 @@ class LocationManageController extends Controller
             return $this->failed(translate('messages.delete_failed', ['name' => 'Country']));
         }
     }
+    /* ---------------------------------------------------------> Country Manage End <------------------------------------------------------------------ */
 
+    /* ---------------------------------------------------------> State Manage Start <------------------------------------------------------------------ */
     public function statesList(Request $request)
     {
         // Extract filters from the request
@@ -142,7 +145,9 @@ class LocationManageController extends Controller
             return $this->failed(translate('messages.delete_failed', ['name' => 'State']));
         }
     }
+    /* ---------------------------------------------------------> State Manage End <------------------------------------------------------------------ */
 
+    /* ---------------------------------------------------------> City Manage Start <------------------------------------------------------------------ */
     public function citiesList(Request $request)
     {
         // Extract filters from the request
@@ -194,7 +199,9 @@ class LocationManageController extends Controller
             return $this->failed(translate('messages.delete_failed', ['name' => 'City']));
         }
     }
+    /* ---------------------------------------------------------> City Manage End <------------------------------------------------------------------ */
 
+    /* ---------------------------------------------------------> Area Manage Start <------------------------------------------------------------------ */
     public function areasList(Request $request)
     {
         // Extract filters from the request
@@ -246,5 +253,5 @@ class LocationManageController extends Controller
             return $this->failed(translate('messages.delete_failed', ['name' => 'Area']));
         }
     }
-
+    /* ---------------------------------------------------------> Area Manage End <------------------------------------------------------------------ */
 }
