@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\SmsGateway\Http\Controllers\SmsGatewayController;
+use Modules\SmsGateway\app\Http\Controllers\SmsGatewayController;
 
 /*
 |--------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\SmsGateway\Providers;
+namespace Modules\SmsGateway\app\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
