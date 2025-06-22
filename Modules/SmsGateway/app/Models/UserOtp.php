@@ -1,10 +1,9 @@
 <?php
 
-namespace Modules\SmsGateway\Models;
+namespace Modules\SmsGateway\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\SmsGateway\Database\Factories\UserOtpFactory;
 
 class UserOtp extends Model
 {

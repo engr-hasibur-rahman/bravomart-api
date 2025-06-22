@@ -1,13 +1,12 @@
 <?php
 
-namespace Modules\PaymentGateways\app\Http\Controllers;
+namespace Modules\PaymentGateways\App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
 use Modules\PaymentGateways\app\Models\PaymentGateway;
-use Modules\PaymentGateways\app\Transformers\PaymentGatewaysListPublicResource;
 use Modules\PaymentGateways\app\Transformers\PaymentGatewaysResource;
 
 class PaymentGatewaySettingsController extends Controller
