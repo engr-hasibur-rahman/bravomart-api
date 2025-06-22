@@ -36,7 +36,7 @@ class LowStockProductResource extends JsonResource
                     'product_id' => $variant->product_id,
                     'id' => $variant->id,
                     'variant_slug' => $variant->variant_slug,
-                    'attributes' => $this->attributes ? json_decode($this->attributes, true) : [], // Decode the JSON column
+                    'attributes' => $variant->attributes ? json_decode($variant->attributes, true) : [], // Decode the JSON column
                     'sku' => $variant->sku,
                     'stock_quantity' => $variant->stock_quantity,
                     'price' => $variant->price,
