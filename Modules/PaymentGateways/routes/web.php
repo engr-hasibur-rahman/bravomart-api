@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\PaymentGateways\App\Http\Controllers\Api\PaymentGatewaysController;
+use Modules\PaymentGateways\app\Http\Controllers\Api\PaymentGatewaysController;
 
 
 Route::group([], function () {
