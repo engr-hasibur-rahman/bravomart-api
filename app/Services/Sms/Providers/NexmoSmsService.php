@@ -14,8 +14,8 @@ class NexmoSmsService implements SmsInterface
     public function __construct(array $credentials)
     {
         $this->client = new Client(new Basic(
-            $credentials['NEXMO_KEY'],
-            $credentials['NEXMO_SECRET']
+            $credentials['nexmo_api_key'],
+            $credentials['nexmo_api_secret']
         ));
         $this->from = $credentials['from'] ?? 'AppName';
     }
