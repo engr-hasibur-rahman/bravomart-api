@@ -1323,6 +1323,33 @@ class PermissionAdminSeeder extends Seeder
                     ]
                 ],
 
+                //Payment settings management
+                [
+                    'PermissionName' => '',
+                    'PermissionTitle' => 'SMS Gateways',
+                    'activity_scope' => 'system_level',
+                    'icon' => '',
+                    'options' => ['view'],
+                    'translations' => [
+                        'en' => 'SMS Gateways',
+                        'ar' => 'بوابات الرسائل القصيرة'
+                    ],
+                    'submenu' => [
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_SMS_GATEWAY_SETTINGS->value,
+                            'PermissionTitle' => 'Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'CreditCard',
+                            'options' => ['view', 'update'],
+                            'translations' => [
+                                'en' => 'Settings',
+                                'ar' => 'إعدادات'
+                            ]
+                        ]
+
+                    ]
+                ],
+
                 //System management
                 [
                     'PermissionName' => '',

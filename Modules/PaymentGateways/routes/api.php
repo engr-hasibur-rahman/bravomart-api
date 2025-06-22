@@ -2,8 +2,8 @@
 
 use App\Enums\PermissionKey;
 use Illuminate\Support\Facades\Route;
-use Modules\PaymentGateways\App\Http\Controllers\Api\PaymentGatewaysController;
-use Modules\PaymentGateways\App\Http\Controllers\Api\PaymentGatewaySettingsController;
+use Modules\PaymentGateways\app\Http\Controllers\Api\PaymentGatewaysController;
+use Modules\PaymentGateways\app\Http\Controllers\Api\PaymentGatewaySettingsController;
 
 
 Route::middleware(['auth:sanctum', 'permission:' . PermissionKey::ADMIN_PAYMENT_SETTINGS->value])->prefix('v1')->group(function () {

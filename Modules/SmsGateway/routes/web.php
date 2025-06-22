@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\SmsGateway\app\Http\Controllers\SmsGatewayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +13,3 @@ use Modules\SmsGateway\app\Http\Controllers\SmsGatewayController;
 |
 */
 
-Route::group([], function () {
-    Route::resource('smsgateway', SmsGatewayController::class)->names('smsgateway');
-});
