@@ -22,7 +22,6 @@ class MediaController extends Controller
 
     public function mediaUpload(Request $request)
     {
-
         if (empty($request->all())) {
             return response()->json([
                 'error' => 'No data provided in the request.',
