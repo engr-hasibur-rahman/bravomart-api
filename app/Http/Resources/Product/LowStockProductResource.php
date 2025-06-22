@@ -36,7 +36,7 @@ class LowStockProductResource extends JsonResource
                     'product_id' => $variant->product_id,
                     'id' => $variant->id,
                     'variant_slug' => $variant->variant_slug,
-                    'attributes' => $variant->attributes,
+                    'attributes' => $variant->attributes,//
                     'sku' => $variant->sku,
                     'stock_quantity' => $variant->stock_quantity,
                     'price' => $variant->price,
