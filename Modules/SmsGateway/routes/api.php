@@ -3,6 +3,7 @@
 use App\Enums\PermissionKey;
 use Illuminate\Support\Facades\Route;
 use Modules\SmsGateway\app\Http\Controllers\Api\V1\SmsProviderController;
+use Modules\SmsGateway\app\Http\Controllers\Api\V1\UserOtpController;
 
 
 //  Admin Sms settings
@@ -10,22 +11,13 @@ Route::middleware(['auth:sanctum','online.track'])->prefix('v1/admin/sms-provide
     Route::prefix('settings')->middleware(['permission:' . PermissionKey::ADMIN_CHAT_SETTINGS->value])->group(function () {
         Route::post('update', [SmsProviderController::class, 'smsProviderSettingUpdate']);
         Route::post('status-update', [SmsProviderController::class, 'smsProviderStatusUpdate']);
-        Route::post('status-update', [SmsProviderController::class, 'smsProviderStatusUpdate']);
+        Route::post('otp-login-status', [SmsProviderController::class, 'smsProviderLoginStatus']);
     });
 });
 
-//  Customer
-Route::middleware(['auth:sanctum','online.track'])->prefix('v1/customer/chat/')->group(function () {
-    Route::get('list/', [CustomerChatController::class, 'customerChatList']);
-    Route::post('send', [CustomerChatController::class, 'customerSendMessage']);
-    Route::get('messages-details', [CustomerChatController::class, 'chatWiseFetchMessages']);
-    Route::post('chat/seen', [CustomerChatController::class, 'markAsSeen']);
-});
-
-//  deliveryman
-Route::middleware(['auth:sanctum','online.track'])->prefix('v1/deliveryman/chat/')->group(function () {
-    Route::get('list/', [DeliverymanChatController::class, 'deliverymanChatList']);
-    Route::post('send', [ChatController::class, 'sendMessage']);
-    Route::get('messages-details', [DeliverymanChatController::class, 'deliverymanChatWiseFetchMessages']);
-    Route::post('chat/seen', [DeliverymanChatController::class, 'markAsSeen']);
+// global opt manage
+Route::middleware(['auth:sanctum'])->prefix('v1/otp-login/')->group(function () {
+    Route::post('send', [UserOtpController::class, 'sendOtp']);
+    Route::post('verification', [UserOtpController::class, 'verificationOtp']);
+    Route::post('resend', [UserOtpController::class, 'resendOtp']);
 });
