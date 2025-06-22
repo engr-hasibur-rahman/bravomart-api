@@ -95,9 +95,10 @@ class SmsProviderController extends Controller
             'message' => 'SMS Provider not found.',
         ], 404);
 
+
     }
     public function smsProviderLoginStatus(Request $request){
-        //  updates a config or DB option)
+        //  updates sms settings
         com_option_update('otp_login_enabled_disable', $request->otp_login_enabled_disable);
         return response()->json([
             'status' => false,
