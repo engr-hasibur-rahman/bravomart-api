@@ -18,6 +18,8 @@ class ProductVariantDetailsForStock extends JsonResource
             'product_id' => $this->product_id,
             'id' => $this->id,
             'sku' => $this->sku,
+            'variant_slug' => $this->variant_slug,
+            'attributes' => $this->attributes ? json_decode($this->attributes, true) : [], // Decode the JSON column
             'stock_quantity' => $this->stock_quantity,
             'stock_status'=> $this->stockStatus(),
             'price' => $this->price,
