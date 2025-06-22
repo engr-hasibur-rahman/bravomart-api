@@ -32,6 +32,7 @@ class SellerBannerRequest extends FormRequest
             'button_text' => 'nullable|string|max:50',
             'button_color' => 'nullable|string|max:15',
             'redirect_url' => 'nullable|string|max:255',
+//            'location' => 'nullable|string|max:50',
             'type' => 'nullable|string|max:50',
         ];
     }
@@ -59,6 +60,9 @@ class SellerBannerRequest extends FormRequest
 
             'redirect_url.string' => __('validation.string', ['attribute' => 'Redirect URL']),
             'redirect_url.max' => __('validation.max', ['attribute' => 'Redirect URL']),
+
+//            'location.string' => __('validation.string', ['attribute' => 'Location']),
+//            'location.max' => __('validation.max', ['attribute' => 'Location']),
 
             'type.string' => __('validation.string', ['attribute' => 'Type']),
             'type.max' => __('validation.max', ['attribute' => 'Type']),
