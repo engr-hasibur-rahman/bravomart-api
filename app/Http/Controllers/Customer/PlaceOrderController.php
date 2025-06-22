@@ -38,20 +38,6 @@ class PlaceOrderController extends Controller
     {
 
         $data = $request->validated();
-
-//        $user = User::with('pushSubscriptions')->find(1);
-//        // Get subscription data from the request
-//        $endpoint = $request->input('endpoint');
-//        $key = $request->input('keys.p256dh');
-//        $token = auth()->user()->currentAccessToken()->token;
-//        $contentEncoding = $request->input('content_encoding', 'aes128gcm');
-//        Log::info('Sending notification...');
-//
-//        $user->updatePushSubscription($endpoint, $key, $token, $contentEncoding);
-//        $user->notify(new NewOrderNotification($data));
-//        return response()->json(['message' => 'Order placed and notification sent']);
-
-
         // login check
         if (!auth()->guard('api_customer')->user()
             && isset($data['guest_info'])

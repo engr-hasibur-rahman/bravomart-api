@@ -4,10 +4,9 @@ use App\Enums\PermissionKey;
 use Illuminate\Support\Facades\Route;
 use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionPackageController;
 use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionSellerController;
-use Modules\Subscription\app\Http\Controllers\Api\AdminSubscriptionSettingsController;
 use Modules\Subscription\app\Http\Controllers\Api\BuySubscriptionPackageController;
+use Modules\Subscription\app\Http\Controllers\Api\StoreSubscriptionManageController;
 use Modules\Subscription\app\Http\Controllers\Api\SubscriptionPackageController;
-use Modules\Subscription\app\Http\Controllers\StoreSubscriptionManageController;
 
 
 //  Admin subscription package manage

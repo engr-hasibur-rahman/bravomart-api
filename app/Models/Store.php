@@ -66,27 +66,7 @@ class Store extends Model
         'meta_description',
     ];
 
-    // Only fetch those stores which have subscription_type commission and if subscription then within the order limit for frontend
-//    protected static function booted(): void
-//    {
-//        if (!request()->is('api/v1/admin/*') && !request()->is('api/v1/seller/*')) {
-//            static::addGlobalScope('validStoreSubscription', function ($builder) {
-//                $builder->where(function ($q) {
-//                    // Allow all commission-based stores
-//                    $q->where('subscription_type', 'commission')
-//                        ->orWhere(function ($q2) {
-//                            // For subscription-based stores, ensure valid subscription
-//                            $q2->where('subscription_type', 'subscription')
-//                                ->whereHas('subscriptions', function ($subQuery) {
-//                                    $subQuery->where('status', 1)
-//                                        ->whereDate('expire_date', '>=', now())
-//                                        ->where('order_limit', '>', 0);
-//                                });
-//                        });
-//                });
-//            });
-//        }
-//    }
+
 // Only fetch those stores which have subscription_type commission and if subscription then within the order limit for frontend
     public function scopeValidForCustomerView($query)
     {

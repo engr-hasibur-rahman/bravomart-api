@@ -13,7 +13,6 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\LowStockProductResource;
 use App\Http\Resources\Product\OutOfStockProductResource;
 use App\Http\Resources\Product\ProductListResource;
-use App\Http\Resources\Product\StoreWiseProductDropdownResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
@@ -26,7 +25,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Subscription\app\Models\StoreSubscription;
-use Modules\Subscription\app\Models\Subscription;
 
 class AdminProductManageController extends Controller
 {

@@ -108,7 +108,6 @@ class FrontendController extends Controller
     }
 
 
-    /* -----------------------------------------------------------> Department List <---------------------------------------------------------- */
     public function departmentList()
     {
         $departments = Department::where('status', 1)->get();
@@ -128,7 +127,6 @@ class FrontendController extends Controller
         }
     }
 
-    /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
     public function getStores(Request $request)
     {
         if (auth('api')->check()) {
@@ -230,7 +228,6 @@ class FrontendController extends Controller
         ]);
     }
 
-    /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
     public function getKeywordSuggestions(Request $request)
     {
         // Validate the query input
