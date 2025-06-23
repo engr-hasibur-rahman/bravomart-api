@@ -30,7 +30,8 @@ class CustomerResource extends JsonResource
             "status" => $this->status,
             "address" => $this->defaultAddress ?? null,
             "gender" => $this->gender,
-            "birth_day" => $this->birth_day
+            "birth_day" => $this->birth_day,
+            "type" => 'customer'
         ];
     }
 }
