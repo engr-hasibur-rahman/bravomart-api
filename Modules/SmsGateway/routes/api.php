@@ -11,17 +11,16 @@ use Modules\SmsGateway\app\Http\Controllers\Api\V1\UserOtpController;
 Route::middleware(['auth:sanctum'])->prefix('v1/admin/sms-provider/')->group(function () {
     Route::prefix('settings/')->middleware(['permission:' . PermissionKey::ADMIN_SMS_GATEWAY_SETTINGS->value])->group(function () {
         Route::post('update', [SmsProviderController::class, 'smsProviderSettingUpdate']);
+        Route::match(['get', 'post'], 'update', [SmsProviderController::class, 'smsProviderSettingUpdate']);
         Route::post('status-update', [SmsProviderController::class, 'smsProviderStatusUpdate']);
-        Route::post('otp-login-status', [SmsProviderController::class, 'smsProviderLoginStatus']);
+        Route::match(['get', 'post'], 'otp-login-status', [SmsProviderController::class, 'smsProviderLoginStatus']);
     });
 });
 
 
-
-// global opt manage
+// opt manage
 Route::middleware(['auth:sanctum'])->prefix('v1/otp-login/')->group(function () {
     Route::post('send', [UserOtpController::class, 'sendOtp']);
     Route::post('verification', [UserOtpController::class, 'verificationOtp']);
     Route::post('resend', [UserOtpController::class, 'resendOtp']);
 });
-Route::get('34556/rtr', [UserOtpController::class, 'resendOtp']);
