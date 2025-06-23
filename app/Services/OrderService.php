@@ -452,7 +452,6 @@ class OrderService
                         $after_discount_final_price_with_qty = $after_any_discount_final_price * $itemData['quantity'];
 
                         // without tax line total price  and - coupon total discount
-//                        $line_total_excluding_tax = $after_discount_final_price_with_qty - $total_discount_amount / $total_items;
                         $line_total_excluding_tax = $after_discount_final_price_with_qty;
 
                         // vat/tax calculate
@@ -573,12 +572,11 @@ class OrderService
                 $package->order_amount = $order_package_total_amount + $package->shipping_charge + $package->order_additional_charge_amount; //order package total amount
                 $package->product_discount_amount += $product_discount_amount_package; // product coupon  discount
                 $package->flash_discount_amount_admin = $flash_discount_amount_admin;  // flash sale discount
-//            $package->coupon_discount_amount_admin = $total_discount_amount / $total_package; // admin coupon  discount
                 $package->order_amount_store_value = $package_order_amount_store_value; // order_amount_admin_commission
                 $package->order_amount_admin_commission = $package_order_amount_admin_commission; // order_amount_admin_commission
                 $package->save();
+
                 // Accumulate package values for the main order
-//            $product_discount_amount += $product_discount_amount;
                 $order_amount_master += $package->order_amount;
                 $flash_discount_amount_admin += $flash_discount_amount_admin;
 

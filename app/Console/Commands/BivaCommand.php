@@ -65,12 +65,6 @@ class BivaCommand extends Command
 
         $this->call('biva:create-admin'); // creating Admin
 
-
-
-        // $this->modifySettingsData();
-
-
-
         info('Everything is successful. Now clearing all cached...');
         $this->call('optimize:clear');
         info('Thank You.');

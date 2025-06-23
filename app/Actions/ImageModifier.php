@@ -14,7 +14,6 @@ class ImageModifier
         if (!empty($image)) {
             return com_option_get_id_wise_url($image);
         }
-
         return null;
     }
 }

@@ -1,16 +1,11 @@
 <?php
 
-use App\Helpers;
-use App\Models\ProductVariant;
 use App\Models\SettingOption;
-use App\Models\Coupon;
 use App\Models\CouponLine;
 use App\Models\Media;
 use App\Models\Translation;
 use App\Models\UniversalNotification;
 use App\Models\User;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -29,10 +24,8 @@ if (!function_exists('translate')) {
     {
         $local = app()->getLocale();
         return trans($key, $replace);
-
     }
 
-    //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
     if (!function_exists('safeJsonDecode')) {
         function safeJsonDecode($value)
         {
@@ -40,10 +33,8 @@ if (!function_exists('translate')) {
             if (is_null($value) || !is_string($value)) {
                 return $value;
             }
-
             // Try decoding, but fallback if not a valid JSON
             $decoded = json_decode($value, true);
-
             return json_last_error() === JSON_ERROR_NONE ? $decoded : $value;
         }
     }
@@ -314,7 +305,6 @@ if (!function_exists('translate')) {
         }
     }
 
-    //=========================================================FAYSAL IBNEA HASAN JESAN==============================================================
     function formatBytes($size, $precision = 2)
     {
         $base = log($size, 1024);
@@ -659,7 +649,6 @@ if (!function_exists('getOrderStatusMessage')) {
             $symbol = get_currency_symbol($text);
             $position = com_option_get('com_site_currency_symbol_position');
             $use_comma = com_option_get('com_site_comma_form_adjustment_amount') === 'yes';
-
             $formatted = number_format((float)$amount, 2, '.', $use_comma ? ',' : '');
 
             return $position === 'right' ? $formatted . $symbol : $symbol . $formatted;
