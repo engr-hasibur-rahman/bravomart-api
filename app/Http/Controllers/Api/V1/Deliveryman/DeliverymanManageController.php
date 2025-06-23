@@ -133,6 +133,7 @@ class DeliverymanManageController extends Controller
                 ->where('status', 1)
                 ->where('deleted_at', null)
                 ->first();
+
             // Check if the user exists and if the password is correct
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([

@@ -54,6 +54,7 @@ class AdminOrderManageController extends Controller
 
         $ordersQuery->when($request->status, fn($query) => $query->where('status', $request->status));
         $ordersQuery->when($request->refund_status, fn($query) => $query->where('refund_status', $request->refund_status));
+        $ordersQuery->when($request->store_id, fn($query) => $query->where('store_id', $request->store_id));
 
         $ordersQuery->when($request->start_date && $request->end_date, function ($query) use ($request) {
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
