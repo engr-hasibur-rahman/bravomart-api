@@ -18,10 +18,9 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin/sms-provider/')->group(fun
 
 
 
-// global opt manage
+// global otp manage
 Route::middleware(['auth:sanctum'])->prefix('v1/otp-login/')->group(function () {
     Route::post('send', [UserOtpController::class, 'sendOtp']);
-    Route::post('verification', [UserOtpController::class, 'verificationOtp']);
+    Route::post('verification', [UserOtpController::class, 'verifyOtp']);
     Route::post('resend', [UserOtpController::class, 'resendOtp']);
 });
-Route::get('34556/rtr', [UserOtpController::class, 'resendOtp']);

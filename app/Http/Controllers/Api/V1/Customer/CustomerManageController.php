@@ -14,10 +14,13 @@ use App\Models\CustomerDeactivationReason;
 use App\Models\UniversalNotification;
 use App\Models\User;
 use App\Models\Wishlist;
+use App\Services\Sms\SmsManager;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Modules\SmsGateway\app\Models\UserOtp;
 use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManageController extends Controller
@@ -58,7 +61,7 @@ class CustomerManageController extends Controller
             return response()->json([
                 "status" => false,
                 "message" => $validator->errors()
-            ],422);
+            ], 422);
         }
 
         $customer = Customer::where('email', $request->email)
@@ -68,7 +71,7 @@ class CustomerManageController extends Controller
             return response()->json([
                 "status" => false,
                 "message" => __('messages.customer.not.found'),
-            ],204);
+            ], 204);
         }
 
         // update firebase device token
@@ -100,7 +103,7 @@ class CustomerManageController extends Controller
                 "status" => false,
                 "message" => __('messages.wrong_credential'),
                 "token" => null,
-            ],204);
+            ], 204);
         } else {
             // Handle the "Remember Me" option
             $remember_me = $request->has('remember_me');

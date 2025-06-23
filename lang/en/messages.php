@@ -6,6 +6,12 @@ return [
     'token.invalid' => 'Token is invalid',
     'token.verified' => 'Token is verified',
 
+    'send_success' => ':name sent successfully.',
+    'send_failed' => 'Failed to send :name!',
+    'verification_success' => ':name is verified successfully.',
+    'verification_failed' => 'Failed to verify :name!',
+    'expired' => ':name has been expired!',
+
     'email.verify.success' => 'Email verified successfully',
     'email.resend.failed' => 'Email resend failed',
     'email.resend.success' => 'Email resend successfully',
