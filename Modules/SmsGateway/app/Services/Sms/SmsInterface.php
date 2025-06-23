@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\Sms;
+namespace Modules\SmsGateway\app\Services\Sms;
 
 interface SmsInterface
 {

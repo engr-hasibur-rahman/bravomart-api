@@ -7,12 +7,11 @@ use App\Models\Customer;
 use App\Models\DeliveryMan;
 use App\Models\SettingOption;
 use App\Models\User;
-use App\Services\Sms\SmsManager;
-use Carbon\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\SmsGateway\app\Models\UserOtp;
+use Modules\SmsGateway\app\Services\Sms\SmsManager;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserOtpController extends Controller

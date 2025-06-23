@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Services\Sms;
+namespace Modules\SmsGateway\app\Services\Sms;
 
-
-
-use App\Services\Sms\Providers\TwilioSmsService;
-use App\Services\Sms\Providers\NexmoSmsService;
+use Modules\SmsGateway\app\Services\Sms\Providers\NexmoSmsService;
+use Modules\SmsGateway\app\Services\Sms\Providers\TwilioSmsService;
+use Modules\SmsGateway\App\Services\Sms\SmsInterface;
 use Modules\SmsGateway\app\Models\SmsProvider;
 
 class SmsManager
