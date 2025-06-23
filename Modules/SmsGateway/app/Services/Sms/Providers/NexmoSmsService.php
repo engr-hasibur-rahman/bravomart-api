@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Sms\Providers;
+namespace Modules\SmsGateway\app\Services\Sms\Providers;
 
-use App\Services\Sms\SmsInterface;
+use Modules\SmsGateway\app\Services\Sms\SmsInterface;
 use Vonage\Client;
 use Vonage\Client\Credentials\Basic;
 use Vonage\SMS\Message\SMS;
