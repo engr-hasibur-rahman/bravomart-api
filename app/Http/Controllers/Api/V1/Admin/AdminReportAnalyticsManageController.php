@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Exports\OrderReportExport;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminOrderDashboardReportResource;
 use App\Http\Resources\Admin\AdminOrderReportResource;
 use App\Http\Resources\Admin\AdminSubscriptionTransactionDashboardReport;

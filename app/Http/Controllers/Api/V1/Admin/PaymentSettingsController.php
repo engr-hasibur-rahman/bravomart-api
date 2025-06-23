@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Actions\ImageModifier;
-use App\Http\Controllers\Controller;
-use App\Models\SettingOption;
+use App\Http\Controllers\Api\V1\Controller;
 use Illuminate\Http\Request;
 
 class PaymentSettingsController extends Controller

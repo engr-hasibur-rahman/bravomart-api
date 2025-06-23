@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Customer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Interfaces\OrderRefundInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;

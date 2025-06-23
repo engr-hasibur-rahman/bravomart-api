@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Seller;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\AdminNoticeDetailsResource;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Seller\SellerNoticeDetailsResource;
 use App\Http\Resources\Seller\SellerNoticeResource;

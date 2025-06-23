@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Product;
 
 use App\Enums\StoreType;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\ProductAttributeRequest;
 use App\Http\Resources\Admin\AdminAttributeDetailsResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -15,7 +15,6 @@ use App\Repositories\ProductAttributeRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductAttributeController extends Controller
 {

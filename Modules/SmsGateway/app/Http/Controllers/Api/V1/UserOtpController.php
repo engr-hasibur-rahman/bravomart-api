@@ -2,7 +2,7 @@
 
 namespace Modules\SmsGateway\app\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Models\Customer;
 use App\Models\DeliveryMan;
 use App\Models\SettingOption;

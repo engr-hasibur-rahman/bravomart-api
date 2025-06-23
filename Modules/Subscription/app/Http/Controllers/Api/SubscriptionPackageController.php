@@ -2,13 +2,12 @@
 
 namespace Modules\Subscription\app\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use Illuminate\Http\Request;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 use Modules\Subscription\app\Transformers\SubscriptionPackagePublicResource;
-use Spatie\LaravelPackageTools\Package;
 
 class SubscriptionPackageController extends Controller
 {

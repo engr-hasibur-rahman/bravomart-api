@@ -6,7 +6,6 @@ use App\Actions\ImageModifier;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\Media;
 use App\Services\MediaService;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 

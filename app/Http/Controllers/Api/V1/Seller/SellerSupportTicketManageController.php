@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Seller;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\SupportTicketRequest;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketMessageResource;
@@ -11,7 +10,6 @@ use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
 use App\Interfaces\SupportTicketManageInterface;
 use App\Models\Store;
 use App\Models\Ticket;
-use App\Models\TicketMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -23,7 +21,6 @@ class SellerSupportTicketManageController extends Controller
 
     }
 
-    /* ----------------------------------------------------------- Support Ticket -------------------------------------------------- */
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -207,7 +204,6 @@ class SellerSupportTicketManageController extends Controller
         }
     }
 
-    /* ----------------------------------------------------------- Support Ticket Messages -------------------------------------------------- */
     public function addMessage(Request $request)
     {
         if (!auth('api')->check()) {

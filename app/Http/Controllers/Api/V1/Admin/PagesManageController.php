@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Helpers\MultilangSlug;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Interfaces\PageManageInterface;
 use App\Models\Page;
 use Illuminate\Http\JsonResponse;

@@ -62,8 +62,6 @@ class SellerStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            //'area_id.exists' => 'The selected area does not exist.',
-            //'store_seller_id.exists' => 'The selected seller does not exist.',
             'store_type.required' => 'Store type is required.',
             'store_type.in' => 'The store type must be one of the following: ' . $this->getEnumValues(StoreType::class),
             'name.required' => 'The name field is required.',

@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Seller;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Store\SellerStoreCommissionResource;
-use App\Mail\DynamicEmail;
-use App\Models\EmailTemplate;
 use App\Models\Store;
 use App\Models\SystemCommission;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Modules\Subscription\app\Models\StoreSubscription;
 
 class SellerBusinessSettingsController extends Controller
 {

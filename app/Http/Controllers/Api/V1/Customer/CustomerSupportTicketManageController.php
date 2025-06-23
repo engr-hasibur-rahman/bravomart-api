@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Customer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\SupportTicketRequest;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsResource;
@@ -21,7 +21,6 @@ class CustomerSupportTicketManageController extends Controller
 
     }
 
-    /* ----------------------------------------------------------- Support Ticket -------------------------------------------------- */
     public function index(Request $request)
     {
         $filters = $request->only([
@@ -149,7 +148,6 @@ class CustomerSupportTicketManageController extends Controller
         }
     }
 
-    /* ----------------------------------------------------------- Support Ticket Messages -------------------------------------------------- */
     public function addMessage(Request $request)
     {
         if (auth('api_customer')->check()) {
@@ -175,7 +173,7 @@ class CustomerSupportTicketManageController extends Controller
 
             // Generate a filename with a timestamp
             $timestamp = now()->timestamp;
-            $email = str_replace(['@', '.'], '_', auth('api_customer')->user()->email); // Replace '@' and '.' with underscores
+            $email = str_replace(['@', '.'], '_', auth('api_customer')->user()->email);
             $originalName = $file->getClientOriginalName(); // Get the original file name
             $filename = 'uploads/support-ticket/' . $timestamp . '_' . $email . '_' . $originalName;
 

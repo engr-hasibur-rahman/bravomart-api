@@ -17,9 +17,6 @@ class ComAreaListForDropdownResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-//        $coordinates = $this->coordinates->getGeometries()->toArray();
-//
-//        dd($coordinates);
         return [
             'id' => $this->id,
             'value' => $this->id,

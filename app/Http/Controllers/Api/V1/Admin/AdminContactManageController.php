@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminContactMessageListResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\ContactManageInterface;

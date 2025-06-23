@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Notifications\OrderNotificationForAdmin;
-use App\Models\Customer;
 use App\Models\UniversalNotification;
 use Illuminate\Http\Request;
 

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\NoticeRequest;
 use App\Http\Resources\Admin\AdminNoticeDetailsResource;
 use App\Http\Resources\Admin\AdminNoticeResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\NoticeManageInterface;
-use App\Models\StoreNotice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 

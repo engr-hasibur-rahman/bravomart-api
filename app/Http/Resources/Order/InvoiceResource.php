@@ -26,27 +26,27 @@ class InvoiceResource extends JsonResource
         $total_amount = ($subtotal + $total_tax_amount + $shipping_charge + $additional_charge) - $coupon_discount;
 
         return [
-            'customer' => $this->orderMaster->customer ? [
-                'name' => $this->orderMaster->customer->first_name . ' ' . $this->orderMaster->customer->last_name,
-                'email' => $this->orderMaster->customer->email,
-                'phone' => $this->orderMaster->customer->phone,
-                'shipping_address' => $this->orderMaster->shippingAddress ? [
-                    'house' => $this->orderMaster->shippingAddress->house,
-                    'road' => $this->orderMaster->shippingAddress->road,
-                    'floor' => $this->orderMaster->shippingAddress->floor,
-                    'address' => $this->orderMaster->shippingAddress->address,
-                    'postal_code' => $this->orderMaster->shippingAddress->postal_code,
-                    'contact' => $this->orderMaster->shippingAddress->contact_number
+            'customer' => $this->orderMaster?->customer ? [
+                'name' => $this->orderMaster?->customer?->first_name . ' ' . $this->orderMaster?->customer?->last_name,
+                'email' => $this->orderMaster?->customer?->email,
+                'phone' => $this->orderMaster?->customer?->phone,
+                'shipping_address' => $this->orderMaster?->shippingAddress ? [
+                    'house' => $this->orderMaster?->shippingAddress?->house,
+                    'road' => $this->orderMaster?->shippingAddress?->road,
+                    'floor' => $this->orderMaster?->shippingAddress?->floor,
+                    'address' => $this->orderMaster?->shippingAddress?->address,
+                    'postal_code' => $this->orderMaster?->shippingAddress?->postal_code,
+                    'contact' => $this->orderMaster?->shippingAddress?->contact_number
                 ] : null
             ] : null,
             'invoice_number' => '#' . $this->invoice_number,
             'invoice_date' => $this->invoice_date ? Carbon::parse($this->invoice_date)->format('d-M-Y') : null,
-            'payment_status' => $this->orderMaster->payment_status,
+            'payment_status' => $this->orderMaster?->payment_status,
             'items' => $this->orderDetail->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'name' => $item->product->name,
-                    'description' => $item->product->description,
+                    'description' => $item->product?->description,
                     'price' => $item->price,
                     'quantity' => $item->quantity,
                     'variant' => json_decode($item->variant_details),

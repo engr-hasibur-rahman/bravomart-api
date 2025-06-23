@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\AdminStoreRequest;
 use App\Http\Requests\SellerStoreRequest;
-use App\Http\Resources\Admin\AdminStoreDetailsResource;
 use App\Http\Resources\Admin\AdminStoreRequestResource;
 use App\Http\Resources\Admin\SellerWiseStoreForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -68,7 +67,6 @@ class AdminStoreManageController extends Controller
     public function show(Request $request)
     {
         return $this->storeRepo->getStoreById($request->id);
-//        return response()->json(new AdminStoreDetailsResource($store));
     }
 
     public function sellerStores(Request $request)

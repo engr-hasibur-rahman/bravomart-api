@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Actions\ImageModifier;
 use App\Helpers\ComHelper;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Models\Store;
-use App\Models\CustomPermission;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;

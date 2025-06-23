@@ -2,8 +2,7 @@
 
 namespace Modules\SmsGateway\app\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Services\Sms\SmsManager;
+use App\Http\Controllers\Api\V1\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\SmsGateway\app\Models\SmsProvider;

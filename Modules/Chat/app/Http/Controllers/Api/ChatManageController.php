@@ -2,7 +2,7 @@
 
 namespace Modules\Chat\app\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 
 class ChatManageController extends Controller
 {

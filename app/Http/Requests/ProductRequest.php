@@ -52,7 +52,6 @@ class ProductRequest extends FormRequest
             "available_time_ends" => "nullable|date|after_or_equal:available_time_starts",
             "manufacture_date" => "nullable|date",
             "expiry_date" => "nullable|date|after_or_equal:expiry_date",
-
             "variants" => "required|array|min:1",
             "variants.*.variant_slug" => "nullable|string|max:255|unique:product_variants,variant_slug," . ($this->route('product') ?? 0) . ",id",
             "variants.*.pack_quantity" => "nullable|numeric|min:0",

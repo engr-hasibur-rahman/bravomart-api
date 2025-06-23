@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Customer;
+namespace App\Http\Controllers\Api\V1\Customer;
 
-use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Models\OrderMaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Modules\Subscription\app\Models\SubscriptionHistory;
 
 class OrderPaymentController extends Controller
 {

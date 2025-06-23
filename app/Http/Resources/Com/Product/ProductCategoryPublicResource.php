@@ -26,7 +26,6 @@ class ProductCategoryPublicResource extends JsonResource
             'parent_id' => $this->parent_id,
             'category_slug' => $locales['category_slug']['value'] ?? $this->category_slug,
             'category_banner' =>  $this->category_banner,
-//            'category_banner_url' => ImageModifier::generateImageUrl($this->category_banner),
             'category_thumb' => $this->category_thumb,
             'category_thumb_url' => ImageModifier::generateImageUrl($this->category_thumb),
             'category_name_paths' => $this->category_name_paths,

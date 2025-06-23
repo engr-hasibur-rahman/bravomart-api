@@ -2,13 +2,13 @@
 
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\WithdrawGateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Modules\Wallet\app\Transformers\WithdrawGatewayListResource;
 use Modules\Wallet\app\Transformers\WithdrawGatewayDetailsResource;
+use Modules\Wallet\app\Transformers\WithdrawGatewayListResource;
 
 class AdminWithdrawGatewayManageController extends Controller
 {

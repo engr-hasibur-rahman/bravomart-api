@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Models\SystemCommission;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class AdminCommissionManageController extends Controller
 {

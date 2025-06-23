@@ -2,7 +2,7 @@
 
 namespace Modules\PaymentGateways\app\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use Modules\PaymentGateways\app\Models\PaymentGateway;
 use Modules\PaymentGateways\app\Transformers\PaymentGatewaysListPublicResource;
 

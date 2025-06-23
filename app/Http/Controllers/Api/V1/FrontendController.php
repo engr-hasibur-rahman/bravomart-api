@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Behaviour;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\AdminFlashSaleDetailsResource;
 use App\Http\Resources\Banner\BannerPublicResource;
 use App\Http\Resources\Com\AboutUsPublicResource;
 use App\Http\Resources\Com\BecomeSellerPublicResource;
@@ -33,12 +31,9 @@ use App\Http\Resources\Location\CityPublicResource;
 use App\Http\Resources\Location\CountryPublicResource;
 use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Order\OrderRefundReasonResource;
-use App\Http\Resources\PageResource;
-use App\Http\Resources\Product\BestSellingPublicResource;
 use App\Http\Resources\Product\FlashSaleAllProductPublicResource;
 use App\Http\Resources\Product\FlashSaleWithProductPublicResource;
 use App\Http\Resources\Product\NewArrivalPublicResource;
-use App\Http\Resources\Product\PopularProductPublicResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductKeywordSuggestionPublicResource;
 use App\Http\Resources\Product\ProductPublicResource;
@@ -108,8 +103,6 @@ class FrontendController extends Controller
 
     }
 
-
-    /* -----------------------------------------------------------> Department List <---------------------------------------------------------- */
     public function departmentList()
     {
         $departments = Department::where('status', 1)->get();
@@ -129,7 +122,6 @@ class FrontendController extends Controller
         }
     }
 
-    /* -----------------------------------------------------------> Store List <---------------------------------------------------------- */
     public function getStores(Request $request)
     {
         if (auth('api')->check()) {
@@ -232,7 +224,6 @@ class FrontendController extends Controller
         ]);
     }
 
-    /* -----------------------------------------------------------> Product List <---------------------------------------------------------- */
     public function getKeywordSuggestions(Request $request)
     {
         // Validate the query input

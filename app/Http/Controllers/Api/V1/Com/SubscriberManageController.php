@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Com;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\SubscribeRequest;
 use App\Http\Resources\Subscribe\SubscribeResource;
 use App\Interfaces\SubscriberManageInterface;
@@ -15,7 +15,6 @@ class SubscriberManageController extends Controller
     {
 
     }
-
     public function subscribe(SubscribeRequest $request)
     {
         $subscriber = $this->subscriberRepo->subscribe($request->validated());

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\AreaCreateRequest;
 use App\Http\Requests\StoreAreaSettingsRequest;
 use App\Http\Resources\Admin\AdminAreaSettingsDetailsResource;
@@ -14,7 +14,6 @@ use App\Interfaces\TranslationInterface;
 use App\Models\StoreArea;
 use App\Models\StoreAreaSetting;
 use App\Models\StoreAreaSettingRangeCharge;
-use App\Models\StoreAreaSettingStoreType;
 use App\Services\AreaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

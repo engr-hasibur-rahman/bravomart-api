@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Enums\StatusType;
 use App\Exports\ProductExport;
 use App\Helpers\MultilangSlug;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\ImportRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Admin\ProductRequestResource;
@@ -14,14 +14,11 @@ use App\Http\Resources\Product\LowStockProductResource;
 use App\Http\Resources\Product\OutOfStockProductResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
 use App\Http\Resources\Product\ProductListResource;
-use App\Http\Resources\Product\RelatedProductPublicResource;
-use App\Http\Resources\Product\StoreWiseProductDropdownResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
-use App\Models\ProductView;
-use App\Models\Store;
 use App\Models\Product;
+use App\Models\Store;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +26,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Subscription\app\Models\StoreSubscription;
-use Modules\Subscription\app\Models\Subscription;
 
 class AdminProductManageController extends Controller
 {

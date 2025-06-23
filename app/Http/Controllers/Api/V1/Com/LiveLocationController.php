@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\Com;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\LiveLocationResource;
 use App\Models\DeliveryMan;
 use App\Models\LiveLocation;
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class LiveLocationController extends Controller

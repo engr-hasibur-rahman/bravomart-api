@@ -3,7 +3,7 @@
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Enums\WalletOwnerType;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\WithdrawGatewayPublicListResource;
 use App\Mail\DynamicEmail;
@@ -16,10 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Modules\Wallet\app\Models\Wallet;
-use Modules\Wallet\app\Models\WalletTransaction;
 use Modules\Wallet\app\Models\WalletWithdrawalsTransaction;
 use Modules\Wallet\app\Transformers\WithdrawDetailsResource;
-use Modules\Wallet\app\Transformers\WithdrawGatewayListResource;
 use Modules\Wallet\app\Transformers\WithdrawListResource;
 
 class SellerAndDeliverymanWithdrawController extends Controller

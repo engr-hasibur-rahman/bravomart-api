@@ -2,14 +2,13 @@
 
 namespace Modules\Wallet\app\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Mail\DynamicEmail;
 use App\Models\EmailTemplate;
 use App\Models\Store;
 use App\Models\User;
 use App\Models\WithdrawalRecord;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +17,6 @@ use Modules\Wallet\app\Models\Wallet;
 use Modules\Wallet\app\Models\WalletTransaction;
 use Modules\Wallet\app\Models\WalletWithdrawalsTransaction;
 use Modules\Wallet\app\Transformers\AdminWithdrawListResource;
-use Modules\Wallet\app\Transformers\AdminWithdrawRequestResource;
 
 class AdminWithdrawRequestManageController extends Controller
 {

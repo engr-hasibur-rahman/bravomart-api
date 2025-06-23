@@ -2,15 +2,13 @@
 
 namespace Modules\Subscription\app\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Subscription\app\Models\StoreSubscription;
-use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 use Modules\Subscription\app\Services\SubscriptionService;
-use Modules\Subscription\app\Transformers\AdminSubscriptionPackageResource;
 use Modules\Subscription\app\Transformers\StoreSubscriptionHistoryResource;
 
 class AdminSubscriptionSellerController extends Controller

@@ -10,12 +10,10 @@ use App\Http\Controllers\Api\V1\Admin\AdminCommissionManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminContactManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminFlashSaleManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminInventoryManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminOrderManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminOrderRefundManageController;
-use App\Http\Controllers\Api\v1\Admin\AdminPosSalesController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminProductQueryManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminReportAnalyticsManageController;
@@ -43,17 +41,17 @@ use App\Http\Controllers\Api\V1\CouponManageController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\MenuManageController;
 use App\Http\Controllers\Api\V1\NotificationManageController;
+use App\Http\Controllers\Api\V1\PermissionController;
 use App\Http\Controllers\Api\V1\Product\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\ProductAuthorController;
+use App\Http\Controllers\Api\V1\ProductBrandController;
+use App\Http\Controllers\Api\V1\ProductCategoryController;
+use App\Http\Controllers\Api\V1\RoleController;
 use App\Http\Controllers\Api\V1\SliderManageController;
+use App\Http\Controllers\Api\V1\StaffController;
 use App\Http\Controllers\Api\V1\SystemManagementController;
 use App\Http\Controllers\Api\V1\TagManageController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\ProductBrandController;
-use App\Http\Controllers\ProductCategoryController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawGatewayManageController;
 use Modules\Wallet\app\Http\Controllers\Api\AdminWithdrawRequestManageController;
@@ -91,27 +89,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('sales-summary', [AdminDashboardController::class, 'salesSummaryData']);
             Route::get('other-summary', [AdminDashboardController::class, 'otherSummaryData']);
             Route::get('order-growth-summary', [AdminDashboardController::class, 'orderGrowthData']);
-        });
-        // POS Manage
-        Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_POS_SALES->value]], function () {
-            Route::group(['prefix' => 'pos/'], function () {
-                Route::get('', [AdminPosSalesController::class, 'index']); // Show POS dashboard
-                Route::post('process', [AdminPosSalesController::class, 'processSale']); // Process a sale
-                Route::get('products', [AdminPosSalesController::class, 'fetchProducts']); // Fetch products for POS
-                Route::post('add-to-cart', [AdminPosSalesController::class, 'addToCart']); // Add product to POS cart
-                Route::get('cart', [AdminPosSalesController::class, 'getCart']); // Fetch current POS cart
-                Route::post('remove-from-cart', [AdminPosSalesController::class, 'removeFromCart']); // Remove item from POS cart
-                Route::post('apply-discount', [AdminPosSalesController::class, 'applyDiscount']); // Apply discount to the order
-                Route::post('apply-tax', [AdminPosSalesController::class, 'applyTax']); // Apply tax to the order
-                Route::get('customers', [AdminPosSalesController::class, 'fetchCustomers']); // Fetch customers for POS
-                Route::post('add-customer', [AdminPosSalesController::class, 'addCustomer']); // Add a new customer
-                Route::post('finalize-sale', [AdminPosSalesController::class, 'finalizeSale']); // Finalize the sale and generate invoice
-                Route::get('order-history', [AdminPosSalesController::class, 'orderHistory']); // View POS order history
-                // POS Settings (with specific permission)
-                Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_POS_SETTINGS->value]], function () {
-                    Route::get('settings', [AdminPosSalesController::class, 'posSettings']); // POS settings
-                });
-            });
         });
 
 
@@ -517,10 +494,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('change-status', [AdminDeliverymanManageController::class, 'changeVehicleStatus']);
                 Route::post('approve', [AdminDeliverymanManageController::class, 'approveVehicleRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroyVehicle']);
-            });
-            // deliveryman review manage
-            Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_REVIEW->value]], function () {
-                Route::get('reviews', [AdminDeliverymanReviewManageController::class, 'index']);
             });
         });
 

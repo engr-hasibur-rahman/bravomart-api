@@ -30,8 +30,6 @@ class CustomerAddressRequest extends FormRequest
             'email' => 'required|string|max:255|email',
             'contact_number' => 'required|string|max:20',
             'address' => 'required|string|max:255',
-            //'latitude' => 'nullable|regex:/^-?\d{1,2}\.\d+$/',
-            //'longitude' => 'nullable|regex:/^-?\d{1,3}\.\d+$/',
             'area_id' => 'nullable|exists:store_areas,id',
             'road' => 'nullable|string|max:255',
             'house' => 'nullable|string|max:255',

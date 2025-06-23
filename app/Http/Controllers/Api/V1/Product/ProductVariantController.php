@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Product;
 
 use App\Helpers\MultilangSlug;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\ProductVariantRequest;
 use App\Interfaces\ProductVariantInterface;
 use App\Models\ProductVariant;
@@ -29,11 +29,8 @@ class ProductVariantController extends Controller
     {
         $variant_slug = MultilangSlug::makeSlug(ProductVariant::class, $request->variant_slug, 'variant_slug');
         $request['variant_slug'] = $variant_slug;
-        // Generate a SKU with a prefix
-        //$sku = generateUniqueSku('PRD', 6); // Example output: PRDABC123
-
         // Generate a SKU without a prefix
-        $sku = generateUniqueSku(); // Example output: ABCD1234
+        $sku = generateUniqueSku();
         $request['sku'] = $sku;
         $variant = $this->productVariantRepo->store($request->all());
 

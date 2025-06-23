@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Helpers\ComHelper;
 use App\Http\Requests\RoleRequest;
@@ -10,7 +10,6 @@ use App\Models\CustomPermission;
 use App\Models\CustomRole;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class RoleController extends Controller
 {

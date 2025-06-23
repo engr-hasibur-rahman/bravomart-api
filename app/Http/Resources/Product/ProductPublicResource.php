@@ -23,17 +23,7 @@ class ProductPublicResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-//        // Filter variants by price range in the resource
-//        $filteredVariants = $this->variants->filter(function ($variant) use ($request) {
-//            // Apply the price range filter
-//            return (!$request->min_price || $variant->price >= $request->min_price) &&
-//                (!$request->max_price || $variant->price <= $request->max_price);
-//        });
-//
-//        // Get the first filtered variant, or null if no variants match the price range
-//        $firstVariant = $filteredVariants->first();
         $firstVariant = $this->variants->first();
-
         // Get the requested language from the query parameter
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
@@ -68,7 +58,6 @@ class ProductPublicResource extends JsonResource
                 ),
             'price' => optional($firstVariant)->price,
             'special_price' => optional($firstVariant)->special_price,
-//            'singleVariant' => $filteredVariants->count() === 1 ? [$firstVariant] : [],
             'singleVariant' => $this->variants->count() === 1 ? [$firstVariant] : [],
             'discount_percentage' => $firstVariant && $firstVariant->price > 0 && $firstVariant->special_price > 0
                 ? round((($firstVariant->price - $firstVariant->special_price) / $firstVariant->price) * 100, 2)
