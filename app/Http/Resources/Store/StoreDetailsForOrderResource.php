@@ -41,6 +41,7 @@ class StoreDetailsForOrderResource extends JsonResource
             "additional_charge_name" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_name : null,
             "additional_charge_amount" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_amount : 0,
             "additional_charge_type" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_type : 'fixed',
+            "type" => "store",
         ];
     }
 }
