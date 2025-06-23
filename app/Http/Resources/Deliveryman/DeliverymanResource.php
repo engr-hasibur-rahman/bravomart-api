@@ -24,7 +24,8 @@ class DeliverymanResource extends JsonResource
             "total_delivered" => $this->total_delivered,
             "last_delivered_location" => $this->last_delivered_location,
             "rating" => number_format((float)$this->rating, 2, '.', ''),
-            "review_count" => $this->review_count
+            "review_count" => $this->review_count,
+            "type" => "deliveryman",
         ];
     }
 }
