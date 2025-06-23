@@ -13,7 +13,7 @@ class TwilioSmsService implements SmsInterface
     public function __construct(array $credentials)
     {
         $this->client = new Client($credentials['twilio_sid'], $credentials['twilio_auth_key']);
-        $this->from = $credentials['from'] ?? 'AppName';
+        $this->from = $credentials['from'] ?? '+16206661971';
     }
 
     public function send(string $to, string $message): bool

@@ -5,33 +5,30 @@ namespace App\Services\Sms\Providers;
 use App\Services\Sms\SmsInterface;
 use Vonage\Client;
 use Vonage\Client\Credentials\Basic;
+use Vonage\SMS\Message\SMS;
 
 class NexmoSmsService implements SmsInterface
 {
-    protected $client;
-    protected $from;
+    protected Client $client;
+    protected string $from;
 
     public function __construct(array $credentials)
     {
-        $this->client = new Client(new Basic(
-            $credentials['nexmo_api_key'],
-            $credentials['nexmo_api_secret']
-        ));
-        $this->from = $credentials['from'] ?? 'AppName';
+        $basic = new Basic($credentials['nexmo_api_key'], $credentials['nexmo_api_secret']);
+        $this->client = new Client($basic);
+        $this->from = $credentials['from'] ?? 'Bravo Mart';
     }
 
     public function send(string $to, string $message): bool
     {
         try {
-            $result = $this->client->message()->send([
-                'to'   => $to,
-                'from' => $this->from,
-                'text' => $message,
-            ]);
+            $response = $this->client->sms()->send(
+                new SMS($to, $this->from, $message)
+            );
 
-            return $result->getStatus() === 0;
-        } catch (\Exception $e) {
-            logger()->error("Nexmo SMS Error: " . $e->getMessage());
+            return $response->current()->getStatus() === 0;
+        } catch (\Throwable $e) {
+            logger()->error("Vonage SMS Error: " . $e->getMessage());
             return false;
         }
     }
