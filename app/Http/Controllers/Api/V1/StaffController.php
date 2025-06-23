@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Actions\ImageModifier;
 use App\Enums\Role as UserRole;
 use App\Http\Requests\SellerStaffStoreRequest;
 use App\Http\Resources\Com\Pagination\PaginationResource;

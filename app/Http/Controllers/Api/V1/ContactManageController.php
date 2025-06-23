@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactRequest;
 use App\Interfaces\ContactManageInterface;
-use App\Mail\ContactUserMail;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class ContactManageController extends Controller
 {

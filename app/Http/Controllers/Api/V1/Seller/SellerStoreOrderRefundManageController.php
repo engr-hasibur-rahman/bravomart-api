@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Seller;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Http\Resources\Order\OrderRefundReasonResource;
 use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Interfaces\OrderRefundInterface;
 use App\Models\OrderRefund;

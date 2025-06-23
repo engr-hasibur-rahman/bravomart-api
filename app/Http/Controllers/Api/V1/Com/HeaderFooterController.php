@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Actions\MultipleImageModifier;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\FooterInfoResource;
 use App\Models\SettingOption;
-use Illuminate\Http\Request;
 
 
 class  HeaderFooterController extends Controller

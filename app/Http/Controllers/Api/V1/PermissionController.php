@@ -1,25 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\PermissionKey;
 use App\Helpers\ComHelper;
 use App\Http\Resources\PermissionResource;
 use App\Http\Resources\SellerRoleResource;
-use App\Models\Store;
 use App\Models\CustomPermission;
+use App\Models\Store;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Permission as SpatiePermission;
-
-// Alias the Spatie PermissionKey model
 use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\QueryBuilder;
-use Illuminate\Database\Eloquent\Builder;
-use App\Enums\PermissionKey;
-
-// Ensure you are importing your custom PermissionKey enum
-
 
 class PermissionController extends Controller
 {

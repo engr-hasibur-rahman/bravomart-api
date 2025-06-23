@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\SliderRequest;
 use App\Http\Resources\Admin\AdminSliderResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\SliderManageInterface;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SliderManageController extends Controller

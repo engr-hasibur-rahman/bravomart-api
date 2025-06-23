@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1\Seller;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Customer\CustomerProfileResource;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Seller\SellerProfileResource;
 use App\Interfaces\SellerManageInterface;
-use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;

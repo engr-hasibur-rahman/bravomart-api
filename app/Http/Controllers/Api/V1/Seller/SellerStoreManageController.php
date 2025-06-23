@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Seller;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\SellerStoreRequest;
 use App\Http\Resources\Com\Store\OwnerWiseStoreListResource;
 use App\Http\Resources\Com\Store\StoreListResource;

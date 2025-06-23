@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Com;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\AreaCreateRequest;
 use App\Interfaces\ComAreaInterface;
 use App\Interfaces\TranslationInterface;
 use App\Services\AreaService;
-use App\Models\StoreArea;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\QueryBuilder;
-use Illuminate\Support\Facades\DB;
 
 class AreaController extends Controller
 {

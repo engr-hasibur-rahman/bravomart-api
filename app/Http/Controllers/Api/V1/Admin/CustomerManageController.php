@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Customer\CustomerDetailsResource;
 use App\Http\Resources\Customer\CustomerResource;
 use App\Models\Customer;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;

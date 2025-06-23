@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\AdminDeliverymanManageController;
-use App\Http\Controllers\Api\V1\Admin\AdminProductManageController;
 use App\Http\Controllers\Api\V1\Auth\PartnerLoginController;
 use App\Http\Controllers\Api\V1\Com\ComSiteGeneralController;
 use App\Http\Controllers\Api\V1\Com\FrontendPageSettingsController;
@@ -11,17 +10,17 @@ use App\Http\Controllers\Api\V1\Com\SubscriberManageController;
 use App\Http\Controllers\Api\V1\ContactManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
+use App\Http\Controllers\Api\V1\Customer\PlaceOrderController;
 use App\Http\Controllers\Api\V1\DeliveryChargeCalculateController;
 use App\Http\Controllers\Api\V1\FrontendController;
 use App\Http\Controllers\Api\V1\MenuManageController;
 use App\Http\Controllers\Api\V1\MigrationController;
 use App\Http\Controllers\Api\V1\OtherChargeInfoController;
+use App\Http\Controllers\Api\V1\PermissionController;
 use App\Http\Controllers\Api\V1\SeederController;
 use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\TaxInfoController;
-use App\Http\Controllers\Customer\PlaceOrderController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Middleware\ApiAuthMiddleware;
 use Illuminate\Support\Facades\Route;
 

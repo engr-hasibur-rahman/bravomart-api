@@ -2,8 +2,7 @@
 
 namespace Modules\Chat\app\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\User\PageListResource;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Models\Customer;
 use App\Models\Store;
 use App\Models\User;
@@ -14,8 +13,6 @@ use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Modules\Chat\app\Models\Chat;
 use Modules\Chat\app\Models\ChatMessage;
-use Modules\Chat\app\Transformers\ChatListResource;
-use Modules\Chat\app\Transformers\ChatMessageDetailsResource;
 
 class ChatController extends Controller
 {

@@ -19,11 +19,6 @@ class CheckPermission
         $user = Auth::guard('sanctum')->user();
         $storeSlug = $request->route('store_slug'); // Get the dynamic store slug
 
-//        // Check if the user has permission for the specific store and route
-//        if (!$user->hasPermissionForStore($permissionKey, $storeSlug)) {
-//            return response()->json(['error' => 'Unauthorized'], 403);
-//        }
-
         return $next($request);
     }
 }

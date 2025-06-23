@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Customer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Http\Resources\Order\CustomerOrderPackageResource;
 use App\Http\Resources\Order\CustomerOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
-use App\Http\Resources\Order\OrderMasterResource;
 use App\Http\Resources\Order\OrderSummaryResource;
 use App\Models\CouponLine;
 use App\Models\Order;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Product;
 
 use App\Helpers\MultilangSlug;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\ProductAuthorRequest;
 use App\Http\Resources\Admin\AdminAuthorDetailsResource;
 use App\Http\Resources\Admin\AdminAuthorRequestResource;

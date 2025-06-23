@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Role as UserRole;
 use App\Http\Requests\UserCreateRequest;
-use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\Deliveryman\DeliverymanDetailsResource;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
 use App\Jobs\SendDynamicEmailJob;
-use App\Mail\DynamicEmail;
 use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
 use App\Models\EmailTemplate;
@@ -19,7 +17,6 @@ use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -362,7 +359,6 @@ class UserController extends Controller
                 "status_code" => 200,
                 "message" => __('messages.login_success', ['name' => 'Admin']),
                 "token" => $user->createToken('auth_token')->plainTextToken,
-//                "permissions" => ComHelper::buildMenuTree($user->roles()->pluck('id')->toArray(), $permissions),
                 "email_verified" => $email_verified,
                 "role" => $user->getRoleNames()->first(),
             ], 200);
@@ -1018,5 +1014,5 @@ class UserController extends Controller
             ]);
         }
     }
-    /* <---- User profile end ----> */
+
 }

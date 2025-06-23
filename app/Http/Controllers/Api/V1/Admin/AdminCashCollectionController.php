@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\OrderActivityType;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminCashCollectionResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\Order;

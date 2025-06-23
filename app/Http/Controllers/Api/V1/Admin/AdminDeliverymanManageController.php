@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Enums\FuelType;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\DeliverymanRequest;
 use App\Http\Requests\VehicleTypeRequest;
 use App\Http\Resources\Admin\AdminDeliverymanDetailsResource;

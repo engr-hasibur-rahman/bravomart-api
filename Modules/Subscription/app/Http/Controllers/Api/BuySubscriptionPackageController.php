@@ -2,7 +2,7 @@
 
 namespace Modules\Subscription\app\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Models\Store;
 use App\Models\SystemCommission;
 use Carbon\Carbon;
@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Modules\Subscription\app\Http\Requests\RenewSubscriptionRequest;
 use Modules\Subscription\app\Models\StoreSubscription;
-use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 use Modules\Subscription\app\Services\SubscriptionService;
 

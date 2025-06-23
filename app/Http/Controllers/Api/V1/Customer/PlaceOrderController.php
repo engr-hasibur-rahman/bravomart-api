@@ -1,28 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Customer;
+namespace App\Http\Controllers\Api\V1\Customer;
 
-use App\Events\MyEvent;
-use App\Events\OrderPlaced;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\Order\PlaceOrderRequest;
-use App\Http\Resources\Order\OrderMasterResource;
 use App\Http\Resources\Order\PlaceOrderDetailsResource;
 use App\Http\Resources\Order\PlaceOrderMasterResource;
-use App\Models\CustomerAddress;
-use App\Models\Order;
 use App\Models\OrderMaster;
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\UniversalNotification;
-use App\Models\User;
-use App\Notifications\NewOrderNotification;
 use App\Services\OrderService;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
 use Modules\Wallet\app\Models\Wallet;
 
 class PlaceOrderController extends Controller
@@ -37,21 +26,7 @@ class PlaceOrderController extends Controller
     // place order
     public function placeOrder(PlaceOrderRequest $request): JsonResponse
     {
-
         $data = $request->validated();
-
-//        $user = User::with('pushSubscriptions')->find(1);
-//        // Get subscription data from the request
-//        $endpoint = $request->input('endpoint');
-//        $key = $request->input('keys.p256dh');
-//        $token = auth()->user()->currentAccessToken()->token;
-//        $contentEncoding = $request->input('content_encoding', 'aes128gcm');
-//        Log::info('Sending notification...');
-//
-//        $user->updatePushSubscription($endpoint, $key, $token, $contentEncoding);
-//        $user->notify(new NewOrderNotification($data));
-//        return response()->json(['message' => 'Order placed and notification sent']);
-
 
         // login check
         if (!auth()->guard('api_customer')->user()

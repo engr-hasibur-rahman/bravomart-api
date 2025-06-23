@@ -2,7 +2,7 @@
 
 namespace Modules\Subscription\app\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Models\Translation;
 use Illuminate\Http\Request;

@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketDetailsResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketMessageResource;
 use App\Http\Resources\Com\SupportTicket\SupportTicketResource;
 use App\Interfaces\SupportTicketManageInterface;
 use App\Models\Ticket;
-use App\Models\TicketMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -232,7 +231,7 @@ class AdminSupportTicketManageController extends Controller
         }
 
         // Use relationship-based deletion if defined
-        $ticket->messages()->delete(); // Assuming hasMany('messages') relationship exists
+        $ticket->messages()->delete();
         $ticket->delete();
 
         return response()->json([

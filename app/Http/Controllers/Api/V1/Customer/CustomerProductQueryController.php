@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Customer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\ProductQueryRequest;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Customer\CustomerProductQueryResource;

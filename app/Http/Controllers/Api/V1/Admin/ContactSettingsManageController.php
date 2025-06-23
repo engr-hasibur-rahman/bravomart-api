@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\AdminAboutSettingsResource;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminContactSettingsResource;
 use App\Models\ContactSetting;
 use App\Models\Translation;

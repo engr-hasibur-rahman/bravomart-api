@@ -2,7 +2,7 @@
 
 namespace Modules\Subscription\app\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller

@@ -3,16 +3,12 @@
 namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Actions\ImageModifier;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\AdminBecomeSellerResource;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\GdprPublicResource;
-use App\Http\Resources\Com\SiteGeneralInfoFilterFavResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterLogoResource;
-use App\Http\Resources\Com\SiteGeneralInfoFilterResource;
 use App\Http\Resources\Com\SiteGeneralInfoResource;
 use App\Models\GeneralSetting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ComSiteGeneralController extends Controller
 {

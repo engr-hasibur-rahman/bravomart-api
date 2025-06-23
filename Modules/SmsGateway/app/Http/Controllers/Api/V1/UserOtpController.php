@@ -2,13 +2,12 @@
 
 namespace Modules\SmsGateway\app\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Models\Customer;
 use App\Models\DeliveryMan;
 use App\Models\SettingOption;
 use App\Models\User;
 use App\Services\Sms\SmsManager;
-use Carbon\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;

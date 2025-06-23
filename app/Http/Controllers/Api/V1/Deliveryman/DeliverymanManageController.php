@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Deliveryman;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Mail\EmailVerificationMail;
 use App\Models\DeliveryMan;
 use App\Models\DeliverymanDeactivationReason;
 use App\Models\Order;
-use App\Models\OrderActivity;
-use App\Models\OrderDeliveryHistory;
 use App\Models\User;
 use App\Services\MediaService;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;

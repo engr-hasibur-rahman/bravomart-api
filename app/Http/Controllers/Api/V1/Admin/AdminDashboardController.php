@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Dashboard\AdminOtherSummaryResource;
 use App\Http\Resources\Dashboard\OrderGrowthSummaryResource;
 use App\Http\Resources\Dashboard\SalesSummaryResource;

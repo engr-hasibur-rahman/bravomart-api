@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\StoreProductBrandRequest;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\DB;
 class ProductBrandController extends Controller
 {
 
-    public function __construct(
-        public ProductBrandRepository $repository
-    )
+    public function __construct(public ProductBrandRepository $repository)
     {
     }
 

@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\StoreTypeRequest;
-use App\Http\Requests\StoreAreaSettingsRequest;
 use App\Http\Resources\Admin\AdminStoreTypeDetailsResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Http\Resources\Com\Store\StoreTypePublicResource;
 use App\Http\Resources\Com\Store\StoreTypeResource;
 use App\Interfaces\StoreTypeManageInterface;
 use Illuminate\Http\Request;

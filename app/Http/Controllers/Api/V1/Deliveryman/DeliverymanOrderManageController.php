@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Deliveryman;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Deliveryman\DeliverymanMyOrdersResource;
 use App\Http\Resources\Deliveryman\DeliverymanOrderRequestResource;
 use App\Http\Resources\Order\AdminOrderResource;
-use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Http\Resources\Order\OrderSummaryResource;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\Order;
@@ -163,16 +162,6 @@ class DeliverymanOrderManageController extends Controller
             })
             ->exists();
 
-//        $is_cash_on_delivery = Order::where('id', $request->id)
-//            ->whereHas('orderMaster', function ($query) {
-//                $query->where('payment_gateway', 'cash_on_delivery');
-//            })
-//            ->exists();
-//        if (!$is_cash_on_delivery) {
-//            return response()->json([
-//                'message' => __('messages.order_is_not_cash_on_delivery')
-//            ], 422);
-//        }
         if ($already_cancelled_or_ignored_or_delivered) {
             return response()->json([
                 'message' => __('messages.order_already_cancelled_or_ignored_or_delivered')

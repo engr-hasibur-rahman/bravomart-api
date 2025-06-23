@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Actions\ImageModifier;
-use App\Http\Controllers\Controller;
-use App\Interfaces\TranslationInterface;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Models\SettingOption;
 use App\Models\Translation;
 use Illuminate\Http\Request;

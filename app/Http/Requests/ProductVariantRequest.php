@@ -26,34 +26,21 @@ class ProductVariantRequest extends FormRequest
         return [
             // Validate that 'product_id' is either null or exists in the 'products' table.
             'product_id' => 'required|exists:products,id',
-            // Validate that 'product_id' is either null or exists in the 'products' table.
-            // 'product_id' => 'nullable|exists:products,id',
-
-            // Ensure 'variant_slug' is a unique string with a maximum length of 255 characters.
-            // Exclude the current record (for update scenarios) using $this->id.
             'variant_slug' => 'nullable|string|max:255|unique:product_variants,variant_slug,' . $this->id,
-
             // Similar validation as 'variant_slug' but for SKU (Seller's Stock Keeping Unit).
             'sku' => 'nullable|string|max:255|unique:product_variants,sku,' . $this->id,
-
             // Validate 'pack_quantity' as a nullable numeric value that cannot be negative.
             'pack_quantity' => 'nullable|numeric|min:0',
-
             // Validate 'weight_major' as a nullable numeric value that cannot be negative.
             'weight_major' => 'nullable|numeric|min:0',
-
             // Validate 'weight_gross' as a nullable numeric value that cannot be negative.
             'weight_gross' => 'nullable|numeric|min:0',
-
             // Validate 'weight_net' as a nullable numeric value that cannot be negative.
             'weight_net' => 'nullable|numeric|min:0',
-
             // Ensure 'color' is a nullable string with a maximum length of 255 characters.
             'color' => 'nullable|string|max:255',
-
             // Ensure 'size' is a nullable string with a maximum length of 255 characters.
             'size' => 'nullable|string|max:255',
-
             // Validate 'price' as a nullable numeric value that cannot be negative.
             'price' => 'nullable|numeric|min:0',
 
@@ -98,7 +85,6 @@ class ProductVariantRequest extends FormRequest
             'variant_slug.unique' => 'The variant slug must be unique.',
             'sku.unique' => 'The SKU must be unique.',
             'special_price.lte' => 'The special price must be less than or equal to the base price.',
-            //'unit_id.exists' => 'The selected unit does not exist.',
             'stock_quantity.required' => 'Stock quantity is required.',
             'status.in' => 'The status must be either 0 (inactive) or 1 (active).',
         ];

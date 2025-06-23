@@ -11,8 +11,6 @@ use App\Http\Controllers\Api\V1\Seller\SellerDeliverymanManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerFlashSaleProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerInventoryManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerManageController;
-use App\Http\Controllers\Api\V1\Seller\SellerPosSalesController;
-use App\Http\Controllers\Api\V1\Seller\SellerPosSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerProductQueryController;
 use App\Http\Controllers\Api\V1\Seller\SellerReviewController;
@@ -21,10 +19,8 @@ use App\Http\Controllers\Api\V1\Seller\SellerStoreManageController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreNoticeController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreOrderController;
 use App\Http\Controllers\Api\V1\Seller\SellerStoreOrderRefundManageController;
-use App\Http\Controllers\Api\V1\Seller\SellerStoreSettingsController;
 use App\Http\Controllers\Api\V1\Seller\SellerSupportTicketManageController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\V1\StaffController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -67,21 +63,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
                 Route::get('other-summary/{slug?}', [SellerStoreDashboardManageController::class, 'otherSummaryData']);
                 Route::get('order-growth-summary/{slug?}', [SellerStoreDashboardManageController::class, 'orderGrowthData']);
             });
-            // POS Manage
-            Route::group(['prefix' => 'pos/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_POS_SALES->value]], function () {
-                Route::get('', [SellerPosSalesController::class, 'index'])->name('seller.store.pos.index'); // Show POS dashboard for the store
-                Route::post('process', [SellerPosSalesController::class, 'processSale'])->name('seller.store.pos.process'); // Process a sale for the store
-                Route::get('products', [SellerPosSalesController::class, 'fetchProducts'])->name('seller.store.pos.products'); // Fetch store-specific products
-                Route::post('add-to-cart', [SellerPosSalesController::class, 'addToCart'])->name('seller.store.pos.addToCart'); // Add product to POS cart
-                Route::get('cart', [SellerPosSalesController::class, 'getCart'])->name('seller.store.pos.cart'); // Fetch POS cart for the store
-                Route::post('remove-from-cart', [SellerPosSalesController::class, 'removeFromCart'])->name('seller.store.pos.removeFromCart'); // Remove product from POS cart
-                Route::post('apply-discount', [SellerPosSalesController::class, 'applyDiscount'])->name('seller.store.pos.applyDiscount'); // Apply discount for the store
-                Route::post('apply-tax', [SellerPosSalesController::class, 'applyTax'])->name('seller.store.pos.applyTax'); // Apply tax for the store
-                Route::get('customers', [SellerPosSalesController::class, 'fetchCustomers'])->name('seller.store.pos.customers'); // Fetch store-specific customers
-                Route::post('add-customer', [SellerPosSalesController::class, 'addCustomer'])->name('seller.store.pos.addCustomer'); // Add customer for the store
-                Route::post('finalize-sale', [SellerPosSalesController::class, 'finalizeSale'])->name('seller.store.pos.finalizeSale'); // Finalize the sale
-                Route::get('order-history', [SellerPosSalesController::class, 'orderHistory'])->name('seller.store.pos.orderHistory'); // POS order history for the store
-            });
+
             // seller deliveryman manage
             Route::group(['prefix' => 'deliveryman/'], function () {
                 Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
@@ -209,18 +191,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
                 Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_BUSINESS_PLAN->value], function () {
                     Route::get('business-plan', [SellerBusinessSettingsController::class, 'businessPlanInfo']);
                     Route::post('business-plan-change', [SellerBusinessSettingsController::class, 'businessPlanChange']);
-                });
-                // store notice
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_NOTICE->value], function () {
-                    Route::get('notices', [SellerStoreSettingsController::class, 'storeNotice']);
-                });
-                // store config
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_STORE_CONFIG->value], function () {
-                    Route::match(['get', 'put'], 'config', [SellerStoreSettingsController::class, 'storeConfig']);
-                });
-                // pos settings
-                Route::group(['middleware' => 'permission:' . PermissionKey::SELLER_STORE_POS_CONFIG->value], function () {
-                    Route::match(['get', 'put'], 'pos-config', [SellerPosSettingsController::class, 'pos-config']);
                 });
             });
             // Flash Sale manage

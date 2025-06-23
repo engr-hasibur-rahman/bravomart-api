@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminEmailDetailsResource;
 use App\Http\Resources\Admin\AdminEmailResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Mail\GeneralMail;
 use App\Models\EmailTemplate;
-use App\Models\OrderRefundReason;
 use App\Models\Translation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class EmailTemplateManageController extends Controller
@@ -20,7 +17,6 @@ class EmailTemplateManageController extends Controller
     {
 
     }
-
     public function translationKeys(): mixed
     {
         return $this->emailTemplate->translationKeys;

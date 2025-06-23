@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Seller;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Dashboard\AdminOtherSummaryResource;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Dashboard\OrderGrowthSummaryResource;
 use App\Http\Resources\Dashboard\SalesSummaryResource;
 use App\Http\Resources\Dashboard\SellerStoreOtherSummaryResource;
 use App\Http\Resources\Dashboard\SellerStoreSummaryResource;
-use App\Http\Resources\Dashboard\SummaryResource;
 use App\Http\Resources\Seller\Store\StoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
 use Illuminate\Http\Request;

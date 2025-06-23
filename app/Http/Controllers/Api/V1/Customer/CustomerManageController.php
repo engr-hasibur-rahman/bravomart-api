@@ -2,25 +2,20 @@
 
 namespace App\Http\Controllers\Api\V1\Customer;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\Customer\CustomerDashboardResource;
 use App\Http\Resources\Customer\CustomerProfileResource;
-use App\Http\Resources\User\UserDetailsResource;
 use App\Interfaces\CustomerManageInterface;
 use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
 use App\Models\CustomerDeactivationReason;
 use App\Models\UniversalNotification;
-use App\Models\User;
 use App\Models\Wishlist;
-use App\Services\Sms\SmsManager;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Modules\SmsGateway\app\Models\UserOtp;
 use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManageController extends Controller
@@ -122,7 +117,6 @@ class CustomerManageController extends Controller
             ]);
         }
     }
-    /* ---------------------------------------------------------- Reset and Verification -------------------------------------------------------- */
 
     // Verify email with token
     public function verifyEmail(Request $request)

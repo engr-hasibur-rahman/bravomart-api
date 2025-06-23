@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\SellerListForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Http\Resources\Dashboard\DeliverymanDashboardResource;
 use App\Http\Resources\Dashboard\SellerStoreSummaryResource;
 use App\Http\Resources\Seller\SellerDetailsResource;
 use App\Http\Resources\Seller\SellerResource;
@@ -13,7 +12,6 @@ use App\Interfaces\StoreManageInterface;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use phpseclib3\Crypt\Hash;
 
 class AdminSellerManageController extends Controller
 {
