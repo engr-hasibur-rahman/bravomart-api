@@ -10,57 +10,66 @@ use Modules\SmsGateway\app\Models\SmsProvider;
 class SmsProviderController extends Controller
 {
     public function smsProviderSettingUpdate(Request $request){
-                $validator = Validator::make($request->all(), [
-                    'name' => 'required|string|in:nexmo,twilio',
-                    'expire_time' => 'required|numeric',
-                    'credentials' => 'required|array',
-                ]);
+        if ($request->method() == "POST") {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|in:nexmo,twilio',
+                'expire_time' => 'required|numeric',
+                'credentials' => 'required|array',
+            ]);
 
-                if ($validator->fails()) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Validation failed',
-                        'errors' => $validator->errors()
-                    ], 422);
-                }
-
-                // Optional: Add per-provider credential validation
-                if ($request->name === 'twilio') {
-                    $validator = Validator::make($request->credentials, [
-                        'twilio_sid' => 'required|string',
-                        'twilio_auth_key' => 'required|string',
-                    ]);
-                } elseif ($request->name === 'nexmo') {
-                    $validator = Validator::make($request->credentials, [
-                        'nexmo_api_key' => 'required|string',
-                        'nexmo_api_secret' => 'required|string',
-                    ]);
-                }
-
-                if ($validator->fails()) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Credential validation failed',
-                        'errors' => $validator->errors()
-                    ], 422);
-                }
-
-
-             SmsProvider::updateOrCreate(
-                 ['slug' => $request->name],
-                 [
-                     'name' => ucfirst($request->name),
-                     'slug' => $request->name,
-                     'expire_time' => $request->expire_time,
-                     'credentials' => json_encode($request->credentials),
-                     'status' => 1,
-                 ]
-                );
-
+            if ($validator->fails()) {
                 return response()->json([
-                    'status' => true,
-                    'message' => 'SMS Provider updated successfully.',
+                    'status' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Optional: Add per-provider credential validation
+            if ($request->name === 'twilio') {
+                $validator = Validator::make($request->credentials, [
+                    'twilio_sid' => 'required|string',
+                    'twilio_auth_key' => 'required|string',
                 ]);
+            } elseif ($request->name === 'nexmo') {
+                $validator = Validator::make($request->credentials, [
+                    'nexmo_api_key' => 'required|string',
+                    'nexmo_api_secret' => 'required|string',
+                ]);
+            }
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Credential validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+
+            SmsProvider::updateOrCreate(
+                ['slug' => $request->name],
+                [
+                    'name' => ucfirst($request->name),
+                    'slug' => $request->name,
+                    'expire_time' => $request->expire_time,
+                    'credentials' => json_encode($request->credentials),
+                    'status' => 1,
+                ]
+            );
+
+            return response()->json([
+                'status' => true,
+                'message' => 'SMS Provider updated successfully.',
+            ]);
+        }
+
+        $sms_gateway = SmsProvider::all();
+
+        return response()->json([
+            'status' => true,
+            'data' => $sms_gateway,
+        ]);
 
     }
 
@@ -106,12 +115,21 @@ class SmsProviderController extends Controller
 
     }
     public function smsProviderLoginStatus(Request $request){
-        //  updates sms settings
-        com_option_update('otp_login_enabled_disable', $request->otp_login_enabled_disable);
+        if ($request->method() == "POST") {
+            //  updates sms settings
+            com_option_update('otp_login_enabled_disable', $request->otp_login_enabled_disable);
+            return response()->json([
+                'status' => true,
+                'message' => 'OTP login status updated successfully.',
+            ]);
+        }
+
+       $otp_login_enabled_disable = com_option_get('otp_login_enabled_disable');
+
         return response()->json([
-            'status' => false,
-            'message' => 'OTP login status updated successfully.',
-        ], 404);
+            'status' => true,
+            'otp_login_enabled_disable' => $otp_login_enabled_disable,
+        ]);
 
     }
 
