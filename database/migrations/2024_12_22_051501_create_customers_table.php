@@ -12,9 +12,9 @@ return new class extends Migration {
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
+            $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('image')->nullable();
             $table->date('birth_day')->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->string('google_id')->nullable();
             $table->string('facebook_id')->nullable();
             $table->string('apple_id')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->timestamp('password_changed_at')->nullable();
             $table->text('email_verify_token')->nullable();
             $table->integer('email_verified')->default(0)->comment('0=unverified, 1=verified');

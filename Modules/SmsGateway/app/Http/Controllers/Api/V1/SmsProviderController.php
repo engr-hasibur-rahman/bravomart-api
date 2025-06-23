@@ -3,6 +3,7 @@
 namespace Modules\SmsGateway\app\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\Sms\SmsManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\SmsGateway\app\Models\SmsProvider;
@@ -73,7 +74,8 @@ class SmsProviderController extends Controller
 
     }
 
-    public function smsProviderStatusUpdate(Request $request){
+    public function smsProviderStatusUpdate(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'status' => 'required',
             'name' => 'required|string|in:nexmo,twilio',
@@ -92,15 +94,18 @@ class SmsProviderController extends Controller
         $status = $request->status;
 
         if ($smsProvider) {
-           if ($status == 1) {
-               $status = 1;
-           }else{
-               $status = 0;
-           }
+            if ($status == 1) {
+                $status = 1;
+            } else {
+                $status = 0;
+            }
+
+            SmsProvider::where('status', 1)->update(['status' => 0]);
 
             $smsProvider->update([
                 'status' => $status,
             ]);
+
             return response()->json([
                 'status' => true,
                 'message' => 'SMS Provider activated successfully.',
