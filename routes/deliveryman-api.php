@@ -22,6 +22,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'delivery-man/'], function ()
             Route::post('/read', [NotificationManageController::class, 'markAsRead']);
         });
         Route::group(['prefix' => 'profile/'], function () {
+            Route::post('is-available', [DeliverymanManageController::class, 'isAvailableToggle']);
             Route::post('activity-notification', [DeliverymanManageController::class, 'activityNotificationToggle']);
             Route::post('activate-deactivate', [DeliverymanManageController::class, 'activeDeactiveAccount']);
             Route::post('delete-account', [DeliverymanManageController::class, 'deleteAccount']);

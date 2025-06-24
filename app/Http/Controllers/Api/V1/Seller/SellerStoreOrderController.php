@@ -19,11 +19,13 @@ use Illuminate\Support\Facades\Validator;
 class SellerStoreOrderController extends Controller
 {
 
-    protected $orderManageNotificationService;
+    protected OrderManageNotificationService $orderManageNotificationService;
+    protected bool $canChangeOrderStatus;
 
     public function __construct(OrderManageNotificationService $orderManageNotificationService)
     {
         $this->orderManageNotificationService = $orderManageNotificationService;
+        $this->canChangeOrderStatus = true;
     }
 
     public function allOrders(Request $request)
@@ -173,6 +175,9 @@ class SellerStoreOrderController extends Controller
 
     public function changeOrderStatus(Request $request)
     {
+        if (!$this->canChangeOrderStatus) {
+            return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
+        }
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
             'status' => 'required|in:pending,confirmed,processing,shipped,cancelled'
@@ -230,6 +235,10 @@ class SellerStoreOrderController extends Controller
 
     public function cancelOrder(Request $request)
     {
+        if (!$this->canChangeOrderStatus) {
+            return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
+        }
+
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
         ]);
@@ -273,6 +282,5 @@ class SellerStoreOrderController extends Controller
                 'message' => __('messages.order_cancel_failed')
             ], 500);
         }
-
     }
 }
