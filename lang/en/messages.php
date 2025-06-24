@@ -117,6 +117,7 @@ return [
     'deliveryman_assign_failed' => 'Deliveryman assign failed!',
     'deliveryman_active_order_exists' => 'You have active orders! Can\'t deactivate or delete your account',
     'deliveryman_can_not_be_assigned' => 'Deliveryman can\'t be assigned!',
+    'deliveryman_has_active_orders' =>'You have active orders! Can\'t change available status.',
 
 
     'customer_product_query_submitted_successful' => 'Your query has been submitted successfully!',
