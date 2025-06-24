@@ -46,6 +46,7 @@ class User extends Authenticatable
         'firebase_token',
         'fcm_token',
         'online_at',
+        'is_available'
     ];
     protected $guard_name = 'api';
     protected $hidden = [
@@ -57,6 +58,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'stores' => 'array',
         'online_at' => 'datetime',
+        'is_available' => 'boolean',
     ];
 
 
