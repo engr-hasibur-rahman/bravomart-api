@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('slug')->unique()->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->unique();
-            $table->string('activity_scope')->nullable(); //system_level/store_level/customer_level/delivery_level/fitting_level,
+            $table->string('activity_scope')->nullable(); //system_level store_level customer_level delivery_level,
             $table->text('email_verify_token')->nullable();
             $table->integer('email_verified')->default(0)->comment('0=unverified, 1=verified');
             $table->timestamp('email_verified_at')->nullable();

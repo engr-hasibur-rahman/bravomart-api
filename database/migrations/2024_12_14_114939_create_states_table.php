@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('states', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Name of the state
+            $table->string('name');
             $table->unsignedBigInteger('country_id');
-            $table->string('timezone')->nullable(); // Timezone of the country (e.g., 'America/New_York')
+            $table->string('timezone')->nullable();
             $table->tinyInteger('status')->comment('0=inactive, 1=active');
             $table->index('country_id');
             $table->timestamps();

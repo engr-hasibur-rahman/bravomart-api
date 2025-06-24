@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('ticket_messages', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ticket_id')->index(); // The ticket this message belongs to
-            $table->unsignedBigInteger('sender_id')->nullable()->index(); // The user (sender) who sent the message
-            $table->unsignedBigInteger('receiver_id')->nullable()->index(); // The user (receiver) who receives the message
-            $table->string('sender_role')->nullable(); // The role of the sender (admin, seller, customer, etc.)
-            $table->string('receiver_role')->nullable(); // The role of the receiver (admin, seller, customer, etc.)
-            $table->longText('message')->nullable(); // The actual message content
-            $table->string('file')->nullable(); //file type like: jpg,png,jpeg, webp, zip
-            $table->boolean('is_read')->default(false); // Whether the message has been read
+            $table->unsignedBigInteger('ticket_id')->index();
+            $table->unsignedBigInteger('sender_id')->nullable()->index();
+            $table->unsignedBigInteger('receiver_id')->nullable()->index();
+            $table->string('sender_role')->nullable();
+            $table->string('receiver_role')->nullable();
+            $table->longText('message')->nullable();
+            $table->string('file')->nullable();
+            $table->boolean('is_read')->default(false);
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });

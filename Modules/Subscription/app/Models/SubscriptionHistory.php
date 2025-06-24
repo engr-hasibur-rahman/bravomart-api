@@ -6,8 +6,6 @@ use App\Models\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-// use Modules\Subscription\Database\Factories\SubscriptionHistoryFactory;
-
 class SubscriptionHistory extends Model
 {
     use HasFactory;
