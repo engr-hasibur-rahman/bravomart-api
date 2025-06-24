@@ -453,4 +453,29 @@ class DeliverymanManageController extends Controller
             ]);
         }
     }
+
+    public function isAvailableToggle()
+    {
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => __('messages.authorization_invalid')
+            ], 401);
+        }
+
+        if ($user->activity_scope !== 'delivery_level') {
+            return response()->json([
+                'message' => __('messages.access_denied')
+            ], 403);
+        }
+
+        $user->is_available = !$user->is_available;
+        $user->save();
+
+        return response()->json([
+            'message' => __('messages.update_success', ['name' => 'Availability status']),
+            'is_available' => $user->is_available
+        ]);
+    }
 }

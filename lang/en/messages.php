@@ -46,6 +46,7 @@ return [
     'authorization_invalid' => 'Not authorized!',
     'data_found' => 'Data was found successfully!',
     'data_not_found' => 'Data was not found!',
+    'access_denied' => 'Access denied!',
 
     'ticket.resolved' => 'Ticket has been resolved!',
     'ticket.closed' => 'Ticket has been closed!',
