@@ -1642,7 +1642,7 @@ class PermissionAdminSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => PermissionKey::DATABASE_UPDATE_CONTROLS->value,
-                            'PermissionTitle' => 'Database Update Controls',
+                            'PermissionTitle' => 'Database Update',
                             'activity_scope' => 'system_level',
                             'icon' => 'Database',
                             'options' => ['view', 'update'],
