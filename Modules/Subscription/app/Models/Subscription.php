@@ -5,7 +5,6 @@ namespace Modules\Subscription\app\Models;
 use App\Models\Translation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\Subscription\Database\Factories\SubscriptionFactory;
 
 class Subscription extends Model
 {

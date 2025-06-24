@@ -8,7 +8,6 @@ use App\Mail\DynamicEmail;
 use App\Models\EmailTemplate;
 use App\Models\Store;
 use App\Models\User;
-use App\Models\WithdrawalRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;

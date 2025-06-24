@@ -26,11 +26,10 @@ return new class extends Migration
         }
 
         Schema::create($tableNames['permissions'], function (Blueprint $table) {
-            //$table->engine('InnoDB');
             $table->bigIncrements('id'); // permission id
             $table->string('available_for')->default('system_level');
-            $table->string('name');       // For MyISAM use string('name', 225); // (or 166 for InnoDB with Redundant/Compact row format)
-            $table->string('guard_name'); // For MyISAM use string('guard_name', 25);
+            $table->string('name');
+            $table->string('guard_name');
             $table->string('module_title')->nullable();
             $table->string('perm_title')->nullable();
             $table->string('icon')->nullable();
@@ -42,15 +41,14 @@ return new class extends Migration
         });
 
         Schema::create($tableNames['roles'], function (Blueprint $table) use ($teams, $columnNames) {
-            //$table->engine('InnoDB');
             $table->bigIncrements('id'); // role id
-            if ($teams || config('permission.testing')) { // permission.testing is a fix for sqlite testing
+            if ($teams || config('permission.testing')) {
                 $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable();
                 $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
             }
             $table->string('available_for')->default('system_level');
-            $table->string('name');       // For MyISAM use string('name', 225); // (or 166 for InnoDB with Redundant/Compact row format)
-            $table->string('guard_name'); // For MyISAM use string('guard_name', 25);
+            $table->string('name');
+            $table->string('guard_name');
             $table->boolean('locked')->default(0);
             $table->boolean('status')->default(1);
             $table->timestamps();
