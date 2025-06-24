@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->decimal('length', 15, 2)->nullable();
             $table->decimal('width', 15, 2)->nullable();
             $table->decimal('height', 15, 2)->nullable();
-            $table->string('image')->nullable(); //[{"sliding_image":"xyx.jpg","position":1},{"sliding_image":"abc.jpg","position":2}]
+            $table->string('image')->nullable();
             $table->integer('order_count')->default(0);
             $table->integer('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->softDeletes();

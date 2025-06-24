@@ -11,6 +11,6 @@ class SubscriptionDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // $this->call([]);
+
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('area_id')->nullable();
             $table->unsignedBigInteger('store_seller_id')->nullable();
-            $table->enum('store_type', array_map(fn($enum) => $enum->value, StoreType::cases()))->nullable(); //medicine/ furniture/ DOOR/ FOOD/ GROCERY
+            $table->enum('store_type', array_map(fn($enum) => $enum->value, StoreType::cases()))->nullable();
             $table->decimal('tax', 5, 2)->default(0);
             $table->string('tax_number')->nullable();
             $table->string('subscription_type', 50)->nullable();
