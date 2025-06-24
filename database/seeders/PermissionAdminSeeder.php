@@ -57,7 +57,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Orders',
                             'activity_scope' => 'system_level',
-                            'icon' => 'BringToFront',
+                            'icon' => 'ListOrdered',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Orders',
