@@ -27,9 +27,10 @@ class UserDetailsResource extends JsonResource
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'logo' => ImageModifier::generateImageUrl($this->image),
             'status' => $this->status,
+            'is_available' => (bool)$this->is_available,
             'email_verified' => $this->email_verified,
-            "account_status" => $this->deactivated_at ? 'deactivated' : 'active',
-            "marketing_email" => (bool)$this->marketing_email,
+            'account_status' => $this->deactivated_at ? 'deactivated' : 'active',
+            'marketing_email' => (bool)$this->marketing_email,
             'started_at' => $this->created_at->format('F d, Y'),
         ];
     }

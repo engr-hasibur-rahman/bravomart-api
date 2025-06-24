@@ -7,6 +7,7 @@ return [
     'token.verified' => 'Token is verified',
 
     'send_success' => ':name sent successfully.',
+    'send_first' => 'Please send :name first!',
     'send_failed' => 'Failed to send :name!',
     'verification_success' => ':name is verified successfully.',
     'verification_failed' => 'Failed to verify :name!',
@@ -117,6 +118,7 @@ return [
     'deliveryman_assign_failed' => 'Deliveryman assign failed!',
     'deliveryman_active_order_exists' => 'You have active orders! Can\'t deactivate or delete your account',
     'deliveryman_can_not_be_assigned' => 'Deliveryman can\'t be assigned!',
+    'deliveryman_has_active_orders' => 'You have active orders! Can\'t change available status.',
 
 
     'customer_product_query_submitted_successful' => 'Your query has been submitted successfully!',
@@ -146,6 +148,7 @@ return [
     'order_confirmation_store' => 'Order delivery confirmation setting is set to store!',
     'received_amount_can\'t_be_greater' => 'The received amount is greater than collected amount!',
     'total_amount_exceed' => 'Total collected amount exceeds total order amount! Remaining amount is :remainingAmount!',
+    'order_accept_limit_reached' => 'You have running orders. Can\'t accept more than :limit orders at a time!',
 
     'can\'t_modify' => 'You can\'t modify this :name!',
 
@@ -161,6 +164,8 @@ return [
     'product_featured_added_successfully' => 'Product featured added successfully!',
     'product_featured_removed_successfully' => 'Product featured removed successfully!',
     'already_featured' => 'This :name is already featured!',
+
+    'available_status_inactive' => 'Available status is inactive!',
 
 ];
 

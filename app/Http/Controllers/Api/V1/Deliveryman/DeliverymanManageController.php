@@ -456,6 +456,7 @@ class DeliverymanManageController extends Controller
 
     public function isAvailableToggle()
     {
+
         $user = auth('api')->user();
 
         if (!$user) {
@@ -469,13 +470,26 @@ class DeliverymanManageController extends Controller
                 'message' => __('messages.access_denied')
             ], 403);
         }
+        $activeOrders = Order::with(['orderMaster.orderAddress', 'store'])
+            ->where('status', '!=', 'delivered') // Exclude delivered orders
+            ->whereHas('orderDeliveryHistory', function ($query) use ($user) {
+                $query->where('deliveryman_id', $user->id)
+                    ->where('status', 'accepted');
+            })
+            ->latest()
+            ->first();
+        if (empty($activeOrders)) {
+            $user->is_available = !$user->is_available;
+            $user->save();
 
-        $user->is_available = !$user->is_available;
-        $user->save();
-
-        return response()->json([
-            'message' => __('messages.update_success', ['name' => 'Availability status']),
-            'is_available' => $user->is_available
-        ]);
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Availability status']),
+                'is_available' => $user->is_available
+            ]);
+        } else {
+            return response()->json([
+                'message' => __('messages.deliveryman_has_active_orders'),
+            ],422);
+        }
     }
 }

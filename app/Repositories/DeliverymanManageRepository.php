@@ -827,7 +827,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function deliverymanListDropdown(array $filter)
     {
-        $query = User::with('deliveryman.area')->where('activity_scope', 'delivery_level');
+        $query = User::with('deliveryman.area')->where('activity_scope', 'delivery_level')->where('is_available', true);
         if (isset($filter['search'])) {
             $search = $filter['search'];
             $query->where(function ($query) use ($search) {
@@ -921,6 +921,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     private function getActiveOrders()
     {
         return Order::with(['orderMaster.orderAddress', 'store'])
+            ->where('status', '!=', 'delivered') // Exclude delivered orders
             ->whereHas('orderDeliveryHistory', function ($query) {
                 $query->where('deliveryman_id', $this->deliveryman->id)
                     ->where('status', 'accepted');
