@@ -21,7 +21,7 @@ class CustomerChatController extends Controller
     public function customerSendMessage(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'receiver_type' => 'required|string|in:admin,deliveryman,store',
+            'receiver_type' => 'required|string|in:deliveryman,store',
             'receiver_id' => 'required|integer',
             'message' => 'nullable|string',
             'file'   => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
@@ -47,7 +47,7 @@ class CustomerChatController extends Controller
         if (isset($authUser->activity_scope) && $authUser->activity_scope === 'store_level' && $request->receiver_type === 'customer') {
             return response()->json([
                 'success' => false,
-                'message' => 'Store cannot send messages only send to admin.',
+                'message' => 'customer cannot send messages only send to store and deliveryman.',
             ], 422);
         }
 
@@ -61,16 +61,10 @@ class CustomerChatController extends Controller
             $receiver = Customer::find($receiver_id);
         }elseif($receiver_type === 'store') {
             $receiver = Store::find($receiver_id);
-        }elseif(in_array($receiver_type, ['admin', 'deliveryman'])){
-            if ($receiver_type === 'admin'){
-                $receiver = User::where('id', $receiver_id)
-                    ->where('activity_scope', 'system_level')
-                    ->first();
-            }else{
-                $receiver = User::where('id', $receiver_id)
-                    ->where('activity_scope', 'delivery_level')
-                    ->first();
-            }
+        }elseif(in_array($receiver_type, ['deliveryman'])){
+            $receiver = User::where('id', $receiver_id)
+                ->where('activity_scope', 'delivery_level')
+                ->first();
         }
 
         // Check  sender type
@@ -117,7 +111,8 @@ class CustomerChatController extends Controller
 
         // if sender type (store) and receiver type (customer or deliveryman) not send message
         $sender_type = $authType;
-        if ($sender_type === 'store' && $request->receiver_type === 'customer' || $sender_type === 'store' && $request->receiver_type === 'deliveryman') {
+        if ($sender_type === 'store' && $request->receiver_type === 'customer'
+            || $sender_type === 'store' && $request->receiver_type === 'deliveryman') {
             return response()->json([
                 'success' => false,
                 'message' => 'Store cannot send messages only send to admin.',
@@ -230,17 +225,6 @@ class CustomerChatController extends Controller
         $name = $request->input('search');
         if ($name) {
             $query->where(function ($q) use ($name) {
-
-                // For user_type = admin
-                $q->orWhere(function ($q2) use ($name) {
-                    $q2->where('user_type', 'admin')
-                        ->whereHasMorph('user', ['admin'], function ($q3) use ($name) {
-                            $q3->where('first_name', 'like', "%{$name}%")
-                                ->orWhere('last_name', 'like', "%{$name}%");
-                        });
-                });
-
-
                 // Deliveryman (User model with first_name / last_name)
                 $q->orWhere(function ($q2) use ($name) {
                     $q2->where('user_type', 'deliveryman')

@@ -38,7 +38,7 @@ class StoreChatController extends Controller
 
         $receiver_chat_ids = ChatMessage::where('receiver_id', $auth_id)
             ->where('receiver_type', 'store')
-            ->pluck('receiver_chat_id');
+            ->pluck('chat_id');
 
         // Merge and get chat IDs
         $all_chat_ids = $sender_chat_ids->merge($receiver_chat_ids)->unique();
