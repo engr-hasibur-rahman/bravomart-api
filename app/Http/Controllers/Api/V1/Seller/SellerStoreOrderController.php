@@ -91,8 +91,7 @@ class SellerStoreOrderController extends Controller
                     $query->where('payment_status', $request->payment_status);
                 });
             }
-            $orders->when($request->search, fn($query) =>
-            $query->where('id', 'LIKE', '%' . $request->search . '%')
+            $orders->when($request->search, fn($query) => $query->where('id', 'LIKE', '%' . $request->search . '%')
                 ->orWhere('invoice_number', 'LIKE', '%' . $request->search . '%'));
 
             $orders = $orders->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
@@ -132,8 +131,7 @@ class SellerStoreOrderController extends Controller
                     $query->where('payment_status', $request->payment_status);
                 });
             }
-            $orders->when($request->search, fn($query) =>
-            $query->where('id', 'LIKE', '%' . $request->search . '%')
+            $orders->when($request->search, fn($query) => $query->where('id', 'LIKE', '%' . $request->search . '%')
                 ->orWhere('invoice_number', 'LIKE', '%' . $request->search . '%'));
 
             $orders = $orders->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
@@ -177,8 +175,9 @@ class SellerStoreOrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
-            'status' => 'required|in:pending,confirmed,processing'
+            'status' => 'required|in:pending,confirmed,processing,shipped,cancelled'
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
@@ -196,39 +195,37 @@ class SellerStoreOrderController extends Controller
         if (!$seller_stores->contains($order->store_id)) {
             return response()->json(['message' => __('messages.order_does_not_belong_to_seller')], 422);
         }
-        if ($order->status === 'pending' || $order->status === 'confirmed' || $order->status === 'processing') {
-            if ($order->status === 'processing') {
-                return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
-            }
-            $success = $order->update([
-                'status' => $request->status
+
+        // If the order is once shipped or cancelled or on_hold or delivered the order status can not be changed
+        if ($order->status === 'shipped' || $order->status === 'cancelled' || $order->status === 'on_hold' || $order->status === 'delivered') {
+            return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
+        }
+
+        $success = $order->update([
+            'status' => $request->status
+        ]);
+
+        // Notify seller and customer
+        $order = [$order->id];
+        $this->orderManageNotificationService->createOrderNotification($order);
+
+        try {
+            // Dispatch the email job asynchronously
+            dispatch(new DispatchOrderEmails($order->orderMaster?->id));
+        } catch (\Exception $e) {
+        }
+
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Order status'])
             ]);
-
-            // Notify seller and customer
-            $order = [$order->id];
-            $this->orderManageNotificationService->createOrderNotification($order);
-
-            try {
-                // Dispatch the email job asynchronously
-                dispatch(new DispatchOrderEmails($order->orderMaster?->id));
-            } catch (\Exception $e) {
-            }
-
-            if ($success) {
-                return response()->json([
-                    'message' => __('messages.update_success', ['name' => 'Order status'])
-                ]);
-            } else {
-                return response()->json([
-                    'message' => __('messages.update_failed', ['name' => 'Order status'])
-                ], 500);
-            }
-
         } else {
             return response()->json([
-                'message' => __('messages.order_status_not_changeable')
-            ], 422);
+                'message' => __('messages.update_failed', ['name' => 'Order status'])
+            ], 500);
         }
+
+
     }
 
     public function cancelOrder(Request $request)
@@ -251,30 +248,31 @@ class SellerStoreOrderController extends Controller
         if (!$seller_stores->contains($order->store_id)) {
             return response()->json(['message' => __('messages.order_does_not_belong_to_seller')], 422);
         }
-        if ($order->status === 'pending' || $order->status === 'confirmed') {
-            $success = $order->update([
-                'cancelled_by' => auth('api')->user()->id,
-                'cancelled_at' => Carbon::now(),
-                'status' => 'cancelled'
-            ]);
 
-            // Notify seller and customer
-            $order = [$order->id];
-            $this->orderManageNotificationService->createOrderNotification($order, 'order-cancelled');
+        // If the order is once shipped or cancelled or on_hold or delivered the order status can not be cancelled
+        if ($order->status === 'shipped' || $order->status === 'cancelled' || $order->status === 'on_hold' || $order->status === 'delivered') {
+            return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
+        }
 
-            if ($success) {
-                return response()->json([
-                    'message' => __('messages.order_cancel_successful')
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => __('messages.order_cancel_failed')
-                ], 500);
-            }
+        $success = $order->update([
+            'cancelled_by' => auth('api')->user()->id,
+            'cancelled_at' => Carbon::now(),
+            'status' => 'cancelled'
+        ]);
+
+        // Notify seller and customer
+        $order = [$order->id];
+        $this->orderManageNotificationService->createOrderNotification($order, 'order-cancelled');
+
+        if ($success) {
+            return response()->json([
+                'message' => __('messages.order_cancel_successful')
+            ], 200);
         } else {
             return response()->json([
-                'message' => __('messages.order_status_not_changeable')
-            ], 422);
+                'message' => __('messages.order_cancel_failed')
+            ], 500);
         }
+
     }
 }
