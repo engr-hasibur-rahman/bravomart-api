@@ -471,6 +471,7 @@ class DeliverymanManageController extends Controller
             ], 403);
         }
         $activeOrders = Order::with(['orderMaster.orderAddress', 'store'])
+            ->where('status', '!=', 'delivered') // Exclude delivered orders
             ->whereHas('orderDeliveryHistory', function ($query) use ($user) {
                 $query->where('deliveryman_id', $user->id)
                     ->where('status', 'accepted');

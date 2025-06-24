@@ -921,6 +921,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     private function getActiveOrders()
     {
         return Order::with(['orderMaster.orderAddress', 'store'])
+            ->where('status', '!=', 'delivered') // Exclude delivered orders
             ->whereHas('orderDeliveryHistory', function ($query) {
                 $query->where('deliveryman_id', $this->deliveryman->id)
                     ->where('status', 'accepted');
