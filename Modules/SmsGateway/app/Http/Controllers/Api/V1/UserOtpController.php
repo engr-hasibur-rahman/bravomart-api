@@ -228,11 +228,14 @@ class UserOtpController extends Controller
             ], 500);
         }
 
+        if (!$lastOtp) {
+            return response()->json([
+                'message' => __('messages.send_first', ['name' => 'Otp']),
+            ]);
+        }
+
         // Save new OTP
-        UserOtp::createOrUpdate(
-            [
-                'user_id' => $user->id,
-            ],
+        UserOtp::where('user_id', $user->id)->update(
             [
                 'user_type' => $request->user_type,
                 'otp_code' => $otp,

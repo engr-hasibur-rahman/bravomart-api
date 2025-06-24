@@ -69,7 +69,7 @@ class DeliverymanOrderManageController extends Controller
             unauthorized_response();
         }
         $order_requests = $this->deliverymanRepo->orderRequests();
-        if (!$order_requests) {
+        if (!$order_requests || !auth('api')->user()->is_available) {
             return response()->json([
                 'message' => __('messages.data_not_found'),
                 'data' => [],
@@ -86,6 +86,11 @@ class DeliverymanOrderManageController extends Controller
 
     public function handleOrderRequest(Request $request)
     {
+        if (!auth('api')->user()->is_available) {
+            return response()->json(['message' => __('messages.available_status_inactive')], 422);
+        }
+
+
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:orders,id',
             'status' => 'required|in:accepted,ignored',
@@ -95,10 +100,24 @@ class DeliverymanOrderManageController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
         $deliveryman = auth('api')->user();
 
         if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
             unauthorized_response();
+        }
+        $limit = 2;
+        $activeOrders = Order::with(['orderMaster.orderAddress', 'store'])
+            ->whereHas('orderDeliveryHistory', function ($query) use ($deliveryman) {
+                $query->where('deliveryman_id', $deliveryman->id)
+                    ->where('status', 'accepted');
+            })
+            ->latest()
+            ->get();
+        if ($request->status === 'accepted' && $activeOrders->count() > $limit) {
+            return response()->json([
+                'message' => __('messages.order_accept_limit_reached', ['limit' => $limit]),
+            ]);
         }
 
         // update order delivery history
