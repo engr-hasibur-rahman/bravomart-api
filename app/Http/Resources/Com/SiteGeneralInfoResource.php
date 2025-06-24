@@ -32,6 +32,7 @@ class SiteGeneralInfoResource extends JsonResource
             'com_google_recaptcha_v3_site_key' => com_option_get('com_google_recaptcha_v3_site_key'),
             'com_google_recaptcha_v3_secret_key' => com_option_get('com_google_recaptcha_v3_secret_key'),
             'com_google_recaptcha_enable_disable' => com_option_get('com_google_recaptcha_enable_disable'),
+            'otp_login_enabled_disable' => com_option_get('otp_login_enabled_disable'),
         ];
     }
 }
