@@ -4,11 +4,8 @@ namespace Database\Seeders;
 
 use App\Enums\PermissionKey;
 use App\Models\Translation;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Modules\Chat\app\Traits\ChatSeederMenu;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Permission as ModelsPermission;
@@ -60,7 +57,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Orders',
                             'activity_scope' => 'system_level',
-                            'icon' => 'BringToFront',
+                            'icon' => 'ListOrdered',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Orders',
@@ -411,7 +408,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_MEDIA_MANAGE->value,
                             'PermissionTitle' => 'Media',
                             'activity_scope' => 'system_level',
-                            'icon' => 'SlidersHorizontal',
+                            'icon' => 'Images',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Media',
@@ -706,7 +703,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'All Customers',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'UsersRound',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'All Customers',
@@ -766,7 +763,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'All Sellers',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'UsersRound',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'All Sellers',
@@ -1128,7 +1125,7 @@ class PermissionAdminSeeder extends Seeder
                     'PermissionName' => '',
                     'PermissionTitle' => 'Report and analytics',
                     'activity_scope' => 'system_level',
-                    'icon' => 'ChartNetwork',
+                    'icon' => 'Logs',
                     'options' => ['view'],
                     'translations' => [
                         'en' => 'Report and analytics',
@@ -1170,7 +1167,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value,
                             'PermissionTitle' => 'Notifications',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'Bell',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Notifications',
@@ -1196,7 +1193,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_NOTICE_MANAGEMENT->value,
                             'PermissionTitle' => 'Notices',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
+                            'icon' => 'MessageSquareWarning',
                             'options' => ['view', 'insert', 'update', 'delete'],
                             'translations' => [
                                 'en' => 'Notices',
@@ -1337,13 +1334,13 @@ class PermissionAdminSeeder extends Seeder
                     'submenu' => [
                         [
                             'PermissionName' => PermissionKey::ADMIN_SMS_GATEWAY_SETTINGS->value,
-                            'PermissionTitle' => 'Settings',
+                            'PermissionTitle' => 'SMS Gateway Settings',
                             'activity_scope' => 'system_level',
                             'icon' => 'CreditCard',
                             'options' => ['view', 'update'],
                             'translations' => [
-                                'en' => 'Settings',
-                                'ar' => 'إعدادات'
+                                'en' => 'SMS Gateway Settings',
+                                'ar' => 'إعدادات بوابة الرسائل القصيرة'
                             ]
                         ]
 
@@ -1567,24 +1564,24 @@ class PermissionAdminSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => PermissionKey::GDPR_COOKIE_SETTINGS->value,
-                            'PermissionTitle' => 'GDPR & Cookie Settings',
+                            'PermissionTitle' => 'Cookie Settings',
                             'activity_scope' => 'system_level',
-                            'icon' => 'SearchCheck',
+                            'icon' => 'Cookie',
                             'options' => ['view', 'update'],
                             'translations' => [
-                                'en' => 'GDPR & Cookie Settings',
-                                'ar' => 'إعدادات حماية البيانات وملفات تعريف الارتباط'
+                                'en' => 'Cookie Settings',
+                                'ar' => 'إعدادات ملفات تعريف الارتباط'
                             ]
                         ],
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => 'Third-Party Integrations',
+                            'PermissionTitle' => 'Third-Party',
                             'activity_scope' => 'system_level',
                             'icon' => 'Blocks',
                             'options' => ['view'],
                             'translations' => [
-                                'en' => 'Third-Party Integrations',
-                                'ar' => 'التكاملات مع جهات خارجية'
+                                'en' => 'Third-Party',
+                                'ar' => 'طرف ثالث'
                             ],
                             'submenu' => [
                                 [
@@ -1633,17 +1630,6 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::LICENSE_SYSTEM->value,
-                            'PermissionTitle' => 'License System',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'ShieldCheck',
-                            'options' => ['view', 'update'],
-                            'translations' => [
-                                'en' => 'License System',
-                                'ar' => 'نظام الترخيص'
-                            ]
-                        ],
-                        [
                             'PermissionName' => PermissionKey::CACHE_MANAGEMENT->value,
                             'PermissionTitle' => 'Cache Management',
                             'activity_scope' => 'system_level',
@@ -1661,8 +1647,8 @@ class PermissionAdminSeeder extends Seeder
                             'icon' => 'Database',
                             'options' => ['view', 'update'],
                             'translations' => [
-                                'en' => 'Database Update Controls',
-                                'ar' => 'عناصر التحكم في تحديث قاعدة البيانات'
+                                'en' => 'Database Update',
+                                'ar' => 'تحديث قاعدة البيانات'
                             ]
                         ],
                         [
