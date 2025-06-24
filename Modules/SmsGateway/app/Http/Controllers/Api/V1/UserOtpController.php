@@ -75,12 +75,16 @@ class UserOtpController extends Controller
                 $userId = $user->id;
         }
 
-        UserOtp::create([
-            'user_id' => $userId,
-            'user_type' => $request->user_type,
-            'otp_code' => $otp,
-            'expired_at' => SmsManager::getExpireAt()
-        ]);
+        UserOtp::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'user_type' => $request->user_type,
+            ],
+            [
+                'otp_code' => $otp,
+                'expired_at' => SmsManager::getExpireAt(),
+            ]
+        );
 
         return response()->json([
             'message' => __('massages.send_success', ['name' => 'Otp']),
