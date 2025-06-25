@@ -811,14 +811,21 @@ class StoreManageRepository implements StoreManageInterface
         ];
     }
 
-    public function getSellerWiseStores(?int $SellerId)
+    public function getSellerWiseStores(?int $sellerId, ?string $search)
     {
-        if ($SellerId) {
-            $stores = Store::where('store_seller_id', $SellerId)->get();
+        $query = Store::query();
+
+        if ($sellerId) {
+            $query->where('store_seller_id', $sellerId);
         } else {
-            $stores = Store::where('status', 1)->get();
+            $query->where('status', 1)->limit(50);
         }
-        return $stores;
+
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        return $query->orderBy('name')->get();
     }
 
     public function approveStores(array $ids)

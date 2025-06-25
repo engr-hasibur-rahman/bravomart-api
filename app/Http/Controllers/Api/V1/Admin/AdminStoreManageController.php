@@ -73,11 +73,12 @@ class AdminStoreManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'seller_id' => 'nullable|exists:users,id',
+            'search' => 'nullable|string',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
-        $stores = $this->storeRepo->getSellerWiseStores($request->seller_id);
+        $stores = $this->storeRepo->getSellerWiseStores($request->seller_id,$request->search);
         if ($stores) {
             return response()->json(SellerWiseStoreForDropdownResource::collection($stores));
         } else {
@@ -126,7 +127,7 @@ class AdminStoreManageController extends Controller
             if ($success) {
                 return $this->success(__('messages.approve.success', ['name' => 'Stores']));
             } else {
-                return $this->failed(__('messages.approve.failed', ['name' => 'Stores']),500);
+                return $this->failed(__('messages.approve.failed', ['name' => 'Stores']), 500);
             }
         } catch (\Exception $e) {
             throw $e;

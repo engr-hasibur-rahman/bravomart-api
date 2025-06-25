@@ -44,12 +44,29 @@ class AdminSellerManageController extends Controller
         ]);
     }
 
-    public function getActiveSellerList()
+    public function getActiveSellerList(Request $request)
     {
-        $query = User::isSeller();
-        $sellers = $query->where('deleted_at', null)
-            ->where('status', 1)
+        $validator = Validator::make($request->all(), [
+            'search' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $query = User::isSeller()
+            ->whereNull('deleted_at')
+            ->where('status', 1);
+
+        if ($request->filled('search')) {
+            $query->where('first_name', 'like', '%' . $request->search . '%')
+                ->orWhere('last_name', 'like', '%' . $request->search . '%');
+        }
+
+        $sellers = $query->orderBy('first_name')
+            ->limit(50)
             ->get();
+
         return response()->json(SellerListForDropdownResource::collection($sellers));
     }
 
