@@ -46,7 +46,10 @@ class Order extends Model
     {
         return $this->belongsTo(OrderMaster::class, 'order_master_id', 'id');
     }
-
+    public function orderAddress()
+    {
+        return $this->belongsTo(OrderAddress::class, 'order_master_id', 'id');
+    }
 
     // Hook into the status update
     public static function boot()
