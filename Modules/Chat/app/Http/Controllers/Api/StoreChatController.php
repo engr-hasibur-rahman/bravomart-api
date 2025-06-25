@@ -66,10 +66,11 @@ class StoreChatController extends Controller
             ->first();
 
         // Get all customer chat IDs from orders related to this store
-        if (!empty($auth_seller_store)) {
+         if (!empty($auth_seller_store)) {
             $orders = Order::with('orderMaster.customer.chats')
                 ->where('store_id', $store_id)
                 ->get();
+
             $chatIds = $orders->flatMap(function ($order) {
                 return $order->orderMaster?->customer?->chats->pluck('id') ?? collect();
             })->unique()->values();
@@ -78,7 +79,6 @@ class StoreChatController extends Controller
             $all_ids = collect($all_chat_ids)->merge($chatIds)->unique()->values();
             $all_chat_ids = $all_ids;
         }
-
 
 
         $query = Chat::with('user')

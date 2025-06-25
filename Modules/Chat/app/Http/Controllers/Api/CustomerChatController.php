@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\OrderMaster;
 use App\Models\Store;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -222,19 +223,49 @@ class CustomerChatController extends Controller
         }
 
         // Get all customer chat IDs from orders related to this store
-//        if (!empty($auth_seller_store)) {
-//            $orders = OrderMaster::with('store.chats')
-//                ->where('customer_id', $auth_user->id)
-//                ->get();
-//            $chatIds = $orders->flatMap(function ($order) {
-//                return $order->orderMaster?->customer?->chats->pluck('id') ?? collect();
-//            })->unique()->values();
-//
-//            // marge in array
-//            $all_ids = collect($all_chat_ids)->merge($chatIds)->unique()->values();
-//            $all_chat_ids = $all_ids;
-//        }
+        $customer_orders = OrderMaster::with('orders.store.chats')
+            ->where('customer_id', $auth_user->id)
+            ->get();
 
+        // get all customer if created order
+        if ($customer_orders->isNotEmpty()) {
+            $chatIds = $customer_orders->flatMap(function ($orderMaster) {
+                return $orderMaster->orders->flatMap(function ($order) {
+                    return $order->store?->chats?->pluck('id') ?? collect();
+                });
+            })->unique()->values();
+
+            // marge in array
+            $all_ids = collect($all_chat_ids)->merge($chatIds)->unique()->values();
+            $all_chat_ids = $all_ids;
+        }
+
+
+
+        // Get all assigned deliveryman
+        $customer_orders = Order::with('order.deliveryman')
+            ->where('customer_id', $auth_user->id)
+            ->get();
+
+        // get all customer if created order
+        if ($customer_orders->isNotEmpty()) {
+            $deliveryman_ids = $customer_orders->flatMap(function ($orderMaster) {
+                return $orderMaster->orders->map(function ($order) {
+                    return $order->deliveryman?->id;
+                });
+            })->filter()->unique()->values();
+
+            $deliveryman_chat_ids = Chat::whereIn('user_id', $deliveryman_ids)
+                ->where('user_type', 'deliveryman')
+                ->pluck('id');
+
+            // marge in array
+            $all_ids = collect($all_chat_ids)->merge($deliveryman_chat_ids)->unique()->values();
+            $all_chat_ids = $all_ids;
+        }
+
+
+        // main chat list
         $query = Chat::with('user')
             ->whereIn('id', $all_chat_ids)
             ->where('id', '!=', $chat->id);
@@ -259,7 +290,6 @@ class CustomerChatController extends Controller
                         });
                 });
             });
-
         }
 
         $type = $request->input('type');
