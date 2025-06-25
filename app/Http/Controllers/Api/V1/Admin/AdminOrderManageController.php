@@ -11,6 +11,7 @@ use App\Http\Resources\Order\InvoiceResource;
 use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Http\Resources\Order\OrderSummaryResource;
 use App\Models\Order;
+use App\Models\OrderDeliveryHistory;
 use App\Models\SystemCommission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -64,8 +65,7 @@ class AdminOrderManageController extends Controller
             });
         });
 
-        $ordersQuery->when($request->search, fn($query) =>
-        $query->where('id', 'LIKE', '%' . $request->search . '%')
+        $ordersQuery->when($request->search, fn($query) => $query->where('id', 'LIKE', '%' . $request->search . '%')
             ->orWhere('invoice_number', 'LIKE', '%' . $request->search . '%'));
 
         $orders = $ordersQuery->orderBy('created_at', 'desc')->paginate($request->per_page ?? 10);
@@ -197,21 +197,32 @@ class AdminOrderManageController extends Controller
                 'message' => __('messages.order_confirmation_store')
             ], 422);
         }
+
         $order = Order::find($request->order_id);
+
         if (!$order) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        if ($order->confirmed_by !== null || $order->confirmed_at !== null) {
-            return response()->json([
-                'message' => __('messages.deliveryman_order_already_taken')
-            ], 422);
-        }
+
         if ($order->status === 'processing') {
+
+            $deliveryIsAccepted = OrderDeliveryHistory::where('order_id', $order->id)
+                ->where('deliveryman_id', $request->delivery_man_id)
+                ->where('status', 'accepted')
+                ->exists();
+
+            if ($deliveryIsAccepted) {
+                return response()->json([
+                    'message' => __('messages.deliveryman_order_already_taken')
+                ]);
+            }
+
             $success = $order->update([
                 'confirmed_by' => $request->delivery_man_id
             ]);
+
             if ($success) {
                 return response()->json([
                     'message' => __('messages.deliveryman_assign_successful')
@@ -221,6 +232,7 @@ class AdminOrderManageController extends Controller
                     'message' => __('messages.deliveryman_assign_failed')
                 ], 500);
             }
+
         } else {
             return response()->json([
                 'message' => __('messages.deliveryman_can_not_be_assigned')
