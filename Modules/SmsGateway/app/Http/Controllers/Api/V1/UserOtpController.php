@@ -10,8 +10,12 @@ use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 use Modules\SmsGateway\app\Models\UserOtp;
 use Modules\SmsGateway\app\Services\Sms\SmsManager;
+use Propaganistas\LaravelPhone\PhoneNumber;
+use Propaganistas\LaravelPhone\Rules\Phone;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserOtpController extends Controller
@@ -32,36 +36,44 @@ class UserOtpController extends Controller
 
     public function sendOtp(Request $request): Response
     {
+//        dd($request->all());
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|string',
             'region' => 'required|string',
+            'phone' => 'required|string',
             'user_type' => 'required|string|in:customer,deliveryman',
         ]);
-
         if ($validator->fails()) {
             return response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+        $phone = new PhoneNumber($request->phone, $request->region);
+        if (!$phone->isOfCountry($request->region)) {
+            return response()->json([
+                'message' => __('messages.invalid_region', ['name' => 'phone']),
+            ]);
+        }
+        $formattedNumber = $this->formatPhoneNumber($request->get('phone'), $request->get('region'));
 
         $otp = rand(100000, 999999);
-        $success = SmsManager::send($request->phone, $otp);
+        $success = SmsManager::send($formattedNumber, $otp);
 
         if (!$success) {
             return response()->json([
-                'message' => __('massages.send_failed', ['name' => 'Otp'])
+                'message' => __('messages.send_failed', ['name' => 'Otp'])
             ], 500);
         }
+
 
         $userId = null;
 
         switch ($request->user_type) {
             case 'customer':
-                $customer = Customer::firstOrCreate(['phone' => $request->phone]);
+                $customer = Customer::firstOrCreate(['phone' => $formattedNumber]);
                 $userId = $customer->id;
                 break;
 
             case 'deliveryman':
                 $deliveryMan = User::firstOrCreate([
-                    'phone' => $request->phone,
+                    'phone' => $formattedNumber,
                     'activity_scope' => 'delivery_level',
                     'store_owner' => 0
                 ]);
@@ -72,7 +84,7 @@ class UserOtpController extends Controller
                 break;
 
             default:
-                $user = User::firstOrCreate(['phone' => $request->phone]);
+                $user = User::firstOrCreate(['phone' => $formattedNumber]);
                 $userId = $user->id;
         }
 
@@ -88,7 +100,7 @@ class UserOtpController extends Controller
         );
 
         return response()->json([
-            'message' => __('massages.send_success', ['name' => 'Otp']),
+            'message' => __('messages.send_success', ['name' => 'Otp']),
         ]);
     }
 
@@ -261,6 +273,13 @@ class UserOtpController extends Controller
         return response()->json([
             'message' => __('messages.send_success', ['name' => 'Otp']),
         ]);
+    }
+
+    private function formatPhoneNumber(string $msisdn, string $region)
+    {
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        $parsedNumber = $phoneUtil->parse($msisdn, $region);
+        return $phoneUtil->format($parsedNumber, PhoneNumberFormat::E164);
     }
 
 }
