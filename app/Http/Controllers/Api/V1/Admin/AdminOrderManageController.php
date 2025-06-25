@@ -143,7 +143,7 @@ class AdminOrderManageController extends Controller
 
             OrderDeliveryHistory::create([
                 'order_id' => $order->id,
-                'deliveryman_id' => $deliveryHistory?->deliveryman_id,
+                'deliveryman_id' => $deliveryHistory ? $deliveryHistory->deliveryman_id : $userId,
                 'status' => 'delivered',
             ]);
 
@@ -284,8 +284,6 @@ class AdminOrderManageController extends Controller
             // Optional: log or ignore
         }
     }
-
-
 
 
     public function changePaymentStatus(Request $request)
