@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Enums\OrderActivityType;
 use App\Enums\OrderStatusType;
+use App\Enums\WalletOwnerType;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminOrderStatusResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
@@ -10,12 +12,18 @@ use App\Http\Resources\Order\AdminOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
 use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Http\Resources\Order\OrderSummaryResource;
+use App\Mail\DynamicEmail;
+use App\Models\EmailTemplate;
 use App\Models\Order;
+use App\Models\OrderActivity;
 use App\Models\OrderDeliveryHistory;
 use App\Models\SystemCommission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Modules\Wallet\app\Models\Wallet;
+use Modules\Wallet\app\Models\WalletTransaction;
 
 class AdminOrderManageController extends Controller
 {
@@ -96,60 +104,189 @@ class AdminOrderManageController extends Controller
             'order_id' => 'required|exists:orders,id',
             'status' => 'required|in:' . implode(',', array_column(OrderStatusType::cases(), 'value')),
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $order = Order::find($request->order_id);
+
+        $order = Order::with(['orderMaster.customer', 'store', 'orderAddress'])->find($request->order_id);
         if (!$order) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
         }
 
+        $userId = auth('api')->id();
+
+        // Handle cancellation
         if ($request->status === 'cancelled') {
             $success = $order->update([
-                'cancelled_by' => auth('api')->user()->id,
-                'cancelled_at' => Carbon::now(),
+                'cancelled_by' => $userId,
+                'cancelled_at' => now(),
                 'status' => 'cancelled'
             ]);
-            if ($success) {
-                return response()->json([
-                    'message' => __('messages.update_success', ['name' => 'Order status'])
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => __('messages.update_failed', ['name' => 'Order status'])
-                ], 500);
-            }
+
+            return response()->json([
+                'message' => __($success ? 'messages.update_success' : 'messages.update_failed', ['name' => 'Order status'])
+            ], $success ? 200 : 500);
         }
+
+        // Handle delivery
         if ($request->status === 'delivered') {
-            $success = $order->update([
-                'delivery_completed_at' => Carbon::now(),
-                'status' => $request->status
+            $deliveryHistory = OrderDeliveryHistory::where('order_id', $order->id)
+                ->where('status', 'accepted')
+                ->whereNotIn('order_id', function ($query) {
+                    $query->select('order_id')
+                        ->from('order_delivery_histories')
+                        ->where('status', 'cancelled');
+                })->first();
+
+            OrderDeliveryHistory::create([
+                'order_id' => $order->id,
+                'deliveryman_id' => $deliveryHistory?->deliveryman_id,
+                'status' => 'delivered',
             ]);
-            if ($success) {
-                return response()->json([
-                    'message' => __('messages.update_success', ['name' => 'Order status'])
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => __('messages.update_failed', ['name' => 'Order status'])
-                ], 500);
+
+            if ($order->orderMaster->payment_gateway === 'cash_on_delivery') {
+                $order->orderMaster->update(['payment_status' => 'paid']);
+
+                OrderActivity::create([
+                    'order_id' => $order->id,
+                    'activity_from' => 'admin',
+                    'activity_type' => OrderActivityType::CASH_COLLECTION->value,
+                    'ref_id' => $deliveryHistory?->deliveryman_id ?? $userId,
+                    'activity_value' => $order->order_amount
+                ]);
             }
+
+            // Wallet updates
+            $this->updateWallets($order, $deliveryHistory);
+
+            // Notification + Email
+            $this->sendOrderDeliveredNotifications($order, $deliveryHistory);
+
+            // Final update
+            $success = $order->update([
+                'delivery_completed_at' => now(),
+                'status' => 'delivered'
+            ]);
+
+            return response()->json([
+                'message' => __($success ? 'messages.update_success' : 'messages.update_failed', ['name' => 'Order status'])
+            ], $success ? 200 : 500);
         }
-        $success = $order->update([
-            'status' => $request->status
-        ]);
-        if ($success) {
-            return response()->json([
-                'message' => __('messages.update_success', ['name' => 'Order status'])
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => __('messages.update_failed', ['name' => 'Order status'])
-            ], 500);
+
+        // Other status updates
+        $success = $order->update(['status' => $request->status]);
+
+        return response()->json([
+            'message' => __($success ? 'messages.update_success' : 'messages.update_failed', ['name' => 'Order status'])
+        ], $success ? 200 : 500);
+    }
+
+    protected function updateWallets(Order $order, $deliveryHistory)
+    {
+        // Store Wallet
+        $storeWallet = Wallet::where('owner_id', $order->store_id)
+            ->where('owner_type', WalletOwnerType::STORE->value)
+            ->first();
+
+        if ($storeWallet) {
+            $storeWallet->increment('balance', $order->order_amount_store_value);
+            $storeWallet->increment('earnings', $order->order_amount_store_value);
+
+            WalletTransaction::create([
+                'wallet_id' => $storeWallet->id,
+                'amount' => $order->order_amount_store_value,
+                'type' => 'credit',
+                'purpose' => 'Order Earnings',
+                'status' => 1,
+            ]);
+        }
+
+        // Deliveryman Wallet
+        if ($deliveryHistory) {
+            $deliverymanWallet = Wallet::where('owner_id', $deliveryHistory->deliveryman_id)
+                ->where('owner_type', WalletOwnerType::DELIVERYMAN->value)
+                ->first();
+
+            if ($deliverymanWallet) {
+                $deliverymanWallet->increment('balance', $order->delivery_charge_admin);
+                $deliverymanWallet->increment('earnings', $order->delivery_charge_admin);
+
+                WalletTransaction::create([
+                    'wallet_id' => $deliverymanWallet->id,
+                    'amount' => $order->delivery_charge_admin,
+                    'type' => 'credit',
+                    'purpose' => 'Delivery Earnings',
+                    'status' => 1,
+                ]);
+            }
         }
     }
+
+    protected function sendOrderDeliveredNotifications(Order $order, $deliveryHistory)
+    {
+        $this->orderManageNotificationService->createOrderNotification($order->id);
+
+        $emailTemplates = EmailTemplate::whereIn('type', [
+            'order-status-delivered',
+            'order-status-delivered-store',
+            'order-status-delivered-admin',
+            'deliveryman-earning'
+        ])->where('status', 1)->get()->keyBy('type');
+
+        $orderAmount = amount_with_symbol_format($order->order_amount);
+
+        try {
+            // Customer
+            $customerMessage = str_replace(
+                ["@customer_name", "@order_id", "@order_amount"],
+                [$order->orderMaster?->customer?->full_name, $order->id, $orderAmount],
+                $emailTemplates['order-status-delivered']?->body ?? ''
+            );
+
+            // Store
+            $storeMessage = str_replace(
+                ["@store_name", "@order_id", "@order_amount_for_store"],
+                [$order->store?->name, $order->id, amount_with_symbol_format($order->order_amount_store_value)],
+                $emailTemplates['order-status-delivered-store']?->body ?? ''
+            );
+
+            // Admin
+            $adminMessage = str_replace(
+                ["@order_id", "@order_amount_admin_commission", "@delivery_charge_commission_amount"],
+                [$order->id, amount_with_symbol_format($order->order_amount_admin_commission), amount_with_symbol_format($order->delivery_charge_admin_commission)],
+                $emailTemplates['order-status-delivered-admin']?->body ?? ''
+            );
+
+            // Deliveryman
+            if ($deliveryHistory) {
+                $deliverymanMessage = str_replace(
+                    ["@name", "@order_id", "@order_amount", "@earnings_amount"],
+                    [auth('api')->user()->full_name, $order->id, $orderAmount, amount_with_symbol_format($order->delivery_charge_admin)],
+                    $emailTemplates['deliveryman-earning']?->body ?? ''
+                );
+            }
+
+            // Sending
+            Mail::to($order->orderAddress?->email ?? $order->orderMaster?->customer?->email)
+                ->send(new DynamicEmail($emailTemplates['order-status-delivered']->subject ?? 'Order Delivered', $customerMessage));
+
+            Mail::to($order->store?->email)->send(new DynamicEmail($emailTemplates['order-status-delivered-store']->subject ?? 'Order Delivered', $storeMessage));
+            Mail::to(com_option_get('com_site_email'))->send(new DynamicEmail($emailTemplates['order-status-delivered-admin']->subject ?? 'Order Delivered', $adminMessage));
+
+            if ($deliveryHistory) {
+                Mail::to($order->deliveryman?->email)->send(new DynamicEmail($emailTemplates['deliveryman-earning']->subject ?? 'Delivery Earnings', $deliverymanMessage));
+            }
+
+        } catch (\Exception $e) {
+            // Optional: log or ignore
+        }
+    }
+
+
+
 
     public function changePaymentStatus(Request $request)
     {
