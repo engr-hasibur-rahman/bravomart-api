@@ -4,6 +4,8 @@ namespace Modules\Chat\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Models\Order;
+use App\Models\OrderMaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Chat\app\Models\Chat;
@@ -50,9 +52,31 @@ class DeliverymanChatController extends Controller
             $all_chat_ids = $all_chat_ids->filter(fn ($id) => $id != $currentChat->id)->values();
         }
 
+        // Get all order customer list
+        $customer_orders = Order::with('orderMaster.customer.chats')
+            ->where('confirmed_by', $auth_user->id)
+            ->get();
+
+        // get all customer if created order
+        if ($customer_orders->isNotEmpty()) {
+            $customer_ids = $customer_orders->map(function ($order) {
+                return $order->orderMaster?->customer?->id;
+            })->filter()->unique()->values();
+
+            $customer_chat_ids = Chat::whereIn('user_id', $customer_ids)
+                ->where('user_type', 'customer')
+                ->pluck('id');
+
+            // marge in array
+            $all_ids = collect($all_chat_ids)->merge($customer_chat_ids)->unique()->values();
+            $all_chat_ids = $all_ids;
+        }
+
+
         $query = Chat::with('user')
             ->whereIn('id', $all_chat_ids)
             ->where('user_type', '!=', 'deliveryman');
+
 
         $name = $request->input('search');
         if ($name) {

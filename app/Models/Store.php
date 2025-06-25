@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
+use Modules\Chat\app\Models\Chat;
 use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 
@@ -66,28 +67,6 @@ class Store extends Model
         'meta_description',
     ];
 
-    // Only fetch those stores which have subscription_type commission and if subscription then within the order limit for frontend
-//    protected static function booted(): void
-//    {
-//        if (!request()->is('api/v1/admin/*') && !request()->is('api/v1/seller/*')) {
-//            static::addGlobalScope('validStoreSubscription', function ($builder) {
-//                $builder->where(function ($q) {
-//                    // Allow all commission-based stores
-//                    $q->where('subscription_type', 'commission')
-//                        ->orWhere(function ($q2) {
-//                            // For subscription-based stores, ensure valid subscription
-//                            $q2->where('subscription_type', 'subscription')
-//                                ->whereHas('subscriptions', function ($subQuery) {
-//                                    $subQuery->where('status', 1)
-//                                        ->whereDate('expire_date', '>=', now())
-//                                        ->where('order_limit', '>', 0);
-//                                });
-//                        });
-//                });
-//            });
-//        }
-//    }
-// Only fetch those stores which have subscription_type commission and if subscription then within the order limit for frontend
     public function scopeValidForCustomerView($query)
     {
         return $query->where(function ($q) {
@@ -208,7 +187,12 @@ class Store extends Model
             }
         }
 
-        return null; // No matching subscription found
+        return null;
+    }
+
+    public function chats()
+    {
+        return $this->morphMany(Chat::class, 'user');
     }
 
 }
