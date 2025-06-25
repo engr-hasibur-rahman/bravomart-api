@@ -167,8 +167,6 @@ return [
 
     'available_status_inactive' => 'Available status is inactive!',
 
-    'invalid_region' => 'This :name does not belongs to valid region!',
-
 ];
 
 
