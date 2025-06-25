@@ -213,7 +213,12 @@ class AdminOrderManageController extends Controller
                 ->where('status', 'accepted')
                 ->exists();
 
-            if ($deliveryIsAccepted) {
+            $deliveryIsCancelled = OrderDeliveryHistory::where('order_id', $order->id)
+                ->where('deliveryman_id', $request->delivery_man_id)
+                ->where('status', 'cancelled')
+                ->exists();
+
+            if ($deliveryIsAccepted && !$deliveryIsCancelled) {
                 return response()->json([
                     'message' => __('messages.deliveryman_order_already_taken')
                 ]);
