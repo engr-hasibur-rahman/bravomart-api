@@ -2,24 +2,20 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+//use Modules\Chat\app\Models\Chat;
 use Modules\Chat\app\Models\Chat;
 use Modules\Chat\app\Models\ChatMessage;
 use Modules\Wallet\app\Models\Wallet;
-
-//use NotificationChannels\WebPush\HasPushSubscriptions;
-//use NotificationChannels\WebPush\PushSubscription;
-
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-//HasPushSubscriptions
+
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     protected $appends = ['rating', 'review_count'];
@@ -181,7 +177,8 @@ class User extends Authenticatable
 
     public function chats()
     {
-        return $this->morphMany(Chat::class, 'user');
+//        return $this->morphMany(Chat::class, 'user', 'user_type', 'user_id');
+        return $this->morphMany(Chat::class, 'user', 'user_type', 'user_id');
     }
 
     public function sentMessages()
