@@ -3,6 +3,8 @@
 namespace Modules\Chat\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\V1\Controller;
+use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\User\PageListResource;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderDetail;
@@ -126,12 +128,13 @@ class StoreChatController extends Controller
         }
 
         // Paginate
-        $chats = $query->paginate(500);
+        $chats = $query->paginate(20);
 
 
         return response()->json([
             'success'  => true,
-            'data' => ChatListResource::collection($chats)
+            'data' => ChatListResource::collection($chats),
+            'meta' => new PaginationResource($chats)
         ]);
     }
 
@@ -188,12 +191,13 @@ class StoreChatController extends Controller
 
         $messages = $message_query
             ->orderBy('created_at', 'asc')
-            ->paginate(500);
+            ->paginate(30);
 
         return response()->json([
             'success'  => true,
             'unread_message' => $unread_message,
-            'data' => ChatMessageDetailsResource::collection($messages)
+            'data' => ChatMessageDetailsResource::collection($messages),
+            'meta' => new PaginationResource($messages)
         ]);
     }
 
