@@ -42,7 +42,7 @@ interface StoreManageInterface
 
     public function storeDashboard(string $slug);
 
-    public function getSellerWiseStores(?int $SellerId);
+    public function getSellerWiseStores(?int $sellerId, ?string $search);
 
     public function approveStores(array $ids);
 
