@@ -34,6 +34,7 @@ class UserOtpController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'phone' => 'required|string',
+            'region' => 'required|string',
             'user_type' => 'required|string|in:customer,deliveryman',
         ]);
 
@@ -95,9 +96,11 @@ class UserOtpController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'phone' => 'required|string',
+            'region' => 'required|string',
             'otp' => 'required|string',
             'user_type' => 'required|string|in:customer,deliveryman',
             'firebase_device_token' => 'nullable|string',
+
         ]);
 
         if ($validator->fails()) {
@@ -153,7 +156,11 @@ class UserOtpController extends Controller
                 ->whereNull('parent_id')
                 ->with('childrenRecursive')
                 ->get();
+            // Handle the "Remember Me" option
+            $remember_me = $request->has('remember_me');
 
+            // Set token expiration dynamically
+            config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
             // Build and return the response
             return response()->json([
                 "status" => true,
@@ -167,7 +174,11 @@ class UserOtpController extends Controller
                 "role" => $user->getRoleNames()->first(),
             ], 200);
         }
+        // Handle the "Remember Me" option
+        $remember_me = $request->has('remember_me');
 
+        // Set token expiration dynamically
+        config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
         return response()->json([
             "status" => true,
             "status_code" => 200,
@@ -185,6 +196,7 @@ class UserOtpController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'phone' => 'required|string',
+            'region' => 'required|string',
             'user_type' => 'required|string|in:customer,deliveryman',
         ]);
 
