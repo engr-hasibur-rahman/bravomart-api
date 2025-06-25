@@ -119,10 +119,12 @@ class UserOtpController extends Controller
             return response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        $formattedNumber = $this->formatPhoneNumber($request->get('phone'), $request->get('region'));
+
         $user = match ($request->user_type) {
-            'customer' => Customer::where('phone', $request->phone)->first(),
+            'customer' => Customer::where('phone', $formattedNumber)->first(),
             'deliveryman' => User::where([
-                'phone' => $request->phone,
+                'phone' => $formattedNumber,
                 'activity_scope' => 'delivery_level',
                 'store_owner' => 0
             ])->first(),
@@ -215,12 +217,19 @@ class UserOtpController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+        $phone = new PhoneNumber($request->phone, $request->region);
+        if (!$phone->isOfCountry($request->region)) {
+            return response()->json([
+                'message' => __('messages.invalid_region', ['name' => 'phone']),
+            ]);
+        }
+        $formattedNumber = $this->formatPhoneNumber($request->get('phone'), $request->get('region'));
 
         // Find existing user by type
         $user = match ($request->user_type) {
-            'customer' => Customer::where('phone', $request->phone)->first(),
+            'customer' => Customer::where('phone', $formattedNumber)->first(),
             'deliveryman' => User::where([
-                'phone' => $request->phone,
+                'phone' => $formattedNumber,
                 'activity_scope' => 'delivery_level',
                 'store_owner' => 0
             ])->first(),
@@ -248,7 +257,7 @@ class UserOtpController extends Controller
 
         // Generate and send new OTP
         $otp = rand(100000, 999999);
-        $success = SmsManager::send($request->phone, $otp);
+        $success = SmsManager::send($formattedNumber, $otp);
 
         if (!$success) {
             return response()->json([
