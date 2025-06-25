@@ -41,10 +41,10 @@ class ChatController extends Controller
         }
 
         // if sender type (store) and receiver type (customer or deliveryman) not send message
-        if ($authUser->activity_scope === 'store_level' && $request->receiver_type === 'customer') {
+        if ($authUser->activity_scope === 'store_level' && $request->receiver_type === 'store') {
             return response()->json([
                 'success' => false,
-                'message' => 'Store cannot send messages only send to admin.',
+                'message' => 'Store cannot send messages only send to admin and customer.',
             ], 422);
         }
 
@@ -101,15 +101,6 @@ class ChatController extends Controller
                 'success' => true,
                 'message' => 'Sender and receiver cannot be of the same type.',
             ]);
-        }
-
-        // if sender type (store) and receiver type (customer or deliveryman) not send message
-        $sender_type = $authType;
-        if ($sender_type === 'store' && $request->receiver_type === 'customer' || $sender_type === 'store' && $request->receiver_type === 'deliveryman') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Store cannot send messages only send to admin.',
-            ], 422);
         }
 
         // receiver chat id

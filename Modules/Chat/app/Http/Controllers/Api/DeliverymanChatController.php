@@ -51,7 +51,7 @@ class DeliverymanChatController extends Controller
 
         $query = Chat::with('user')
             ->whereIn('id', $all_chat_ids)
-            ->where('user_type', '!=', 'store');
+            ->where('user_type', '!=', 'deliveryman');
 
         $name = $request->input('search');
         if ($name) {
