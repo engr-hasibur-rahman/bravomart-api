@@ -3,6 +3,10 @@
 namespace Modules\Chat\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\V1\Controller;
+use App\Models\Customer;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Chat\app\Models\Chat;
@@ -49,6 +53,31 @@ class StoreChatController extends Controller
         if ($currentChat) {
             $all_chat_ids = $all_chat_ids->filter(fn ($id) => $id != $currentChat->id)->values();
         }
+
+        // store order customer chat ids
+        $store_id = intval($request->store_id);
+        $auth_id = auth()->guard('api')->user()->id;
+
+        // check store
+        $auth_seller_store = Store::where('id', $store_id)
+            ->where('store_seller_id', $auth_id)
+            ->first();
+
+        // Get all customer chat IDs from orders related to this store
+        if (!empty($auth_seller_store)) {
+            $orders = Order::with('orderMaster.customer.chats')
+                ->where('store_id', $store_id)
+                ->get();
+            $chatIds = $orders->flatMap(function ($order) {
+                return $order->orderMaster?->customer?->chats->pluck('id') ?? collect();
+            })->unique()->values();
+
+            // marge in array
+            $all_ids = collect($all_chat_ids)->merge($chatIds)->unique()->values();
+            $all_chat_ids = $all_ids;
+        }
+
+
 
         $query = Chat::with('user')
             ->whereIn('id', $all_chat_ids)

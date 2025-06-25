@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class OrderDetail extends Model
 {
+    use HasRelationships;
+
     protected $fillable = [
         'order_id',
         'store_id',
@@ -53,5 +56,12 @@ class OrderDetail extends Model
         return $this->belongsTo(Product::class, 'product_id');
     }
 
+    public function customerChats()
+    {
+        return $this->hasManyDeepFromRelations(
+            $this->order(),
+            (new \App\Models\Order)->customer()->chats()
+        );
+    }
 
 }

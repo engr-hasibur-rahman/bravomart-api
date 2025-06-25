@@ -98,7 +98,7 @@ class CustomerManageController extends Controller
                 "status" => false,
                 "message" => __('messages.wrong_credential'),
                 "token" => null,
-            ], 204);
+            ], 422);
         } else {
             // Handle the "Remember Me" option
             $remember_me = $request->has('remember_me');
