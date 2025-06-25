@@ -190,8 +190,10 @@ class AdminOrderManageController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
         $systemSettings = SystemCommission::first();
         $store_handle_delivery = $systemSettings->order_confirmation_by == 'store';
+
         if ($store_handle_delivery) {
             return response()->json([
                 'message' => __('messages.order_confirmation_store')
