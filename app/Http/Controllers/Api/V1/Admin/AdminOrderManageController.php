@@ -18,6 +18,7 @@ use App\Models\Order;
 use App\Models\OrderActivity;
 use App\Models\OrderDeliveryHistory;
 use App\Models\SystemCommission;
+use App\Services\Order\OrderManageNotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -27,6 +28,12 @@ use Modules\Wallet\app\Models\WalletTransaction;
 
 class AdminOrderManageController extends Controller
 {
+    protected $orderManageNotificationService;
+
+    public function __construct(OrderManageNotificationService $orderManageNotificationService)
+    {
+        $this->orderManageNotificationService = $orderManageNotificationService;
+    }
     public function allOrders(Request $request)
     {
         $order_id = $request->order_id;
