@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\Route;
 
 /* Admin Login */
 Route::post('/token', [UserController::class, 'token']);
+Route::post('/refresh-token', [UserController::class, 'refreshToken']);
+Route::post('/customer/refresh-token', [CustomerManageController::class, 'refreshToken']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/forget-password', [UserController::class, 'forgetPassword']);
 Route::post('/verify-forget-password-token', [UserController::class, 'verifyForgetPasswordToken']);

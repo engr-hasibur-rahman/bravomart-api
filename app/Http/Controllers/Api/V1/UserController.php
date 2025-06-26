@@ -14,12 +14,15 @@ use App\Models\EmailTemplate;
 use App\Models\StoreSeller;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Socialite\Facades\Socialite;
 use Spatie\Permission\Models\Role;
 
@@ -353,12 +356,18 @@ class UserController extends Controller
             // Set token expiration dynamically
             config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
 
+            $token = $user->createToken('auth_token');
+            $accessToken = $token->accessToken;
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->save();
+
             // Build and return the response
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.login_success', ['name' => 'Admin']),
-                "token" => $user->createToken('auth_token')->plainTextToken,
+                "token" => $token->plainTextToken,
+                'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                 "email_verified" => $email_verified,
                 "role" => $user->getRoleNames()->first(),
             ], 200);
@@ -379,6 +388,50 @@ class UserController extends Controller
                 "error" => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $plainToken = $request->bearerToken();
+
+        if (!$plainToken) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Access token missing.',
+            ], 401);
+        }
+
+        $tokenId = explode('|', $plainToken)[0];
+
+        $token = PersonalAccessToken::find($tokenId);
+        $user = $token->tokenable;
+
+        if (!$token) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Token not found.',
+            ], 401);
+        }
+
+        if ($token->expires_at && Carbon::parse($token->expires_at)->lt(now())) {
+            $newToken = $user->createToken('auth_token');
+            $token->expires_at = now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
+            $token->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Token refreshed.',
+                'token' => $newToken->plainTextToken,
+                'new_expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Token is still valid.',
+            'token' => $plainToken,
+            'expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+        ]);
     }
 
     public function StoreOwnerRegistration(Request $request)
