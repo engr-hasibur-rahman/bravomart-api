@@ -99,12 +99,16 @@ class UserController extends Controller
                 }
 
                 // Generate a Sanctum token for API access
-                $token = $existingUser->createToken('api_token')->plainTextToken;
+                $token = $existingUser->createToken('social_auth_token')->plainTextToken;
+                $accessToken = $token->accessToken;
+                $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+                $accessToken->save();
 
                 return redirect()->away($frontendUrl . '?' . http_build_query([
                         'success' => true,
                         'message' => __('auth.social.login'),
-                        'token' => $token,
+                        "token" => $token->plainTextToken,
+                        'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                         'email_verified' => (bool)$existingUser->email_verified,
                         'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
                         'marketing_email' => (bool)$existingUser->marketing_email,
@@ -157,12 +161,17 @@ class UserController extends Controller
             }
 
             // Generate a Sanctum token for the new user
-            $token = $newUser->createToken('api_token')->plainTextToken;
+
+            $token = $newUser->createToken('social_auth_token')->plainTextToken;
+            $accessToken = $token->accessToken;
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->save();
 
             return redirect()->away($frontendUrl . '?' . http_build_query([
                     'success' => true,
                     'message' => __('auth.social.login'),
-                    'token' => $token,
+                    "token" => $token->plainTextToken,
+                    'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                     'email_verified' => $newUser->email_verified,
                     'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
                     'marketing_email' => $newUser->marketing_email,
@@ -238,12 +247,15 @@ class UserController extends Controller
             }
 
             // Generate a Sanctum token for the existing user
-            $token = $existingUser->createToken('api_token')->plainTextToken;
-
+            $token = $existingUser->createToken('social_auth_token')->plainTextToken;
+            $accessToken = $token->accessToken;
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->save();
             return redirect()->away($frontendUrl . '?' . http_build_query([
                     'success' => true,
                     'message' => __('auth.social.login'),
-                    'token' => $token,
+                    "token" => $token->plainTextToken,
+                    'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                     'email_verified' => (bool)$existingUser->email_verified,
                     'account_status' => $existingUser->deactivated_at ? 'deactivated' : 'active',
                     'marketing_email' => (bool)$existingUser->marketing_email,
@@ -295,12 +307,16 @@ class UserController extends Controller
             }
 
             // Generate a Sanctum token for the new user
-            $token = $newUser->createToken('api_token')->plainTextToken;
+            $token = $user->createToken('social_auth_token');
+            $accessToken = $token->accessToken;
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->save();
 
             return redirect()->away($frontendUrl . '?' . http_build_query([
                     'success' => true,
                     'message' => __('auth.social.login'),
-                    'token' => $token,
+                    "token" => $token->plainTextToken,
+                    'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                     'email_verified' => $newUser->email_verified,
                     'account_status' => $newUser->deactivated_at ? 'deactivated' : 'active',
                     'marketing_email' => $newUser->marketing_email,
