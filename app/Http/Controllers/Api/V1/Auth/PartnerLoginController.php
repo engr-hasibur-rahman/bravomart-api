@@ -8,9 +8,11 @@ use App\Http\Controllers\Api\V1\Controller;
 use App\Models\Store;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class PartnerLoginController extends Controller
@@ -85,6 +87,12 @@ class PartnerLoginController extends Controller
 
         // Set token expiration dynamically
         config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
+
+        $token = $user->createToken('auth_token');
+        $accessToken = $token->accessToken;
+        $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+        $accessToken->save();
+
         // update firebase device token
         $user->update([
             'firebase_token' => $request->firebase_device_token,
@@ -92,7 +100,8 @@ class PartnerLoginController extends Controller
         return [
             "success" => true,
             "message" => __('messages.login_success', ['name' => 'Seller']),
-            "token" => $user->createToken('auth_token')->plainTextToken,
+            "token" => $token->plainTextToken,
+            'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
@@ -104,6 +113,50 @@ class PartnerLoginController extends Controller
             "stores" => $stores,
             "role" => $user->getRoleNames()
         ];
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $plainToken = $request->bearerToken();
+
+        if (!$plainToken) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Access token missing.',
+            ], 401);
+        }
+
+        $tokenId = explode('|', $plainToken)[0];
+
+        $token = PersonalAccessToken::find($tokenId);
+        $user = $token->tokenable;
+
+        if (!$token) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Token not found.',
+            ], 401);
+        }
+
+        if ($token->expires_at && Carbon::parse($token->expires_at)->lt(now())) {
+            $newToken = $user->createToken('auth_token');
+            $token->expires_at = now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
+            $token->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Token refreshed.',
+                'token' => $newToken->plainTextToken,
+                'new_expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Token is still valid.',
+            'token' => $plainToken,
+            'expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+        ]);
     }
 
     public static function buildMenuTree($data_list)

@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\DeliveryMan;
 use App\Models\SettingOption;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -175,12 +176,16 @@ class UserOtpController extends Controller
 
             // Set token expiration dynamically
             config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
+            $token = $user->createToken('auth_token');
+            $accessToken = $token->accessToken;
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->save();
             // Build and return the response
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
-                "message" => __('messages.login_success', ['name' => 'Deliveryman']),
-                "token" => $user->createToken('auth_token')->plainTextToken,
+                "token" => $token->plainTextToken,
+                'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                 "deliveryman_id" => $user->id,
                 "email_verified" => $email_verified,
                 "activity_notification" => (bool)$user->activity_notification,
@@ -193,11 +198,16 @@ class UserOtpController extends Controller
 
         // Set token expiration dynamically
         config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
+        $token = $user->createToken('customer_auth_token');
+        $accessToken = $token->accessToken;
+        $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+        $accessToken->save();
         return response()->json([
             "status" => true,
             "status_code" => 200,
             "message" => __('messages.login_success', ['name' => 'Customer']),
-            "token" => $user->createToken('customer_auth_token')->plainTextToken,
+            "token" => $token->plainTextToken,
+            'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
             "email_verified" => (bool)$user->email_verified, // shorthand of -> $token->email_verified ? true : false
             "account_status" => $user->deactivated_at ? 'deactivated' : 'active',
             "marketing_email" => (bool)$user->marketing_email,

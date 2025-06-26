@@ -12,10 +12,12 @@ use App\Models\Customer;
 use App\Models\CustomerDeactivationReason;
 use App\Models\UniversalNotification;
 use App\Models\Wishlist;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManageController extends Controller
@@ -66,7 +68,7 @@ class CustomerManageController extends Controller
             return response()->json([
                 "status" => false,
                 "message" => __('messages.customer.not.found'),
-            ], 204);
+            ], 404);
         }
 
         // update firebase device token
@@ -106,17 +108,67 @@ class CustomerManageController extends Controller
             // Set token expiration dynamically
             config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
 
+            $token = $customer->createToken('customer_auth_token');
+            $accessToken = $token->accessToken;
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->save();
+
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.login_success', ['name' => 'Customer']),
-                "token" => $customer->createToken('customer_auth_token')->plainTextToken,
+                "token" => $token->plainTextToken,
+                'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                 "email_verified" => (bool)$customer->email_verified, // shorthand of -> $token->email_verified ? true : false
                 "account_status" => $customer->deactivated_at ? 'deactivated' : 'active',
                 "marketing_email" => (bool)$customer->marketing_email,
                 "activity_notification" => (bool)$customer->activity_notification,
             ]);
         }
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $plainToken = $request->bearerToken();
+
+        if (!$plainToken) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Access token missing.',
+            ], 401);
+        }
+
+        $tokenId = explode('|', $plainToken)[0];
+
+        $token = PersonalAccessToken::find($tokenId);
+        $user = $token->tokenable;
+
+        if (!$token) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Token not found.',
+            ], 401);
+        }
+
+        if ($token->expires_at && Carbon::parse($token->expires_at)->lt(now())) {
+            $newToken = $user->createToken('customer_auth_token');
+            $token->expires_at = now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
+            $token->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Token refreshed.',
+                'token' => $newToken->plainTextToken,
+                'new_expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Token is still valid.',
+            'token' => $plainToken,
+            'expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+        ]);
     }
 
     // Verify email with token

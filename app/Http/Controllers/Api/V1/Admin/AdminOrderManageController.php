@@ -148,6 +148,9 @@ class AdminOrderManageController extends Controller
                         ->where('status', 'cancelled');
                 })->first();
 
+            // Wallet updates
+            $this->updateWallets($order, $deliveryHistory);
+
             OrderDeliveryHistory::create([
                 'order_id' => $order->id,
                 'deliveryman_id' => $deliveryHistory ? $deliveryHistory->deliveryman_id : $userId,
@@ -165,9 +168,6 @@ class AdminOrderManageController extends Controller
                     'activity_value' => $order->order_amount
                 ]);
             }
-
-            // Wallet updates
-            $this->updateWallets($order, $deliveryHistory);
 
             // Notification + Email
             $this->sendOrderDeliveredNotifications($order, $deliveryHistory);
