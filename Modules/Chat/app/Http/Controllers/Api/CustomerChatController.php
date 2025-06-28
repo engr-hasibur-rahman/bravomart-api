@@ -243,27 +243,47 @@ class CustomerChatController extends Controller
 
 
         // Get all assigned deliveryman
+//        $customer_orders = Order::with('deliveryman')
+//            ->whereHas('orderMaster', function ($query) use ($auth_user) {
+//                $query->where('customer_id', $auth_user->id);
+//            })
+//            ->get();
+//
+//        // get all customer if created order
+//        if ($customer_orders->isNotEmpty()) {
+//            $deliveryman_ids = $customer_orders->flatMap(function ($orderMaster) {
+//                return $orderMaster->map(function ($order) {
+//                    return $order->deliveryman?->id;
+//                });
+//            })->filter()->unique()->values();
+//
+//            $deliveryman_chat_ids = Chat::whereIn('user_id', $deliveryman_ids)
+//                ->where('user_type', 'deliveryman')
+//                ->pluck('id');
+//
+//            // marge in array
+//            $all_ids = collect($all_chat_ids)->merge($deliveryman_chat_ids)->unique()->values();
+//            $all_chat_ids = $all_ids;
+//        }
         $customer_orders = Order::with('deliveryman')
             ->whereHas('orderMaster', function ($query) use ($auth_user) {
                 $query->where('customer_id', $auth_user->id);
             })
             ->get();
 
-        // get all customer if created order
         if ($customer_orders->isNotEmpty()) {
-            $deliveryman_ids = $customer_orders->flatMap(function ($orderMaster) {
-                return $orderMaster->map(function ($order) {
-                    return $order->deliveryman?->id;
-                });
+            $deliveryman_ids = $customer_orders->map(function ($order) {
+                return $order->deliveryman?->id;
             })->filter()->unique()->values();
 
             $deliveryman_chat_ids = Chat::whereIn('user_id', $deliveryman_ids)
                 ->where('user_type', 'deliveryman')
                 ->pluck('id');
 
-            // marge in array
-            $all_ids = collect($all_chat_ids)->merge($deliveryman_chat_ids)->unique()->values();
-            $all_chat_ids = $all_ids;
+            $all_chat_ids = collect($all_chat_ids)
+                ->merge($deliveryman_chat_ids)
+                ->unique()
+                ->values();
         }
 
 
