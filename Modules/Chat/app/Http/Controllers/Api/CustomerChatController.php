@@ -252,7 +252,7 @@ class CustomerChatController extends Controller
         // get all customer if created order
         if ($customer_orders->isNotEmpty()) {
             $deliveryman_ids = $customer_orders->flatMap(function ($orderMaster) {
-                return $orderMaster->orders->map(function ($order) {
+                return $orderMaster->map(function ($order) {
                     return $order->deliveryman?->id;
                 });
             })->filter()->unique()->values();
