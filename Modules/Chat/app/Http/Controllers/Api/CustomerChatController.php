@@ -28,13 +28,13 @@ class CustomerChatController extends Controller
             'receiver_type' => 'required|string|in:deliveryman,store',
             'receiver_id' => 'required|integer',
             'message' => 'nullable|string',
-            'file'   => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
+            'file' => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors'  => $validator->errors(),
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -63,22 +63,22 @@ class CustomerChatController extends Controller
         // Get Receiver info
         if ($receiver_type === 'customer') {
             $receiver = Customer::find($receiver_id);
-        }elseif($receiver_type === 'store') {
+        } elseif ($receiver_type === 'store') {
             $receiver = Store::find($receiver_id);
-        }elseif(in_array($receiver_type, ['deliveryman'])){
+        } elseif (in_array($receiver_type, ['deliveryman'])) {
             $receiver = User::where('id', $receiver_id)
                 ->where('activity_scope', 'delivery_level')
                 ->first();
         }
 
         // Check  sender type
-        if ($authUser->activity_scope === 'system_level'){
+        if ($authUser->activity_scope === 'system_level') {
             $authType = 'admin';
-        }elseif($authUser->activity_scope === 'store_level'){
+        } elseif ($authUser->activity_scope === 'store_level') {
             $authType = 'store';
-        }elseif($authUser->activity_scope === 'delivery_level'){
+        } elseif ($authUser->activity_scope === 'delivery_level') {
             $authType = 'deliveryman';
-        }else{
+        } else {
             $authType = 'customer';
         }
 
@@ -86,21 +86,21 @@ class CustomerChatController extends Controller
         if (empty($receiver)) {
             return response()->json([
                 'success' => false,
-                'message'  => 'Receiver not found',
+                'message' => 'Receiver not found',
             ], 404);
         }
 
 
         // Receiver Type Set
         if (!empty($receiver)) {
-            if ($receiver->activity_scope === 'system_level'){
+            if ($receiver->activity_scope === 'system_level') {
                 $receiver_type = 'admin';
-            }elseif(isset($receiver->store_type) && !empty($receiver->store_type)){
+            } elseif (isset($receiver->store_type) && !empty($receiver->store_type)) {
                 // store check and store not exits activity_scope check only store_type
                 $receiver_type = 'store';
-            }elseif($receiver->activity_scope === 'delivery_level'){
+            } elseif ($receiver->activity_scope === 'delivery_level') {
                 $receiver_type = 'deliveryman';
-            }else{
+            } else {
                 $receiver_type = 'customer';
             }
         }
@@ -125,7 +125,7 @@ class CustomerChatController extends Controller
 
         // receiver chat id
         $receiver_chat = Chat::where('user_id', $receiver->id)->where('user_type', $receiver_type)->first();
-        if (empty($receiver_chat)){
+        if (empty($receiver_chat)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Receiver chat not found',
@@ -133,12 +133,12 @@ class CustomerChatController extends Controller
         }
 
         $data = [
-            'receiver_chat_id'    => $receiver_chat->id,
-            'sender_id'    => $authUser->id,
-            'sender_type'  => $authType,
-            'receiver_id'  => $receiver->id,
-            'receiver_type'=> $receiver_type,
-            'message'      => $request->message,
+            'receiver_chat_id' => $receiver_chat->id,
+            'sender_id' => $authUser->id,
+            'sender_type' => $authType,
+            'receiver_id' => $receiver->id,
+            'receiver_type' => $receiver_type,
+            'message' => $request->message,
         ];
 
 
@@ -162,8 +162,7 @@ class CustomerChatController extends Controller
                 });
 
                 $image->save($fullPath);
-            }
-            // PDF or other allowed non-image
+            } // PDF or other allowed non-image
             elseif ($extension === 'pdf') {
                 $file->storeAs('uploads/chat', $filename, 'public');
             }
@@ -176,7 +175,8 @@ class CustomerChatController extends Controller
         try {
             //  broadcast with Pusher
             event(new \App\Events\MessageSent($message));
-        }catch (\Exception $e){}
+        } catch (\Exception $e) {
+        }
 
         return response()->json([
             'success' => true,
@@ -219,7 +219,7 @@ class CustomerChatController extends Controller
         $currentChat = $chat;
 
         if ($currentChat) {
-            $all_chat_ids = $all_chat_ids->filter(fn ($id) => $id != $currentChat->id)->values();
+            $all_chat_ids = $all_chat_ids->filter(fn($id) => $id != $currentChat->id)->values();
         }
 
         // Get all customer chat IDs from orders related to this store
@@ -241,18 +241,15 @@ class CustomerChatController extends Controller
         }
 
 
-
-        // Get all assigned deliveryman
-//        $customer_orders = Order::with('deliveryman')
-//            ->whereHas('orderMaster', function ($query) use ($auth_user) {
-//                $query->where('customer_id', $auth_user->id);
-//            })
+//        // Get all assigned deliveryman
+//        $customer_orders = Order::with('order.deliveryman')
+//            ->where('customer_id', $auth_user->id)
 //            ->get();
 //
 //        // get all customer if created order
 //        if ($customer_orders->isNotEmpty()) {
 //            $deliveryman_ids = $customer_orders->flatMap(function ($orderMaster) {
-//                return $orderMaster->map(function ($order) {
+//                return $orderMaster->orders->map(function ($order) {
 //                    return $order->deliveryman?->id;
 //                });
 //            })->filter()->unique()->values();
@@ -265,6 +262,7 @@ class CustomerChatController extends Controller
 //            $all_ids = collect($all_chat_ids)->merge($deliveryman_chat_ids)->unique()->values();
 //            $all_chat_ids = $all_ids;
 //        }
+
         $customer_orders = Order::with('deliveryman')
             ->whereHas('orderMaster', function ($query) use ($auth_user) {
                 $query->where('customer_id', $auth_user->id);
@@ -325,7 +323,7 @@ class CustomerChatController extends Controller
 
 
         return response()->json([
-            'success'  => true,
+            'success' => true,
             'data' => ChatListResource::collection($chats),
             'meta' => new PaginationResource($chats)
         ]);
@@ -334,25 +332,25 @@ class CustomerChatController extends Controller
     public function chatWiseFetchMessages(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'receiver_id'   => 'required|integer',
+            'receiver_id' => 'required|integer',
             'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
-            'search'        => 'nullable|string',
+            'search' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors'  => $validator->errors(),
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $auth_id = auth()->guard('api_customer')->user()->id;
-        $chat = Chat::where('user_id',$auth_id)->first();
+        $chat = Chat::where('user_id', $auth_id)->first();
 
         if (empty($chat)) {
             return response()->json([
                 'success' => false,
-                'message'  => 'Chats not found',
+                'message' => 'Chats not found',
             ]);
         }
 
@@ -381,16 +379,17 @@ class CustomerChatController extends Controller
         (clone $message_query)->where('is_seen', 1)->update(['is_seen' => 1]);
 
         $messages = $message_query
-            ->orderBy('created_at', 'asc')
+            ->latest()
             ->paginate(30);
 
         return response()->json([
-            'success'  => true,
+            'success' => true,
             'unread_message' => $unread_message,
             'data' => ChatMessageDetailsResource::collection($messages),
             'meta' => new PaginationResource($messages)
         ]);
     }
+
     public function markAsSeen(Request $request)
     {
         ChatMessage::where('chat_id', $request->chat_id)
