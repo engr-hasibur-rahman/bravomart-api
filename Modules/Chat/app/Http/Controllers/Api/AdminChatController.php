@@ -135,7 +135,7 @@ class AdminChatController extends Controller
         (clone $message_query)->where('is_seen', 1)->update(['is_seen' => 1]);
 
         $messages = $message_query
-            ->orderBy('created_at', 'asc')
+            ->latest()
             ->paginate(30);
 
         return response()->json([
