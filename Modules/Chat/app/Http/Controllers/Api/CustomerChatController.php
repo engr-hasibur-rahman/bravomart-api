@@ -244,7 +244,9 @@ class CustomerChatController extends Controller
 
         // Get all assigned deliveryman
         $customer_orders = Order::with('order.deliveryman')
-            ->where('customer_id', $auth_user->id)
+            ->whereHas('orderMaster', function ($query) use ($auth_user) {
+                $query->where('customer_id', $auth_user->id);
+            })
             ->get();
 
         // get all customer if created order
