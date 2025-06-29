@@ -178,7 +178,7 @@ class UserOtpController extends Controller
             config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
             $token = $user->createToken('auth_token');
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
             $accessToken->save();
             // Build and return the response
             return response()->json([
@@ -200,7 +200,7 @@ class UserOtpController extends Controller
         config(['sanctum.expiration' => $remember_me ? null : env('SANCTUM_EXPIRATION')]);
         $token = $user->createToken('customer_auth_token');
         $accessToken = $token->accessToken;
-        $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+        $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
         $accessToken->save();
         return response()->json([
             "status" => true,

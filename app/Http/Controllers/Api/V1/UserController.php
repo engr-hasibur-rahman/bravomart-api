@@ -101,7 +101,7 @@ class UserController extends Controller
                 // Generate a Sanctum token for API access
                 $token = $existingUser->createToken('social_auth_token')->plainTextToken;
                 $accessToken = $token->accessToken;
-                $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+                $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
                 $accessToken->save();
 
                 return redirect()->away($frontendUrl . '?' . http_build_query([
@@ -164,7 +164,7 @@ class UserController extends Controller
 
             $token = $newUser->createToken('social_auth_token')->plainTextToken;
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
             $accessToken->save();
 
             return redirect()->away($frontendUrl . '?' . http_build_query([
@@ -249,7 +249,7 @@ class UserController extends Controller
             // Generate a Sanctum token for the existing user
             $token = $existingUser->createToken('social_auth_token')->plainTextToken;
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
             $accessToken->save();
             return redirect()->away($frontendUrl . '?' . http_build_query([
                     'success' => true,
@@ -309,7 +309,7 @@ class UserController extends Controller
             // Generate a Sanctum token for the new user
             $token = $user->createToken('social_auth_token');
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
             $accessToken->save();
 
             return redirect()->away($frontendUrl . '?' . http_build_query([
@@ -374,7 +374,7 @@ class UserController extends Controller
 
             $token = $user->createToken('auth_token');
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
             $accessToken->save();
 
             // Build and return the response

@@ -110,7 +110,7 @@ class CustomerManageController extends Controller
 
             $token = $customer->createToken('customer_auth_token');
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
             $accessToken->save();
 
             return response()->json([
