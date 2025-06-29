@@ -14,7 +14,7 @@ class OrderManageNotificationService
 {
     public function createOrderNotification($last_order_ids, $otherCheckData = null)
     {
-        try {
+//        try {
             if (empty($last_order_ids)) {
                 return;
             }
@@ -82,25 +82,39 @@ class OrderManageNotificationService
                     $messages['deliveryman']
                 );
             }
-        }catch (\Exception $exception){}
+
+//        }catch (\Exception $exception){}
 
 
     }
 
     private function sendOrderNotification($recipient, $idKey, $idValue, $orderId, $title, $body)
     {
+
         if (empty($recipient)) {
             return;
         }
 
-        $fcm_web_token = User::select('id','fcm_token')->where('activity_scope', 'system_level')->first()->fcm_token;
+        // super admin token
+        $super_admin = User::where('activity_scope', 'system_level')
+            ->where('slug', 'system-admin-1')
+            ->first();
+
+        $fcm_web_token = $super_admin->firebase_token;
+        $user_firebase_token = $recipient->firebase_token;
 
         // Collect tokens (add web token and recipient's token)
-        $token = [$fcm_web_token];  // Start with the web token
+        // Start with the web token
+        $token = [$fcm_web_token];
+
         // If the recipient has a firebase_token (Flutter token), add it
-        if (!empty($recipient->firebase_token)) {
-            $flutterToken = is_array($recipient->firebase_token) ? $recipient->firebase_token : [$recipient->firebase_token];
-            $tokens = array_merge($token, $flutterToken);  // Merge Flutter tokens with Web token
+        if (!empty($user_firebase_token)) {
+            $flutterToken = is_array($user_firebase_token)
+                ? $user_firebase_token
+                : [$user_firebase_token];
+
+            // Merge Flutter tokens with Web token
+            $tokens = array_merge($token, $flutterToken);
         }
 
         // empty check
@@ -178,7 +192,7 @@ class OrderManageNotificationService
     public function sendFirebaseNotification(array $firebaseTokens, $title, $body, $data)
     {
 
-        try {
+//        try {
             // Check if the third parameter (image URL) is being passed as an array.
             $imageUrl = isset($data['imageUrl']) && is_string($data['imageUrl']) ? $data['imageUrl'] : null;
             // Path to the Firebase credentials JSON file
@@ -218,33 +232,33 @@ class OrderManageNotificationService
                 ->withNotification($notification)  // Pass the Notification object
                 ->withData($dataToSend);
             // Send the notification to multiple tokens
-            $messaging->sendMulticast($message, $firebaseTokens);
+        $response =  $messaging->sendMulticast($message, $firebaseTokens);
+//dd($firebaseTokens);
+
+            // Check for the success or failure of each token
+            $successCount = 0;
+            $failureCount = 0;
+            // Loop through the results to check for successful and failed deliveries
+            foreach ($response->successes() as $success) {
+                $successCount++;
+            }
+
+            // Loop through the failed responses
+            foreach ($response->failures() as $failure) {
+                $failureCount++;
+                // Log the error message if needed
+                Log::error("Failed to send notification: " . $failure->error()->message());
+            }
+
+            // Check if all notifications were sent successfully
+            if ($successCount == count($firebaseTokens)) {
+                Log::info('All notifications sent successfully!');
+            } else {
+                Log::info("Notifications sent: Success - {$successCount}, Failure - {$failureCount}");
+            }
 
 
-//            // Check for the success or failure of each token
-//            $successCount = 0;
-//            $failureCount = 0;
-//            // Loop through the results to check for successful and failed deliveries
-//            foreach ($response->successes() as $success) {
-//                $successCount++;
-//            }
-//
-//            // Loop through the failed responses
-//            foreach ($response->failures() as $failure) {
-//                $failureCount++;
-//                // Log the error message if needed
-//                Log::error("Failed to send notification: " . $failure->error()->message());
-//            }
-//
-//            // Check if all notifications were sent successfully
-//            if ($successCount == count($firebaseTokens)) {
-//                Log::info('All notifications sent successfully!');
-//            } else {
-//                Log::info("Notifications sent: Success - {$successCount}, Failure - {$failureCount}");
-//            }
-
-
-        }catch (\Exception $exception){}
+//        }catch (\Exception $exception){}
     }
 
 }
