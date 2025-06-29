@@ -104,11 +104,11 @@ class InstallController
 
             chdir($projectRoot);
 
-            // Install Composer dependencies
-            exec('composer install --no-interaction --prefer-dist', $composerOutput, $composerStatus);
-
-            // Install NPM dependencies
-            exec('npm install --legacy-peer-deps', $npmOutput, $npmStatus); // safer for older projects
+//            // Install Composer dependencies
+//            exec('composer install --no-interaction --prefer-dist', $composerOutput, $composerStatus);
+//
+//            // Install NPM dependencies
+//            exec('npm install --legacy-peer-deps', $npmOutput, $npmStatus); // safer for older projects
 
             // Generate key if missing
             $env = $this->parseEnv(); // If you have parseEnv()
@@ -124,7 +124,7 @@ class InstallController
 
             // Run migrations and seeders
             exec('php artisan migrate --force', $outputMigrate, $statusMigrate);
-            exec('php artisan db:seed --force', $outputSeed, $statusSeed);
+//            exec('php artisan db:seed --force', $outputSeed, $statusSeed);
 
             // Update the .env key for cache store
             $this->updateEnvKey('CACHE_STORE', 'database');
@@ -135,17 +135,17 @@ class InstallController
 
             if (
                 $result === false ||
-                $composerStatus !== 0 ||
-                $npmStatus !== 0 ||
-                $statusMigrate !== 0 ||
-                $statusSeed !== 0
+                $statusMigrate !== 0
             ) {
-                // Log everything
+//                // Log everything
+//                file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge(
+//                    $composerOutput ?? [],
+//                    $npmOutput ?? [],
+//                    $outputMigrate ?? [],
+//                    $outputSeed ?? []
+//                )));
                 file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge(
-                    $composerOutput ?? [],
-                    $npmOutput ?? [],
                     $outputMigrate ?? [],
-                    $outputSeed ?? []
                 )));
                 header('Location: ?step=environment&error=artisan');
             } else {
