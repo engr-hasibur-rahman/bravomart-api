@@ -48,7 +48,7 @@ return [
     |
     */
 
-    'expiration' => env('SANCTUM_EXPIRATION', null),  // Default is null (infinite)
+    'expiration' => env('SANCTUM_EXPIRATION', 60),  // Default is null (infinite)
 
     /*
     |--------------------------------------------------------------------------

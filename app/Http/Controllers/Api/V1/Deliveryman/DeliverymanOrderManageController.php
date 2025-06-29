@@ -68,28 +68,26 @@ class DeliverymanOrderManageController extends Controller
         if (!auth('api')->user() && auth('api')->user()->activity_scope != 'delivery_level') {
             unauthorized_response();
         }
+
         $order_requests = $this->deliverymanRepo->orderRequests();
-        if (!$order_requests || !auth('api')->user()->is_available) {
+
+        if (!$order_requests) {
             return response()->json([
                 'message' => __('messages.data_not_found'),
                 'data' => [],
-            ], 200);
+            ]);
         } else {
             return response()->json([
                 'message' => __('messages.data_found'),
                 'data' => DeliverymanOrderRequestResource::collection($order_requests),
                 'meta' => new PaginationResource($order_requests)
-            ], 200);
+            ]);
 
         }
     }
 
     public function handleOrderRequest(Request $request)
     {
-        if (!auth('api')->user()->is_available) {
-            return response()->json(['message' => __('messages.available_status_inactive')], 422);
-        }
-
 
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:orders,id',
