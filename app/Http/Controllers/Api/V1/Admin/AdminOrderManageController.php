@@ -133,6 +133,9 @@ class AdminOrderManageController extends Controller
                 'status' => 'cancelled'
             ]);
 
+            // Notification + Email
+            $this->sendOrderDeliveredNotifications($order, null);
+
             return response()->json([
                 'message' => __($success ? 'messages.update_success' : 'messages.update_failed', ['name' => 'Order status'])
             ], $success ? 200 : 500);
@@ -169,14 +172,14 @@ class AdminOrderManageController extends Controller
                 ]);
             }
 
-            // Notification + Email
-            $this->sendOrderDeliveredNotifications($order, $deliveryHistory);
-
             // Final update
             $success = $order->update([
                 'delivery_completed_at' => now(),
                 'status' => 'delivered'
             ]);
+
+            // Notification + Email
+            $this->sendOrderDeliveredNotifications($order, $deliveryHistory);
 
             return response()->json([
                 'message' => __($success ? 'messages.update_success' : 'messages.update_failed', ['name' => 'Order status'])
@@ -236,16 +239,17 @@ class AdminOrderManageController extends Controller
     {
         $this->orderManageNotificationService->createOrderNotification($order->id);
 
-        $emailTemplates = EmailTemplate::whereIn('type', [
-            'order-status-delivered',
-            'order-status-delivered-store',
-            'order-status-delivered-admin',
-            'deliveryman-earning'
-        ])->where('status', 1)->get()->keyBy('type');
-
-        $orderAmount = amount_with_symbol_format($order->order_amount);
-
         try {
+
+            $emailTemplates = EmailTemplate::whereIn('type', [
+                'order-status-delivered',
+                'order-status-delivered-store',
+                'order-status-delivered-admin',
+                'deliveryman-earning'
+            ])->where('status', 1)->get()->keyBy('type');
+
+            $orderAmount = amount_with_symbol_format($order->order_amount);
+
             // Customer
             $customerMessage = str_replace(
                 ["@customer_name", "@order_id", "@order_amount"],
