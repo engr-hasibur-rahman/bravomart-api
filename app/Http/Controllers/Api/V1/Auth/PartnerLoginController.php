@@ -90,7 +90,7 @@ class PartnerLoginController extends Controller
 
         $token = $user->createToken('auth_token');
         $accessToken = $token->accessToken;
-        $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION'));
+        $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
         $accessToken->save();
 
         // update firebase device token

@@ -42,10 +42,10 @@ class InvoiceResource extends JsonResource
             'invoice_number' => '#' . $this->invoice_number,
             'invoice_date' => $this->invoice_date ? Carbon::parse($this->invoice_date)->format('d-M-Y') : null,
             'payment_status' => $this->orderMaster?->payment_status,
-            'items' => $this->orderDetail->map(function ($item) {
+            'items' => $this->orderDetail?->map(function ($item) {
                 return [
                     'id' => $item->id,
-                    'name' => $item->product->name,
+                    'name' => $item->product?->name,
                     'description' => $item->product?->description,
                     'price' => $item->price,
                     'quantity' => $item->quantity,
