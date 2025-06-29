@@ -1330,7 +1330,7 @@ class FrontendController extends Controller
         ]);
     }
 
-    protected function getUniqueAttributesFromVariants($products, string $languageCode = 'en')
+    protected function getUniqueAttributesFromVariants($products, ?string $languageCode = 'en')
     {
         $attributes = [];
 

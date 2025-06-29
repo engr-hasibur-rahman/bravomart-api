@@ -1,4 +1,5 @@
 <?php
+
 class InstallController
 {
     public function welcome()
@@ -54,13 +55,13 @@ class InstallController
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $envUpdates = [
-                'APP_NAME'     => $_POST['app_name'],
-                'DB_HOST'      => $_POST['db_host'],
-                'DB_PORT'      => $_POST['db_port'],
-                'DB_DATABASE'  => $_POST['db_database'],
-                'DB_USERNAME'  => $_POST['db_username'],
-                'DB_PASSWORD'  => $_POST['db_password'],
-                'CACHE_STORE'  => 'file'
+                'APP_NAME' => $_POST['app_name'],
+                'DB_HOST' => $_POST['db_host'],
+                'DB_PORT' => $_POST['db_port'],
+                'DB_DATABASE' => $_POST['db_database'],
+                'DB_USERNAME' => $_POST['db_username'],
+                'DB_PASSWORD' => $_POST['db_password'],
+                'CACHE_STORE' => 'file'
             ];
 
             $targetPath = realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . '.env';
@@ -98,6 +99,12 @@ class InstallController
             $projectRoot = realpath(__DIR__ . '/../../');
             chdir($projectRoot);
 
+            // Install Composer dependencies
+            exec('composer install --no-interaction --prefer-dist', $composerOutput, $composerStatus);
+
+            // Install NPM dependencies
+            exec('npm install --legacy-peer-deps', $npmOutput, $npmStatus); // safer for older projects
+
             // Generate key if missing
             $env = $this->parseEnv(); // If you have parseEnv()
             if (empty($env['APP_KEY'])) {
@@ -121,9 +128,20 @@ class InstallController
             exec('php artisan config:clear');
             exec('php artisan cache:clear');
 
-            if ($result === false || $statusMigrate !== 0 || $statusSeed !== 0) {
-                // Optional: log errors
-                file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge($outputMigrate, $outputSeed)));
+            if (
+                $result === false ||
+                $composerStatus !== 0 ||
+                $npmStatus !== 0 ||
+                $statusMigrate !== 0 ||
+                $statusSeed !== 0
+            ) {
+                // Log everything
+                file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge(
+                    $composerOutput ?? [],
+                    $npmOutput ?? [],
+                    $outputMigrate ?? [],
+                    $outputSeed ?? []
+                )));
                 header('Location: ?step=environment&error=artisan');
             } else {
                 header('Location: ?step=admin');
@@ -198,6 +216,7 @@ class InstallController
 
         return $env;
     }
+
     public function updateEnvKey($key, $value)
     {
         $path = realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . '.env';
@@ -216,6 +235,7 @@ class InstallController
             file_put_contents($path, $envContent);
         }
     }
+
     private function username_slug_generator($first, $last = null)
     {
         $full = trim($first . ' ' . ($last ?? ''));
