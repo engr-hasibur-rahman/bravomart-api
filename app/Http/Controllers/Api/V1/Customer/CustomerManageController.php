@@ -159,7 +159,7 @@ class CustomerManageController extends Controller
                 'status' => true,
                 'message' => 'Token refreshed.',
                 'token' => $newToken->plainTextToken,
-                'new_expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+                'new_expires_at' => $token->expires_at?->format('Y-m-d H:i:s'),
             ]);
         }
 
@@ -167,7 +167,7 @@ class CustomerManageController extends Controller
             'status' => true,
             'message' => 'Token is still valid.',
             'token' => $plainToken,
-            'expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+            'expires_at' => $token->expires_at?->format('Y-m-d H:i:s'),
         ]);
     }
 
