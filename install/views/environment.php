@@ -7,10 +7,10 @@
     <title>Installation - Database Setup</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="assets/css/style.css" rel="stylesheet">
-    <link href="assets/css/toast.css" rel="stylesheet">
-    <link href="assets/css/loader.css" rel="stylesheet">
-    <?php include 'views/partials/toast.php'; ?>
+    <link href="/install/assets/css/style.css" rel="stylesheet">
+    <link href="/install/assets/css/toast.css" rel="stylesheet">
+    <link href="/install/assets/css/loader.css" rel="stylesheet">
+    <?php include __DIR__ . '/partials/toast.php'; ?>
 </head>
 
 <body>
@@ -98,7 +98,7 @@
             document.getElementById('loader-overlay').classList.remove('hidden');
         });
     </script>
-    <script src="assets/js/toast.js"></script>
+    <script src="/install/assets/js/toast.js"></script>
     <?php if (isset($_GET['error'])): ?>
         <script>
             showToast("Failed to update .env file.");

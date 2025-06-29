@@ -14,9 +14,9 @@ foreach ($folders as $key => $isWritable) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Installation - Step 1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
-    <link href="assets/css/toast.css" rel="stylesheet">
-    <?php include 'views/partials/toast.php'; ?>
+    <link href="/install/assets/css/style.css" rel="stylesheet">
+    <link href="/install/assets/css/toast.css" rel="stylesheet">
+    <?php include __DIR__ . '/partials/toast.php'; ?>
 </head>
 <body>
 <h1>Step 2: Get Your File Permissions Ready</h1>
@@ -49,7 +49,7 @@ foreach ($folders as $key => $isWritable) {
             </a>
     </div>
 </div>
-<script src="assets/js/toast.js"></script>
+<script src="/install/assets/js/toast.js"></script>
         <script>
             const nextBtn = document.getElementById('nextBtnPermissions');
 
