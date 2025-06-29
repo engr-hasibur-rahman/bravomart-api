@@ -39,6 +39,7 @@ class PartnerLoginController extends Controller
             ->where('activity_scope', 'store_level')
             ->where('status', 1)
             ->first();
+
         if (!$user) {
             return response()->json([
                 "status" => false,
@@ -46,6 +47,8 @@ class PartnerLoginController extends Controller
                 "message" => 'User is not a seller!',
             ]);
         }
+
+
         // Check if the user's account is deleted
         if ($user->deleted_at !== null) {
             return response()->json([
