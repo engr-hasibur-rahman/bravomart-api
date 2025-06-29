@@ -130,8 +130,7 @@ class CustomerManageController extends Controller
     public function refreshToken(Request $request)
     {
         $plainToken = $request->bearerToken();
-
-        if (!$plainToken) {
+        if (!$plainToken || $plainToken == 'null') {
             return response()->json([
                 'status' => false,
                 'message' => 'Access token missing.',
