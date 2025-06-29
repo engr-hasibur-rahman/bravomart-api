@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append([
             \App\Http\Middleware\ApiAuthMiddleware::class,
             \App\Http\Middleware\LocaleMiddleware::class,
+            \App\Http\Middleware\DemoModeMiddleware::class, // for demo mode
         ]);
 
         $middleware->alias([
@@ -32,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'verify_api_csrf_token' => \App\Http\Middleware\VerifyApiCsrfToken::class,
             'online.track' => \App\Http\Middleware\UpdateOnlineAt::class,
+            'demo' => \App\Http\Middleware\DemoModeMiddleware::class, // Optional alias, safe to keep for demo mode
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
