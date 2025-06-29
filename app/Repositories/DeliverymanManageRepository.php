@@ -502,6 +502,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             })
             ->latest()
             ->paginate(10);
+        
         return $order_requests;
     }
 

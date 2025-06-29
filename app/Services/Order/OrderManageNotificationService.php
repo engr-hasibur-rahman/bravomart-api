@@ -14,7 +14,8 @@ class OrderManageNotificationService
 {
     public function createOrderNotification($last_order_ids, $otherCheckData = null)
     {
-//        try {
+
+        try {
             if (empty($last_order_ids)) {
                 return;
             }
@@ -83,7 +84,7 @@ class OrderManageNotificationService
                 );
             }
 
-//        }catch (\Exception $exception){}
+        }catch (\Exception $exception){}
 
 
     }
@@ -192,7 +193,7 @@ class OrderManageNotificationService
     public function sendFirebaseNotification(array $firebaseTokens, $title, $body, $data)
     {
 
-//        try {
+        try {
             // Check if the third parameter (image URL) is being passed as an array.
             $imageUrl = isset($data['imageUrl']) && is_string($data['imageUrl']) ? $data['imageUrl'] : null;
             // Path to the Firebase credentials JSON file
@@ -232,33 +233,9 @@ class OrderManageNotificationService
                 ->withNotification($notification)  // Pass the Notification object
                 ->withData($dataToSend);
             // Send the notification to multiple tokens
-        $response =  $messaging->sendMulticast($message, $firebaseTokens);
-//dd($firebaseTokens);
+         $messaging->sendMulticast($message, $firebaseTokens);
 
-            // Check for the success or failure of each token
-            $successCount = 0;
-            $failureCount = 0;
-            // Loop through the results to check for successful and failed deliveries
-            foreach ($response->successes() as $success) {
-                $successCount++;
-            }
-
-            // Loop through the failed responses
-            foreach ($response->failures() as $failure) {
-                $failureCount++;
-                // Log the error message if needed
-                Log::error("Failed to send notification: " . $failure->error()->message());
-            }
-
-            // Check if all notifications were sent successfully
-            if ($successCount == count($firebaseTokens)) {
-                Log::info('All notifications sent successfully!');
-            } else {
-                Log::info("Notifications sent: Success - {$successCount}, Failure - {$failureCount}");
-            }
-
-
-//        }catch (\Exception $exception){}
+        }catch (\Exception $exception){}
     }
 
 }
