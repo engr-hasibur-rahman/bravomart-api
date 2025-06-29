@@ -377,6 +377,11 @@ class UserController extends Controller
             $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
             $accessToken->save();
 
+            // update firebase device token
+            $user->update([
+                'firebase_token' => $request->firebase_device_token,
+            ]);
+
             // Build and return the response
             return response()->json([
                 "status" => true,
