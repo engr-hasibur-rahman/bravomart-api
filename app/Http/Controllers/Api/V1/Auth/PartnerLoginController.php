@@ -139,15 +139,17 @@ class PartnerLoginController extends Controller
         }
 
         if ($token->expires_at && Carbon::parse($token->expires_at)->lt(now())) {
+            $token->delete();
             $newToken = $user->createToken('auth_token');
-            $token->expires_at = now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
-            $token->save();
+            $accessToken = $newToken->accessToken;
+            $accessToken->expires_at = now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
+            $accessToken->save();
 
             return response()->json([
                 'status' => true,
                 'message' => 'Token refreshed.',
                 'token' => $newToken->plainTextToken,
-                'new_expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+                'new_expires_at' => $accessToken->expires_at?->format('Y-m-d H:i:s'),
             ]);
         }
 
@@ -155,7 +157,7 @@ class PartnerLoginController extends Controller
             'status' => true,
             'message' => 'Token is still valid.',
             'token' => $plainToken,
-            'expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+            'expires_at' => $token->expires_at?->format('Y-m-d H:i:s'),
         ]);
     }
 

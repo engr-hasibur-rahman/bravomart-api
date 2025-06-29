@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Installation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="/install/assets/css/style.css" rel="stylesheet">
 </head>
 <body>
 
@@ -27,29 +27,29 @@
         <p>Ensure the following information is ready before installation. It’s required to complete the process.</p>
         <div class="info-boxes">
             <div class="info-box">
-                <img class="icon" src="assets/images/database.svg"
+                <img class="icon" src="/install/assets/images/database.svg"
                      alt="Install Illustration">
                 <div class="label">Database Name</div>
             </div>
             <div class="info-box">
-                <img class="icon" src="assets/images/database_user_name.svg"
+                <img class="icon" src="/install/assets/images/database_user_name.svg"
                      alt="Install Illustration">
                 <div class="label">Database Username</div>
             </div>
             <div class="info-box">
-                <img class="icon" src="assets/images/database_host_name.svg"
+                <img class="icon" src="/install/assets/images/database_host_name.svg"
                      alt="Install Illustration">
                 <div class="label">Database Host Name</div>
             </div>
             <div class="info-box">
-                <img class="icon" src="assets/images/database_password.svg"
+                <img class="icon" src="/install/assets/images/database_password.svg"
                      alt="Install Illustration">
                 <div class="label">Database Password</div>
             </div>
         </div>
     </div>
     <div class="right">
-        <img src="assets/images/ready_to_begin.png"
+        <img src="/install/assets/images/ready_to_begin.png"
              alt="Install Illustration">
         <div class="cta">
             <p>Ready to begin the installation?</p>

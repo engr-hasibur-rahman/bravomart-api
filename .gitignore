@@ -21,6 +21,7 @@ yarn-error.log
 /.vscode
 docker-compose.yml
 temp
+index.php
 logs
 vendor
 vendor/

@@ -130,8 +130,7 @@ class CustomerManageController extends Controller
     public function refreshToken(Request $request)
     {
         $plainToken = $request->bearerToken();
-
-        if (!$plainToken) {
+        if (!$plainToken || $plainToken == 'null') {
             return response()->json([
                 'status' => false,
                 'message' => 'Access token missing.',
@@ -151,15 +150,17 @@ class CustomerManageController extends Controller
         }
 
         if ($token->expires_at && Carbon::parse($token->expires_at)->lt(now())) {
+            $token->delete();
             $newToken = $user->createToken('customer_auth_token');
-            $token->expires_at = now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
-            $token->save();
+            $accessToken = $newToken->accessToken;
+            $accessToken->expires_at = now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
+            $accessToken->save();
 
             return response()->json([
                 'status' => true,
                 'message' => 'Token refreshed.',
                 'token' => $newToken->plainTextToken,
-                'new_expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+                'new_expires_at' => $accessToken->expires_at?->format('Y-m-d H:i:s'),
             ]);
         }
 
@@ -167,7 +168,7 @@ class CustomerManageController extends Controller
             'status' => true,
             'message' => 'Token is still valid.',
             'token' => $plainToken,
-            'expires_at' => $token->expires_at->format('Y-m-d H:i:s'),
+            'expires_at' => $token->expires_at?->format('Y-m-d H:i:s'),
         ]);
     }
 
