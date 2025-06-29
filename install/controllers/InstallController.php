@@ -64,7 +64,9 @@ class InstallController
                 'CACHE_STORE' => 'file'
             ];
 
+
             $targetPath = realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . '.env';
+
 
             $envContent = file_exists($targetPath) ? file_get_contents($targetPath) : '';
 
@@ -80,6 +82,7 @@ class InstallController
                 }
             }
 
+
             $result = file_put_contents($targetPath, $envContent);
 
             // Test DB connection first
@@ -89,6 +92,7 @@ class InstallController
                     $envUpdates['DB_USERNAME'],
                     $envUpdates['DB_PASSWORD']
                 );
+
             } catch (PDOException $e) {
                 // Connection failed
                 header('Location: ?step=environment&error=database');
@@ -97,6 +101,7 @@ class InstallController
 
             // Change working directory to Laravel root
             $projectRoot = realpath(__DIR__ . '/../../');
+
             chdir($projectRoot);
 
             // Install Composer dependencies
