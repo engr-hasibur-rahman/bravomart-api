@@ -655,6 +655,13 @@ if (!function_exists('getOrderStatusMessage')) {
         }
     }
 
+    if (!function_exists('isDemoMode')) {
+        function isDemoMode(): bool
+        {
+            return config('demo.enable') === true;
+        }
+    }
+
 
 }
 

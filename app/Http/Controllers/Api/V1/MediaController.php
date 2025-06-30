@@ -21,6 +21,13 @@ class MediaController extends Controller
 
     public function mediaUpload(Request $request)
     {
+        if (config('demoMode.check')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This action is disabled in demo mode.',
+            ], 403);
+        }
+
         if (empty($request->all())) {
             return response()->json([
                 'error' => 'No data provided in the request.',
@@ -71,6 +78,14 @@ class MediaController extends Controller
 
     public function delete_media(Request $request)
     {
+
+        if (config('demoMode.check')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This action is disabled in demo mode.',
+            ], 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'image_id' => 'required|integer|exists:media,id',
         ]);

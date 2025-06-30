@@ -11,6 +11,8 @@ class DemoModeMiddleware
 
     protected array $blockedMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
     protected array $protectedPaths = [
+        // for admin
+        'api/v1/admin/profile*',
         'api/v1/admin/payment-gateways*',
         'api/v1/admin/attribute*',
         'api/v1/admin/blog*',
@@ -59,9 +61,21 @@ class DemoModeMiddleware
         'api/v1/seller/store/staff*',
         'api/v1/seller/store/deliveryman*',
         'api/v1/seller/profile*',
-        // seller route
         'api/v1/admin/attribute*',
-        // Add more patterns as needed
+
+        // for customer
+        'api/v1/customer/profile*',
+        'api/v1/customer/reset-password',
+        'api/v1/customer/forget-password',
+        'api/v1/customer/verify-token',
+        'api/v1/customer/orders*',
+        'api/v1/customer/address*',
+        'api/v1/customer/wish-list*',
+        'api/v1/customer/wallet*',
+        'api/v1/customer/support-ticket*',
+        'api/v1/customer/review*',
+        'api/v1/customer/product-query*',
+        'api/v1/customer/blog*',
     ];
 
     public function handle(Request $request, Closure $next): Response
