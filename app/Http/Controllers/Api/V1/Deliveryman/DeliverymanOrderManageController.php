@@ -161,7 +161,7 @@ class DeliverymanOrderManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:orders,id',
-            'status' => 'required|in:delivered,cancelled',
+            'status' => 'required|in:delivered',
         ]);
 
         if ($validator->fails()) {
@@ -185,14 +185,7 @@ class DeliverymanOrderManageController extends Controller
                 'message' => __('messages.order_already_cancelled_or_ignored_or_delivered')
             ], 422);
         }
-        if ($request->status == 'cancelled') {
-            $validator = Validator::make($request->all(), [
-                'reason' => 'required|string|max:255',
-            ]);
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-        }
+
         // update order delivery history
         $success = $this->deliverymanRepo->orderChangeStatus($request->status, $request->id);
 

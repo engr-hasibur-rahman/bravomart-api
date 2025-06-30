@@ -13,8 +13,8 @@
 <p class="subtitle">Follow the step-by-step instructions and input the required details accurately</p>
 
 <div class="steps">
-    <a class="step active" href="?step=welcome"></a>
-    <a class="step" href="?step=requirements"></a>
+    <a class="step active"></a>
+    <a class="step"></a>
     <a class="step"></a>
     <a class="step"></a>
     <a class="step"></a>

@@ -34,6 +34,10 @@ class InstallController
 
     public function permissions()
     {
+        if (!$this->isAllRequirementsOk()) {
+            header('Location: ?step=requirements');
+        }
+
         $basePath = realpath(__DIR__ . '/../../../'); // Root of Laravel app
         $storagePath = $basePath . '/storage';
         $bootstrapPath = $basePath . '/bootstrap/cache';
@@ -42,27 +46,37 @@ class InstallController
 
         $folders = [
             'Storage (storage/)' => is_writable($storagePath),
-            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
-            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
-            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
-            'Uploads (public/uploads)' => is_dir($publicPath . '/uploads') && is_writable($publicPath . '/uploads'),
+//            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
+//            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
+//            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
+//            'Uploads (public/uploads)' => is_dir($publicPath . '/uploads') && is_writable($publicPath . '/uploads'),
         ];
+
+        if (!$this->isAllPermissionOk()) {
+            header('Location: ?step=permissions&error=requirements');
+        }
 
         include __DIR__ . '/../views/permissions.php';
     }
 
     public function environment()
     {
+        if (!$this->isAllPermissionOk()) {
+            header('Location: ?step=permissions');
+        }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $envUpdates = [
                 'APP_NAME' => $_POST['app_name'],
                 'DB_HOST' => $_POST['db_host'],
                 'DB_PORT' => $_POST['db_port'],
                 'DB_DATABASE' => $_POST['db_database'],
+                'ADMIN_URL' => $_POST['admin_url'],
+                'FRONTEND_URL' => $_POST['frontend_url'],
                 'DB_USERNAME' => $_POST['db_username'],
                 'DB_PASSWORD' => $_POST['db_password'],
                 'CACHE_STORE' => 'file'
             ];
+            $installation_mode = $_POST['install_mode'];
 
             $targetPath = realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . '.env';
 
@@ -80,6 +94,7 @@ class InstallController
                 }
             }
 
+
             $result = file_put_contents($targetPath, $envContent);
 
             // Test DB connection first
@@ -89,21 +104,18 @@ class InstallController
                     $envUpdates['DB_USERNAME'],
                     $envUpdates['DB_PASSWORD']
                 );
+
             } catch (PDOException $e) {
                 // Connection failed
                 header('Location: ?step=environment&error=database');
                 exit;
             }
 
+
             // Change working directory to Laravel root
             $projectRoot = realpath(__DIR__ . '/../../');
+
             chdir($projectRoot);
-
-            // Install Composer dependencies
-            exec('composer install --no-interaction --prefer-dist', $composerOutput, $composerStatus);
-
-            // Install NPM dependencies
-            exec('npm install --legacy-peer-deps', $npmOutput, $npmStatus); // safer for older projects
 
             // Generate key if missing
             $env = $this->parseEnv(); // If you have parseEnv()
@@ -117,9 +129,6 @@ class InstallController
             // Create the cache table for database cache
             exec('php artisan cache:table');
 
-            // Run migrations and seeders
-            exec('php artisan migrate --force', $outputMigrate, $statusMigrate);
-            exec('php artisan db:seed --force', $outputSeed, $statusSeed);
 
             // Update the .env key for cache store
             $this->updateEnvKey('CACHE_STORE', 'database');
@@ -127,22 +136,47 @@ class InstallController
             // Clear caches
             exec('php artisan config:clear');
             exec('php artisan cache:clear');
+            $requirements = $this->isAllRequirementsOk();
+            $permissions = $this->isAllPermissionOk();
+
+            if ($installation_mode == 'demo') {
+                $sqlFile = realpath(__DIR__ . '/../database/bravo_fresh.sql');
+
+                if (file_exists($sqlFile)) {
+                    $sql = file_get_contents($sqlFile);
+                    if ($sql !== false) {
+                        $pdo->exec($sql);
+                    } else {
+                        die('Could not read SQL file.');
+                    }
+                } else {
+                    die('SQL file not found.');
+                }
+            } else {
+                $sqlFile = realpath(__DIR__ . '/../database/bravo_fresh.sql');
+
+                if (file_exists($sqlFile)) {
+                    $sql = file_get_contents($sqlFile);
+                    if ($sql !== false) {
+                        $pdo->exec($sql);
+                    } else {
+                        die('Could not read SQL file.');
+                    }
+                } else {
+                    die('SQL file not found.');
+                }
+            }
 
             if (
-                $result === false ||
-                $composerStatus !== 0 ||
-                $npmStatus !== 0 ||
-                $statusMigrate !== 0 ||
-                $statusSeed !== 0
+                $result === false
             ) {
-                // Log everything
                 file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge(
-                    $composerOutput ?? [],
-                    $npmOutput ?? [],
                     $outputMigrate ?? [],
-                    $outputSeed ?? []
+                    $outputModuleMigrate ?? [],
                 )));
                 header('Location: ?step=environment&error=artisan');
+            } elseif (!$requirements || !$permissions) {
+                header('Location: ?step=environment&error=requirements');
             } else {
                 header('Location: ?step=admin');
             }
@@ -155,6 +189,12 @@ class InstallController
 
     public function admin()
     {
+        if (!$this->isAllRequirementsOk()) {
+            header('Location: ?step=requirements');
+        }
+        if (!$this->isAllPermissionOk()) {
+            header('Location: ?step=permissions');
+        }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $first_name = $_POST['first_name'];
             $last_name = $_POST['last_name'];
@@ -169,8 +209,9 @@ class InstallController
                 $env['DB_PASSWORD']
             );
 
-            $stmt = $pdo->prepare("INSERT INTO users (first_name,last_name,slug,phone,email,password,activity_scope) VALUES (?,?,?,?,?,?,?)");
-            $stmt->execute([$first_name, $last_name, $slug, $phone, $email, $password, 'system_level']);
+            $stmt = $pdo->prepare("INSERT INTO users (id, first_name, last_name, slug, phone, email, password, activity_scope,email_verified)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
+            $stmt->execute([1, $first_name, $last_name, $slug, $phone, $email, $password, 'system_level',1]);
 
             header('Location: index.php?step=finish');
             exit;
@@ -182,6 +223,14 @@ class InstallController
 
     public function finish()
     {
+        // If requirements and permissions are missing
+        if (!$this->isAllRequirementsOk()) {
+            header('Location: ?step=requirements');
+        }
+        if (!$this->isAllPermissionOk()) {
+            header('Location: ?step=permissions');
+        }
+
         $path = realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . '/storage';
         $installedFile = $path . '/installed';
 
@@ -200,6 +249,11 @@ class InstallController
             $envContent = preg_replace('/^DEMO_MODE=.*$/m', 'DEMO_MODE=false', $envContent);
             file_put_contents($envPath, $envContent);
         }
+
+        $env = parse_ini_file($envPath, false, INI_SCANNER_RAW);
+
+        $adminUrl = isset($env['ADMIN_URL']) ? trim($env['ADMIN_URL'], '"') : '#';
+        $frontendUrl = isset($env['FRONTEND_URL']) ? trim($env['FRONTEND_URL'], '"') : '#';
 
         include __DIR__ . '/../views/finish.php';
     }
@@ -242,6 +296,56 @@ class InstallController
 
             file_put_contents($path, $envContent);
         }
+    }
+
+    private function isAllRequirementsOk()
+    {
+        $requirements = [
+            'extensions' => [
+                'php' => version_compare(PHP_VERSION, '8.2.0', '>='), // Laravel 11 requires PHP 8.2+
+                'openssl' => extension_loaded('openssl'),
+                'pdo' => extension_loaded('pdo'),
+                'mbstring' => extension_loaded('mbstring'),
+                'tokenizer' => extension_loaded('tokenizer'),
+                'xml' => extension_loaded('xml'),
+                'ctype' => extension_loaded('ctype'),
+                'json' => extension_loaded('json'),
+                'fileinfo' => extension_loaded('fileinfo'),
+                'bcmath' => extension_loaded('bcmath'),
+                'curl' => extension_loaded('curl'), // required by Socialite, Pusher, Firebase
+                'gd' => extension_loaded('gd') || extension_loaded('imagick'), // required by intervention/image
+                'zip' => extension_loaded('zip'), // required by spatie/laravel-backup
+                'iconv' => extension_loaded('iconv'), // commonly required by packages like maatwebsite/excel
+                'intl' => extension_loaded('intl'), // useful for spatie and other advanced packages
+            ],
+        ];
+
+        if (in_array(false, $requirements['extensions'], true)) {
+            return false;
+        }
+
+        return $requirements;
+    }
+
+    private function isAllPermissionOk()
+    {
+        $basePath = realpath(__DIR__ . '/../../../'); // Root of Laravel app
+        $storagePath = $basePath . '/storage';
+        $bootstrapPath = $basePath . '/bootstrap/cache';
+        $publicPath = $basePath . '/public';
+        $modulesPath = $basePath . '/Modules';
+
+        $folders = [
+            'Storage (storage/)' => is_writable($storagePath),
+//            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
+//            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
+//            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
+//            'Uploads (public/uploads)' => is_dir($publicPath . '/uploads') && is_writable($publicPath . '/uploads'),
+        ];
+        if (in_array(false, $folders, true)) {
+            return false;
+        }
+        return $folders;
     }
 
     private function username_slug_generator($first, $last = null)

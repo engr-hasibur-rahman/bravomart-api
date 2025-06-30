@@ -23,10 +23,10 @@ foreach ($folders as $key => $isWritable) {
 <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
 
 <div class="steps">
-    <a class="step" href="?step=welcome"></a>
-    <a class="step" href="?step=requirements"></a>
-    <a class="step active" href="?step=permissions"></a>
-    <a class="step" href="?step=environment"></a>
+    <a class="step"></a>
+    <a class="step"></a>
+    <a class="step active"></a>
+    <a class="step"></a>
     <a class="step"></a>
     <a class="step"></a>
 </div>
@@ -43,24 +43,52 @@ foreach ($folders as $key => $isWritable) {
         <p>All set with the permissions?</p>
         <a id="nextBtnPermissions"
                 class="button"
-                href="<?= $allMet ? '?step=permissions' : '#' ?>"
+                href="<?= $allMet ? '?step=environment' : '#' ?>"
                 data-all-met="<?= $allMet ? '1' : '0' ?>">
                 Next
             </a>
     </div>
 </div>
 <script src="/install/assets/js/toast.js"></script>
-        <script>
-            const nextBtn = document.getElementById('nextBtnPermissions');
+<?php if (isset($_GET['error'])): ?>
+    <script>
+        const errorParam = new URLSearchParams(window.location.search).get('error');
 
-            nextBtn?.addEventListener('click', function(e) {
-                const allMet = this.dataset.allMet === '1';
+        let message = 'Something went wrong.';
+        switch (errorParam) {
+            case 'env':
+                message = "Failed to update .env file.";
+                break;
+            case 'database':
+                message = "Database connection failed.";
+                break;
+            case 'artisan':
+                message = "Artisan command failed. Check logs.";
+                break;
+            case 'requirements':
+                message = "Please ensure all the requirements and permission to proceed further!";
+                break;
+        }
+        // Show toast
+        showToast(message);
 
-                if (!allMet) {
-                    e.preventDefault();
-                    showToast("Please give all the neccessary permissions to procceed further.");
-                }
-            });
-        </script>
+        // Remove the error param from URL after showing toast
+        const url = new URL(window.location.href);
+        url.searchParams.delete('error');
+        window.history.replaceState({}, document.title, url.toString());
+    </script>
+<?php endif; ?>
+<!--        <script>-->
+<!--            const nextBtn = document.getElementById('nextBtnPermissions');-->
+<!---->
+<!--            nextBtn?.addEventListener('click', function(e) {-->
+<!--                const allMet = this.dataset.allMet === '1';-->
+<!---->
+<!--                if (!allMet) {-->
+<!--                    e.preventDefault();-->
+<!--                    showToast("Please give all the neccessary permissions to procceed further.");-->
+<!--                }-->
+<!--            });-->
+<!--        </script>-->
 </body>
 </html>

@@ -15,12 +15,12 @@
     <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details For Database Accurately</p>
 
     <div class="steps">
-        <a class="step" href="?step=welcome"></a>
-        <a class="step" href="?step=requirements"></a>
-        <a class="step" href="?step=permissions"></a>
-        <a class="step" href="?step=environment"></a>
-        <a class="step active" href="?step=admin"></a>
-        <a class="step" href="?step=finish"></a>
+        <a class="step"></a>
+        <a class="step"></a>
+        <a class="step"></a>
+        <a class="step"></a>
+        <a class="step active"></a>
+        <a class="step"></a>
     </div>
 
     <div class="card">
