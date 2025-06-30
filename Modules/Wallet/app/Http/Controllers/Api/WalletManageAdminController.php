@@ -49,7 +49,7 @@ class WalletManageAdminController extends Controller
 
         // Filter by status if provided
         if (!empty($request->status)) {
-            $wallets->where('status', (int)$request->status);
+            $wallets->where('status', (int)$request->status ?? 1);
         }
 
         // Paginate the results with a default of 10 per page
