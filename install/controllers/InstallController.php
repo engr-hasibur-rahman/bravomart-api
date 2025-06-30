@@ -124,7 +124,13 @@ class InstallController
 
             // Run migrations and seeders
             exec('php artisan migrate --force', $outputMigrate, $statusMigrate);
+            exec('php artisan module:migrate --all --force', $outputModuleMigrate, $statusModuleMigrate);
 //            exec('php artisan db:seed --force', $outputSeed, $statusSeed);
+            // 🔍 Return and stop everything else
+            echo "<pre>";
+            print_r($outputMigrate);
+            echo "</pre>";
+            return; // 👈 this prevents the rest of the method from running
 
             // Update the .env key for cache store
             $this->updateEnvKey('CACHE_STORE', 'database');
@@ -135,7 +141,8 @@ class InstallController
 
             if (
                 $result === false ||
-                $statusMigrate !== 0
+                $statusMigrate !== 0 ||
+                $statusModuleMigrate !== 0
             ) {
 //                // Log everything
 //                file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge(
@@ -146,6 +153,7 @@ class InstallController
 //                )));
                 file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge(
                     $outputMigrate ?? [],
+                    $outputModuleMigrate ?? [],
                 )));
                 header('Location: ?step=environment&error=artisan');
             } else {
