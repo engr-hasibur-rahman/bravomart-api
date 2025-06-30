@@ -113,6 +113,11 @@ class CustomerManageController extends Controller
             $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
             $accessToken->save();
 
+            // update firebase device token
+            $customer->update([
+                'firebase_token' => $request->firebase_device_token,
+            ]);
+
             return response()->json([
                 "status" => true,
                 "status_code" => 200,

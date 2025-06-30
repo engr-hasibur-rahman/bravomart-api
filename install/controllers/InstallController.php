@@ -206,6 +206,14 @@ class InstallController
         // Now write the installed file
         file_put_contents($installedFile, date('Y-m-d H:i:s'));
 
+        // Disable demo mode automatically in .env
+        $envPath = realpath(__DIR__ . '/../..') . '/.env';
+        if (file_exists($envPath)) {
+            $envContent = file_get_contents($envPath);
+            $envContent = preg_replace('/^DEMO_MODE=.*$/m', 'DEMO_MODE=false', $envContent);
+            file_put_contents($envPath, $envContent);
+        }
+
         include __DIR__ . '/../views/finish.php';
     }
 

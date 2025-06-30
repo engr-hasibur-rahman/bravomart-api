@@ -110,9 +110,7 @@ class OrderManageNotificationService
 
         // If the recipient has a firebase_token (Flutter token), add it
         if (!empty($user_firebase_token)) {
-            $flutterToken = is_array($user_firebase_token)
-                ? $user_firebase_token
-                : [$user_firebase_token];
+            $flutterToken = is_array($user_firebase_token) ? $user_firebase_token : [$user_firebase_token];
 
             // Merge Flutter tokens with Web token
             $tokens = array_merge($token, $flutterToken);
