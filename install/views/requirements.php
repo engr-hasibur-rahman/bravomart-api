@@ -51,9 +51,9 @@ foreach ($requirements['extensions'] as $key => $isLoaded) {
     <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
 
     <div class="steps">
-        <a class="step" href="?step=welcome"></a>
-        <a class="step active" href="?step=requirements"></a>
-        <a class="step"  href="?step=permissions"></a>
+        <a class="step"></a>
+        <a class="step active"></a>
+        <a class="step"></a>
         <a class="step"></a>
         <a class="step"></a>
         <a class="step"></a>

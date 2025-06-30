@@ -12,12 +12,12 @@
 <p class="subtitle">Your system is now ready to use</p>
 
 <div class="steps">
-    <a class="step" href="?step=welcome"></a>
-    <a class="step" href="?step=requirements"></a>
-    <a class="step" href="?step=permissions"></a>
-    <a class="step" href="?step=environment"></a>
-    <a class="step" href="?step=admin"></a>
-    <a class="step active" href="?step=finish"></a>
+    <a class="step"></a>
+    <a class="step"></a>
+    <a class="step"></a>
+    <a class="step"></a>
+    <a class="step"></a>
+    <a class="step active"></a>
 </div>
 
 <div class="card">
@@ -27,13 +27,13 @@
     </div>
 
     <div class="options-container">
-        <div class="option-item blue">
+        <a href="<?= $frontendUrl ?>" target="_blank" class="option-item blue">
             <span class="option-name">Landing Page</span>
-        </div>
+        </a>
 
-        <div class="option-item deep-blue">
+        <a href="<?= $adminUrl ?>" target="_blank" class="option-item deep-blue">
             <span class="option-name">Admin Panel</span>
-        </div>
+        </a>
     </div>
 </div>
 </body>
