@@ -46,7 +46,7 @@ class StoreOrderResource extends JsonResource
             'cancel_request_at' => $this->cancel_request_at,
             'cancelled_at' => $this->cancelled_at,
             'delivery_completed_at' => $this->delivery_completed_at,
-            'payment_status' => $this->orderMaster->payment_status,
+            'payment_status' => $this->payment_status,
             'status' => $this->status,
             'refund_status' => $this->refund_status,
             'store_details' => new StoreDetailsForOrderResource($this->whenLoaded('store')),
