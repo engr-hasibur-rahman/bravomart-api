@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminOrderStatusResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\InvoiceResource;
+use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Http\Resources\Order\OrderSummaryResource;
 use App\Http\Resources\Order\StoreOrderResource;
 use App\Jobs\DispatchOrderEmails;
@@ -59,7 +60,8 @@ class SellerStoreOrderController extends Controller
 
             return response()->json([
                 'order_data' => new StoreOrderResource($order),
-                'order_summary' => new OrderSummaryResource($order)
+                'order_summary' => new OrderSummaryResource($order),
+                'refund' => $order->refund ? new OrderRefundRequestResource($order->refund) : null,
             ]);
         }
 
