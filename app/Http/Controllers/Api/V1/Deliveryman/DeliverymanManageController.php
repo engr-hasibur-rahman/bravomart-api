@@ -220,6 +220,7 @@ class DeliverymanManageController extends Controller
                 'message' => 'Token not found.',
             ], 401);
         }
+
         $user = $token->tokenable;
 
         if ($token->expires_at && Carbon::parse($token->expires_at)->lt(now())) {

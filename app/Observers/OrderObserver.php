@@ -41,8 +41,10 @@ class OrderObserver
                 dispatch(new DispatchOrderEmails($order->id, 'order-status-change-customer'));
             }
         }
-        // If the order is refunded then restore the product quantity
-        if ($order->isDirty('refund_status') && $order->refund_status === 'refunded') {
+        // If the order is refunded or cancelled then restore the product quantity
+        if ($order->isDirty('refund_status') && $order->refund_status === 'refunded' ||
+            $order->isDirty('status') && $order->refund_status === 'cancelled')
+        {
             DB::transaction(function () use ($order) {
                 foreach ($order->orderDetail as $detail) {
                     if ($detail->productVariant) {

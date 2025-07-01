@@ -127,11 +127,11 @@ class AdminOrderManageController extends Controller
 
         // Handle cancellation
         if ($request->status === 'cancelled') {
-            $success = $order->update([
-                'cancelled_by' => $userId,
-                'cancelled_at' => now(),
-                'status' => 'cancelled'
-            ]);
+
+            $order->cancelled_by = $userId;
+            $order->cancelled_at = Carbon::now();
+            $order->status = 'cancelled';
+            $success = $order->save();
 
             // Notification + Email
             $this->sendOrderDeliveredNotifications($order, null);
