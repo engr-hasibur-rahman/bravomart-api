@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
+})->purpose('Display an inspiring quote')->daily();
 
 Schedule::command('subscription:expire')->everyMinute();
+Schedule::command('bravo:refresh-database')->hourly();
