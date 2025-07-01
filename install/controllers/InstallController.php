@@ -329,7 +329,7 @@ class InstallController
 
     private function isAllPermissionOk()
     {
-        $basePath = realpath(__DIR__ . '/../../../'); // Root of Laravel app
+        $basePath = realpath(__DIR__ . '/../../../'); // Root of Laravel app (/../../ for live)
         $storagePath = $basePath . '/storage';
         $bootstrapPath = $basePath . '/bootstrap/cache';
         $publicPath = $basePath . '/public';
