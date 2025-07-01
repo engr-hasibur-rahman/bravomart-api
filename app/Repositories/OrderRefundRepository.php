@@ -157,8 +157,14 @@ class OrderRefundRepository implements OrderRefundInterface
 
         $request->update(['status' => $status]);
 
-        return (bool)Order::where('id', $request->order_id)
-            ->update(['refund_status' => 'refunded']);
+        // Use Eloquent to trigger observer
+        $order = Order::find($request->order_id);
+        if (!$order) {
+            return false;
+        }
+
+        $order->refund_status = 'refunded';
+        return $order->save(); //  this triggers the observer
     }
 
     /* -------------------------------------------------------->Refund Reason<--------------------------------------------------- */
