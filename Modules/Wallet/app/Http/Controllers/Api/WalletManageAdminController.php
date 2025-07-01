@@ -48,7 +48,7 @@ class WalletManageAdminController extends Controller
         }
 
         // Filter by status if provided
-        if (!empty($request->status) || !$request->status == 'all') {
+        if ($request->filled('status') && $request->status != 'all') {
             $wallets->where('status', (int)$request->status);
         }
 
