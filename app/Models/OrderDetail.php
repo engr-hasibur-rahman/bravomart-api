@@ -53,5 +53,10 @@ class OrderDetail extends Model
         return $this->belongsTo(Product::class, 'product_id');
     }
 
+    public function productVariant()
+    {
+        return $this->hasOne(ProductVariant::class, 'sku', 'product_sku');
+    }
+
 
 }
