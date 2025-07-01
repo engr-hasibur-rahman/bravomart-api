@@ -9,4 +9,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->daily();
 
 Schedule::command('subscription:expire')->everyMinute();
-Schedule::command('bravo:refresh-database')->hourly();
+
+if (env('DEMO_MODE', false)) {
+    Schedule::command('bravo:refresh-database')->hourly();
+}
