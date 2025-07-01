@@ -106,11 +106,11 @@ class CustomerOrderController extends Controller
             ], 422);
         }
 
-        $success = $order->update([
-            'cancelled_by' => auth('api_customer')->user()->id,
-            'cancelled_at' => Carbon::now(),
-            'status' => 'cancelled'
-        ]);
+        $order->cancelled_by = auth('api_customer')->user()->id;
+        $order->cancelled_at = Carbon::now();
+        $order->status = 'cancelled';
+        $success = $order->save();
+
         if ($success) {
             return response()->json([
                 'message' => __('messages.order_cancel_successful')
