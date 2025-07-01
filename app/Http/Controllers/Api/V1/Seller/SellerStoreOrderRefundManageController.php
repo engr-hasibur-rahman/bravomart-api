@@ -66,6 +66,20 @@ class SellerStoreOrderRefundManageController extends Controller
                 'message' => __('messages.order_does_not_belong_to_seller')
             ], 422);
         }
+
+        $refund = OrderRefund::find($request->id);
+        if ($refund->status == 'approved' && $request->status == 'rejected') {
+            return response()->json([
+                'message' => __('messages.already_approved', ['name' => 'Order Refund'])
+            ]);
+        }
+
+        if ($refund->status == 'rejected' && $request->status == 'approved') {
+            return response()->json([
+                'message' => __('messages.already_rejected', ['name' => 'Order Refund'])
+            ]);
+        }
+
         if ($request->status === 'approved') {
             $success = $this->orderRefundRepo->approve_refund_request($request->id, $request->status);
             if ($success) {

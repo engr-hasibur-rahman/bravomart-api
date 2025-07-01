@@ -169,6 +169,9 @@ return [
 
     'invalid_region' => 'This :name does not belongs to valid region!',
 
+    'already_approved' => ':name is already approved. Can\'t change status!',
+    'already_rejected' => ':name is already rejected. Can\'t change status!',
+
 ];
 
 

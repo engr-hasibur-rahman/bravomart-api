@@ -47,7 +47,7 @@ class OrderRefundRepository implements OrderRefundInterface
         if (isset($filters['store_id'])) {
             $query->where('store_id', $filters['store_id']);
         }
-        return $query->with(['order','store.related_translations', 'customer', 'orderRefundReason.related_translations'])->latest()->paginate($filters['per_page'] ?? 10);
+        return $query->with(['order', 'store.related_translations', 'customer', 'orderRefundReason.related_translations'])->latest()->paginate($filters['per_page'] ?? 10);
     }
 
     public function get_seller_store_order_refund_request(int $store_id, array $filters)
@@ -93,7 +93,7 @@ class OrderRefundRepository implements OrderRefundInterface
         if ($order->status !== 'delivered') {
             return 'not_delivered';
         }
-        $alreadyRequested = OrderRefund::where('order_id', $order_id)->exists();
+        $alreadyRequested = OrderRefund::where('order_id', $order_id)->whereIn('status', ['pending', 'refunded'])->exists();
         if ($alreadyRequested) {
             return 'already_requested_for_refund';
         }
