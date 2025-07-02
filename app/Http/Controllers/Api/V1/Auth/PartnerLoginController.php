@@ -132,7 +132,6 @@ class PartnerLoginController extends Controller
         $tokenId = explode('|', $plainToken)[0];
 
         $token = PersonalAccessToken::find($tokenId);
-        $user = $token->tokenable;
 
         if (!$token) {
             return response()->json([
@@ -140,6 +139,8 @@ class PartnerLoginController extends Controller
                 'message' => 'Token not found.',
             ], 401);
         }
+        $user = $token->tokenable;
+
 
         if ($token->expires_at && Carbon::parse($token->expires_at)->lt(now())) {
             $token->delete();

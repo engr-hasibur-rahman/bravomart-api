@@ -8,6 +8,7 @@ use App\Http\Resources\Order\OrderRefundReasonDetailsResource;
 use App\Http\Resources\Order\OrderRefundReasonResource;
 use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Interfaces\OrderRefundInterface;
+use App\Models\OrderRefund;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -39,11 +40,26 @@ class AdminOrderRefundManageController extends Controller
         $validator = Validator::make($request->all(), [
             'id' => 'required|integer|exists:order_refunds,id',
             'status' => 'required|in:approved,rejected,refunded',
-            'reject_reason' =>'nullable|string|max:500'
+            'reject_reason' => 'nullable|string|max:500'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
+
+        $refund = OrderRefund::find($request->id);
+        if ($refund->status == 'approved' && $request->status == 'rejected') {
+            return response()->json([
+                'message' => __('messages.already_approved', ['name' => 'Order Refund'])
+            ]);
+        }
+
+        if ($refund->status == 'rejected' && $request->status == 'approved') {
+            return response()->json([
+                'message' => __('messages.already_rejected', ['name' => 'Order Refund'])
+            ]);
+        }
+
         if ($request->status === 'approved') {
             $success = $this->orderRefundRepo->approve_refund_request($request->id, $request->status);
             if ($success) {
@@ -60,9 +76,9 @@ class AdminOrderRefundManageController extends Controller
             if (!isset($request->reject_reason) || empty($request->reject_reason)) {
                 return response()->json([
                     'message' => __('validation.required', ['attribute' => 'Reason']),
-                ],422);
+                ], 422);
             }
-            $success = $this->orderRefundRepo->reject_refund_request($request->id, $request->status,$request->reject_reason);
+            $success = $this->orderRefundRepo->reject_refund_request($request->id, $request->status, $request->reject_reason);
             if ($success) {
                 return response()->json([
                     'message' => __('messages.reject.success', ['name' => 'Order Refund Request']),

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\CustomerOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
+use App\Http\Resources\Order\OrderRefundRequestResource;
 use App\Http\Resources\Order\OrderSummaryResource;
 use App\Models\CouponLine;
 use App\Models\Order;
@@ -32,7 +33,8 @@ class CustomerOrderController extends Controller
             return response()->json([
                 'order_data' => new CustomerOrderResource($order),
                 'order_summary' => new OrderSummaryResource($order),
-            ], 200);
+                'refund' => $order->refund ? new OrderRefundRequestResource($order->refund) : null,
+            ]);
         }
 
         $request['status'] = $request->status == 'active' ? 'confirmed' : $request->status;
@@ -104,11 +106,11 @@ class CustomerOrderController extends Controller
             ], 422);
         }
 
-        $success = $order->update([
-            'cancelled_by' => auth('api_customer')->user()->id,
-            'cancelled_at' => Carbon::now(),
-            'status' => 'cancelled'
-        ]);
+        $order->cancelled_by = auth('api_customer')->user()->id;
+        $order->cancelled_at = Carbon::now();
+        $order->status = 'cancelled';
+        $success = $order->save();
+
         if ($success) {
             return response()->json([
                 'message' => __('messages.order_cancel_successful')

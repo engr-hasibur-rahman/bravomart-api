@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Jobs\DispatchOrderEmails;
 use App\Models\Order;
+use Illuminate\Support\Facades\DB;
 
 class OrderObserver
 {
@@ -39,6 +40,18 @@ class OrderObserver
             } elseif ($user->activity_scope === 'delivery_level') {
                 dispatch(new DispatchOrderEmails($order->id, 'order-status-change-customer'));
             }
+        }
+        // If the order is refunded or cancelled then restore the product quantity
+        if ($order->isDirty('refund_status') && $order->refund_status === 'refunded' ||
+            $order->isDirty('status') && $order->status === 'cancelled')
+        {
+            DB::transaction(function () use ($order) {
+                foreach ($order->orderDetail as $detail) {
+                    if ($detail->productVariant) {
+                        $detail->productVariant->increment('stock_quantity', $detail->quantity);
+                    }
+                }
+            });
         }
     }
 
