@@ -14,8 +14,8 @@ class ChatListResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'chat_id'    => $this->user_id,
+            'chat_id'         => $this->id,
+            'user_id'    => $this->user_id,
             'user_type'    => $this->user_type,
             'sender_id'    => $this->getSenderId(),
             'user' => new UserInfoForChatResource($this->whenLoaded('user'), $this->user_type),
