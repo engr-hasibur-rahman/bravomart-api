@@ -141,6 +141,8 @@ return [
     'order_already_request_for_refund' => 'Order already requested for refund!',
     'order_is_not_delivered' => 'Order is not delivered yet!',
     'order_delivered_success' => 'Order delivered successfully!',
+    'order_pickup_success' => 'Order picked up successfully!',
+    'order_shipped_success' => 'Order shipped successfully!',
     'order_already_cancelled_or_ignored_or_delivered' => 'This order is already either cancelled or ignored or delivered!',
     'order_is_not_accepted' => 'This order is not accepted yet!',
     'order_is_not_cash_on_delivery' => 'This order is not cash on delivery!',

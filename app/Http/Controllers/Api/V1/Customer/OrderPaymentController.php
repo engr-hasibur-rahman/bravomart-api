@@ -71,6 +71,11 @@ class OrderPaymentController extends Controller
             'transaction_details' => $request->transaction_details ?? null,
             'status' => 1,
         ]);
+        // Update each order individually (triggers events, observers, etc.)
+        foreach ($orderMaster->orders as $order) {
+            $order->payment_status = 'paid';
+            $order->save();
+        }
 
         // Return success response
         return response()->json([

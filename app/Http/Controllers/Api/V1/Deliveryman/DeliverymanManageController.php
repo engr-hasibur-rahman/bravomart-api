@@ -39,7 +39,7 @@ class DeliverymanManageController extends Controller
             'vehicle_type_id' => 'required|exists:vehicle_types,id',
             'area_id' => 'required|exists:areas,id',
             'identification_type' => 'required|in:nid,passport,driving_license',
-            'identification_number' => 'required|string',
+            'identification_number' => 'required|string|unique:users,identification_number',
             'identification_photo_front' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:1024',
             'identification_photo_back' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:1024',
         ]);
@@ -164,7 +164,7 @@ class DeliverymanManageController extends Controller
 
             $token = $user->createToken('auth_token');
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
 
             // Build and return the response
@@ -544,7 +544,7 @@ class DeliverymanManageController extends Controller
         } else {
             return response()->json([
                 'message' => __('messages.deliveryman_has_active_orders'),
-            ],422);
+            ], 422);
         }
     }
 }
