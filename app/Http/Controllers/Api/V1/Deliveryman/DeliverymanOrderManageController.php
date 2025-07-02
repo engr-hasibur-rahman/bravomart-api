@@ -161,7 +161,7 @@ class DeliverymanOrderManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:orders,id',
-            'status' => 'required|in:delivered',
+            'status' => 'required|in:pickup,shipped,delivered',
         ]);
 
         if ($validator->fails()) {
@@ -184,6 +184,20 @@ class DeliverymanOrderManageController extends Controller
             return response()->json([
                 'message' => __('messages.order_already_cancelled_or_ignored_or_delivered')
             ], 422);
+        }
+
+        $order = Order::with('orderMaster.customer', 'orderMaster.orderAddress', 'store', 'deliveryman')->find($request->id);
+        $statusFlow = [
+            'pickup',
+            'shipped',
+            'delivered'
+        ];
+
+        $currentIndex = array_search($order->status, $statusFlow);
+        $newIndex = array_search($request->status, $statusFlow);
+
+        if ($newIndex === false || $newIndex < $currentIndex || $order->status === $request->status) {
+            return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
         }
 
         // update order delivery history

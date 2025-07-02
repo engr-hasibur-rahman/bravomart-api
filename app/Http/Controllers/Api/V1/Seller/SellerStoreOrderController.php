@@ -182,7 +182,7 @@ class SellerStoreOrderController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
-            'status' => 'required|in:pending,confirmed,processing,shipped,cancelled'
+            'status' => 'required|in:pending,confirmed,processing,pickup,shipped'
         ]);
 
         if ($validator->fails()) {
@@ -203,8 +203,18 @@ class SellerStoreOrderController extends Controller
             return response()->json(['message' => __('messages.order_does_not_belong_to_seller')], 422);
         }
 
-        // If the order is once shipped or cancelled or on_hold or delivered the order status can not be changed
-        if ($order->status === 'shipped' || $order->status === 'cancelled' || $order->status === 'on_hold' || $order->status === 'delivered') {
+        $statusFlow = [
+            'pending',
+            'confirmed',
+            'processing',
+            'pickup',
+            'shipped',
+        ];
+
+        $currentIndex = array_search($order->status, $statusFlow);
+        $newIndex = array_search($request->status, $statusFlow);
+
+        if ($newIndex === false || $newIndex < $currentIndex || $order->status === $request->status) {
             return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
         }
 
