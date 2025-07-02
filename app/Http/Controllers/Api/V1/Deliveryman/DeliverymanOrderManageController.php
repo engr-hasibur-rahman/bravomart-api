@@ -212,15 +212,23 @@ class DeliverymanOrderManageController extends Controller
             return response()->json([
                 'message' => __('messages.order_delivered_success')
             ], 200);
-        } elseif ($success === 'already delivered') {
+        }
+        elseif ($success === 'already delivered') {
             return response()->json([
                 'message' => __('messages.deliveryman_order_already_taken')
             ], 422);
-        } elseif ($success === 'cancelled') {
+        }
+        elseif ($success === 'pickup') {
             return response()->json([
-                'message' => __('messages.order_cancel_successful')
+                'message' => __('messages.order_pickup_successful')
             ], 200);
-        } else {
+        }
+        elseif ($success === 'shipped') {
+            return response()->json([
+                'message' => __('messages.order_shipped_successful')
+            ], 200);
+        }
+        else {
             return response()->json([
                 'message' => __('messages.something_went_wrong')
             ], 500);
