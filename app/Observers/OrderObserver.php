@@ -54,13 +54,21 @@ class OrderObserver
             });
         }
 
-        $user = auth('api')->user()->activity_scope;
-        $activity_from = match ($user ?? '') {
-            'system_level' => 'admin',
-            'store_level' => 'store',
-            'delivery_level' => 'deliveryman',
-            default => 'customer',
-        };
+        $adminOrStoreUser = auth('api')->user();
+        $customerUser = auth('api_customer')->user();
+
+        if ($adminOrStoreUser) {
+            $activity_from = match ($adminOrStoreUser->activity_scope ?? '') {
+                'system_level'   => 'admin',
+                'store_level'    => 'store',
+                'delivery_level' => 'deliveryman',
+                default          => 'unknown',
+            };
+        } elseif ($customerUser) {
+            $activity_from = 'customer';
+        } else {
+            $activity_from = 'guest'; // Or 'undefined' / 'system' depending on use case
+        }
         // Check if status changed
         if ($order->isDirty('status')) {
             OrderActivity::create([
