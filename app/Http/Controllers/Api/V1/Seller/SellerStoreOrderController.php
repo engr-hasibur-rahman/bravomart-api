@@ -208,9 +208,8 @@ class SellerStoreOrderController extends Controller
             return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
         }
 
-        $success = $order->update([
-            'status' => $request->status
-        ]);
+        $order->status = $request->status;
+        $success = $order->save();
 
         // Notify seller and customer
         $order = [$order->id];
@@ -265,11 +264,10 @@ class SellerStoreOrderController extends Controller
             return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
         }
 
-        $success = $order->update([
-            'cancelled_by' => auth('api')->user()->id,
-            'cancelled_at' => Carbon::now(),
-            'status' => 'cancelled'
-        ]);
+        $order->cancelled_by = auth('api')->user()->id;
+        $order->cancelled_at = Carbon::now();
+        $order->status = 'cancelled';
+        $success = $order->save();
 
         // Notify seller and customer
         $order = [$order->id];

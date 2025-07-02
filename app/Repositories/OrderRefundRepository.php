@@ -126,8 +126,15 @@ class OrderRefundRepository implements OrderRefundInterface
 
         $request->update(['status' => $status]);
 
-        return (bool)Order::where('id', $request->order_id)
-            ->update(['refund_status' => 'processing']);
+        // Use Eloquent to trigger observer
+        $order = Order::find($request->order_id);
+        if (!$order) {
+            return false;
+        }
+
+        $order->refund_status = 'processing';
+        return $order->save(); //  this triggers the observer
+
     }
 
     public function reject_refund_request(int $id, string $status, string $reason)
@@ -143,8 +150,14 @@ class OrderRefundRepository implements OrderRefundInterface
             'reject_reason' => $reason
         ]);
 
-        return (bool)Order::where('id', $request->order_id)
-            ->update(['refund_status' => 'rejected']);
+        // Use Eloquent to trigger observer
+        $order = Order::find($request->order_id);
+        if (!$order) {
+            return false;
+        }
+
+        $order->refund_status = 'rejected';
+        return $order->save(); //  this triggers the observer
     }
 
     public function refunded_refund_request(int $id, string $status)

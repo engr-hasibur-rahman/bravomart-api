@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Jobs\DispatchOrderEmails;
 use App\Models\Order;
+use App\Models\OrderActivity;
 use Illuminate\Support\Facades\DB;
 
 class OrderObserver
@@ -43,8 +44,7 @@ class OrderObserver
         }
         // If the order is refunded or cancelled then restore the product quantity
         if ($order->isDirty('refund_status') && $order->refund_status === 'refunded' ||
-            $order->isDirty('status') && $order->status === 'cancelled')
-        {
+            $order->isDirty('status') && $order->status === 'cancelled') {
             DB::transaction(function () use ($order) {
                 foreach ($order->orderDetail as $detail) {
                     if ($detail->productVariant) {
@@ -53,12 +53,54 @@ class OrderObserver
                 }
             });
         }
+
+        $user = auth('api')->user()->activity_scope ?? auth('api_customer')->user()->activity_scope;
+        $activity_from = match ($user ?? '') {
+            'system_level' => 'admin',
+            'store_level' => 'store',
+            'delivery_level' => 'deliveryman',
+            default => 'undefined',
+        };
+        // Check if status changed
+        if ($order->isDirty('status')) {
+            OrderActivity::create([
+                'order_id' => $order->id,
+                'store_id' => $order->store_id,
+                'ref_id' => auth('api')->user()->id,
+                'activity_from' => $activity_from ?? 'null',
+                'activity_type' => 'order_status',
+                'activity_value' => $order->status,
+            ]);
+        }
+        // Check if refund status changed
+        if ($order->isDirty('refund_status')) {
+            OrderActivity::create([
+                'order_id' => $order->id,
+                'store_id' => $order->store_id,
+                'ref_id' => auth('api')->user()->id,
+                'activity_from' => $activity_from ?? 'null',
+                'activity_type' => 'refund_status',
+                'activity_value' => $order->refund_status,
+            ]);
+        }
+        // Check if payment status changed
+        if ($order->isDirty('payment_status')) {
+            OrderActivity::create([
+                'order_id' => $order->id,
+                'store_id' => $order->store_id,
+                'ref_id' => auth('api')->user()->id,
+                'activity_from' => $activity_from ?? 'null',
+                'activity_type' => 'payment_status',
+                'activity_value' => $order->payment_status,
+            ]);
+        }
     }
 
     /**
      * Handle the Order "deleted" event.
      */
-    public function deleted(Order $order): void
+    public
+    function deleted(Order $order): void
     {
         //
     }
@@ -66,7 +108,8 @@ class OrderObserver
     /**
      * Handle the Order "restored" event.
      */
-    public function restored(Order $order): void
+    public
+    function restored(Order $order): void
     {
         //
     }
@@ -74,7 +117,8 @@ class OrderObserver
     /**
      * Handle the Order "force deleted" event.
      */
-    public function forceDeleted(Order $order): void
+    public
+    function forceDeleted(Order $order): void
     {
         //
     }
