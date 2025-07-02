@@ -39,6 +39,7 @@ class Order extends Model
         'cancelled_at',
         'delivery_completed_at',
         'refund_status',
+        'payment_status',
         'status',
     ];
 

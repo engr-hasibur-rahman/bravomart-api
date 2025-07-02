@@ -34,6 +34,7 @@ class AdminOrderManageController extends Controller
     {
         $this->orderManageNotificationService = $orderManageNotificationService;
     }
+
     public function allOrders(Request $request)
     {
         $order_id = $request->order_id;
@@ -173,10 +174,9 @@ class AdminOrderManageController extends Controller
             }
 
             // Final update
-            $success = $order->update([
-                'delivery_completed_at' => now(),
-                'status' => 'delivered'
-            ]);
+            $order->delivery_completed_at = Carbon::now();
+            $order->status = 'delivered';
+            $success = $order->save();
 
             // Notification + Email
             $this->sendOrderDeliveredNotifications($order, $deliveryHistory);
@@ -187,7 +187,8 @@ class AdminOrderManageController extends Controller
         }
 
         // Other status updates
-        $success = $order->update(['status' => $request->status]);
+        $order->status = $request->status;
+        $success = $order->save();
 
         return response()->json([
             'message' => __($success ? 'messages.update_success' : 'messages.update_failed', ['name' => 'Order status'])
@@ -301,7 +302,7 @@ class AdminOrderManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
-            'status' => 'required|in:pending,paid,failed',
+            'status' => 'required|in:pending,partially_paid,paid,cancelled,failed,refunded',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -313,9 +314,9 @@ class AdminOrderManageController extends Controller
             ], 404);
         }
 
-        $success = $order->orderMaster->update([
-            'payment_status' => $request->status
-        ]);
+        $order->payment_status = $request->status;
+        $success = $order->save();
+
         if ($success) {
             return response()->json([
                 'message' => __('messages.update_success', ['name' => 'Order payment status'])
@@ -408,11 +409,10 @@ class AdminOrderManageController extends Controller
             ], 404);
         }
         if ($order->status !== 'delivered') {
-            $success = $order->update([
-                'cancelled_by' => auth('api')->user()->id,
-                'cancelled_at' => Carbon::now(),
-                'status' => 'cancelled'
-            ]);
+            $order->cancelled_by = auth('api')->user()->id;
+            $order->cancelled_at = Carbon::now();
+            $order->status = 'cancelled';
+            $success = $order->save();
             if ($success) {
                 return response()->json([
                     'message' => __('messages.order_cancel_successful')
