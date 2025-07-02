@@ -73,6 +73,7 @@ class OrderRefundRepository implements OrderRefundInterface
 
         return $query->where('store_id', $store_id)
             ->with(['store', 'customer', 'orderRefundReason'])
+            ->latest()
             ->paginate($filters['per_page'] ?? 10);
     }
 
