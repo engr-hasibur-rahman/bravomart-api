@@ -42,7 +42,7 @@ class OrderService
 
     public function createOrder($data)
     {
-        try {
+//        try {
             $customer = auth()->guard('api_customer')->user();
             //  check authenticated
             if (!$customer) {
@@ -612,8 +612,8 @@ class OrderService
                 'customer' => $customer,
             ];
 
-        } catch (\Exception $e) {
-        }
+//        } catch (\Exception $e) {
+//        }
     }
 
     public function updateOrderStatus($orderId, $status)
