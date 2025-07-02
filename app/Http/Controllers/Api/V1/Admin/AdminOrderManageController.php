@@ -7,6 +7,9 @@ use App\Enums\OrderStatusType;
 use App\Enums\WalletOwnerType;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminOrderStatusResource;
+use App\Http\Resources\Com\OrderPaymentTrackingResource;
+use App\Http\Resources\Com\OrderRefundTrackingResource;
+use App\Http\Resources\Com\OrderTrackingResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\AdminOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
@@ -40,7 +43,17 @@ class AdminOrderManageController extends Controller
         $order_id = $request->order_id;
 
         if ($order_id) {
-            $order = Order::with(['orderMaster.customer', 'orderDetail.product', 'orderMaster', 'store.area', 'deliveryman', 'orderMaster.shippingAddress', 'refund.store', 'refund.orderRefundReason'])
+            $order = Order::with([
+                'orderMaster.customer',
+                'orderDetail.product',
+                'orderMaster',
+                'store.area',
+                'deliveryman',
+                'orderMaster.shippingAddress',
+                'refund.store',
+                'refund.orderRefundReason',
+                'orderActivities',
+            ])
                 ->where('id', $order_id)
                 ->first();
             if (!$order) {
@@ -62,7 +75,28 @@ class AdminOrderManageController extends Controller
                     'order_data' => new AdminOrderResource($order),
                     'order_summary' => new OrderSummaryResource($order),
                     'refund' => $order->refund ? new OrderRefundRequestResource($order->refund) : null,
-                ], 200
+                    'order_tracking' => OrderTrackingResource::collection(
+                        $order->orderActivities
+                            ->where('activity_type', 'order_status')
+                            ->sortByDesc('created_at') // Sort latest first
+                            ->unique('activity_value') // Keep only latest per status
+                            ->values() // Reset collection keys
+                    ),
+                    'order_payment_tracking' => OrderPaymentTrackingResource::collection(
+                        $order->orderActivities
+                            ->where('activity_type', 'payment_status')
+                            ->sortByDesc('created_at') // Sort latest first
+                            ->unique('activity_value') // Keep only latest per status
+                            ->values() // Reset collection keys
+                    ),
+                    'order_refund_tracking' => OrderRefundTrackingResource::collection(
+                        $order->orderActivities
+                            ->where('activity_type', 'refund_status')
+                            ->sortByDesc('created_at') // Sort latest first
+                            ->unique('activity_value') // Keep only latest per status
+                            ->values() // Reset collection keys
+                    ),
+                ]
             );
         }
         $ordersQuery = Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store.related_translations', 'deliveryman', 'orderMaster.shippingAddress']);

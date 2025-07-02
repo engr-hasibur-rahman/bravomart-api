@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Customer;
 
 use App\Http\Controllers\Api\V1\Controller;
+use App\Http\Resources\Com\OrderPaymentTrackingResource;
+use App\Http\Resources\Com\OrderRefundTrackingResource;
+use App\Http\Resources\Com\OrderTrackingResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\CustomerOrderResource;
 use App\Http\Resources\Order\InvoiceResource;
@@ -34,6 +37,27 @@ class CustomerOrderController extends Controller
                 'order_data' => new CustomerOrderResource($order),
                 'order_summary' => new OrderSummaryResource($order),
                 'refund' => $order->refund ? new OrderRefundRequestResource($order->refund) : null,
+                'order_tracking' => OrderTrackingResource::collection(
+                    $order->orderActivities
+                        ->where('activity_type', 'order_status')
+                        ->sortByDesc('created_at') // Sort latest first
+                        ->unique('activity_value') // Keep only latest per status
+                        ->values() // Reset collection keys
+                ),
+                'order_payment_tracking' => OrderPaymentTrackingResource::collection(
+                    $order->orderActivities
+                        ->where('activity_type', 'payment_status')
+                        ->sortByDesc('created_at') // Sort latest first
+                        ->unique('activity_value') // Keep only latest per status
+                        ->values() // Reset collection keys
+                ),
+                'order_refund_tracking' => OrderRefundTrackingResource::collection(
+                    $order->orderActivities
+                        ->where('activity_type', 'refund_status')
+                        ->sortByDesc('created_at') // Sort latest first
+                        ->unique('activity_value') // Keep only latest per status
+                        ->values() // Reset collection keys
+                ),
             ]);
         }
 

@@ -53,9 +53,11 @@ class OrderRefundRepository implements OrderRefundInterface
     public function get_seller_store_order_refund_request(int $store_id, array $filters)
     {
         $query = OrderRefund::query();
+
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }
+
         if (isset($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->whereHas('customer', function ($q) use ($filters) {
@@ -67,6 +69,7 @@ class OrderRefundRepository implements OrderRefundInterface
                     });
             });
         }
+
         if (isset($filters['order_refund_reason_id'])) {
             $query->where('order_refund_reason_id', $filters['order_refund_reason_id']);
         }
