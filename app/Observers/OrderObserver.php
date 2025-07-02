@@ -54,12 +54,12 @@ class OrderObserver
             });
         }
 
-        $user = auth('api')->user()->activity_scope ?? auth('api_customer')->user()->activity_scope;
+        $user = auth('api')->user()->activity_scope;
         $activity_from = match ($user ?? '') {
             'system_level' => 'admin',
             'store_level' => 'store',
             'delivery_level' => 'deliveryman',
-            default => 'undefined',
+            default => 'customer',
         };
         // Check if status changed
         if ($order->isDirty('status')) {
