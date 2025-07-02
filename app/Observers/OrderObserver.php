@@ -64,8 +64,10 @@ class OrderObserver
                 'delivery_level' => 'deliveryman',
                 default          => 'unknown',
             };
+            $ref_id = $adminOrStoreUser->id;
         } elseif ($customerUser) {
             $activity_from = 'customer';
+            $ref_id = $customerUser->id;
         } else {
             $activity_from = 'guest'; // Or 'undefined' / 'system' depending on use case
         }
@@ -74,7 +76,7 @@ class OrderObserver
             OrderActivity::create([
                 'order_id' => $order->id,
                 'store_id' => $order->store_id,
-                'ref_id' => auth('api')->user()->id,
+                'ref_id' => $ref_id,
                 'activity_from' => $activity_from ?? 'null',
                 'activity_type' => 'order_status',
                 'activity_value' => $order->status,
@@ -85,7 +87,7 @@ class OrderObserver
             OrderActivity::create([
                 'order_id' => $order->id,
                 'store_id' => $order->store_id,
-                'ref_id' => auth('api')->user()->id,
+                'ref_id' => $ref_id,
                 'activity_from' => $activity_from ?? 'null',
                 'activity_type' => 'refund_status',
                 'activity_value' => $order->refund_status,
@@ -96,7 +98,7 @@ class OrderObserver
             OrderActivity::create([
                 'order_id' => $order->id,
                 'store_id' => $order->store_id,
-                'ref_id' => auth('api')->user()->id,
+                'ref_id' => $ref_id,
                 'activity_from' => $activity_from ?? 'null',
                 'activity_type' => 'payment_status',
                 'activity_value' => $order->payment_status,
