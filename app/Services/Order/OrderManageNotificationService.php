@@ -16,7 +16,7 @@ class OrderManageNotificationService
     public function createOrderNotification($last_order_ids, $otherCheckData = null)
     {
 
-//        try {
+        try {
             if (empty($last_order_ids)) {
                 return;
             }
@@ -85,7 +85,7 @@ class OrderManageNotificationService
                 );
             }
 
-//        }catch (\Exception $exception){}
+        }catch (\Exception $exception){}
 
 
     }
@@ -192,7 +192,7 @@ class OrderManageNotificationService
     public function sendFirebaseNotification(array $firebaseTokens, $title, $body, $data)
     {
 
-//        try {
+        try {
             // Check if the third parameter (image URL) is being passed as an array.
             $imageUrl = isset($data['imageUrl']) && is_string($data['imageUrl']) ? $data['imageUrl'] : null;
             // Path to the Firebase credentials JSON file
@@ -245,22 +245,18 @@ class OrderManageNotificationService
                 ->withWebPushConfig($webPushConfig); // Required for web
 
             // Send the notification to multiple tokens
-//            $messaging->sendMulticast($message, $firebaseTokens);
+            $messaging->sendMulticast($message, $firebaseTokens);
 
 //            $firebaseTokens = ['dMaD-PMBkw813WeMdORiOZ:APA91bHX15HXBp56hSEm1HbaWuB6QAL8QDZH1ZsF2qisp_Z5auDgkekhumzsE_fLQ3LbrBDSLYYaFORGQHPsnuyiuAq5uWu35UetgXkAKdQs9hSG8HdLE_8'];
 //            $firebaseTokens = ['fGjZQXwSQGKgOhPe8xhj2Y:APA91bG6WhwKuGKTAftwogrtyakyEA_o56HmvZ5ESFbsBqNoMJiDCzMt6rsKDCL-wRW-L7lt64noNu7Ta7VcYqJ-cIjZ6ITexaOnf2vdpZtji8dQZJnF2g4'];
-            $response = $messaging->sendMulticast($message, $firebaseTokens);
-
-//            Log::info("Push sent. Success: " . count($response->successes()));
-//            Log::info("Push sent. Failures: " . count($response->failures()));
-//dd($response->failures());
-            foreach ($response->failures() as $failure) {
-                Log::error(' FCM Error: ' . $failure->error()->getMessage());
-                Log::error(' Token: ' . $failure->target()->value());
-            }
+//            $response = $messaging->sendMulticast($message, $firebaseTokens);
+//            foreach ($response->failures() as $failure) {
+//                Log::error(' FCM Error: ' . $failure->error()->getMessage());
+//                Log::error(' Token: ' . $failure->target()->value());
+//            }
 
 
-//        }catch (\Exception $exception){}
+        }catch (\Exception $exception){}
     }
 
 }
