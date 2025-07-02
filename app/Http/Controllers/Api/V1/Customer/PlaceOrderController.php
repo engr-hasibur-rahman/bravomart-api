@@ -58,7 +58,7 @@ class PlaceOrderController extends Controller
             $order_master = $orders[1];
         }
 
-        try {
+//        try {
             if ($orders) {
                 if ($order_master['payment_gateway'] === 'wallet') {
                     $this->updateWallet($order_master['order_amount']);
@@ -80,13 +80,13 @@ class PlaceOrderController extends Controller
                 ], 500);
             }
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while placing the order.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+//        } catch (\Exception $e) {
+//            return response()->json([
+//                'success' => false,
+//                'message' => 'An error occurred while placing the order.',
+//                'error' => $e->getMessage(),
+//            ], 500);
+//        }
     }
 
 
