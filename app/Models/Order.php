@@ -39,6 +39,7 @@ class Order extends Model
         'cancelled_at',
         'delivery_completed_at',
         'refund_status',
+        'payment_status',
         'status',
     ];
 
@@ -46,6 +47,7 @@ class Order extends Model
     {
         return $this->belongsTo(OrderMaster::class, 'order_master_id', 'id');
     }
+
     public function orderAddress()
     {
         return $this->belongsTo(OrderAddress::class, 'order_master_id', 'id');
@@ -118,6 +120,11 @@ class Order extends Model
     public function refund()
     {
         return $this->hasOne(OrderRefund::class, 'order_id', 'id');
+    }
+
+    public function orderActivities()
+    {
+        return $this->hasMany(OrderActivity::class, 'order_id', 'id');
     }
 
     public function isReviewedByCustomer(int $customerId, int $orderId, int $reviewableId, string $reviewableType): bool

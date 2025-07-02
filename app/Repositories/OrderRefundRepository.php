@@ -53,9 +53,11 @@ class OrderRefundRepository implements OrderRefundInterface
     public function get_seller_store_order_refund_request(int $store_id, array $filters)
     {
         $query = OrderRefund::query();
+
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }
+
         if (isset($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->whereHas('customer', function ($q) use ($filters) {
@@ -67,12 +69,14 @@ class OrderRefundRepository implements OrderRefundInterface
                     });
             });
         }
+
         if (isset($filters['order_refund_reason_id'])) {
             $query->where('order_refund_reason_id', $filters['order_refund_reason_id']);
         }
 
         return $query->where('store_id', $store_id)
             ->with(['store', 'customer', 'orderRefundReason'])
+            ->latest()
             ->paginate($filters['per_page'] ?? 10);
     }
 
@@ -126,8 +130,15 @@ class OrderRefundRepository implements OrderRefundInterface
 
         $request->update(['status' => $status]);
 
-        return (bool)Order::where('id', $request->order_id)
-            ->update(['refund_status' => 'processing']);
+        // Use Eloquent to trigger observer
+        $order = Order::find($request->order_id);
+        if (!$order) {
+            return false;
+        }
+
+        $order->refund_status = 'processing';
+        return $order->save(); //  this triggers the observer
+
     }
 
     public function reject_refund_request(int $id, string $status, string $reason)
@@ -143,8 +154,14 @@ class OrderRefundRepository implements OrderRefundInterface
             'reject_reason' => $reason
         ]);
 
-        return (bool)Order::where('id', $request->order_id)
-            ->update(['refund_status' => 'rejected']);
+        // Use Eloquent to trigger observer
+        $order = Order::find($request->order_id);
+        if (!$order) {
+            return false;
+        }
+
+        $order->refund_status = 'rejected';
+        return $order->save(); //  this triggers the observer
     }
 
     public function refunded_refund_request(int $id, string $status)

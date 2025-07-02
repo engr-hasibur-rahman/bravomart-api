@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api\V1\Seller;
 
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminOrderStatusResource;
+use App\Http\Resources\Com\OrderPaymentTrackingResource;
+use App\Http\Resources\Com\OrderRefundTrackingResource;
+use App\Http\Resources\Com\OrderTrackingResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Order\InvoiceResource;
 use App\Http\Resources\Order\OrderRefundRequestResource;
@@ -62,6 +65,27 @@ class SellerStoreOrderController extends Controller
                 'order_data' => new StoreOrderResource($order),
                 'order_summary' => new OrderSummaryResource($order),
                 'refund' => $order->refund ? new OrderRefundRequestResource($order->refund) : null,
+                'order_tracking' => OrderTrackingResource::collection(
+                    $order->orderActivities
+                        ->where('activity_type', 'order_status')
+                        ->sortByDesc('created_at') // Sort latest first
+                        ->unique('activity_value') // Keep only latest per status
+                        ->values() // Reset collection keys
+                ),
+                'order_payment_tracking' => OrderPaymentTrackingResource::collection(
+                    $order->orderActivities
+                        ->where('activity_type', 'payment_status')
+                        ->sortByDesc('created_at') // Sort latest first
+                        ->unique('activity_value') // Keep only latest per status
+                        ->values() // Reset collection keys
+                ),
+                'order_refund_tracking' => OrderRefundTrackingResource::collection(
+                    $order->orderActivities
+                        ->where('activity_type', 'refund_status')
+                        ->sortByDesc('created_at') // Sort latest first
+                        ->unique('activity_value') // Keep only latest per status
+                        ->values() // Reset collection keys
+                ),
             ]);
         }
 
@@ -182,7 +206,7 @@ class SellerStoreOrderController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
-            'status' => 'required|in:pending,confirmed,processing,shipped,cancelled'
+            'status' => 'required|in:pending,confirmed,processing,pickup,shipped'
         ]);
 
         if ($validator->fails()) {
@@ -203,14 +227,23 @@ class SellerStoreOrderController extends Controller
             return response()->json(['message' => __('messages.order_does_not_belong_to_seller')], 422);
         }
 
-        // If the order is once shipped or cancelled or on_hold or delivered the order status can not be changed
-        if ($order->status === 'shipped' || $order->status === 'cancelled' || $order->status === 'on_hold' || $order->status === 'delivered') {
+        $statusFlow = [
+            'pending',
+            'confirmed',
+            'processing',
+            'pickup',
+            'shipped',
+        ];
+
+        $currentIndex = array_search($order->status, $statusFlow);
+        $newIndex = array_search($request->status, $statusFlow);
+
+        if ($newIndex === false || $newIndex < $currentIndex || $order->status === $request->status) {
             return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
         }
 
-        $success = $order->update([
-            'status' => $request->status
-        ]);
+        $order->status = $request->status;
+        $success = $order->save();
 
         // Notify seller and customer
         $order = [$order->id];
@@ -265,11 +298,10 @@ class SellerStoreOrderController extends Controller
             return response()->json(['message' => __('messages.order_status_not_changeable')], 422);
         }
 
-        $success = $order->update([
-            'cancelled_by' => auth('api')->user()->id,
-            'cancelled_at' => Carbon::now(),
-            'status' => 'cancelled'
-        ]);
+        $order->cancelled_by = auth('api')->user()->id;
+        $order->cancelled_at = Carbon::now();
+        $order->status = 'cancelled';
+        $success = $order->save();
 
         // Notify seller and customer
         $order = [$order->id];
