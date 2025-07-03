@@ -479,6 +479,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
                 Route::post('update', [AdminDeliverymanManageController::class, 'update']);
                 Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
+                Route::post('verification', [AdminDeliverymanManageController::class, 'deliverymanVerification']);
                 Route::post('approve', [AdminDeliverymanManageController::class, 'approveRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
                 Route::get('history/{id}', [AdminDeliverymanManageController::class, 'deliverymanDashboard']);

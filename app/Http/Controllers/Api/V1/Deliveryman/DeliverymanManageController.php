@@ -525,6 +525,7 @@ class DeliverymanManageController extends Controller
                 'message' => __('messages.access_denied')
             ], 403);
         }
+
         $activeOrders = Order::with(['orderMaster.orderAddress', 'store'])
             ->where('status', '!=', 'delivered') // Exclude delivered orders
             ->whereHas('orderDeliveryHistory', function ($query) use ($user) {

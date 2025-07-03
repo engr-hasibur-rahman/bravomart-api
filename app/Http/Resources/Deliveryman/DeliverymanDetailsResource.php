@@ -34,6 +34,8 @@ class DeliverymanDetailsResource extends JsonResource
             'identification_photo_back' => $this->deliveryman?->identification_photo_back,
             'identification_photo_back_url' => ImageModifier::generateImageUrl($this->deliveryman?->identification_photo_back),
             'status' => $this->status,
+            'is_verified' => (int)$this->is_verified,
+            'verified_at' => $this->verified_at,
             'is_available' => (bool)$this->is_available,
             'email_verified' => $this->email_verified,
             "account_status" => $this->deactivated_at ? 'deactivated' : 'active',
