@@ -502,7 +502,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             })
             ->latest()
             ->paginate(10);
-        
+
         return $order_requests;
     }
 
@@ -575,19 +575,38 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             })
             ->exists();
 
-        if ($status == 'cancelled') {
+        if ($status == 'pickup') {
             if ($order->status === 'delivered') {
                 return 'already delivered';
             }
             if (!$order_is_accepted) {
                 return 'order_is_not_accepted';
             }
+            $order->status = 'pickup';
+            $order->save();
             OrderDeliveryHistory::create([
                 'order_id' => $order_id,
                 'deliveryman_id' => $deliveryman->id,
                 'status' => $status,
             ]);
-            return 'cancelled';
+            return 'pickup';
+        }
+
+        if ($status == 'shipped') {
+            if ($order->status === 'delivered') {
+                return 'already delivered';
+            }
+            if (!$order_is_accepted) {
+                return 'order_is_not_accepted';
+            }
+            $order->status = 'shipped';
+            $order->save();
+            OrderDeliveryHistory::create([
+                'order_id' => $order_id,
+                'deliveryman_id' => $deliveryman->id,
+                'status' => $status,
+            ]);
+            return 'shipped';
         }
 
         if ($status == 'delivered') {
@@ -597,20 +616,21 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             if (!$order_is_accepted) {
                 return 'order_is_not_accepted';
             }
-
-            $order->update([
-                'status' => 'delivered',
-                'delivery_completed_at' => Carbon::now(),
-            ]);
+            $order->status = 'delivered';
+            $order->delivery_completed_at = Carbon::now();
+            $order->save();
 
             OrderDeliveryHistory::create([
                 'order_id' => $order_id,
                 'deliveryman_id' => $deliveryman->id,
                 'status' => $status,
             ]);
+
             if ($order->orderMaster->payment_gateway === 'cash_on_delivery') {
                 $order->orderMaster->payment_status = 'paid';
                 $order->orderMaster->save();
+                $order->payment_status = 'paid';
+                $order->save();
                 OrderActivity::create([
                     'order_id' => $order_id,
                     'activity_from' => 'deliveryman',

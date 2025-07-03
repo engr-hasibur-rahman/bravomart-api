@@ -1125,8 +1125,42 @@ class FrontendController extends Controller
         if ($request->is_featured) {
             return $this->getFeaturedProduct($request);
         }
-        /* ===========================================================Product================================================= */
+
         $query = Product::query();
+        // Location wise product filter
+        $userLat = $request->user_lat;
+        $userLng = $request->user_lng;
+        $useLocationFilter = false;
+
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+
+            // Clone the base query to apply location filter
+            $locationQuery = clone $query;
+
+            $locationQuery->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
+
+            // Test if location-filtered query returns any product
+            $testResults = (clone $locationQuery)->take(1)->get();
+
+            if ($testResults->isNotEmpty()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            }
+        }
+
         // Apply category filter (multiple categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
             // Fetch all child categories for the given category IDs
@@ -1326,7 +1360,8 @@ class FrontendController extends Controller
             'messages' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
             'meta' => new PaginationResource($products),
-            'filters' => $uniqueAttributes
+            'filters' => $uniqueAttributes,
+            'locationFilter' => $useLocationFilter
         ]);
     }
 

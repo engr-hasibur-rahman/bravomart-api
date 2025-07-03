@@ -42,7 +42,7 @@ class OrderService
 
     public function createOrder($data)
     {
-//        try {
+        try {
             $customer = auth()->guard('api_customer')->user();
             //  check authenticated
             if (!$customer) {
@@ -368,9 +368,9 @@ class OrderService
                     'delivery_charge_admin' => $packageData['delivery_option'] === 'home_delivery' ? $delivery_charge_delivery_man_commission : 0, // Full delivery charge
                     'delivery_charge_admin_commission' => $packageData['delivery_option'] === 'home_delivery' ? $delivery_charge_admin_commission : 0, // Admin commission on delivery charge
                     'is_reviewed' => false,
-                    'status' => 'pending',
                 ]);
-
+                $package->payment_status = 'pending';
+                $package->status = 'pending';
                 // set order package discount info
                 $order_package_total_amount = 0;
                 $product_discount_amount_package = 0;
@@ -612,8 +612,8 @@ class OrderService
                 'customer' => $customer,
             ];
 
-//        } catch (\Exception $e) {
-//        }
+        } catch (\Exception $e) {
+        }
     }
 
     public function updateOrderStatus($orderId, $status)

@@ -32,7 +32,7 @@ class OrderTrackingResource extends JsonResource
                 'cancelled' => 'This order has been cancelled. For more details, please contact support.',
 
                 'on_hold' => 'Your order is temporarily on hold. This may be due to payment or stock issues.',
-                default      => ucfirst($this->activity_value),
+                default => ucfirst($this->activity_value),
             },
             'status' => $this->activity_value,
             'created_at' => Carbon::parse($this->created_at)->format('d M Y, h:i A'),
