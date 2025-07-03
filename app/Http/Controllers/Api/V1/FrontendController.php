@@ -433,7 +433,7 @@ class FrontendController extends Controller
         }
 
         // Base filters
-        $query->where('status', 'approved')->whereNull('deleted_at');
+        $query->where('products.status', 'approved')->whereNull('products.deleted_at');
 
         // Order by most viewed
         $query->orderByDesc('views');
@@ -759,8 +759,7 @@ class FrontendController extends Controller
             $query->where('is_featured', true);
         }
 
-        // Base filters
-        $query->where('status', 'approved')->whereNull('deleted_at');
+        $query->where('products.status', 'approved')->whereNull('products.deleted_at');
 
         // Order by best-selling (order_count)
         $query->orderByDesc('order_count');
@@ -949,8 +948,7 @@ class FrontendController extends Controller
             }
         }
 
-        // Base conditions
-        $query->where('status', 'approved')->whereNull('deleted_at')->where('is_featured', true);
+        $query->where('products.status', 'approved')->whereNull('products.deleted_at');
 
         // Pagination
         $perPage = $request->per_page ?? 10;
