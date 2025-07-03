@@ -347,7 +347,7 @@ if (!function_exists('translate')) {
 
     function com_option_get_id_wise_url($id, $size = null)
     {
-        $return_val = com_get_attachment_by_id($id, $size);
+        $return_val = com_get_attachment_by_id_new($id, $size);
         return $return_val['img_url'] ?? '';
     }
 
@@ -404,6 +404,48 @@ if (!function_exists('translate')) {
         }
 
         return $return_val;
+    }
+
+
+    function com_get_attachment_by_id_new($id, $size = null, $default = false)
+    {
+        $image = Media::find($id);
+        $response = [];
+
+        if ($image) {
+            $path = $image->path; // e.g., uploads/media-uploader/default/filename.png
+
+            $size_prefixes = [
+                'large' => 'large-',
+                'grid' => 'grid-',
+                'semi-large' => 'semi-large-',
+                'thumb' => 'thumb-',
+            ];
+
+            $final_path = $path;
+
+            if ($size && isset($size_prefixes[$size])) {
+                $dirname = pathinfo($path, PATHINFO_DIRNAME); // uploads/media-uploader/default
+                $basename = pathinfo($path, PATHINFO_BASENAME); // filename.png
+                $final_path = $dirname . '/' . $size_prefixes[$size] . $basename;
+
+                // Check if resized version exists
+                if (!file_exists(public_path('uploads/' . $final_path))) {
+                    $final_path = $path; // fallback to original
+                }
+            }
+
+            $response = [
+                'image_id' => $image->id,
+                'path'     => $path,
+                'img_url'  => url('uploads/' . $final_path), // clean SEO-friendly URL
+                'img_alt'  => $image->alt,
+            ];
+        } elseif ($default) {
+            $response['img_url'] = url('uploads/no-image.png');
+        }
+
+        return $response;
     }
 
 
