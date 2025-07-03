@@ -41,15 +41,20 @@ class NotificationManageController extends Controller
 
         // Build the query based on notifiable type
         $query = UniversalNotification::query();
+
         if ($notifiableType == 'customer') {
             $query->where('notifiable_type', $notifiableType)->where('notifiable_id', $customer->id);
+        } elseif ($notifiableType == 'admin') {
+            // admin will see all
         } else {
             $query->where('notifiable_type', $notifiableType)->where('notifiable_id', $user->id);
         }
+
         if (isset($request->status)) {
             $query->where('status', $request->status);
         }
-        if (isset($request->notifiable_type)) {
+
+        if (!empty($request->notifiable_type)) {
             $query->where('notifiable_type', $request->notifiable_type);
         }
         // Paginate results
