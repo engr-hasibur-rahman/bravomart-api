@@ -133,7 +133,8 @@ class AdminReportAnalyticsManageController extends Controller
         $orderDetails = $query->with(['order.orderMaster.customer', 'order.orderMaster', 'store', 'area'])
             ->latest()
             ->paginate($filters['per_page'] ?? 20);
-        $dashboard = $this->adminRepo->getSummaryData($store_id);
+
+        $dashboard = $this->adminRepo->getSummaryDataWithFilters($filters);
         // Check if export option is requested (either csv or xlsx)
         if ($request->has('export') && in_array($request->export, ['csv', 'xlsx'])) {
             // Export to CSV or XLSX using the filtered data
@@ -150,7 +151,7 @@ class AdminReportAnalyticsManageController extends Controller
     public function transactionReport(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'transaction_type' => 'required|in:order,transaction',
+            'transaction_type' => 'required|in:order,subscription',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);

@@ -144,6 +144,158 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             'total_revenue' => $total_revenue,
         ];
     }
+    public function getSummaryDataWithFilters(array $filters): array
+    {
+        $orderQuery = Order::query();
+
+        if (!empty($filters['store_id'])) {
+            $orderQuery->where('store_id', $filters['store_id']);
+        }
+
+        if (!empty($filters['order_status'])) {
+            $orderQuery->where('status', $filters['order_status']);
+        }
+
+        if (!empty($filters['customer_id'])) {
+            $orderQuery->whereHas('orderMaster', function ($q) use ($filters) {
+                $q->where('customer_id', $filters['customer_id']);
+            });
+        }
+
+        if (!empty($filters['payment_gateway'])) {
+            $orderQuery->whereHas('orderMaster', function ($q) use ($filters) {
+                $q->where('payment_gateway', $filters['payment_gateway']);
+            });
+        }
+
+        if (!empty($filters['payment_status'])) {
+            $orderQuery->whereHas('orderMaster', function ($q) use ($filters) {
+                $q->where('payment_status', $filters['payment_status']);
+            });
+        }
+
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $orderQuery->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+        } elseif (!empty($filters['start_date'])) {
+            $orderQuery->whereDate('created_at', '>=', $filters['start_date']);
+        } elseif (!empty($filters['end_date'])) {
+            $orderQuery->whereDate('created_at', '<=', $filters['end_date']);
+        }
+
+        if (!empty($filters['type'])) {
+            $orderQuery->whereHas('store', function ($q) use ($filters) {
+                $q->where('store_type', $filters['type']);
+            });
+        }
+
+        if (!empty($filters['area_id'])) {
+            $orderQuery->where('area_id', $filters['area_id']);
+        }
+
+        // Now calculate the rest same as before using the filtered query
+        $total_order = $orderQuery->count();
+        $pending_orders = (clone $orderQuery)->where('status', 'pending')->count();
+        $confirmed_orders = (clone $orderQuery)->where('status', 'confirmed')->count();
+        $processing_orders = (clone $orderQuery)->where('status', 'processing')->count();
+        $shipped_orders = (clone $orderQuery)->where('status', 'shipped')->count();
+        $completed_orders = (clone $orderQuery)->where('status', 'delivered')->count();
+        $cancelled_orders = (clone $orderQuery)->where('status', 'cancelled')->count();
+        $deliveryman_not_assigned_orders = (clone $orderQuery)->where('status', 'processing')->whereNull('confirmed_by')->count();
+        $refunded_orders = (clone $orderQuery)->where('refund_status', 'refunded')->count();
+
+        // earnings, revenue etc
+        $total_earnings = (clone $orderQuery)
+            ->whereHas('orderMaster', function ($q) {
+                $q->where('payment_status', 'paid');
+            })
+            ->where(function ($q) {
+                $q->where('refund_status', '!=', 'refunded')
+                    ->orWhereNull('refund_status');
+            })->sum('order_amount');
+
+        $total_refunds = (clone $orderQuery)->where('refund_status', 'refunded')->sum('order_amount');
+
+        $total_admin_commission_amount = (clone $orderQuery)
+            ->whereHas('orderMaster', function ($q) {
+                $q->where('payment_status', 'paid');
+            })
+            ->whereNull('refund_status')
+            ->sum('order_amount_admin_commission');
+
+        $total_order_revenue = $total_earnings - $total_refunds;
+
+        $total_tax = OrderDetail::whereHas('order', function ($q) use ($filters) {
+            if (!empty($filters['store_id'])) {
+                $q->where('store_id', $filters['store_id']);
+            }
+
+            $q->where(function ($subQ) {
+                $subQ->where('refund_status', '!=', 'refunded')->orWhereNull('refund_status');
+            })->whereHas('orderMaster', function ($masterQ) {
+                $masterQ->where('payment_status', 'paid');
+            });
+        })->sum('total_tax_amount');
+
+        $total_subscription_earnings = SubscriptionHistory::where('status', 1)
+            ->where('payment_status', 'paid')
+            ->sum('price');
+
+        $total_revenue = ($total_order_revenue + $total_admin_commission_amount + $total_subscription_earnings) - $total_tax;
+
+        // static counts
+        $total_store = Store::count();
+        $total_seller = User::where('store_owner', 1)->count();
+        $total_product = Product::count();
+        $total_customer = Customer::count();
+        $total_staff = User::where('activity_scope', 'store_level')->where('store_owner', '!=', 1)->count();
+        $total_areas = StoreArea::count();
+        $total_deliverymen = User::where('activity_scope', 'delivery_level')->count();
+        $total_categories = ProductCategory::count();
+        $total_brands = ProductBrand::count();
+        $total_sliders = Slider::count();
+        $total_coupons = Coupon::count();
+        $total_pages = Page::count();
+        $total_blogs = Blog::count();
+        $total_tickets = Ticket::count();
+        $total_withdrawals = WalletWithdrawalsTransaction::where('status', 'approved')->sum('amount');
+
+        return [
+            'total_customers' => $total_customer,
+            'total_sellers' => $total_seller,
+            'total_stores' => $total_store,
+            'total_products' => $total_product,
+            'total_deliverymen' => $total_deliverymen,
+            'total_areas' => $total_areas,
+            'total_categories' => $total_categories,
+            'total_brands' => $total_brands,
+            'total_sliders' => $total_sliders,
+            'total_coupons' => $total_coupons,
+            'total_pages' => $total_pages,
+            'total_blogs' => $total_blogs,
+            'total_tickets' => $total_tickets,
+            'total_staff' => $total_staff,
+
+            'total_orders' => $total_order,
+            'total_pending_orders' => $pending_orders,
+            'total_confirmed_orders' => $confirmed_orders,
+            'total_processing_orders' => $processing_orders,
+            'total_shipped_orders' => $shipped_orders,
+            'total_delivered_orders' => $completed_orders,
+            'total_cancelled_orders' => $cancelled_orders,
+            'deliveryman_not_assigned_orders' => $deliveryman_not_assigned_orders,
+            'total_refunded_orders' => $refunded_orders,
+
+            'total_earnings' => $total_earnings,
+            'total_order_commission' => $total_admin_commission_amount,
+            'total_refunds' => $total_refunds,
+            'total_order_revenue' => $total_order_revenue,
+            'total_withdrawals' => $total_withdrawals,
+            'total_tax' => $total_tax,
+            'total_subscription_earnings' => $total_subscription_earnings,
+            'total_revenue' => $total_revenue,
+        ];
+    }
+
 
 
     public function getSalesSummaryData(array $filters)
