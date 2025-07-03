@@ -8,6 +8,8 @@ interface AdminDashboardManageInterface
 {
     public function getSummaryData(?int $store_id);
 
+    public function getSummaryDataWithFilters(array $filters): array;
+
     public function getSalesSummaryData(array $filters);
 
     public function getOtherSummaryData();
