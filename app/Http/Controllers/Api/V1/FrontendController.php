@@ -2071,6 +2071,10 @@ class FrontendController extends Controller
             });
         }
 
+        if ($request->has('category_id') && $request->category_id) {
+            $blogsQuery->where('category_id', $request->category_id);  // Assuming you have a 'views' column
+        }
+
         // Check for sort filter (sort by created_at only)
         if ($request->has('sort') && $request->sort) {
             // Ensure the sort direction is either 'asc' or 'desc'
