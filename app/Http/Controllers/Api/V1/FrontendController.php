@@ -303,6 +303,39 @@ class FrontendController extends Controller
         }
 
         $query = Product::query();
+        // Location wise product filter
+        $userLat = $request->user_lat;
+        $userLng = $request->user_lng;
+        $useLocationFilter = false;
+
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+
+            // Clone the base query to apply location filter
+            $locationQuery = clone $query;
+
+            $locationQuery->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
+
+            // Test if location-filtered query returns any product
+            $testResults = (clone $locationQuery)->take(1)->get();
+
+            if ($testResults->isNotEmpty()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            }
+        }
 
         // Category filter (including child categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
@@ -434,7 +467,8 @@ class FrontendController extends Controller
             'message' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
             'meta' => new PaginationResource($products),
-            'filters' => $uniqueAttributes
+            'filters' => $uniqueAttributes,
+            'locationFilter' => $useLocationFilter
         ], 200);
     }
 
@@ -591,6 +625,39 @@ class FrontendController extends Controller
         }
 
         $query = Product::query();
+        // Location wise product filter
+        $userLat = $request->user_lat;
+        $userLng = $request->user_lng;
+        $useLocationFilter = false;
+
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+
+            // Clone the base query to apply location filter
+            $locationQuery = clone $query;
+
+            $locationQuery->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
+
+            // Test if location-filtered query returns any product
+            $testResults = (clone $locationQuery)->take(1)->get();
+
+            if ($testResults->isNotEmpty()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            }
+        }
 
         // Category filter (including child categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
@@ -727,7 +794,8 @@ class FrontendController extends Controller
             'message' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
             'meta' => new PaginationResource($products),
-            'filters' => $uniqueAttributes
+            'filters' => $uniqueAttributes,
+            'locationFilter' => $useLocationFilter
         ], 200);
     }
 
@@ -753,6 +821,39 @@ class FrontendController extends Controller
         }
 
         $query = Product::query();
+        // Location wise product filter
+        $userLat = $request->user_lat;
+        $userLng = $request->user_lng;
+        $useLocationFilter = false;
+
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+
+            // Clone the base query to apply location filter
+            $locationQuery = clone $query;
+
+            $locationQuery->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
+
+            // Test if location-filtered query returns any product
+            $testResults = (clone $locationQuery)->take(1)->get();
+
+            if ($testResults->isNotEmpty()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            }
+        }
 
         // Category filter (including child categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
@@ -880,7 +981,8 @@ class FrontendController extends Controller
             'message' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
             'meta' => new PaginationResource($products),
-            'filters' => $uniqueAttributes
+            'filters' => $uniqueAttributes,
+            'locationFilter' => $useLocationFilter
         ]);
     }
 
@@ -991,6 +1093,36 @@ class FrontendController extends Controller
         ])->whereHas('flashSale', function ($query) {
             $query->where('status', 1);
         });
+
+        // Location wise product filter
+        $userLat = $request->user_lat;
+        $userLng = $request->user_lng;
+        $useLocationFilter = false;
+
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+
+            // Build a subquery that checks distance from store
+            $locationFilteredFlashSaleIds = FlashSaleProduct::whereHas('product.store', function ($query) use ($userLat, $userLng, $radius) {
+                $query->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(latitude)) *
+                cos(radians(longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                    ->having('distance', '<', $radius);
+            })->pluck('id');
+
+            if ($locationFilteredFlashSaleIds->isNotEmpty()) {
+                $query->whereIn('id', $locationFilteredFlashSaleIds);
+                $useLocationFilter = true;
+            }
+        }
+
+
         // Apply category filter (multiple categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
             // Fetch all child categories for the given category IDs
@@ -1106,7 +1238,8 @@ class FrontendController extends Controller
             'message' => __('messages.data_found'),
             'data' => FlashSaleAllProductPublicResource::collection($flashSaleProducts),
             'meta' => new PaginationResource($flashSaleProducts),
-            'filters' => $uniqueAttributes
+            'filters' => $uniqueAttributes,
+            'locationFilter' => $useLocationFilter
         ], 200);
     }
 
