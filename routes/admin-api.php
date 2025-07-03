@@ -586,7 +586,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['prefix' => 'report-analytics/'], function () {
             Route::get('reportList', [AdminReportAnalyticsManageController::class, 'reportList'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value);
             Route::get('order', [AdminReportAnalyticsManageController::class, 'orderReport'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value);
-            Route::get('transaction', [AdminReportAnalyticsManageController::class, 'transactionReport'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value);
+            Route::get('transaction', [AdminReportAnalyticsManageController::class, 'transactionReport'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_TRANSACTION->value);
         });
 
         /*--------------------- System management ----------------------------*/
