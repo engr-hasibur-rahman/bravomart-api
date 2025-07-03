@@ -17,6 +17,9 @@ class DeliveryMan extends Model
         'identification_photo_front',
         'identification_photo_back',
         'address',
+        'status',
+        'is_verified',
+        'verified_at',
         'created_by',
         'updated_by',
     ];
