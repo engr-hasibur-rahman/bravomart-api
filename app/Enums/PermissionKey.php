@@ -159,6 +159,7 @@ enum PermissionKey: string
     //                          Report and analytics                                            //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_REPORT_ANALYTICS_ORDER = '/admin/report-analytics/order';
+    case ADMIN_REPORT_ANALYTICS_TRANSACTION = '/admin/report-analytics/transaction';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //             Business Operations  Functionality                                                        //

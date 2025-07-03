@@ -1136,11 +1136,22 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value,
                             'PermissionTitle' => 'Order Report',
                             'activity_scope' => 'system_level',
-                            'icon' => '',
-                            'options' => ['view'],
+                            'icon' => 'FileChartColumnIncreasing',
+                            'options' => ['view', 'update', 'delete', 'others'],
                             'translations' => [
                                 'en' => 'Order Report',
                                 'ar' => 'تقرير الطلب'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_REPORT_ANALYTICS_TRANSACTION->value,
+                            'PermissionTitle' => 'Transaction Report',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'ChartNoAxesCombined',
+                            'options' => ['view', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Transaction Report',
+                                'ar' => 'تقرير المعاملات'
                             ]
                         ]
                     ]
