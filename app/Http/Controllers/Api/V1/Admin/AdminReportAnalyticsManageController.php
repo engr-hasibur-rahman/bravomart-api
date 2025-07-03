@@ -15,6 +15,7 @@ use App\Interfaces\AdminDashboardManageInterface;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Subscription\app\Models\SubscriptionHistory;
 
@@ -148,6 +149,12 @@ class AdminReportAnalyticsManageController extends Controller
 
     public function transactionReport(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'transaction_type' => 'required|in:order,transaction',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
         $filters = [
             'type' => $request->type,
             'area_id' => $request->area_id,
