@@ -51,6 +51,7 @@ class MediaController extends Controller
         return response()->json([
             'message' => 'Media uploaded successfully.',
             'image_id' => $media->id ?? null,
+            'image_url' => com_option_get_id_wise_url($media->id) ?? null,
         ], 201);
     }
 
