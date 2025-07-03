@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\ApiAuthMiddleware::class,
             \App\Http\Middleware\LocaleMiddleware::class,
             \App\Http\Middleware\DemoModeMiddleware::class, // for demo mode
+            \App\Http\Middleware\SetUserLocation::class,
         ]);
 
         $middleware->alias([
