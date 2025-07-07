@@ -11,6 +11,7 @@ use App\Models\SettingOption;
 use App\Services\LicenseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -528,6 +529,20 @@ class SystemManagementController extends Controller
             $com_facebook_client_secret = com_option_get('com_facebook_client_secret');
             $com_facebook_client_callback_url = com_option_get('com_facebook_client_callback_url');
 
+
+            // Mask values if in demo mode
+            if (Config::get('demoMode.check')) {
+                $com_google_login_enabled = '';
+                $com_google_app_id = '';
+                $com_google_client_secret = '';
+                $com_google_client_callback_url = '';
+
+                $com_facebook_login_enabled = '';
+                $com_facebook_app_id = '';
+                $com_facebook_client_secret = '';
+                $com_facebook_client_callback_url = '';
+            }
+
             return $this->success([
                 'com_google_login_enabled' => $com_google_login_enabled,
                 'com_google_app_id' => $com_google_app_id,
@@ -586,11 +601,19 @@ class SystemManagementController extends Controller
             }
              com_option_update('com_google_map_enable_disable', $request->com_google_map_enable_disable);
              com_option_update('com_google_map_api_key', $request->com_google_map_api_key);
+
             return $this->success(translate('messages.update_success', ['name' => 'Google Map Settings']));
         }
 
+
         $com_google_map_enable_disable = com_option_get('com_google_map_enable_disable');
         $com_google_map_api_key = com_option_get('com_google_map_api_key');
+
+        //demo check
+        if (Config::get('demoMode.check')) {
+            $com_google_map_enable_disable = '';
+            $com_google_map_api_key = '';
+        }
 
         return $this->success([
             'com_google_map_enable_disable' => $com_google_map_enable_disable,
@@ -623,6 +646,13 @@ class SystemManagementController extends Controller
         $com_google_recaptcha_v3_site_key = com_option_get('com_google_recaptcha_v3_site_key');
         $com_google_recaptcha_v3_secret_key = com_option_get('com_google_recaptcha_v3_secret_key');
         $com_google_recaptcha_enable_disable = com_option_get('com_google_recaptcha_enable_disable');
+
+        //demo check
+        if (Config::get('demoMode.check')) {
+            $com_google_recaptcha_v3_site_key = '';
+            $com_google_recaptcha_v3_secret_key = '';
+            $com_google_recaptcha_enable_disable = '';
+        }
 
         return $this->success([
             'site_key' => $com_google_recaptcha_v3_site_key,

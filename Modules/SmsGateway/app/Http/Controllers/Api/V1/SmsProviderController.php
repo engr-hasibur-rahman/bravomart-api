@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\SmsGateway\app\Models\SmsProvider;
+use Vonage\Verify\Check;
 
 class SmsProviderController extends Controller
 {
@@ -53,7 +54,7 @@ class SmsProviderController extends Controller
                     'name' => ucfirst($request->name),
                     'slug' => $request->name,
                     'expire_time' => $request->expire_time,
-                    'credentials' => json_encode($request->credentials),
+                    'credentials' => config('demoMode.check') ? null : json_encode($request->credentials),
                     'status' => 1,
                 ]
             );
@@ -65,6 +66,24 @@ class SmsProviderController extends Controller
         }
 
         $sms_gateway = SmsProvider::all();
+
+        // check demo mode is true
+        if (config('demoMode.check')){
+            foreach ($sms_gateway as $sms_provider) {
+                // Decode credentials to array
+                $credentials = json_decode($sms_provider->credentials, true);
+
+                if (is_array($credentials)) {
+                    // Mask all keys
+                    foreach ($credentials as $key => $value) {
+                        $credentials[$key] = '*** DEMO ***';
+                    }
+                    // Reassign masked credentials back to the model
+                    $sms_provider->credentials = $credentials;
+                }
+
+            }
+        }
 
         return response()->json([
             'status' => true,
