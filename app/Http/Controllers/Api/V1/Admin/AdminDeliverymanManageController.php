@@ -186,7 +186,7 @@ class AdminDeliverymanManageController extends Controller
     public function changeStatus(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'deliveryman_ids*' => 'required|array',
+            'id' => 'required|exists:delivery_men,id',
             'status' => 'required|integer|in:pending,approved,inactive,rejected',
         ]);
         if ($validator->fails()) {

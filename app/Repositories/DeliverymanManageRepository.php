@@ -258,6 +258,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             return false;
         }
     }
+
     public function rejectDeliverymen(array $deliveryman_ids)
     {
         try {
@@ -273,11 +274,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function changeStatus(array $data)
     {
         try {
-            $deliverymen = User::whereIn('id', $data['deliveryman_ids'])
+            return DeliveryMan::where('id', $data['id'])
                 ->where('deleted_at', null)
-                ->where('activity_scope', 'delivery_level')
                 ->update(['status' => $data['status']]);
-            return $deliverymen > 0;
+
         } catch (\Exception $exception) {
             return false;
         }
