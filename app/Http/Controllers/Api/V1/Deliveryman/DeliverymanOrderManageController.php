@@ -172,17 +172,41 @@ class DeliverymanOrderManageController extends Controller
         if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
             unauthorized_response();
         }
-        $already_cancelled_or_ignored_or_delivered = Order::with('orderDeliveryHistory')
+        $already_cancelled = Order::with('orderDeliveryHistory')
             ->whereHas('orderDeliveryHistory', function ($query) use ($deliveryman, $request) {
                 $query->where('deliveryman_id', $deliveryman->id)
                     ->where('order_id', $request->id)
-                    ->where('status', '!=', 'accepted'); // Ensures status is NOT 'accepted'
+                    ->where('status', 'cancelled'); // Ensures status is NOT 'accepted'
+            })
+            ->exists();
+        $already_ignored = Order::with('orderDeliveryHistory')
+            ->whereHas('orderDeliveryHistory', function ($query) use ($deliveryman, $request) {
+                $query->where('deliveryman_id', $deliveryman->id)
+                    ->where('order_id', $request->id)
+                    ->where('status', 'ignored'); // Ensures status is NOT 'accepted'
+            })
+            ->exists();
+        $already_delivered = Order::with('orderDeliveryHistory')
+            ->whereHas('orderDeliveryHistory', function ($query) use ($deliveryman, $request) {
+                $query->where('deliveryman_id', $deliveryman->id)
+                    ->where('order_id', $request->id)
+                    ->where('status', 'delivered'); // Ensures status is NOT 'accepted'
             })
             ->exists();
 
-        if ($already_cancelled_or_ignored_or_delivered) {
+        if ($already_cancelled) {
             return response()->json([
-                'message' => __('messages.order_already_cancelled_or_ignored_or_delivered')
+                'message' => __('messages.order_already_cancelled')
+            ], 422);
+        }
+        if ($already_ignored) {
+            return response()->json([
+                'message' => __('messages.order_already_ignored')
+            ], 422);
+        }
+        if ($already_delivered) {
+            return response()->json([
+                'message' => __('messages.order_already_delivered')
             ], 422);
         }
 
@@ -206,29 +230,25 @@ class DeliverymanOrderManageController extends Controller
         if ($success === 'order_is_not_accepted') {
             return response()->json([
                 'message' => __('messages.order_is_not_accepted')
-            ], 200);
+            ]);
         }
         if ($success === 'delivered') {
             return response()->json([
                 'message' => __('messages.order_delivered_success')
-            ], 200);
-        }
-        elseif ($success === 'already delivered') {
+            ]);
+        } elseif ($success === 'already delivered') {
             return response()->json([
                 'message' => __('messages.deliveryman_order_already_taken')
             ], 422);
-        }
-        elseif ($success === 'pickup') {
+        } elseif ($success === 'pickup') {
             return response()->json([
-                'message' => __('messages.order_pickup_successful')
-            ], 200);
-        }
-        elseif ($success === 'shipped') {
+                'message' => __('messages.order_pickup_success')
+            ]);
+        } elseif ($success === 'shipped') {
             return response()->json([
-                'message' => __('messages.order_shipped_successful')
-            ], 200);
-        }
-        else {
+                'message' => __('messages.order_shipped_success')
+            ]);
+        } else {
             return response()->json([
                 'message' => __('messages.something_went_wrong')
             ], 500);
