@@ -20,6 +20,7 @@ class AdminDeliverymanRequestResource extends JsonResource
             'user_id' => $this->user?->id,
             'first_name' => $this->user?->first_name,
             'last_name' => $this->user?->last_name,
+            'full_name' => $this->user?->full_name,
             'slug' => $this->user?->slug,
             'phone' => $this->user?->phone,
             'email' => $this->user?->email,
