@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Actions\ImageModifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -36,6 +37,8 @@ class AdminDeliverymanResource extends JsonResource
                     ? $area_translation->where('key', 'name')->first()->value
                     : $this->area->name, // If language is empty or not provided attribute
             ]): null,
+            'identification_photo_front_url' => ImageModifier::generateImageUrl($this->identification_photo_front),
+            'identification_photo_back_url' => ImageModifier::generateImageUrl($this->identification_photo_back),
         ]);
     }
 }
