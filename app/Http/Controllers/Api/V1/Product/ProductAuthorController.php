@@ -107,14 +107,6 @@ class ProductAuthorController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        if ($author->created_by != auth('api')->user()->id) {
-            return response()->json([
-                'message' => __('messages.update_failed', ['name' => 'Author'])
-            ], 500);
-        }
-        if (auth('api')->user()->activity_scope == 'store_level') {
-            unset($data['status']); // Remove 'status' if user is store_level
-        }
         $author = $this->authorRepo->update($data);
         createOrUpdateTranslation($request, $author, 'App\Models\ProductAuthor', $this->authorRepo->translationKeys());
         if ($author) {
@@ -166,11 +158,6 @@ class ProductAuthorController extends Controller
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
-        }
-        if ($author->created_by != auth('api')->id()) {
-            return response()->json([
-                'message' => __('messages.delete_failed', ['name' => 'Author'])
-            ], 500);
         }
         $this->authorRepo->delete($id);
         return response()->json([
