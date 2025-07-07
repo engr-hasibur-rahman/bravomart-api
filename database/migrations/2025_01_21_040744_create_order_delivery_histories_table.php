@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('deliveryman_id');
             $table->text('reason')->nullable()->comment('Reason for ignoring or cancelling delivery');
-            $table->enum('status', ['accepted', 'ignored', 'delivered', 'cancelled'])->comment('accepted, ignored, delivered, cancelled');
+            $table->string('status')->comment('accepted, ignored, pickup, shipped, delivered, cancelled');
             $table->timestamps();
         });
     }

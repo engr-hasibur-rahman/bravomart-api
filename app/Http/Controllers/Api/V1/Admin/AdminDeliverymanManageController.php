@@ -16,8 +16,13 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Dashboard\DeliverymanDashboardResource;
 use App\Http\Resources\Deliveryman\DeliverymanDropdownResource;
 use App\Interfaces\DeliverymanManageInterface;
+use App\Mail\DynamicEmail;
+use App\Models\DeliveryMan;
+use App\Models\EmailTemplate;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class AdminDeliverymanManageController extends Controller
@@ -338,5 +343,43 @@ class AdminDeliverymanManageController extends Controller
         }
         $data = $this->deliverymanRepo->getDeliverymanDashboard($request->id);
         return response()->json(new DeliverymanDashboardResource((object)$data));
+    }
+
+    public function deliverymanVerification(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:delivery_men,id',
+            'status' => 'required|in:0,1,2',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $deliveryman = DeliveryMan::find($request->id);
+        if (!$deliveryman) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ]);
+        }
+        $deliveryman->is_verified = (int) $request->status;
+
+        $deliveryman->verified_at = $request->status == 1 ? Carbon::now() : null;
+
+        $deliveryman->save();
+
+        try {
+            $statusText = match ((int) $request->status) {
+                1 => 'Verified',
+                2 => 'Rejected',
+                default => 'Pending',
+            };
+
+            $deliverymanMessage = "Your account verification status is now: {$statusText}.";
+
+            Mail::to($deliveryman->email)->send(new DynamicEmail('Delivery account verification', $deliverymanMessage));
+        } catch (\Exception $e) {
+        }
+        return response()->json([
+            'message' => __('messages.update_success', ['name' => 'Deliveryman verification status'])
+        ]);
     }
 }

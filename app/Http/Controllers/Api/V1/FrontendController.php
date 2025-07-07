@@ -433,7 +433,7 @@ class FrontendController extends Controller
         }
 
         // Base filters
-        $query->where('status', 'approved')->whereNull('deleted_at');
+        $query->where('products.status', 'approved')->whereNull('products.deleted_at');
 
         // Order by most viewed
         $query->orderByDesc('views');
@@ -759,8 +759,7 @@ class FrontendController extends Controller
             $query->where('is_featured', true);
         }
 
-        // Base filters
-        $query->where('status', 'approved')->whereNull('deleted_at');
+        $query->where('products.status', 'approved')->whereNull('products.deleted_at');
 
         // Order by best-selling (order_count)
         $query->orderByDesc('order_count');
@@ -949,8 +948,7 @@ class FrontendController extends Controller
             }
         }
 
-        // Base conditions
-        $query->where('status', 'approved')->whereNull('deleted_at')->where('is_featured', true);
+        $query->where('products.status', 'approved')->whereNull('products.deleted_at');
 
         // Pagination
         $perPage = $request->per_page ?? 10;
@@ -2071,6 +2069,10 @@ class FrontendController extends Controller
                 $query->where('title', 'like', '%' . $request->search . '%')
                     ->orWhere('description', 'like', '%' . $request->search . '%');
             });
+        }
+
+        if ($request->has('category_id') && $request->category_id) {
+            $blogsQuery->where('category_id', $request->category_id);  // Assuming you have a 'views' column
         }
 
         // Check for sort filter (sort by created_at only)

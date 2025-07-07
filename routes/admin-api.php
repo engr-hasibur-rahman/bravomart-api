@@ -479,6 +479,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
                 Route::post('update', [AdminDeliverymanManageController::class, 'update']);
                 Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
+                Route::post('verification', [AdminDeliverymanManageController::class, 'deliverymanVerification']);
                 Route::post('approve', [AdminDeliverymanManageController::class, 'approveRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
                 Route::get('history/{id}', [AdminDeliverymanManageController::class, 'deliverymanDashboard']);
@@ -585,7 +586,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['prefix' => 'report-analytics/'], function () {
             Route::get('reportList', [AdminReportAnalyticsManageController::class, 'reportList'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value);
             Route::get('order', [AdminReportAnalyticsManageController::class, 'orderReport'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value);
-            Route::get('transaction', [AdminReportAnalyticsManageController::class, 'transactionReport'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value);
+            Route::get('transaction', [AdminReportAnalyticsManageController::class, 'transactionReport'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_TRANSACTION->value);
         });
 
         /*--------------------- System management ----------------------------*/

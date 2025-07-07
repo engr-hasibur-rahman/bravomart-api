@@ -42,6 +42,8 @@ class AdminDeliverymanDetailsResource extends JsonResource
             'creator' => $this->creator->first_name ?? null,
             'updater' => $this->updater->first_name ?? null,
             'status' => $this->user->status ?? null,
+            'is_verified' => (int)$this->is_verified,
+            'verified_at' => $this->verified_at,
             'created_at' => $this->user->created_at ?? null,
             'updated_at' => $this->user->updated_at ?? null,
         ];
