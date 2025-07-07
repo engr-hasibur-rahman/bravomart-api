@@ -172,55 +172,52 @@ class AdminReportAnalyticsManageController extends Controller
             $query = Order::with(['orderMaster.customer', 'orderDetail', 'store', 'area']);
 
             if (isset($filters['search'])) {
-                $query->whereHas('order', function ($q) use ($filters) {
-                    $q->where('id', 'LIKE', '%' . $filters['search'] . '%')
-                        ->orWhere('invoice_number', 'LIKE', '%' . $filters['search'] . '%');
-                });
+                $query->where('id', 'LIKE', '%' . $filters['search'] . '%')
+                    ->orWhere('invoice_number', 'LIKE', '%' . $filters['search'] . '%');
             }
+
             if (isset($filters['type'])) {
                 $query->whereHas('store', function ($q) use ($filters) {
                     $q->where('store_type', $filters['type']);
                 });
             }
+
             if (isset($filters['area_id'])) {
                 $query->where('area_id', $filters['area_id']);
             }
+
             if (isset($filters['payment_gateway'])) {
-                $query->whereHas('order.orderMaster', function ($q) use ($filters) {
+                $query->whereHas('orderMaster', function ($q) use ($filters) {
                     $q->where('payment_gateway', $filters['payment_gateway']);
                 });
             }
+
             if (isset($filters['payment_status'])) {
-                $query->whereHas('order.orderMaster', function ($q) use ($filters) {
-                    $q->where('payment_status', $filters['payment_status']);
-                });
+                $query->where('payment_status', $filters['payment_status']);
             }
+
             if (isset($filters['order_status'])) {
-                $query->whereHas('order', function ($q) use ($filters) {
-                    $q->where('status', $filters['order_status']);
-                });
+                $query->where('status', $filters['order_status']);
             }
+
             if (isset($filters['store_id'])) {
                 $query->where('store_id', $filters['store_id']);
             }
+
             if (isset($filters['customer_id'])) {
-                $query->whereHas('order.orderMaster', function ($q) use ($filters) {
+                $query->whereHas('orderMaster', function ($q) use ($filters) {
                     $q->where('customer_id', $filters['customer_id']);
                 });
             }
+
             if (isset($filters['start_date']) && isset($filters['end_date'])) {
-                $query->whereHas('order', function ($q) use ($filters) {
-                    $q->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
-                });
+                $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
             } elseif (isset($filters['start_date'])) {
-                $query->whereHas('order', function ($q) use ($filters) {
-                    $q->whereDate('created_at', '>=', $filters['start_date']);
-                });
+                $query->whereDate('created_at', '>=', $filters['start_date']);
             } elseif (isset($filters['end_date'])) {
-                $query->whereHas('order', function ($q) use ($filters) {
-                    $q->whereDate('created_at', '<=', $filters['end_date']);
-                });
+                $query->whereDate('created_at', '<=', $filters['end_date']);
             }
+
             $filteredQuery = (clone $query); // Clone for the dashboard summary
             $orderDetails = $query
                 ->latest()
@@ -251,29 +248,21 @@ class AdminReportAnalyticsManageController extends Controller
             if (isset($filters['payment_gateway'])) {
                 $query->where('payment_gateway', $filters['payment_gateway']);
             }
+
             if (isset($filters['payment_status'])) {
                 $query->where('payment_status', $filters['payment_status']);
             }
+
             if (isset($filters['store_id'])) {
                 $query->where('store_id', $filters['store_id']);
             }
-            if (isset($filters['area_id'])) {
-                $query->whereHas('store', function ($q) use ($filters) {
-                    $q->where('area_id', $filters['area_id']);
-                });
-            }
+
             if (isset($filters['start_date']) && isset($filters['end_date'])) {
-                $query->whereHas('order', function ($q) use ($filters) {
-                    $q->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
-                });
+                $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
             } elseif (isset($filters['start_date'])) {
-                $query->whereHas('order', function ($q) use ($filters) {
-                    $q->whereDate('created_at', '>=', $filters['start_date']);
-                });
+                $query->whereDate('created_at', '>=', $filters['start_date']);
             } elseif (isset($filters['end_date'])) {
-                $query->whereHas('order', function ($q) use ($filters) {
-                    $q->whereDate('created_at', '<=', $filters['end_date']);
-                });
+                $query->whereDate('created_at', '<=', $filters['end_date']);
             }
             $subscriptionHistory = $query->latest()->paginate($filters['per_page'] ?? 20);
             $filteredQuery = (clone $query); // Clone for the dashboard summary
