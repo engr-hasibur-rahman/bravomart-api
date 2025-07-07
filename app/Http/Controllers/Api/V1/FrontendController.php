@@ -2039,7 +2039,7 @@ class FrontendController extends Controller
             });
         }
 
-        $customers = $query->orderBy('name')->limit(50)->get();
+        $customers = $query->orderBy('first_name')->limit(50)->get();
 
         return response()->json(CustomerPublicResource::collection($customers));
     }

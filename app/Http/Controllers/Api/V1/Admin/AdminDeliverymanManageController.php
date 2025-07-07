@@ -154,30 +154,40 @@ class AdminDeliverymanManageController extends Controller
     public function handleRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'deliveryman_ids*' => 'required|array',
-            'status' => 'required|in:approved,rejected'
+            'deliveryman_ids' => 'required|array',
+            'deliveryman_ids.*' => 'required|integer|exists:deliverymen,id',
+            'status' => 'required|in:approved,rejected',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        if ($request->status == 'approved') {
-            $success = $this->deliverymanRepo->approveDeliverymen($request->deliveryman_ids);
-        }
-        if ($request->status == 'rejected') {
-            $success = $this->deliverymanRepo->rejectDeliverymen($request->deliveryman_ids);
-        }
-        if ($success) {
-            return $this->success(__('messages.approve.success', ['name' => 'Deliveryman requests']));
+
+        $status = $request->status;
+        $ids = $request->deliveryman_ids;
+
+        if ($status === 'approved') {
+            $success = $this->deliverymanRepo->approveDeliverymen($ids);
+            $message = $success
+                ? __('messages.approve.success', ['name' => 'Deliveryman'])
+                : __('messages.approve.failed', ['name' => 'Deliveryman']);
+        } elseif ($status === 'rejected') {
+            $success = $this->deliverymanRepo->rejectDeliverymen($ids);
+            $message = $success
+                ? __('messages.reject.success', ['name' => 'Deliveryman'])
+                : __('messages.reject.failed', ['name' => 'Deliveryman']);
         } else {
-            return $this->failed(__('messages.approve.failed', ['name' => 'Deliveryman requests']));
+            return $this->failed(__('messages.action.invalid'));
         }
+
+        return $success ? $this->success($message) : $this->failed($message);
     }
 
     public function changeStatus(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'deliveryman_ids*' => 'required|array',
-            'status' => 'required|integer|in:0,1,2',
+            'status' => 'required|integer|in:pending,approved,inactive,rejected',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
