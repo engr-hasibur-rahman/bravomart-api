@@ -20,21 +20,24 @@ class SystemManagementController extends Controller
     public function __construct(
         protected TranslationInterface $transRepo,
         protected SettingOption        $get_com_option,
-        protected GeneralSetting      $general_settings,
-        protected LicenseService $licenseService
-    ) {}
+        protected GeneralSetting       $general_settings,
+        protected LicenseService       $licenseService
+    )
+    {
+    }
 
     public function translationKeys(): mixed
     {
         return $this->get_com_option->translationKeys;
     }
-    
+
     public function translationKeysGdpr(): mixed
     {
         return $this->general_settings->translationKeys;
     }
 
-    public function generalSettings(Request $request){
+    public function generalSettings(Request $request)
+    {
         if ($request->isMethod('POST')) {
             $validator = Validator::make($request->all(), [
                 'com_site_logo' => 'nullable|string',
@@ -51,6 +54,7 @@ class SystemManagementController extends Controller
                 'com_site_website_url' => 'nullable|string',
                 'com_site_email' => 'nullable|string',
                 'com_site_footer_copyright' => 'nullable|string',
+                'com_site_time_zone' => 'nullable|string',
             ], [
                 'com_site_logo.string' => 'The site logo must be a valid string.',
                 'com_site_white_logo.string' => 'The site logo must be a valid string.',
@@ -65,6 +69,7 @@ class SystemManagementController extends Controller
                 'com_site_website_url.string' => 'The website URL must be a valid string.',
                 'com_site_email.string' => 'The site email must be a valid string.',
                 'com_site_footer_copyright.string' => 'The footer copyright must be a valid string.',
+                'com_site_time_zone.string' => 'The time zone must be a valid string.',
             ]);
 
             if ($validator->fails()) {
@@ -75,13 +80,13 @@ class SystemManagementController extends Controller
                 ], 422);
             }
 
-            $fields = ['com_site_logo','com_site_white_logo', 'com_site_favicon', 'com_site_title', 'com_site_subtitle', 'com_user_email_verification','com_user_login_otp', 'com_maintenance_mode',
-                'com_site_full_address','com_site_contact_number', 'com_site_website_url', 'com_site_email', 'com_site_footer_copyright'
+            $fields = ['com_site_logo', 'com_site_white_logo', 'com_site_favicon', 'com_site_title', 'com_site_subtitle', 'com_user_email_verification', 'com_user_login_otp', 'com_maintenance_mode',
+                'com_site_full_address', 'com_site_contact_number', 'com_site_website_url', 'com_site_email', 'com_site_footer_copyright','com_site_time_zone'
             ];
 
             foreach ($fields as $field) {
-                  $value = $request->input($field) ?? null;
-                  com_option_update($field, $value);
+                $value = $request->input($field) ?? null;
+                com_option_update($field, $value);
             }
 
             // Define the fields that need to be translated
@@ -93,7 +98,7 @@ class SystemManagementController extends Controller
             }
 
             return $this->success(translate('messages.update_success', ['name' => 'General Settings']));
-        }else{
+        } else {
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
 
@@ -132,6 +137,7 @@ class SystemManagementController extends Controller
             $com_site_contact_number = com_option_get('com_site_contact_number') ?? '';
             $com_site_website_url = com_option_get('com_site_website_url') ?? '';
             $com_site_email = com_option_get('com_site_email') ?? '';
+            $com_site_time_zone = com_option_get('com_site_time_zone') ?? '';
 
             return $this->success([
                 'com_site_logo' => $com_site_logo,
@@ -151,6 +157,7 @@ class SystemManagementController extends Controller
                 'com_site_contact_number' => $com_site_contact_number,
                 'com_site_website_url' => $com_site_website_url,
                 'com_site_email' => $com_site_email,
+                'com_site_time_zone' => $com_site_time_zone,
                 'translations' => $transformedData,
             ]);
 
@@ -159,7 +166,8 @@ class SystemManagementController extends Controller
 
     }
 
-    public function seoSettings(Request $request){
+    public function seoSettings(Request $request)
+    {
         if ($request->isMethod('POST')) {
             $this->validate($request, [
                 'com_meta_title' => 'nullable|string',
@@ -174,12 +182,12 @@ class SystemManagementController extends Controller
             $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags', 'com_canonical_url', 'com_og_title', 'com_og_description', 'com_og_image'];
 
             foreach ($fields as $field) {
-                  $value = $request->input($field) ?? null;
-                  com_option_update($field, $value);
+                $value = $request->input($field) ?? null;
+                com_option_update($field, $value);
             }
 
             // Define the fields that need to be translated
-            $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'];
+            $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags', 'com_og_title', 'com_og_description'];
             $setting_options = SettingOption::whereIn('option_name', $fields)->get(['id']);
 
             foreach ($setting_options as $com_option) {
@@ -187,12 +195,12 @@ class SystemManagementController extends Controller
             }
 
             return $this->success(translate('messages.update_success', ['name' => 'SEO Settings']));
-        }else{
+        } else {
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
 
             $ComOptionGet = SettingOption::with('translations')
-                ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'])
+                ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags', 'com_og_title', 'com_og_description'])
                 ->get(['id']);
 
             // transformed data
@@ -215,7 +223,7 @@ class SystemManagementController extends Controller
             $com_canonical_url = com_option_get('com_canonical_url');
             $com_og_title = com_option_get('com_og_title');
             $com_og_description = com_option_get('com_og_description');
-            $com_og_image =com_option_get('com_og_image');
+            $com_og_image = com_option_get('com_og_image');
             $com_og_image_url = $imageModifier->generateImageUrl(com_option_get('com_og_image'));
 
             return $this->success([
@@ -233,7 +241,8 @@ class SystemManagementController extends Controller
 
     }
 
-    public function footerCustomization(Request $request){
+    public function footerCustomization(Request $request)
+    {
         if ($request->isMethod('POST')) {
             $this->validate($request, [
                 //Quick Access
@@ -246,18 +255,18 @@ class SystemManagementController extends Controller
                 // our info
                 'com_our_info' => 'nullable|array',
                 'com_our_info_enable_disable' => 'nullable|string',
-                'com_our_info.*.title'=> 'nullable|string',
-                'com_our_info.*.name'=> 'nullable|string',
-                'com_our_info.*.url'=> 'nullable|string',
-                'com_our_info_title'=> 'nullable|string',
+                'com_our_info.*.title' => 'nullable|string',
+                'com_our_info.*.name' => 'nullable|string',
+                'com_our_info.*.url' => 'nullable|string',
+                'com_our_info_title' => 'nullable|string',
 
                 // Help Center
                 'com_help_center' => 'nullable|array',
                 'com_help_center_enable_disable' => 'nullable|string',
-                'com_help_center.*.title'=> 'nullable|string',
-                'com_help_center.*.name'=> 'nullable|string',
-                'com_help_center.*.url'=> 'nullable|string',
-                'com_help_center_title'=> 'nullable|string',
+                'com_help_center.*.title' => 'nullable|string',
+                'com_help_center.*.name' => 'nullable|string',
+                'com_help_center.*.url' => 'nullable|string',
+                'com_help_center_title' => 'nullable|string',
 
                 // Social Links Section
                 'com_social_links_enable_disable' => 'nullable|string',
@@ -344,7 +353,7 @@ class SystemManagementController extends Controller
                         com_option_update($field, $value);
                         $processedFields[] = $field;
                     }
-                }elseif ($field === 'com_help_center' && isset($request['com_help_center'])) {
+                } elseif ($field === 'com_help_center' && isset($request['com_help_center'])) {
                     $value = json_encode($request['com_help_center']);
                     if ($value !== false) {
                         com_option_update($field, $value);
@@ -355,7 +364,7 @@ class SystemManagementController extends Controller
 
 
             // Define the fields that need to be translated
-            $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'];
+            $fields = ['com_meta_title', 'com_meta_description', 'com_meta_tags', 'com_og_title', 'com_og_description'];
             $setting_options = SettingOption::whereIn('option_name', $fields)->get(['id']);
 
 
@@ -364,7 +373,7 @@ class SystemManagementController extends Controller
             }
 
             return $this->success(translate('messages.update_success', ['name' => 'Footer Settings']));
-        }else{
+        } else {
             // Create an instance of ImageModifier
             $imageModifier = new MultipleImageModifier();
 
@@ -372,7 +381,7 @@ class SystemManagementController extends Controller
             $com_payment_methods_image_urls = $imageModifier->multipleImageModifier(com_option_get('com_payment_methods_image'));
 
             $ComOptionGet = SettingOption::with('translations')
-                ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags','com_og_title', 'com_og_description'])
+                ->whereIn('option_name', ['com_meta_title', 'com_meta_description', 'com_meta_tags', 'com_og_title', 'com_og_description'])
                 ->get(['id']);
 
             // transformed data
@@ -419,7 +428,8 @@ class SystemManagementController extends Controller
 
     }
 
-    public function maintenanceSettings(Request $request){
+    public function maintenanceSettings(Request $request)
+    {
         if ($request->isMethod('POST')) {
             $this->validate($request, [
                 'com_maintenance_title' => 'nullable|string',
@@ -431,8 +441,8 @@ class SystemManagementController extends Controller
 
             $fields = ['com_maintenance_title', 'com_maintenance_description', 'com_maintenance_start_date', 'com_maintenance_end_date', 'com_maintenance_image'];
             foreach ($fields as $field) {
-                  $value = $request->input($field) ?? null;
-                  com_option_update($field, $value);
+                $value = $request->input($field) ?? null;
+                com_option_update($field, $value);
             }
 
             // Define the fields that need to be translated
@@ -444,7 +454,7 @@ class SystemManagementController extends Controller
             }
 
             return $this->success(translate('messages.update_success', ['name' => 'Maintenance Settings']));
-        }else{
+        } else {
             // Create an instance of ImageModifier
             $imageModifier = new ImageModifier();
 
@@ -486,7 +496,8 @@ class SystemManagementController extends Controller
 
     }
 
-    public function socialLoginSettings(Request $request){
+    public function socialLoginSettings(Request $request)
+    {
         if ($request->isMethod('POST')) {
             $this->validate($request, [
                 // google
@@ -513,11 +524,11 @@ class SystemManagementController extends Controller
             ];
 
             foreach ($fields as $field) {
-                  $value = $request->input($field) ?? null;
-                  com_option_update($field, $value);
+                $value = $request->input($field) ?? null;
+                com_option_update($field, $value);
             }
             return $this->success(translate('messages.update_success', ['name' => 'Social Login Settings']));
-        }else{
+        } else {
             // Retrieve the values using the correct keys
             $com_google_login_enabled = com_option_get('com_google_login_enabled');
             $com_google_app_id = com_option_get('com_google_app_id');
@@ -617,10 +628,9 @@ class SystemManagementController extends Controller
 
         return $this->success([
             'com_google_map_enable_disable' => $com_google_map_enable_disable,
-            'com_google_map_api_key' => $com_google_map_enable_disable === 'on' ?  $com_google_map_api_key : '',
+            'com_google_map_api_key' => $com_google_map_enable_disable === 'on' ? $com_google_map_api_key : '',
         ]);
     }
-
 
 
     public function recaptchaSettings(Request $request)
@@ -637,9 +647,9 @@ class SystemManagementController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-             com_option_update('com_google_recaptcha_v3_site_key', $request->com_google_recaptcha_v3_site_key);
-             com_option_update('com_google_recaptcha_v3_secret_key', $request->com_google_recaptcha_v3_secret_key);
-             com_option_update('com_google_recaptcha_enable_disable', $request->com_google_recaptcha_enable_disable);
+            com_option_update('com_google_recaptcha_v3_site_key', $request->com_google_recaptcha_v3_site_key);
+            com_option_update('com_google_recaptcha_v3_secret_key', $request->com_google_recaptcha_v3_secret_key);
+            com_option_update('com_google_recaptcha_enable_disable', $request->com_google_recaptcha_enable_disable);
             return $this->success(translate('messages.update_success', ['name' => 'Recaptcha Settings']));
         }
 
@@ -673,7 +683,7 @@ class SystemManagementController extends Controller
             if (!$settings) {
                 return response()->json([
                     'message' => __('messages.data_not_found')
-                ],404);
+                ], 404);
             }
 
             $content = jsonImageModifierFormatter($settings->content);
@@ -689,15 +699,14 @@ class SystemManagementController extends Controller
         ]);
 
 
-
         $settings = GeneralSetting::where('type', 'gdpr')->first();
 
-        if(!empty($settings)){
+        if (!empty($settings)) {
             $settings->update([
                 'content' => $validatedData['content']
             ]);
-        }else{
-            $settings =  GeneralSetting::updateOrCreate([
+        } else {
+            $settings = GeneralSetting::updateOrCreate([
                 'id' => $request->id,
                 'type' => 'gdpr',
                 'content' => $validatedData['content']
@@ -761,18 +770,18 @@ class SystemManagementController extends Controller
     public function licenseSystem(Request $request)
     {
 
-       $validator = Validator::make($request->all(),[
-          'site_license_key' => 'required|string|max:255',
-          'envato_username' => 'required|string|max:255',
-       ]);
+        $validator = Validator::make($request->all(), [
+            'site_license_key' => 'required|string|max:255',
+            'envato_username' => 'required|string|max:255',
+        ]);
 
-       if ($validator->fails()) {
-           return response()->json([
-               'success' => false,
-               'message' => 'Validation failed.',
-               'errors' => $validator->errors(),
-           ], 422);
-       }
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
         // api check
         $result = $this->licenseService->activate(
@@ -784,15 +793,15 @@ class SystemManagementController extends Controller
         $message = "License verification failed. Please try again later or contact support.";
 
         // If activation is successful
-       if(!empty($result['status']) && $result['status']) {
-           // Save license data
-           com_option_update('application_license_key', $request->site_license_key);
-           com_option_update('application_license_status', $result['status']);
-           com_option_update('application_license_message', $result['message']);
+        if (!empty($result['status']) && $result['status']) {
+            // Save license data
+            com_option_update('application_license_key', $request->site_license_key);
+            com_option_update('application_license_status', $result['status']);
+            com_option_update('application_license_message', $result['message']);
 
-           $type = 'success';
-           $message = $result['message'];
-       }
+            $type = 'success';
+            $message = $result['message'];
+        }
 
         return response()->json([
             'type' => $type,
