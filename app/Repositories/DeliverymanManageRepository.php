@@ -118,7 +118,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'store_owner' => 0,
             'store_seller_id' => null,
             'stores' => null,
-            'status' => $data['status'] ?? 0,
+            'status' => 1,
         ]);
 
         if (!$deliveryman) {
