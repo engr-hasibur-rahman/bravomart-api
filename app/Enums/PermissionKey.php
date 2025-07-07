@@ -199,6 +199,8 @@ enum PermissionKey: string
     case SMTP_SETTINGS = '/admin/system-management/email-settings/smtp';
     case EMAIL_TEMPLATES = '/admin/system-management/email-settings/email-template/list';
     case SEO_SETTINGS = '/admin/system-management/seo-settings';
+    case SITEMAP_SETTINGS = '/admin/system-management/sitemap-settings';
+
     case GDPR_COOKIE_SETTINGS = '/admin/system-management/gdpr-cookie-settings';
     case CACHE_MANAGEMENT = '/admin/system-management/cache-management';
     case LICENSE_SYSTEM = '/admin/system-management/license-system';
@@ -332,6 +334,6 @@ enum PermissionKey: string
     // ######################## Seller PermissionKey End ###########################
 
     // deliveryman
-  case DELIVERYMAN_FINANCIAL_WITHDRAWALS = '/deliveryman/withdraw-manage';
+    case DELIVERYMAN_FINANCIAL_WITHDRAWALS = '/deliveryman/withdraw-manage';
 
 }

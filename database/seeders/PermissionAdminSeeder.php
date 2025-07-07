@@ -1574,6 +1574,17 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' => PermissionKey::SITEMAP_SETTINGS->value,
+                            'PermissionTitle' => 'Sitemap Settings',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Network',
+                            'options' => ['view', 'update'],
+                            'translations' => [
+                                'en' => 'Sitemap Settings',
+                                'ar' => 'إعدادات خريطة الموقع'
+                            ]
+                        ],
+                        [
                             'PermissionName' => PermissionKey::GDPR_COOKIE_SETTINGS->value,
                             'PermissionTitle' => 'Cookie Settings',
                             'activity_scope' => 'system_level',

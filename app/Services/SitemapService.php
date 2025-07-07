@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 class SitemapService
 {
-    public function generate(): SitemapModel
+    public function generate()
     {
         $sitemap = Sitemap::create();
         $baseUrl = config('app.frontend_url'); // We’ll load this from config
@@ -64,20 +64,19 @@ class SitemapService
                 ->setLastModificationDate($blog->updated_at));
         }
 
-        // Generate unique filename
+        $xmlContent = $sitemap->render();
         $timestamp = now()->timestamp;
         $filename = "sitemap-{$timestamp}.xml";
-        $path = public_path($filename);
+        $size = round(strlen($xmlContent) / 1024, 2); // Get size from string
 
-        $sitemap->writeToFile($path);
-
-        // Save metadata
-        $sizeKb = round(filesize($path) / 1024, 2);
-
-        return SitemapModel::create([
+        SitemapModel::create([
             'filename' => $filename,
             'generated_at' => now(),
-            'size_kb' => $sizeKb,
+            'size' => $size,
         ]);
+
+        return response($xmlContent, 200)
+            ->header('Content-Type', 'application/xml')
+            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 }
