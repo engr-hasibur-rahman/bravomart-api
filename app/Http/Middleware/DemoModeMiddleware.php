@@ -11,57 +11,15 @@ class DemoModeMiddleware
 
     protected array $blockedMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
     protected array $protectedPaths = [
+        // for admin
         'api/v1/admin/payment-gateways*',
-        'api/v1/admin/attribute*',
-        'api/v1/admin/blog*',
-        'api/v1/admin/brand*',
-        'api/v1/admin/coupon*',
-        'api/v1/admin/customer*',
-        'api/v1/admin/stores*',
-        'api/v1/admin/department*',
-        'api/v1/admin/orders*',
-        'api/v1/admin/product*',
-        'api/v1/admin/product-categories*',
-        'api/v1/admin/product/author*',
-        'api/v1/admin/product/inventory*',
-        'api/v1/admin/promotional*',
-        'api/v1/admin/pages*',
-        'api/v1/admin/roles*',
-        'api/v1/admin/store*',
-        'api/v1/admin/store-notices*',
-        'api/v1/admin/staff*',
-        'api/v1/admin/notifications*',
-        'api/v1/admin/slider*',
-        'api/v1/admin/media-manage*',
-        'api/v1/admin/seller*',
         'api/v1/admin/system-management*',
-        'api/v1/admin/tag*',
-        'api/v1/admin/unit*',
-        'api/v1/admin/deliveryman*',
-        'api/v1/admin/financial*',
-        'api/v1/admin/business-operations*',
-        'api/v1/admin/contact-messages*',
-        'api/v1/admin/feedback-control*',
-        'api/v1/admin/support-ticket*',
         'api/v1/admin/sms-provider/settings*',
 
         // for seller
-        'api/v1/seller/store/product*',
-        'api/v1/seller/store/product*',
         'api/v1/seller/store/settings*',
-        'api/v1/seller/store/orders*',
-        'api/v1/seller/store/remove*',
-        'api/v1/seller/store/update*',
-        'api/v1/seller/store/financial/wallet*',
-        'api/v1/seller/store/promotional/wallet*',
-        'api/v1/seller/store/feedback-control/wallet*',
-        'api/v1/seller/store/support-ticket*',
-        'api/v1/seller/store/staff*',
-        'api/v1/seller/store/deliveryman*',
-        'api/v1/seller/profile*',
-        // seller route
-        'api/v1/admin/attribute*',
-        // Add more patterns as needed
+
+        // for customer
     ];
 
     public function handle(Request $request, Closure $next): Response

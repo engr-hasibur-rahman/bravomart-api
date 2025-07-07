@@ -407,6 +407,49 @@ if (!function_exists('translate')) {
     }
 
 
+    function com_get_attachment_by_id_new($id, $size = null, $default = false)
+    {
+
+        $image = Media::find($id);
+        $response = [];
+
+        if ($image) {
+            $path = $image->path; // e.g., uploads/media-uploader/default/filename.png
+
+            $size_prefixes = [
+                'large' => 'large-',
+                'grid' => 'grid-',
+                'semi-large' => 'semi-large-',
+                'thumb' => 'thumb-',
+            ];
+
+            $final_path = $path;
+
+            if ($size && isset($size_prefixes[$size])) {
+                $dirname = pathinfo($path, PATHINFO_DIRNAME);     // uploads/media-uploader/default
+                $basename = pathinfo($path, PATHINFO_BASENAME);   // filename.png
+                $sized_path = $dirname . '/' . $size_prefixes[$size] . $basename;
+
+                // Fix: Use public_path directly without adding "uploads/"
+                if (file_exists(public_path($sized_path))) {
+                    $final_path = $sized_path;
+                }
+            }
+
+            $response = [
+                'image_id' => $image->id,
+                'path'     => $path,
+                'img_url'  => url($final_path), // Clean SEO-friendly URL
+                'img_alt'  => $image->alt,
+            ];
+        } elseif ($default) {
+            $response['img_url'] = url('uploads/no-image.png');
+        }
+
+        return $response;
+    }
+
+
     function updateEnvValues(array $get_data)
     {
         $env_data_file = app()->environmentFilePath();
@@ -652,6 +695,13 @@ if (!function_exists('getOrderStatusMessage')) {
             $formatted = number_format((float)$amount, 2, '.', $use_comma ? ',' : '');
 
             return $position === 'right' ? $formatted . $symbol : $symbol . $formatted;
+        }
+    }
+
+    if (!function_exists('isDemoMode')) {
+        function isDemoMode(): bool
+        {
+            return config('demo.enable') === true;
         }
     }
 

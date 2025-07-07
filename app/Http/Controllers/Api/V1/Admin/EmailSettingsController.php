@@ -5,23 +5,13 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Mail\GeneralMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
 class EmailSettingsController extends Controller
 {
     public function smtpSettings(Request $request){
         if ($request->isMethod('POST')) {
-
-            $rules = [
-                'com_site_global_email' => 'nullable|string',
-                'com_site_smtp_mail_mailer' => 'nullable|string',
-                'com_site_smtp_mail_host' => 'nullable|string',
-                'com_site_smtp_mail_post' => 'nullable|string',
-                'com_site_smtp_mail_username' => 'nullable|string',
-                'com_site_smtp_mail_password' => 'nullable|string',
-                'com_site_smtp_mail_encryption' => 'nullable|string',
-            ];
-
             $fields = [
                 'com_site_global_email',
                 'com_site_smtp_mail_mailer',
@@ -31,12 +21,10 @@ class EmailSettingsController extends Controller
                 'com_site_smtp_mail_password',
                 'com_site_smtp_mail_encryption',
             ];
-
             foreach ($fields as $field) {
                 $value = $request->input($field) ?? null;
                 com_option_update($field, $value);
             }
-
             updateEnvValues([
                 'MAIL_DRIVER' => $request->com_site_smtp_mail_mailer,
                 'MAIL_HOST' => $request->com_site_smtp_mail_host,
@@ -45,7 +33,6 @@ class EmailSettingsController extends Controller
                 'MAIL_PASSWORD' => $request->com_site_smtp_mail_password,
                 'MAIL_ENCRYPTION' => $request->com_site_smtp_mail_encryption,
             ]);
-
             return $this->success(translate('messages.update_success', ['name' => 'SMTP Settings']));
         }else{
             $fields = [
@@ -59,9 +46,14 @@ class EmailSettingsController extends Controller
             ];
 
             $data = [];
-
+            $demoMode = Config::get('demoMode.check');
             foreach ($fields as $field) {
-                $data[$field] = com_option_get($field);
+                $value = com_option_get($field);
+                // Mask only username and password if demo mode is ON
+                if ($demoMode && in_array($field, ['com_site_smtp_mail_username', 'com_site_smtp_mail_password'])) {
+                    $value = '';
+                }
+                $data[$field] = $value;
             }
 
             return $this->success($data);

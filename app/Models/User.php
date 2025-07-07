@@ -177,7 +177,6 @@ class User extends Authenticatable
 
     public function chats()
     {
-//        return $this->morphMany(Chat::class, 'user', 'user_type', 'user_id');
         return $this->morphMany(Chat::class, 'user', 'user_type', 'user_id');
     }
 

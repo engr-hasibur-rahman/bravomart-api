@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\WebPushConfig;
 
 class OrderManageNotificationService
 {
@@ -218,7 +219,7 @@ class OrderManageNotificationService
                 }
             }
 
-            // Prepare the data array without nested arrays
+            // for mobile app  Prepare the data array without nested arrays
             $dataToSend = array_merge(
                 [
                     'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
@@ -226,12 +227,34 @@ class OrderManageNotificationService
                 $processedData
             );
 
+            // for web Prepare the data array without nested arrays
+            $webPushConfig = WebPushConfig::fromArray([
+                'notification' => [
+                    'title' => $title,
+                    'body' => $body,
+                    'icon' => '/logo.png',
+                    'click_action' => $data['click_action'] ?? '',
+                ],
+            ]);
+
+
             // Construct the CloudMessage with notification and data payloads
             $message = CloudMessage::new()
                 ->withNotification($notification)  // Pass the Notification object
-                ->withData($dataToSend);
+                ->withData($dataToSend)
+                ->withWebPushConfig($webPushConfig); // Required for web
+
             // Send the notification to multiple tokens
-         $messaging->sendMulticast($message, $firebaseTokens);
+            $messaging->sendMulticast($message, $firebaseTokens);
+
+//            $firebaseTokens = ['dMaD-PMBkw813WeMdORiOZ:APA91bHX15HXBp56hSEm1HbaWuB6QAL8QDZH1ZsF2qisp_Z5auDgkekhumzsE_fLQ3LbrBDSLYYaFORGQHPsnuyiuAq5uWu35UetgXkAKdQs9hSG8HdLE_8'];
+//            $firebaseTokens = ['fGjZQXwSQGKgOhPe8xhj2Y:APA91bG6WhwKuGKTAftwogrtyakyEA_o56HmvZ5ESFbsBqNoMJiDCzMt6rsKDCL-wRW-L7lt64noNu7Ta7VcYqJ-cIjZ6ITexaOnf2vdpZtji8dQZJnF2g4'];
+//            $response = $messaging->sendMulticast($message, $firebaseTokens);
+//            foreach ($response->failures() as $failure) {
+//                Log::error(' FCM Error: ' . $failure->error()->getMessage());
+//                Log::error(' Token: ' . $failure->target()->value());
+//            }
+
 
         }catch (\Exception $exception){}
     }

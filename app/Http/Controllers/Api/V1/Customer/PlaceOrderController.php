@@ -40,6 +40,7 @@ class PlaceOrderController extends Controller
         }
 
         $orders = $this->orderService->createOrder($data);
+
         foreach ($data['packages'] as $package) {
             foreach ($package['items'] as $item) {
                 $this->updateProductData($item['product_id']);
