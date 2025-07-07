@@ -232,6 +232,7 @@ class DeliverymanOrderManageController extends Controller
                 'message' => __('messages.order_is_not_accepted')
             ]);
         }
+
         if ($success === 'delivered') {
             return response()->json([
                 'message' => __('messages.order_delivered_success')
