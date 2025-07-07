@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminProductQueryManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminReportAnalyticsManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminReviewManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminSellerManageController;
+use App\Http\Controllers\Api\V1\Admin\AdminSitemapController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreNoticeController;
 use App\Http\Controllers\Api\V1\Admin\AdminStoreTypeManageController;
@@ -582,6 +583,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::match(['get', 'post'], '/settings', [AdminCommissionManageController::class, 'commissionSettings']);
             });
         });
+
         // report-analytics
         Route::group(['prefix' => 'report-analytics/'], function () {
             Route::get('reportList', [AdminReportAnalyticsManageController::class, 'reportList'])->middleware('permission:' . PermissionKey::ADMIN_REPORT_ANALYTICS_ORDER->value);
@@ -634,7 +636,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('/email-settings/test-mail-send', [EmailSettingsController::class, 'testMailSend']);
             });
             // email settings
-
             Route::group(['prefix' => 'email-settings/email-template/', 'middleware' => 'permission:' . PermissionKey::EMAIL_TEMPLATES->value], function () {
                 Route::get('list', [EmailTemplateManageController::class, 'allEmailTemplate']);
                 Route::post('add', [EmailTemplateManageController::class, 'addEmailTemplate']);
@@ -643,6 +644,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [EmailTemplateManageController::class, 'deleteEmailTemplate']);
                 Route::post('change-status', [EmailTemplateManageController::class, 'changeStatus']);
             });
+            Route::match(['get', 'post'], 'sitemap-settings', [AdminSitemapController::class, 'generate'])->middleware('permission:' . PermissionKey::SITEMAP_SETTINGS->value);
         });
 
         /*--------------------- Roles &  permissions manage ----------------------------*/
