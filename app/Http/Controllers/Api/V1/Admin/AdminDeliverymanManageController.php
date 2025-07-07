@@ -187,7 +187,7 @@ class AdminDeliverymanManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:delivery_men,id',
-            'status' => 'required|integer|in:pending,approved,inactive,rejected',
+            'status' => 'required|in:pending,approved,inactive,rejected',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
