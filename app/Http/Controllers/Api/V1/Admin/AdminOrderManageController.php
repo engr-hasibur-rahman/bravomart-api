@@ -110,9 +110,7 @@ class AdminOrderManageController extends Controller
         });
 
         $ordersQuery->when($request->payment_status, function ($query) use ($request) {
-            $query->whereHas('orderMaster', function ($q) use ($request) {
-                $q->where('payment_status', $request->payment_status);
-            });
+            $query->where('payment_status', $request->payment_status);
         });
 
         $ordersQuery->when($request->search, fn($query) => $query->where('id', 'LIKE', '%' . $request->search . '%')

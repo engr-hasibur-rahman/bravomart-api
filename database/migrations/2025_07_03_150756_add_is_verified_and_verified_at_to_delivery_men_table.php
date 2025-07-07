@@ -28,8 +28,10 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('delivery_men', function (Blueprint $table) {
-            $table->dropColumn(['is_verified', 'verified_at']);
-        });
+        if (Schema::hasColumn('delivery_men', 'is_verified') || Schema::hasColumn('delivery_men', 'verified_at')) {
+            Schema::table('delivery_men', function (Blueprint $table) {
+                $table->dropColumn(['is_verified', 'verified_at']);
+            });
+        }
     }
 };
