@@ -21,6 +21,8 @@ interface DeliverymanManageInterface
 
     public function approveDeliverymen(array $deliveryman_ids);
 
+    public function rejectDeliverymen(array $deliveryman_ids);
+
     public function changeStatus(array $data);
 
     public function getAllVehicles(array $filters);

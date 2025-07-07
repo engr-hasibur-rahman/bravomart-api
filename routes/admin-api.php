@@ -481,7 +481,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('update', [AdminDeliverymanManageController::class, 'update']);
                 Route::post('change-status', [AdminDeliverymanManageController::class, 'changeStatus']);
                 Route::post('verification', [AdminDeliverymanManageController::class, 'deliverymanVerification']);
-                Route::post('approve', [AdminDeliverymanManageController::class, 'approveRequest']);
+                Route::post('handle-request', [AdminDeliverymanManageController::class, 'handleRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
                 Route::get('history/{id}', [AdminDeliverymanManageController::class, 'deliverymanDashboard']);
             });

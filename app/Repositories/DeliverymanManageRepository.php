@@ -250,11 +250,20 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function approveDeliverymen(array $deliveryman_ids)
     {
         try {
-            $deliverymen = User::whereIn('id', $deliveryman_ids)
-                ->where('status', 0)
-                ->where('activity_scope', 'delivery_level')
+            $deliverymen = DeliveryMan::whereIn('id', $deliveryman_ids)
                 ->where('deleted_at', null)
-                ->update(['status' => 1]);
+                ->update(['status' => 'approved']);
+            return $deliverymen > 0;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+    public function rejectDeliverymen(array $deliveryman_ids)
+    {
+        try {
+            $deliverymen = DeliveryMan::whereIn('id', $deliveryman_ids)
+                ->where('deleted_at', null)
+                ->update(['status' => 'rejected']);
             return $deliverymen > 0;
         } catch (\Exception $exception) {
             return false;

@@ -151,15 +151,21 @@ class AdminDeliverymanManageController extends Controller
         }
     }
 
-    public function approveRequest(Request $request)
+    public function handleRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'deliveryman_ids*' => 'required|array',
+            'status' => 'required|in:approved,rejected'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $success = $this->deliverymanRepo->approveDeliverymen($request->deliveryman_ids);
+        if ($request->status == 'approved') {
+            $success = $this->deliverymanRepo->approveDeliverymen($request->deliveryman_ids);
+        }
+        if ($request->status == 'rejected') {
+            $success = $this->deliverymanRepo->rejectDeliverymen($request->deliveryman_ids);
+        }
         if ($success) {
             return $this->success(__('messages.approve.success', ['name' => 'Deliveryman requests']));
         } else {
@@ -360,14 +366,14 @@ class AdminDeliverymanManageController extends Controller
                 'message' => __('messages.data_not_found')
             ]);
         }
-        $deliveryman->is_verified = (int) $request->status;
+        $deliveryman->is_verified = (int)$request->status;
 
         $deliveryman->verified_at = $request->status == 1 ? Carbon::now() : null;
 
         $deliveryman->save();
 
         try {
-            $statusText = match ((int) $request->status) {
+            $statusText = match ((int)$request->status) {
                 1 => 'Verified',
                 2 => 'Rejected',
                 default => 'Pending',
