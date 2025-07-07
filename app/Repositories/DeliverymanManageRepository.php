@@ -239,7 +239,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 'updater'
             ])
                 ->where('deleted_at', null)
-                ->pendingDeliveryman()
+                ->where('status', 'pending')
                 ->paginate(10);
             return $deliverymen;
         } catch (\Exception $exception) {
