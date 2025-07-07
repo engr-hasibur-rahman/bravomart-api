@@ -159,6 +159,7 @@ class AdminReportAnalyticsManageController extends Controller
         $filters = [
             'type' => $request->type,
             'area_id' => $request->area_id,
+            'customer_id' => $request->customer_id,
             'payment_gateway' => $request->payment_gateway,
             'payment_status' => $request->payment_status,
             'order_status' => $request->order_status,
