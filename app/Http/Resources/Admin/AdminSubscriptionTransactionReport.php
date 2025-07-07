@@ -16,6 +16,7 @@ class AdminSubscriptionTransactionReport extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'store' => $this->store?->name,
             'subscription' => $this->name,
             'validity' => $this->validity,
