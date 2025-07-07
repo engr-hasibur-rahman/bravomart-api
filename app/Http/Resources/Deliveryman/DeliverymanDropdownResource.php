@@ -19,9 +19,9 @@ class DeliverymanDropdownResource extends JsonResource
         return [
             'id' => $this->id,
             'value' => $this->id,
-            'label' => $this->first_name . ' ' . $this->last_name,
+            'label' => $this->full_name,
             'image_url' => ImageModifier::generateImageUrl($this->image),
-            'area' => new ComAreaListForDropdownResource($this->deliveryman->area),
+            'area' => new ComAreaListForDropdownResource($this->deliveryman?->area),
         ];
     }
 }
