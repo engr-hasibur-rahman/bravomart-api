@@ -5,6 +5,7 @@ namespace Modules\PaymentGateways\app\Http\Controllers\Api;
 use App\Http\Controllers\Api\V1\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
 use Modules\PaymentGateways\app\Models\PaymentGateway;
 use Modules\PaymentGateways\app\Transformers\PaymentGatewaysResource;
@@ -192,6 +193,22 @@ class PaymentGatewaySettingsController extends Controller
             ], 404);
         }
 
+        // If demo mode is enabled
+        if (Config::get('demoMode.check')) {
+            // Decode JSON to array
+            $authCredentialsJson = $paymentGateway->auth_credentials;
+            $authCredentials = json_decode($authCredentialsJson, true);
+
+            if (is_array($authCredentials)) {
+                foreach ($authCredentials as $key => $value) {
+                    if ($value) {
+                        $authCredentials[$key] = '';
+                    }
+                }
+                // Update the attribute with cleaned JSON
+                $paymentGateway->auth_credentials = json_encode($authCredentials);
+            }
+        }
 
         return response()->json([
             'status' => 'success',
