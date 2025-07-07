@@ -2028,9 +2028,19 @@ class FrontendController extends Controller
         return response()->json(ProductUnitPublicResource::collection($units));
     }
 
-    public function customerList()
+    public function customerList(Request $request)
     {
-        $customers = Customer::where('status', 1)->get();
+        $query = Customer::where('status', 1);
+
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('first_name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $request->search . '%');
+            });
+        }
+
+        $customers = $query->orderBy('name')->limit(50)->get();
+
         return response()->json(CustomerPublicResource::collection($customers));
     }
 
