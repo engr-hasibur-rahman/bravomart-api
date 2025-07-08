@@ -195,4 +195,9 @@ class Store extends Model
         return $this->morphMany(Chat::class, 'user');
     }
 
+    public function media()
+    {
+        return $this->morphMany(Media::class, 'fileable', 'user_type', 'user_id');
+    }
+
 }
