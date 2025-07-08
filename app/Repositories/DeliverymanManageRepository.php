@@ -473,6 +473,9 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     {
         $deliveryman = auth('api')->user();
 
+        // Define custom status order
+        $statusOrder = ['accepted', 'pickup', 'shipped', 'delivered', 'ignored'];
+
         $orders = OrderDeliveryHistory::with([
             'order.orderMaster.orderAddress',
             'order.orderDetail',
@@ -480,14 +483,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'order.orderMaster.customer'
         ])
             ->where('deliveryman_id', $deliveryman->id)
-            // Apply both local and related order status filtering only if 'status' filter is present
             ->when(!empty($filters['status']), function ($query) use ($filters) {
-                $query->where('status', $filters['status'])
-                    ->whereHas('order', function ($q) {
-                        $q->where('status', '!=', 'delivered');
-                    });
+                $query->where('status', $filters['status']);
             })
-            ->latest()
+            ->orderByRaw("FIELD(status, '" . implode("','", $statusOrder) . "')")
             ->paginate(10);
 
         return $orders;
