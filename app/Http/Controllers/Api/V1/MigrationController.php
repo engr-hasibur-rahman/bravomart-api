@@ -14,22 +14,26 @@ class MigrationController extends Controller
     {
         $request->validate([
             'table' => 'required|string',
-            'type' => 'required|in:refresh,rollback,reset,fresh,migrate'
+            'type' => 'required|in:refresh,rollback,reset,fresh,migrate',
+            'add_column' => 'nullable|boolean',
         ]);
 
         $table = $request->input('table');
         $type = $request->input('type');
+        $isColumnAdd = $request->input('add_column');
 
         // Check if table exists (for operations needing it)
-        if (in_array($type, ['refresh', 'rollback', 'reset']) && !Schema::hasTable($table)) {
+        if (in_array($type, ['rollback', 'reset']) && !Schema::hasTable($table)) {
             return response()->json(['error' => "Table '$table' does not exist"], 400);
         }
 
+
         try {
+
             $migrationName = null;
             $existingData = collect();
 
-            if (in_array($type, ['refresh', 'rollback'])) {
+            if (in_array($type, ['refresh', 'rollback']) && !$isColumnAdd) {
                 // Backup data
                 $existingData = DB::table($table)->get();
 
@@ -41,8 +45,9 @@ class MigrationController extends Controller
                 $migrationName = $migration->migration;
 
                 DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            } else {
+                $migrationName = $table;
             }
-
             // Run Artisan migration commands based on type
             switch ($type) {
                 case 'refresh':
@@ -70,7 +75,24 @@ class MigrationController extends Controller
                     break;
 
                 case 'migrate':
-                    Artisan::call('migrate', ['--force' => true]);
+                    $migrationFile = $request->input('table');
+
+                    // Ensure file exists
+                    $defaultPath = base_path("database/migrations/{$migrationFile}.php");
+                    $modulePath = base_path("Modules/Subscription/database/migrations/{$migrationFile}.php");
+
+                    if (!File::exists($defaultPath) && !File::exists($modulePath)) {
+                        return response()->json(['error' => "Migration file '{$migrationFile}' not found."], 400);
+                    }
+
+                    $path = File::exists($modulePath)
+                        ? "Modules/Subscription/database/migrations/{$migrationFile}.php"
+                        : "database/migrations/{$migrationFile}.php";
+
+                    Artisan::call('migrate', [
+                        '--path' => $path,
+                        '--force' => true,
+                    ]);
                     break;
             }
 

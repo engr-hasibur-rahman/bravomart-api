@@ -36,6 +36,7 @@ class CustomerSupportTicketManageController extends Controller
             'meta' => new PaginationResource($tickets)
         ], 200);
     }
+
     public function show(Request $request)
     {
 
@@ -156,7 +157,7 @@ class CustomerSupportTicketManageController extends Controller
         $validator = Validator::make($request->all(), [
             'ticket_id' => 'required|exists:tickets,id',
             'message' => 'nullable|string',
-            'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip|max:2048'
+            'file' => 'nullable|file|mimes:jpg,png,jpeg,webp,zip,pdf|max:2048'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);

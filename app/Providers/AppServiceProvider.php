@@ -43,5 +43,10 @@ class AppServiceProvider extends ServiceProvider
             'deliveryman'  => User::class,
             'store'        => Store::class,
         ]);
+
+        $timezone = com_option_get('com_site_time_zone') ?? 'UTC';
+
+        config(['app.timezone' => $timezone]);
+        date_default_timezone_set($timezone);
     }
 }

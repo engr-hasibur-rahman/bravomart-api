@@ -118,7 +118,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'store_owner' => 0,
             'store_seller_id' => null,
             'stores' => null,
-            'status' => $data['status'] ?? 0,
+            'status' => 1,
         ]);
 
         if (!$deliveryman) {
@@ -239,7 +239,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                 'updater'
             ])
                 ->where('deleted_at', null)
-                ->pendingDeliveryman()
+                ->where('status', 'pending')
                 ->paginate(10);
             return $deliverymen;
         } catch (\Exception $exception) {
@@ -250,11 +250,21 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function approveDeliverymen(array $deliveryman_ids)
     {
         try {
-            $deliverymen = User::whereIn('id', $deliveryman_ids)
-                ->where('status', 0)
-                ->where('activity_scope', 'delivery_level')
+            $deliverymen = DeliveryMan::whereIn('id', $deliveryman_ids)
                 ->where('deleted_at', null)
-                ->update(['status' => 1]);
+                ->update(['status' => 'approved']);
+            return $deliverymen > 0;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    public function rejectDeliverymen(array $deliveryman_ids)
+    {
+        try {
+            $deliverymen = DeliveryMan::whereIn('id', $deliveryman_ids)
+                ->where('deleted_at', null)
+                ->update(['status' => 'rejected']);
             return $deliverymen > 0;
         } catch (\Exception $exception) {
             return false;
@@ -264,11 +274,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     public function changeStatus(array $data)
     {
         try {
-            $deliverymen = User::whereIn('id', $data['deliveryman_ids'])
+            return DeliveryMan::where('id', $data['id'])
                 ->where('deleted_at', null)
-                ->where('activity_scope', 'delivery_level')
                 ->update(['status' => $data['status']]);
-            return $deliverymen > 0;
+
         } catch (\Exception $exception) {
             return false;
         }

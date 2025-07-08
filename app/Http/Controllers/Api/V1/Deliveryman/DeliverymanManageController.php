@@ -87,7 +87,7 @@ class DeliverymanManageController extends Controller
                 'identification_number' => $request->identification_number,
                 'identification_photo_front' => $identification_photo_front?->id,
                 'identification_photo_back' => $identification_photo_back?->id,
-                'status' => 'approved',
+                'status' => 'pending',
             ]);
 
             // Assign roles to the user

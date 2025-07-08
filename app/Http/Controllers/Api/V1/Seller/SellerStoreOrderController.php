@@ -155,9 +155,7 @@ class SellerStoreOrderController extends Controller
 
             // Apply payment_status filter
             if (isset($request->payment_status)) {
-                $orders->whereHas('orderMaster', function ($query) use ($request) {
-                    $query->where('payment_status', $request->payment_status);
-                });
+                $orders->where('payment_status', $request->payment_status);
             }
             $orders->when($request->search, fn($query) => $query->where('id', 'LIKE', '%' . $request->search . '%')
                 ->orWhere('invoice_number', 'LIKE', '%' . $request->search . '%'));

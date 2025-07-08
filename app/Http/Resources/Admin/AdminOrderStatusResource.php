@@ -36,6 +36,11 @@ class AdminOrderStatusResource extends JsonResource
                 'count' => $this->where('status', 'processing')->count(),
             ],
             [
+                'label' => 'Pickup',
+                'value' => 'pickup',
+                'count' => $this->where('status', 'pickup')->count(),
+            ],
+            [
                 'label' => 'Shipped',
                 'value' => 'shipped',
                 'count' => $this->where('status', 'shipped')->count(),
