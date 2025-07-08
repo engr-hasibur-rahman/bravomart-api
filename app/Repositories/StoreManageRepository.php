@@ -2,30 +2,27 @@
 
 namespace App\Repositories;
 
-use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Http\Resources\Product\BestSellingPublicResource;
-use App\Http\Resources\Product\ProductDetailsPublicResource;
+use App\Models\Customer;
+use App\Models\Store;
 use App\Http\Resources\Seller\SellerStoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
 use App\Jobs\SendDynamicEmailJob;
 use App\Models\Banner;
-use App\Models\Customer;
 use App\Models\EmailTemplate;
+use App\Models\FlashSaleProduct;
+use App\Models\Media;
 use App\Models\ProductVariant;
-use App\Models\Store;
 use App\Models\DeliveryMan;
 use App\Models\Order;
-use App\Models\OrderActivity;
-use App\Models\OrderMaster;
 use App\Models\Product;
 use App\Models\Translation;
 use App\Models\User;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\Subscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
@@ -253,16 +250,68 @@ class StoreManageRepository implements StoreManageInterface
 
     public function delete(int|string $id): bool
     {
-        $store = Store::findOrFail($id);
 
-        // Delete related translations
-        $this->deleteTranslation($store->id, Store::class);
+        // check for if store id in media table null check all store and store type
+        $all_stores = Store::all();
+        foreach ($all_stores as $store) {
+            Media::where('user_id', $store->id)
+                ->whereNull('user_type')
+                ->update([
+                    'user_type' => Store::class,
+                ]);
+        }
 
-        // Delete related products and variants
-        $this->deleteStoreRelatedProducts($store->id);
+        $all_stores = Customer::all();
+        foreach ($all_stores as $store) {
+            Media::where('user_id', $store->id)
+                ->whereNull('user_type')
+                ->update([
+                    'user_type' => Customer::class,
+                ]);
+        }
 
-        // Delete the store
-        $store->delete();
+        $all_stores = Customer::all();
+        foreach ($all_stores as $store) {
+            Media::where('user_id', $store->id)
+                ->whereNull('user_type')
+                ->update([
+                    'user_type' => Customer::class,
+                ]);
+        }
+
+        $all_stores = User::all();
+        foreach ($all_stores as $store) {
+            Media::where('user_id', $store->id)
+                ->whereNull('user_type')
+                ->update([
+                    'user_type' => Customer::class,
+                ]);
+        }
+
+        try {
+            $store = Store::findOrFail($id);
+            $this->deleteTranslation($store->id, Store::class);
+            $this->deleteStoreRelatedProducts($store->id);
+
+            $store_id = $store->id;
+
+            // remove 	flash_sales
+            FlashSaleProduct::where('store_id', $store_id);
+
+            $store_all_media = Media::where('user_id', $store_id)
+                ->where('user_type', Store::class)
+                ->get();
+
+            // remove 	store media
+            foreach ($store_all_media as $media) {
+                if ($media->path && Storage::exists($media->path)) {
+                    Storage::delete($media->path);
+                }
+//                $media->delete();
+            }
+
+//            $store->delete();
+        }catch (\Throwable $th) {}
 
         return true;
     }
@@ -357,7 +406,6 @@ class StoreManageRepository implements StoreManageInterface
         return true;
     }
 
-    // Fetch deleted records(true = only trashed records, false = all records with trashed)
     public function records(bool $onlyDeleted = false)
     {
         try {
