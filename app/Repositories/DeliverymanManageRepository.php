@@ -67,10 +67,14 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'updater'
         ]);
         if (isset($filters['search'])) {
-            $searchTerm = $filters['search'];
-            $query->whereHas('user', function ($q) use ($searchTerm) {
-                $q->where('first_name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+            $searchTerms = preg_split('/\s+/', trim($filters['search'])); // Split by space
+            $query->whereHas('user', function ($q) use ($searchTerms) {
+                foreach ($searchTerms as $term) {
+                    $q->where(function ($subQ) use ($term) {
+                        $subQ->where('first_name', 'like', "%$term%")
+                            ->orWhere('last_name', 'like', "%$term%");
+                    });
+                }
             });
         }
 
