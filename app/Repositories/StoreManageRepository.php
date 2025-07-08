@@ -261,19 +261,10 @@ class StoreManageRepository implements StoreManageInterface
                 ]);
         }
 
-        $all_stores = Customer::all();
-        foreach ($all_stores as $store) {
-            Media::where('user_id', $store->id)
-                ->whereNull('user_type')
-                ->update([
-                    'user_type' => Customer::class,
-                ]);
-        }
 
         $all_stores = Customer::all();
         foreach ($all_stores as $store) {
             Media::where('user_id', $store->id)
-                ->whereNull('user_type')
                 ->update([
                     'user_type' => Customer::class,
                 ]);
@@ -282,9 +273,8 @@ class StoreManageRepository implements StoreManageInterface
         $all_stores = User::all();
         foreach ($all_stores as $store) {
             Media::where('user_id', $store->id)
-                ->whereNull('user_type')
                 ->update([
-                    'user_type' => Customer::class,
+                    'user_type' => User::class,
                 ]);
         }
 
