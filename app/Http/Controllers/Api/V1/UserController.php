@@ -7,13 +7,16 @@ use App\Http\Requests\UserCreateRequest;
 use App\Http\Resources\Deliveryman\DeliverymanDetailsResource;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\UserResource;
+use App\Interfaces\DeliverymanManageInterface;
 use App\Jobs\SendDynamicEmailJob;
 use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
+use App\Models\DeliveryMan;
 use App\Models\EmailTemplate;
 use App\Models\StoreSeller;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\MediaService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -31,10 +34,12 @@ class UserController extends Controller
 {
 
     public $repository;
+    protected $mediaService;
 
-    public function __construct(UserRepository $repository)
+    public function __construct(UserRepository $repository, MediaService $mediaService)
     {
         $this->repository = $repository;
+        $this->mediaService = $mediaService;
     }
 
     /* Social login start */
@@ -101,7 +106,7 @@ class UserController extends Controller
                 // Generate a Sanctum token for API access
                 $token = $existingUser->createToken('social_auth_token')->plainTextToken;
                 $accessToken = $token->accessToken;
-                $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
+                $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
                 $accessToken->save();
 
                 return redirect()->away($frontendUrl . '?' . http_build_query([
@@ -164,7 +169,7 @@ class UserController extends Controller
 
             $token = $newUser->createToken('social_auth_token')->plainTextToken;
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
 
             return redirect()->away($frontendUrl . '?' . http_build_query([
@@ -249,7 +254,7 @@ class UserController extends Controller
             // Generate a Sanctum token for the existing user
             $token = $existingUser->createToken('social_auth_token')->plainTextToken;
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
             return redirect()->away($frontendUrl . '?' . http_build_query([
                     'success' => true,
@@ -309,7 +314,7 @@ class UserController extends Controller
             // Generate a Sanctum token for the new user
             $token = $user->createToken('social_auth_token');
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
 
             return redirect()->away($frontendUrl . '?' . http_build_query([
@@ -374,7 +379,7 @@ class UserController extends Controller
 
             $token = $user->createToken('auth_token');
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
 
             // update firebase device token
@@ -914,7 +919,29 @@ class UserController extends Controller
 
             if ($user) {
                 if ($user->isDeliveryman()) {
-                    $user->update($request->all());
+                    $identification_photo_front = $this->mediaService->insert_media_image($request, 'deliveryman', 'identification_photo_front', 'verification');
+                    $identification_photo_back = $this->mediaService->insert_media_image($request, 'deliveryman', 'identification_photo_back', 'verification');
+                    // Create the user
+                    $user->update([
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'slug' => username_slug_generator($request->first_name, $request->last_name),
+                        'email' => $request->email,
+                        'phone' => $request->phone,
+                        'password' => Hash::make($request->password),
+                        'activity_scope' => 'delivery_level',
+                        'store_owner' => 0,
+                        'status' => 1,
+                    ]);
+                    $deliverymanDetails = DeliveryMan::find($user->id);
+                    $deliverymanDetails->update([
+                        'vehicle_type_id' => $request->vehicle_type_id,
+                        'area_id' => $request->area_id,
+                        'identification_type' => $request->identification_type,
+                        'identification_number' => $request->identification_number,
+                        'identification_photo_front' => $identification_photo_front?->id,
+                        'identification_photo_back' => $identification_photo_back?->id,
+                    ]);
                     return response()->json([
                         'status' => true,
                         'status_code' => 200,
