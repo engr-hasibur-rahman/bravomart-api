@@ -252,6 +252,9 @@ class StoreManageRepository implements StoreManageInterface
     {
 
         // check for if store id in media table null check all store and store type
+
+        dd(Store::all()->pluck('id')->toArray() ,Customer::all()->pluck('id')->toArray() ,User::all()->pluck('id')->toArray()  );
+
         $all_stores = Store::all();
         foreach ($all_stores as $store) {
             Media::where('user_id', $store->id)
