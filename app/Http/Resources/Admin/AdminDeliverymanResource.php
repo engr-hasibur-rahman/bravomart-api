@@ -37,7 +37,7 @@ class AdminDeliverymanResource extends JsonResource
                     ? $area_translation->where('key', 'name')->first()->value
                     : $this->area->name, // If language is empty or not provided attribute
             ]) : null,
-            'image_url' => ImageModifier::generateImageUrl($this->image),
+            'image_url' => ImageModifier::generateImageUrl($this->user?->image),
             'identification_photo_front_url' => ImageModifier::generateImageUrl($this->identification_photo_front),
             'identification_photo_back_url' => ImageModifier::generateImageUrl($this->identification_photo_back),
         ]);
