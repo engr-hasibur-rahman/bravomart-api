@@ -170,8 +170,36 @@ class StoreManageRepository implements StoreManageInterface
             $data = Arr::except($data, ['translations']);
             $store = Store::create($data);
 
-
             $seller = User::find($store->store_seller_id);
+
+            // modified media for this store
+            $user_id = $store->id;
+            $user_type = Store::class;
+
+            // If logo media exists, update its relation
+            if (!empty($store->logo)) {
+                $logoMedia = Media::find($store->logo);
+                if ($logoMedia) {
+                    $logoMedia->update([
+                        'user_id' => $user_id,
+                        'user_type' => $user_type,
+                        'usage_type' => 'store_logo',
+                    ]);
+                }
+            }
+
+            // If banner media exists, update its relation
+            if (!empty($store->banner)) {
+                $bannerMedia = Media::find($store->banner);
+                if ($bannerMedia) {
+                    $bannerMedia->update([
+                        'user_id' => $user_id,
+                        'user_type' => $user_type,
+                        'usage_type' => 'store_banner',
+                    ]);
+                }
+            }
+
             // Send email to seller register in background
             try {
 
@@ -251,17 +279,7 @@ class StoreManageRepository implements StoreManageInterface
     public function delete(int|string $id): bool
     {
 
-
-        $all_stores = Store::all();
-        foreach ($all_stores as $store) {
-            Media::where('user_id', $store->id)
-                ->update([
-                    'user_type' => Store::class,
-                ]);
-        }
-
-
-//        try {
+        try {
             $store = Store::findOrFail($id);
             $this->deleteTranslation($store->id, Store::class);
             $this->deleteStoreRelatedProducts($store->id);
@@ -269,22 +287,20 @@ class StoreManageRepository implements StoreManageInterface
             $store_id = $store->id;
 
             // remove 	flash_sales
-            FlashSaleProduct::where('store_id', $store_id);
-
-            $store_all_media = Media::where('user_id', $store_id)
-                ->where('user_type', Store::class)
-                ->get();
+            FlashSaleProduct::where('store_id', $store_id)->delete();
 
             // remove 	store media
+            $store_all_media = Media::where('user_id', $store_id)->where('user_type', Store::class)->get();
             foreach ($store_all_media as $media) {
                 if ($media->path && Storage::exists($media->path)) {
                     Storage::delete($media->path);
                 }
-//                $media->delete();
+                $media->delete();
             }
 
-//            $store->delete();
-//        }catch (\Throwable $th) {}
+
+            $store->delete();
+        }catch (\Throwable $th) {}
 
         return true;
     }
