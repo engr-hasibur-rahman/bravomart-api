@@ -251,6 +251,28 @@ class StoreManageRepository implements StoreManageInterface
     public function delete(int|string $id): bool
     {
 
+
+        // Load existing IDs into arrays for matching
+        $storeIds = Store::pluck('id')->toArray();
+        $customerIds = Customer::pluck('id')->toArray();
+        $userIds = User::pluck('id')->toArray();
+
+        Media::whereNull('user_type')->chunk(10000, function ($mediaBatch) use ($storeIds, $customerIds, $userIds) {
+            foreach ($mediaBatch as $media) {
+                if (in_array($media->user_id, $storeIds)) {
+                    $media->user_type = App\Models\Store::class;
+                } elseif (in_array($media->user_id, $customerIds)) {
+                    $media->user_type = App\Models\Customer::class;
+                } elseif (in_array($media->user_id, $userIds)) {
+                    $media->user_type = App\Models\User::class;
+                } else {
+                    continue; // Unknown type, skip
+                }
+
+                $media->save();
+            }
+        });
+
         // check for if store id in media table null check all store and store type
 
         dd(Store::all()->pluck('id')->toArray() ,Customer::all()->pluck('id')->toArray() ,User::all()->pluck('id')->toArray()  );
