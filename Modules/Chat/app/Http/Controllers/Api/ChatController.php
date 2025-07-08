@@ -21,13 +21,13 @@ class ChatController extends Controller
         $validator = Validator::make($request->all(), [
             'receiver_id' => 'required|integer',
             'message' => 'nullable|string',
-            'file'   => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
+            'file' => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors'  => $validator->errors(),
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -52,6 +52,15 @@ class ChatController extends Controller
         $receiver_id = $request->receiver_id;
         $receiver_type = $request->receiver_type;
 
+        if ($authUser->activity_scope === 'store_level') {
+            $isLiveChatEnabled = checkSubscription($request->store_id, 'live_chat');
+            if (!$isLiveChatEnabled) {
+                return response()->json([
+                    'message' => __('chat::messages.feature_not_available', ['name' => 'Chat']),
+                ], 422);
+            }
+        }
+
         if ($receiver_type == 'store') {
             $isLiveChatEnabled = checkSubscription($receiver_id, 'live_chat');
             if (!$isLiveChatEnabled) {
@@ -64,19 +73,19 @@ class ChatController extends Controller
         // Get Receiver info
         if ($receiver_type === 'customer') {
             $receiver = Customer::find($receiver_id);
-        }elseif($receiver_type === 'store') {
+        } elseif ($receiver_type === 'store') {
             $receiver = Store::find($receiver_id);
-        }elseif(in_array($receiver_type, ['admin', 'store', 'deliveryman'])){
+        } elseif (in_array($receiver_type, ['admin', 'store', 'deliveryman'])) {
             $receiver = User::find($receiver_id);
         }
         // Check  sender type
-        if ($authUser->activity_scope === 'system_level'){
+        if ($authUser->activity_scope === 'system_level') {
             $authType = 'admin';
-        }elseif($authUser->activity_scope === 'store_level'){
+        } elseif ($authUser->activity_scope === 'store_level') {
             $authType = 'store';
-        }elseif($authUser->activity_scope === 'delivery_level'){
+        } elseif ($authUser->activity_scope === 'delivery_level') {
             $authType = 'deliveryman';
-        }else{
+        } else {
             $authType = 'customer';
         }
 
@@ -84,25 +93,25 @@ class ChatController extends Controller
         if (empty($receiver)) {
             return response()->json([
                 'success' => false,
-                'message'  => 'Receiver not found',
+                'message' => 'Receiver not found',
             ], 404);
         }
 
         // Receiver Type Set
         if (!empty($receiver)) {
-            if ($receiver->activity_scope === 'system_level'){
+            if ($receiver->activity_scope === 'system_level') {
                 $receiver_type = 'admin';
-            }elseif(isset($receiver->store_type) && !empty($receiver->store_type)){
+            } elseif (isset($receiver->store_type) && !empty($receiver->store_type)) {
                 // store check and store not exits activity_scope check only store_type
                 $receiver_type = 'store';
-            }elseif($receiver->activity_scope === 'delivery_level'){
+            } elseif ($receiver->activity_scope === 'delivery_level') {
                 $receiver_type = 'deliveryman';
-            }else{
+            } else {
                 $receiver_type = 'customer';
             }
         }
 
-       // if sender and receiver type same  message not send
+        // if sender and receiver type same  message not send
         if ($authType === $receiver_type) {
             return response()->json([
                 'success' => true,
@@ -112,7 +121,7 @@ class ChatController extends Controller
 
         // receiver chat id
         $receiver_chat = Chat::select('id')->where('user_id', $receiver->id)->where('user_type', $receiver_type)->first();
-        if (empty($receiver_chat)){
+        if (empty($receiver_chat)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Receiver chat not found',
@@ -121,12 +130,12 @@ class ChatController extends Controller
 
 
         $data = [
-            'receiver_chat_id'    => $receiver_chat->id,
-            'sender_id'    => $authUser->id,
-            'sender_type'  => $authType,
-            'receiver_id'  => $receiver->id,
-            'receiver_type'=> $receiver_type,
-            'message'      => $request->message,
+            'receiver_chat_id' => $receiver_chat->id,
+            'sender_id' => $authUser->id,
+            'sender_type' => $authType,
+            'receiver_id' => $receiver->id,
+            'receiver_type' => $receiver_type,
+            'message' => $request->message,
         ];
 
 
@@ -156,8 +165,7 @@ class ChatController extends Controller
                 });
 
                 $image->save($fullPath);
-            }
-            // PDF or other allowed non-image
+            } // PDF or other allowed non-image
             elseif ($extension === 'pdf') {
                 $file->storeAs('uploads/chat', $filename, 'public');
             }
@@ -169,13 +177,14 @@ class ChatController extends Controller
 
         // Update online_at only for this store
         try {
-            $storeId =(int) $request->store_id;
+            $storeId = (int)$request->store_id;
             if ($storeId) {
                 Store::where('id', $storeId)
                     ->where('store_seller_id', $authUser->id)
-                    ->update(['online_at' =>  (new \DateTime())->format("Y-m-d H:i:s")]);
+                    ->update(['online_at' => (new \DateTime())->format("Y-m-d H:i:s")]);
             }
-        }catch (\Exception $e){}
+        } catch (\Exception $e) {
+        }
 
         return response()->json([
             'success' => true,
