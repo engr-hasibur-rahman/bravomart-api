@@ -70,7 +70,24 @@ class MigrationController extends Controller
                     break;
 
                 case 'migrate':
-                    Artisan::call('migrate', ['--force' => true]);
+                    $migrationFile = $request->input('table');
+
+                    // Ensure file exists
+                    $defaultPath = base_path("database/migrations/{$migrationFile}.php");
+                    $modulePath = base_path("Modules/Subscription/database/migrations/{$migrationFile}.php");
+
+                    if (!File::exists($defaultPath) && !File::exists($modulePath)) {
+                        return response()->json(['error' => "Migration file '{$migrationFile}' not found."], 400);
+                    }
+
+                    $path = File::exists($modulePath)
+                        ? "Modules/Subscription/database/migrations/{$migrationFile}.php"
+                        : "database/migrations/{$migrationFile}.php";
+
+                    Artisan::call('migrate', [
+                        '--path' => $path,
+                        '--force' => true,
+                    ]);
                     break;
             }
 
