@@ -166,7 +166,10 @@ return [
     'already_featured' => 'This :name is already featured!',
 
     'available_status_inactive' => 'Available status is inactive!',
-    'setting_disabled' => ':name settings is disabled'
+    'setting_disabled' => ':name settings is disabled',
+
+    'not_found' => ':name not found!',
+    'feature_not_available' => ':name feature is not available!',
 
 ];
 

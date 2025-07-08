@@ -52,7 +52,14 @@ class ChatController extends Controller
         $receiver_id = $request->receiver_id;
         $receiver_type = $request->receiver_type;
 
-
+        if ($receiver_type == 'store') {
+            $isLiveChatEnabled = checkSubscription($receiver_id, 'live_chat');
+            if (!$isLiveChatEnabled) {
+                return response()->json([
+                    'message' => __('chat::messages.feature_not_available', ['name' => 'Chat']),
+                ], 422);
+            }
+        }
 
         // Get Receiver info
         if ($receiver_type === 'customer') {

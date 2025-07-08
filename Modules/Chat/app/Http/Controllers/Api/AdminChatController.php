@@ -27,12 +27,14 @@ class AdminChatController extends Controller
         if (!$chat) {
             return response()->json([
                 'success' => false,
-                'message' => 'Chats not found',
+                'message' => __('chat::messages.not_found', ['name' => 'Chat']),
             ]);
         }
 
 
-        $query = Chat::with('user') ->where('user_type', '!=', 'admin');
+        $query = Chat::with('user')
+            ->where('user_type', '!=', 'admin')
+            ->withLiveChatEnabledStoreSubscription();
 
         $name = $request->input('search');
         if ($name) {
@@ -79,33 +81,34 @@ class AdminChatController extends Controller
 
 
         return response()->json([
-            'success'  => true,
+            'success' => true,
             'data' => ChatListResource::collection($chats),
             'meta' => new PaginationResource($chats)
         ]);
     }
+
     public function chatWiseFetchMessages(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'receiver_id'   => 'required|integer',
+            'receiver_id' => 'required|integer',
             'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
-            'search'        => 'nullable|string',
+            'search' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors'  => $validator->errors(),
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $auth_id = auth()->guard('api')->user()->id;
-        $chat = Chat::where('user_id',$auth_id)->first();
+        $chat = Chat::where('user_id', $auth_id)->first();
 
         if (empty($chat)) {
             return response()->json([
                 'success' => false,
-                'message'  => 'Chats not found',
+                'message' => __('chat::messages.not_found', ['name' => 'Chat']),
             ]);
         }
 
@@ -114,6 +117,15 @@ class AdminChatController extends Controller
 
         $receiver_id = $request->receiver_id;
         $receiver_type = $request->receiver_type;
+
+        if ($receiver_type == 'store') {
+            $isLiveChatEnabled = checkSubscription($receiver_id, 'live_chat');
+            if (!$isLiveChatEnabled) {
+                return response()->json([
+                    'message' => __('chat::messages.feature_not_available', ['name' => 'Chat']),
+                ], 422);
+            }
+        }
 
         // get message
         $message_query = ChatMessage::query()
@@ -139,12 +151,13 @@ class AdminChatController extends Controller
             ->paginate(30);
 
         return response()->json([
-            'success'  => true,
+            'success' => true,
             'unread_message' => $unread_message,
             'data' => ChatMessageDetailsResource::collection($messages),
             'meta' => new PaginationResource($messages)
         ]);
     }
+
     public function markAsSeen(Request $request)
     {
         ChatMessage::where('chat_id', $request->chat_id)

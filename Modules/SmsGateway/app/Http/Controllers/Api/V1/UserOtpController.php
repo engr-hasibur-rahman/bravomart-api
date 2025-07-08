@@ -30,7 +30,7 @@ class UserOtpController extends Controller
         $setting_options = SettingOption::where('option_name', 'otp_login_enabled_disable')->value('option_value');
         if (empty($setting_options) || $setting_options === 'off') {
             throw new HttpResponseException(response()->json([
-                'message' => __('messages.setting_disabled', ['name' => 'Otp login']),
+                'message' => __('smsgateway::messages.setting_disabled', ['name' => 'Otp login']),
             ], Response::HTTP_UNPROCESSABLE_ENTITY));
         }
     }
@@ -49,7 +49,7 @@ class UserOtpController extends Controller
         $phone = new PhoneNumber($request->phone, $request->region);
         if (!$phone->isOfCountry($request->region)) {
             return response()->json([
-                'message' => __('messages.invalid_region', ['name' => 'phone']),
+                'message' => __('smsgateway::messages.invalid_region', ['name' => 'phone']),
             ]);
         }
         $formattedNumber = $this->formatPhoneNumber($request->get('phone'), $request->get('region'));
@@ -59,7 +59,7 @@ class UserOtpController extends Controller
 
         if (!$success) {
             return response()->json([
-                'message' => __('messages.send_failed', ['name' => 'Otp'])
+                'message' => __('smsgateway::messages.send_failed', ['name' => 'Otp'])
             ], 500);
         }
 
@@ -101,7 +101,7 @@ class UserOtpController extends Controller
         );
 
         return response()->json([
-            'message' => __('messages.send_success', ['name' => 'Otp']),
+            'message' => __('smsgateway::messages.send_success', ['name' => 'Otp']),
         ]);
     }
 
@@ -134,7 +134,7 @@ class UserOtpController extends Controller
 
         if (!$user) {
             return response()->json([
-                'message' => __('messages.data_not_found'),
+                'message' => __('smsgateway::messages.data_not_found'),
             ], Response::HTTP_NOT_FOUND);
         }
 
@@ -146,13 +146,13 @@ class UserOtpController extends Controller
 
         if (!$otp) {
             return response()->json([
-                'message' => __('messages.verification_failed', ['name' => 'Otp']),
+                'message' => __('smsgateway::messages.verification_failed', ['name' => 'Otp']),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         if ($otp->expired_at < now()) {
             return response()->json([
-                'message' => __('messages.expired', ['name' => 'Otp']),
+                'message' => __('smsgateway::messages.expired', ['name' => 'Otp']),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -205,7 +205,7 @@ class UserOtpController extends Controller
         return response()->json([
             "status" => true,
             "status_code" => 200,
-            "message" => __('messages.login_success', ['name' => 'Customer']),
+            "message" => __('smsgateway::messages.login_success', ['name' => 'Customer']),
             "token" => $token->plainTextToken,
             'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
             "email_verified" => (bool)$user->email_verified, // shorthand of -> $token->email_verified ? true : false
@@ -230,7 +230,7 @@ class UserOtpController extends Controller
         $phone = new PhoneNumber($request->phone, $request->region);
         if (!$phone->isOfCountry($request->region)) {
             return response()->json([
-                'message' => __('messages.invalid_region', ['name' => 'phone']),
+                'message' => __('smsgateway::messages.invalid_region', ['name' => 'phone']),
             ]);
         }
         $formattedNumber = $this->formatPhoneNumber($request->get('phone'), $request->get('region'));
@@ -248,7 +248,7 @@ class UserOtpController extends Controller
 
         if (!$user) {
             return response()->json([
-                'message' => __('messages.data_not_found'),
+                'message' => __('smsgateway::messages.data_not_found'),
             ], Response::HTTP_NOT_FOUND);
         }
 
@@ -261,7 +261,7 @@ class UserOtpController extends Controller
         if ($lastOtp && $lastOtp->created_at > now()->subSeconds(60)) {
             $remaining = 60 - now()->diffInSeconds($lastOtp->created_at);
             return response()->json([
-                'message' => __('messages.resend_wait', ['seconds' => $remaining]),
+                'message' => __('smsgateway::messages.resend_wait', ['seconds' => $remaining]),
             ], Response::HTTP_TOO_MANY_REQUESTS);
         }
 
@@ -271,13 +271,13 @@ class UserOtpController extends Controller
 
         if (!$success) {
             return response()->json([
-                'message' => __('messages.send_failed', ['name' => 'Otp']),
+                'message' => __('smsgateway::messages.send_failed', ['name' => 'Otp']),
             ], 500);
         }
 
         if (!$lastOtp) {
             return response()->json([
-                'message' => __('messages.send_first', ['name' => 'Otp']),
+                'message' => __('smsgateway::messages.send_first', ['name' => 'Otp']),
             ]);
         }
 
@@ -290,7 +290,7 @@ class UserOtpController extends Controller
             ]);
 
         return response()->json([
-            'message' => __('messages.send_success', ['name' => 'Otp']),
+            'message' => __('smsgateway::messages.send_success', ['name' => 'Otp']),
         ]);
     }
 
