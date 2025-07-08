@@ -255,7 +255,6 @@ class StoreManageRepository implements StoreManageInterface
         $all_stores = Store::all();
         foreach ($all_stores as $store) {
             Media::where('user_id', $store->id)
-                ->whereNull('user_type')
                 ->update([
                     'user_type' => Store::class,
                 ]);
