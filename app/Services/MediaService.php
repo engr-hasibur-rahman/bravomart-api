@@ -24,6 +24,7 @@ class MediaService
     public function insert_media_image($request, $type = 'admin', $file_field_name = 'file', $folder_type = 'default')
     {
         if ($request->hasFile($file_field_name)) {
+
             $image = $request->$file_field_name;
 
 

@@ -926,14 +926,12 @@ class UserController extends Controller
                         'first_name' => $request->first_name,
                         'last_name' => $request->last_name,
                         'slug' => username_slug_generator($request->first_name, $request->last_name),
-                        'email' => $request->email,
+                        'image' => $request->image,
                         'phone' => $request->phone,
-                        'password' => Hash::make($request->password),
                         'activity_scope' => 'delivery_level',
                         'store_owner' => 0,
-                        'status' => 1,
                     ]);
-                    $deliverymanDetails = DeliveryMan::find($user->id);
+                    $deliverymanDetails = DeliveryMan::where('user_id',$user->id);
                     $deliverymanDetails->update([
                         'vehicle_type_id' => $request->vehicle_type_id,
                         'area_id' => $request->area_id,
