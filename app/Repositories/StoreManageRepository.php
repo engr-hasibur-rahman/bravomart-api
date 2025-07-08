@@ -2,8 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Models\Customer;
 use App\Models\Store;
+use App\Models\Customer;
+use App\Models\User;
 use App\Http\Resources\Seller\SellerStoreDetailsResource;
 use App\Interfaces\StoreManageInterface;
 use App\Jobs\SendDynamicEmailJob;
@@ -16,7 +17,6 @@ use App\Models\DeliveryMan;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Translation;
-use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
@@ -288,7 +288,7 @@ class StoreManageRepository implements StoreManageInterface
                 ]);
         }
 
-        try {
+//        try {
             $store = Store::findOrFail($id);
             $this->deleteTranslation($store->id, Store::class);
             $this->deleteStoreRelatedProducts($store->id);
@@ -311,7 +311,7 @@ class StoreManageRepository implements StoreManageInterface
             }
 
 //            $store->delete();
-        }catch (\Throwable $th) {}
+//        }catch (\Throwable $th) {}
 
         return true;
     }
