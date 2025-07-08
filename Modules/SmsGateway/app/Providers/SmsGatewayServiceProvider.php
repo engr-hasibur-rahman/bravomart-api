@@ -27,6 +27,7 @@ class SmsGatewayServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+        $this->loadTranslationsFrom(module_path($this->name, 'resources/lang'), 'smsgateway');
     }
 
     /**

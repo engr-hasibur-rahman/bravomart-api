@@ -10,6 +10,23 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Modules\Subscription\app\Models\Subscription;
+
+
+if (!function_exists('checkSubscription')) {
+    function checkSubscription($storeId, $feature = null)
+    {
+        $query = \Modules\Subscription\app\Models\StoreSubscription::where('store_id', $storeId)
+            ->where('status', 1)
+            ->where('payment_status', 'paid');
+
+        if ($feature !== null) {
+            $query->where($feature, 1); // assuming 1 = enabled
+        }
+
+        return $query->exists();
+    }
+}
 
 
 if (!function_exists('remove_invalid_charcaters')) {
@@ -114,7 +131,7 @@ if (!function_exists('translate')) {
                 foreach ($colNames as $key) {
                     $translatedValue = $translation[$key] ?? null;
 
-                    if ($translatedValue === null|| $translatedValue === '') {
+                    if ($translatedValue === null || $translatedValue === '') {
                         Translation::where('translatable_type', $refPath)
                             ->where('translatable_id', $refid)
                             ->where('language', $translation['language_code'])
@@ -438,9 +455,9 @@ if (!function_exists('translate')) {
 
             $response = [
                 'image_id' => $image->id,
-                'path'     => $path,
-                'img_url'  => url($final_path), // Clean SEO-friendly URL
-                'img_alt'  => $image->alt,
+                'path' => $path,
+                'img_url' => url($final_path), // Clean SEO-friendly URL
+                'img_alt' => $image->alt,
             ];
         } elseif ($default) {
             $response['img_url'] = url('uploads/no-image.png');

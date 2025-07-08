@@ -59,6 +59,14 @@ class CustomerChatController extends Controller
         $receiver_id = $request->receiver_id;
         $receiver_type = $request->receiver_type;
 
+        if ($receiver_type == 'store') {
+            $isLiveChatEnabled = checkSubscription($receiver_id, 'live_chat');
+            if (!$isLiveChatEnabled) {
+                return response()->json([
+                    'message' => __('chat::messages.feature_not_available', ['name' => 'Chat']),
+                ], 422);
+            }
+        }
 
         // Get Receiver info
         if ($receiver_type === 'customer') {
@@ -265,7 +273,8 @@ class CustomerChatController extends Controller
         // main chat list
         $query = Chat::with('user')
             ->whereIn('id', $all_chat_ids)
-            ->where('id', '!=', $chat->id);
+            ->where('id', '!=', $chat->id)
+            ->withLiveChatEnabledStoreSubscription();
 
         $name = $request->input('search');
         if ($name) {
@@ -336,6 +345,14 @@ class CustomerChatController extends Controller
         $receiver_id = $request->receiver_id;
         $receiver_type = $request->receiver_type;
 
+        if ($receiver_type == 'store') {
+            $isLiveChatEnabled = checkSubscription($receiver_id, 'live_chat');
+            if (!$isLiveChatEnabled) {
+                return response()->json([
+                    'message' => __('chat::messages.feature_not_available', ['name' => 'Chat']),
+                ], 422);
+            }
+        }
         // get message
         $message_query = ChatMessage::query()
             ->where(function ($query) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {

@@ -2,10 +2,12 @@
 
 namespace Modules\Chat\app\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Modules\Subscription\App\Models\StoreSubscription;
 
 
 class Chat extends Model
@@ -27,4 +29,37 @@ class Chat extends Model
     {
         return $this->hasMany(ChatMessage::class);
     }
+
+    public function storeSubscription()
+    {
+        return $this->hasOne(StoreSubscription::class, 'store_id', 'user_id');
+    }
+    public function scopeWithActiveStoreSubscription(Builder $query): Builder
+    {
+        return $query->where(function ($q) {
+            $q->where('user_type', '!=', 'store')
+                ->orWhere(function ($q2) {
+                    $q2->where('user_type', 'store')
+                        ->whereHas('storeSubscription', function ($q3) {
+                            $q3->where('payment_status', 'paid')
+                                ->where('status', 1);
+                        });
+                });
+        });
+    }
+    public function scopeWithLiveChatEnabledStoreSubscription(Builder $query): Builder
+    {
+        return $query->where(function ($q) {
+            $q->where('user_type', '!=', 'store')
+                ->orWhere(function ($q2) {
+                    $q2->where('user_type', 'store')
+                        ->whereHas('storeSubscription', function ($q3) {
+                            $q3->where('payment_status', 'paid')
+                                ->where('status', 1)
+                                ->where('live_chat', 1); // extra condition
+                        });
+                });
+        });
+    }
+
 }
