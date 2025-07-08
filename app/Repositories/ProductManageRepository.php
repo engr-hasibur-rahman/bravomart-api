@@ -9,6 +9,7 @@ use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
 use App\Jobs\SendDynamicEmailJob;
 use App\Models\EmailTemplate;
+use App\Models\Media;
 use App\Models\Store;
 use App\Models\Product;
 use App\Models\ProductTag;
@@ -108,6 +109,18 @@ class ProductManageRepository implements ProductManageInterface
             $data = Arr::except($data, ['translations']);
             $product = Product::create($data);
 
+            //Set up media binding for main image
+            if (!empty($product->image)) {
+                $mainImage = Media::find($product->image);
+                if ($mainImage) {
+                    $mainImage->update([
+                        'user_id' => $product->store_id,
+                        'user_type' => Store::class,
+                        'usage_type' => 'product_main',
+                    ]);
+                }
+            }
+
             // If variants exist 
             if (!empty($data['variants']) && is_array($data['variants'])) {
                 $variants = array_map(function ($variant) use ($product) {
@@ -123,6 +136,19 @@ class ProductManageRepository implements ProductManageInterface
                 // insert all variants at once
                 foreach ($variants as $variant) {
                     ProductVariant::create($variant);
+
+                    // Set up media binding for variant image
+                    if (!empty($variantData['image'])) {
+                        $variantImage = Media::find($variantData['image']);
+                        if ($variantImage) {
+                            $variantImage->update([
+                                'user_id' => $product->store_id,
+                                'user_type' => Store::class,
+                                'usage_type' => 'product_variant',
+                            ]);
+                        }
+                    }
+
                 }
             }
 
