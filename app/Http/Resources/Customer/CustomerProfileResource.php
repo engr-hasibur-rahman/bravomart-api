@@ -46,7 +46,7 @@ class CustomerProfileResource extends JsonResource
 
             // Optional: fallback region only if not in E.164 format
             if (!str_starts_with($phone, '+')) {
-                $defaultRegion = 'BD'; // or infer from user/account settings
+                $phone = '+' . $phone;
             }
 
             $numberProto = $phoneUtil->parse($phone, $defaultRegion);
