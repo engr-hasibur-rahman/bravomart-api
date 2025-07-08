@@ -252,31 +252,6 @@ class StoreManageRepository implements StoreManageInterface
     {
 
 
-        // Load existing IDs into arrays for matching
-        $storeIds = Store::pluck('id')->toArray();
-        $customerIds = Customer::pluck('id')->toArray();
-        $userIds = User::pluck('id')->toArray();
-
-        Media::whereNull('user_type')->chunk(10000, function ($mediaBatch) use ($storeIds, $customerIds, $userIds) {
-            foreach ($mediaBatch as $media) {
-                if (in_array($media->user_id, $storeIds)) {
-                    $media->user_type = App\Models\Store::class;
-                } elseif (in_array($media->user_id, $customerIds)) {
-                    $media->user_type = App\Models\Customer::class;
-                } elseif (in_array($media->user_id, $userIds)) {
-                    $media->user_type = App\Models\User::class;
-                } else {
-                    continue; // Unknown type, skip
-                }
-
-                $media->save();
-            }
-        });
-
-        // check for if store id in media table null check all store and store type
-
-        dd(Store::all()->pluck('id')->toArray() ,Customer::all()->pluck('id')->toArray() ,User::all()->pluck('id')->toArray()  );
-
         $all_stores = Store::all();
         foreach ($all_stores as $store) {
             Media::where('user_id', $store->id)
@@ -285,22 +260,6 @@ class StoreManageRepository implements StoreManageInterface
                 ]);
         }
 
-
-        $all_cus = Customer::all();
-        foreach ($all_cus as $cus) {
-            Media::where('user_id', $cus->id)
-                ->update([
-                    'user_type' => Customer::class,
-                ]);
-        }
-
-        $all_users = User::all();
-        foreach ($all_users as $user) {
-            Media::where('user_id', $user->id)
-                ->update([
-                    'user_type' => User::class,
-                ]);
-        }
 
 //        try {
             $store = Store::findOrFail($id);
