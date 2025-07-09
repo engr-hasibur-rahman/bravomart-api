@@ -1,13 +1,17 @@
 <?php
 
+use App\Models\Customer;
+use App\Models\DeliveryMan;
 use App\Models\SettingOption;
 use App\Models\CouponLine;
 use App\Models\Media;
 use App\Models\Translation;
 use App\Models\UniversalNotification;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Modules\Subscription\app\Models\Subscription;
@@ -25,6 +29,185 @@ if (!function_exists('checkSubscription')) {
         }
 
         return $query->exists();
+    }
+}
+
+if (!function_exists('socialLogin')) {
+    function socialLogin(string $accessToken, string $type, string $firebaseToken = null, string $role)
+    {
+        $socialId = null;
+        $name = null;
+        $email = null;
+        if ($type === 'google') {
+            $data = verifyGoogleToken($accessToken);
+            if (!$data) {
+                return response()->json(['error' => 'invalid token']);
+            }
+            $socialId = $data['id'];
+            $name = $data['name'];
+            $email = $data['email'];
+        } elseif ($type === 'facebook') {
+            $data = verifyFacebookToken($accessToken);
+            if (!$data) {
+                return response()->json(['error' => 'invalid token']);
+            }
+            $socialId = $data['id'];
+            $name = $data['name'];
+            $email = $data['email'];
+        } else {
+            return response()->json([
+                'message' => __('messages.invalid_token')
+            ], 422);
+        }
+        $socialColumn = $type . '_id';
+        if ($role === 'customer') {
+            $user = Customer::where($socialColumn, $socialId)
+                ->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    $socialColumn => $socialId,
+                    'firebase_token' => $firebaseToken,
+                    'password' => Hash::make(Str::random(8)), // Never use dummy passwords
+                ]);
+            } else {
+                $user->update([
+                    $socialColumn => $socialId,
+                    'firebase_token' => $firebaseToken,
+                ]);
+            }
+            // Create Sanctum token
+            $token = $user->createToken('social_auth_token');
+            $accessToken = $token->accessToken;
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
+            $accessToken->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('auth.social.login'),
+                'token' => $token->plainTextToken,
+                'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
+                'email_verified' => (bool)$user->email_verified,
+                'account_status' => $user->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => (bool)$user->marketing_email,
+                'activity_notification' => (bool)$user->activity_notification,
+            ]);
+        }
+
+        if ($role === 'deliveryman') {
+            $userButNotDeliveryman = User::where($socialColumn, $socialId)
+                ->whereNot('activity_scope', 'delivery_level')
+                ->first();
+            $user = User::where($socialColumn, $socialId)
+                ->where('activity_scope', 'delivery_level')
+                ->first();
+            if ($userButNotDeliveryman) {
+                $user_role = match ($userButNotDeliveryman->activity_scope) {
+                    'system_level' => 'Admin',
+                    'store_level' => 'Seller',
+                    'deliveryman' => 'Deliveryman',
+                    'customer' => 'Customer',
+                    default => 'user',
+                };
+
+                if ($userButNotDeliveryman) {
+                    return response()->json([
+                        'message' => __('messages.user_exists', ['name' => $user_role]),
+                    ]);
+                }
+            }
+
+            if (!$user) {
+                $user = User::create([
+                    'first_name' => $name,
+                    'email' => $email,
+                    'slug' => username_slug_generator($name),
+                    $socialColumn => $socialId,
+                    'firebase_token' => $firebaseToken,
+                    'password' => Hash::make(Str::random(8)), // Never use dummy passwords
+                    'activity_scope' => 'delivery_level',
+                    'store_owner' => 0,
+                    'status' => 0,
+                ]);
+                $deliverymanDetails = Deliveryman::create([
+                    'user_id' => $user->id,
+                    'status' => 'pending',
+                ]);
+            } else {
+                $user->update([
+                    $socialColumn => $socialId,
+                    'firebase_token' => $firebaseToken,
+                ]);
+            }
+
+            // Create Sanctum token
+            $token = $user->createToken('social_auth_token');
+            $accessToken = $token->accessToken;
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
+            $accessToken->save();
+            return response()->json([
+                'success' => true,
+                'message' => __('auth.social.login'),
+                'token' => $token->plainTextToken,
+                'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
+                "deliveryman_id" => $user->id,
+                'email_verified' => (bool)$user->email_verified,
+                'account_status' => $user->deactivated_at ? 'deactivated' : 'active',
+                'marketing_email' => (bool)$user->marketing_email,
+                'activity_notification' => (bool)$user->activity_notification,
+            ]);
+        }
+    }
+}
+if (!function_exists('verifyFacebookToken')) {
+    function verifyFacebookToken(string $accessToken)
+    {
+        $client = new \GuzzleHttp\Client();
+
+        // Verify token & get user info
+        $response = $client->get('https://graph.facebook.com/me', [
+            'query' => [
+                'access_token' => $accessToken,
+                'fields' => 'id,name,email',
+            ]
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            return null;
+        }
+
+        return json_decode($response->getBody(), true);
+    }
+}
+
+if (!function_exists('verifyGoogleToken')) {
+    function verifyGoogleToken(string $accessToken)
+    {
+        try {
+            $client = new \GuzzleHttp\Client();
+
+            $response = $client->get('https://www.googleapis.com/oauth2/v1/userinfo', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Accept' => 'application/json',
+                ],
+            ]);
+
+            $userData = json_decode($response->getBody(), true);
+            // Optional: check required fields
+            if (!isset($userData['email']) || !isset($userData['id'])) {
+                return null;
+            }
+
+            return $userData;
+
+        } catch (\Exception $e) {
+            // You can log: $e->getMessage() or $e->getResponse()->getBody()->getContents()
+            return null;
+        }
     }
 }
 

@@ -226,7 +226,6 @@ class UserController extends Controller
             'client_secret' => com_option_get('com_google_client_secret'),
             'redirect_uri' => com_option_get('com_google_client_callback_url'),
         ]);
-
         $user->stateless()->user();
         $google_id = $user->user()->id;
         $google_email = $user->user()->email;

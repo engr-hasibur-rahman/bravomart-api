@@ -138,7 +138,7 @@ class DeliverymanManageController extends Controller
                 $type = $request->type;
                 $role = $request->role;
 
-                return $this->socialLogin($accessToken, $type, $firebaseToken, $role);
+                return socialLogin($accessToken, $type, $firebaseToken, $role);
             }
 
             $request->validate([
@@ -220,133 +220,6 @@ class DeliverymanManageController extends Controller
             ], 500);
         }
     }
-
-    private function socialLogin(string $accessToken, string $type, string $firebaseToken = null, string $role)
-    {
-        $socialId = null;
-        $name = null;
-        $email = null;
-        if ($type === 'google') {
-            $data = $this->verifyGoogleToken($accessToken);
-            $socialId = $data['id'];
-            $name = $data['name'];
-            $email = $data['email'];
-        } elseif ($type === 'facebook') {
-            $data = $this->verifyFacebookToken($accessToken);
-            $socialId = $data['id'];
-            $name = $data['name'];
-            $email = $data['email'];
-        } else {
-            return response()->json([
-                'message' => __('messages.invalid_token')
-            ], 422);
-        }
-        $socialColumn = $type . '_id';
-
-        $userButNotDeliveryman = User::where($socialColumn, $socialId)
-            ->whereNot('activity_scope', 'delivery_level')
-            ->first();
-        $user = User::where($socialColumn, $socialId)
-            ->where('activity_scope', 'delivery_level')
-            ->first();
-        if ($userButNotDeliveryman) {
-            $user_role = match ($userButNotDeliveryman->activity_scope) {
-                'system_level' => 'Admin',
-                'store_level' => 'Seller',
-                'deliveryman' => 'Deliveryman',
-                'customer' => 'Customer',
-                default => 'user',
-            };
-
-            if ($userButNotDeliveryman) {
-                return response()->json([
-                    'message' => __('messages.user_exists', ['name' => $user_role]),
-                ]);
-            }
-        }
-
-        if (!$user) {
-            $user = User::create([
-                'first_name' => $name,
-                'email' => $email,
-                'slug' => username_slug_generator($name),
-                $socialColumn => $socialId,
-                'firebase_token' => $firebaseToken,
-                'password' => Hash::make(Str::random(8)), // Never use dummy passwords
-                'activity_scope' => 'delivery_level',
-                'store_owner' => 0,
-                'status' => 0,
-            ]);
-        } else {
-            $user->update([
-                $socialColumn => $socialId,
-                'firebase_token' => $firebaseToken,
-            ]);
-        }
-
-        // Create Sanctum token
-        $token = $user->createToken('social_auth_token');
-
-        return response()->json([
-            'success' => true,
-            'message' => __('auth.social.login'),
-            'token' => $token->plainTextToken,
-            'expires_at' => now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60))->format('Y-m-d H:i:s'),
-            "deliveryman_id" => $user->id,
-            'email_verified' => (bool)$user->email_verified,
-            'account_status' => $user->deactivated_at ? 'deactivated' : 'active',
-            'marketing_email' => (bool)$user->marketing_email,
-            'activity_notification' => (bool)$user->activity_notification,
-        ]);
-    }
-
-    private function verifyGoogleToken(string $accessToken)
-    {
-        try {
-            $client = new \GuzzleHttp\Client();
-
-            $response = $client->get('https://www.googleapis.com/oauth2/v1/userinfo', [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $accessToken,
-                    'Accept' => 'application/json',
-                ],
-            ]);
-
-            $userData = json_decode($response->getBody(), true);
-
-            // Optional: check required fields
-            if (!isset($userData['email']) || !isset($userData['id'])) {
-                return null;
-            }
-
-            return $userData;
-
-        } catch (\Exception $e) {
-            // You can log: $e->getMessage() or $e->getResponse()->getBody()->getContents()
-            return $e->getResponse()->getBody()->getContents();
-        }
-    }
-
-
-    private function verifyFacebookToken(string $accessToken)
-    {
-        $client = new \GuzzleHttp\Client();
-
-        // Verify token & get user info
-        $response = $client->get('https://graph.facebook.com/me', [
-            'query' => [
-                'access_token' => $accessToken,
-                'fields' => 'id,name,email',
-            ]
-        ]);
-
-        if ($response->getStatusCode() !== 200) {
-            return null;
-        }
-
-        return json_decode($response->getBody(), true);
-    }
-
 
     public function refreshToken(Request $request)
     {
