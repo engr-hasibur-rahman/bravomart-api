@@ -150,7 +150,7 @@ class UserController extends Controller
                     'password' => Hash::make('123456dummy'),
                     'activity_scope' => 'delivery_level',
                     'store_owner' => 0,
-                    'status' => 1,
+                    'status' => 0,
                 ]);
             } else {
                 $newUser = User::create([
@@ -307,7 +307,7 @@ class UserController extends Controller
                     'password' => Hash::make('123456dummy'),
                     'activity_scope' => null,
                     'store_owner' => 0,
-                    'status' => 1,
+                    'status' => 0,
                 ]);
             }
 
