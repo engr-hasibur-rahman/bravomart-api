@@ -622,12 +622,12 @@ class PermissionAdminSeeder extends Seeder
                 // Deliveryman management
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Deliveryman management',
+                    'PermissionTitle' => 'Deliveryman',
                     'activity_scope' => 'system_level',
                     'icon' => 'UserRoundPen',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Deliveryman management',
+                        'en' => 'Deliveryman',
                         'ar' => 'إدارة التوصيل'
                     ],
                     'submenu' => [
