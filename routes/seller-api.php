@@ -141,6 +141,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
                 Route::post('change-status', [ProductAttributeController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [ProductAttributeController::class, 'destroy']);
             });
+
             // Staff manage
             Route::group(['prefix' => 'staff/', 'middleware' => ['permission:' . PermissionKey::SELLER_STORE_STAFF_MANAGE->value]], function () {
                 Route::get('list', [StaffController::class, 'index']);
@@ -148,7 +149,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
                 Route::get('details/{id}', [StaffController::class, 'show']);
                 Route::post('update', [StaffController::class, 'update']);
                 Route::post('change-status', [StaffController::class, 'changeStatus']);
-                Route::delete('remove/{id}', [StaffController::class, 'destroy']);
+                Route::delete('remove', [StaffController::class, 'destroy']);
             });
 
 
@@ -222,7 +223,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function
                 Route::post('add', [ProductAuthorController::class, 'authorAddRequest']);
                 Route::post('update', [ProductAuthorController::class, 'update']);
                 Route::get('details/{id}', [ProductAuthorController::class, 'show']);
-                Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
+                Route::delete('remove', [ProductAuthorController::class, 'destroy']);
             });
         });
         // ********END STORE ROUTE

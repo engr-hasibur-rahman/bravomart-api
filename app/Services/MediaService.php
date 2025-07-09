@@ -274,7 +274,7 @@ class MediaService
 
             // Delete main image
             if (file_exists($full_image_path)) {
-                @unlink($full_image_path);
+                dd(file_exists($full_image_path));
             }
 
             // Delete DB record

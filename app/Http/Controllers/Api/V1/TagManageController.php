@@ -7,10 +7,14 @@ use App\Interfaces\TagInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class TagManageController extends Controller
 {
-    public function __construct(protected TagInterface $tagRepo) {}
+    public function __construct(protected TagInterface $tagRepo)
+    {
+    }
+
     public function index(Request $request)
     {
         return $this->tagRepo->getPaginatedTag(
@@ -23,6 +27,7 @@ class TagManageController extends Controller
             []
         );
     }
+
     public function store(TagRequest $request): JsonResponse
     {
         $created_by = Auth::user()->id;
@@ -35,10 +40,12 @@ class TagManageController extends Controller
             return $this->failed(translate('messages.save_failed', ['name' => 'Tag']));
         }
     }
+
     public function show(Request $request)
     {
         return $this->tagRepo->getTagById($request->id);
     }
+
     public function update(TagRequest $request)
     {
         $tag = $this->tagRepo->update($request->all());
@@ -49,9 +56,21 @@ class TagManageController extends Controller
             return $this->failed(translate('messages.update_failed', ['name' => 'Tag']));
         }
     }
-    public function destroy($id)
+
+    public function destroy(Request $request)
     {
-        $this->tagRepo->delete($id);
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:tags,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        foreach ($request->ids as $id) {
+            $this->tagRepo->delete($id);
+        }
         return $this->success(translate('messages.delete_success'));
     }
 }

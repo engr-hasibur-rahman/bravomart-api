@@ -14,6 +14,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Interfaces\BlogManageInterface;
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -183,10 +184,42 @@ class AdminBlogManageController extends Controller
         }
     }
 
-    public function blogDestroy($id)
+    public function blogDestroy(Request $request)
     {
-        $this->blogRepo->delete($id, Blog::class);
-        return $this->success(translate('messages.delete_success'));
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:blogs,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $blogs = Blog::whereIn('id', $request->ids)->get();
+        $mediaIds = [];
+
+        foreach ($blogs as $blog) {
+            if ($blog->image) {
+                $mediaIds[] = $blog->image;
+            }
+            if ($blog->meta_image) {
+                $mediaIds[] = $blog->meta_image;
+            }
+
+            // Delete the blog using the repository
+            $this->blogRepo->delete($blog->id, Blog::class);
+        }
+
+        // Delete media images
+        $mediaService = app(MediaService::class);
+        $mediaResult = $mediaService->bulkDeleteMediaImages(array_unique($mediaIds));
+
+        return response()->json([
+            'message' => __('messages.delete_success',['name' => 'Blog']),
+            'deleted_blogs' => $blogs->count(),
+            'deleted_media' => $mediaResult['deleted'],
+            'failed_media' => $mediaResult['failed'],
+        ]);
     }
 
     public function changeStatus(Request $request)

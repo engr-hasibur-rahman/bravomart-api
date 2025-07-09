@@ -6,6 +6,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Notifications\OrderNotificationForAdmin;
 use App\Models\UniversalNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 
 class NotificationManageController extends Controller
@@ -100,11 +101,27 @@ class NotificationManageController extends Controller
     /**
      * Remove the specified notification.
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $notification = UniversalNotification::findOrFail($id);
-        $notification->delete();
-        return response()->json(['message' => 'Notification deleted successfully']);
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:universal_notifications,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $deleted = UniversalNotification::whereIn('id', $request->ids)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notifications deleted successfully',
+            'deleted_count' => $deleted,
+        ]);
     }
 
 }

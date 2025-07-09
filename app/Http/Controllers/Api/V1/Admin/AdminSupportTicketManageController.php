@@ -222,20 +222,38 @@ class AdminSupportTicketManageController extends Controller
 
     public function destroy(Request $request)
     {
-        $ticket = Ticket::find($request->ticket_id);
+        $validator = Validator::make($request->all(), [
+            'ticket_ids' => 'required|array|min:1',
+            'ticket_ids.*' => 'integer|exists:tickets,id',
+        ]);
 
-        if (!$ticket) {
+        if ($validator->fails()) {
             return response()->json([
-                'message' => __('messages.delete_failed', ['name' => 'Support Ticket']),
-            ], 404);
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
-        // Use relationship-based deletion if defined
-        $ticket->messages()->delete();
-        $ticket->delete();
+        $deleted = 0;
+        $failed = 0;
+
+        $tickets = Ticket::whereIn('id', $request->ticket_ids)->get();
+
+        foreach ($tickets as $ticket) {
+            try {
+                $ticket->messages()->delete(); // Delete related messages
+                $ticket->delete();             // Delete the ticket itself
+                $deleted++;
+            } catch (\Throwable $e) {
+                $failed++;
+            }
+        }
 
         return response()->json([
-            'message' => __('messages.delete_success', ['name' => 'Support Ticket']),
+            'success' => true,
+            'message' => __('messages.delete_success', ['name' => 'Support Tickets']),
+            'deleted_tickets' => $deleted,
+            'failed_tickets' => $failed,
         ]);
     }
 

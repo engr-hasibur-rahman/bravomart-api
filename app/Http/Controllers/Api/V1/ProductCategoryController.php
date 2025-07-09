@@ -9,8 +9,10 @@ use App\Http\Resources\Com\Product\ProductCategoryResource;
 use App\Http\Resources\ProductCategoryByIdResource;
 use App\Models\ProductCategory;
 use App\Repositories\ProductCategoryRepository;
+use App\Services\MediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ProductCategoryController extends Controller
 {
@@ -124,22 +126,47 @@ class ProductCategoryController extends Controller
 
     public function destroy(Request $request)
     {
-        $category = ProductCategory::find($request->id);
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:product_category,id',
+        ]);
 
-        if (!$category) {
+        if ($validator->fails()) {
             return response()->json([
-                'message' => __('messages.not_found', ['name' => 'Product category'])
-            ], 404);
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
-        // Delete all children categories in a single query
-        ProductCategory::where('parent_id', $category->id)->delete();
+        $mainCategories = ProductCategory::whereIn('id', $request->ids)->get();
 
-        // Delete the main category
-        $category->delete();
+        // Get direct children
+        $childCategories = ProductCategory::whereIn('parent_id', $request->ids)->get();
+
+        // Combine all categories
+        $allCategories = $mainCategories->concat($childCategories);
+
+        // Collect all related media IDs
+        $mediaIds = [];
+        foreach ($allCategories as $cat) {
+            if ($cat->category_thumb) {
+                $mediaIds[] = $cat->category_thumb;
+            }
+        }
+
+        // Delete categories
+        $deletedCount = ProductCategory::whereIn('id', $allCategories->pluck('id'))->delete();
+
+        // Delete associated media
+        $mediaService = app(MediaService::class);
+        $mediaResult = $mediaService->bulkDeleteMediaImages(array_unique($mediaIds));
 
         return response()->json([
-            'message' => __('messages.delete_success', ['name' => 'Product category'])
-        ], 200);
+            'success' => true,
+            'message' => __('messages.delete_success', ['name' => 'Product categories']),
+            'deleted_categories' => $deletedCount,
+            'deleted_media' => $mediaResult['deleted'],
+            'failed_media' => $mediaResult['failed'],
+        ]);
     }
 }

@@ -88,13 +88,21 @@ class AdminStoreNoticeController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $success = $this->noticeRepo->deleteNotice($id);
-        if ($success) {
-            return $this->success(__('messages.delete_success', ['name' => 'Notice']));
-        } else {
-            return $this->failed(__('messages.delete_failed', ['name' => 'Notice']),500);
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:store_notices,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
+
+        foreach ($request->ids as $id) {
+            $success = $this->noticeRepo->deleteNotice($id);
+        }
+
+        return $this->success(__('messages.delete_success', ['name' => 'Notices']));
     }
 }
