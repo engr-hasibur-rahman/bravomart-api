@@ -307,12 +307,12 @@ class PermissionAdminSeeder extends Seeder
                 //Seller & Store
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Seller & Store',
+                    'PermissionTitle' => 'Sellers & Stores',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Seller & Store',
+                        'en' => 'Sellers & Stores',
                         'ar' => 'البائع والمتجر'
                     ],
                     'submenu' => [
@@ -353,12 +353,12 @@ class PermissionAdminSeeder extends Seeder
                         ],
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => 'Store',
+                            'PermissionTitle' => 'All Stores',
                             'activity_scope' => 'system_level',
                             'icon' => 'Store',
                             'translations' => [
-                                'en' => 'Blogs',
-                                'ar' => ' الموظفين'
+                                'en' => 'All Stores',
+                                'ar' => ' ميع المتاج'
                             ],
                             'submenu' => [
                                 [
