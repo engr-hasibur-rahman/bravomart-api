@@ -135,8 +135,8 @@ class MediaController extends Controller
     public function mediaFileDelete(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|integer|exists:media,id',
-            'ids.*' => 'nullable|integer|exists:media,id',
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:media,id',
         ]);
 
         if ($validator->fails()) {
@@ -146,12 +146,14 @@ class MediaController extends Controller
             ], 422);
         }
 
-        $response = $this->mediaService->bulkDeleteMediaImages($request->ids);
+        $result = $this->mediaService->bulkDeleteMediaImages($request->ids);
 
         return response()->json([
-            'message' => $response['msg'],
-            'success' => $response['success'],
-        ], $response['success'] ? 200 : 500);
+            'success' => $result['success'],
+            'message' => $result['message'],
+            'deleted_count' => $result['deleted'],
+            'failed_count' => $result['failed'],
+        ], $result['success'] ? 200 : 500);
     }
 
 }

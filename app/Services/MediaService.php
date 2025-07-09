@@ -254,7 +254,7 @@ class MediaService
         $failed = 0;
 
         foreach ($ids as $id) {
-            $media = Media::find($id);
+            $media = Media::find((int)$id);
 
             if (!$media) {
                 $failed++;
