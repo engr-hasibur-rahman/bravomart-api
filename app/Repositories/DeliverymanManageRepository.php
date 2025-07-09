@@ -67,10 +67,14 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'updater'
         ]);
         if (isset($filters['search'])) {
-            $searchTerm = $filters['search'];
-            $query->whereHas('user', function ($q) use ($searchTerm) {
-                $q->where('first_name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+            $searchTerms = preg_split('/\s+/', trim($filters['search'])); // Split by space
+            $query->whereHas('user', function ($q) use ($searchTerms) {
+                foreach ($searchTerms as $term) {
+                    $q->where(function ($subQ) use ($term) {
+                        $subQ->where('first_name', 'like', "%$term%")
+                            ->orWhere('last_name', 'like', "%$term%");
+                    });
+                }
             });
         }
 
@@ -469,6 +473,9 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     {
         $deliveryman = auth('api')->user();
 
+        // Define custom status order
+        $statusOrder = ['accepted', 'pickup', 'shipped', 'delivered', 'ignored'];
+
         $orders = OrderDeliveryHistory::with([
             'order.orderMaster.orderAddress',
             'order.orderDetail',
@@ -476,14 +483,10 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             'order.orderMaster.customer'
         ])
             ->where('deliveryman_id', $deliveryman->id)
-            // Apply both local and related order status filtering only if 'status' filter is present
             ->when(!empty($filters['status']), function ($query) use ($filters) {
-                $query->where('status', $filters['status'])
-                    ->whereHas('order', function ($q) {
-                        $q->where('status', '!=', 'delivered');
-                    });
+                $query->where('status', $filters['status']);
             })
-            ->latest()
+            ->orderByRaw("FIELD(status, '" . implode("','", $statusOrder) . "')")
             ->paginate(10);
 
         return $orders;

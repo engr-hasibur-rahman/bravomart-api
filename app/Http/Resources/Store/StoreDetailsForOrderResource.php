@@ -42,6 +42,7 @@ class StoreDetailsForOrderResource extends JsonResource
             "additional_charge_amount" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_amount : 0,
             "additional_charge_type" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_type : 'fixed',
             "type" => "store",
+            "live_chat" => checkSubscription($this->id, 'live_chat'),
         ];
     }
 }

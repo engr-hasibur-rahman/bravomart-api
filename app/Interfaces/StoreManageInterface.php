@@ -46,5 +46,7 @@ interface StoreManageInterface
 
     public function approveStores(array $ids);
 
+    public function rejectStores(array $ids);
+
     public function changeStatus(array $data);
 }

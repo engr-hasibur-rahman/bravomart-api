@@ -22,9 +22,22 @@ class StoreChatController extends Controller
 
     public function chatList(Request $request)
     {
-        $auth_user = auth()->guard('api')->user();
-        $auth_id = $auth_user->id;
+        $validator = Validator::make($request->all(), [
+            'store_id' => 'required|exists:stores,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $auth_id = $request->store_id;
         $auth_type = 'store';
+
+        $isLiveChatEnabled = checkSubscription($auth_id, 'live_chat');
+        if (!$isLiveChatEnabled) {
+            return response()->json([
+                'message' => __('chat::messages.feature_not_available', ['name' => 'Chat']),
+            ], 422);
+        }
 
         $chat = Chat::where('user_id', $auth_id)
             ->where('user_type', $auth_type)
@@ -36,7 +49,6 @@ class StoreChatController extends Controller
                 'message' => 'Chats not found',
             ]);
         }
-
 
         $sender_chat_ids = ChatMessage::where('sender_id', $auth_id)
             ->where('sender_type', 'store')
@@ -53,7 +65,7 @@ class StoreChatController extends Controller
         $currentChat = $chat;
 
         if ($currentChat) {
-            $all_chat_ids = $all_chat_ids->filter(fn ($id) => $id != $currentChat->id)->values();
+            $all_chat_ids = $all_chat_ids->filter(fn($id) => $id != $currentChat->id)->values();
         }
 
         // store order customer chat ids
@@ -66,7 +78,7 @@ class StoreChatController extends Controller
             ->first();
 
         // Get all customer chat IDs from orders related to this store
-         if (!empty($auth_seller_store)) {
+        if (!empty($auth_seller_store)) {
             $orders = Order::with('orderMaster.customer.chats')
                 ->where('store_id', $store_id)
                 ->get();
@@ -132,7 +144,7 @@ class StoreChatController extends Controller
 
 
         return response()->json([
-            'success'  => true,
+            'success' => true,
             'data' => ChatListResource::collection($chats),
             'meta' => new PaginationResource($chats)
         ]);
@@ -142,25 +154,25 @@ class StoreChatController extends Controller
     public function chatWiseFetchMessages(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'receiver_id'   => 'required|integer',
+            'receiver_id' => 'required|integer',
             'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
-            'search'        => 'nullable|string',
+            'search' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors'  => $validator->errors(),
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $auth_id = auth()->guard('api')->user()->id;
-        $chat = Chat::where('user_id',$auth_id)->first();
+        $chat = Chat::where('user_id', $auth_id)->first();
 
         if (empty($chat)) {
             return response()->json([
                 'success' => false,
-                'message'  => 'Chats not found',
+                'message' => 'Chats not found',
             ]);
         }
 
@@ -169,6 +181,15 @@ class StoreChatController extends Controller
 
         $receiver_id = $request->receiver_id;
         $receiver_type = $request->receiver_type;
+
+        if ($receiver_type == 'store') {
+            $isLiveChatEnabled = checkSubscription($receiver_id, 'live_chat');
+            if (!$isLiveChatEnabled) {
+                return response()->json([
+                    'message' => __('chat::messages.feature_not_available', ['name' => 'Chat']),
+                ], 422);
+            }
+        }
 
         // get message
         $message_query = ChatMessage::query()
@@ -194,7 +215,7 @@ class StoreChatController extends Controller
             ->paginate(30);
 
         return response()->json([
-            'success'  => true,
+            'success' => true,
             'unread_message' => $unread_message,
             'data' => ChatMessageDetailsResource::collection($messages),
             'meta' => new PaginationResource($messages)

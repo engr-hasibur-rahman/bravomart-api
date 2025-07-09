@@ -23,8 +23,8 @@ class PaymentGatewaysResource extends JsonResource
             'auth_credentials' => !empty($this->auth_credentials)
                 ? json_decode($this->auth_credentials, true)
                 : null,
-            'is_test_mode' => $this->is_test_mode,
-            'status' => $this->status
+            'is_test_mode' => (bool)$this->is_test_mode,
+            'status' => (bool)$this->status
         ];
     }
 }

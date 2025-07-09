@@ -75,6 +75,7 @@ class UserController extends Controller
                 ])
                 ->stateless()
                 ->user(); // Use stateless() here
+            dd($user);
             $facebook_id = $user->id;
             $email = $user->email;
             $name = $user->name;
@@ -104,7 +105,7 @@ class UserController extends Controller
                 }
 
                 // Generate a Sanctum token for API access
-                $token = $existingUser->createToken('social_auth_token')->plainTextToken;
+                $token = $existingUser->createToken('social_auth_token');
                 $accessToken = $token->accessToken;
                 $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
                 $accessToken->save();
@@ -150,7 +151,7 @@ class UserController extends Controller
                     'password' => Hash::make('123456dummy'),
                     'activity_scope' => 'delivery_level',
                     'store_owner' => 0,
-                    'status' => 1,
+                    'status' => 0,
                 ]);
             } else {
                 $newUser = User::create([
@@ -167,7 +168,7 @@ class UserController extends Controller
 
             // Generate a Sanctum token for the new user
 
-            $token = $newUser->createToken('social_auth_token')->plainTextToken;
+            $token = $newUser->createToken('social_auth_token');
             $accessToken = $token->accessToken;
             $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
@@ -252,7 +253,7 @@ class UserController extends Controller
             }
 
             // Generate a Sanctum token for the existing user
-            $token = $existingUser->createToken('social_auth_token')->plainTextToken;
+            $token = $existingUser->createToken('social_auth_token');
             $accessToken = $token->accessToken;
             $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
@@ -307,7 +308,7 @@ class UserController extends Controller
                     'password' => Hash::make('123456dummy'),
                     'activity_scope' => null,
                     'store_owner' => 0,
-                    'status' => 1,
+                    'status' => 0,
                 ]);
             }
 
@@ -926,14 +927,12 @@ class UserController extends Controller
                         'first_name' => $request->first_name,
                         'last_name' => $request->last_name,
                         'slug' => username_slug_generator($request->first_name, $request->last_name),
-                        'email' => $request->email,
+                        'image' => $request->image,
                         'phone' => $request->phone,
-                        'password' => Hash::make($request->password),
                         'activity_scope' => 'delivery_level',
                         'store_owner' => 0,
-                        'status' => 1,
                     ]);
-                    $deliverymanDetails = DeliveryMan::find($user->id);
+                    $deliverymanDetails = DeliveryMan::where('user_id',$user->id);
                     $deliverymanDetails->update([
                         'vehicle_type_id' => $request->vehicle_type_id,
                         'area_id' => $request->area_id,

@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 use Spatie\Permission\Models\Role;
 
@@ -121,9 +122,30 @@ class DeliverymanManageController extends Controller
     public function login(Request $request)
     {
         try {
+
+            if ($request->social_login && $request->platform === 'mobile') {
+                $validator = Validator::make($request->all(), [
+                    'access_token' => 'required|string',
+                    'type' => 'required|string|in:facebook,google',
+                    'role' => 'required|string|in:deliveryman',
+                    'firebase_device_token' => 'nullable|string',
+                ]);
+                if ($validator->fails()) {
+                    return response()->json($validator->errors(), 422);
+                }
+                $accessToken = $request->access_token;
+                $firebaseToken = $request->firebase_device_token;
+                $type = $request->type;
+                $role = $request->role;
+
+                return socialLogin($accessToken, $type, $firebaseToken, $role);
+            }
+
             $request->validate([
                 'email' => 'required|email',
                 'password' => 'required',
+                'social_login' => 'nullable|boolean',
+                'platform' => 'nullable|string|in:web,mobile',
             ]);
 
             // Attempt to find the user
