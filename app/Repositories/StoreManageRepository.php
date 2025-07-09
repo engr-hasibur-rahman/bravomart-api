@@ -908,7 +908,53 @@ class StoreManageRepository implements StoreManageInterface
 
             return true;
         } catch (\Exception $e) {
-            Log::error('approveStores error: ' . $e->getMessage());
+            Log::error('Approve stores error: ' . $e->getMessage());
+            return false;
+        }
+    }
+    public function rejectStores(array $ids)
+    {
+        try {
+            $stores = Store::whereIn('id', $ids)
+                ->whereNull('deleted_at')
+                ->get();
+
+            if ($stores->isEmpty()) {
+                return false;
+            }
+
+            foreach ($stores as $store) {
+                $store->status = 3;
+                $store->save();
+
+                try {
+                    $seller = User::find($store->store_seller_id);
+                    if (!$seller) {
+                        continue;
+                    }
+
+                    $email_template_seller = EmailTemplate::where('type', 'store-reject-seller')
+                        ->where('status', 1)
+                        ->first();
+
+                    if ($email_template_seller) {
+                        $seller_subject = $email_template_seller->subject;
+                        $seller_message = str_replace(
+                            ["@seller_name", "@store_name"],
+                            [$seller->first_name . ' ' . $seller->last_name, $store->name],
+                            $email_template_seller->body
+                        );
+
+                        dispatch(new SendDynamicEmailJob($seller->email, $seller_subject, $seller_message));
+                    }
+                } catch (\Exception $ex) {
+                    Log::error('Error sending store rejection email: ' . $ex->getMessage());
+                }
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Rejected stores error: ' . $e->getMessage());
             return false;
         }
     }
