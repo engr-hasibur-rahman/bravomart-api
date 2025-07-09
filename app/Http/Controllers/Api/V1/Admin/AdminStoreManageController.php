@@ -78,7 +78,7 @@ class AdminStoreManageController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
-        $stores = $this->storeRepo->getSellerWiseStores($request->seller_id,$request->search);
+        $stores = $this->storeRepo->getSellerWiseStores($request->seller_id, $request->search);
         if ($stores) {
             return response()->json(SellerWiseStoreForDropdownResource::collection($stores));
         } else {
@@ -118,20 +118,37 @@ class AdminStoreManageController extends Controller
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array',
             'ids.*' => 'exists:stores,id',
+            'status' => 'required|in:1,3'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
-        try {
-            $success = $this->storeRepo->approveStores($request->ids);
-            if ($success) {
-                return $this->success(__('messages.approve.success', ['name' => 'Stores']));
-            } else {
-                return $this->failed(__('messages.approve.failed', ['name' => 'Stores']), 500);
+        if ($request->status == 1) {
+            try {
+                $success = $this->storeRepo->approveStores($request->ids);
+                if ($success) {
+                    return $this->success(__('messages.approve.success', ['name' => 'Stores']));
+                } else {
+                    return $this->failed(__('messages.approve.failed', ['name' => 'Stores']), 500);
+                }
+            } catch (\Exception $e) {
+                throw $e;
             }
-        } catch (\Exception $e) {
-            throw $e;
+        } elseif ($request->status == 3) {
+            try {
+                $success = $this->storeRepo->rejectStores($request->ids);
+                if ($success) {
+                    return $this->success(__('messages.reject.success', ['name' => 'Stores']));
+                } else {
+                    return $this->failed(__('messages.reject.failed', ['name' => 'Stores']), 500);
+                }
+            } catch (\Exception $e) {
+                throw $e;
+            }
+        } else {
+            return $this->failed(__('messages.something_went_wrong'));
         }
+
     }
 
     public function changeStatus(Request $request)
