@@ -14,6 +14,7 @@ use App\Http\Resources\Seller\SellerAuthorResource;
 use App\Interfaces\ProductAuthorInterface;
 use App\Models\ProductAuthor;
 use App\Models\User;
+use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -151,17 +152,46 @@ class ProductAuthorController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $author = ProductAuthor::find($id);
-        if (!$author) {
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:product_authors,id',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
         }
-        $this->authorRepo->delete($id);
+
+        $authors = ProductAuthor::whereIn('id', $request->ids)->get();
+
+        $mediaIds = [];
+
+        foreach ($authors as $author) {
+            if ($author->profile_image) {
+                $mediaIds[] = $author->profile_image;
+            }
+            if ($author->cover_image) {
+                $mediaIds[] = $author->cover_image;
+            }
+
+            // Delete author via repo
+            $this->authorRepo->delete($author->id);
+        }
+
+        // Delete media files
+        $mediaService = app(MediaService::class);
+        $mediaResult = $mediaService->bulkDeleteMediaImages(array_unique($mediaIds));
+
         return response()->json([
-            'message' => __('messages.delete_success', ['name' => 'Author'])
-        ], 200);
+            'success' => true,
+            'message' => __('messages.delete_success', ['name' => 'Authors']),
+            'deleted_authors' => $authors->count(),
+            'deleted_media' => $mediaResult['deleted'],
+            'failed_media' => $mediaResult['failed'],
+        ]);
     }
 }

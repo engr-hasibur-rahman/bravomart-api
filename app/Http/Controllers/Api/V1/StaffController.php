@@ -12,6 +12,7 @@ use App\Models\Media;
 use App\Models\Store;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\MediaService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -255,33 +256,61 @@ class StaffController extends Controller
 
     public function destroy(Request $request)
     {
-        $validator = Validator::make(['id' => $request->id], [
-            'id' => 'required|exists:users,id',
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:users,id',
         ]);
+
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-        $staff = User::find($request->id);
-        if ($staff->locked) {
             return response()->json([
-                'message' => __('messages.staff_can\'t_be_modified', ['reason' => 'This staff has assigned for super admin.', 'action' => 'deleted']),
-            ],403);
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
         }
-        if (!$staff) {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
+
+        $users = User::whereIn('id', $request->ids)->get();
+
+        $mediaIds = [];
+        $deleted = 0;
+        $skipped = 0;
+
+        foreach ($users as $user) {
+            // Skip locked users (e.g., super admins)
+            if ($user->locked) {
+                $skipped++;
+                continue;
+            }
+
+            try {
+                // Collect media ID (e.g., profile image)
+                if ($user->image) {
+                    $mediaIds[] = $user->image;
+                }
+
+                // Delete permissions (assuming hasMany or belongsToMany)
+                $user->permissions()->delete(); // or $user->permissions()->detach()
+
+                // Delete user
+                $user->delete();
+
+                $deleted++;
+            } catch (\Throwable $e) {
+                $skipped++;
+            }
         }
-        if ($staff) {
-            $staff->delete();
-            return response()->json([
-                'message' => __('messages.delete_success', ['name' => 'Staff']),
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => __('messages.delete_failed', ['name' => 'Staff']),
-            ], 500);
-        }
+
+        // Delete all related media
+        $mediaService = app(MediaService::class);
+        $mediaResult = $mediaService->bulkDeleteMediaImages(array_unique($mediaIds));
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.delete_success', ['name' => 'Staff']),
+            'deleted_staff' => $deleted,
+            'skipped_staff' => $skipped,
+            'deleted_media' => $mediaResult['deleted'],
+            'failed_media' => $mediaResult['failed'],
+        ]);
     }
 
     public function changePassword(Request $request)

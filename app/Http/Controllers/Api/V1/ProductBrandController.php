@@ -8,8 +8,10 @@ use App\Http\Resources\ProductBrandByIdResource;
 use App\Http\Resources\ProductBrandResource;
 use App\Models\ProductBrand;
 use App\Repositories\ProductBrandRepository;
+use App\Services\MediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ProductBrandController extends Controller
 {
@@ -107,16 +109,39 @@ class ProductBrandController extends Controller
 
     public function destroy(Request $request)
     {
-        $brand = ProductBrand::find($request->id);
-        if ($brand) {
-            $brand->delete();
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:product_brand,id',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
-                'message' => __('messages.delete_success', ['name' => 'Brand'])
-            ]);
-        } else {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ]);
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
         }
+
+        $brandLogoIds = [];
+
+        // Fetch brands and collect logo IDs
+        $brands = ProductBrand::whereIn('id', $request->ids)->get();
+
+        foreach ($brands as $brand) {
+            if ($brand->brand_logo) {
+                $brandLogoIds[] = $brand->brand_logo;
+            }
+            $brand->delete();
+        }
+
+        // Delete media files
+        $mediaResult = app(MediaService::class)->bulkDeleteMediaImages($brandLogoIds);
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.delete_success', ['name' => 'Brands']),
+            'deleted_brands' => count($brands),
+            'deleted_media' => $mediaResult['deleted'],
+            'failed_media' => $mediaResult['failed'],
+        ]);
     }
 }

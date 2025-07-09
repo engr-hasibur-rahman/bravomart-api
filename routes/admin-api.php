@@ -324,7 +324,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('update', [ProductBrandController::class, 'update']);
                 Route::get('details/{id}', [ProductBrandController::class, 'show']);
                 Route::post('change-status', [ProductBrandController::class, 'productBrandStatus']);
-                Route::delete('remove/{id}', [ProductBrandController::class, 'destroy']);
+                Route::delete('remove', [ProductBrandController::class, 'destroy']);
             });
         });
         // Product Author manage
@@ -333,7 +333,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('add', [ProductAuthorController::class, 'store']);
             Route::get('details/{id}', [ProductAuthorController::class, 'show']);
             Route::post('update', [ProductAuthorController::class, 'update']);
-            Route::delete('remove/{id}', [ProductAuthorController::class, 'destroy']);
+            Route::delete('remove', [ProductAuthorController::class, 'destroy']);
             Route::post('change-status', [ProductAuthorController::class, 'changeStatus']);
             Route::post('approve', [ProductAuthorController::class, 'approveAuthors']);
             Route::get('author-request', [ProductAuthorController::class, 'authorRequests']);
@@ -345,7 +345,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('product-categories/details/{id}', [ProductCategoryController::class, 'show']);
             Route::post('product-categories/update', [ProductCategoryController::class, 'store']);
             Route::post('product-categories/change-status', [ProductCategoryController::class, 'productCategoryStatus']);
-            Route::delete('product-categories/remove/{id}', [ProductCategoryController::class, 'destroy']);
+            Route::delete('product-categories/remove', [ProductCategoryController::class, 'destroy']);
         });
         // User Management
         Route::group(['middleware' => [getPermissionMiddleware('ban-user')]], function () {
@@ -387,7 +387,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('add', [TagManageController::class, 'store']);
             Route::get('details/{id}', [TagManageController::class, 'show']);
             Route::post('update', [TagManageController::class, 'update']);
-            Route::delete('remove/{id}', [TagManageController::class, 'destroy']);
+            Route::delete('remove', [TagManageController::class, 'destroy']);
         });
         // Unit manage
         Route::group(['prefix' => 'unit/', 'middleware' => ['permission:' . PermissionKey::ADMIN_PRODUCT_UNIT_LIST->value]], function () {
@@ -404,7 +404,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('details/{id}', [AdminBlogManageController::class, 'blogShow']);
             Route::post('update', [AdminBlogManageController::class, 'blogUpdate']);
             Route::post('change-status', [AdminBlogManageController::class, 'changeStatus']);
-            Route::delete('remove/{id}', [AdminBlogManageController::class, 'blogDestroy']);
+            Route::delete('remove', [AdminBlogManageController::class, 'blogDestroy']);
             // Blog category manage
             Route::group(['prefix' => 'category/', 'middleware' => ['permission:' . PermissionKey::ADMIN_BLOG_CATEGORY_MANAGE->value]], function () {
                 Route::get('list', [AdminBlogManageController::class, 'blogCategoryIndex']);
@@ -425,7 +425,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('update', [StaffController::class, 'update'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
             Route::post('change-status', [StaffController::class, 'changeStatus'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
             Route::post('change-password', [StaffController::class, 'changePassword'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
-            Route::delete('remove/{id}', [StaffController::class, 'destroy'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
+            Route::delete('remove', [StaffController::class, 'destroy'])->middleware(['permission:' . PermissionKey::ADMIN_STAFF_MANAGE->value]);
         });
 
         // Pages manage
@@ -442,7 +442,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::prefix('notifications/')->middleware(['permission:' . PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value])->group(function () {
             Route::get('/', [NotificationManageController::class, 'index']);
             Route::post('/read', [NotificationManageController::class, 'markAsRead']);
-            Route::delete('remove/{id}', [NotificationManageController::class, 'destroy']);
+            Route::delete('remove', [NotificationManageController::class, 'destroy']);
         });
 
         // Store Notice manage
@@ -452,7 +452,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::get('details/{id}', [AdminStoreNoticeController::class, 'show']);
             Route::post('update', [AdminStoreNoticeController::class, 'update']);
             Route::post('change-status', [AdminStoreNoticeController::class, 'changeStatus']);
-            Route::delete('remove/{id}', [AdminStoreNoticeController::class, 'destroy']);
+            Route::delete('remove', [AdminStoreNoticeController::class, 'destroy']);
         });
 
         Route::group(['prefix' => 'feedback-control/'], function () {
@@ -507,7 +507,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('resolve', [AdminSupportTicketManageController::class, 'resolve']);
             Route::post('message/reply', [AdminSupportTicketManageController::class, 'replyMessage']);
             Route::get('get-ticket-messages/{ticket_id}', [AdminSupportTicketManageController::class, 'getTicketMessages']);
-            Route::delete('remove/{ticket_id}', [AdminSupportTicketManageController::class, 'destroy']);
+            Route::delete('remove', [AdminSupportTicketManageController::class, 'destroy']);
         });
 
         // FINANCIAL WITHDRAWALS management
