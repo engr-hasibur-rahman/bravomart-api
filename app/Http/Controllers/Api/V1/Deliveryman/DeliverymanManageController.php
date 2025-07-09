@@ -128,17 +128,17 @@ class DeliverymanManageController extends Controller
                     'access_token' => 'required|string',
                     'type' => 'required|string|in:facebook,google',
                     'role' => 'required|string|in:deliveryman',
-                    'firebase_token' => 'nullable|string',
+                    'firebase_device_token' => 'nullable|string',
                 ]);
                 if ($validator->fails()) {
                     return response()->json($validator->errors(), 422);
                 }
                 $accessToken = $request->access_token;
-                $firebaseToken = $request->firebase_token;
+                $firebaseToken = $request->firebase_device_token;
                 $type = $request->type;
                 $role = $request->role;
 
-                return $this->socialLogin($accessToken, $type, $firebaseToken = null, $role);
+                return $this->socialLogin($accessToken, $type, $firebaseToken, $role);
             }
 
             $request->validate([
@@ -271,14 +271,17 @@ class DeliverymanManageController extends Controller
                 'email' => $email,
                 'slug' => username_slug_generator($name),
                 $socialColumn => $socialId,
-                $firebaseToken => $firebaseToken,
+                'firebase_token' => $firebaseToken,
                 'password' => Hash::make(Str::random(8)), // Never use dummy passwords
                 'activity_scope' => 'delivery_level',
                 'store_owner' => 0,
                 'status' => 0,
             ]);
-        } elseif (!$user->{$socialColumn}) {
-            $user->update([$socialColumn => $socialId]);
+        } else {
+            $user->update([
+                $socialColumn => $socialId,
+                'firebase_token' => $firebaseToken,
+            ]);
         }
 
         // Create Sanctum token
