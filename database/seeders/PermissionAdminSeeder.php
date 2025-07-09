@@ -365,60 +365,6 @@ class PermissionAdminSeeder extends Seeder
                 ],
 
 
-                //  slider management start
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Slider Management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Slider Management',
-                        'ar' => 'إدارة المدونة'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value,
-                            'PermissionTitle' => 'Slider',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'SlidersHorizontal',
-                            'options' => ['view', 'insert', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Slider',
-                                'ar' => ' قوائم الصفحات'
-                            ]
-                        ],
-                    ]
-                ], //  slider management end
-
-
-                //  media management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Media Management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Media Management',
-                        'ar' => 'إدارة المدونة'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_MEDIA_MANAGE->value,
-                            'PermissionTitle' => 'Media',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'Images',
-                            'options' => ['view', 'insert', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Media',
-                                'ar' => ' قوائم الصفحات'
-                            ]
-                        ],
-                    ]
-                ],
-
-
                 // Promotional control
                 [
                     'PermissionName' => '',
@@ -431,6 +377,7 @@ class PermissionAdminSeeder extends Seeder
                         'ar' => 'الرقابة الترويجية'
                     ],
                     'submenu' => [
+                        // flash sale
                         [
                             'PermissionName' => '',
                             'PermissionTitle' => 'Flash Sale',
@@ -463,7 +410,7 @@ class PermissionAdminSeeder extends Seeder
                                         'en' => 'Join Deals',
                                         'ar' => 'اطلب التسجيل'
                                     ]
-                                ]
+                                ],
                             ]
                         ],
 
@@ -478,7 +425,19 @@ class PermissionAdminSeeder extends Seeder
                                 'en' => 'Banners',
                                 'ar' => 'راية'
                             ],
-                        ]
+                        ],
+                        // Slider
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value,
+                            'PermissionTitle' => 'Slider',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'SlidersHorizontal',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Slider',
+                                'ar' => ' قوائم الصفحات'
+                            ]
+                        ],
                     ]
                 ],
 
@@ -570,31 +529,6 @@ class PermissionAdminSeeder extends Seeder
                     ]
                 ],
 
-                // dynamic pages manage
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Pages Management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Pages Management',
-                        'ar' => 'إدارة الصفحات'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_PAGES_LIST->value,
-                            'PermissionTitle' => 'Page Lists',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'List',
-                            'options' => ['view', 'insert', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Page Lists',
-                                'ar' => ' قوائم الصفحات'
-                            ]
-                        ]
-                    ]
-                ],
 
                 // wallet manage
                 [
@@ -798,16 +732,16 @@ class PermissionAdminSeeder extends Seeder
                 ],
 
 
-                // Employee Management
+                // Staff & Permissions
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Employee Management',
+                    'PermissionTitle' => 'Staff & Permissions',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view', 'insert', 'update', 'delete'],
                     'translations' => [
-                        'en' => 'Employee Management',
-                        'ar' => 'إدارة الموظفين'
+                        'en' => 'Staff & Permissions',
+                        'ar' => 'الموظفين والأذونات'
                     ],
                     'submenu' => [
                         [
@@ -878,162 +812,6 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
-
-
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Chat Management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Chat Management',
-                        'ar' => 'إدارة الدردشة'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Chat',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'MessageSquareMore',
-                            'options' => ['view', 'update', 'delete'],
-                            'translations' => [
-                                'en' => 'Chat',
-                                'ar' => 'إعدادات الدردشة'
-                            ],
-
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_CHAT_SETTINGS->value,
-                                    'PermissionTitle' => 'Chat Settings',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'update'],
-                                    'translations' => [
-                                        'en' => 'Chat Settings',
-                                        'ar' => 'إعدادات الدردشة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_CHAT_MANAGE->value,
-                                    'PermissionTitle' => 'Chat List',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'update'],
-                                    'translations' => [
-                                        'en' => 'Chat List',
-                                        'ar' => 'قائمة الدردشة'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-
-
-                // Support Ticket Management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Support Ticket',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Support Ticket',
-                        'ar' => 'إدارة المدونة'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Tickets',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'Headphones',
-                            'options' => ['view'],
-                            'translations' => [
-                                'en' => 'Tickets',
-                                'ar' => 'التذاكر'
-                            ],
-
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_TICKETS_DEPARTMENT->value,
-                                    'PermissionTitle' => 'Department',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
-                                    'translations' => [
-                                        'en' => 'Department',
-                                        'ar' => ' الموظفين'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value,
-                                    'PermissionTitle' => 'All Tickets',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
-                                    'translations' => [
-                                        'en' => 'All Tickets',
-                                        'ar' => 'دعامات'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-
-
-                // Support Ticket Management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Support Ticket',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Support Ticket',
-                        'ar' => 'إدارة المدونة'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'Tickets',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'Headphones',
-                            'options' => ['view'],
-                            'translations' => [
-                                'en' => 'Tickets',
-                                'ar' => 'التذاكر'
-                            ],
-
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_TICKETS_DEPARTMENT->value,
-                                    'PermissionTitle' => 'Department',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
-                                    'translations' => [
-                                        'en' => 'Department',
-                                        'ar' => ' الموظفين'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value,
-                                    'PermissionTitle' => 'All Tickets',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete'],
-                                    'translations' => [
-                                        'en' => 'All Tickets',
-                                        'ar' => 'دعامات'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-
             ]
         ];
 
@@ -1162,18 +940,94 @@ class PermissionAdminSeeder extends Seeder
         $admin_settings_related_menu = [
             [
 
-                // Notifications Management
+
+                // Communication Center
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Notifications',
+                    'PermissionTitle' => 'Communication Center',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Notifications',
-                        'ar' => 'إدارة الأعمال'
+                        'en' => 'Communication Center',
+                        'ar' => 'مركز الاتصالات'
                     ],
                     'submenu' => [
+                        // chat
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Chat',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'MessageSquareMore',
+                            'options' => ['view', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Chat',
+                                'ar' => 'إعدادات الدردشة'
+                            ],
+
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_CHAT_SETTINGS->value,
+                                    'PermissionTitle' => 'Chat Settings',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Chat Settings',
+                                        'ar' => 'إعدادات الدردشة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_CHAT_MANAGE->value,
+                                    'PermissionTitle' => 'Chat List',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Chat List',
+                                        'ar' => 'قائمة الدردشة'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        //Tickets
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Tickets',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Headphones',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'Tickets',
+                                'ar' => 'التذاكر'
+                            ],
+
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_TICKETS_DEPARTMENT->value,
+                                    'PermissionTitle' => 'Department',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'Department',
+                                        'ar' => ' الموظفين'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_SUPPORT_TICKETS_MANAGE->value,
+                                    'PermissionTitle' => 'All Tickets',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete'],
+                                    'translations' => [
+                                        'en' => 'All Tickets',
+                                        'ar' => 'دعامات'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        //Notifications
                         [
                             'PermissionName' => PermissionKey::ADMIN_NOTIFICATION_MANAGEMENT->value,
                             'PermissionTitle' => 'Notifications',
@@ -1184,22 +1038,8 @@ class PermissionAdminSeeder extends Seeder
                                 'en' => 'Notifications',
                                 'ar' => 'إعدادات الأعمال'
                             ]
-                        ]
-                    ]
-                ],
-
-                // Notice Management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Notice Management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Notice Management',
-                        'ar' => 'إدارة الأعمال'
-                    ],
-                    'submenu' => [
+                        ],
+                        //Notices
                         [
                             'PermissionName' => PermissionKey::ADMIN_NOTICE_MANAGEMENT->value,
                             'PermissionTitle' => 'Notices',
@@ -1210,7 +1050,7 @@ class PermissionAdminSeeder extends Seeder
                                 'en' => 'Notices',
                                 'ar' => 'إعدادات الأعمال'
                             ]
-                        ]
+                        ],
                     ]
                 ],
 
@@ -1304,18 +1144,22 @@ class PermissionAdminSeeder extends Seeder
                     ]
                 ],
 
-                //Payment settings management
+
+
+
+                //Gateway Management
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Payment Gateways',
+                    'PermissionTitle' => 'Gateway Management',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Payment Gateways',
-                        'ar' => 'إدارة بوابات الدفع'
+                        'en' => 'Gateway Management',
+                        'ar' => 'إدارة البوابة'
                     ],
                     'submenu' => [
+                        //Payment settings management
                         [
                             'PermissionName' => PermissionKey::ADMIN_PAYMENT_SETTINGS->value,
                             'PermissionTitle' => 'Payment Settings',
@@ -1326,23 +1170,8 @@ class PermissionAdminSeeder extends Seeder
                                 'en' => 'Payment Settings',
                                 'ar' => 'إعدادات الدفع'
                             ]
-                        ]
-
-                    ]
-                ],
-
-                //Payment settings management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'SMS Gateways',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'SMS Gateways',
-                        'ar' => 'بوابات الرسائل القصيرة'
-                    ],
-                    'submenu' => [
+                        ],
+                        //SMS settings management
                         [
                             'PermissionName' => PermissionKey::ADMIN_SMS_GATEWAY_SETTINGS->value,
                             'PermissionTitle' => 'SMS Gateway Settings',
@@ -1378,6 +1207,17 @@ class PermissionAdminSeeder extends Seeder
                             'translations' => [
                                 'en' => 'General Settings',
                                 'ar' => 'الإعدادات العامة'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_PAGES_LIST->value,
+                            'PermissionTitle' => 'Page Lists',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'List',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Page Lists',
+                                'ar' => ' قوائم الصفحات'
                             ]
                         ],
                         [
@@ -1562,6 +1402,19 @@ class PermissionAdminSeeder extends Seeder
                                 ]
                             ]
                         ],
+
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_MEDIA_MANAGE->value,
+                            'PermissionTitle' => 'Media',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Images',
+                            'options' => ['view', 'insert', 'update', 'delete'],
+                            'translations' => [
+                                'en' => 'Media',
+                                'ar' => ' قوائم الصفحات'
+                            ]
+                        ],
+
                         [
                             'PermissionName' => PermissionKey::SEO_SETTINGS->value,
                             'PermissionTitle' => 'SEO Settings',
