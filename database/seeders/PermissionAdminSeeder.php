@@ -304,16 +304,16 @@ class PermissionAdminSeeder extends Seeder
                     ]
                 ],
 
-                //Store management
+                //Seller & Store
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Store management',
+                    'PermissionTitle' => 'Seller & Store',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Store management',
-                        'ar' => 'إدارة المتجر'
+                        'en' => 'Seller & Store',
+                        'ar' => 'البائع والمتجر'
                     ],
                     'submenu' => [
                         [
