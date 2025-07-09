@@ -245,5 +245,56 @@ class MediaService
         }
     }
 
+    public function bulkDeleteMediaImages(array $ids): array
+    {
+        $base_path = storage_path('app/public/uploads/media-uploader/');
+        $image_variants = ['grid-', 'large-', 'semi-large-', 'thumb-'];
+
+        $deleted = 0;
+        $failed = 0;
+
+        foreach ($ids as $id) {
+            $media = Media::find($id);
+
+            if (!$media) {
+                $failed++;
+                continue;
+            }
+
+            $folder_path = dirname($media->path);
+            $full_image_path = $base_path . $media->path;
+
+            // Delete image variants
+            foreach ($image_variants as $variant) {
+                $variant_path = $base_path . $folder_path . '/' . $variant . basename($media->path);
+                if (file_exists($variant_path)) {
+                    @unlink($variant_path);
+                }
+            }
+
+            // Delete main image
+            if (file_exists($full_image_path)) {
+                @unlink($full_image_path);
+            }
+
+            // Delete DB record
+            if ($media->delete()) {
+                $deleted++;
+            } else {
+                $failed++;
+            }
+        }
+
+        return [
+            'success' => $deleted > 0,
+            'message' => $deleted > 0
+                ? "Deleted $deleted media file(s), $failed failed."
+                : 'No media files were deleted.',
+            'deleted' => $deleted,
+            'failed' => $failed,
+        ];
+    }
+
+
 
 }
