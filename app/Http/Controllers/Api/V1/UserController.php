@@ -75,6 +75,7 @@ class UserController extends Controller
                 ])
                 ->stateless()
                 ->user(); // Use stateless() here
+            dd($user);
             $facebook_id = $user->id;
             $email = $user->email;
             $name = $user->name;
@@ -104,7 +105,7 @@ class UserController extends Controller
                 }
 
                 // Generate a Sanctum token for API access
-                $token = $existingUser->createToken('social_auth_token')->plainTextToken;
+                $token = $existingUser->createToken('social_auth_token');
                 $accessToken = $token->accessToken;
                 $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
                 $accessToken->save();
@@ -167,7 +168,7 @@ class UserController extends Controller
 
             // Generate a Sanctum token for the new user
 
-            $token = $newUser->createToken('social_auth_token')->plainTextToken;
+            $token = $newUser->createToken('social_auth_token');
             $accessToken = $token->accessToken;
             $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
@@ -225,6 +226,7 @@ class UserController extends Controller
             'client_secret' => com_option_get('com_google_client_secret'),
             'redirect_uri' => com_option_get('com_google_client_callback_url'),
         ]);
+
         $user->stateless()->user();
         $google_id = $user->user()->id;
         $google_email = $user->user()->email;
@@ -252,7 +254,7 @@ class UserController extends Controller
             }
 
             // Generate a Sanctum token for the existing user
-            $token = $existingUser->createToken('social_auth_token')->plainTextToken;
+            $token = $existingUser->createToken('social_auth_token');
             $accessToken = $token->accessToken;
             $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();

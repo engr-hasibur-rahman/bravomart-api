@@ -81,6 +81,7 @@ Route::group(['prefix' => 'v1/'], function () {
         Route::post('forget-password', [UserController::class, 'forgetPassword']);
         Route::post('verify-token', [UserController::class, 'verifyToken']);
         Route::post('reset-password', [UserController::class, 'resetPassword']);
+
     });
     // Product Category
     Route::group(['prefix' => 'product-category/'], function () {
