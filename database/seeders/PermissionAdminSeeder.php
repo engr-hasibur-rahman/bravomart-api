@@ -1149,12 +1149,12 @@ class PermissionAdminSeeder extends Seeder
                         //Payment settings management
                         [
                             'PermissionName' => PermissionKey::ADMIN_PAYMENT_SETTINGS->value,
-                            'PermissionTitle' => 'Payment Settings',
+                            'PermissionTitle' => 'Payment Gateway',
                             'activity_scope' => 'system_level',
                             'icon' => 'CreditCard',
                             'options' => ['view', 'update'],
                             'translations' => [
-                                'en' => 'Payment Settings',
+                                'en' => 'Payment Gateway',
                                 'ar' => 'إعدادات الدفع'
                             ]
                         ],
