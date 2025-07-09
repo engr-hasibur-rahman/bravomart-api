@@ -8,6 +8,7 @@ use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Staff\SellerStaffDetailsResource;
 use App\Http\Resources\UserDetailsResource;
 use App\Http\Resources\UserResource;
+use App\Models\Media;
 use App\Models\Store;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -103,6 +104,18 @@ class StaffController extends Controller
 
         // Assign roles to the user
         $user->assignRole($roles);
+
+        // Update media record for this user's image if exists
+        if (!empty($request->image)) {
+            $media = Media::find($request->image);
+            if ($media) {
+                $media->update([
+                    'user_id' => $user->id,
+                    'user_type' => get_class($user),
+                    'usage_type' => 'profile_picture',
+                ]);
+            }
+        }
 
         // Return success response
         return response()->json([

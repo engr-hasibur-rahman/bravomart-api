@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Jobs\SendDynamicEmailJob;
 use App\Jobs\SendStoreCreatedEmailJob;
 use App\Models\EmailTemplate;
+use App\Models\Media;
 use App\Models\Store;
 use App\Models\SystemCommission;
 use Illuminate\Support\Arr;
@@ -30,6 +31,32 @@ class StoreManageService
         $data['store_seller_id'] = auth('api')->id();
         $store = Store::create($data);
         $data['store_id'] = $store->id;
+
+        // After creation, update media (logo & banner) to link to the store
+        $user_id = $store->id;
+        $user_type = Store::class;
+
+        if ($store->logo) {
+            $logo = Media::find($store->logo);
+            if ($logo) {
+                $logo->update([
+                    'user_id' => $user_id,
+                    'user_type' => $user_type,
+                    'usage_type' => 'store_logo',
+                ]);
+            }
+        }
+
+        if ($store->banner) {
+            $banner = Media::find($store->banner);
+            if ($banner) {
+                $banner->update([
+                    'user_id' => $user_id,
+                    'user_type' => $user_type,
+                    'usage_type' => 'store_banner',
+                ]);
+            }
+        }
 
         // store create after commission set
         $store = Store::find($store->id);

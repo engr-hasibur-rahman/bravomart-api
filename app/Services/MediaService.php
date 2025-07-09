@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Store;
 use Illuminate\Http\UploadedFile;
 use App\Models\Media;
 use Illuminate\Support\Facades\Auth;
@@ -63,6 +64,20 @@ class MediaService
             // Save images to storage
             $resize_full_image->save(storage_path("app/public/{$folder_path}/{$image_db}"));
 
+
+
+            $user_id = auth('sanctum')->id();
+            $user_type = get_class(auth('sanctum')->user());
+            $usage_type = $request->usage_type;
+
+            if (!empty($request->store_id)) {
+                $store = Store::find($request->store_id);
+                if ($store) {
+                    $user_id = $store->id;
+                    $user_type = Store::class;
+                }
+            }
+
             // Save to the database and return the Media instance
             return Media::create([
                 'name' => $image_name_with_ext,
@@ -70,7 +85,9 @@ class MediaService
                 'file_size' => formatBytes($image_size_for_db),
                 'path' => "{$folder_path}/{$image_db}",
                 'dimensions' => $image_dimension_for_db,
-                'user_id' => auth('sanctum')->id(),
+                'user_id' => $user_id,
+                'user_type' => $user_type,
+                'usage_type' => $usage_type ?? null,
             ]);
         }
 

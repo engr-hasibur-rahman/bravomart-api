@@ -121,4 +121,10 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         return $this->morphMany(ChatMessage::class, 'receiver');
     }
 
+    public function media()
+    {
+        return $this->morphMany(Media::class, 'fileable', 'user_type', 'user_id');
+    }
+
+
 }
