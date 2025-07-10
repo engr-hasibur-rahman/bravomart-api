@@ -62,11 +62,19 @@ class PlaceOrderController extends Controller
         try {
             if ($orders) {
                 if ($order_master['payment_gateway'] === 'wallet') {
-                    $this->updateWallet($order_master['order_amount']);
-                    OrderMaster::where('id', $order_master['id'])->update([
-                        'payment_gateway' => 'wallet',
-                        'payment_status' => 'paid',
-                    ]);
+                    $success = $this->updateWallet($order_master['order_amount']);
+                    if ($success) {
+                        OrderMaster::where('id', $order_master['id'])->update([
+                            'payment_gateway' => 'wallet',
+                            'payment_status' => 'paid',
+                        ]);
+                    } else {
+                        OrderMaster::where('id', $order_master['id'])->update([
+                            'payment_gateway' => 'wallet',
+                            'payment_status' => 'pending',
+                        ]);
+                    }
+
                 }
                 return response()->json([
                     'success' => true,
@@ -159,15 +167,22 @@ class PlaceOrderController extends Controller
     private function updateWallet($order_amount): bool
     {
         $customer = auth()->guard('api_customer')->user();
+
         if (!$customer) {
             return false;
         }
-        $wallet = Wallet::where('owner_id', $customer->id)->first();
-        if (!$wallet) {
+
+        $wallet = Wallet::where('owner_id', $customer->id)
+            ->where('owner_type', \App\Models\Customer::class) // if polymorphic
+            ->first();
+
+        if (!$wallet || $wallet->balance <= 0 || $wallet->balance < $order_amount) {
             return false;
         }
-        $wallet->balance = $wallet->balance - $order_amount;
+
+        $wallet->balance -= $order_amount;
         $wallet->save();
+
         return true;
     }
 }
