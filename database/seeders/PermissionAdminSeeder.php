@@ -716,57 +716,6 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
-                // Seller Management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Seller management',
-                    'activity_scope' => 'system_level',
-                    'icon' => '',
-                    'options' => ['view'],
-                    'translations' => [
-                        'en' => 'Seller management',
-                        'ar' => 'إدارة العملاء'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => '',
-                            'PermissionTitle' => 'All Sellers',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'UsersRound',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'All Sellers',
-                                'ar' => 'إدارة العملاء'
-                            ],
-                            'submenu' => [
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_SELLER_MANAGEMENT->value,
-                                    'PermissionTitle' => 'Sellers',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'Sellers',
-                                        'ar' => 'عملاء'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::ADMIN_SELLER_REGISTRATION->value,
-                                    'PermissionTitle' => 'Register A Seller',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'Subscriber List',
-                                        'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-
-
 
                 // Staff & Permissions
                 [
