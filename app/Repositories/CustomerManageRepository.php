@@ -305,7 +305,6 @@ class CustomerManageRepository implements CustomerManageInterface
             $customer->delete();
         });
 
-
         return true;
     }
 

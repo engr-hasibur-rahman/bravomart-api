@@ -113,11 +113,11 @@ class DeliverymanOrderManageController extends Controller
             })
             ->latest()
             ->get();
-        if ($request->status === 'accepted' && $activeOrders->count() > $limit) {
-            return response()->json([
-                'message' => __('messages.order_accept_limit_reached', ['limit' => $limit]),
-            ]);
-        }
+//        if ($request->status === 'accepted' && $activeOrders->count() > $limit) {
+//            return response()->json([
+//                'message' => __('messages.order_accept_limit_reached', ['limit' => $limit]),
+//            ]);
+//        }
 
         // update order delivery history
         $success = $this->deliverymanRepo->updateOrderStatus(
