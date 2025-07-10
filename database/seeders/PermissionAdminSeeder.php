@@ -418,7 +418,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Flash Sale',
                             'activity_scope' => 'system_level',
                             'icon' => 'Zap',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Flash Sale',
                                 'ar' => 'بيع سريع'
@@ -673,7 +673,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'All Customers',
                             'activity_scope' => 'system_level',
                             'icon' => 'UsersRound',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'All Customers',
                                 'ar' => 'إدارة العملاء'
@@ -733,7 +733,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Staff Roles',
                             'activity_scope' => 'system_level',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'options' => ['view'],
                             'icon' => 'LockKeyholeOpen',
                             'translations' => [
                                 'en' => 'Staff Roles',
@@ -768,7 +768,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'My Staff',
                             'activity_scope' => 'system_level',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'options' => ['view'],
                             'icon' => 'Users',
                             'translations' => [
                                 'en' => 'My Staff',
@@ -791,7 +791,7 @@ class PermissionAdminSeeder extends Seeder
                                     'PermissionTitle' => 'Add Staff',
                                     'activity_scope' => 'system_level',
                                     'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'options' => ['view', 'insert'],
                                     'translations' => [
                                         'en' => 'Add Staff',
                                         'ar' => 'إضافة الموظفين'
@@ -823,7 +823,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Financial',
                             'activity_scope' => 'system_level',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'options' => ['view'],
                             'icon' => 'BadgeDollarSign',
                             'translations' => [
                                 'en' => 'Financial',
@@ -951,7 +951,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionTitle' => 'Chat',
                             'activity_scope' => 'system_level',
                             'icon' => 'MessageSquareMore',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'options' => ['view'],
                             'translations' => [
                                 'en' => 'Chat',
                                 'ar' => 'إعدادات الدردشة'
