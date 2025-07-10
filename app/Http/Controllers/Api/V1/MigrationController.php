@@ -48,13 +48,34 @@ class MigrationController extends Controller
             } else {
                 $migrationName = $table;
             }
-            // Run Artisan migration commands based on type
-            switch ($type) {
+
+
+            $migrationFile = $request->input('table');
+
+            $defaultPath = base_path("database/migrations/{$migrationFile}.php");
+            $modulePath  = base_path("{$migrationFile}");
+
+            $pathExists = File::exists($defaultPath) || File::exists($modulePath);
+            $pathOption = File::exists($modulePath)
+                ? "{$migrationFile}"
+                : "database/migrations/{$migrationFile}.php";
+
+            switch ($request->input('type')) {
+                case 'migrate':
+                    if (!$pathExists) {
+                        return response()->json(['error' => "Migration file '{$migrationFile}' not found."], 400);
+                    }
+
+                    Artisan::call('migrate', [
+                        '--path' => $pathOption,
+                        '--force' => true,
+                    ]);
+                    break;
+
                 case 'refresh':
-                    $migrationPath = base_path("Modules/Subscription/database/migrations/{$migrationName}.php");
-                    $pathOption = File::exists($migrationPath)
-                        ? 'Modules/Subscription/database/migrations'
-                        : "database/migrations/{$migrationName}.php";
+                    if (!$pathExists) {
+                        return response()->json(['error' => "Migration file '{$migrationFile}' not found."], 400);
+                    }
 
                     Artisan::call('migrate:refresh', [
                         '--path' => $pathOption,
@@ -63,38 +84,27 @@ class MigrationController extends Controller
                     break;
 
                 case 'rollback':
-                    Artisan::call('migrate:rollback', ['--force' => true]);
-                    break;
-
-                case 'reset':
-                    Artisan::call('migrate:reset', ['--force' => true]);
-                    break;
-
-                case 'fresh':
-                    Artisan::call('migrate:fresh', ['--force' => true]);
-                    break;
-
-                case 'migrate':
-                    $migrationFile = $request->input('table');
-
-                    // Ensure file exists
-                    $defaultPath = base_path("database/migrations/{$migrationFile}.php");
-                    $modulePath = base_path("Modules/Subscription/database/migrations/{$migrationFile}.php");
-
-                    if (!File::exists($defaultPath) && !File::exists($modulePath)) {
-                        return response()->json(['error' => "Migration file '{$migrationFile}' not found."], 400);
-                    }
-
-                    $path = File::exists($modulePath)
-                        ? "Modules/Subscription/database/migrations/{$migrationFile}.php"
-                        : "database/migrations/{$migrationFile}.php";
-
-                    Artisan::call('migrate', [
-                        '--path' => $path,
+                    Artisan::call('migrate:rollback', [
                         '--force' => true,
                     ]);
                     break;
+
+                case 'reset':
+                    Artisan::call('migrate:reset', [
+                        '--force' => true,
+                    ]);
+                    break;
+
+                case 'fresh':
+                    Artisan::call('migrate:fresh', [
+                        '--force' => true,
+                    ]);
+                    break;
+
+                default:
+                    return response()->json(['error' => 'Invalid migration action.'], 400);
             }
+
 
             // Restore data for rollback/refresh
             if (in_array($type, ['refresh', 'rollback']) && $existingData->isNotEmpty()) {

@@ -111,11 +111,11 @@ class RoleController extends Controller
     public function update(RoleRequest $request)
     {
         $role = Role::find($request->role_id);
-//        if ($role->locked){
-//            return response()->json([
-//                'message' => __('messages.role_can\'t_be_edited', ['reason' => 'This role is locked.'])
-//            ]);
-//        }
+        if ($role->locked){
+            return response()->json([
+                'message' => __('messages.role_can\'t_be_edited', ['reason' => 'This role is locked.'])
+            ]);
+        }
         if ($role) {
             $role->name = $request->role_name;
             $role->available_for = $request->available_for;
@@ -133,7 +133,10 @@ class RoleController extends Controller
                 }
                 $role->permissions()->sync($syncData);
             }
-            return $role;
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Role']),
+                'role' => $role
+            ]);
         } else {
             return response()->json([
                 "message" => __('messages.data_not_found')

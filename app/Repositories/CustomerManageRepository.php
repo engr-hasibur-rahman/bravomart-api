@@ -279,4 +279,33 @@ class CustomerManageRepository implements CustomerManageInterface
         }
     }
 
+    protected function deleteCustomerRelatedAllData(int $customer_id): bool
+    {
+        $customer = Customer::find($customer_id);
+        if (!$customer) {
+            return false;
+        }
+        DB::transaction(function () use ($customer) {
+            $customer->blogComments()->delete();
+            $customer->reviews()->delete();
+            $customer->tickets()->delete();
+            $customer->sentMessages()->delete();
+            $customer->receivedMessages()->delete();
+            $customer->productQueries()->delete();
+            $customer->wishlists()->delete();
+            $customer->blogCommentReactions()->delete();
+            $customer->reviewReactions()->delete();
+            $customer->addresses()->delete();
+            $customer->userOtps()->delete();
+            $customer->notifications()->delete();
+
+            if ($customer->wallet) {
+                $customer->wallet->delete();
+            }
+            $customer->delete();
+        });
+
+        return true;
+    }
+
 }
