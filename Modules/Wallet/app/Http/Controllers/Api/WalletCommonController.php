@@ -140,7 +140,8 @@ class WalletCommonController extends Controller
             "search" => $request->search,
             "status" => $request->status,
             "payment_status" => $request->payment_status,
-            "type" => $request->type
+            "type" => $request->type,
+            "per_page" => $request->per_page
         ];
 
         // auth user check
@@ -171,7 +172,7 @@ class WalletCommonController extends Controller
         if (!$wallet) {
             return response()->json([
                 'message' => __('messages.wallet_not_found')
-            ],404);
+            ], 404);
         }
 
         $query = WalletTransaction::query();
