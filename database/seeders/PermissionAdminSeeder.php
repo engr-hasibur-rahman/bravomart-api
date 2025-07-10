@@ -304,26 +304,61 @@ class PermissionAdminSeeder extends Seeder
                     ]
                 ],
 
-                //Store management
+                //Seller & Store
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Store management',
+                    'PermissionTitle' => 'Sellers & Stores',
                     'activity_scope' => 'system_level',
                     'icon' => '',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Store management',
-                        'ar' => 'إدارة المتجر'
+                        'en' => 'Sellers & Stores',
+                        'ar' => 'البائع والمتجر'
                     ],
                     'submenu' => [
                         [
                             'PermissionName' => '',
-                            'PermissionTitle' => 'Store',
+                            'PermissionTitle' => 'All Sellers',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'UsersRound',
+                            'options' => ['view'],
+                            'translations' => [
+                                'en' => 'All Sellers',
+                                'ar' => 'إدارة العملاء'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_SELLER_MANAGEMENT->value,
+                                    'PermissionTitle' => 'Sellers',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Sellers',
+                                        'ar' => 'عملاء'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_SELLER_REGISTRATION->value,
+                                    'PermissionTitle' => 'Register A Seller',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Subscriber List',
+                                        'ar' => 'الاشتراك في قائمة البريد الإلكتروني'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'All Stores',
                             'activity_scope' => 'system_level',
                             'icon' => 'Store',
                             'translations' => [
-                                'en' => 'Blogs',
-                                'ar' => ' الموظفين'
+                                'en' => 'All Stores',
+                                'ar' => ' ميع المتاج'
                             ],
                             'submenu' => [
                                 [
@@ -587,12 +622,12 @@ class PermissionAdminSeeder extends Seeder
                 // Deliveryman management
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Deliveryman management',
+                    'PermissionTitle' => 'Deliveryman',
                     'activity_scope' => 'system_level',
                     'icon' => 'UserRoundPen',
                     'options' => ['view'],
                     'translations' => [
-                        'en' => 'Deliveryman management',
+                        'en' => 'Deliveryman',
                         'ar' => 'إدارة التوصيل'
                     ],
                     'submenu' => [
@@ -730,6 +765,7 @@ class PermissionAdminSeeder extends Seeder
                         ]
                     ]
                 ],
+
 
 
                 // Staff & Permissions
@@ -1167,19 +1203,19 @@ class PermissionAdminSeeder extends Seeder
                         //Payment settings management
                         [
                             'PermissionName' => PermissionKey::ADMIN_PAYMENT_SETTINGS->value,
-                            'PermissionTitle' => 'Payment Settings',
+                            'PermissionTitle' => 'Payment Gateway',
                             'activity_scope' => 'system_level',
                             'icon' => 'CreditCard',
                             'options' => ['view', 'update'],
                             'translations' => [
-                                'en' => 'Payment Settings',
+                                'en' => 'Payment Gateway',
                                 'ar' => 'إعدادات الدفع'
                             ]
                         ],
                         //SMS settings management
                         [
                             'PermissionName' => PermissionKey::ADMIN_SMS_GATEWAY_SETTINGS->value,
-                            'PermissionTitle' => 'SMS Gateway Settings',
+                            'PermissionTitle' => 'SMS Settings',
                             'activity_scope' => 'system_level',
                             'icon' => 'CreditCard',
                             'options' => ['view', 'update'],

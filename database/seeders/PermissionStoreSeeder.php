@@ -143,6 +143,17 @@ class PermissionStoreSeeder extends Seeder
                                     ]
                                 ],
                                 [
+                                    'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value,
+                                    'PermissionTitle' => 'Inventory',
+                                    'activity_scope' => 'store_level',
+                                    'icon' => 'PackageOpen',
+                                    'options' => ['view'],
+                                    'translations' => [
+                                        'en' => 'Inventory',
+                                        'ar' => 'السحوبات'
+                                    ]
+                                ],
+                                [
                                     'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_BULK_IMPORT->value,
                                     'PermissionTitle' => 'Bulk Import',
                                     'activity_scope' => 'store_level',
@@ -190,31 +201,6 @@ class PermissionStoreSeeder extends Seeder
                     ]
                 ],
 
-                // Inventory Management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Inventory Management',
-                    'activity_scope' => 'store_level',
-                    'icon' => 'SquareChartGantt',
-                    'options' => ['View'],
-                    'translations' => [
-                        'en' => 'Inventory Management',
-                        'ar' => 'الإدارة المالية'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::SELLER_STORE_PRODUCT_INVENTORY->value,
-                            'PermissionTitle' => 'Inventory',
-                            'activity_scope' => 'store_level',
-                            'icon' => 'PackageOpen',
-                            'options' => ['view'],
-                            'translations' => [
-                                'en' => 'Inventory',
-                                'ar' => 'السحوبات'
-                            ]
-                        ]
-                    ]
-                ],
 
                 // Promotional control
                 [
@@ -266,15 +252,16 @@ class PermissionStoreSeeder extends Seeder
                     ]
                 ],
 
+                // Communication Center
                 [
                     'PermissionName' => '',
-                    'PermissionTitle' => 'Chat',
+                    'PermissionTitle' => 'Communication Center',
                     'activity_scope' => 'store_level',
-                    'icon' => '',
-                    'options' => ['view'],
+                    'icon' => 'Headphones',
+                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
                     'translations' => [
-                        'en' => 'Chat',
-                        'ar' => 'إدارة الدردشة'
+                        'en' => 'Communication Center',
+                        'ar' => 'مركز الاتصالات'
                     ],
                     'submenu' => [
                         [
@@ -287,23 +274,7 @@ class PermissionStoreSeeder extends Seeder
                                 'en' => 'Chat',
                                 'ar' => 'إعدادات الدردشة'
                             ]
-                        ]
-                    ]
-                ],
-
-
-                // Support ticket  Management
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Support Ticket',
-                    'activity_scope' => 'store_level',
-                    'icon' => 'Headphones',
-                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                    'translations' => [
-                        'en' => 'Ticket',
-                        'ar' => 'تذكرة الدعم'
-                    ],
-                    'submenu' => [
+                        ],
                         [
                             'PermissionName' => PermissionKey::SELLER_STORE_SUPPORT_TICKETS_MANAGE->value,
                             'PermissionTitle' => 'Tickets',
@@ -313,6 +284,16 @@ class PermissionStoreSeeder extends Seeder
                             'translations' => [
                                 'en' => 'Support Ticket',
                                 'ar' => 'السحوبات'
+                            ]
+                        ],
+                        [
+                            'PermissionName' => PermissionKey::SELLER_NOTIFICATION_MANAGEMENT->value,
+                            'PermissionTitle' => 'All Notifications',
+                            'activity_scope' => 'store_level',
+                            'icon' => 'Bell',
+                            'translations' => [
+                                'en' => 'All Notifications',
+                                'ar' => 'كل الإشعارات'
                             ]
                         ]
                     ]
@@ -417,30 +398,7 @@ class PermissionStoreSeeder extends Seeder
                     ]
                 ],
 
-                // Notifications Settings
-                [
-                    'PermissionName' => '',
-                    'PermissionTitle' => 'Notifications',
-                    'activity_scope' => 'store_level',
-                    'icon' => 'MessageCircleMore',
-                    'options' => ['View'],
-                    'translations' => [
-                        'en' => 'Notifications',
-                        'ar' => 'إعدادات المتجر'
-                    ],
-                    'submenu' => [
-                        [
-                            'PermissionName' => PermissionKey::SELLER_NOTIFICATION_MANAGEMENT->value,
-                            'PermissionTitle' => 'All Notifications',
-                            'activity_scope' => 'store_level',
-                            'icon' => 'Bell',
-                            'translations' => [
-                                'en' => 'All Notifications',
-                                'ar' => 'كل الإشعارات'
-                            ]
-                        ]
-                    ]
-                ],
+
 
                 // Store Settings
                 [
