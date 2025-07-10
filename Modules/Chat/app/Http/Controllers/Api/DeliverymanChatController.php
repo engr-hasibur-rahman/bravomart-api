@@ -79,7 +79,7 @@ class DeliverymanChatController extends Controller
 
 
         $name = $request->input('search');
-        if ($name) {
+        if (!empty($name)) {
             $query->where(function ($q) use ($name) {
                 // For user_type = customer (Customer model)
                 $q->orWhere(function ($q2) use ($name) {
