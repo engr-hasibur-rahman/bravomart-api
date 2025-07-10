@@ -56,7 +56,10 @@ class Chat extends Model
                         ->whereHas('storeSubscription', function ($q3) {
                             $q3->where('payment_status', 'paid')
                                 ->where('status', 1)
-                                ->where('live_chat', 1); // extra condition
+                                ->where('live_chat', 1)
+                                ->whereHas('store', function ($q4) {
+                                    $q4->where('subscription_type', 'subscription');
+                                });
                         });
                 });
         });
