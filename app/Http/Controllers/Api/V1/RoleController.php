@@ -133,7 +133,10 @@ class RoleController extends Controller
                 }
                 $role->permissions()->sync($syncData);
             }
-            return $role;
+            return response()->json([
+                'message' => __('messages.update_success', ['name' => 'Role']),
+                'role' => $role
+            ]);
         } else {
             return response()->json([
                 "message" => __('messages.data_not_found')
