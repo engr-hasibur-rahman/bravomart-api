@@ -188,7 +188,7 @@ class AdminBlogManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array|min:1',
-            'ids.*' => 'integer|exists:blogs,id',
+            'ids.*' => 'nullable|exists:blogs,id',
         ]);
 
         if ($validator->fails()) {

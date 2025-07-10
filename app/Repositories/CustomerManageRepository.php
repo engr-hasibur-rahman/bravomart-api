@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Ticket;
 use App\Models\Wishlist;
+use App\Services\MediaService;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -279,13 +280,23 @@ class CustomerManageRepository implements CustomerManageInterface
         }
     }
 
-    protected function deleteCustomerRelatedAllData(int $customer_id): bool
+    public function deleteCustomerRelatedAllData(int $customer_id): bool
     {
         $customer = Customer::find($customer_id);
         if (!$customer) {
             return false;
         }
         DB::transaction(function () use ($customer) {
+            $wallet = Wallet::where('owner_id', $customer->id)->where('owner_type', Customer::class)->first();
+            // Delete support ticket files
+            foreach ($customer->tickets as $ticket) {
+                foreach ($ticket->messages as $message) {
+                    if ($message->file && file_exists(public_path($message->file))) {
+                        @unlink(public_path($message->file));
+                    }
+                }
+            }
+
             $customer->blogComments()->delete();
             $customer->reviews()->delete();
             $customer->tickets()->delete();
@@ -298,12 +309,16 @@ class CustomerManageRepository implements CustomerManageInterface
             $customer->addresses()->delete();
             $customer->userOtps()->delete();
             $customer->notifications()->delete();
+            $wallet->delete();
 
-            if ($customer->wallet) {
-                $customer->wallet->delete();
+            // Delete profile image if used MediaService
+            $imgId[] = $customer->image;
+            if ($customer->image) {
+                app(MediaService::class)->bulkDeleteMediaImages($imgId);
             }
             $customer->delete();
         });
+
 
         return true;
     }

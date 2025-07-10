@@ -111,7 +111,7 @@ class ProductBrandController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array|min:1',
-            'ids.*' => 'integer|exists:product_brand,id',
+            'ids.*' => 'nullable|exists:product_brand,id',
         ]);
 
         if ($validator->fails()) {

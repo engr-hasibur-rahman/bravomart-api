@@ -61,7 +61,7 @@ class TagManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array|min:1',
-            'ids.*' => 'integer|exists:tags,id',
+            'ids.*' => 'nullable|exists:tags,id',
         ]);
 
         if ($validator->fails()) {
