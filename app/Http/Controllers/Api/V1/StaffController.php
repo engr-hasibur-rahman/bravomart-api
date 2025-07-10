@@ -258,7 +258,7 @@ class StaffController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array|min:1',
-            'ids.*' => 'integer|exists:users,id',
+            'ids.*' => 'nullable|exists:users,id',
         ]);
 
         if ($validator->fails()) {

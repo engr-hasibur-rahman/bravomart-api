@@ -92,7 +92,7 @@ class AdminStoreNoticeController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array|min:1',
-            'ids.*' => 'integer|exists:store_notices,id',
+            'ids.*' => 'nullable|exists:store_notices,id',
         ]);
 
         if ($validator->fails()) {

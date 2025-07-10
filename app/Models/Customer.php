@@ -178,5 +178,14 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         return $this->hasMany(UniversalNotification::class, 'notifiable_id')->where('notifiable_type', 'customer');
     }
 
+    public function hasRunningOrders(): bool
+    {
+        return OrderMaster::where('customer_id', $this->id)
+            ->whereHas('orders', function ($query) {
+                $query->whereNotIn('status', ['delivered', 'cancelled']);
+            })
+            ->exists();
+    }
+
 
 }

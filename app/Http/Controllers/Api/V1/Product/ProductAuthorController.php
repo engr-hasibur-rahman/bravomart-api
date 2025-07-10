@@ -156,7 +156,7 @@ class ProductAuthorController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array|min:1',
-            'ids.*' => 'integer|exists:product_authors,id',
+            'ids.*' => 'nullable|exists:product_authors,id',
         ]);
 
         if ($validator->fails()) {

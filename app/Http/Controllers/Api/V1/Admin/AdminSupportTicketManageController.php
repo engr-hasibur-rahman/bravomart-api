@@ -224,7 +224,7 @@ class AdminSupportTicketManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ticket_ids' => 'required|array|min:1',
-            'ticket_ids.*' => 'integer|exists:tickets,id',
+            'ticket_ids.*' => 'nullable|exists:tickets,id',
         ]);
 
         if ($validator->fails()) {
