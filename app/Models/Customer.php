@@ -10,6 +10,8 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Modules\Chat\app\Models\Chat;
 use Modules\Chat\app\Models\ChatMessage;
+use Modules\SmsGateway\app\Models\UserOtp;
+use Modules\Wallet\app\Models\Wallet;
 
 //class Customer extends Model
 class Customer extends Authenticatable // Extend Authenticatable instead of Model
@@ -96,11 +98,6 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
         return $this->restore();
     }
 
-    public function addresses()
-    {
-        return $this->hasMany(CustomerAddress::class, 'customer_id');
-    }
-
     public function defaultAddress()
     {
         return $this->hasOne(CustomerAddress::class)->where('is_default', 1);
@@ -124,6 +121,61 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
     public function media()
     {
         return $this->morphMany(Media::class, 'fileable', 'user_type', 'user_id');
+    }
+
+    public function blogComments()
+    {
+        return $this->hasMany(BlogComment::class, 'user_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'customer_id');
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'customer_id');
+    }
+
+    public function productQueries()
+    {
+        return $this->hasMany(ProductQuery::class, 'customer_id');
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class, 'customer_id');
+    }
+
+    public function blogCommentReactions()
+    {
+        return $this->hasMany(BlogCommentReaction::class, 'user_id');
+    }
+
+    public function reviewReactions()
+    {
+        return $this->hasMany(ReviewReaction::class, 'user_id');
+    }
+
+    public function wallet()
+    {
+        return $this->morphOne(Wallet::class, 'owner');
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(CustomerAddress::class, 'customer_id');
+    }
+
+    public function userOtps()
+    {
+        return $this->hasMany(UserOtp::class, 'user_id')->where('user_type', 'customer');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(UniversalNotification::class, 'notifiable_id')->where('notifiable_type', 'customer');
     }
 
 
