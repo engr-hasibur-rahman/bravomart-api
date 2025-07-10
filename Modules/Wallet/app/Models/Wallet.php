@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Wallet extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
