@@ -29,8 +29,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Headers: *');
         // change
         User::observe(UserObserver::class);
         Customer::observe(CustomerObserver::class);
