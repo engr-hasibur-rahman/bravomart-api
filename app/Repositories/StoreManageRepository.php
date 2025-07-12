@@ -17,6 +17,7 @@ use App\Models\DeliveryMan;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Translation;
+use App\Services\MediaService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
@@ -289,7 +290,7 @@ class StoreManageRepository implements StoreManageInterface
             // remove 	flash_sales
             FlashSaleProduct::where('store_id', $store_id)->delete();
 
-            // remove 	store media
+            // remove store media
             $store_all_media = Media::where('user_id', $store_id)->where('user_type', Store::class)->get();
             foreach ($store_all_media as $media) {
                 if ($media->path && Storage::exists($media->path)) {
@@ -298,9 +299,149 @@ class StoreManageRepository implements StoreManageInterface
                 $media->delete();
             }
 
-
             $store->delete();
-        }catch (\Throwable $th) {}
+        } catch (\Throwable $th) {
+        }
+
+        return true;
+    }
+
+    public function deleteStoresRelatedAllData(int|string $sellerId): bool
+    {
+        $seller = User::where('activity_scope', 'store_level')->where('store_owner', 1)->find($sellerId);
+        if (!$seller) {
+            return false;
+        }
+
+        $mediaIds = [];
+
+        DB::transaction(function () use ($seller, &$mediaIds) {
+            $stores = Store::where('store_seller_id', $seller->id)->get();
+
+            foreach ($stores as $store) {
+                // Collect store media
+                if ($store->logo) {
+                    $mediaIds[] = $store->logo;
+                }
+                if ($store->banner) {
+                    $mediaIds[] = $store->banner;
+                }
+
+                $store->related_translations()->delete();
+
+                // Product-related deletions
+                $store->products()->each(function ($product) use (&$mediaIds) {
+                    // Collect product images
+                    if ($product->image) {
+                        $mediaIds[] = $product->image;
+                    }
+                    if ($product->meta_image) {
+                        $mediaIds[] = $product->meta_image;
+                    }
+
+                    // Collect variant images
+                    $product->variants->each(function ($variant) use (&$mediaIds) {
+                        if ($variant->image) {
+                            $mediaIds[] = $variant->image;
+                        }
+                    });
+
+                    // Delete related records
+                    $product->flashSaleProduct()?->delete();
+                    $product->related_translations()->delete();
+                    $product->variants()->delete();
+                    $product->reviews()->delete();
+                    $product->wishlists()->delete();
+                    $product->queries()->delete();
+                    $product->delete();
+                });
+
+                // Chat-related
+                $store->chats()->each(function ($chat) {
+                    $chat->messages()->delete();
+                    $chat->delete();
+                });
+
+                // Ticket-related
+                $store->tickets()->each(function ($ticket) {
+                    $ticket->messages()->delete();
+                    $ticket->delete();
+                });
+
+                // Notices
+                $store->notices()->each(function ($storeNotice) {
+                    $storeNotice->notice()?->delete();
+                    $storeNotice->delete();
+                });
+
+                $store->notifications()->delete();
+                $store->wallet()?->delete();
+                $store->subscriptions()->update(['status' => 0]);
+            }
+        });
+
+        // After transaction, delete all collected media files
+        if (!empty($mediaIds)) {
+            $mediaService = app(MediaService::class);
+            $mediaService->bulkDeleteMediaImages($mediaIds);
+        }
+
+        return true;
+    }
+
+
+    public function deleteSellerRelatedAllData(int|string $id): bool
+    {
+        $seller = User::where('activity_scope', 'store_level')->where('store_owner', 1)->find($id);
+        if (!$seller) {
+            return false;
+        }
+
+        $mediaIds = [];
+
+        DB::transaction(function () use ($seller, &$mediaIds) {
+            // Collect seller's image
+            if ($seller->image) {
+                $mediaIds[] = $seller->image;
+            }
+
+            // Collect staff media IDs
+            $staffs = User::where('store_seller_id', $seller->id)->get();
+            foreach ($staffs as $staff) {
+                if ($staff->image) {
+                    $mediaIds[] = $staff->image;
+                }
+            }
+
+            // Collect author media IDs
+            $seller->authors->each(function ($author) use (&$mediaIds) {
+                if ($author->profile_image) {
+                    $mediaIds[] = $author->profile_image;
+                }
+                if ($author->cover_image) {
+                    $mediaIds[] = $author->cover_image;
+                }
+            });
+
+            // Delete all store-related data (also collects media inside)
+            $this->deleteStoresRelatedAllData($seller->id);
+
+            // Delete authors and attributes
+            $seller->authors()->delete();
+            $seller->attributes()->delete();
+
+            // Delete staff
+            $staffs->each->delete();
+
+            // Delete seller
+            $seller->delete();
+        });
+
+        // Delete all collected media files
+        if (!empty($mediaIds)) {
+            $mediaService = app(MediaService::class);
+            $mediaService->bulkDeleteMediaImages($mediaIds);
+        }
 
         return true;
     }
@@ -912,6 +1053,7 @@ class StoreManageRepository implements StoreManageInterface
             return false;
         }
     }
+
     public function rejectStores(array $ids)
     {
         try {

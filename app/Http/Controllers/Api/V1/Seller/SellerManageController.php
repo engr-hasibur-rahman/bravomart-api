@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Api\V1\Seller;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Seller\SellerProfileResource;
 use App\Interfaces\SellerManageInterface;
+use App\Interfaces\StoreManageInterface;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class SellerManageController extends Controller
 {
-    public function __construct(protected SellerManageInterface $sellerRepo)
+    public function __construct(protected SellerManageInterface $sellerRepo, protected StoreManageInterface $storeRepo)
     {
     }
 
@@ -354,7 +355,7 @@ class SellerManageController extends Controller
         if (!auth('api')->check()) {
             unauthorized_response();
         }
-        $success = $this->sellerRepo->deleteAccount();
+        $success = $this->storeRepo->deleteSellerRelatedAllData(auth('api')->user()->id);
         if ($success) {
             return response()->json([
                 'status' => true,

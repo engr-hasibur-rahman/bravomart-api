@@ -110,7 +110,7 @@ class CustomerManageController extends Controller
 
             $token = $customer->createToken('customer_auth_token');
             $accessToken = $token->accessToken;
-            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
+            $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
 
             // update firebase device token
@@ -623,7 +623,17 @@ class CustomerManageController extends Controller
         if (!auth('api_customer')->check()) {
             unauthorized_response();
         }
-        $success = $this->customerRepo->deleteAccount();
+
+        $customer = Customer::find(auth('api_customer')->user()->id);
+
+        if ($customer->hasRunningOrders()) {
+            return response()->json([
+                'message' => __('messages.has_running_orders', ['name' => 'Customer'])
+            ], 422);
+        }
+
+        $success = $this->customerRepo->deleteCustomerRelatedAllData($customer->id);
+
         if ($success) {
             return response()->json([
                 'status' => true,

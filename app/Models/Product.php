@@ -313,5 +313,10 @@ class Product extends Model
             ->get();
     }
 
+    public function queries()
+    {
+        return $this->hasMany(ProductQuery::class, 'product_id');
+    }
+
 
 }

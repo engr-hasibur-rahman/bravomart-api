@@ -21,7 +21,9 @@ class StoreNoticeRecipient extends Model
     {
         return $this->belongsTo(User::class, 'seller_id');
     }
-    public function store(){
+
+    public function store()
+    {
         return $this->belongsTo(Store::class, 'store_id');
     }
 }
