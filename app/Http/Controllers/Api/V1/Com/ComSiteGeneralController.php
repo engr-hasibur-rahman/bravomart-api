@@ -49,7 +49,7 @@ class ComSiteGeneralController extends Controller
 
         return response()->json([
             'site_settings' => new SiteGeneralInfoResource($site_settings),
-        ])->header('Access-Control-Allow-Origin', '*');
+        ]);
     }
 
     public function siteMaintenancePage(Request $request)
