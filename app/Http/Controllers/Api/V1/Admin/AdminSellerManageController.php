@@ -129,22 +129,42 @@ class AdminSellerManageController extends Controller
 
     public function destroy(Request $request)
     {
-        $validator = Validator::make(['seller_id' => $request->seller_id], [
-            'seller_id' => 'required|exists:users,id',
+        $validator = Validator::make($request->all(), [
+            'seller_ids' => 'required|array|min:1',
+            'seller_ids.*' => 'exists:users,id',
         ]);
+
         if ($validator->fails()) {
-            return response()->json($validator->errors());
-        }
-        $seller = User::find($request->seller_id);
-        if (!$seller) {
             return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 404);
+                'errors' => $validator->errors(),
+            ], 422);
         }
-        $seller->delete();
+
+        $failed = [];
+        foreach ($request->seller_ids as $seller_id) {
+            $seller = User::find($seller_id);
+            if (!$seller) {
+                $failed[] = $seller_id;
+                continue;
+            }
+
+            $success = $this->storeRepo->deleteSellerRelatedAllData($seller_id);
+            if (!$success) {
+                $failed[] = $seller_id;
+            }
+        }
+
+        if (count($failed)) {
+            return response()->json([
+                'message' => __('messages.partial_delete_failed', ['name' => 'Seller']),
+                'failed_ids' => $failed,
+            ], 207); // 207 Multi-Status (partial success)
+        }
+
         return response()->json([
-            'message' => __('messages.delete_success', ['name' => 'Seller']),
+            'message' => __('messages.delete_success', ['name' => 'Sellers']),
         ]);
+
     }
 
     public function changePassword(Request $request)
@@ -212,9 +232,11 @@ class AdminSellerManageController extends Controller
             'id' => 'required|exists:users,id',
             'slug' => 'nullable|exists:stores,slug',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
         $seller = User::where('id', $request->id)->where('activity_scope', 'store_level')->first();
         if (!$seller) {
             return response()->json([

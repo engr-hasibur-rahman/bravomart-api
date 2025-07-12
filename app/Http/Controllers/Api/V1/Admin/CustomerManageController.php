@@ -256,6 +256,5 @@ class CustomerManageController extends Controller
             'skipped' => $skipped,
             'failed'  => $failed,
         ]);
-
     }
 }

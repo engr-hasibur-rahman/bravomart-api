@@ -49,4 +49,6 @@ interface StoreManageInterface
     public function rejectStores(array $ids);
 
     public function changeStatus(array $data);
+
+    public function deleteSellerRelatedAllData(int|string $id);
 }

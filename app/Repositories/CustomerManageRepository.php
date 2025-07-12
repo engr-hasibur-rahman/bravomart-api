@@ -309,7 +309,9 @@ class CustomerManageRepository implements CustomerManageInterface
             $customer->addresses()->delete();
             $customer->userOtps()->delete();
             $customer->notifications()->delete();
-            $wallet->delete();
+            if ($wallet) {
+                $wallet->delete();
+            }
 
             // Delete profile image if used MediaService
             $imgId[] = $customer->image;
