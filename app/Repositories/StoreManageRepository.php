@@ -45,31 +45,46 @@ class StoreManageRepository implements StoreManageInterface
         return Store::class;
     }
 
-    public function getAllStores(int|string $limit, int|string $status, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
-    {
-        $store = Store::leftJoin('translations as name_translations', function ($join) use ($language) {
-            $join->on('stores.id', '=', 'name_translations.translatable_id')
-                ->where('name_translations.translatable_type', '=', Store::class)
-                ->where('name_translations.language', '=', $language)
-                ->where('name_translations.key', '=', 'name');
-        })->select(
-            'stores.*',
-            DB::raw('COALESCE(name_translations.value, stores.name) as name'),
-        );
+    public function getAllStores(
+        int|string $limit,
+        int|string|null $status,
+        int $page,
+        string $language,
+        string $search,
+        string $sortField,
+        string $sort,
+        array $filters
+    ) {
+        $store = Store::query()
+            ->leftJoin('translations as name_translations', function ($join) use ($language) {
+                $join->on('stores.id', '=', 'name_translations.translatable_id')
+                    ->where('name_translations.translatable_type', '=', Store::class)
+                    ->where('name_translations.language', '=', $language)
+                    ->where('name_translations.key', '=', 'name');
+            })
+            ->select(
+                'stores.*',
+                DB::raw('COALESCE(name_translations.value, stores.name) as name')
+            );
 
-        // Apply search filter if search parameter exists
-        if ($search) {
+        // ✅ Filter by search
+        if (!empty($search)) {
             $store->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT_WS(' ', stores.name, name_translations.value)"), 'like', "%{$search}%");
+                $query->where(DB::raw("COALESCE(name_translations.value, stores.name)"), 'like', "%{$search}%");
             });
         }
-        if (isset($status) && !empty($status)) {
-            $store->where('stores.status', $status);
+
+        // ✅ Filter by status (including 0)
+        if (is_numeric($status)) {
+            $store->where('stores.status', (int) $status);
         }
+
+        // ✅ Pagination & Sorting
         return $store->with(['seller', 'area', 'related_translations'])
-            ->orderBy($sortField ?? 'created_at', $sort ?? 'asc')
+            ->orderBy($sortField ?: 'stores.created_at', $sort ?: 'asc')
             ->paginate($limit);
     }
+
 
     public function getAuthSellerStores(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters)
     {
