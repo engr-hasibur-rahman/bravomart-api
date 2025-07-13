@@ -214,7 +214,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('email-verify', [AdminCustomerManageController::class, 'emailVerify']);
                 Route::post('update-profile', [AdminCustomerManageController::class, 'updateProfile']);
                 Route::post('suspend', [AdminCustomerManageController::class, 'suspend']);
-                Route::delete('remove', [AdminCustomerManageController::class, 'destroy']);
+                Route::post('remove', [AdminCustomerManageController::class, 'destroy']);
             });
             // Newsletter
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
