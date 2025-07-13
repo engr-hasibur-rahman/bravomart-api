@@ -246,7 +246,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('suspend', [AdminSellerManageController::class, 'rejectSeller']);
             Route::post('change-status', [AdminSellerManageController::class, 'changeStatus']);
             Route::post('change-password', [AdminSellerManageController::class, 'changePassword']);
-            Route::delete('remove/{seller_id}', [AdminSellerManageController::class, 'destroy']);
+            Route::post('remove', [AdminSellerManageController::class, 'destroy']);
         });
         // Department manage
         Route::group(['prefix' => 'department/'], function () {
@@ -474,7 +474,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
                 Route::get('list', [AdminDeliverymanManageController::class, 'index']);
                 Route::get('list-dropdown', [AdminDeliverymanManageController::class, 'deliverymanDropdownList']);
-                Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest']);
+                Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest'])->middleware(['permission:'.PermissionKey::ADMIN_DELIVERYMAN_REQUEST->value]);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
                 Route::post('change-password', [AdminDeliverymanManageController::class, 'changePassword']);
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);

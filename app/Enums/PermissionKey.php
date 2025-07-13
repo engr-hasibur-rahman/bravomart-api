@@ -133,6 +133,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_DELIVERYMAN_VEHICLE_TYPE = '/admin/deliveryman/vehicle-types/list';
     case ADMIN_DELIVERYMAN_MANAGE_LIST = '/admin/deliveryman/list';
+    case ADMIN_DELIVERYMAN_REQUEST = '/admin/deliveryman/request';
     case ADMIN_DELIVERYMAN_MANAGE_REVIEW = '/admin/deliveryman/review';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
