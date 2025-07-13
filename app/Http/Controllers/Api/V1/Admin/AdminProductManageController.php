@@ -8,6 +8,7 @@ use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\ImportRequest;
 use App\Http\Requests\ProductRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\Admin\ProductRequestResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Product\LowStockProductResource;
@@ -152,7 +153,7 @@ class AdminProductManageController extends Controller
         ], 200);
     }
 
-    public function update(ProductRequest $request)
+    public function update(ProductUpdateRequest $request)
     {
         $request['meta_keywords'] = json_encode($request['meta_keywords']);
         $request['warranty'] = json_encode($request['warranty']);
