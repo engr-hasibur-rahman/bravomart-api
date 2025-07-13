@@ -224,6 +224,7 @@ class CustomerManageController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+
         $deleted = 0;
         $skipped = [];
         $failed = [];
@@ -249,9 +250,19 @@ class CustomerManageController extends Controller
                 $failed[] = $customerId;
             }
         }
+        $skippedCustomerNames = [];
+
+        foreach ($skipped as $customerId) {
+            $customer = Customer::find($customerId);
+            if ($customer) {
+                $skippedCustomerNames[] = $customer->full_name;
+            }
+        }
+
+        $skippedNames = implode(', ', $skippedCustomerNames);
 
         return response()->json([
-            'message' => "Processed: $deleted deleted, " . count($skipped) . " skipped (running orders), " . count($failed) . " failed.",
+            'message' => "Processed: $deleted deleted, " . count($skipped) . " skipped (Customer(s): $skippedNames have running orders), " . count($failed) . " failed.",
             'deleted' => $deleted,
             'skipped' => $skipped,
             'failed'  => $failed,
