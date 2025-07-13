@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Modules\Subscription\App\Models\StoreSubscription;
+use Modules\Subscription\app\Models\StoreSubscription;
 
 
 class Chat extends Model
