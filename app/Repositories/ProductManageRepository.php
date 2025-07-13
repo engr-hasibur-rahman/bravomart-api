@@ -138,8 +138,8 @@ class ProductManageRepository implements ProductManageInterface
                     ProductVariant::create($variant);
 
                     // Set up media binding for variant image
-                    if (!empty($variantData['image'])) {
-                        $variantImage = Media::find($variantData['image']);
+                    if (!empty($variant['image'])) {
+                        $variantImage = Media::find($variant['image']);
                         if ($variantImage) {
                             $variantImage->update([
                                 'user_id' => $product->store_id,
@@ -148,6 +148,7 @@ class ProductManageRepository implements ProductManageInterface
                             ]);
                         }
                     }
+
 
                 }
             }
@@ -212,6 +213,18 @@ class ProductManageRepository implements ProductManageInterface
             // Update the product details
             $product->update($data);
 
+            //Set up media binding for main image
+            if (!empty($product->image)) {
+                $mainImage = Media::find($product->image);
+                if ($mainImage) {
+                    $mainImage->update([
+                        'user_id' => $product->store_id,
+                        'user_type' => Store::class,
+                        'usage_type' => 'product_main',
+                    ]);
+                }
+            }
+
             // Update or create variants
             if (!empty($data['variants']) && is_array($data['variants'])) {
                 $variantIds = []; // Track updated & newly created variant IDs
@@ -233,6 +246,19 @@ class ProductManageRepository implements ProductManageInterface
                             $existingVariant->update($variant);
                             $variantIds[] = $existingVariant->id;
                         }
+
+                        // Set up media binding for variant image
+                        if (!empty($variant['image'])) {
+                             $variantImage = Media::find($variant['image']);
+                            if ($variantImage) {
+                                $variantImage->update([
+                                    'user_id' => $product->store_id,
+                                    'user_type' => Store::class,
+                                    'usage_type' => 'product_variant',
+                                ]);
+                            }
+                        }
+
                     } else {
                         // Generate SKU if null
                         if (empty($variant['sku'])) {
@@ -240,7 +266,20 @@ class ProductManageRepository implements ProductManageInterface
                         }
                         $newVariant = ProductVariant::create($variant);
                         $variantIds[] = $newVariant->id;
+
+                        // Set up media binding for variant image
+                        if (!empty($variant['image'])) {
+                            $variantImage = Media::find($newVariant->image);
+                            if ($variantImage) {
+                                $variantImage->update([
+                                    'user_id' => $product->store_id,
+                                    'user_type' => Store::class,
+                                    'usage_type' => 'product_variant',
+                                ]);
+                            }
+                        }
                     }
+
                 }
 
                 // Delete variants not present in the request
@@ -266,7 +305,8 @@ class ProductManageRepository implements ProductManageInterface
             }
 
             return $product->id;
-        } catch (\Throwable $th) {
+        }
+        catch (\Throwable $th) {
             throw $th;
         }
     }
