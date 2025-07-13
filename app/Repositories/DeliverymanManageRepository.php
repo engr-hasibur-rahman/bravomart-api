@@ -474,7 +474,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         $deliveryman = auth('api')->user();
 
         // Define custom status order
-        $statusOrder = ['accepted', 'pickup', 'shipped', 'delivered', 'ignored'];
+        $statusOrder = ['processing', 'pickup', 'shipped', 'delivered', 'ignored'];
 
         $orders = OrderDeliveryHistory::with([
             'order.orderMaster.orderAddress',
@@ -543,6 +543,11 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
                     'order_id' => $order_id,
                     'deliveryman_id' => $deliveryman->id,
                     'status' => $status,
+                ]);
+                OrderDeliveryHistory::create([
+                    'order_id' => $order_id,
+                    'deliveryman_id' => $deliveryman->id,
+                    'status' => $order->status,
                 ]);
             }
             if ($status === 'ignored') {
