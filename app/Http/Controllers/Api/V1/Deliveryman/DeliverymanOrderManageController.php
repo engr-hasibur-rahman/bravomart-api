@@ -33,7 +33,7 @@ class DeliverymanOrderManageController extends Controller
                     [
                         'order_data' => new AdminOrderResource($order),
                         'order_summary' => new OrderSummaryResource($order),
-                    ], 200
+                    ]
                 );
             } else {
                 return response()->json(['message' => __('messages.data_not_found')], 404);
@@ -104,20 +104,22 @@ class DeliverymanOrderManageController extends Controller
         if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
             unauthorized_response();
         }
+
         $limit = 2;
         $activeOrders = Order::with(['orderMaster.orderAddress', 'store'])
-            ->where('status', '!=', 'delivered') // Exclude delivered orders
+            ->whereNotIn('status', ['delivered', 'cancelled', 'on_hold']) // Exclude both delivered and cancelled
             ->whereHas('orderDeliveryHistory', function ($query) use ($deliveryman) {
                 $query->where('deliveryman_id', $deliveryman->id)
-                    ->where('status', 'accepted');
+                    ->where('status', 'accepted'); // Ensure it's accepted
             })
             ->latest()
             ->get();
-//        if ($request->status === 'accepted' && $activeOrders->count() > $limit) {
-//            return response()->json([
-//                'message' => __('messages.order_accept_limit_reached', ['limit' => $limit]),
-//            ]);
-//        }
+
+        if ($request->status === 'accepted' && $activeOrders->count() > $limit) {
+            return response()->json([
+                'message' => __('messages.order_accept_limit_reached', ['limit' => $limit]),
+            ]);
+        }
 
         // update order delivery history
         $success = $this->deliverymanRepo->updateOrderStatus(

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Interfaces;
+
 use App\Models\Customer;
 
 interface CustomerManageInterface
@@ -26,4 +27,6 @@ interface CustomerManageInterface
     public function deleteAccount();
 
     public function getDashboard();
+
+    public function deleteCustomerRelatedAllData(int $customer_id);
 }

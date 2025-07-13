@@ -105,7 +105,7 @@ class NotificationManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array|min:1',
-            'ids.*' => 'integer|exists:universal_notifications,id',
+            'ids.*' => 'nullable|exists:universal_notifications,id',
         ]);
 
         if ($validator->fails()) {

@@ -7,6 +7,7 @@ use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Customer\CustomerDetailsResource;
 use App\Http\Resources\Customer\CustomerResource;
+use App\Interfaces\CustomerManageInterface;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,11 @@ use Illuminate\Support\Facades\Validator;
 
 class CustomerManageController extends Controller
 {
+    public function __construct(protected CustomerManageInterface $customerManageRepo)
+    {
+
+    }
+
     public function getCustomerList(Request $request)
     {
         $query = Customer::query();
@@ -35,6 +41,7 @@ class CustomerManageController extends Controller
             'meta' => new PaginationResource($customers)
         ]);
     }
+
     public function register(CustomerRequest $request)
     {
         try {
@@ -44,15 +51,15 @@ class CustomerManageController extends Controller
                 return response()->json([
                     "message" => __('messages.registration_success', ['name' => 'Customer']),
                 ]);
-            }else{
+            } else {
                 return response()->json([
                     "message" => __('messages.registration_failed', ['name' => 'Customer']),
-                ],500);
+                ], 500);
             }
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
-            ],500);
+            ], 500);
         }
     }
 
@@ -184,6 +191,7 @@ class CustomerManageController extends Controller
             ]);
         }
     }
+
     public function suspend(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -204,23 +212,49 @@ class CustomerManageController extends Controller
             'message' => __('messages.suspended', ['name' => 'Customer']),
         ]);
     }
+
     public function destroy(Request $request)
     {
-        $validator = Validator::make(['customer_id' => $request->customer_id], [
-            'customer_id' => 'required|exists:customers,id',
+        $validator = Validator::make($request->all(), [
+            'customer_ids'   => 'required|array',
+            'customer_ids.*' => 'required|exists:customers,id',
         ]);
+
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json(['errors' => $validator->errors()], 422);
         }
-        $customer = Customer::find($request->customer_id);
-        if (!$customer) {
-            return response()->json([
-                'message' => __('messages.data_not_found'),
-            ], 404);
+
+        $deleted = 0;
+        $skipped = [];
+        $failed = [];
+
+        foreach ($request->customer_ids as $customerId) {
+            $customer = Customer::find($customerId);
+
+            if (!$customer) {
+                $failed[] = $customerId;
+                continue;
+            }
+
+            if ($customer->hasRunningOrders()) {
+                $skipped[] = $customerId;
+                continue;
+            }
+
+            $success = $this->customerManageRepo->deleteCustomerRelatedAllData($customerId);
+
+            if ($success) {
+                $deleted++;
+            } else {
+                $failed[] = $customerId;
+            }
         }
-        $customer->delete();
+
         return response()->json([
-            'message' => __('messages.delete_success', ['name' => 'Customer']),
+            'message' => "Processed: $deleted deleted, " . count($skipped) . " skipped (running orders), " . count($failed) . " failed.",
+            'deleted' => $deleted,
+            'skipped' => $skipped,
+            'failed'  => $failed,
         ]);
     }
 }

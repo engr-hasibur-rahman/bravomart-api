@@ -128,7 +128,7 @@ class ProductCategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array|min:1',
-            'ids.*' => 'integer|exists:product_category,id',
+            'ids.*' => 'nullable|exists:product_category,id',
         ]);
 
         if ($validator->fails()) {

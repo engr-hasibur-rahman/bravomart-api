@@ -20,6 +20,13 @@ use Modules\Subscription\app\Models\Subscription;
 if (!function_exists('checkSubscription')) {
     function checkSubscription($storeId, $feature = null)
     {
+        $store = \App\Models\Store::find($storeId);
+        if (!$store) {
+            return false;
+        }
+        if ($store->subscription_type === 'commission') {
+            return true;
+        }
         $query = \Modules\Subscription\app\Models\StoreSubscription::where('store_id', $storeId)
             ->where('status', 1)
             ->where('payment_status', 'paid');

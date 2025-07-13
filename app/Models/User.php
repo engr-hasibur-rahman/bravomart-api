@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+
 //use Modules\Chat\app\Models\Chat;
 use Modules\Chat\app\Models\Chat;
 use Modules\Chat\app\Models\ChatMessage;
@@ -195,5 +196,19 @@ class User extends Authenticatable
         return $this->morphMany(Media::class, 'fileable', 'user_type', 'user_id');
     }
 
+    public function stores()
+    {
+        return $this->hasMany(Store::class, 'store_seller_id', 'id');
+    }
+
+    public function attributes()
+    {
+        return $this->hasMany(ProductAttribute::class, 'created_by', 'id');
+    }
+
+    public function authors()
+    {
+        return $this->hasMany(ProductAuthor::class, 'created_by', 'id');
+    }
 
 }

@@ -9,6 +9,7 @@ use MatanYadaev\EloquentSpatial\Objects\Polygon;
 use Modules\Chat\app\Models\Chat;
 use Modules\Subscription\app\Models\StoreSubscription;
 use Modules\Subscription\app\Models\SubscriptionHistory;
+use Modules\Wallet\app\Models\Wallet;
 
 class Store extends Model
 {
@@ -199,5 +200,26 @@ class Store extends Model
     {
         return $this->morphMany(Media::class, 'fileable', 'user_type', 'user_id');
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'store_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(UniversalNotification::class, 'notifiable_id')->where('notifiable_type', 'store');
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class, 'owner_id')->where('owner_type', self::class);
+    }
+
+    public function notices()
+    {
+        return $this->hasMany(StoreNoticeRecipient::class, 'store_id');
+    }
+
 
 }

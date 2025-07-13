@@ -12,7 +12,8 @@ use Illuminate\Http\Request;
 
 class ComSiteGeneralController extends Controller
 {
-    public function siteGeneralInfo(Request $request){
+    public function siteGeneralInfo(Request $request)
+    {
 
         $filter_data = $request->filter;
         if ($filter_data == 'logo') {
@@ -22,9 +23,9 @@ class ComSiteGeneralController extends Controller
                 'com_site_favicon' => com_option_get('com_site_favicon'),
             ];
             return response()->json([
-                'site_settings' => New SiteGeneralInfoFilterLogoResource($site_settings),
+                'site_settings' => new SiteGeneralInfoFilterLogoResource($site_settings),
             ]);
-        }else{
+        } else {
             $site_settings = [
                 'com_site_title' => com_option_get('com_site_title'),
                 'com_site_subtitle' => com_option_get('com_site_subtitle'),
@@ -47,18 +48,19 @@ class ComSiteGeneralController extends Controller
         }
 
         return response()->json([
-            'site_settings' => New SiteGeneralInfoResource($site_settings),
+            'site_settings' => new SiteGeneralInfoResource($site_settings),
         ]);
     }
 
-    public function siteMaintenancePage(Request $request){
-            $settings = [
-                'com_maintenance_title' => com_option_get('com_maintenance_title'),
-                'com_maintenance_description' => com_option_get('com_maintenance_description'),
-                'com_maintenance_start_date' => com_option_get('com_maintenance_end_date'),
-                'com_maintenance_end_date' => com_option_get('com_maintenance_end_date'),
-                'com_maintenance_image' => ImageModifier::generateImageUrl(com_option_get('com_maintenance_image'))
-            ];
+    public function siteMaintenancePage(Request $request)
+    {
+        $settings = [
+            'com_maintenance_title' => com_option_get('com_maintenance_title'),
+            'com_maintenance_description' => com_option_get('com_maintenance_description'),
+            'com_maintenance_start_date' => com_option_get('com_maintenance_end_date'),
+            'com_maintenance_end_date' => com_option_get('com_maintenance_end_date'),
+            'com_maintenance_image' => ImageModifier::generateImageUrl(com_option_get('com_maintenance_image'))
+        ];
         return response()->json([
             'maintenance_settings' => $settings,
         ]);
@@ -84,7 +86,7 @@ class ComSiteGeneralController extends Controller
         if (!$settings) {
             return response()->json([
                 'message' => __('messages.data_not_found')
-            ],404);
+            ], 404);
         }
 
         $content = jsonImageModifierFormatter($settings->content);

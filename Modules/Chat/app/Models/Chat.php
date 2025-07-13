@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Modules\Subscription\App\Models\StoreSubscription;
+use Modules\Subscription\app\Models\StoreSubscription;
 
 
 class Chat extends Model
@@ -56,7 +56,10 @@ class Chat extends Model
                         ->whereHas('storeSubscription', function ($q3) {
                             $q3->where('payment_status', 'paid')
                                 ->where('status', 1)
-                                ->where('live_chat', 1); // extra condition
+                                ->where('live_chat', 1)
+                                ->whereHas('store', function ($q4) {
+                                    $q4->where('subscription_type', 'subscription');
+                                });
                         });
                 });
         });

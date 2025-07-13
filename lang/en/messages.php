@@ -174,7 +174,9 @@ return [
     'already_approved' => ':name is already approved. Can\'t change status!',
     'already_rejected' => ':name is already rejected. Can\'t change status!',
 
-    'user_exists' => 'This user is already exists as :name!'
+    'user_exists' => 'This user is already exists as :name!',
+
+    'has_running_orders' => 'This :name has running orders!'
 
 ];
 
