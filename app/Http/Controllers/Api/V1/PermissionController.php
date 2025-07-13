@@ -146,38 +146,44 @@ class PermissionController extends Controller
             }
 
         } else {
-            // Define the permissions array for non-store level seller
-            $permissionsArray = ['dashboard',
-                'Store Settings',
+            $permissionsArray = [
+                'dashboard',
                 PermissionKey::SELLER_STORE_MY_SHOP->value,
-                'Staff control',
-                PermissionKey::SELLER_STORE_STAFF_MANAGE->value,];
+            ];
 
-            // Get specific permissions for non-store level users
+            // Get only the permissions listed
             $permissions = $user->rolePermissionsQuery()
                 ->whereIn('name', $permissionsArray)
-                ->whereNull('parent_id') // Top-level permissions
-                ->with(['children' => function ($query) use ($permissionsArray) {
-                    $query->whereIn('name', $permissionsArray);
-                }])->get();
+                ->get()
+                ->map(function ($permission) {
+                    // Decode options if it's a string
+                    if (is_string($permission->options)) {
+                        $permission->options = json_decode($permission->options, true);
+                    }
 
-            $permissions = $permissions->map(function ($permission) {
-                // Check if options is a string and decode it into an array
-                if (is_string($permission->options)) {
-                    $permission->options = json_decode($permission->options, true);
+                    // Add type info
+                    $permission->type = $permission->parent_id === null ? 'parent' : 'child';
+
+                    return $permission;
+                });
+
+            // Identify parent and child
+            $parents = $permissions->filter(fn($p) => $p->parent_id === null)->keyBy('id');
+            $children = $permissions->filter(fn($p) => $p->parent_id !== null);
+
+            // Attach children only if their parent exists in the list
+            foreach ($children as $child) {
+                if ($parents->has($child->parent_id)) {
+                    $child->type = 'child';
+                    $parents[$child->parent_id]->children[] = $child;
                 }
-                // Recursively decode the options of children permissions (if any)
-                if (!empty($permission->children)) {
-                    $permission->children = collect($permission->children)->map(function ($child) {
-                        if (is_string($child->options)) {
-                            $child->options = json_decode($child->options, true);
-                        }
-                        return $child;
-                    });
-                }
+            }
+
+            // Result: parent with children (if both in array), and also track type
+            $permissions->map(function ($permission) use ($parents) {
+                $permission->type = $permission->parent_id === null ? 'parent' : 'child';
                 return $permission;
             });
-
         }
 
         return [

@@ -143,6 +143,7 @@ class PartnerLoginController extends Controller
 
 
         if ($token->expires_at && Carbon::parse($token->expires_at)->lt(now())) {
+
             $token->delete();
             $newToken = $user->createToken('auth_token');
             $accessToken = $newToken->accessToken;
