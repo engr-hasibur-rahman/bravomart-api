@@ -267,6 +267,31 @@ class StoreManageRepository implements StoreManageInterface
             if ($store) {
                 $data = Arr::except($data, ['translations']);
                 $store->update($data);
+
+                // If logo media exists, update its relation
+                if (!empty($store->logo)) {
+                    $logoMedia = Media::find($store->logo);
+                    if ($logoMedia) {
+                        $logoMedia->update([
+                            'user_id' => $store->id,
+                            'user_type' => Store::class,
+                            'usage_type' => 'store_logo',
+                        ]);
+                    }
+                }
+
+                // If banner media exists, update its relation
+                if (!empty($store->banner)) {
+                    $bannerMedia = Media::find($store->banner);
+                    if ($bannerMedia) {
+                        $bannerMedia->update([
+                            'user_id' => $store->id,
+                            'user_type' => Store::class,
+                            'usage_type' => 'store_banner',
+                        ]);
+                    }
+                }
+
                 return $store->id;
             } else {
                 return false;
