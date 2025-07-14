@@ -22,6 +22,7 @@ class ChatController extends Controller
             'receiver_id' => 'required|integer',
             'message' => 'nullable|string',
             'file' => 'nullable|file|mimes:png,jpg,jpeg,webp,gif,pdf|max:2048', // max 2MB
+            'store_id' => 'nullable|exists:stores,id',
         ]);
 
         if ($validator->fails()) {
@@ -33,6 +34,19 @@ class ChatController extends Controller
 
         // Check authenticated user
         $authUser = auth()->guard('api')->user();
+        if ($authUser->activity_scope == 'store_level' && $authUser->store_owner) {
+            if (!isset($request->store_id)){
+                return response()->json([
+                    'message' => __('validation.required',["attribute" => "store_id"]),
+                ],422);
+            }
+            $authStore = Store::where('id', $request->store_id)->where('store_seller_id', $authUser->id)->first();
+            if (!$authUser) {
+                return response()->json([
+                    'message' => __('chat::messages.store.doesnt.belongs.to.seller')
+                ],422);
+            }
+        }
         if (!$authUser) {
             return response()->json([
                 'success' => false,
@@ -75,7 +89,7 @@ class ChatController extends Controller
             $receiver = Customer::find($receiver_id);
         } elseif ($receiver_type === 'store') {
             $receiver = Store::find($receiver_id);
-        } elseif (in_array($receiver_type, ['admin', 'store', 'deliveryman'])) {
+        } elseif (in_array($receiver_type, ['admin', 'deliveryman'])) {
             $receiver = User::find($receiver_id);
         }
         // Check  sender type
@@ -131,7 +145,8 @@ class ChatController extends Controller
 
         $data = [
             'receiver_chat_id' => $receiver_chat->id,
-            'sender_id' => $authUser->id,
+//            'sender_id' => $authUser->id,
+            'sender_id' => $authType == 'store' ? $authStore->id : $authUser->id,
             'sender_type' => $authType,
             'receiver_id' => $receiver->id,
             'receiver_type' => $receiver_type,

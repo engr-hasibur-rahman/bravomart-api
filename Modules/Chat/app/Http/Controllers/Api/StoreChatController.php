@@ -173,7 +173,7 @@ class StoreChatController extends Controller
         if (!$sellerStores->contains($request->store_id)){
             return response()->json([
                 'messages' => __('chat::messages.store.doesnt.belongs.to.seller'),
-            ]);
+            ],422);
         }
         $chat = Chat::where('user_id', $auth_id)->first();
 
