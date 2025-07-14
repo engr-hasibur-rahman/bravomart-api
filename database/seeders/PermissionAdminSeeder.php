@@ -653,6 +653,17 @@ class PermissionAdminSeeder extends Seeder
                                 'ar' => 'قائمة رجال التوصيل'
                             ]
                         ],
+                        [
+                            'PermissionName' => PermissionKey::ADMIN_DELIVERYMAN_REQUEST->value,
+                            'PermissionTitle' => 'Deliveryman Requests',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'ListPlus',
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Deliveryman Requests',
+                                'ar' => 'طلبات مندوب التوصيل'
+                            ]
+                        ],
                     ]
                 ],
 
