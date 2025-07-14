@@ -38,9 +38,9 @@ class DeliverymanDetailsResource extends JsonResource
             'identification_type' => $this->deliveryman?->identification_type,
             'identification_number' => $this->deliveryman?->identification_number,
             'identification_photo_front' => $this->deliveryman?->identification_photo_front,
-            'identification_photo_front_url' => ImageModifier::generateImageUrl($this->deliveryman?->identification_photo_front),
+            'identification_photo_front_url' => asset('storage/' . $this->deliveryman?->identification_photo_front),
             'identification_photo_back' => $this->deliveryman?->identification_photo_back,
-            'identification_photo_back_url' => ImageModifier::generateImageUrl($this->deliveryman?->identification_photo_back),
+            'identification_photo_back_url' => asset('storage/' . $this->deliveryman?->identification_photo_back),
             'status' => $this->status,
             'is_verified' => (int)$this->is_verified,
             'verified_at' => $this->verified_at,
@@ -51,6 +51,7 @@ class DeliverymanDetailsResource extends JsonResource
             "started_at" => $this->created_at->format('F d, Y'),
         ];
     }
+
     protected function getPhoneData($phone)
     {
         try {
