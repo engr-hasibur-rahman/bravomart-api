@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('media', function (Blueprint $table) {
-            $table->enum('visibility', ['public', 'private', 'restricted'])->default('public')->after('user_type')->nullable();
-        });
+        if (!Schema::hasColumn('media', 'visibility')) {
+            Schema::table('media', function (Blueprint $table) {
+                $table->enum('visibility', ['public', 'private', 'restricted'])->default('public')->after('user_type')->nullable();
+            });
+        }
     }
 
     /**

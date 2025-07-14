@@ -1528,17 +1528,6 @@ class PermissionAdminSeeder extends Seeder
                                 'en' => 'Database Update',
                                 'ar' => 'تحديث قاعدة البيانات'
                             ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::APP_SETTINGS->value,
-                            'PermissionTitle' => 'App settings',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'Smartphone',
-                            'options' => ['view', 'update'],
-                            'translations' => [
-                                'en' => 'App settings',
-                                'ar' => 'إعدادات التطبيق'
-                            ]
                         ]
                     ]
                 ]

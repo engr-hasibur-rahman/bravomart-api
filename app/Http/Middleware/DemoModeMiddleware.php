@@ -12,6 +12,7 @@ class DemoModeMiddleware
     protected array $blockedMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
     protected array $protectedPaths = [
         // for admin
+        'api/v1/admin/business-operations*',
         'api/v1/admin/payment-gateways*',
         'api/v1/admin/system-management*',
         'api/v1/admin/sms-provider/settings*',
