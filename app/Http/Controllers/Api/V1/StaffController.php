@@ -101,6 +101,17 @@ class StaffController extends Controller
             'status' => 1,
             'password' => Hash::make($request->password),
         ]);
+        //Set up media binding for main image
+        if (!empty($user->image)) {
+            $mainImage = Media::find($user->image);
+            if ($mainImage) {
+                $mainImage->update([
+                    'user_id' => $user->id,
+                    'user_type' => User::class,
+                    'usage_type' => 'staff_profile',
+                ]);
+            }
+        }
 
 
         // Assign roles to the user
@@ -232,6 +243,17 @@ class StaffController extends Controller
         $user->store_seller_id = $isAdmin ? null : auth()->guard('api')->user()->id;
         $user->activity_scope = $isAdmin ? 'system_level' : 'store_level';
         $user->image = $validatedData['image'] ?? null;
+        //Set up media binding for main image
+        if (!empty($user->image)) {
+            $mainImage = Media::find($user->image);
+            if ($mainImage) {
+                $mainImage->update([
+                    'user_id' => $user->id,
+                    'user_type' => User::class,
+                    'usage_type' => 'seller_profile',
+                ]);
+            }
+        }
 
         // Update password only if provided
         if (!empty($validatedData['password'])) {
