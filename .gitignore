@@ -25,3 +25,5 @@ index.php
 logs
 vendor
 vendor/
+install_local
+install_local/
