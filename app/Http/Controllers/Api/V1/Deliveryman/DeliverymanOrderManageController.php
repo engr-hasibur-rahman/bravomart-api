@@ -82,7 +82,6 @@ class DeliverymanOrderManageController extends Controller
                 'data' => DeliverymanOrderRequestResource::collection($order_requests),
                 'meta' => new PaginationResource($order_requests)
             ]);
-
         }
     }
 

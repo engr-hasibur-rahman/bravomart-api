@@ -89,7 +89,7 @@ class BivaCommandAuto extends Command
             [
                 'first_name'      => 'required|string',
                 'email'    => 'required|email|unique:users,email',
-                'password' => 'required',
+                'password' => 'required|string|min:8|max:32',
                 'confirmPassword' => 'required|same:password',
             ]
         );

@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Run installer if not yet installed
+//// Run installer if not yet installed
 if (!file_exists(__DIR__ . '/../storage/installed')) {
     // Prevent recursion if installer calls index.php again
     if (!str_contains($_SERVER['REQUEST_URI'], '/install')) {

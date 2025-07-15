@@ -82,7 +82,7 @@ class CustomerManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'customer_id' => 'required|exists:customers,id',
-            'password' => 'required',
+            'password' => 'required|string|min:8|max:32',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());

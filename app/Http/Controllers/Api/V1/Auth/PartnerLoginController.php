@@ -29,7 +29,7 @@ class PartnerLoginController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|string|min:8|max:32',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
