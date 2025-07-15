@@ -96,8 +96,32 @@ class MediaService
 
     public function load_more_images($request)
     {
+        // user type
+        $user = auth('sanctum')->user();
+        $user_id = $user->id;
+        $user_type = '';
+
+        // check only store
+        if (!empty($request->store_id)) {
+            $store = Store::where('id', $request->store_id)->first();
+            if ($store) {
+                $user_id = $store->id;
+                $user_type = Store::class;
+            }
+        }
+
+        // check for admin and deliveryman and seller
+        if($user->activity_scope === 'system_level'){
+          $user_type = 'App\Models\User';
+        } // check for customer
+        elseif(isset($user->birth_day)){
+           $user_type = 'App\Models\Customer';
+        }
+
         $image_query = Media::query();
-        $image_query->where('user_id', auth('sanctum')->id());
+        $image_query->where('user_id', $user_id)
+            ->where('user_type', $user_type);
+
         $offset = $request->get('offset') ?? 0;
 
         $all_images = $image_query->orderBy('created_at', 'DESC')
