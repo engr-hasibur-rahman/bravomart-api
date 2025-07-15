@@ -4,10 +4,13 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Installer redirection logic (no redirect, just include)
+// Run installer if not yet installed
 if (!file_exists(__DIR__ . '/../storage/installed')) {
-    require __DIR__ . '/../install_local/index.php';
-    exit;
+    // Prevent recursion if installer calls index.php again
+    if (!str_contains($_SERVER['REQUEST_URI'], '/install')) {
+        require __DIR__ . '/../install_local/index.php';
+        exit;
+    }
 }
 
 // Determine if the application is in maintenance mode...
