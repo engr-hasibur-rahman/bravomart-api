@@ -157,6 +157,7 @@ class StoreChatController extends Controller
             'receiver_id' => 'required|integer',
             'receiver_type' => 'required|string|in:customer,store,admin,deliveryman',
             'search' => 'nullable|string',
+            'store_id' => 'required|exists:stores,id',
         ]);
 
         if ($validator->fails()) {
@@ -167,6 +168,13 @@ class StoreChatController extends Controller
         }
 
         $auth_id = auth()->guard('api')->user()->id;
+
+        $sellerStores = Store::where('store_seller_id', $auth_id)->pluck('id');
+        if (!$sellerStores->contains($request->store_id)){
+            return response()->json([
+                'messages' => __('chat::messages.store.doesnt.belongs.to.seller'),
+            ],422);
+        }
         $chat = Chat::where('user_id', $auth_id)->first();
 
         if (empty($chat)) {
@@ -176,7 +184,7 @@ class StoreChatController extends Controller
             ]);
         }
 
-
+        $sender_id = $request->store_id;
         $auth_type = 'store';
 
         $receiver_id = $request->receiver_id;
@@ -193,16 +201,16 @@ class StoreChatController extends Controller
 
         // get message
         $message_query = ChatMessage::query()
-            ->where(function ($query) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
-                $query->where(function ($q) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
-                    $q->where('sender_id', $auth_id)
+            ->where(function ($query) use ($sender_id, $auth_type, $receiver_id, $receiver_type) {
+                $query->where(function ($q) use ($sender_id, $auth_type, $receiver_id, $receiver_type) {
+                    $q->where('sender_id', $sender_id)
                         ->where('sender_type', $auth_type)
                         ->where('receiver_id', $receiver_id)
                         ->where('receiver_type', $receiver_type);
-                })->orWhere(function ($q) use ($auth_id, $auth_type, $receiver_id, $receiver_type) {
+                })->orWhere(function ($q) use ($sender_id, $auth_type, $receiver_id, $receiver_type) {
                     $q->where('sender_id', $receiver_id)
                         ->where('sender_type', $receiver_type)
-                        ->where('receiver_id', $auth_id)
+                        ->where('receiver_id', $sender_id)
                         ->where('receiver_type', $auth_type);
                 });
             });

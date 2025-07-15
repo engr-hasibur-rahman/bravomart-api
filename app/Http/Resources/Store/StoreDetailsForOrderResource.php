@@ -19,8 +19,8 @@ class StoreDetailsForOrderResource extends JsonResource
         // Get the requested language from the query parameter
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
-        $translation = $this->related_translations->where('language', $language);
-        $store_type_info = StoreType::where('type', $this->store_type)->first();
+        $translation = $this->related_translations?->where('language', $language) ?? collect();
+        $store_type_info = StoreType::where('type', $this->store_type)->first() ?? new StoreType();
         return [
             "id" => $this->id,
             "name" => !empty($translation) && $translation->where('key', 'name')->first()

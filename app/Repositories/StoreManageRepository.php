@@ -120,6 +120,46 @@ class StoreManageRepository implements StoreManageInterface
             $data['store_seller_id'] = auth('api')->id();
             $store = Store::create($data);
 
+            // modified media for this store
+            $user_id = $store->id;
+            $user_type = Store::class;
+
+            // If logo media exists, update its relation
+            if (!empty($store->logo)) {
+                $logoMedia = Media::find($store->logo);
+                if ($logoMedia) {
+                    $logoMedia->update([
+                        'user_id' => $user_id,
+                        'user_type' => $user_type,
+                        'usage_type' => 'store_logo',
+                    ]);
+                }
+            }
+
+            // If banner media exists, update its relation
+            if (!empty($store->banner)) {
+                $bannerMedia = Media::find($store->banner);
+                if ($bannerMedia) {
+                    $bannerMedia->update([
+                        'user_id' => $user_id,
+                        'user_type' => $user_type,
+                        'usage_type' => 'store_banner',
+                    ]);
+                }
+            }
+
+            // If meta_image exists, update
+            if (!empty($store->meta_image)) {
+                $metaImageMedia = Media::find($store->meta_image);
+                if ($metaImageMedia) {
+                    $metaImageMedia->update([
+                        'user_id' => $user_id,
+                        'user_type' => $user_type,
+                        'usage_type' => 'store_meta_image',
+                    ]);
+                }
+            }
+
             // if seller select store business type commission or subscription
             if (isset($data['subscription_type']) && !empty($data['subscription_type'])) {
                 // create store wise subscription history
@@ -216,6 +256,18 @@ class StoreManageRepository implements StoreManageInterface
                 }
             }
 
+            // If meta_image exists, update
+            if (!empty($store->meta_image)) {
+                $metaImageMedia = Media::find($store->meta_image);
+                if ($metaImageMedia) {
+                    $metaImageMedia->update([
+                        'user_id' => $user_id,
+                        'user_type' => $user_type,
+                        'usage_type' => 'store_meta_image',
+                    ]);
+                }
+            }
+
             // Send email to seller register in background
             try {
 
@@ -267,6 +319,43 @@ class StoreManageRepository implements StoreManageInterface
             if ($store) {
                 $data = Arr::except($data, ['translations']);
                 $store->update($data);
+
+                // If logo media exists, update its relation
+                if (!empty($store->logo)) {
+                    $logoMedia = Media::find($store->logo);
+                    if ($logoMedia) {
+                        $logoMedia->update([
+                            'user_id' => $store->id,
+                            'user_type' => Store::class,
+                            'usage_type' => 'store_logo',
+                        ]);
+                    }
+                }
+
+                // If banner media exists, update its relation
+                if (!empty($store->banner)) {
+                    $bannerMedia = Media::find($store->banner);
+                    if ($bannerMedia) {
+                        $bannerMedia->update([
+                            'user_id' => $store->id,
+                            'user_type' => Store::class,
+                            'usage_type' => 'store_banner',
+                        ]);
+                    }
+                }
+
+                // If meta_image exists, update
+                if (!empty($store->meta_image)) {
+                    $metaImageMedia = Media::find($store->meta_image);
+                    if ($metaImageMedia) {
+                        $metaImageMedia->update([
+                            'user_id' => $store->id,
+                            'user_type' => Store::class,
+                            'usage_type' => 'store_meta_image',
+                        ]);
+                    }
+                }
+
                 return $store->id;
             } else {
                 return false;
@@ -283,6 +372,46 @@ class StoreManageRepository implements StoreManageInterface
             if ($store) {
                 $data = Arr::except($data, ['translations']);
                 $store->update($data);
+
+                // modified media for this store
+                $user_id = $store->id;
+                $user_type = Store::class;
+
+                // If logo media exists, update its relation
+                if (!empty($store->logo)) {
+                    $logoMedia = Media::find($store->logo);
+                    if ($logoMedia) {
+                        $logoMedia->update([
+                            'user_id' => $user_id,
+                            'user_type' => $user_type,
+                            'usage_type' => 'store_logo',
+                        ]);
+                    }
+                }
+
+                // If banner media exists, update its relation
+                if (!empty($store->banner)) {
+                    $bannerMedia = Media::find($store->banner);
+                    if ($bannerMedia) {
+                        $bannerMedia->update([
+                            'user_id' => $user_id,
+                            'user_type' => $user_type,
+                            'usage_type' => 'store_banner',
+                        ]);
+                    }
+                }
+
+                // If meta_image exists, update
+                if (!empty($store->meta_image)) {
+                    $metaImageMedia = Media::find($store->meta_image);
+                    if ($metaImageMedia) {
+                        $metaImageMedia->update([
+                            'user_id' => $user_id,
+                            'user_type' => $user_type,
+                            'usage_type' => 'store_meta_image',
+                        ]);
+                    }
+                }
                 return $store->id;
             } else {
                 return false;

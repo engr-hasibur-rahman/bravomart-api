@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Seller\SellerProfileResource;
 use App\Interfaces\SellerManageInterface;
 use App\Interfaces\StoreManageInterface;
+use App\Models\Media;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -69,11 +70,23 @@ class SellerManageController extends Controller
 
             if ($user) {
                 $user->update($request->only('first_name', 'last_name', 'phone', 'image', 'def_lang'));
+                //Set up media binding for main image
+                if (!empty($user->image)) {
+                    $mainImage = Media::find($user->image);
+                    if ($mainImage) {
+                        $mainImage->update([
+                            'user_id' => $user->id,
+                            'user_type' => User::class,
+                            'usage_type' => 'seller_profile',
+                        ]);
+                    }
+                }
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
                     'message' => __('messages.update_success', ['name' => 'Seller']),
                 ]);
+
             } else {
                 return response()->json([
                     'status' => true,

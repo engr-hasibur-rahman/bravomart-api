@@ -9,6 +9,8 @@ use App\Http\Resources\Dashboard\SellerStoreSummaryResource;
 use App\Http\Resources\Seller\SellerDetailsResource;
 use App\Http\Resources\Seller\SellerResource;
 use App\Interfaces\StoreManageInterface;
+use App\Models\Media;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -202,6 +204,7 @@ class AdminSellerManageController extends Controller
             'last_name' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
             'phone' => 'nullable|string',
+            'image' => 'nullable'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -220,7 +223,18 @@ class AdminSellerManageController extends Controller
             ], 422);
         }
 
-        $user->update($request->only('first_name', 'last_name', 'phone', 'email'));
+        $user->update($request->only('first_name', 'last_name', 'phone', 'email', 'image'));
+        //Set up media binding for main image
+        if (!empty($user->image)) {
+            $mainImage = Media::find($user->image);
+            if ($mainImage) {
+                $mainImage->update([
+                    'user_id' => $user->id,
+                    'user_type' => User::class,
+                    'usage_type' => 'seller_profile',
+                ]);
+            }
+        }
         return response()->json([
             'message' => __('messages.update_success', ['name' => 'Seller'])
         ]);

@@ -31,7 +31,7 @@ class DemoModeMiddleware
                     if ($request->is("$path*")) {
                         return response()->json([
                             'message' => 'This action is not allowed in demo mode',
-                        ], 403);
+                        ], 405);
                     }
                 }
             }
