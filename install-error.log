@@ -1,0 +1,1 @@
+[2025-07-15 08:47:39] SQL import failed: SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'about_settings' already exists
