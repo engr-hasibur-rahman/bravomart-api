@@ -32,7 +32,9 @@
     "spatie/laravel-query-builder": "^6.0",
     "spatie/laravel-sitemap": "^7.3",
     "twilio/sdk": "^8.6",
-    "vonage/client": "^4.2"
+    "vonage/client": "^4.2",
+    "ext-fileinfo": "*",
+    "ext-curl": "*"
   },
   "require-dev": {
     "fakerphp/faker": "^1.23",
