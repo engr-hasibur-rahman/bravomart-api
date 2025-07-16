@@ -7,114 +7,61 @@ class InstallController
         include __DIR__ . '/../views/welcome.php';
     }
 
-    public function verify()
-    {
-        $error = null;
-        $success = null;
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $purchase_key = trim($_POST['purchase_key']);
-            if (empty($purchase_key)) {
-                $error = "Purchase code is required.";
-            } else {
-                // Envato API call
-                $token = 'Vk6wKUdScQeIMYP9g2c3kpiVgebAWTvx'; // Replace with real token
-
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, "https://api.envato.com/v3/market/author/sale?code=" . urlencode($purchase_key));
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    "Authorization: Bearer {$token}",
-                    "User-Agent: Purchase verification script"
-                ]);
-
-                $response = curl_exec($ch);
-                $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close($ch);
-
-                if ($http_status === 200) {
-                    $data = json_decode($response, true);
-
-                    if (isset($data['item'])) {
-                        // ✅ Valid
-                        // Optionally store verification in session or file
-                        $_SESSION['purchase_verified'] = true;
-                        $_SESSION['purchase_data'] = $data;
-
-                        header('Location: index.php?step=requirements');
-                        exit;
-                    } else {
-                        $error = "Invalid purchase code.";
-                    }
-                } else {
-                    $error = "Could not verify purchase code. Please try again.";
-                }
-            }
-        }
-
-        include __DIR__ . '/../views/verify.php';
-    }
-
-
     public function requirements()
     {
-        if (isset($_SESSION['purchase_verified']) && $_SESSION['purchase_verified'] == true) {
-            $requirements = [
-                'extensions' => [
-                    'php' => version_compare(PHP_VERSION, '8.2.0', '>='), // Laravel 11 requires PHP 8.2+
-                    'openssl' => extension_loaded('openssl'),
-                    'pdo' => extension_loaded('pdo'),
-                    'mbstring' => extension_loaded('mbstring'),
-                    'tokenizer' => extension_loaded('tokenizer'),
-                    'xml' => extension_loaded('xml'),
-                    'ctype' => extension_loaded('ctype'),
-                    'json' => extension_loaded('json'),
-                    'fileinfo' => extension_loaded('fileinfo'),
-                    'bcmath' => extension_loaded('bcmath'),
-                    'curl' => extension_loaded('curl'), // required by Socialite, Pusher, Firebase
-                    'gd' => extension_loaded('gd') || extension_loaded('imagick'), // required by intervention/image
-                    'zip' => extension_loaded('zip'), // required by spatie/laravel-backup
-                    'iconv' => extension_loaded('iconv'), // commonly required by packages like maatwebsite/excel
-                    'intl' => extension_loaded('intl'), // useful for spatie and other advanced packages
-                ],
-            ];
 
-            include __DIR__ . '/../views/requirements.php';
-        } else {
-            header('Location: index.php?step=verify');
-        }
+        $requirements = [
+            'extensions' => [
+                'php' => version_compare(PHP_VERSION, '8.2.0', '>='), // Laravel 11 requires PHP 8.2+
+                'openssl' => extension_loaded('openssl'),
+                'pdo' => extension_loaded('pdo'),
+                'mbstring' => extension_loaded('mbstring'),
+                'tokenizer' => extension_loaded('tokenizer'),
+                'xml' => extension_loaded('xml'),
+                'ctype' => extension_loaded('ctype'),
+                'json' => extension_loaded('json'),
+                'fileinfo' => extension_loaded('fileinfo'),
+                'bcmath' => extension_loaded('bcmath'),
+                'curl' => extension_loaded('curl'), // required by Socialite, Pusher, Firebase
+                'gd' => extension_loaded('gd') || extension_loaded('imagick'), // required by intervention/image
+                'zip' => extension_loaded('zip'), // required by spatie/laravel-backup
+                'iconv' => extension_loaded('iconv'), // commonly required by packages like maatwebsite/excel
+                'intl' => extension_loaded('intl'), // useful for spatie and other advanced packages
+            ],
+        ];
+
+        include __DIR__ . '/../views/requirements.php';
+
     }
 
     public function permissions()
     {
-        if (isset($_SESSION['purchase_verified']) && $_SESSION['purchase_verified'] == true) {
-
-            if (!$this->isAllRequirementsOk()) {
-                header('Location: ?step=requirements');
-            }
-
-            $basePath = realpath(__DIR__ . '/../../'); // Root of Laravel app
-            $storagePath = $basePath . '/storage';
-            $bootstrapPath = $basePath . '/bootstrap/cache';
-            $publicPath = $basePath . '/public';
-            $modulesPath = $basePath . '/Modules';
-
-            $folders = [
-                'Storage (storage/)' => is_writable($storagePath),
-//            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
-//            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
-//            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
-//            'Uploads (public/uploads)' => is_dir($publicPath . '/uploads') && is_writable($publicPath . '/uploads'),
-            ];
-
-            if (!$this->isAllPermissionOk()) {
-                header('Location: ?step=permissions&error=requirements');
-            }
-
-            include __DIR__ . '/../views/permissions.php';
-        } else {
-            header('Location: index.php?step=verify');
+        if (!$this->isAllRequirementsOk()) {
+            header('Location: ?step=requirements');
         }
+
+        $basePath = realpath(__DIR__ . '/../../'); // Root of Laravel app
+        $storagePath = $basePath . '/storage';
+        $bootstrapPath = $basePath . '/bootstrap/cache';
+        $publicPath = $basePath . '/public';
+        $modulesPath = $basePath . '/Modules';
+
+        $folders = [
+            'Storage (storage/)' => is_writable($storagePath),
+            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
+            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
+            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
+            'App (storage/app)' => is_writable($storagePath . '/app'),
+            'Logs (storage/logs)' => is_writable($storagePath . '/logs'),
+            'Framework (storage/framework)' => is_writable($storagePath . '/framework'),
+        ];
+
+        if (!$this->isAllPermissionOk()) {
+            header('Location: ?step=permissions&error=requirements');
+        }
+
+        include __DIR__ . '/../views/permissions.php';
+
     }
 
     public function environment()
@@ -285,99 +232,94 @@ class InstallController
 
     public function admin()
     {
-        if (isset($_SESSION['purchase_verified']) && $_SESSION['purchase_verified'] == true) {
-            if (!$this->isAllRequirementsOk()) {
-                header('Location: ?step=requirements');
-            }
-            if (!$this->isAllPermissionOk()) {
-                header('Location: ?step=permissions');
-            }
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $first_name = $_POST['first_name'];
-                $last_name = $_POST['last_name'];
-                $slug = $this->username_slug_generator($first_name, $last_name); // Must be defined in included file
-                $phone = $_POST['phone'];
-                $email = $_POST['email'];
-                $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-                $env = $this->parseEnv();
-                $pdo = new PDO(
-                    'mysql:host=' . $env['DB_HOST'] . ';dbname=' . $env['DB_DATABASE'],
-                    $env['DB_USERNAME'],
-                    $env['DB_PASSWORD']
-                );
 
-                $stmt = $pdo->prepare("INSERT INTO users (id, first_name, last_name, slug, phone, email, password, activity_scope,email_verified)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
-                $stmt->execute([1, $first_name, $last_name, $slug, $phone, $email, $password, 'system_level', 1]);
-
-                header('Location: index.php?step=finish');
-                exit;
-            }
-
-            include __DIR__ . '/../views/admin.php';
-        } else {
-            header('Location: ?step=verify');
+        if (!$this->isAllRequirementsOk()) {
+            header('Location: ?step=requirements');
         }
+        if (!$this->isAllPermissionOk()) {
+            header('Location: ?step=permissions');
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $first_name = $_POST['first_name'];
+            $last_name = $_POST['last_name'];
+            $slug = $this->username_slug_generator($first_name, $last_name); // Must be defined in included file
+            $phone = $_POST['phone'];
+            $email = $_POST['email'];
+            $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+            $env = $this->parseEnv();
+            $pdo = new PDO(
+                'mysql:host=' . $env['DB_HOST'] . ';dbname=' . $env['DB_DATABASE'],
+                $env['DB_USERNAME'],
+                $env['DB_PASSWORD']
+            );
+
+            $stmt = $pdo->prepare("INSERT INTO users (id, first_name, last_name, slug, phone, email, password, activity_scope,email_verified)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
+            $stmt->execute([1, $first_name, $last_name, $slug, $phone, $email, $password, 'system_level', 1]);
+
+            header('Location: index.php?step=finish');
+            exit;
+        }
+
+        include __DIR__ . '/../views/admin.php';
+
 
     }
 
 
     public function finish()
     {
-        if (isset($_SESSION['purchase_verified']) && $_SESSION['purchase_verified'] == true) {
-            // If requirements and permissions are missing
-            if (!$this->isAllRequirementsOk()) {
-                header('Location: ?step=requirements');
-            }
-            if (!$this->isAllPermissionOk()) {
-                header('Location: ?step=permissions');
-            }
 
-            $path = realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . '/storage';
-            $installedFile = $path . '/installed';
-
-            // Create the directory if it doesn't exist
-            if (!file_exists($path)) {
-                mkdir($path, 0755, true);
-            }
-
-            // Now write the installed file
-            file_put_contents($installedFile, date('Y-m-d H:i:s'));
-
-            // Disable demo mode automatically in .env and set INSTALLED=true
-            $envPath = realpath(__DIR__ . '/../..') . '/.env';
-
-            if (file_exists($envPath)) {
-                $envContent = file_get_contents($envPath);
-
-                // Disable DEMO_MODE
-                if (preg_match('/^DEMO_MODE=.*$/m', $envContent)) {
-                    $envContent = preg_replace('/^DEMO_MODE=.*$/m', 'DEMO_MODE=false', $envContent);
-                } else {
-                    $envContent .= "\nDEMO_MODE=false";
-                }
-
-                // Add or update INSTALLED=true
-                if (preg_match('/^INSTALLED=.*$/m', $envContent)) {
-                    $envContent = preg_replace('/^INSTALLED=.*$/m', 'INSTALLED=true', $envContent);
-                } else {
-                    $envContent .= "\nINSTALLED=true";
-                }
-
-                file_put_contents($envPath, $envContent);
-            }
-
-            $env = parse_ini_file($envPath, false, INI_SCANNER_RAW);
-
-            $adminUrl = isset($env['ADMIN_URL']) ? trim($env['ADMIN_URL'], '"') : '#';
-            $frontendUrl = isset($env['FRONTEND_URL']) ? trim($env['FRONTEND_URL'], '"') : '#';
-
-            include __DIR__ . '/../views/finish.php';
-        } else {
-            header('Location: ?step=verify');
+        // If requirements and permissions are missing
+        if (!$this->isAllRequirementsOk()) {
+            header('Location: ?step=requirements');
+        }
+        if (!$this->isAllPermissionOk()) {
+            header('Location: ?step=permissions');
         }
 
+        $path = realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . '/storage';
+        $installedFile = $path . '/installed';
+
+        // Create the directory if it doesn't exist
+        if (!file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+
+        // Now write the installed file
+        file_put_contents($installedFile, date('Y-m-d H:i:s'));
+
+        // Disable demo mode automatically in .env and set INSTALLED=true
+        $envPath = realpath(__DIR__ . '/../..') . '/.env';
+
+        if (file_exists($envPath)) {
+            $envContent = file_get_contents($envPath);
+
+            // Disable DEMO_MODE
+            if (preg_match('/^DEMO_MODE=.*$/m', $envContent)) {
+                $envContent = preg_replace('/^DEMO_MODE=.*$/m', 'DEMO_MODE=false', $envContent);
+            } else {
+                $envContent .= "\nDEMO_MODE=false";
+            }
+
+            // Add or update INSTALLED=true
+            if (preg_match('/^INSTALLED=.*$/m', $envContent)) {
+                $envContent = preg_replace('/^INSTALLED=.*$/m', 'INSTALLED=true', $envContent);
+            } else {
+                $envContent .= "\nINSTALLED=true";
+            }
+
+            file_put_contents($envPath, $envContent);
+        }
+
+        $env = parse_ini_file($envPath, false, INI_SCANNER_RAW);
+
+        $adminUrl = isset($env['ADMIN_URL']) ? trim($env['ADMIN_URL'], '"') : '#';
+        $frontendUrl = isset($env['FRONTEND_URL']) ? trim($env['FRONTEND_URL'], '"') : '#';
+
+        include __DIR__ . '/../views/finish.php';
     }
+
 
     private function parseEnv()
     {
@@ -458,10 +400,12 @@ class InstallController
 
         $folders = [
             'Storage (storage/)' => is_writable($storagePath),
-//            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
-//            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
-//            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
-//            'Uploads (public/uploads)' => is_dir($publicPath . '/uploads') && is_writable($publicPath . '/uploads'),
+            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
+            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
+            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
+            'App (storage/app)' => is_writable($storagePath . '/app'),
+            'Logs (storage/logs)' => is_writable($storagePath . '/logs'),
+            'Framework (storage/framework)' => is_writable($storagePath . '/framework'),
         ];
         if (in_array(false, $folders, true)) {
             return false;

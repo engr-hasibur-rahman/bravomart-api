@@ -173,6 +173,12 @@ class SellerAndDeliverymanWithdrawController extends Controller
             ], 422);
         }
 
+        if ($wallet->status == 0) {
+            return response()->json([
+                'message' => __('wallet::messages.wallet_inactive')
+            ], 422);
+        }
+
         if (!empty($wallet) && $wallet->balance <= 0) {
             return response()->json([
                 'message' => 'You have insufficient balance.',
