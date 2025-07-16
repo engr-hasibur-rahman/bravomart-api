@@ -238,14 +238,32 @@ class OrderManageNotificationService
             ]);
 
 
-            // Construct the CloudMessage with notification and data payloads
-            $message = CloudMessage::new()
-                ->withNotification($notification)  // Pass the Notification object
-                ->withData($dataToSend)
-                ->withWebPushConfig($webPushConfig); // Required for web
+//            // Construct the CloudMessage with notification and data payloads
+//            $message = CloudMessage::new()
+//                ->withNotification($notification)  // Pass the Notification object
+//                ->withData($dataToSend)
+//                ->withWebPushConfig($webPushConfig); // Required for web
+//
+//
+//            // Send the notification to multiple tokens
+//            $messaging->sendMulticast($message, $firebaseTokens);
+//===================================
 
-            // Send the notification to multiple tokens
-            $messaging->sendMulticast($message, $firebaseTokens);
+            foreach ($firebaseTokens as $token) {
+                $message = CloudMessage::fromArray([
+                    'token' => 'cRL-u0zaO7UN0YWFbL717R:APA91bGlCIxlXbc41dH0t7hytZtXUtISsBJFV8rBaMXzkQKIOtwl_I-naG1hSdwNN4mGT4DNzqP7f6Ud4KF6ayHAWfSz2HbGA6GaRi_wJq93dLi7SQ50H7Q',
+                    'notification' => $notification->jsonSerialize(), // convert to array
+                    'data' => $dataToSend,
+                    'webpush' => $webPushConfig->jsonSerialize(), // convert to array
+                ]);
+
+                try {
+                    $messaging->send($message);
+                } catch (\Throwable $e) {
+                    \Log::error("Failed to send FCM to token {$token}: " . $e->getMessage());
+                }
+            }
+
 
 //            $firebaseTokens = ['dMaD-PMBkw813WeMdORiOZ:APA91bHX15HXBp56hSEm1HbaWuB6QAL8QDZH1ZsF2qisp_Z5auDgkekhumzsE_fLQ3LbrBDSLYYaFORGQHPsnuyiuAq5uWu35UetgXkAKdQs9hSG8HdLE_8'];
 //            $firebaseTokens = ['fGjZQXwSQGKgOhPe8xhj2Y:APA91bG6WhwKuGKTAftwogrtyakyEA_o56HmvZ5ESFbsBqNoMJiDCzMt6rsKDCL-wRW-L7lt64noNu7Ta7VcYqJ-cIjZ6ITexaOnf2vdpZtji8dQZJnF2g4'];

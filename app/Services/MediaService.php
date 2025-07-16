@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Store;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use App\Models\Media;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
+use function Psy\debug;
 
 
 class MediaService
@@ -96,8 +98,37 @@ class MediaService
 
     public function load_more_images($request)
     {
+        // user type
+        $user = auth('sanctum')->user();
+        $user_id = $user->id;
+        $user_type = '';
+
+        // check only store
+        if($user->activity_scope === 'store_level' && !empty($request->store_id)){
+                $store = Store::where('id', $request->store_id)
+                    ->where('store_seller_id', $user_id)
+                    ->first();
+
+                if ($store) {
+                    $user_id = $store->id;
+                    $user_type = Store::class;
+                }
+            // check for admin and deliveryman and seller
+        }elseif(
+            $user->activity_scope === 'system_level' ||
+            $user->activity_scope === 'delivery_level' ||
+            ($user->activity_scope === 'store_level' && empty($request->store_id))
+        ){
+           $user_type = User::class;
+        } else{
+           $user_type = 'App\Models\Customer';
+        }
+
+
         $image_query = Media::query();
-        $image_query->where('user_id', auth('sanctum')->id());
+        $image_query->where('user_id', $user_id)
+            ->where('user_type', $user_type);
+
         $offset = $request->get('offset') ?? 0;
 
         $all_images = $image_query->orderBy('created_at', 'DESC')
