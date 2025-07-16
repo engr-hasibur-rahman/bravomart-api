@@ -19,7 +19,6 @@
         <a class="step"></a>
         <a class="step"></a>
         <a class="step"></a>
-        <a class="step"></a>
         <a class="step active"></a>
         <a class="step"></a>
     </div>

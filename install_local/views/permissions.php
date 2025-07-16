@@ -25,7 +25,6 @@ foreach ($folders as $key => $isWritable) {
 <div class="steps">
     <a class="step"></a>
     <a class="step"></a>
-    <a class="step "></a>
     <a class="step active"></a>
     <a class="step"></a>
     <a class="step"></a>

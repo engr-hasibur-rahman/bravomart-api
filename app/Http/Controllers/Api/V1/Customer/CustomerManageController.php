@@ -428,6 +428,7 @@ class CustomerManageController extends Controller
             'birth_day' => 'nullable|date|date_format:Y-m-d',
             'gender' => 'nullable|string|in:male,female,others',
         ]);
+
         if ($validator->fails()) {
             return response()->json([
                 "status" => false,

@@ -97,6 +97,12 @@ class WalletCommonController extends Controller
             ->where('owner_id', $user->id)
             ->first();
 
+        if ($wallet->status == 0) {
+            return response()->json([
+                'message' => __('wallet::messages.wallet_inactive')
+            ], 422);
+        }
+
         // Check if validation failed
         if (empty($wallet)) {
             return response()->json([
