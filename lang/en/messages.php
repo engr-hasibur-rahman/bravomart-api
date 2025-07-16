@@ -176,7 +176,8 @@ return [
 
     'user_exists' => 'This user is already exists as :name!',
 
-    'has_running_orders' => 'This :name has running orders!'
+    'has_running_orders' => 'This :name has running orders!',
+    'not_allowed_status' => 'Your account status is :name! Can\'t proceed!',
 
 ];
 

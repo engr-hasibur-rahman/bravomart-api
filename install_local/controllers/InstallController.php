@@ -119,136 +119,168 @@ class InstallController
 
     public function environment()
     {
-        if (isset($_SESSION['purchase_verified']) && $_SESSION['purchase_verified'] == true) {
-            if (!$this->isAllPermissionOk()) {
-                header('Location: ?step=permissions');
+        if (!$this->isAllPermissionOk()) {
+            header('Location: ?step=permissions');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $envUpdates = [
+                'APP_NAME' => $_POST['app_name'] ?? '',
+                'DB_HOST' => $_POST['db_host'] ?? '',
+                'DB_PORT' => $_POST['db_port'] ?? '3306',
+                'DB_DATABASE' => $_POST['db_database'] ?? '',
+                'ADMIN_URL' => $_POST['admin_url'] ?? '',
+                'FRONTEND_URL' => $_POST['frontend_url'] ?? '',
+                'DB_USERNAME' => $_POST['db_username'] ?? '',
+                'DB_PASSWORD' => $_POST['db_password'] ?? '',
+                'CACHE_STORE' => 'file',
+            ];
+            $installation_mode = $_POST['install_mode'];
+
+            $targetPath = realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . '.env';
+
+            $envContent = file_exists($targetPath) ? file_get_contents($targetPath) : '';
+
+            // Update or insert each key
+            foreach ($envUpdates as $key => $value) {
+                $pattern = "/^$key=.*$/m";
+                $line = $key . '="' . addslashes($value) . '"';
+
+                if (preg_match($pattern, $envContent)) {
+                    $envContent = preg_replace($pattern, $line, $envContent);
+                } else {
+                    $envContent .= $line . "\n";
+                }
             }
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $envUpdates = [
-                    'APP_NAME' => $_POST['app_name'],
-                    'DB_HOST' => $_POST['db_host'],
-                    'DB_PORT' => $_POST['db_port'],
-                    'DB_DATABASE' => $_POST['db_database'],
-                    'ADMIN_URL' => $_POST['admin_url'],
-                    'FRONTEND_URL' => $_POST['frontend_url'],
-                    'DB_USERNAME' => $_POST['db_username'],
-                    'DB_PASSWORD' => $_POST['db_password'],
-                    'CACHE_STORE' => 'file',
-                    'INSTALLED' => false
-                ];
-                $installation_mode = $_POST['install_mode'];
 
-                $targetPath = realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . '.env';
+            $result = file_put_contents($targetPath, $envContent);
 
-                $envContent = file_exists($targetPath) ? file_get_contents($targetPath) : '';
-
-                // Update or insert each key
-                foreach ($envUpdates as $key => $value) {
-                    $pattern = "/^$key=.*$/m";
-                    $line = $key . '="' . addslashes($value) . '"';
-
-                    if (preg_match($pattern, $envContent)) {
-                        $envContent = preg_replace($pattern, $line, $envContent);
-                    } else {
-                        $envContent .= $line . "\n";
-                    }
-                }
-
-
-                $result = file_put_contents($targetPath, $envContent);
-
-                // Test DB connection first
-                try {
-                    $pdo = new PDO(
-                        "mysql:host={$envUpdates['DB_HOST']};dbname={$envUpdates['DB_DATABASE']}",
-                        $envUpdates['DB_USERNAME'],
-                        $envUpdates['DB_PASSWORD']
-                    );
-
-                } catch (PDOException $e) {
-                    // Connection failed
-                    header('Location: ?step=environment&error=database');
-                    exit;
-                }
-
-
-                // Change working directory to Laravel root
-                $projectRoot = realpath(__DIR__ . '/../../');
-
-                chdir($projectRoot);
-
-                // Generate key if missing
-                $env = $this->parseEnv(); // If you have parseEnv()
-                if (empty($env['APP_KEY'])) {
-                    exec('php artisan key:generate --force');
-                }
-
-                // Drop all tables before running migrations
-                exec('php artisan db:wipe --force');
-
-                // Create the cache table for database cache
-                exec('php artisan cache:table');
-
-
-                // Update the .env key for cache store
-                $this->updateEnvKey('CACHE_STORE', 'database');
-
-                // Clear caches
-                exec('php artisan config:clear');
-                exec('php artisan cache:clear');
-                $requirements = $this->isAllRequirementsOk();
-                $permissions = $this->isAllPermissionOk();
-
-                if ($installation_mode == 'demo') {
-                    $sqlFile = realpath(__DIR__ . '/../database/bravo_fresh.sql');
-
-                    if (file_exists($sqlFile)) {
-                        $sql = file_get_contents($sqlFile);
-                        if ($sql !== false) {
-                            $pdo->exec($sql);
-                        } else {
-                            die('Could not read SQL file.');
-                        }
-                    } else {
-                        die('SQL file not found.');
-                    }
-                } else {
-                    $sqlFile = realpath(__DIR__ . '/../database/bravo_fresh.sql');
-
-                    if (file_exists($sqlFile)) {
-                        $sql = file_get_contents($sqlFile);
-                        if ($sql !== false) {
-                            $pdo->exec($sql);
-                        } else {
-                            die('Could not read SQL file.');
-                        }
-                    } else {
-                        die('SQL file not found.');
-                    }
-                }
-
-                if (
-                    $result === false
-                ) {
-                    file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge(
-                        $outputMigrate ?? [],
-                        $outputModuleMigrate ?? [],
-                    )));
-                    header('Location: ?step=environment&error=artisan');
-                } elseif (!$requirements || !$permissions) {
-                    header('Location: ?step=environment&error=requirements');
-                } else {
-                    header('Location: ?step=admin');
-                }
-
+            if ($result === false) {
+                $this->logError('Failed to write .env file.');
+                header('Location: ?step=environment&error=envwrite');
                 exit;
             }
 
-            include __DIR__ . '/../views/environment.php';
-        } else {
-            header('Location: ?step=verify');
+            // Test DB connection first
+            try {
+                $pdo = new PDO(
+                    "mysql:host={$envUpdates['DB_HOST']};dbname={$envUpdates['DB_DATABASE']}",
+                    $envUpdates['DB_USERNAME'],
+                    $envUpdates['DB_PASSWORD']
+                );
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                $this->logError("DB Connection failed: " . $e->getMessage());
+                header('Location: ?step=environment&error=database');
+                exit;
+            }
+
+            // Change working directory to Laravel root
+            $projectRoot = realpath(__DIR__ . '/../../');
+            chdir($projectRoot);
+
+            // Generate key if missing
+            $env = $this->parseEnv(); // Assuming parseEnv() returns array of env vars
+            if (empty($env['APP_KEY'])) {
+                exec('php artisan key:generate --force 2>&1', $outputKeyGen, $codeKeyGen);
+                if ($codeKeyGen !== 0) {
+                    $this->logError("Key generation failed:\n" . implode("\n", $outputKeyGen));
+                }
+            }
+
+            // Clear config before wiping
+            exec('php artisan config:clear 2>&1');
+
+            // Wipe database
+            $tables = $pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+
+            $pdo->exec("SET foreign_key_checks = 0;");
+            foreach ($tables as $table) {
+                $pdo->exec("DROP TABLE IF EXISTS `$table`");
+            }
+            $pdo->exec("SET foreign_key_checks = 1;");
+
+            // Create the cache table for database cache
+            exec('php artisan cache:table 2>&1', $outputCacheTable, $codeCacheTable);
+
+            // Update the .env key for cache store
+            $this->updateEnvKey('CACHE_STORE', 'database');
+
+            // Clear caches
+            exec('php artisan config:clear 2>&1');
+            exec('php artisan cache:clear 2>&1');
+
+            $requirements = $this->isAllRequirementsOk();
+            $permissions = $this->isAllPermissionOk();
+
+            // Import SQL
+            $sqlFile = realpath(__DIR__ . '/../database/bravo_fresh.sql');
+
+            if ($installation_mode === 'demo') {
+                if (file_exists($sqlFile)) {
+                    $sql = file_get_contents($sqlFile);
+                    if ($sql !== false) {
+                        try {
+                            $pdo->exec($sql);
+                        } catch (PDOException $e) {
+                            $this->logError("SQL import failed: " . $e->getMessage());
+                            die('SQL import failed. Check logs.');
+                        }
+                    } else {
+                        die('Could not read SQL file.');
+                    }
+                } else {
+                    die('SQL file not found.');
+                }
+            } else {
+                if ($sqlFile === false) {
+                    http_response_code(500);
+                    echo "<pre>File not found at expected path.</pre>";
+                    echo "<pre>Checked path: " . __DIR__ . '/../database/bravo_fresh.sql' . "</pre>";
+                    exit;
+                }
+                if (file_exists($sqlFile)) {
+                    $sql = file_get_contents($sqlFile);
+                    if ($sql !== false) {
+                        try {
+                            $pdo->exec($sql);
+                        } catch (PDOException $e) {
+                            $this->logError("SQL import failed: " . $e->getMessage());
+                            die('SQL import failed. Check logs.');
+                        }
+                    } else {
+                        die('Could not read SQL file.');
+                    }
+                } else {
+                    die('SQL file not found.');
+                }
+            }
+
+            if ($result === false) {
+                file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge(
+                    $outputMigrate ?? [],
+                    $outputModuleMigrate ?? []
+                )));
+                header('Location: ?step=environment&error=artisan');
+                exit;
+            } elseif (!$requirements || !$permissions) {
+                header('Location: ?step=environment&error=requirements');
+                exit;
+            } else {
+                header('Location: ?step=admin');
+                exit;
+            }
         }
 
+        include __DIR__ . '/../views/environment.php';
+    }
+
+    private function logError(string $message): void
+    {
+        $logFile = __DIR__ . '/../install-error.log';
+        $formattedMessage = "[" . date('Y-m-d H:i:s') . "] " . $message . PHP_EOL;
+        file_put_contents($logFile, $formattedMessage, FILE_APPEND);
     }
 
     public function admin()

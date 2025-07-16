@@ -51,7 +51,7 @@ class CustomerManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
-            'password' => 'required',
+            'password' => 'required|string|min:8|max:32',
         ]);
 
         if ($validator->fails()) {
