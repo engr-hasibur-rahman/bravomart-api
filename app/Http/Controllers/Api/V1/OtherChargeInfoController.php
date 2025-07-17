@@ -7,8 +7,10 @@ use App\Http\Resources\Admin\OtheChargeInfoResource;
 use App\Http\Resources\Order\StoreTaxInfoResource;
 use App\Models\Store;
 use App\Models\SystemCommission;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Modules\Wallet\app\Models\Wallet;
 
 class OtherChargeInfoController extends Controller
 {
@@ -69,5 +71,43 @@ class OtherChargeInfoController extends Controller
             'other_charge_info' => $otherChargeInfo
         ]);
     }
+
+    public function removeUserDemoData(Request $request){
+
+        $user_level = $request->input('user_level');
+
+        if ($user_level == 'delivery_level'){
+            $users = User::with(['reviews', 'chats'])
+                ->where('activity_scope', $user_level)
+                ->get();
+        }
+
+//        if ($user_level == 'store_level'){
+//            $users = User::with(['wallet', 'chats'])
+//                ->where('activity_scope', $user_level)
+//                ->get();
+//        }
+//
+//        if ($user_level == 'system_level'){
+//            $users = User::with(['wallet', 'reviews', 'chats'])
+//                ->where('activity_scope', $user_level)
+//                ->get();
+//        }
+
+
+
+
+        foreach ($users as $user) {
+            // Only delete wallet if this user is owner (owner_type check optional)
+            Wallet::where('owner_id', $user->id)->where('owner_type', 'App\Models\User')->delete();
+
+            $user->reviews()->delete();
+            $user->chats()->delete();
+
+            // Finally delete the user
+            $user->delete();
+        }
+
+     }
 
 }
