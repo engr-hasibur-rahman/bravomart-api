@@ -47,7 +47,7 @@ foreach ($requirements['extensions'] as $key => $isLoaded) {
 </head>
 
 <body>
-    <h1>Step 1: Get Your File Requirements Ready</h1>
+    <h1>Step 2: Get Your File Requirements Ready</h1>
     <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
 
     <div class="steps">

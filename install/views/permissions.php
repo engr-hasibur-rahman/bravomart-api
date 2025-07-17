@@ -19,7 +19,7 @@ foreach ($folders as $key => $isWritable) {
     <?php include __DIR__ . '/partials/toast.php'; ?>
 </head>
 <body>
-<h1>Step 2: Get Your File Permissions Ready</h1>
+<h1>Step 3: Get Your File Permissions Ready</h1>
 <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
 
 <div class="steps">
@@ -78,17 +78,5 @@ foreach ($folders as $key => $isWritable) {
         window.history.replaceState({}, document.title, url.toString());
     </script>
 <?php endif; ?>
-<!--        <script>-->
-<!--            const nextBtn = document.getElementById('nextBtnPermissions');-->
-<!---->
-<!--            nextBtn?.addEventListener('click', function(e) {-->
-<!--                const allMet = this.dataset.allMet === '1';-->
-<!---->
-<!--                if (!allMet) {-->
-<!--                    e.preventDefault();-->
-<!--                    showToast("Please give all the neccessary permissions to procceed further.");-->
-<!--                }-->
-<!--            });-->
-<!--        </script>-->
 </body>
 </html>

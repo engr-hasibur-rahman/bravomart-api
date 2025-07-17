@@ -8,7 +8,7 @@
     <link href="/install/assets/css/style.css" rel="stylesheet">
 </head>
 <body>
-<h1>Step 5: Installation Complete</h1>
+<h1>Step 6: Installation Complete</h1>
 <p class="subtitle">Your system is now ready to use</p>
 
 <div class="steps">

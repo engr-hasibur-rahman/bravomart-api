@@ -9,6 +9,7 @@ class InstallController
 
     public function requirements()
     {
+
         $requirements = [
             'extensions' => [
                 'php' => version_compare(PHP_VERSION, '8.2.0', '>='), // Laravel 11 requires PHP 8.2+
@@ -30,6 +31,7 @@ class InstallController
         ];
 
         include __DIR__ . '/../views/requirements.php';
+
     }
 
     public function permissions()
@@ -46,10 +48,12 @@ class InstallController
 
         $folders = [
             'Storage (storage/)' => is_writable($storagePath),
-//            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
-//            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
-//            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
-//            'Uploads (public/uploads)' => is_dir($publicPath . '/uploads') && is_writable($publicPath . '/uploads'),
+            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
+            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
+            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
+            'App (storage/app)' => is_writable($storagePath . '/app'),
+            'Logs (storage/logs)' => is_writable($storagePath . '/logs'),
+            'Framework (storage/framework)' => is_writable($storagePath . '/framework'),
         ];
 
         if (!$this->isAllPermissionOk()) {
@@ -57,24 +61,27 @@ class InstallController
         }
 
         include __DIR__ . '/../views/permissions.php';
+
     }
 
     public function environment()
     {
         if (!$this->isAllPermissionOk()) {
             header('Location: ?step=permissions');
+            exit;
         }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $envUpdates = [
-                'APP_NAME' => $_POST['app_name'],
-                'DB_HOST' => $_POST['db_host'],
-                'DB_PORT' => $_POST['db_port'],
-                'DB_DATABASE' => $_POST['db_database'],
-                'ADMIN_URL' => $_POST['admin_url'],
-                'FRONTEND_URL' => $_POST['frontend_url'],
-                'DB_USERNAME' => $_POST['db_username'],
-                'DB_PASSWORD' => $_POST['db_password'],
-                'CACHE_STORE' => 'file'
+                'APP_NAME' => $_POST['app_name'] ?? '',
+                'DB_HOST' => $_POST['db_host'] ?? '',
+                'DB_PORT' => $_POST['db_port'] ?? '3306',
+                'DB_DATABASE' => $_POST['db_database'] ?? '',
+                'ADMIN_URL' => $_POST['admin_url'] ?? '',
+                'FRONTEND_URL' => $_POST['frontend_url'] ?? '',
+                'DB_USERNAME' => $_POST['db_username'] ?? '',
+                'DB_PASSWORD' => $_POST['db_password'] ?? '',
+                'CACHE_STORE' => 'file',
             ];
             $installation_mode = $_POST['install_mode'];
 
@@ -94,8 +101,13 @@ class InstallController
                 }
             }
 
-
             $result = file_put_contents($targetPath, $envContent);
+
+            if ($result === false) {
+                $this->logError('Failed to write .env file.');
+                header('Location: ?step=environment&error=envwrite');
+                exit;
+            }
 
             // Test DB connection first
             try {
@@ -104,48 +116,64 @@ class InstallController
                     $envUpdates['DB_USERNAME'],
                     $envUpdates['DB_PASSWORD']
                 );
-
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
-                // Connection failed
+                $this->logError("DB Connection failed: " . $e->getMessage());
                 header('Location: ?step=environment&error=database');
                 exit;
             }
 
-
             // Change working directory to Laravel root
             $projectRoot = realpath(__DIR__ . '/../../');
-
             chdir($projectRoot);
 
             // Generate key if missing
-            $env = $this->parseEnv(); // If you have parseEnv()
+            $env = $this->parseEnv(); // Assuming parseEnv() returns array of env vars
             if (empty($env['APP_KEY'])) {
-                exec('php artisan key:generate --force');
+                exec('php artisan key:generate --force 2>&1', $outputKeyGen, $codeKeyGen);
+                if ($codeKeyGen !== 0) {
+                    $this->logError("Key generation failed:\n" . implode("\n", $outputKeyGen));
+                }
             }
 
-            // Drop all tables before running migrations
-            exec('php artisan db:wipe --force');
+            // Clear config before wiping
+            exec('php artisan config:clear 2>&1');
+
+            // Wipe database
+            $tables = $pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+
+            $pdo->exec("SET foreign_key_checks = 0;");
+            foreach ($tables as $table) {
+                $pdo->exec("DROP TABLE IF EXISTS `$table`");
+            }
+            $pdo->exec("SET foreign_key_checks = 1;");
 
             // Create the cache table for database cache
-            exec('php artisan cache:table');
-
+            exec('php artisan cache:table 2>&1', $outputCacheTable, $codeCacheTable);
 
             // Update the .env key for cache store
             $this->updateEnvKey('CACHE_STORE', 'database');
 
             // Clear caches
-            exec('php artisan config:clear');
-            exec('php artisan cache:clear');
+            exec('php artisan config:clear 2>&1');
+            exec('php artisan cache:clear 2>&1');
+
             $requirements = $this->isAllRequirementsOk();
             $permissions = $this->isAllPermissionOk();
 
-            if ($installation_mode == 'demo') {
-                $sqlFile = realpath(__DIR__ . '/../database/bravo_fresh.sql');
+            // Import SQL
+            $sqlFile = realpath(__DIR__ . '/../database/bravo_fresh.sql');
 
+            if ($installation_mode === 'demo') {
                 if (file_exists($sqlFile)) {
                     $sql = file_get_contents($sqlFile);
                     if ($sql !== false) {
-                        $pdo->exec($sql);
+                        try {
+                            $pdo->exec($sql);
+                        } catch (PDOException $e) {
+                            $this->logError("SQL import failed: " . $e->getMessage());
+                            die('SQL import failed. Check logs.');
+                        }
                     } else {
                         die('Could not read SQL file.');
                     }
@@ -153,12 +181,21 @@ class InstallController
                     die('SQL file not found.');
                 }
             } else {
-                $sqlFile = realpath(__DIR__ . '/../database/bravo_fresh.sql');
-
+                if ($sqlFile === false) {
+                    http_response_code(500);
+                    echo "<pre>File not found at expected path.</pre>";
+                    echo "<pre>Checked path: " . __DIR__ . '/../database/bravo_fresh.sql' . "</pre>";
+                    exit;
+                }
                 if (file_exists($sqlFile)) {
                     $sql = file_get_contents($sqlFile);
                     if ($sql !== false) {
-                        $pdo->exec($sql);
+                        try {
+                            $pdo->exec($sql);
+                        } catch (PDOException $e) {
+                            $this->logError("SQL import failed: " . $e->getMessage());
+                            die('SQL import failed. Check logs.');
+                        }
                     } else {
                         die('Could not read SQL file.');
                     }
@@ -167,28 +204,35 @@ class InstallController
                 }
             }
 
-            if (
-                $result === false
-            ) {
+            if ($result === false) {
                 file_put_contents(__DIR__ . '/../logs/install-error.log', implode("\n", array_merge(
                     $outputMigrate ?? [],
-                    $outputModuleMigrate ?? [],
+                    $outputModuleMigrate ?? []
                 )));
                 header('Location: ?step=environment&error=artisan');
+                exit;
             } elseif (!$requirements || !$permissions) {
                 header('Location: ?step=environment&error=requirements');
+                exit;
             } else {
                 header('Location: ?step=admin');
+                exit;
             }
-
-            exit;
         }
 
         include __DIR__ . '/../views/environment.php';
     }
 
+    private function logError(string $message): void
+    {
+        $logFile = __DIR__ . '/../install-error.log';
+        $formattedMessage = "[" . date('Y-m-d H:i:s') . "] " . $message . PHP_EOL;
+        file_put_contents($logFile, $formattedMessage, FILE_APPEND);
+    }
+
     public function admin()
     {
+
         if (!$this->isAllRequirementsOk()) {
             header('Location: ?step=requirements');
         }
@@ -211,18 +255,21 @@ class InstallController
 
             $stmt = $pdo->prepare("INSERT INTO users (id, first_name, last_name, slug, phone, email, password, activity_scope,email_verified)
                        VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
-            $stmt->execute([1, $first_name, $last_name, $slug, $phone, $email, $password, 'system_level',1]);
+            $stmt->execute([1, $first_name, $last_name, $slug, $phone, $email, $password, 'system_level', 1]);
 
             header('Location: index.php?step=finish');
             exit;
         }
 
         include __DIR__ . '/../views/admin.php';
+
+
     }
 
 
     public function finish()
     {
+
         // If requirements and permissions are missing
         if (!$this->isAllRequirementsOk()) {
             header('Location: ?step=requirements');
@@ -242,11 +289,26 @@ class InstallController
         // Now write the installed file
         file_put_contents($installedFile, date('Y-m-d H:i:s'));
 
-        // Disable demo mode automatically in .env
+        // Disable demo mode automatically in .env and set INSTALLED=true
         $envPath = realpath(__DIR__ . '/../..') . '/.env';
+
         if (file_exists($envPath)) {
             $envContent = file_get_contents($envPath);
-            $envContent = preg_replace('/^DEMO_MODE=.*$/m', 'DEMO_MODE=false', $envContent);
+
+            // Disable DEMO_MODE
+            if (preg_match('/^DEMO_MODE=.*$/m', $envContent)) {
+                $envContent = preg_replace('/^DEMO_MODE=.*$/m', 'DEMO_MODE=false', $envContent);
+            } else {
+                $envContent .= "\nDEMO_MODE=false";
+            }
+
+            // Add or update INSTALLED=true
+            if (preg_match('/^INSTALLED=.*$/m', $envContent)) {
+                $envContent = preg_replace('/^INSTALLED=.*$/m', 'INSTALLED=true', $envContent);
+            } else {
+                $envContent .= "\nINSTALLED=true";
+            }
+
             file_put_contents($envPath, $envContent);
         }
 
@@ -257,6 +319,7 @@ class InstallController
 
         include __DIR__ . '/../views/finish.php';
     }
+
 
     private function parseEnv()
     {
@@ -337,10 +400,12 @@ class InstallController
 
         $folders = [
             'Storage (storage/)' => is_writable($storagePath),
-//            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
-//            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
-//            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
-//            'Uploads (public/uploads)' => is_dir($publicPath . '/uploads') && is_writable($publicPath . '/uploads'),
+            'Storage App Public (storage/app/public)' => is_writable($storagePath . '/app/public'),
+            'Bootstrap Cache (bootstrap/cache)' => is_writable($bootstrapPath),
+            'Modules Directory (Modules/)' => is_dir($modulesPath) && is_writable($modulesPath),
+            'App (storage/app)' => is_writable($storagePath . '/app'),
+            'Logs (storage/logs)' => is_writable($storagePath . '/logs'),
+            'Framework (storage/framework)' => is_writable($storagePath . '/framework'),
         ];
         if (in_array(false, $folders, true)) {
             return false;

@@ -19,6 +19,7 @@
     <a class="step"></a>
     <a class="step"></a>
     <a class="step"></a>
+    <a class="step"></a>
 </div>
 
 <div class="container">

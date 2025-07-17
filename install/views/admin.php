@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <h1>Step 4: Enter Admin Information</h1>
+    <h1>Step 5: Enter Admin Information</h1>
     <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details For Database Accurately</p>
 
     <div class="steps">
