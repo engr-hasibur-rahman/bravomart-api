@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminContactSettingsResource;
-use App\Models\ContactSetting;
+use App\Models\Page;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 
 class ContactSettingsManageController extends Controller
 {
-    public function __construct(protected ContactSetting $contactSetting, protected Translation $translation)
+    public function __construct(protected Page $contactSetting, protected Translation $translation)
     {
 
     }
@@ -23,31 +23,66 @@ class ContactSettingsManageController extends Controller
     public function contactSettings(Request $request)
     {
         if ($request->isMethod('GET')) {
-            $settings = ContactSetting::with('related_translations')->where('status', 1)->first();
+            $settings = Page::with('related_translations')
+                ->where('slug', 'contact_page')
+                ->first();
+
             if (!$settings) {
                 return response()->json([
                     'message' => __('messages.data_not_found')
                 ], 404);
             }
-            $content = jsonImageModifierFormatter($settings->content);
+
+            $content = $settings->content ? json_decode($settings->content, true) : [];
+            $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
             $settings->content = $content;
+
             return response()->json([
                 'data' => new AdminContactSettingsResource($settings),
             ]);
         }
+
         $validatedData = $request->validate([
-            'content' => 'required|array'
+            'content' => 'required|array',
+            'translations' => 'required|array',
         ]);
-        $settings = ContactSetting::updateOrCreate(
-            ['id' => $request->id],
-            ['content' => $validatedData['content']]
-        );
-        createOrUpdateTranslationJson($request, $settings->id, 'App\Models\ContactSetting', $this->translationKeys());
+
+        // Update by ID
+        $settings = Page::where('slug', 'contact_page')->first();
+
+        if ($settings) {
+            $settings->update([
+                'content' => json_encode($validatedData['content']),
+                'title' => 'Contact Page',
+            ]);
+        } else {
+            $settings = Page::updateOrCreate(
+                ['slug' => 'contact_page'], // Correct format
+                [
+                    'content' => json_encode($validatedData['content']),
+                    'title' => 'Contact Page',
+                    'status' => 'publish',
+                ]
+            );
+        }
+
+        foreach ($validatedData['translations'] as $translation) {
+            Translation::updateOrCreate(
+                [
+                    'language' => $translation['language_code'],
+                    'translatable_id' => $settings->id,
+                    'translatable_type' => 'App\Models\Page',
+                    'key' => 'content',
+                ],
+                [
+                    'value' => json_encode($translation['content']),
+                ]
+            );
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Settings saved successfully',
-            'data' => $settings
         ]);
 
     }
