@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/install_local/assets/{any}', function ($any) {
-    $path = base_path('install_local/assets/' . $any);
+Route::get('/install/assets/{any}', function ($any) {
+    $path = base_path('install/assets/' . $any);
 
     if (!file_exists($path)) {
         abort(404);
