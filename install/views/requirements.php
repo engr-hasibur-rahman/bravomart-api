@@ -15,8 +15,8 @@ foreach ($requirements['extensions'] as $key => $isLoaded) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Installation - Step 1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="/install/assets/css/style.css" rel="stylesheet">
-    <link href="/install/assets/css/toast.css" rel="stylesheet">
+    <link href="/install_local/assets/css/style.css" rel="stylesheet">
+    <link href="/install_local/assets/css/toast.css" rel="stylesheet">
     <?php include __DIR__ . '/partials/toast.php'; ?>
     <style>
         .permission-box {
@@ -51,6 +51,7 @@ foreach ($requirements['extensions'] as $key => $isLoaded) {
     <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
 
     <div class="steps">
+        <a class="step"></a>
         <a class="step"></a>
         <a class="step active"></a>
         <a class="step"></a>

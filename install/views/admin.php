@@ -7,7 +7,7 @@
     <title>Installation - Database Setup</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="/install/assets/css/style.css" rel="stylesheet">
+    <link href="/install_local/assets/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -15,6 +15,7 @@
     <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details For Database Accurately</p>
 
     <div class="steps">
+        <a class="step"></a>
         <a class="step"></a>
         <a class="step"></a>
         <a class="step"></a>
