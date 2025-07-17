@@ -99,13 +99,13 @@ class OtherChargeInfoController extends Controller
 
         foreach ($users as $user) {
             // Only delete wallet if this user is owner (owner_type check optional)
-            Wallet::where('owner_id', $user->id)->where('owner_type', 'App\Models\User')->delete();
+            Wallet::where('owner_id', $user->id)->where('owner_type', 'App\Models\User')->forceDelete();
 
-            $user->reviews()->delete();
-            $user->chats()->delete();
+            $user->reviews()->forceDelete();
+            $user->chats()->forceDelete();
 
             // Finally delete the user
-            $user->delete();
+            $user->forceDelete();
         }
 
      }
