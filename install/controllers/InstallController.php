@@ -146,6 +146,7 @@ class InstallController
             foreach ($tables as $table) {
                 $pdo->exec("DROP TABLE IF EXISTS `$table`");
             }
+
             $pdo->exec("SET foreign_key_checks = 1;");
 
             // Create the cache table for database cache

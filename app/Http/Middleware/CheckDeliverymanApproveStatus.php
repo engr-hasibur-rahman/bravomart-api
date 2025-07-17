@@ -23,11 +23,11 @@ class CheckDeliverymanApproveStatus
         if (!$auth->activity_scope == 'delivery_level') {
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
-        $deliveryman = DeliveryMan::find($auth->id);
+        $deliveryman = DeliveryMan::where('user_id', $auth->id)->first();
         if ($deliveryman && $deliveryman->status == 'approved') {
             return $next($request);
         } else {
-            return response()->json(['message' => __('messages.not_allowed_status',['name' => $deliveryman?->status ?? 'not allowed'])], Response::HTTP_UNAUTHORIZED);
+            return response()->json(['message' => __('messages.not_allowed_status', ['name' => $deliveryman?->status ?? 'not allowed'])], Response::HTTP_UNAUTHORIZED);
         }
     }
 }

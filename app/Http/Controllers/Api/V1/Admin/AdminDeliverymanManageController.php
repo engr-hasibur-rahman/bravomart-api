@@ -155,7 +155,7 @@ class AdminDeliverymanManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'deliveryman_ids' => 'required|array',
-            'deliveryman_ids.*' => 'required|integer|exists:deliverymen,id',
+            'deliveryman_ids.*' => 'required|integer|exists:delivery_men,id',
             'status' => 'required|in:approved,rejected',
         ]);
 
