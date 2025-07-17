@@ -948,7 +948,7 @@ class FrontendController extends Controller
             }
         }
 
-        $query->where('products.status', 'approved')->whereNull('products.deleted_at');
+        $query->where('products.status', 'approved')->where('products.is_featured', true)->whereNull('products.deleted_at');
 
         // Pagination
         $perPage = $request->per_page ?? 10;
@@ -1430,8 +1430,10 @@ class FrontendController extends Controller
         }
 
         if (!empty($request->search)) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('description', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('products.name', 'like', '%' . $request->search . '%')
+                    ->orWhere('products.description', 'like', '%' . $request->search . '%');
+            });
         }
 
         // Pagination
