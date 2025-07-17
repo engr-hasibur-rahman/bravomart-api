@@ -37,8 +37,8 @@ class DeliverymanOrderRequestResource extends JsonResource
             "order_amount" => $this->order_amount,
             "status" => $this->status,
             "address" => $formattedAddress,
-            "shipping_address_lat" => $this->orderMaster?->shippingAddress?->latitude,
-            "shipping_address_lng" => $this->orderMaster?->shippingAddress?->longitude,
+            "shipping_address_lat" => $this->orderMaster?->orderAddress?->latitude,
+            "shipping_address_lng" => $this->orderMaster?->orderAddress?->longitude,
             "shipping_charge" => $this->shipping_charge,
             "created_at" => $this->created_at->diffForHumans(),
         ];
