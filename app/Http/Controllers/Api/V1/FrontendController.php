@@ -55,14 +55,11 @@ use App\Interfaces\CountryManageInterface;
 use App\Interfaces\OrderRefundInterface;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\StateManageInterface;
-use App\Models\AboutSetting;
 use App\Models\Banner;
-use App\Models\BecomeSellerSetting;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\BlogComment;
 use App\Models\BlogView;
-use App\Models\ContactSetting;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -2284,46 +2281,60 @@ class FrontendController extends Controller
 
     public function becomeSeller(Request $request)
     {
-        $setting = BecomeSellerSetting::with('related_translations')
-            ->where('status', 1)
+        $setting = Page::with('related_translations')
+            ->where('slug', 'become_seller')
+            ->where('status', 'publish')
             ->first();
+
         if (!$setting) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        $content = jsonImageModifierFormatter($setting->content);
+
+        $content = $setting->content ? json_decode($setting->content, true) : [];
+        $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
         $setting->content = $content;
+
         return response()->json(new BecomeSellerPublicResource($setting));
     }
 
     public function aboutUs(Request $request)
     {
-        $setting = AboutSetting::with('related_translations')
-            ->where('status', 1)
+        $setting = Page::with('related_translations')
+            ->where('slug', 'about_page')
+            ->where('status', 'publish')
             ->first();
+
         if (!$setting) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        $content = jsonImageModifierFormatter($setting->content);
+
+        $content = $setting->content ? json_decode($setting->content, true) : [];
+        $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
         $setting->content = $content;
+
         return response()->json(new AboutUsPublicResource($setting));
     }
 
     public function contactUs(Request $request)
     {
-        $setting = ContactSetting::with('related_translations')
-            ->where('status', 1)
+        $setting = Page::with('related_translations')
+            ->where('slug', 'contact_page')
+            ->where('status', 'publish')
             ->first();
+
         if (!$setting) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-        $content = jsonImageModifierFormatter($setting->content);
+        $content = $setting->content ? json_decode($setting->content, true) : [];
+        $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
         $setting->content = $content;
+
         return response()->json(new ContactUsPublicResource($setting));
     }
 

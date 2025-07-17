@@ -16,7 +16,7 @@ class AdminAboutSettingsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->id,
+            "slug" => $this->slug,
             "content" => $this->content,
             "translations"=>SettingsTranslationResource::collection($this->related_translations->groupBy('language'))
         ];

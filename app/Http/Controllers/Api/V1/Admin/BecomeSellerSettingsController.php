@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\AdminBecomeSellerResource;
-use App\Models\BecomeSellerSetting;
+use App\Models\Page;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 
 class BecomeSellerSettingsController extends Controller
 {
-    public function __construct(protected BecomeSellerSetting $becomeSellerSetting, protected Translation $translation)
+    public function __construct(protected Page $becomeSellerSetting, protected Translation $translation)
     {
 
     }
@@ -23,34 +23,66 @@ class BecomeSellerSettingsController extends Controller
     public function becomeSellerSettings(Request $request)
     {
         if ($request->isMethod('GET')) {
-            $settings = BecomeSellerSetting::with('related_translations')->where('status', 1)->first();
+            $settings = Page::with('related_translations')
+                ->where('slug', 'become_seller')
+                ->first();
+
             if (!$settings) {
                 return response()->json([
                     'message' => __('messages.data_not_found')
                 ],404);
             }
-            $content = jsonImageModifierFormatter($settings->content);
+
+            $content = $settings->content ? json_decode($settings->content, true) : [];
+            $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
             $settings->content = $content;
+
             return response()->json([
                 'data' => new AdminBecomeSellerResource($settings),
             ]);
         }
 
         $validatedData = $request->validate([
-            'content' => 'required|array'
+            'content' => 'required|array',
+            'translations' => 'required|array',
         ]);
 
-        $settings = BecomeSellerSetting::updateOrCreate(
-            ['id' => $request->id],
-            ['content' => $validatedData['content']]
-        );
+        // Update by ID
+        $settings = Page::where('slug', 'become_seller')->first();
 
-        createOrUpdateTranslationJson($request, $settings->id, 'App\Models\BecomeSellerSetting', $this->translationKeys());
+        if ($settings) {
+            $settings->update([
+                'content' => json_encode($validatedData['content']),
+                'title' => 'Become A Seller',
+            ]);
+        } else {
+            $settings = Page::updateOrCreate(
+                ['slug' => 'become_seller'],
+                [
+                    'content' => json_encode($validatedData['content']),
+                    'title' => 'Become A Seller',
+                    'status' => 'publish',
+                ]
+            );
+        }
+
+        foreach ($validatedData['translations'] as $translation) {
+            Translation::updateOrCreate(
+                [
+                    'language' => $translation['language_code'],
+                    'translatable_id' => $settings->id,
+                    'translatable_type' => 'App\Models\Page',
+                    'key' => 'content',
+                ],
+                [
+                    'value' => json_encode($translation['content']),
+                ]
+            );
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Settings saved successfully',
-            'data' => $settings
         ]);
     }
 
