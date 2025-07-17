@@ -338,7 +338,7 @@ class UserController extends Controller
             // Validate the incoming request
             $request->validate([
                 'email' => 'required|email',
-                'password' => 'required',
+                'password' => 'required|string|min:8|max:32',
             ]);
 
             // Attempt to find the user

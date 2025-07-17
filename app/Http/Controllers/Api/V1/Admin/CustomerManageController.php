@@ -35,7 +35,7 @@ class CustomerManageController extends Controller
         if (isset($request->status)) {
             $query->where("status", $request->status);
         }
-        $customers = $query->latest()->paginate($request->perPage ?? 10);
+        $customers = $query->latest()->paginate($request->per_page ?? 10);
         return response()->json([
             'customers' => CustomerResource::collection($customers),
             'meta' => new PaginationResource($customers)
@@ -82,7 +82,7 @@ class CustomerManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'customer_id' => 'required|exists:customers,id',
-            'password' => 'required',
+            'password' => 'required|string|min:8|max:32',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
@@ -216,7 +216,7 @@ class CustomerManageController extends Controller
     public function destroy(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'customer_ids'   => 'required|array',
+            'customer_ids' => 'required|array',
             'customer_ids.*' => 'required|exists:customers,id',
         ]);
 
@@ -265,7 +265,7 @@ class CustomerManageController extends Controller
             'message' => "Processed: $deleted deleted, " . count($skipped) . " skipped (Customer(s): $skippedNames have running orders), " . count($failed) . " failed.",
             'deleted' => $deleted,
             'skipped' => $skipped,
-            'failed'  => $failed,
+            'failed' => $failed,
         ]);
     }
 }

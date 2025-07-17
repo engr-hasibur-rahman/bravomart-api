@@ -35,7 +35,7 @@ class DeliverymanManageController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required',
+            'password' => 'required|string|min:8|max:32',
             'phone' => 'required|unique:users,phone',
             'vehicle_type_id' => 'required|exists:vehicle_types,id',
             'area_id' => 'required|exists:areas,id',
@@ -158,7 +158,7 @@ class DeliverymanManageController extends Controller
 
             $request->validate([
                 'email' => 'required|email',
-                'password' => 'required',
+                'password' => 'required|string|min:8|max:32',
                 'social_login' => 'nullable|boolean',
                 'platform' => 'nullable|string|in:web,mobile',
             ]);

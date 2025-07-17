@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'delivery-man/'], function () {
     Route::post('registration', [DeliverymanManageController::class, 'registration']);
     Route::post('login', [DeliverymanManageController::class, 'login']);
-    Route::post('verify-google-token',[DeliverymanManageController::class, 'verifyGoogleToken']);
+    Route::post('verify-google-token', [DeliverymanManageController::class, 'verifyGoogleToken']);
 
     Route::group(['middleware' => ['auth:sanctum', ApiAuthMiddleware::class], 'no.code.input'], function () {
         Route::get('dashboard', [DeliverymanDashboardController::class, 'dashboard']);
@@ -32,7 +32,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'delivery-man/'], function ()
             Route::post('send-verification-email', [DeliverymanManageController::class, 'sendVerificationEmail']);
 
         });
-        Route::group(['prefix' => 'order/'], function () {
+        Route::group(['prefix' => 'order/', 'middleware' => \App\Http\Middleware\CheckDeliverymanApproveStatus::class], function () {
             Route::get('my-orders/{order_id?}', [DeliverymanOrderManageController::class, 'getMyOrders']);
             Route::get('request', [DeliverymanOrderManageController::class, 'getOrderRequest']);
             Route::post('handle-request', [DeliverymanOrderManageController::class, 'handleOrderRequest']);

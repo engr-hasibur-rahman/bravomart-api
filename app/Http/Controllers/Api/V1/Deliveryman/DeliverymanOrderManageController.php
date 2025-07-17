@@ -82,7 +82,6 @@ class DeliverymanOrderManageController extends Controller
                 'data' => DeliverymanOrderRequestResource::collection($order_requests),
                 'meta' => new PaginationResource($order_requests)
             ]);
-
         }
     }
 
@@ -174,6 +173,7 @@ class DeliverymanOrderManageController extends Controller
         if (!$deliveryman || $deliveryman->activity_scope !== 'delivery_level') {
             unauthorized_response();
         }
+
         $already_cancelled = Order::with('orderDeliveryHistory')
             ->whereHas('orderDeliveryHistory', function ($query) use ($deliveryman, $request) {
                 $query->where('deliveryman_id', $deliveryman->id)

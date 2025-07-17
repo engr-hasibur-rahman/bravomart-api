@@ -30,7 +30,7 @@ class CustomerRequest extends FormRequest
             'last_name' => 'nullable|string|max:255',
             'email' => 'required|email|unique:customers,email',
             'phone' => 'nullable|string|unique:customers,phone',
-            'password' => 'required',
+            'password' => 'required|string|min:8|max:32',
             'birth_day' => 'nullable|date|date_format:Y-m-d',
             'gender' => 'nullable|in:' . $this->getEnumValues(Gender::class),
         ];

@@ -51,7 +51,7 @@ class CustomerManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
-            'password' => 'required',
+            'password' => 'required|string|min:8|max:32',
         ]);
 
         if ($validator->fails()) {
@@ -428,6 +428,7 @@ class CustomerManageController extends Controller
             'birth_day' => 'nullable|date|date_format:Y-m-d',
             'gender' => 'nullable|string|in:male,female,others',
         ]);
+
         if ($validator->fails()) {
             return response()->json([
                 "status" => false,

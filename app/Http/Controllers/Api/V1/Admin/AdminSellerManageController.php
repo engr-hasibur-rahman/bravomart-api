@@ -173,7 +173,7 @@ class AdminSellerManageController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:users,id',
-            'password' => 'required'
+            'password' => 'required|string|min:8|max:32'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);

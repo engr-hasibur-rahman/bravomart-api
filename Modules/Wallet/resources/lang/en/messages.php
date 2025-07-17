@@ -130,7 +130,6 @@ return [
     'order_cancel_failed' => 'Order cancellation failed!',
     'order_already_cancelled' => 'Order has been already cancelled!',
     'order_already_delivered' => 'Order has been already delivered!',
-    'order_already_ignored' => 'Order has been already ignored!',
     'order_status_not_changeable' => 'This order status cannot be changed!',
     'order_does_not_belong_to_seller' => 'This order does not belong to this seller!',
     'order_does_not_belong_to_customer' => 'This order does not belong to this customer!',
@@ -142,8 +141,7 @@ return [
     'order_already_request_for_refund' => 'Order already requested for refund!',
     'order_is_not_delivered' => 'Order is not delivered yet!',
     'order_delivered_success' => 'Order delivered successfully!',
-    'order_pickup_success' => 'Order picked up successfully!',
-    'order_shipped_success' => 'Order shipped successfully!',
+    'order_already_cancelled_or_ignored_or_delivered' => 'This order is already either cancelled or ignored or delivered!',
     'order_is_not_accepted' => 'This order is not accepted yet!',
     'order_is_not_cash_on_delivery' => 'This order is not cash on delivery!',
     'order_is_not_shipped' => 'This order is not shipped yet!',
@@ -162,22 +160,14 @@ return [
     'currently_not_available' => 'Sorry! We are currently not available!',
 
     'wallet_not_found' => 'Wallet not found!',
+    'wallet_inactive' => 'Your wallet is inactive. Can\'t proceed!',
     'insufficient_limit' => 'Insufficient limit!',
     'product_featured_added_successfully' => 'Product featured added successfully!',
     'product_featured_removed_successfully' => 'Product featured removed successfully!',
     'already_featured' => 'This :name is already featured!',
 
     'available_status_inactive' => 'Available status is inactive!',
-
-    'invalid_region' => 'This :name does not belongs to valid region!',
-
-    'already_approved' => ':name is already approved. Can\'t change status!',
-    'already_rejected' => ':name is already rejected. Can\'t change status!',
-
-    'user_exists' => 'This user is already exists as :name!',
-
-    'has_running_orders' => 'This :name has running orders!',
-    'not_allowed_status' => 'Your account status is :name! Can\'t proceed!',
+    'setting_disabled' => ':name settings is disabled'
 
 ];
 

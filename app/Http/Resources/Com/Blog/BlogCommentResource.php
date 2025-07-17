@@ -17,7 +17,7 @@ class BlogCommentResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "user_name" => $this->user->getFullNameAttribute(),
+            "user_name" => $this->user?->getFullNameAttribute(),
             "user_image_url" => ImageModifier::generateImageUrl($this->user?->image),
             "comment" => $this->comment,
             "like_count" => $this->like_count,
