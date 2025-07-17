@@ -2282,7 +2282,7 @@ class FrontendController extends Controller
     public function becomeSeller(Request $request)
     {
         $setting = Page::with('related_translations')
-            ->where('slug', 'become_seller')
+            ->where('slug', 'become_a_seller')
             ->where('status', 'publish')
             ->first();
 
@@ -2302,7 +2302,7 @@ class FrontendController extends Controller
     public function aboutUs(Request $request)
     {
         $setting = Page::with('related_translations')
-            ->where('slug', 'about_page')
+            ->where('slug', 'about')
             ->where('status', 'publish')
             ->first();
 
@@ -2322,7 +2322,7 @@ class FrontendController extends Controller
     public function contactUs(Request $request)
     {
         $setting = Page::with('related_translations')
-            ->where('slug', 'contact_page')
+            ->where('slug', 'contact')
             ->where('status', 'publish')
             ->first();
 
