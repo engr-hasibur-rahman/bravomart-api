@@ -24,7 +24,7 @@ class ContactSettingsManageController extends Controller
     {
         if ($request->isMethod('GET')) {
             $settings = Page::with('related_translations')
-                ->where('slug', 'contact_page')
+                ->where('slug', 'contact')
                 ->first();
 
             if (!$settings) {
@@ -48,7 +48,7 @@ class ContactSettingsManageController extends Controller
         ]);
 
         // Update by ID
-        $settings = Page::where('slug', 'contact_page')->first();
+        $settings = Page::where('slug', 'contact')->first();
 
         if ($settings) {
             $settings->update([
@@ -57,7 +57,7 @@ class ContactSettingsManageController extends Controller
             ]);
         } else {
             $settings = Page::updateOrCreate(
-                ['slug' => 'contact_page'], // Correct format
+                ['slug' => 'contact'], // Correct format
                 [
                     'content' => json_encode($validatedData['content']),
                     'title' => 'Contact Page',

@@ -24,7 +24,7 @@ class BecomeSellerSettingsController extends Controller
     {
         if ($request->isMethod('GET')) {
             $settings = Page::with('related_translations')
-                ->where('slug', 'become_seller')
+                ->where('slug', 'become_a_seller')
                 ->first();
 
             if (!$settings) {
@@ -48,7 +48,7 @@ class BecomeSellerSettingsController extends Controller
         ]);
 
         // Update by ID
-        $settings = Page::where('slug', 'become_seller')->first();
+        $settings = Page::where('slug', 'become_a_seller')->first();
 
         if ($settings) {
             $settings->update([
@@ -57,7 +57,7 @@ class BecomeSellerSettingsController extends Controller
             ]);
         } else {
             $settings = Page::updateOrCreate(
-                ['slug' => 'become_seller'],
+                ['slug' => 'become_a_seller'],
                 [
                     'content' => json_encode($validatedData['content']),
                     'title' => 'Become A Seller',

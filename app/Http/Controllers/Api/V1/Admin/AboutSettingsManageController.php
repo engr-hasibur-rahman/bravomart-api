@@ -24,7 +24,7 @@ class AboutSettingsManageController extends Controller
     {
         if ($request->isMethod('GET')) {
             $settings = Page::with('related_translations')
-                ->where('slug', 'about_page')
+                ->where('slug', 'about')
                 ->first();
 
             if (!$settings) {
@@ -48,7 +48,7 @@ class AboutSettingsManageController extends Controller
         ]);
 
         // Update by ID
-        $settings = Page::where('slug', 'about_page')->first();
+        $settings = Page::where('slug', 'about')->first();
 
         if ($settings) {
             $settings->update([
@@ -57,7 +57,7 @@ class AboutSettingsManageController extends Controller
             ]);
         } else {
             $settings = Page::updateOrCreate(
-                ['slug' => 'about_page'],
+                ['slug' => 'about'],
                 [
                     'content' => json_encode($validatedData['content']),
                     'title' => 'About Page',
