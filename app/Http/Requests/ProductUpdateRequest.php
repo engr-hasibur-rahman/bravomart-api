@@ -105,4 +105,31 @@ class ProductUpdateRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
+
+    public function withValidator(Validator $validator): void
+    {
+        if (!shouldRound()) {
+            return;
+        }
+
+        $validator->after(function ($validator) {
+            foreach ($this->input('variants', []) as $index => $variant) {
+                if (
+                    isset($variant['price']) &&
+                    is_numeric($variant['price']) &&
+                    is_float($variant['price'])
+                ) {
+                    $validator->errors()->add("variants.$index.price", __('messages.should_round', ['name' => 'Price']));
+                }
+
+                if (
+                    isset($variant['special_price']) &&
+                    is_numeric($variant['special_price']) &&
+                    is_float($variant['special_price'])
+                ) {
+                    $validator->errors()->add("variants.$index.special_price", __('messages.should_round', ['name' => 'Special price']));
+                }
+            }
+        });
+    }
 }

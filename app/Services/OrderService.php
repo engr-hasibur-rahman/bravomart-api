@@ -678,7 +678,12 @@ class OrderService
             foreach ($orderMaster->orders as $order) {
                 $orderDiscount = $order->orderDetail->sum('coupon_discount_amount');
                 $orderAmount = ($order->orderDetail->sum('line_total_price') + $order->shipping_charge + $order->order_additional_charge_amount);
-                $orderAmountStoreValue = $order->orderDetail->sum('line_total_price') - $order->order_amount_admin_commission + $order->order_additional_charge_store_amount;
+                $orderAmountStoreValue = max(
+                    $order->orderDetail->sum('line_total_price')
+                    - $order->order_amount_admin_commission
+                    + $order->order_additional_charge_store_amount,
+                    0
+                );
                 $order->update([
                     'order_amount_store_value' => $orderAmountStoreValue,
                     'order_amount' => $orderAmount,
