@@ -88,8 +88,17 @@ class ComSiteGeneralController extends Controller
             ], 404);
         }
 
-        $content = json_decode($settings->content);
-        $settings->content = $content;
+        // Decode content only if it's a string
+        if (is_string($settings->content)) {
+            $decoded = json_decode($settings->content, true);
+
+            // Only assign if decoding is successful
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $settings->content = $decoded;
+            } else {
+                $settings->content = [];
+            }
+        }
 
         return response()->json([
             'data' => new GdprPublicResource($settings),

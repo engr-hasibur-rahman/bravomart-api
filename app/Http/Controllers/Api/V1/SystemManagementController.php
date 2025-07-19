@@ -691,8 +691,7 @@ class SystemManagementController extends Controller
                 $data = [];
             }
 
-            $content = json_decode($data);
-            $settings->option_value = $content;
+            $settings->option_value = $data;
 
             return response()->json([
                 'data' => new GdprPublicResource($settings),
