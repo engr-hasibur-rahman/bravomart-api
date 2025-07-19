@@ -676,8 +676,17 @@ class OrderService
 
             // Step 3: Distribute per Order
             foreach ($orderMaster->orders as $order) {
-                $orderDiscount = $order->orderDetail->sum('coupon_discount_amount');
-                $orderAmount = ($order->orderDetail->sum('line_total_price') + $order->shipping_charge + $order->order_additional_charge_amount);
+                $orderDiscount = shouldRound() ? round($order->orderDetail->sum('coupon_discount_amount')) : $order->orderDetail->sum('coupon_discount_amount');
+                $orderAmount = shouldRound() ? (
+                    round($order->orderDetail->sum('line_total_price'))
+                    + round($order->shipping_charge)
+                    + round($order->order_additional_charge_amount)
+                ) :
+                    (
+                        $order->orderDetail->sum('line_total_price')
+                        + $order->shipping_charge
+                        + $order->order_additional_charge_amount
+                    );
                 $orderAmountStoreValue = max(
                     $order->orderDetail->sum('line_total_price')
                     - $order->order_amount_admin_commission
