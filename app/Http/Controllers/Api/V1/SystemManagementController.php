@@ -685,7 +685,6 @@ class SystemManagementController extends Controller
                 ], 404);
             }
 
-
             return response()->json([
                 'data' => new GdprPublicResource($settings),
             ]);
@@ -700,7 +699,7 @@ class SystemManagementController extends Controller
 
         if (!empty($settings)) {
             $settings->update([
-                'content' => json_encode($validatedData['content']),
+                'option_value' => json_encode($validatedData['content']),
             ]);
         } else {
             $settings = SettingOption::updateOrCreate([
