@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Admin\AdminBecomeSellerResource;
+use App\Http\Resources\Com\GdprPublicResource;
 use App\Interfaces\TranslationInterface;
 use App\Models\SettingOption;
 use App\Services\LicenseService;
@@ -694,7 +695,7 @@ class SystemManagementController extends Controller
             $settings->option_value = $content;
 
             return response()->json([
-                'data' => new AdminBecomeSellerResource($settings),
+                'data' => new GdprPublicResource($settings),
             ]);
         }
 
