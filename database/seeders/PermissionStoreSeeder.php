@@ -20,7 +20,20 @@ class PermissionStoreSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('permissions')->where('available_for','store_level')->delete();
+        $permissionIds = DB::table('permissions')
+            ->where('available_for', 'store_level')
+            ->pluck('id')
+            ->toArray();
+
+        if (!empty($permissionIds)) {
+            // Delete permissions
+            DB::table('permissions')->whereIn('id', $permissionIds)->delete();
+
+            // Delete related translations
+            DB::table('translations')->whereIn('translatable_id', $permissionIds)
+                ->where('translatable_type', 'App\\Models\\Permissions')
+                ->delete();
+        }
         $admin_main_menu = [];
         $shop_menu = [
             [
