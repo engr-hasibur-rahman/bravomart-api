@@ -167,7 +167,9 @@ return [
     'already_featured' => 'This :name is already featured!',
 
     'available_status_inactive' => 'Available status is inactive!',
-    'setting_disabled' => ':name settings is disabled'
+    'setting_disabled' => ':name settings is disabled',
+
+    'should_round' => ':name shouldn\'t have a decimal value!'
 
 ];
 
