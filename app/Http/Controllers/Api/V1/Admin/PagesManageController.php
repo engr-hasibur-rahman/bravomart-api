@@ -6,6 +6,7 @@ use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Interfaces\PageManageInterface;
 use App\Models\Page;
+use App\Models\Translation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -35,6 +36,129 @@ class PagesManageController extends Controller
             $request['slug'] = MultilangSlug::makeSlug(Page::class, $request->title, 'slug');
         }
         try {
+
+            if ($request->slug === 'about'){
+                $validatedData = $request->validate([
+                    'content' => 'required|array',
+                    'translations' => 'required|array',
+                ]);
+
+                // Update by ID
+                $settings = Page::where('slug', 'about')->first();
+
+                if ($settings) {
+                    $settings->update([
+                        'content' => json_encode($validatedData['content']),
+                        'title' => 'About Page',
+                    ]);
+                } else {
+                    $settings = Page::updateOrCreate(
+                        ['slug' => 'about'],
+                        [
+                            'content' => json_encode($validatedData['content']),
+                            'title' => 'About Page',
+                            'status' => 'publish',
+                        ]
+                    );
+                }
+
+                foreach ($validatedData['translations'] as $translation) {
+                    Translation::updateOrCreate(
+                        [
+                            'language' => $translation['language_code'],
+                            'translatable_id' => $settings->id,
+                            'translatable_type' => 'App\Models\Page',
+                            'key' => 'content',
+                        ],
+                        [
+                            'value' => json_encode($translation['content']),
+                        ]
+                    );
+                }
+            }
+
+
+            if ($request->slug === 'contact'){
+                $validatedData = $request->validate([
+                    'content' => 'required|array',
+                    'translations' => 'required|array',
+                ]);
+
+                // Update by ID
+                $settings = Page::where('slug', 'contact')->first();
+
+                if ($settings) {
+                    $settings->update([
+                        'content' => json_encode($validatedData['content']),
+                        'title' => 'Contact Page',
+                    ]);
+                } else {
+                    $settings = Page::updateOrCreate(
+                        ['slug' => 'contact'], // Correct format
+                        [
+                            'content' => json_encode($validatedData['content']),
+                            'title' => 'Contact Page',
+                            'status' => 'publish',
+                        ]
+                    );
+                }
+
+                foreach ($validatedData['translations'] as $translation) {
+                    Translation::updateOrCreate(
+                        [
+                            'language' => $translation['language_code'],
+                            'translatable_id' => $settings->id,
+                            'translatable_type' => 'App\Models\Page',
+                            'key' => 'content',
+                        ],
+                        [
+                            'value' => json_encode($translation['content']),
+                        ]
+                    );
+                }
+            }
+
+
+            if ($request->slug === 'become_a_seller'){
+                $validatedData = $request->validate([
+                    'content' => 'required|array',
+                    'translations' => 'required|array',
+                ]);
+
+                // Update by ID
+                $settings = Page::where('slug', 'become_a_seller')->first();
+
+                if ($settings) {
+                    $settings->update([
+                        'content' => json_encode($validatedData['content']),
+                        'title' => 'Become A Seller',
+                    ]);
+                } else {
+                    $settings = Page::updateOrCreate(
+                        ['slug' => 'become_a_seller'],
+                        [
+                            'content' => json_encode($validatedData['content']),
+                            'title' => 'Become A Seller',
+                            'status' => 'publish',
+                        ]
+                    );
+                }
+
+                foreach ($validatedData['translations'] as $translation) {
+                    Translation::updateOrCreate(
+                        [
+                            'language' => $translation['language_code'],
+                            'translatable_id' => $settings->id,
+                            'translatable_type' => 'App\Models\Page',
+                            'key' => 'content',
+                        ],
+                        [
+                            'value' => json_encode($translation['content']),
+                        ]
+                    );
+                }
+            }
+
             // Validate input data
             $validator = Validator::make($request->all(), [
                 'title' => 'required|unique:pages,title',
