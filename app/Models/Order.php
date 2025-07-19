@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\RoundNumericFields;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Subscription\app\Models\StoreSubscription;
 
 class Order extends Model
 {
+    use RoundNumericFields;
     protected $fillable = [
         'order_master_id',
         'store_id',

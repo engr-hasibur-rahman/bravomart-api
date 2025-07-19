@@ -11,6 +11,7 @@ use App\Mail\DynamicEmail;
 use App\Models\Area;
 use App\Models\EmailTemplate;
 use App\Models\OrderAddress;
+use App\Models\SettingOption;
 use App\Models\Store;
 use App\Models\StoreArea;
 use App\Models\Coupon;
@@ -44,6 +45,8 @@ class OrderService
     {
         try {
             $customer = auth()->guard('api_customer')->user();
+
+            $shouldRound = shouldRound();
             //  check authenticated
             if (!$customer) {
                 return false;
@@ -587,11 +590,11 @@ class OrderService
 
             // Update Order Master
             $this->distributeCouponDiscount($order_master);
-            $order_master->product_discount_amount = $product_discount_amount_master;
-            $order_master->flash_discount_amount_admin = $order_master->orders->sum('flash_discount_amount_admin');
+            $order_master->product_discount_amount = $shouldRound ? round($product_discount_amount_master) : $product_discount_amount_master;
+            $order_master->flash_discount_amount_admin = $shouldRound ? round($order_master->orders->sum('flash_discount_amount_admin')) : $order_master->orders->sum('flash_discount_amount_admin');
 
-            $order_master->shipping_charge = $shipping_charge;
-            $order_master->order_amount = $order_master->orders->sum('order_amount');
+            $order_master->shipping_charge = $shouldRound ? round($shipping_charge) : $shipping_charge;
+            $order_master->order_amount = $shouldRound ? round($order_master->orders->sum('order_amount')) : $order_master->orders->sum('order_amount');
             $order_master->save();
             // return all order id
             $all_orders = Order::with('store.seller')->where('order_master_id', $order_master->id)->get();
@@ -633,6 +636,7 @@ class OrderService
     public function distributeCouponDiscount(OrderMaster $orderMaster): void
     {
         DB::transaction(function () use ($orderMaster) {
+
             $totalLineAmount = 0;
 
             // Step 1: Gather all OrderDetails with their totals
@@ -681,9 +685,20 @@ class OrderService
                     'coupon_discount_amount_admin' => $orderDiscount
                 ]);
             }
-            // Done
         });
+
+        $shouldRound = shouldRound();
+        if ($shouldRound) {
+            $orderDetails = $orderMaster->orders()->with('orderDetail')->get()->flatMap->orderDetail;
+            foreach ($orderDetails as $detail) {
+                $detail->applyRoundedFields()->save();
+            }
+
+            foreach ($orderMaster->orders as $order) {
+                $order->applyRoundedFields()->save();
+            }
+
+            $orderMaster->applyRoundedFields()->save();
+        }
     }
-
-
 }

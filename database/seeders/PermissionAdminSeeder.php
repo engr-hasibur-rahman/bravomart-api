@@ -24,8 +24,20 @@ class PermissionAdminSeeder extends Seeder
 
     public function run()
     {
+        $permissionIds = DB::table('permissions')
+            ->where('available_for', 'system_level')
+            ->pluck('id')
+            ->toArray();
 
-        DB::table('permissions')->where('available_for', 'system_level')->delete();
+        if (!empty($permissionIds)) {
+            // Delete permissions
+            DB::table('permissions')->whereIn('id', $permissionIds)->delete();
+
+            // Delete related translations
+            DB::table('translations')->whereIn('translatable_id', $permissionIds)
+                ->where('translatable_type', 'App\\Models\\Permissions')
+                ->delete();
+        }
         $admin_main_menu = [
             [
                 // Dashboard
