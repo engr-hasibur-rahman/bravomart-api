@@ -2279,64 +2279,8 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    public function becomeSeller(Request $request)
-    {
-        $setting = Page::with('related_translations')
-            ->where('slug', 'become_a_seller')
-            ->where('status', 'publish')
-            ->first();
 
-        if (!$setting) {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
-        }
 
-        $content = $setting->content ? json_decode($setting->content, true) : [];
-        $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
-        $setting->content = $content;
-
-        return response()->json(new BecomeSellerPublicResource($setting));
-    }
-
-    public function aboutUs(Request $request)
-    {
-        $setting = Page::with('related_translations')
-            ->where('slug', 'about')
-            ->where('status', 'publish')
-            ->first();
-
-        if (!$setting) {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
-        }
-
-        $content = $setting->content ? json_decode($setting->content, true) : [];
-        $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
-        $setting->content = $content;
-
-        return response()->json(new AboutUsPublicResource($setting));
-    }
-
-    public function contactUs(Request $request)
-    {
-        $setting = Page::with('related_translations')
-            ->where('slug', 'contact')
-            ->where('status', 'publish')
-            ->first();
-
-        if (!$setting) {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
-        }
-        $content = $setting->content ? json_decode($setting->content, true) : [];
-        $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
-        $setting->content = $content;
-
-        return response()->json(new ContactUsPublicResource($setting));
-    }
 
     public function getPage(Request $request, $slug)
     {
@@ -2344,6 +2288,64 @@ class FrontendController extends Controller
             ->where('slug', $slug)
             ->where('status', 'publish')
             ->first();
+
+          if($page === 'about'){
+              $setting = Page::with('related_translations')
+                  ->where('slug', 'about')
+                  ->where('status', 'publish')
+                  ->first();
+
+              if (!$setting) {
+                  return response()->json([
+                      'message' => __('messages.data_not_found')
+                  ], 404);
+              }
+
+              $content = $setting->content ? json_decode($setting->content, true) : [];
+              $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+              $setting->content = $content;
+
+              return response()->json(new AboutUsPublicResource($setting));
+          }
+
+          if($page === 'contact'){
+              $setting = Page::with('related_translations')
+                  ->where('slug', 'contact')
+                  ->where('status', 'publish')
+                  ->first();
+
+              if (!$setting) {
+                  return response()->json([
+                      'message' => __('messages.data_not_found')
+                  ], 404);
+              }
+              $content = $setting->content ? json_decode($setting->content, true) : [];
+              $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+              $setting->content = $content;
+
+              return response()->json(new ContactUsPublicResource($setting));
+          }
+
+          if($page === 'become_a_seller'){
+              $setting = Page::with('related_translations')
+                  ->where('slug', 'become_a_seller')
+                  ->where('status', 'publish')
+                  ->first();
+
+              if (!$setting) {
+                  return response()->json([
+                      'message' => __('messages.data_not_found')
+                  ], 404);
+              }
+
+              $content = $setting->content ? json_decode($setting->content, true) : [];
+              $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+              $setting->content = $content;
+
+              return response()->json(new BecomeSellerPublicResource($setting));
+          }
+
+
 
         if (!$page) {
             return response()->json([
