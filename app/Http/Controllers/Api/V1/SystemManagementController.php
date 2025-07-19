@@ -691,7 +691,7 @@ class SystemManagementController extends Controller
                 $data = [];
             }
 
-            $content = jsonImageModifierFormatter($data);
+            $content = json_decode($data);
             $settings->option_value = $content;
 
             return response()->json([
