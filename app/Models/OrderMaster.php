@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\RoundNumericFields;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderMaster extends Model
 {
+    use RoundNumericFields;
+
     protected $fillable = [
         'customer_id',
         'area_id',
@@ -32,6 +35,7 @@ class OrderMaster extends Model
     {
         return $this->hasOne(OrderAddress::class, 'order_master_id', 'id');
     }
+
     public function shippingAddress()
     {
         return $this->belongsTo(CustomerAddress::class, 'shipping_address_id', 'id');

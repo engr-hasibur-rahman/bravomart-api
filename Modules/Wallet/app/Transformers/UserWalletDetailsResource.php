@@ -16,9 +16,9 @@ class UserWalletDetailsResource extends JsonResource
             'id' => $this->id,
             'owner_id' => $this->owner_id,
             'owner_type' => $this->owner_type,
-            'total_balance' => $this->balance,
-            'total_earnings' => $this->earnings,
-            'total_withdrawn' => $this->withdrawn,
+            'total_balance' => shouldRound() ? round($this->balance) : $this->balance,
+            'total_earnings' => shouldRound() ? round($this->earnings) : $this->earnings,
+            'total_withdrawn' => shouldRound() ? round($this->withdrawn) : $this->withdrawn,
             'status' => $this->status == 1 ? 'active' : 'inactive',
         ];
     }

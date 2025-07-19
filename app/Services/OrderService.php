@@ -11,6 +11,7 @@ use App\Mail\DynamicEmail;
 use App\Models\Area;
 use App\Models\EmailTemplate;
 use App\Models\OrderAddress;
+use App\Models\SettingOption;
 use App\Models\Store;
 use App\Models\StoreArea;
 use App\Models\Coupon;
@@ -44,6 +45,8 @@ class OrderService
     {
         try {
             $customer = auth()->guard('api_customer')->user();
+
+            $shouldRound = shouldRound();
             //  check authenticated
             if (!$customer) {
                 return false;
@@ -587,11 +590,11 @@ class OrderService
 
             // Update Order Master
             $this->distributeCouponDiscount($order_master);
-            $order_master->product_discount_amount = $product_discount_amount_master;
-            $order_master->flash_discount_amount_admin = $order_master->orders->sum('flash_discount_amount_admin');
+            $order_master->product_discount_amount = $shouldRound ? round($product_discount_amount_master) : $product_discount_amount_master;
+            $order_master->flash_discount_amount_admin = $shouldRound ? round($order_master->orders->sum('flash_discount_amount_admin')) : $order_master->orders->sum('flash_discount_amount_admin');
 
-            $order_master->shipping_charge = $shipping_charge;
-            $order_master->order_amount = $order_master->orders->sum('order_amount');
+            $order_master->shipping_charge = $shouldRound ? round($shipping_charge) : $shipping_charge;
+            $order_master->order_amount = $shouldRound ? round($order_master->orders->sum('order_amount')) : $order_master->orders->sum('order_amount');
             $order_master->save();
             // return all order id
             $all_orders = Order::with('store.seller')->where('order_master_id', $order_master->id)->get();
@@ -633,6 +636,7 @@ class OrderService
     public function distributeCouponDiscount(OrderMaster $orderMaster): void
     {
         DB::transaction(function () use ($orderMaster) {
+
             $totalLineAmount = 0;
 
             // Step 1: Gather all OrderDetails with their totals
@@ -672,18 +676,43 @@ class OrderService
 
             // Step 3: Distribute per Order
             foreach ($orderMaster->orders as $order) {
-                $orderDiscount = $order->orderDetail->sum('coupon_discount_amount');
-                $orderAmount = ($order->orderDetail->sum('line_total_price') + $order->shipping_charge + $order->order_additional_charge_amount);
-                $orderAmountStoreValue = $order->orderDetail->sum('line_total_price') - $order->order_amount_admin_commission + $order->order_additional_charge_store_amount;
+                $orderDiscount = shouldRound() ? round($order->orderDetail->sum('coupon_discount_amount')) : $order->orderDetail->sum('coupon_discount_amount');
+                $orderAmount = shouldRound() ? (
+                    round($order->orderDetail->sum('line_total_price'))
+                    + round($order->shipping_charge)
+                    + round($order->order_additional_charge_amount)
+                ) :
+                    (
+                        $order->orderDetail->sum('line_total_price')
+                        + $order->shipping_charge
+                        + $order->order_additional_charge_amount
+                    );
+                $orderAmountStoreValue = max(
+                    $order->orderDetail->sum('line_total_price')
+                    - $order->order_amount_admin_commission
+                    + $order->order_additional_charge_store_amount,
+                    0
+                );
                 $order->update([
                     'order_amount_store_value' => $orderAmountStoreValue,
                     'order_amount' => $orderAmount,
                     'coupon_discount_amount_admin' => $orderDiscount
                 ]);
             }
-            // Done
         });
+
+        $shouldRound = shouldRound();
+        if ($shouldRound) {
+            $orderDetails = $orderMaster->orders()->with('orderDetail')->get()->flatMap->orderDetail;
+            foreach ($orderDetails as $detail) {
+                $detail->applyRoundedFields()->save();
+            }
+
+            foreach ($orderMaster->orders as $order) {
+                $order->applyRoundedFields()->save();
+            }
+
+            $orderMaster->applyRoundedFields()->save();
+        }
     }
-
-
 }
