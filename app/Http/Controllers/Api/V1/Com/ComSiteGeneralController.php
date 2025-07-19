@@ -88,7 +88,7 @@ class ComSiteGeneralController extends Controller
             ], 404);
         }
 
-        $content = jsonImageModifierFormatter($settings->content);
+        $content = json_decode($settings->content);
         $settings->content = $content;
 
         return response()->json([
