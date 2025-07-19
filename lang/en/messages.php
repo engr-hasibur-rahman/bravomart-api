@@ -179,6 +179,8 @@ return [
     'has_running_orders' => 'This :name has running orders!',
     'not_allowed_status' => 'Your account status is :name! Can\'t proceed!',
 
+    'should_round' => ':name shouldn\'t have a decimal value!'
+
 ];
 
 
