@@ -20,8 +20,8 @@ class GdprPublicResource extends JsonResource
         $translation = $this->related_translations->where('language', $language);
         return [
             "content" => !empty($translation) && $translation->where('key', 'content')->first()
-                ? jsonImageModifierFormatter(json_decode($translation->where('key', 'content')->first()->value, true))
-                : jsonImageModifierFormatter($this->content),
+                ? json_decode($translation->where('key', 'content')->first()->value, true)
+                : $this->content,
         ];
     }
 }
