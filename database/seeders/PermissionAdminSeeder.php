@@ -1640,7 +1640,6 @@ class PermissionAdminSeeder extends Seeder
                     }
                 }
             }
-
         }
 
         $user = auth('api')->user();
