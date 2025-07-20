@@ -35,6 +35,14 @@ class AdminStoreTypeManageController extends Controller
 
     public function updateStoreType(StoreTypeRequest $request)
     {
+        $additional_charge_type = $request->get('additional_charge_type');
+        $additional_charge_amount = $request->get('additional_charge_amount');
+        $shouldRound = shouldRound();
+        if ($shouldRound && $additional_charge_type === 'fixed' && is_float($additional_charge_amount)) {
+            return response()->json([
+                'message' => __('messages.should_round', ['name' => 'Additional charge']),
+            ]);
+        }
         $success = $this->storeTypeRepo->updateStoreType($request->all());
         createOrUpdateTranslation($request, $success, 'App\Models\StoreType', $this->storeTypeRepo->translationKeys());
         if ($success) {
