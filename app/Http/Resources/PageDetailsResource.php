@@ -19,12 +19,25 @@ class PageDetailsResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
-            'content' =>  $this->parsedContent(), // handle dynamic format
+            'content' => $this->parsedContent(),
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'meta_keywords' => $this->meta_keywords,
             'status' => $this->status,
             'translations' => PageTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
+    }
+
+    public function parsedContent(): mixed
+    {
+        if (blank($this->content)) {
+            return null;
+        }
+
+        $decoded = json_decode($this->content, true);
+
+        return (json_last_error() === JSON_ERROR_NONE && is_array($decoded))
+            ? $decoded
+            : html_entity_decode($this->content);
     }
 }

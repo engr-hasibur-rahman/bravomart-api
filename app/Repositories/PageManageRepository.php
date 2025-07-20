@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\PageDetailsResource;
 use App\Http\Resources\PageResource;
+use App\Http\Resources\Translation\PageTranslationResource;
 use App\Interfaces\PageManageInterface;
 use App\Models\Page;
 use App\Models\Translation;
@@ -42,6 +43,7 @@ class PageManageRepository implements PageManageInterface
                     "message" => __('messages.data_not_found')
                 ], 404);
             }
+
 
             // Return response with Page and translations
             return response()->json([
