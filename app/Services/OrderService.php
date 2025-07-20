@@ -637,72 +637,67 @@ class OrderService
     {
         DB::transaction(function () use ($orderMaster) {
 
-            $totalLineAmount = 0;
-
-            // Step 1: Gather all OrderDetails with their totals
             $orderDetails = $orderMaster->orders()->with('orderDetail')->get()->flatMap->orderDetail;
-
-            // Calculate total line amount
             $totalLineAmount = $orderDetails->sum('line_total_price_with_qty');
 
-            if ($totalLineAmount <= 0 || $orderMaster->coupon_discount_amount_admin <= 0) {
-                return; // Nothing to distribute
-            }
+            $hasValidDiscount = $totalLineAmount > 0 && $orderMaster->coupon_discount_amount_admin > 0;
 
-            $remainingDiscount = $orderMaster->coupon_discount_amount_admin;
-            $distributedTotal = 0;
+            if ($hasValidDiscount) {
+                $remainingDiscount = $orderMaster->coupon_discount_amount_admin;
+                $distributedTotal = 0;
 
-            // Step 2: Distribute coupon discount to each OrderDetail
-            foreach ($orderDetails as $index => $detail) {
-                $lineTotal = $detail->line_total_price_with_qty;
+                // Step 1: Distribute coupon discount to each OrderDetail
+                foreach ($orderDetails as $index => $detail) {
+                    $lineTotal = $detail->line_total_price_with_qty;
 
-                // Last item gets the remaining to avoid rounding errors
-                if ($index === $orderDetails->count() - 1) {
-                    $discount = round($remainingDiscount - $distributedTotal, 2);
-                } else {
-                    $discount = round(($lineTotal / $totalLineAmount) * $orderMaster->coupon_discount_amount_admin, 2);
-                    $distributedTotal += $discount;
+                    // Last item gets the remaining to avoid rounding errors
+                    if ($index === $orderDetails->count() - 1) {
+                        $discount = round($remainingDiscount - $distributedTotal, 2);
+                    } else {
+                        $discount = round(($lineTotal / $totalLineAmount) * $orderMaster->coupon_discount_amount_admin, 2);
+                        $distributedTotal += $discount;
+                    }
+
+                    $detail->update([
+                        'coupon_discount_amount' => $discount,
+                        'line_total_excluding_tax' => $detail->line_total_price_with_qty - $discount,
+                        'tax_amount' => ($detail->line_total_price_with_qty / 100 * $detail->tax_rate) / $detail->quantity,
+                        'total_tax_amount' => $detail->line_total_price_with_qty / 100 * $detail->tax_rate,
+                        'line_total_price' => ($detail->line_total_price_with_qty - $discount) + ($detail->line_total_price_with_qty / 100 * $detail->tax_rate),
+                        'admin_commission_amount' => $detail->admin_commission_type == 'percentage'
+                            ? $detail->line_total_price_with_qty / 100 * $detail->admin_commission_rate
+                            : $detail->admin_commission_rate,
+                    ]);
                 }
-
-                $detail->update([
-                    'coupon_discount_amount' => $discount,
-                    'line_total_excluding_tax' => $detail->line_total_price_with_qty - $discount,
-                    'tax_amount' => ($detail->line_total_price_with_qty / 100 * $detail->tax_rate) / $detail->quantity,
-                    'total_tax_amount' => $detail->line_total_price_with_qty / 100 * $detail->tax_rate,
-                    'line_total_price' => ($detail->line_total_price_with_qty - $discount) + ($detail->line_total_price_with_qty / 100 * $detail->tax_rate),
-                    'admin_commission_amount' => $detail->admin_commission_type == 'percentage' ? $detail->line_total_price_with_qty / 100 * $detail->admin_commission_rate : $detail->admin_commission_rate,
-                ]);
             }
 
-            // Step 3: Distribute per Order
+            // Step 2: Distribute per Order (always executes)
             foreach ($orderMaster->orders as $order) {
-                $orderDiscount = shouldRound() ? round($order->orderDetail->sum('coupon_discount_amount')) : $order->orderDetail->sum('coupon_discount_amount');
-                $orderAmount = shouldRound() ? (
-                    round($order->orderDetail->sum('line_total_price'))
-                    + round($order->shipping_charge)
-                    + round($order->order_additional_charge_amount)
-                ) :
-                    (
-                        $order->orderDetail->sum('line_total_price')
-                        + $order->shipping_charge
-                        + $order->order_additional_charge_amount
-                    );
-                $orderAmountStoreValue = max(
-                    $order->orderDetail->sum('line_total_price')
-                    - $order->order_amount_admin_commission
-                    + $order->order_additional_charge_store_amount,
-                    0
-                );
+                $sumCoupon = $order->orderDetail->sum('coupon_discount_amount');
+                $sumLineTotal = $order->orderDetail->sum('line_total_price');
+                $shipping = $order->shipping_charge;
+                $addCharge = $order->order_additional_charge_amount;
+                $commission = $order->order_amount_admin_commission;
+                $storeAddCharge = $order->order_additional_charge_store_amount;
+
+                $orderDiscount = shouldRound() ? round($sumCoupon) : $sumCoupon;
+                $orderAmount = shouldRound()
+                    ? (round($sumLineTotal) + round($shipping) + round($addCharge))
+                    : ($sumLineTotal + $shipping + $addCharge);
+
+                $orderAmountStoreValue = max($sumLineTotal - $commission + $storeAddCharge, 0);
+
+
                 $order->update([
                     'order_amount_store_value' => $orderAmountStoreValue,
                     'order_amount' => $orderAmount,
-                    'coupon_discount_amount_admin' => $orderDiscount
+                    'coupon_discount_amount_admin' => $orderDiscount,
                 ]);
             }
         });
 
-        $shouldRound = shouldRound();
-        if ($shouldRound) {
+        // Step 3: Apply rounded fields if rounding is enabled
+        if (shouldRound()) {
             $orderDetails = $orderMaster->orders()->with('orderDetail')->get()->flatMap->orderDetail;
             foreach ($orderDetails as $detail) {
                 $detail->applyRoundedFields()->save();
@@ -715,4 +710,5 @@ class OrderService
             $orderMaster->applyRoundedFields()->save();
         }
     }
+
 }
