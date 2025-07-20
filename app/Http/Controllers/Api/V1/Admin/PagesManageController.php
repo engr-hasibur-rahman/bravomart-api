@@ -43,9 +43,8 @@ class PagesManageController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
-                    'status_code' => 400,
                     'message' => $validator->errors()
-                ]);
+                ],422);
             }
             $page = $this->pageRepo->store($request->all(), Page::class);
             createOrUpdateTranslationJson($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
@@ -53,7 +52,7 @@ class PagesManageController extends Controller
             if ($page) {
                 return $this->success(translate('messages.save_success', ['name' => 'Page']));
             } else {
-                return $this->failed(translate('messages.save_failed', ['name' => 'Page']));
+                return $this->failed(translate('messages.save_failed', ['name' => 'Page']),500);
             }
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json([
@@ -73,16 +72,15 @@ class PagesManageController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
-                    'status_code' => 400,
                     'message' => $validator->errors()
-                ]);
+                ],422);
             }
             $category = $this->pageRepo->update($request->all(), Page::class);
             createOrUpdateTranslationJson($request, $category, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
             if ($category) {
                 return $this->success(translate('messages.update_success', ['name' => 'Page']));
             } else {
-                return $this->failed(translate('messages.update_failed', ['name' => 'Page']));
+                return $this->failed(translate('messages.update_failed', ['name' => 'Page']),500);
             }
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json([
@@ -95,7 +93,7 @@ class PagesManageController extends Controller
 
     public function pagesShow(Request $request)
     {
-        return $this->pageRepo->getPageById($request->id);
+        return $this->pageRepo->getPageById($request->slug);
     }
 
     public function pagesDestroy($id)

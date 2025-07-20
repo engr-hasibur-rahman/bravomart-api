@@ -33,10 +33,10 @@ class PageManageRepository implements PageManageInterface
         ]);
     }
 
-    public function getPageById(int|string $id)
+    public function getPageById(string $slug)
     {
         try {
-            $page = Page::with('related_translations')->find($id);
+            $page = Page::with('related_translations')->where('slug', $slug)->first();
             if (!$page) {
                 return response()->json([
                     "message" => __('messages.data_not_found')
