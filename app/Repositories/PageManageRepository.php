@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\PageDetailsResource;
 use App\Http\Resources\PageResource;
+use App\Http\Resources\Translation\PageTranslationResource;
 use App\Interfaces\PageManageInterface;
 use App\Models\Page;
 use App\Models\Translation;

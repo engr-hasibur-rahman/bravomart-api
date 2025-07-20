@@ -88,9 +88,6 @@ class ComSiteGeneralController extends Controller
             ], 404);
         }
 
-        $content = jsonImageModifierFormatter($settings->content);
-        $settings->content = $content;
-
         return response()->json([
             'data' => new GdprPublicResource($settings),
         ]);

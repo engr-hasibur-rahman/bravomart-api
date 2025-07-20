@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Admin\AdminBecomeSellerResource;
+use App\Http\Resources\Com\GdprPublicResource;
 use App\Interfaces\TranslationInterface;
 use App\Models\SettingOption;
 use App\Services\LicenseService;
@@ -684,17 +685,8 @@ class SystemManagementController extends Controller
                 ], 404);
             }
 
-            $data = json_decode($settings->option_value, true);
-
-            if (!is_array($data)) {
-                $data = [];
-            }
-
-            $content = jsonImageModifierFormatter($data);
-            $settings->option_value = $content;
-
             return response()->json([
-                'data' => new AdminBecomeSellerResource($settings),
+                'data' => new GdprPublicResource($settings),
             ]);
         }
 
@@ -707,7 +699,7 @@ class SystemManagementController extends Controller
 
         if (!empty($settings)) {
             $settings->update([
-                'content' => json_encode($validatedData['content']),
+                'option_value' => json_encode($validatedData['content']),
             ]);
         } else {
             $settings = SettingOption::updateOrCreate([
