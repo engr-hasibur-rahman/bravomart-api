@@ -30,11 +30,19 @@ class Page extends Model
         'meta_keywords',
     ];
 
+    public function getContentAttribute($value)
+    {
+        if (is_array($value)) {
+            return $value;
+        }
 
-    protected $casts = [
-        'content' => 'array',
-    ];
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            return (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : $value;
+        }
 
+        return $value;
+    }
 
     public function translations()
     {

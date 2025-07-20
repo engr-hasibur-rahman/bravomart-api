@@ -44,7 +44,6 @@ class PageManageRepository implements PageManageInterface
                 ], 404);
             }
 
-
             // Return response with Page and translations
             return response()->json([
                 'data' => new PageDetailsResource($page),
