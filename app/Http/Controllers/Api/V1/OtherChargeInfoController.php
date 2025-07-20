@@ -72,42 +72,5 @@ class OtherChargeInfoController extends Controller
         ]);
     }
 
-    public function removeUserDemoData(Request $request){
-
-        $user_level = $request->input('user_level');
-
-        if ($user_level == 'delivery_level'){
-            $users = User::with(['reviews', 'chats'])
-                ->where('activity_scope', $user_level)
-                ->get();
-        }
-
-//        if ($user_level == 'store_level'){
-//            $users = User::with(['wallet', 'chats'])
-//                ->where('activity_scope', $user_level)
-//                ->get();
-//        }
-//
-//        if ($user_level == 'system_level'){
-//            $users = User::with(['wallet', 'reviews', 'chats'])
-//                ->where('activity_scope', $user_level)
-//                ->get();
-//        }
-
-
-
-
-        foreach ($users as $user) {
-            // Only delete wallet if this user is owner (owner_type check optional)
-            Wallet::where('owner_id', $user->id)->where('owner_type', 'App\Models\User')->forceDelete();
-
-            $user->reviews()->forceDelete();
-            $user->chats()->forceDelete();
-
-            // Finally delete the user
-            $user->forceDelete();
-        }
-
-     }
 
 }
