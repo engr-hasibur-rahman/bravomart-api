@@ -432,7 +432,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PAGES_LIST->value]], function () {
             Route::get('pages/list', [PagesManageController::class, 'pagesIndex']);
             Route::post('pages/store', [PagesManageController::class, 'pagesStore']);
-            Route::get('pages/details/{id}', [PagesManageController::class, 'pagesShow']);
+            Route::get('pages/details/{slug}', [PagesManageController::class, 'pagesShow']);
             Route::post('pages/update', [PagesManageController::class, 'pagesUpdate']);
             Route::post('pages/status-change', [PagesManageController::class, 'pagesStatusChange']);
             Route::delete('pages/remove/{id}', [PagesManageController::class, 'pagesDestroy']);

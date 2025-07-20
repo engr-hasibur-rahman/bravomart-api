@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Socialite\Facades\Socialite;
 use Spatie\Permission\Models\Role;
@@ -920,8 +921,21 @@ class UserController extends Controller
 
             if ($user) {
                 if ($user->isDeliveryman()) {
-                    $identification_photo_front = $this->mediaService->insert_media_image($request, 'deliveryman', 'identification_photo_front', 'verification');
-                    $identification_photo_back = $this->mediaService->insert_media_image($request, 'deliveryman', 'identification_photo_back', 'verification');
+                    $uploadPath = 'uploads/deliveryman/verification';
+                    $storedPaths = [];
+                    foreach (['front', 'back'] as $side) {
+                        $key = "identification_photo_{$side}";
+
+                        if ($request->hasFile($key)) {
+                            $file = $request->file($key);
+
+                            // Optional: generate a unique and meaningful filename
+                            $fileName = Str::uuid() . '_' . $side . '.' . $file->getClientOriginalExtension();
+
+                            // Store and collect the relative path
+                            $storedPaths[$key] = $file->storeAs($uploadPath, $fileName, 'public');
+                        }
+                    }
                     // Create the user
                     $user->update([
                         'first_name' => $request->first_name,
@@ -932,14 +946,14 @@ class UserController extends Controller
                         'activity_scope' => 'delivery_level',
                         'store_owner' => 0,
                     ]);
-                    $deliverymanDetails = DeliveryMan::where('user_id',$user->id);
+                    $deliverymanDetails = DeliveryMan::where('user_id', $user->id);
                     $deliverymanDetails->update([
                         'vehicle_type_id' => $request->vehicle_type_id,
                         'area_id' => $request->area_id,
                         'identification_type' => $request->identification_type,
                         'identification_number' => $request->identification_number,
-                        'identification_photo_front' => $identification_photo_front?->id,
-                        'identification_photo_back' => $identification_photo_back?->id,
+                        'identification_photo_front'=> $storedPaths['identification_photo_front'] ?? null,
+                        'identification_photo_back' => $storedPaths['identification_photo_back'] ?? null,
                     ]);
                     return response()->json([
                         'status' => true,
