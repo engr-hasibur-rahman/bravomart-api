@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Admin\AdminBecomeSellerResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\PageDetailsResource;
 use App\Http\Resources\PageResource;
@@ -42,6 +43,15 @@ class PageManageRepository implements PageManageInterface
                 return response()->json([
                     "message" => __('messages.data_not_found')
                 ], 404);
+            }
+
+            if ($page->enable_builder === 1){
+                $value = $page->content;
+                $content = is_array($value) ? jsonImageModifierFormatter($value) : [];
+                $page->content = $content;
+                return response()->json([
+                    'data' => new AdminBecomeSellerResource($page),
+                ]);
             }
 
             // Return response with Page and translations

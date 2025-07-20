@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Http\Resources\Translation\PageTranslationResource;
 use App\Http\Resources\Translation\SettingsTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -24,7 +25,7 @@ class AdminBecomeSellerResource extends JsonResource
             'status' => $this->status,
             "slug" => $this->slug,
             "content" => $this->content,
-            "translations"=>SettingsTranslationResource::collection($this->related_translations->groupBy('language'))
+            'translations' => PageTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
 }
