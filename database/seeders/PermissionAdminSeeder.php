@@ -1299,39 +1299,6 @@ class PermissionAdminSeeder extends Seeder
                                         'ar' => 'إعدادات الصيانة'
                                     ]
                                 ],
-                                [
-                                    'PermissionName' => PermissionKey::ABOUT_PAGE_SETTINGS->value,
-                                    'PermissionTitle' => 'About Page',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'About Page',
-                                        'ar' => 'إعدادات الصيانة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::CONTACT_PAGE_SETTINGS->value,
-                                    'PermissionTitle' => 'Contact Page',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'Contact Page',
-                                        'ar' => 'إعدادات الصيانة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::BECOME_SELLER_PAGE_SETTINGS->value,
-                                    'PermissionTitle' => 'Become A Seller Page',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'Become A Seller Page',
-                                        'ar' => 'إعدادات الصيانة'
-                                    ]
-                                ]
                             ]
                         ],
 
