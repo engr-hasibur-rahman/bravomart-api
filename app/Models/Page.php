@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Page extends Model
 {
     protected $fillable = [
+        'page_type',
+        'layout',
+        'page_class',
+        'enable_builder',
+        'show_breadcrumb',
+        'page_parent',
+        'page_order',
         'title',
         'slug',
         'content',

@@ -37,26 +37,40 @@ class PagesManageController extends Controller
         }
         try {
 
-            if ($request->slug === 'about'){
+            if (in_array($request->slug, ['about', 'contact', 'become_a_seller'])) {
                 $validatedData = $request->validate([
-                    'content' => 'required|array',
+                    'title' => 'required|unique:pages,title',
+                    'slug' => 'required|unique:pages,slug',
+                    'about' => 'nullable|array',
+                    'content' => 'nullable|array',
+                    'become_a_seller' => 'nullable|array',
                     'translations' => 'required|array',
                 ]);
 
-                // Update by ID
-                $settings = Page::where('slug', 'about')->first();
+                $slug = $request->slug;
+                // Dynamic title based on slug
+                $page_title = match ($slug) {
+                    'about' => 'About Page',
+                    'contact' => 'Contact Page',
+                    'become_a_seller' => 'Become A Seller',
+                    default => 'Custom Page',
+                };
+
+                // Try to find page by slug
+                $settings = Page::where('slug', $slug)->first();
+
 
                 if ($settings) {
                     $settings->update([
                         'content' => json_encode($validatedData['content']),
-                        'title' => 'About Page',
+                        'title' => $page_title,
                     ]);
                 } else {
                     $settings = Page::updateOrCreate(
-                        ['slug' => 'about'],
+                        ['slug' => $slug],
                         [
                             'content' => json_encode($validatedData['content']),
-                            'title' => 'About Page',
+                            'title' => $page_title,
                             'status' => 'publish',
                         ]
                     );
@@ -77,87 +91,6 @@ class PagesManageController extends Controller
                 }
             }
 
-
-            if ($request->slug === 'contact'){
-                $validatedData = $request->validate([
-                    'content' => 'required|array',
-                    'translations' => 'required|array',
-                ]);
-
-                // Update by ID
-                $settings = Page::where('slug', 'contact')->first();
-
-                if ($settings) {
-                    $settings->update([
-                        'content' => json_encode($validatedData['content']),
-                        'title' => 'Contact Page',
-                    ]);
-                } else {
-                    $settings = Page::updateOrCreate(
-                        ['slug' => 'contact'], // Correct format
-                        [
-                            'content' => json_encode($validatedData['content']),
-                            'title' => 'Contact Page',
-                            'status' => 'publish',
-                        ]
-                    );
-                }
-
-                foreach ($validatedData['translations'] as $translation) {
-                    Translation::updateOrCreate(
-                        [
-                            'language' => $translation['language_code'],
-                            'translatable_id' => $settings->id,
-                            'translatable_type' => 'App\Models\Page',
-                            'key' => 'content',
-                        ],
-                        [
-                            'value' => json_encode($translation['content']),
-                        ]
-                    );
-                }
-            }
-
-
-            if ($request->slug === 'become_a_seller'){
-                $validatedData = $request->validate([
-                    'content' => 'required|array',
-                    'translations' => 'required|array',
-                ]);
-
-                // Update by ID
-                $settings = Page::where('slug', 'become_a_seller')->first();
-
-                if ($settings) {
-                    $settings->update([
-                        'content' => json_encode($validatedData['content']),
-                        'title' => 'Become A Seller',
-                    ]);
-                } else {
-                    $settings = Page::updateOrCreate(
-                        ['slug' => 'become_a_seller'],
-                        [
-                            'content' => json_encode($validatedData['content']),
-                            'title' => 'Become A Seller',
-                            'status' => 'publish',
-                        ]
-                    );
-                }
-
-                foreach ($validatedData['translations'] as $translation) {
-                    Translation::updateOrCreate(
-                        [
-                            'language' => $translation['language_code'],
-                            'translatable_id' => $settings->id,
-                            'translatable_type' => 'App\Models\Page',
-                            'key' => 'content',
-                        ],
-                        [
-                            'value' => json_encode($translation['content']),
-                        ]
-                    );
-                }
-            }
 
             // Validate input data
             $validator = Validator::make($request->all(), [
