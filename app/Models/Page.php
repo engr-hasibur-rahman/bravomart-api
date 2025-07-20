@@ -35,16 +35,6 @@ class Page extends Model
         'content' => 'array',
     ];
 
-    public function parsedContent()
-    {
-        // If it's valid JSON, return decoded
-        $decoded = json_decode($this->content, true);
-
-        return json_last_error() === JSON_ERROR_NONE
-            ? $decoded
-            : html_entity_decode($this->content);
-    }
-
 
     public function translations()
     {
