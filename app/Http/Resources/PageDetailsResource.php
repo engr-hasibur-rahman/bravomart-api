@@ -19,7 +19,7 @@ class PageDetailsResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
-            'content' => html_entity_decode($this->content), // Decodes HTML entities
+            'content' =>  $this->parsedContent(), // handle dynamic format
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'meta_keywords' => $this->meta_keywords,
