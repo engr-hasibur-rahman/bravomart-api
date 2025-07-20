@@ -15,11 +15,12 @@ class PageDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
-            'content' => $this->parsedContent(),
+            'content' => $this->content,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'meta_keywords' => $this->meta_keywords,
@@ -28,16 +29,5 @@ class PageDetailsResource extends JsonResource
         ];
     }
 
-    public function parsedContent(): mixed
-    {
-        if (blank($this->content)) {
-            return null;
-        }
 
-        $decoded = json_decode($this->content, true);
-
-        return (json_last_error() === JSON_ERROR_NONE && is_array($decoded))
-            ? $decoded
-            : html_entity_decode($this->content);
-    }
 }
