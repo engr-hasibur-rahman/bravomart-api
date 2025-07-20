@@ -30,8 +30,11 @@ class Page extends Model
         'meta_keywords',
     ];
 
+
+
     public function getContentAttribute($value)
     {
+
         if (is_array($value)) {
             return $value;
         }

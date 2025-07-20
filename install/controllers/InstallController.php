@@ -12,7 +12,7 @@ class InstallController
 
         $requirements = [
             'extensions' => [
-                'php' => version_compare(PHP_VERSION, '8.2.0', '>='), // Laravel 11 requires PHP 8.2+
+                'php' => version_compare(PHP_VERSION, '8.2.0', '>='),
                 'openssl' => extension_loaded('openssl'),
                 'pdo' => extension_loaded('pdo'),
                 'mbstring' => extension_loaded('mbstring'),
@@ -22,11 +22,11 @@ class InstallController
                 'json' => extension_loaded('json'),
                 'fileinfo' => extension_loaded('fileinfo'),
                 'bcmath' => extension_loaded('bcmath'),
-                'curl' => extension_loaded('curl'), // required by Socialite, Pusher, Firebase
-                'gd' => extension_loaded('gd') || extension_loaded('imagick'), // required by intervention/image
-                'zip' => extension_loaded('zip'), // required by spatie/laravel-backup
-                'iconv' => extension_loaded('iconv'), // commonly required by packages like maatwebsite/excel
-                'intl' => extension_loaded('intl'), // useful for spatie and other advanced packages
+                'curl' => extension_loaded('curl'),
+                'gd' => extension_loaded('gd') || extension_loaded('imagick'),
+                'zip' => extension_loaded('zip'),
+                'iconv' => extension_loaded('iconv'),
+                'intl' => extension_loaded('intl'),
             ],
         ];
 

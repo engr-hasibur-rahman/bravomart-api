@@ -35,7 +35,7 @@ class PagesManageController extends Controller
         if (empty($request->slug) || $request->slug == null) {
             $request['slug'] = MultilangSlug::makeSlug(Page::class, $request->title, 'slug');
         }
-//        try {
+        try {
             if (in_array($request->slug, ['about', 'contact', 'become_a_seller'])) {
 
                 // Validate input data
@@ -70,6 +70,7 @@ class PagesManageController extends Controller
                     $settings->update([
                         'content' => json_encode($validatedData['content']),
                         'title' => $page_title,
+                        'enable_builder' => 1,
                     ]);
                 } else {
                     $settings = Page::updateOrCreate(
@@ -77,6 +78,7 @@ class PagesManageController extends Controller
                         [
                             'content' => json_encode($validatedData['content']),
                             'title' => $page_title,
+                            'enable_builder' => 1,
                             'status' => 'publish',
                         ]
                     );
@@ -130,13 +132,13 @@ class PagesManageController extends Controller
             } else {
                 return $this->failed(translate('messages.save_failed', ['name' => 'Page']),500);
             }
-//        } catch (\Illuminate\Validation\ValidationException $validationException) {
-//            return response()->json([
-//                'success' => false,
-//                'message' => translate('messages.validation_failed', ['name' => 'Page']),
-//                'errors' => $validationException->errors(),
-//            ], 422);
-//        }
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json([
+                'success' => false,
+                'message' => translate('messages.validation_failed', ['name' => 'Page']),
+                'errors' => $validationException->errors(),
+            ], 422);
+        }
     }
 
     public function pagesUpdate(Request $request)

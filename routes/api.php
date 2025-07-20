@@ -169,7 +169,4 @@ Route::group(['prefix' => 'v1/'], function () {
         Route::post('orders/checkout', [PlaceOrderController::class, 'placeOrder']);
     });
 
-    // demo test user data remove
-    Route::post('/remove-all-user-data', [OtherChargeInfoController::class, 'removeUserDemoData']);
-
 });
