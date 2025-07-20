@@ -68,7 +68,7 @@ class StoreDetailsPublicResource extends JsonResource
                 ->where('status', 'approved')
                 ->with([
                     'variants' => function ($query) {
-                        $query->take(1);
+                        $query->withoutTrashed()->take(1);
                     }
                 ])
                 ->latest()
@@ -78,7 +78,7 @@ class StoreDetailsPublicResource extends JsonResource
                 ->where('status', 'approved')
                 ->where('is_featured', 1)
                 ->with(['variants' => function ($query) {
-                    $query->take(1);
+                    $query->withoutTrashed()->take(1);
                 }])
                 ->get()),
         ];

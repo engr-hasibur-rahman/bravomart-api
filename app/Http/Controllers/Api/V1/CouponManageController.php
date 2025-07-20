@@ -102,6 +102,14 @@ class CouponManageController extends Controller
 
     public function couponLineStore(CouponLineRequest $request): JsonResponse
     {
+        $discount_type = $request->get('discount_type');
+        $discount_amount = $request->get('discount');
+        $shouldRound = shouldRound();
+        if ($shouldRound && $discount_type === 'amount' && is_float($discount_amount)) {
+            return response()->json([
+                'message' => __('messages.should_round', ['name' => 'Discount']),
+            ]);
+        }
         if (!isset($request->coupon_code)) {
             $request['coupon_code'] = generateRandomCouponCode();
         }
@@ -116,8 +124,15 @@ class CouponManageController extends Controller
 
     public function couponLineUpdate(CouponLineRequest $request)
     {
+        $discount_type = $request->get('discount_type');
+        $discount_amount = $request->get('discount');
+        $shouldRound = shouldRound();
+        if ($shouldRound && $discount_type === 'amount' && is_float($discount_amount)) {
+            return response()->json([
+                'message' => __('messages.should_round', ['name' => 'Discount']),
+            ]);
+        }
         $couponLine = $this->couponLineRepo->couponLineUpdate($request->all());
-
         if ($couponLine) {
             return $this->success(translate('messages.update_success', ['name' => 'Coupon Line']));
         } else {
