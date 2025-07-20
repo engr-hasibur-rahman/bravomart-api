@@ -31,7 +31,6 @@ class Page extends Model
     ];
 
 
-
     public function getContentAttribute($value)
     {
 
