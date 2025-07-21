@@ -225,6 +225,7 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         if ($deliveryman) {
             $deliveryman->delete();
         }
+        $user->wallet()->delete();
         $user->delete();
 
         DB::commit();
@@ -473,19 +474,25 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
     {
         $deliveryman = auth('api')->user();
 
-        // Define custom status order
         $statusOrder = ['processing', 'pickup', 'shipped', 'delivered', 'ignored'];
 
+        // Step 1: Get latest IDs of grouped delivery histories
+        $historyIds = OrderDeliveryHistory::selectRaw('MAX(id) as id')
+            ->where('deliveryman_id', $deliveryman->id)
+            ->when(!empty($filters['status']), function ($query) use ($filters) {
+                $query->where('status', $filters['status']);
+            })
+            ->groupBy('order_id')
+            ->pluck('id');
+
+        // Step 2: Fetch full models using those IDs
         $orders = OrderDeliveryHistory::with([
             'order.orderMaster.orderAddress',
             'order.orderDetail',
             'order.store',
             'order.orderMaster.customer'
         ])
-            ->where('deliveryman_id', $deliveryman->id)
-            ->when(!empty($filters['status']), function ($query) use ($filters) {
-                $query->where('status', $filters['status']);
-            })
+            ->whereIn('id', $historyIds)
             ->orderByRaw("FIELD(status, '" . implode("','", $statusOrder) . "')")
             ->paginate(10);
 

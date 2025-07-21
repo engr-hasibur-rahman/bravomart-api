@@ -15,7 +15,7 @@ class AdminCommissionManageController extends Controller
             $validatedData = $request->validate([
                 'subscription_enabled' => 'nullable|boolean',
                 'commission_enabled' => 'nullable|boolean',
-                'commission_type' => 'nullable',
+                'commission_type' => 'nullable|in:fixed,percentage',
                 'commission_amount' => 'nullable|numeric|min:0',
                 'default_order_commission_rate' => 'nullable|numeric|min:0',
                 'default_delivery_commission_charge' => 'nullable|numeric|min:0',
@@ -37,6 +37,15 @@ class AdminCommissionManageController extends Controller
                     'success' => false,
                     'message' => 'At least one option must be enabled.',
                 ], 400); // Use HTTP status code 400 for bad request
+            }
+
+            $commission_type = $request->get('commission_type');
+            $commission_amount = $request->get('commission_amount');
+            $shouldRound = shouldRound();
+            if ($shouldRound && $commission_type === 'fixed' && is_float($commission_amount)) {
+                return response()->json([
+                    'message' => __('messages.should_round', ['name' => 'Commission']),
+                ]);
             }
 
             // Update or create settings

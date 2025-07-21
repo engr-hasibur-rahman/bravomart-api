@@ -19,6 +19,7 @@ class DeliveryChargeHelper
         // Get the store area and settings
         $store_area = StoreArea::with('storeTypeSettings')->find($areaId);
         $systemSettings = SystemCommission::first();
+        $shouldRound = shouldRound();
 
         // If not found, try to find the nearest store area based on latitude & longitude
         if (!$store_area) {
@@ -39,7 +40,7 @@ class DeliveryChargeHelper
                 'status' => false,
                 'message' => 'Calculation failed',
                 'delivery_method' => 'failed',
-                'delivery_charge' => round($systemSettings->order_shipping_charge, 2),
+                'delivery_charge' => $shouldRound ? round($systemSettings->order_shipping_charge) : round($systemSettings->order_shipping_charge, 2),
                 'distance_km' => 0,
                 'info' => 'area settings not found or empty',
             ];
@@ -69,7 +70,7 @@ class DeliveryChargeHelper
                 ->addBinding("POINT({$customerLng} {$customerLat})", 'select')
                 ->first();
 
-             // Ensure the query result is not null and extract the actual "inside" flag
+            // Ensure the query result is not null and extract the actual "inside" flag
             $is_inside_area = $is_out_of_area ? (bool)$is_out_of_area->is_inside : false;
 
             // Now use the correct condition
@@ -134,8 +135,8 @@ class DeliveryChargeHelper
                 'status' => true,
                 'message' => 'Calculation successful',
                 'delivery_method' => $settings->delivery_charge_method,
-                'delivery_charge' => round($delivery_charge, 2),
-                'distance_km' => round($distance, 2),
+                'delivery_charge' => $shouldRound ? round($delivery_charge) : round($delivery_charge, 2),
+                'distance_km' => $shouldRound ? round($distance) : round($distance, 2),
                 'info' => $out_of_area_delivery_info,
             ];
         } else {
@@ -143,7 +144,7 @@ class DeliveryChargeHelper
                 'status' => false,
                 'message' => 'Calculation failed',
                 'delivery_method' => 'failed',
-                'delivery_charge' => round($systemSettings->order_shipping_charge, 2),
+                'delivery_charge' => $shouldRound ? round($systemSettings->order_shipping_charge) : round($systemSettings->order_shipping_charge, 2),
                 'distance_km' => 0,
                 'info' => 'area not found',
             ];

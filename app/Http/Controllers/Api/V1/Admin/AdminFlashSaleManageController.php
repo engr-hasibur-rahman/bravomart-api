@@ -29,6 +29,15 @@ class AdminFlashSaleManageController extends Controller
 
     public function createFlashSale(FlashSaleRequest $request): JsonResponse
     {
+        $discount_type = $request->get('discount_type');
+        $discount_amount = $request->get('discount_amount');
+        $shouldRound = shouldRound();
+        if ($shouldRound && $discount_type === 'amount' && is_float($discount_amount)) {
+            return response()->json([
+                'message' => __('messages.should_round', ['name' => 'Discount amount']),
+            ]);
+        }
+
         $flashSale = $this->flashSaleService->createFlashSale($request->validated());
         createOrUpdateTranslation($request, $flashSale, 'App\Models\FlashSale', $this->flashSaleService->translationKeys());
         if ($flashSale) {
@@ -47,6 +56,14 @@ class AdminFlashSaleManageController extends Controller
 
     public function updateFlashSale(FlashSaleRequest $request): JsonResponse
     {
+        $discount_type = $request->get('discount_type');
+        $discount_amount = $request->get('discount_amount');
+        $shouldRound = shouldRound();
+        if ($shouldRound && $discount_type === 'amount' && is_float($discount_amount)) {
+            return response()->json([
+                'message' => __('messages.should_round', ['name' => 'Discount amount']),
+            ]);
+        }
         $flashSale = $this->flashSaleService->updateFlashSale($request->all());
         createOrUpdateTranslation($request, $flashSale, 'App\Models\FlashSale', $this->flashSaleService->translationKeys());
         if ($flashSale) {

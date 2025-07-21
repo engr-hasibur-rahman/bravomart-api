@@ -179,7 +179,9 @@ return [
     'has_running_orders' => 'This :name has running orders!',
     'not_allowed_status' => 'Your account status is :name! Can\'t proceed!',
 
-    'should_round' => ':name shouldn\'t have a decimal value!'
+    'should_round' => ':name shouldn\'t have a decimal value!',
+    'wishlist_add' => ':name added to wishlist!',
+    'wishlist_remove' => ':name removed from wishlist!',
 
 ];
 

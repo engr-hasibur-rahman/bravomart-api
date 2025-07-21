@@ -186,6 +186,4 @@ class Customer extends Authenticatable // Extend Authenticatable instead of Mode
             })
             ->exists();
     }
-
-
 }
