@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\File;
-use App\Repositories\ComAreaRepository;
-use App\Interfaces\ComAreaInterface;
 
 class InterfaceServiceProvider extends ServiceProvider
 {
@@ -20,7 +18,6 @@ class InterfaceServiceProvider extends ServiceProvider
 
     private function bindInterfaces(): void
     {
-        //$this->app->bind(ControllerInterface::class, BaseController::class);
 
         $repositoriesDir = app_path('Repositories');
         $interfaceDir = app_path('Interfaces');
@@ -37,10 +34,6 @@ class InterfaceServiceProvider extends ServiceProvider
             }
         }
 
-        //$this->app->bind('App\Interfaces\TranslationInterface', 'App\Repositories\TranslationRepository');
-
-        //$this->app->bind(ComAreaInterface::class, ComAreaRepository::class);
-        //$this->app->bind('App\Interfaces\ComAreaInterface', 'App\Repositories\ComAreaRepository');
     }
 
 
