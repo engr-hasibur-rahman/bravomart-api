@@ -9,15 +9,18 @@ use App\Http\Resources\Customer\CustomerDetailsResource;
 use App\Http\Resources\Customer\CustomerResource;
 use App\Interfaces\CustomerManageInterface;
 use App\Models\Customer;
+use App\Services\TrashService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerManageController extends Controller
 {
-    public function __construct(protected CustomerManageInterface $customerManageRepo)
-    {
+    protected $trashService;
 
+    public function __construct(protected CustomerManageInterface $customerManageRepo, TrashService $trashService)
+    {
+        $this->trashService = $trashService;
     }
 
     public function getCustomerList(Request $request)
@@ -266,6 +269,25 @@ class CustomerManageController extends Controller
             'deleted' => $deleted,
             'skipped' => $skipped,
             'failed' => $failed,
+        ]);
+    }
+
+    public function getTrashList(Request $request)
+    {
+        $trash = $this->trashService->listTrashed('customer', $request->per_page ?? 10);
+        return response()->json([
+            'data' => CustomerResource::collection($trash),
+            'meta' => new PaginationResource($trash)
+        ]);
+    }
+
+    public function restoreTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $restored = $this->trashService->restore('customer', $ids);
+        return response()->json([
+            'message' => __('messages.restore_success', ['name' => 'Customer']),
+            'restored' => $restored,
         ]);
     }
 }
