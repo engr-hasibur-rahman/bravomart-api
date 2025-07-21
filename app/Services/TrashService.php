@@ -12,6 +12,39 @@ use Modules\Wallet\app\Models\Wallet;
 
 class TrashService
 {
+    protected array $relatedRelations = [
+        'customer' => [
+            'wallet',
+            'addresses',
+            'reviews',
+            'tickets',
+            'productQueries',
+            'blogComments',
+            'chats',
+            'sentMessages',
+            'receivedMessages',
+        ],
+        'seller' => [
+            'stores'
+        ],
+        'store' => [
+            'wallet',
+            'chats',
+            'sentMessages',
+            'receivedMessages',
+            'products',
+            'tickets',
+        ],
+        'deliveryman' => [
+            'wallet',
+        ],
+        'product' => [
+            'reviews',
+            'variants',
+            'queries',
+        ]
+        // Add others later as needed
+    ];
     protected array $models = [
         'customer' => Customer::class,
         'seller' => User::class,
@@ -51,7 +84,64 @@ class TrashService
 
     public function restore(string $type, array $ids): int
     {
-        return $this->getQueryBuilder($type)->whereIn('id', $ids)->restore();
+        $query = $this->getQueryBuilder($type)->whereIn('id', $ids);
+        $restored = $query->restore();
+
+        $modelClass = $this->models[$type];
+        $related = $this->relatedRelations[$type] ?? [];
+
+        foreach ($modelClass::withTrashed()->whereIn('id', $ids)->get() as $item) {
+            $this->restoreRelations($type, $item);
+        }
+
+        return $restored;
+    }
+
+    protected function restoreRelations(string $type, Model $item): void
+    {
+        $relations = $this->relatedRelations[$type] ?? [];
+
+        foreach ($relations as $relation) {
+            if (!method_exists($item, $relation)) {
+                continue;
+            }
+
+            $relatedItems = $item->$relation()->withTrashed()->get();
+
+            foreach ($relatedItems as $relatedItem) {
+                if (method_exists($relatedItem, 'restore') && $relatedItem->trashed()) {
+                    $relatedItem->restore();
+                }
+
+                // Recursively restore related data for next-level model type (if mapped)
+                $relatedType = $this->guessRelatedType(get_class($relatedItem));
+                if ($relatedType) {
+                    $this->restoreRelations($relatedType, $relatedItem);
+                }
+            }
+        }
+    }
+
+    protected function guessRelatedType(string $className): ?string
+    {
+        foreach ($this->models as $key => $modelClass) {
+            if ($className === $modelClass) {
+                return $key;
+            }
+        }
+
+        return null;
+    }
+
+    protected function restoreNestedStoreRelations(Model $store): void
+    {
+        $storeRelations = $this->relatedRelations['store'] ?? [];
+
+        foreach ($storeRelations as $relation) {
+            if (method_exists($store, $relation)) {
+                $store->$relation()->onlyTrashed()->restore();
+            }
+        }
     }
 
     public function forceDelete(string $type, array $ids): int

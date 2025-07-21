@@ -180,8 +180,8 @@ return [
     'not_allowed_status' => 'Your account status is :name! Can\'t proceed!',
 
     'should_round' => ':name shouldn\'t have a decimal value!',
-    'wishlist_add' => ': added to wishlist!',
-    'wishlist_remove' => ': removed from wishlist!',
+    'wishlist_add' => ':name added to wishlist!',
+    'wishlist_remove' => ':name removed from wishlist!',
 
 ];
 
