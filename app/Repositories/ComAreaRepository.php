@@ -1,4 +1,4 @@
-<?php
+?php
 
 namespace App\Repositories;
 
@@ -64,6 +64,7 @@ class ComAreaRepository implements ComAreaInterface
 
     public function getById($id): mixed
     {
+
         // Find the area by id
         $area = $this->area->with('related_translations')->findOrFail($id);
 //        // Fetch translation which is initialized in StoreArea Model grouped by language
@@ -102,13 +103,13 @@ class ComAreaRepository implements ComAreaInterface
 
         $area = $this->area->newInstance();
 
-        foreach ($data as $column => $value) {        
+        foreach ($data as $column => $value) {
             // skips the translation field
             if ($column <> 'translations') {
                 $area[$column] = $value;
             }
         }
-     
+
         $area->save();
         return $area;
     }
