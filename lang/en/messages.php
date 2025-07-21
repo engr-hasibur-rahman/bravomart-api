@@ -183,6 +183,9 @@ return [
     'wishlist_add' => ':name added to wishlist!',
     'wishlist_remove' => ':name removed from wishlist!',
 
+    'restore_success' => ':name restored successfully!',
+    'restore_failed' => ':name restore failed!',
+
 ];
 
 

@@ -215,6 +215,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('update-profile', [AdminCustomerManageController::class, 'updateProfile']);
                 Route::post('suspend', [AdminCustomerManageController::class, 'suspend']);
                 Route::post('remove', [AdminCustomerManageController::class, 'destroy']);
+                Route::get('trash-list', [AdminCustomerManageController::class, 'getTrashList']);
+                Route::post('trash-restore', [AdminCustomerManageController::class, 'restoreTrashed']);
             });
             // Newsletter
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
