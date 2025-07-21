@@ -27,8 +27,7 @@ class WishListManageController extends Controller
             ], 422);
         }
         Wishlist::create(request()->all());
-        return $this->success(translate('messages.save_success', ['name' => 'Wish List']));
-
+        return $this->success(translate('messages.wishlist_add', ['name' => 'Product']));
     }
 
     public function removeFromWishlist(Request $request)
@@ -45,7 +44,7 @@ class WishListManageController extends Controller
         Wishlist::where('customer_id', auth('api_customer')->user()->id)
             ->where('product_id', $request->product_id)
             ->delete();
-        return $this->success(translate('messages.delete_success', ['name' => 'Wish List']));
+        return $this->success(translate('messages.wishlist_remove', ['name' => 'Product']));
 
     }
 
