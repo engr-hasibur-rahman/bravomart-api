@@ -22,9 +22,8 @@ class WishListManageController extends Controller
             ->where('product_id', $request->product_id)
             ->exists();
         if ($exists) {
-            return response()->json([
-                'message' => __('messages.exists', ['name' => 'Product'])
-            ], 422);
+            $exists->delete();
+            return $this->success(translate('messages.wishlist_remove', ['name' => 'Product']));
         }
         Wishlist::create(request()->all());
         return $this->success(translate('messages.wishlist_add', ['name' => 'Product']));

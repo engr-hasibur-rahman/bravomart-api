@@ -26,10 +26,6 @@ use App\Http\Resources\Com\Store\StorePublicListResource;
 use App\Http\Resources\Com\Store\StoreTypeDropdownPublicResource;
 use App\Http\Resources\Coupon\CouponPublicResource;
 use App\Http\Resources\Customer\CustomerPublicResource;
-use App\Http\Resources\Location\AreaPublicResource;
-use App\Http\Resources\Location\CityPublicResource;
-use App\Http\Resources\Location\CountryPublicResource;
-use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Order\OrderRefundReasonResource;
 use App\Http\Resources\Product\FlashSaleAllProductPublicResource;
 use App\Http\Resources\Product\FlashSaleWithProductPublicResource;
@@ -48,13 +44,9 @@ use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use App\Http\Resources\User\PageListResource;
-use App\Interfaces\AreaManageInterface;
 use App\Interfaces\BannerManageInterface;
-use App\Interfaces\CityManageInterface;
-use App\Interfaces\CountryManageInterface;
 use App\Interfaces\OrderRefundInterface;
 use App\Interfaces\ProductManageInterface;
-use App\Interfaces\StateManageInterface;
 use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\BlogCategory;
@@ -87,10 +79,6 @@ use Illuminate\Support\Facades\Validator;
 class FrontendController extends Controller
 {
     public function __construct(
-        protected CountryManageInterface $countryRepo,
-        protected StateManageInterface   $stateRepo,
-        protected CityManageInterface    $cityRepo,
-        protected AreaManageInterface    $areaRepo,
         protected BannerManageInterface  $bannerRepo,
         protected ProductManageInterface $productRepo,
         protected FlashSaleService       $flashSaleService,
@@ -1736,7 +1724,6 @@ class FrontendController extends Controller
 
     }
 
-    /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
     public function productCategoryList(Request $request)
     {
         try {
@@ -1861,8 +1848,6 @@ class FrontendController extends Controller
         }
     }
 
-
-    /* -----------------------------------------------------------> Slider List <---------------------------------------------------------- */
     public function allSliders(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1886,7 +1871,6 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
     public function index(Request $request)
     {
         if (isset($request->language)) {
@@ -1903,52 +1887,8 @@ class FrontendController extends Controller
             ->get();
         return BannerPublicResource::collection($banner);
     }
-    /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
-    // Country
-    public function countriesList(Request $request)
-    {
-        // Extract filters from the request
-        $filters = $request->only(['name', 'code', 'status', 'region', 'sortBy', 'sortOrder', 'perPage']);
 
-        // Get the countries from the repository
-        $countries = $this->countryRepo->getCountries($filters);
-        return CountryPublicResource::collection($countries);
-    }
 
-    // State
-    public function statesList(Request $request)
-    {
-        // Extract filters from the request
-        $filters = $request->only(['name', 'country_id', 'status', 'timezone', 'sortBy', 'sortOrder', 'perPage']);
-
-        // Get the states from the repository
-        $states = $this->stateRepo->getStates($filters);
-
-        // Return the response using a Resource Collection
-        return StatePublicResource::collection($states);
-    }
-
-    // City
-    public function citiesList(Request $request)
-    {
-        // Extract filters from the request
-        $filters = $request->only(['name', 'status', 'state_id', 'sortBy', 'sortOrder', 'perPage']);
-
-        // Get the countries from the repository
-        $cities = $this->cityRepo->getCities($filters);
-        return CityPublicResource::collection($cities);
-    }
-
-    // Area
-    public function areas(Request $request)
-    {
-        // Extract filters from the request
-        $filters = $request->only(['name', 'city_id', 'status', 'sortBy', 'sortOrder', 'perPage']);
-
-        // Get the countries from the repository
-        $areas = $this->areaRepo->getAreas($filters);
-        return AreaPublicResource::collection($areas);
-    }
 
     public function areaList()
     {
