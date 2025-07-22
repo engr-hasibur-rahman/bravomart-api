@@ -260,6 +260,7 @@ class FrontendController extends Controller
                             ->orWhere('attributes', 'like', "%{$query}%");
                     });
             })
+            ->whereNull('deleted_at')
             ->with(['variants:id,product_id,sku,price,stock_quantity,special_price', 'store'])
             ->get();
         return response()->json([
@@ -1889,7 +1890,6 @@ class FrontendController extends Controller
     }
 
 
-
     public function areaList()
     {
         $areas = StoreArea::where('status', 1)->latest()->get();
@@ -2220,8 +2220,6 @@ class FrontendController extends Controller
     }
 
 
-
-
     public function getPage(Request $request, $slug)
     {
         $page = Page::with('related_translations')
@@ -2229,62 +2227,61 @@ class FrontendController extends Controller
             ->where('status', 'publish')
             ->first();
 
-          if($page === 'about'){
-              $setting = Page::with('related_translations')
-                  ->where('slug', 'about')
-                  ->where('status', 'publish')
-                  ->first();
+        if ($page === 'about') {
+            $setting = Page::with('related_translations')
+                ->where('slug', 'about')
+                ->where('status', 'publish')
+                ->first();
 
-              if (!$setting) {
-                  return response()->json([
-                      'message' => __('messages.data_not_found')
-                  ], 404);
-              }
+            if (!$setting) {
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ], 404);
+            }
 
-              $content = $setting->content ? json_decode($setting->content, true) : [];
-              $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
-              $setting->content = $content;
+            $content = $setting->content ? json_decode($setting->content, true) : [];
+            $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+            $setting->content = $content;
 
-              return response()->json(new AboutUsPublicResource($setting));
-          }
+            return response()->json(new AboutUsPublicResource($setting));
+        }
 
-          if($page === 'contact'){
-              $setting = Page::with('related_translations')
-                  ->where('slug', 'contact')
-                  ->where('status', 'publish')
-                  ->first();
+        if ($page === 'contact') {
+            $setting = Page::with('related_translations')
+                ->where('slug', 'contact')
+                ->where('status', 'publish')
+                ->first();
 
-              if (!$setting) {
-                  return response()->json([
-                      'message' => __('messages.data_not_found')
-                  ], 404);
-              }
-              $content = $setting->content ? json_decode($setting->content, true) : [];
-              $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
-              $setting->content = $content;
+            if (!$setting) {
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ], 404);
+            }
+            $content = $setting->content ? json_decode($setting->content, true) : [];
+            $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+            $setting->content = $content;
 
-              return response()->json(new ContactUsPublicResource($setting));
-          }
+            return response()->json(new ContactUsPublicResource($setting));
+        }
 
-          if($page === 'become_a_seller'){
-              $setting = Page::with('related_translations')
-                  ->where('slug', 'become_a_seller')
-                  ->where('status', 'publish')
-                  ->first();
+        if ($page === 'become_a_seller') {
+            $setting = Page::with('related_translations')
+                ->where('slug', 'become_a_seller')
+                ->where('status', 'publish')
+                ->first();
 
-              if (!$setting) {
-                  return response()->json([
-                      'message' => __('messages.data_not_found')
-                  ], 404);
-              }
+            if (!$setting) {
+                return response()->json([
+                    'message' => __('messages.data_not_found')
+                ], 404);
+            }
 
-              $content = $setting->content ? json_decode($setting->content, true) : [];
-              $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
-              $setting->content = $content;
+            $content = $setting->content ? json_decode($setting->content, true) : [];
+            $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+            $setting->content = $content;
 
-              return response()->json(new BecomeSellerPublicResource($setting));
-          }
-
+            return response()->json(new BecomeSellerPublicResource($setting));
+        }
 
 
         if (!$page) {
