@@ -81,11 +81,6 @@ class User extends Authenticatable
     }
 
 
-    public function pushSubscriptions()
-    {
-        return $this->hasMany(WebPushToken::class);
-    }
-
     public function wallet()
     {
         return $this->hasOne(Wallet::class);

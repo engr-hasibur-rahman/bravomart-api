@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\PermissionKey;
-use App\Http\Controllers\Api\V1\Admin\AboutSettingsManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminAreaSetupManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBannerManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminBlogManageController;
@@ -27,13 +26,10 @@ use App\Http\Controllers\Api\V1\Admin\AdminSupportTicketManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminUnitManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawManageController;
 use App\Http\Controllers\Api\V1\Admin\AdminWithdrawSettingsController;
-use App\Http\Controllers\Api\V1\Admin\BecomeSellerSettingsController;
-use App\Http\Controllers\Api\V1\Admin\ContactSettingsManageController;
 use App\Http\Controllers\Api\V1\Admin\CustomerManageController as AdminCustomerManageController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentManageController;
 use App\Http\Controllers\Api\V1\Admin\EmailSettingsController;
 use App\Http\Controllers\Api\V1\Admin\EmailTemplateManageController;
-use App\Http\Controllers\Api\V1\Admin\LocationManageController;
 use App\Http\Controllers\Api\V1\Admin\PageSettingsManageController;
 use App\Http\Controllers\Api\V1\Admin\PagesManageController;
 use App\Http\Controllers\Api\V1\Com\AreaController;
@@ -215,6 +211,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('update-profile', [AdminCustomerManageController::class, 'updateProfile']);
                 Route::post('suspend', [AdminCustomerManageController::class, 'suspend']);
                 Route::post('remove', [AdminCustomerManageController::class, 'destroy']);
+                Route::get('trash-list', [AdminCustomerManageController::class, 'getTrashList']);
+                Route::post('trash-restore', [AdminCustomerManageController::class, 'restoreTrashed']);
             });
             // Newsletter
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
@@ -256,49 +254,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('update', [DepartmentManageController::class, 'update']);
             Route::delete('remove/{id}', [DepartmentManageController::class, 'destroy']);
         });
-        // Location Manage
-        Route::group(['prefix' => 'location/'], function () {
-            // Country
-            Route::group(['prefix' => 'country/'], function () {
-                Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-                    Route::get('list', [LocationManageController::class, 'countriesList']);
-                    Route::post('add', [LocationManageController::class, 'storeCountry']);
-                    Route::get('details', [LocationManageController::class, 'countryDetails']);
-                    Route::post('update', [LocationManageController::class, 'updateCountry']);
-                    Route::delete('remove/{id}', [LocationManageController::class, 'destroyCountry']);
-                });
-            });
-            // State
-            Route::group(['prefix' => 'state/'], function () {
-                Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-                    Route::get('list', [LocationManageController::class, 'statesList']);
-                    Route::post('add', [LocationManageController::class, 'storeState']);
-                    Route::get('details', [LocationManageController::class, 'stateDetails']);
-                    Route::post('update', [LocationManageController::class, 'updateState']);
-                    Route::delete('remove/{id}', [LocationManageController::class, 'destroyState']);
-                });
-            });
-            // City
-            Route::group(['prefix' => 'city/'], function () {
-                Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-                    Route::get('list', [LocationManageController::class, 'citiesList']);
-                    Route::post('add', [LocationManageController::class, 'storeCity']);
-                    Route::get('details', [LocationManageController::class, 'cityDetails']);
-                    Route::post('update', [LocationManageController::class, 'updateCity']);
-                    Route::delete('remove/{id}', [LocationManageController::class, 'destroyCity']);
-                });
-            });
-            // Area
-            Route::group(['prefix' => 'area/'], function () {
-                Route::group(['middleware' => ['permission:' . PermissionKey::PRODUCT_ATTRIBUTE_ADD->value]], function () {
-                    Route::get('list', [LocationManageController::class, 'areasList']);
-                    Route::post('add', [LocationManageController::class, 'storeArea']);
-                    Route::get('details', [LocationManageController::class, 'areaDetails']);
-                    Route::post('update', [LocationManageController::class, 'updateArea']);
-                    Route::delete('remove/{id}', [LocationManageController::class, 'destroyArea']);
-                });
-            });
-        });
+
 
         // Slider manage
         Route::group(['prefix' => 'slider/', 'middleware' => ['permission:' . PermissionKey::ADMIN_SLIDER_MANAGE_LIST->value]], function () {
@@ -432,7 +388,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
         Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_PAGES_LIST->value]], function () {
             Route::get('pages/list', [PagesManageController::class, 'pagesIndex']);
             Route::post('pages/store', [PagesManageController::class, 'pagesStore']);
-            Route::get('pages/details/{id}', [PagesManageController::class, 'pagesShow']);
+            Route::get('pages/details/{slug}', [PagesManageController::class, 'pagesShow']);
             Route::post('pages/update', [PagesManageController::class, 'pagesUpdate']);
             Route::post('pages/status-change', [PagesManageController::class, 'pagesStatusChange']);
             Route::delete('pages/remove/{id}', [PagesManageController::class, 'pagesDestroy']);
@@ -601,9 +557,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::match(['get', 'post'], 'login', [PageSettingsManageController::class, 'loginSettings'])->middleware('permission:' . PermissionKey::LOGIN_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'product-details', [PageSettingsManageController::class, 'ProductDetailsSettings'])->middleware('permission:' . PermissionKey::PRODUCT_DETAILS_PAGE_SETTINGS->value);
                 Route::match(['get', 'post'], 'blog-details', [PageSettingsManageController::class, 'blogSettings'])->middleware('permission:' . PermissionKey::BLOG_PAGE_SETTINGS->value);
-                Route::match(['get', 'post'], 'about', [AboutSettingsManageController::class, 'aboutSettings'])->middleware('permission:' . PermissionKey::ABOUT_PAGE_SETTINGS->value);
-                Route::match(['get', 'post'], 'contact', [ContactSettingsManageController::class, 'contactSettings'])->middleware('permission:' . PermissionKey::CONTACT_PAGE_SETTINGS->value);
-                Route::match(['get', 'post'], 'become-seller', [BecomeSellerSettingsController::class, 'becomeSellerSettings'])->middleware('permission:' . PermissionKey::BECOME_SELLER_PAGE_SETTINGS->value);
             });
 
             // menu manage

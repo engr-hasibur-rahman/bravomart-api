@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface PageManageInterface
 {
-    public function getPageById(int|string $id);
+    public function getPageById(string $slug);
     public function translationKeysForPage();
     public function getPaginatedPage(int|string $limit, int $page, string $language, string $search, string $sortField, string $sort, array $filters);
     public function store(array $data, string $modelClass);

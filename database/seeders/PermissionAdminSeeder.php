@@ -24,8 +24,20 @@ class PermissionAdminSeeder extends Seeder
 
     public function run()
     {
+        $permissionIds = DB::table('permissions')
+            ->where('available_for', 'system_level')
+            ->pluck('id')
+            ->toArray();
 
-        DB::table('permissions')->where('available_for', 'system_level')->delete();
+        if (!empty($permissionIds)) {
+            // Delete permissions
+            DB::table('permissions')->whereIn('id', $permissionIds)->delete();
+
+            // Delete related translations
+            DB::table('translations')->whereIn('translatable_id', $permissionIds)
+                ->where('translatable_type', 'App\\Models\\Permissions')
+                ->delete();
+        }
         $admin_main_menu = [
             [
                 // Dashboard
@@ -1287,39 +1299,6 @@ class PermissionAdminSeeder extends Seeder
                                         'ar' => 'إعدادات الصيانة'
                                     ]
                                 ],
-                                [
-                                    'PermissionName' => PermissionKey::ABOUT_PAGE_SETTINGS->value,
-                                    'PermissionTitle' => 'About Page',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'About Page',
-                                        'ar' => 'إعدادات الصيانة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::CONTACT_PAGE_SETTINGS->value,
-                                    'PermissionTitle' => 'Contact Page',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'Contact Page',
-                                        'ar' => 'إعدادات الصيانة'
-                                    ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::BECOME_SELLER_PAGE_SETTINGS->value,
-                                    'PermissionTitle' => 'Become A Seller Page',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                                    'translations' => [
-                                        'en' => 'Become A Seller Page',
-                                        'ar' => 'إعدادات الصيانة'
-                                    ]
-                                ]
                             ]
                         ],
 
@@ -1628,7 +1607,6 @@ class PermissionAdminSeeder extends Seeder
                     }
                 }
             }
-
         }
 
         $user = auth('api')->user();

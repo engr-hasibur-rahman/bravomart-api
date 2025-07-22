@@ -20,7 +20,20 @@ class PermissionStoreSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('permissions')->where('available_for','store_level')->delete();
+        $permissionIds = DB::table('permissions')
+            ->where('available_for', 'store_level')
+            ->pluck('id')
+            ->toArray();
+
+        if (!empty($permissionIds)) {
+            // Delete permissions
+            DB::table('permissions')->whereIn('id', $permissionIds)->delete();
+
+            // Delete related translations
+            DB::table('translations')->whereIn('translatable_id', $permissionIds)
+                ->where('translatable_type', 'App\\Models\\Permissions')
+                ->delete();
+        }
         $admin_main_menu = [];
         $shop_menu = [
             [
@@ -548,7 +561,7 @@ class PermissionStoreSeeder extends Seeder
         //Assign PermissionKey to Store Admin Role
         $role = Role::where('id',2)->first();
         $role->givePermissionTo(Permission::whereIn('available_for',['store_level','COMMON'])->get());
-        $user = User::whereEmail('owner@store.com')->first();
+        $user = User::whereEmail('seller@gmail.com')->first();
         // Assign default Store User to a Specific Role
         $user->assignRole($role);
     }

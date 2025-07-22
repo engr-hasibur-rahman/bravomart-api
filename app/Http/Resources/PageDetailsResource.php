@@ -15,11 +15,14 @@ class PageDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+
+
         return [
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
-            'content' => html_entity_decode($this->content), // Decodes HTML entities
+            'content' => $this->content,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'meta_keywords' => $this->meta_keywords,
@@ -27,4 +30,6 @@ class PageDetailsResource extends JsonResource
             'translations' => PageTranslationResource::collection($this->related_translations->groupBy('language')),
         ];
     }
+
+
 }

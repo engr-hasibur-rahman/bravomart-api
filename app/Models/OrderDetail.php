@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\RoundNumericFields;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderDetail extends Model
 {
+    use RoundNumericFields;
     protected $fillable = [
         'order_id',
         'store_id',

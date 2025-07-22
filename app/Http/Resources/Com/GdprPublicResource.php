@@ -18,10 +18,11 @@ class GdprPublicResource extends JsonResource
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
         $translation = $this->related_translations->where('language', $language);
+
         return [
-            "content" => !empty($translation) && $translation->where('key', 'content')->first()
-                ? jsonImageModifierFormatter(json_decode($translation->where('key', 'content')->first()->value, true))
-                : jsonImageModifierFormatter($this->content),
+            "content" => !empty($translation) && $translation->where('key', 'option_value')->first()
+                ? json_decode($translation->where('key', 'option_value')->first()->value, true)
+                : json_decode($this->option_value),
         ];
     }
 }

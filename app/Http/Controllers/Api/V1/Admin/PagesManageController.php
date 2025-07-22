@@ -6,6 +6,7 @@ use App\Helpers\MultilangSlug;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Interfaces\PageManageInterface;
 use App\Models\Page;
+use App\Models\Translation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -35,6 +36,78 @@ class PagesManageController extends Controller
             $request['slug'] = MultilangSlug::makeSlug(Page::class, $request->title, 'slug');
         }
         try {
+            if (in_array($request->slug, ['about', 'contact', 'become_a_seller'])) {
+                // Validate input data
+
+                $validatedData = Validator::make($request->all(), [
+                    'title' => 'required|unique:pages,title',
+                    'slug' => 'required|unique:pages,slug',
+                    'about' => 'nullable|array',
+                    'content' => 'nullable|array',
+                    'become_a_seller' => 'nullable|array',
+                    'translations' => 'nullable|array',
+                ]);
+
+                if ($validatedData->fails()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => $validatedData->errors()
+                    ],422);
+                }
+                $data = $validatedData->validated();
+
+                $slug = $request->slug;
+                // Dynamic title based on slug
+                $page_title = match ($slug) {
+                    'about' => 'About Page',
+                    'contact' => 'Contact Page',
+                    'become_a_seller' => 'Become A Seller',
+                    default => 'Custom Page',
+                };
+
+                // Try to find page by slug
+                $page = Page::where('slug', $slug)->first();
+
+
+                if ($page) {
+                    $page->update([
+                        'content' => json_encode($data['content']),
+                        'title' => $page_title,
+                        'enable_builder' => 1,
+                    ]);
+                } else {
+                    $page = Page::updateOrCreate(
+                        ['slug' => $slug],
+                        [
+                            'content' => json_encode($data['content']),
+                            'title' => $page_title,
+                            'enable_builder' => 1,
+                            'status' => 'publish',
+                        ]
+                    );
+                }
+
+                // Save translations
+                if (isset($data['translations'])) {
+                    foreach ($data['translations'] as $translation) {
+                        Translation::updateOrCreate(
+                            [
+                                'language' => $translation['language_code'],
+                                'translatable_id' => $page->id,
+                                'translatable_type' => 'App\Models\Page',
+                                'key' => 'content',
+                            ],
+                            [
+                                'value' => json_encode($translation['content']),
+                            ]
+                        );
+                    }
+                }
+
+                return $this->success(translate('messages.save_success', ['name' => 'Page']));
+            }
+
+
             // Validate input data
             $validator = Validator::make($request->all(), [
                 'title' => 'required|unique:pages,title',
@@ -43,17 +116,28 @@ class PagesManageController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
-                    'status_code' => 400,
                     'message' => $validator->errors()
-                ]);
+                ],422);
             }
-            $page = $this->pageRepo->store($request->all(), Page::class);
-            createOrUpdateTranslationJson($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
+
+        // Prepare input for storage
+        $input = $request->all();
+
+       // Convert content array to JSON string if necessary
+        if (isset($input['content']) && is_array($input['content'])) {
+            $input['content'] = json_encode($input['content']);
+        }
+
+        // Store page
+        $page = $this->pageRepo->store($input, Page::class);
+
+      // Save translations
+        createOrUpdateTranslationJson($request, $page, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
 
             if ($page) {
                 return $this->success(translate('messages.save_success', ['name' => 'Page']));
             } else {
-                return $this->failed(translate('messages.save_failed', ['name' => 'Page']));
+                return $this->failed(translate('messages.save_failed', ['name' => 'Page']),500);
             }
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json([
@@ -73,16 +157,15 @@ class PagesManageController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
-                    'status_code' => 400,
                     'message' => $validator->errors()
-                ]);
+                ],422);
             }
             $category = $this->pageRepo->update($request->all(), Page::class);
             createOrUpdateTranslationJson($request, $category, 'App\Models\Page', $this->pageRepo->translationKeysForPage());
             if ($category) {
                 return $this->success(translate('messages.update_success', ['name' => 'Page']));
             } else {
-                return $this->failed(translate('messages.update_failed', ['name' => 'Page']));
+                return $this->failed(translate('messages.update_failed', ['name' => 'Page']),500);
             }
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json([
@@ -95,7 +178,7 @@ class PagesManageController extends Controller
 
     public function pagesShow(Request $request)
     {
-        return $this->pageRepo->getPageById($request->id);
+        return $this->pageRepo->getPageById($request->slug);
     }
 
     public function pagesDestroy($id)

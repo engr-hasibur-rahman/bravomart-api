@@ -2,9 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Admin\AdminBecomeSellerResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\PageDetailsResource;
 use App\Http\Resources\PageResource;
+use App\Http\Resources\Translation\PageTranslationResource;
 use App\Interfaces\PageManageInterface;
 use App\Models\Page;
 use App\Models\Translation;
@@ -33,14 +35,23 @@ class PageManageRepository implements PageManageInterface
         ]);
     }
 
-    public function getPageById(int|string $id)
+    public function getPageById(string $slug)
     {
         try {
-            $page = Page::with('related_translations')->find($id);
+            $page = Page::with('related_translations')->where('slug', $slug)->first();
             if (!$page) {
                 return response()->json([
                     "message" => __('messages.data_not_found')
                 ], 404);
+            }
+
+            if ($page->enable_builder === 1){
+                $value = $page->content;
+                $content = is_array($value) ? jsonImageModifierFormatter($value) : [];
+                $page->content = $content;
+                return response()->json([
+                    'data' => new AdminBecomeSellerResource($page),
+                ]);
             }
 
             // Return response with Page and translations

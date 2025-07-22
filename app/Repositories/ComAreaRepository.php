@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Helpers\ComHelper;
 use App\Http\Resources\Translation\AreaTranslationResource;
-use App\Http\Resources\Translation\TranslationResource;
 use App\Models\StoreArea;
 use App\Interfaces\ComAreaInterface;
 use Illuminate\Support\Facades\DB;
@@ -66,22 +65,7 @@ class ComAreaRepository implements ComAreaInterface
     {
         // Find the area by id
         $area = $this->area->with('related_translations')->findOrFail($id);
-//        // Fetch translation which is initialized in StoreArea Model grouped by language
-//        $translations = $area->translations()->get()->groupBy('language');
-//
-//        // Initialize an array to hold the transformed data
-//        $transformedData = [];
-//
-//        foreach ($translations as $language => $items) {
-//            $languageInfo = ['language' => $language];
-//            /* iterate all Column to Assign Language Value */
-//            foreach ($this->area->translationKeys as $columnName) {
-//                $languageInfo[$columnName] = $items->where('key', $columnName)->first()->value ?? "";
-//            }
-//            $transformedData[] = $languageInfo;
-//        }
         $formated_coordinates = json_decode($area->coordinates[0]->toJson(), true);
-
 
         return [
             'id' => $area->id,
@@ -101,14 +85,13 @@ class ComAreaRepository implements ComAreaInterface
     {
 
         $area = $this->area->newInstance();
-
-        foreach ($data as $column => $value) {        
+        foreach ($data as $column => $value) {
             // skips the translation field
             if ($column <> 'translations') {
                 $area[$column] = $value;
             }
         }
-     
+
         $area->save();
         return $area;
     }
@@ -140,3 +123,4 @@ class ComAreaRepository implements ComAreaInterface
         return true;
     }
 }
+

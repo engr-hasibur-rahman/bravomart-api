@@ -26,10 +26,6 @@ use App\Http\Resources\Com\Store\StorePublicListResource;
 use App\Http\Resources\Com\Store\StoreTypeDropdownPublicResource;
 use App\Http\Resources\Coupon\CouponPublicResource;
 use App\Http\Resources\Customer\CustomerPublicResource;
-use App\Http\Resources\Location\AreaPublicResource;
-use App\Http\Resources\Location\CityPublicResource;
-use App\Http\Resources\Location\CountryPublicResource;
-use App\Http\Resources\Location\StatePublicResource;
 use App\Http\Resources\Order\OrderRefundReasonResource;
 use App\Http\Resources\Product\FlashSaleAllProductPublicResource;
 use App\Http\Resources\Product\FlashSaleWithProductPublicResource;
@@ -48,21 +44,14 @@ use App\Http\Resources\Seller\Store\StoreDetailsPublicResource;
 use App\Http\Resources\Slider\SliderPublicResource;
 use App\Http\Resources\Tag\TagPublicResource;
 use App\Http\Resources\User\PageListResource;
-use App\Interfaces\AreaManageInterface;
 use App\Interfaces\BannerManageInterface;
-use App\Interfaces\CityManageInterface;
-use App\Interfaces\CountryManageInterface;
 use App\Interfaces\OrderRefundInterface;
 use App\Interfaces\ProductManageInterface;
-use App\Interfaces\StateManageInterface;
-use App\Models\AboutSetting;
 use App\Models\Banner;
-use App\Models\BecomeSellerSetting;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\BlogComment;
 use App\Models\BlogView;
-use App\Models\ContactSetting;
 use App\Models\CouponLine;
 use App\Models\Customer;
 use App\Models\Department;
@@ -90,10 +79,6 @@ use Illuminate\Support\Facades\Validator;
 class FrontendController extends Controller
 {
     public function __construct(
-        protected CountryManageInterface $countryRepo,
-        protected StateManageInterface   $stateRepo,
-        protected CityManageInterface    $cityRepo,
-        protected AreaManageInterface    $areaRepo,
         protected BannerManageInterface  $bannerRepo,
         protected ProductManageInterface $productRepo,
         protected FlashSaleService       $flashSaleService,
@@ -948,7 +933,7 @@ class FrontendController extends Controller
             }
         }
 
-        $query->where('products.status', 'approved')->whereNull('products.deleted_at');
+        $query->where('products.status', 'approved')->where('products.is_featured', true)->whereNull('products.deleted_at');
 
         // Pagination
         $perPage = $request->per_page ?? 10;
@@ -1430,8 +1415,10 @@ class FrontendController extends Controller
         }
 
         if (!empty($request->search)) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('description', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('products.name', 'like', '%' . $request->search . '%')
+                    ->orWhere('products.description', 'like', '%' . $request->search . '%');
+            });
         }
 
         // Pagination
@@ -1737,7 +1724,6 @@ class FrontendController extends Controller
 
     }
 
-    /* -----------------------------------------------------------> Product Category List <---------------------------------------------------------- */
     public function productCategoryList(Request $request)
     {
         try {
@@ -1862,8 +1848,6 @@ class FrontendController extends Controller
         }
     }
 
-
-    /* -----------------------------------------------------------> Slider List <---------------------------------------------------------- */
     public function allSliders(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1887,7 +1871,6 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
     public function index(Request $request)
     {
         if (isset($request->language)) {
@@ -1904,52 +1887,8 @@ class FrontendController extends Controller
             ->get();
         return BannerPublicResource::collection($banner);
     }
-    /* -----------------------------------------------------------> Location List <---------------------------------------------------------- */
-    // Country
-    public function countriesList(Request $request)
-    {
-        // Extract filters from the request
-        $filters = $request->only(['name', 'code', 'status', 'region', 'sortBy', 'sortOrder', 'perPage']);
 
-        // Get the countries from the repository
-        $countries = $this->countryRepo->getCountries($filters);
-        return CountryPublicResource::collection($countries);
-    }
 
-    // State
-    public function statesList(Request $request)
-    {
-        // Extract filters from the request
-        $filters = $request->only(['name', 'country_id', 'status', 'timezone', 'sortBy', 'sortOrder', 'perPage']);
-
-        // Get the states from the repository
-        $states = $this->stateRepo->getStates($filters);
-
-        // Return the response using a Resource Collection
-        return StatePublicResource::collection($states);
-    }
-
-    // City
-    public function citiesList(Request $request)
-    {
-        // Extract filters from the request
-        $filters = $request->only(['name', 'status', 'state_id', 'sortBy', 'sortOrder', 'perPage']);
-
-        // Get the countries from the repository
-        $cities = $this->cityRepo->getCities($filters);
-        return CityPublicResource::collection($cities);
-    }
-
-    // Area
-    public function areas(Request $request)
-    {
-        // Extract filters from the request
-        $filters = $request->only(['name', 'city_id', 'status', 'sortBy', 'sortOrder', 'perPage']);
-
-        // Get the countries from the repository
-        $areas = $this->areaRepo->getAreas($filters);
-        return AreaPublicResource::collection($areas);
-    }
 
     public function areaList()
     {
@@ -2280,50 +2219,8 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    public function becomeSeller(Request $request)
-    {
-        $setting = BecomeSellerSetting::with('related_translations')
-            ->where('status', 1)
-            ->first();
-        if (!$setting) {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
-        }
-        $content = jsonImageModifierFormatter($setting->content);
-        $setting->content = $content;
-        return response()->json(new BecomeSellerPublicResource($setting));
-    }
 
-    public function aboutUs(Request $request)
-    {
-        $setting = AboutSetting::with('related_translations')
-            ->where('status', 1)
-            ->first();
-        if (!$setting) {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
-        }
-        $content = jsonImageModifierFormatter($setting->content);
-        $setting->content = $content;
-        return response()->json(new AboutUsPublicResource($setting));
-    }
 
-    public function contactUs(Request $request)
-    {
-        $setting = ContactSetting::with('related_translations')
-            ->where('status', 1)
-            ->first();
-        if (!$setting) {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
-        }
-        $content = jsonImageModifierFormatter($setting->content);
-        $setting->content = $content;
-        return response()->json(new ContactUsPublicResource($setting));
-    }
 
     public function getPage(Request $request, $slug)
     {
@@ -2331,6 +2228,64 @@ class FrontendController extends Controller
             ->where('slug', $slug)
             ->where('status', 'publish')
             ->first();
+
+          if($page === 'about'){
+              $setting = Page::with('related_translations')
+                  ->where('slug', 'about')
+                  ->where('status', 'publish')
+                  ->first();
+
+              if (!$setting) {
+                  return response()->json([
+                      'message' => __('messages.data_not_found')
+                  ], 404);
+              }
+
+              $content = $setting->content ? json_decode($setting->content, true) : [];
+              $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+              $setting->content = $content;
+
+              return response()->json(new AboutUsPublicResource($setting));
+          }
+
+          if($page === 'contact'){
+              $setting = Page::with('related_translations')
+                  ->where('slug', 'contact')
+                  ->where('status', 'publish')
+                  ->first();
+
+              if (!$setting) {
+                  return response()->json([
+                      'message' => __('messages.data_not_found')
+                  ], 404);
+              }
+              $content = $setting->content ? json_decode($setting->content, true) : [];
+              $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+              $setting->content = $content;
+
+              return response()->json(new ContactUsPublicResource($setting));
+          }
+
+          if($page === 'become_a_seller'){
+              $setting = Page::with('related_translations')
+                  ->where('slug', 'become_a_seller')
+                  ->where('status', 'publish')
+                  ->first();
+
+              if (!$setting) {
+                  return response()->json([
+                      'message' => __('messages.data_not_found')
+                  ], 404);
+              }
+
+              $content = $setting->content ? json_decode($setting->content, true) : [];
+              $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+              $setting->content = $content;
+
+              return response()->json(new BecomeSellerPublicResource($setting));
+          }
+
+
 
         if (!$page) {
             return response()->json([

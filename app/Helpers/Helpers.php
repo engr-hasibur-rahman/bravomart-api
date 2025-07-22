@@ -39,6 +39,14 @@ if (!function_exists('checkSubscription')) {
     }
 }
 
+if (!function_exists('shouldRound')) {
+    function shouldRound(): bool
+    {
+        $setting = SettingOption::where('option_name', 'com_site_enable_disable_decimal_point')->first();
+        return $setting && $setting->option_value === 'NO';
+    }
+}
+
 if (!function_exists('socialLogin')) {
     function socialLogin(string $accessToken, string $type, string $firebaseToken = null, string $role)
     {

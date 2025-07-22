@@ -134,7 +134,7 @@ class MediaService
         $all_images = $image_query->orderBy('created_at', 'DESC')
             ->skip($offset)
             ->latest()
-            ->take(10)
+            ->take(20)
             ->get();
 
         $all_image_files = [];

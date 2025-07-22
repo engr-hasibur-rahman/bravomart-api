@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\GdprPublicResource;
 use App\Http\Resources\Com\SiteGeneralInfoFilterLogoResource;
 use App\Http\Resources\Com\SiteGeneralInfoResource;
-use App\Models\GeneralSetting;
+use App\Models\SettingOption;
 use Illuminate\Http\Request;
 
 class ComSiteGeneralController extends Controller
@@ -78,9 +78,8 @@ class ComSiteGeneralController extends Controller
 
     public function gdprCookieSettings(Request $request)
     {
-        $settings = GeneralSetting::with('related_translations')
-            ->where('status', 1)
-            ->where('type', 'gdpr')
+        $settings = SettingOption::with('related_translations')
+            ->where('option_name', 'gdpr_data')
             ->first();
 
         if (!$settings) {
@@ -88,9 +87,6 @@ class ComSiteGeneralController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
-
-        $content = jsonImageModifierFormatter($settings->content);
-        $settings->content = $content;
 
         return response()->json([
             'data' => new GdprPublicResource($settings),

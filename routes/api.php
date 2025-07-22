@@ -107,10 +107,6 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/banner-list', [FrontendController::class, 'index']);
     Route::post('/subscribe', [SubscriberManageController::class, 'subscribe']);
     Route::post('/unsubscribe', [SubscriberManageController::class, 'unsubscribe']);
-    Route::get('/country-list', [FrontendController::class, 'countriesList']);
-    Route::get('/state-list', [FrontendController::class, 'statesList']);
-    Route::get('/city-list', [FrontendController::class, 'citiesList']);
-    Route::get('/areas', [FrontendController::class, 'areas']);
     Route::get('/area-list', [FrontendController::class, 'areaList']);
     Route::get('/tag-list', [FrontendController::class, 'tagList']);
     Route::get('/brand-list', [FrontendController::class, 'brandList']);
@@ -131,9 +127,6 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/coupons', [FrontendController::class, 'couponList']);
     Route::get('/blogs', [FrontendController::class, 'blogs']);
     Route::get('/blog/{slug}', [FrontendController::class, 'blogDetails']);
-    Route::get('/become-a-seller', [FrontendController::class, 'becomeSeller']);
-    Route::get('/about-us', [FrontendController::class, 'aboutUs']);
-    Route::get('/contact-us', [FrontendController::class, 'contactUs']);
     Route::get('/pages/{slug}', [FrontendController::class, 'getPage']);
     Route::get('/all/pages', [FrontendController::class, 'allPage']);
     Route::get('/store-wise-products', [FrontendController::class, 'getStoreWiseProducts']);

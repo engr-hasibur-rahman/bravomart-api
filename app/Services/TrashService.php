@@ -1,0 +1,193 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Customer;
+use App\Models\Product;
+use App\Models\Store;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Modules\Wallet\app\Models\Wallet;
+
+class TrashService
+{
+    protected array $relatedRelations = [
+        'customer' => [
+            'wallet',
+            'addresses',
+            'reviews',
+            'tickets',
+            'productQueries',
+            'blogComments',
+            'chats',
+            'sentMessages',
+            'receivedMessages',
+        ],
+        'seller' => [
+            'stores',
+        ],
+        'store' => [
+            'wallet',
+            'chats',
+            'sentMessages',
+            'receivedMessages',
+            'products',
+            'tickets',
+        ],
+        'deliveryman' => [
+            'wallet',
+        ],
+        'product' => [
+            'reviews',
+            'variants',
+            'queries',
+        ],
+        // Define other models if needed
+    ];
+
+    protected array $models = [
+        'customer' => Customer::class,
+        'seller' => User::class,
+        'store' => Store::class,
+        'deliveryman' => User::class,
+        'product' => Product::class,
+        'wallet' => Wallet::class,
+    ];
+
+    protected array $scopes = [
+        'seller' => 'store_level',
+        'deliveryman' => 'delivery_level',
+    ];
+
+    protected function getQueryBuilder(string $type)
+    {
+        $model = $this->models[$type] ?? null;
+
+        if (!$model) {
+            throw new \InvalidArgumentException("Invalid model type: {$type}");
+        }
+
+        $query = $model::onlyTrashed();
+
+        if (isset($this->scopes[$type])) {
+            $query->where('activity_scope', $this->scopes[$type]);
+        }
+
+        return $query;
+    }
+
+    public function listTrashed(string $type, int $perPage = 10)
+    {
+        return $this->getQueryBuilder($type)->paginate($perPage);
+    }
+
+    public function restore(string $type, array $ids): int
+    {
+        $query = $this->getQueryBuilder($type)->whereIn('id', $ids);
+        $restored = $query->restore();
+
+        $modelClass = $this->models[$type];
+
+        foreach ($modelClass::withTrashed()->whereIn('id', $ids)->get() as $item) {
+            $this->restoreRelations($type, $item);
+        }
+
+        return $restored;
+    }
+
+    protected function restoreRelations(string $type, Model $item): void
+    {
+        $relations = $this->relatedRelations[$type] ?? [];
+
+        foreach ($relations as $relation) {
+            if (!method_exists($item, $relation)) {
+                continue;
+            }
+
+            $relatedItems = $item->$relation()->withTrashed()->get();
+
+            foreach ($relatedItems as $relatedItem) {
+                if (method_exists($relatedItem, 'restore') && $relatedItem->trashed()) {
+                    $relatedItem->restore();
+                }
+
+                $relatedType = $this->guessExplicitRelatedType($type, $relation);
+                if ($relatedType) {
+                    $this->restoreRelations($relatedType, $relatedItem);
+                }
+            }
+        }
+    }
+
+    public function forceDelete(string $type, array $ids): int
+    {
+        $modelClass = $this->models[$type];
+        $items = $modelClass::withTrashed()->whereIn('id', $ids)->get();
+
+        foreach ($items as $item) {
+            $this->forceDeleteRelations($type, $item);
+            $item->forceDelete();
+        }
+
+        return count($items);
+    }
+
+    protected function forceDeleteRelations(string $type, Model $item): void
+    {
+        $relations = $this->relatedRelations[$type] ?? [];
+
+        foreach ($relations as $relation) {
+            if (!method_exists($item, $relation)) {
+                continue;
+            }
+
+            $relatedItems = $item->$relation()->withTrashed()->get();
+
+            foreach ($relatedItems as $relatedItem) {
+                $relatedType = $this->guessExplicitRelatedType($type, $relation);
+
+                if ($relatedType) {
+                    $this->forceDeleteRelations($relatedType, $relatedItem);
+                }
+
+                if (method_exists($relatedItem, 'forceDelete')) {
+                    $relatedItem->forceDelete();
+                }
+            }
+        }
+    }
+
+    protected function guessExplicitRelatedType(string $parentType, string $relation): ?string
+    {
+        // Match from the original relatedRelations config
+        foreach ($this->relatedRelations as $type => $relations) {
+            if ($type === $parentType && in_array($relation, $relations, true)) {
+                return $this->resolveRelationType($parentType, $relation);
+            }
+        }
+
+        return null;
+    }
+
+    protected function resolveRelationType(string $parentType, string $relation): ?string
+    {
+        // Static map to resolve relation => type (can be extended or automated later)
+        $map = [
+            'stores' => 'store',
+            'wallet' => 'wallet',
+            'products' => 'product',
+            'variants' => null, // If variant is not in $models, skip
+            'reviews' => null,
+            'queries' => null,
+            'chats' => null,
+            'sentMessages' => null,
+            'receivedMessages' => null,
+            'tickets' => null,
+            'addresses' => null,
+            'productQueries' => null,
+            'blogComments' => null,
+        ];
+
+        return $map[$relation] ?? null;
+    }
+}

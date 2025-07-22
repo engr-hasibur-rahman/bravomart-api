@@ -14,17 +14,18 @@ foreach ($folders as $key => $isWritable) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Installation - Step 1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="/install/assets/css/style.css" rel="stylesheet">
-    <link href="/install/assets/css/toast.css" rel="stylesheet">
+    <link href="/install_local/assets/css/style.css" rel="stylesheet">
+    <link href="/install_local/assets/css/toast.css" rel="stylesheet">
     <?php include __DIR__ . '/partials/toast.php'; ?>
 </head>
 <body>
-<h1>Step 2: Get Your File Permissions Ready</h1>
+<h1>Step 3: Get Your File Permissions Ready</h1>
 <p class="subtitle">Follow The Step-By-Step Instructions And Input The Required Details Accurately</p>
 
 <div class="steps">
     <a class="step"></a>
     <a class="step"></a>
+    <a class="step "></a>
     <a class="step active"></a>
     <a class="step"></a>
     <a class="step"></a>
@@ -78,17 +79,5 @@ foreach ($folders as $key => $isWritable) {
         window.history.replaceState({}, document.title, url.toString());
     </script>
 <?php endif; ?>
-<!--        <script>-->
-<!--            const nextBtn = document.getElementById('nextBtnPermissions');-->
-<!---->
-<!--            nextBtn?.addEventListener('click', function(e) {-->
-<!--                const allMet = this.dataset.allMet === '1';-->
-<!---->
-<!--                if (!allMet) {-->
-<!--                    e.preventDefault();-->
-<!--                    showToast("Please give all the neccessary permissions to procceed further.");-->
-<!--                }-->
-<!--            });-->
-<!--        </script>-->
 </body>
 </html>

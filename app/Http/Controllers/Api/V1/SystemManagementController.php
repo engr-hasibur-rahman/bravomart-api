@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Admin\AdminBecomeSellerResource;
+use App\Http\Resources\Com\GdprPublicResource;
 use App\Interfaces\TranslationInterface;
-use App\Models\GeneralSetting;
 use App\Models\SettingOption;
 use App\Services\LicenseService;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class SystemManagementController extends Controller
     public function __construct(
         protected TranslationInterface $transRepo,
         protected SettingOption        $get_com_option,
-        protected GeneralSetting       $general_settings,
+        protected SettingOption       $general_settings,
         protected LicenseService       $licenseService
     )
     {
@@ -675,9 +675,8 @@ class SystemManagementController extends Controller
     {
 
         if ($request->isMethod('GET')) {
-            $settings = GeneralSetting::with('related_translations')
-                ->where('status', 1)
-                ->where('type', 'gdpr')
+            $settings = SettingOption::with('related_translations')
+                ->where('option_name', 'gdpr_data')
                 ->first();
 
             if (!$settings) {
@@ -686,11 +685,8 @@ class SystemManagementController extends Controller
                 ], 404);
             }
 
-            $content = jsonImageModifierFormatter($settings->content);
-            $settings->content = $content;
-
             return response()->json([
-                'data' => new AdminBecomeSellerResource($settings),
+                'data' => new GdprPublicResource($settings),
             ]);
         }
 
@@ -699,21 +695,21 @@ class SystemManagementController extends Controller
         ]);
 
 
-        $settings = GeneralSetting::where('type', 'gdpr')->first();
+        $settings = SettingOption::where('option_name', 'gdpr_data')->first();
 
         if (!empty($settings)) {
             $settings->update([
-                'content' => $validatedData['content']
+                'option_value' => json_encode($validatedData['content']),
             ]);
         } else {
-            $settings = GeneralSetting::updateOrCreate([
-                'id' => $request->id,
-                'type' => 'gdpr',
-                'content' => $validatedData['content']
+            $settings = SettingOption::updateOrCreate([
+                'option_name' => 'gdpr_data',
+                'option_value' =>json_encode($validatedData['content']),
+                'autoload' => 'json',
             ]);
         }
 
-        createOrUpdateTranslationJson($request, $settings->id, 'App\Models\GeneralSetting', $this->translationKeysGdpr());
+        createOrUpdateTranslationJson($request, $settings->id, 'App\Models\SettingOption', $this->translationKeysGdpr());
 
         return response()->json([
             'success' => true,

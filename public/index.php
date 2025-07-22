@@ -8,7 +8,7 @@ define('LARAVEL_START', microtime(true));
 //if (!file_exists(__DIR__ . '/../storage/installed')) {
 //    // Prevent recursion if installer calls index.php again
 //    if (!str_contains($_SERVER['REQUEST_URI'], '/install')) {
-//        require __DIR__ . '/../install_local/index.php';
+//        require __DIR__ . '/../install/index.php';
 //        exit;
 //    }
 //}

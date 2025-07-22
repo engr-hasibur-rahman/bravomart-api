@@ -133,6 +133,11 @@ class SellerAndDeliverymanWithdrawController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
+        if (shouldRound() && is_float($request->amount)) {
+            return response()->json([
+                'message' => __('wallet::messages.should_round', ['name' => strtoupper($request->amount)])
+            ]);
+        }
         if (isset($request->store_id)) {
             $owner_id = $request->store_id;
         } else if (isset($request->deliveryman_id)) {

@@ -33,7 +33,4 @@ class OrderSummaryResource extends JsonResource
             'total_amount' => round($total_amount, 2), // Final total amount
         ];
     }
-
-
-
 }

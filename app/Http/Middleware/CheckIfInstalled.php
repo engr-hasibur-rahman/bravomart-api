@@ -18,7 +18,7 @@ class CheckIfInstalled
 
         // Paths to exclude from middleware check
         $excludedPaths = [
-            'install_local/assets/*',
+            'install/assets/*',
             'install*',
             'installer*',
         ];

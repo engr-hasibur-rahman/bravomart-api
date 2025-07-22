@@ -101,7 +101,7 @@ class DeliverymanManageController extends Controller
                 'area_id' => $request->area_id,
                 'identification_type' => $request->identification_type,
                 'identification_number' => $request->identification_number,
-                'identification_photo_front'=> $storedPaths['identification_photo_front'] ?? null,
+                'identification_photo_front' => $storedPaths['identification_photo_front'] ?? null,
                 'identification_photo_back' => $storedPaths['identification_photo_back'] ?? null,
                 'status' => 'pending',
             ]);
@@ -371,6 +371,7 @@ class DeliverymanManageController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $deliveryman = auth('api')->user();
+        $deliveryman_details = DeliveryMan::where('user_id', $deliveryman->id)->first();
         $existing_orders = Order::where('confirmed_by', $deliveryman->id)
             ->whereIn('status', ['processing', 'shipped'])
             ->exists();
@@ -385,6 +386,8 @@ class DeliverymanManageController extends Controller
                 'reason' => $request->reason,
                 'description' => $request->description
             ]);
+            $deliveryman_details?->delete();
+            $deliveryman->wallet()->delete();
             $deliveryman->delete(); // Soft delete
             $deliveryman->currentAccessToken()->delete();
             return response()->json([
