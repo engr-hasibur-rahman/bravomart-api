@@ -4,6 +4,8 @@ namespace Modules\Wallet\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Customer\CustomerResource;
+use App\Models\Customer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -202,6 +204,45 @@ class WalletManageAdminController extends Controller
         return response()->json([
             'message' => 'Transaction payment status updated successfully',
             'transaction' => $transaction,
+        ]);
+    }
+
+    public function getTrashList(Request $request)
+    {
+        $trash = Wallet::onlyTrashed()->paginate($request->per_page ?? 10);
+        return response()->json([
+            'data' => CustomerResource::collection($trash),
+            'meta' => new PaginationResource($trash)
+        ]);
+    }
+
+    public function restoreTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $restored = Wallet::whereIn('id', $ids)
+            ->onlyTrashed()
+            ->get();
+        if ($restored->isNotEmpty()) {
+            $restored->each->restore();
+        }
+        return response()->json([
+            'message' => __('messages.restore_success', ['name' => 'Customers']),
+            'restored' => $restored,
+        ]);
+    }
+
+    public function deleteTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $deleted = Wallet::whereIn('id', $ids)
+            ->onlyTrashed()
+            ->get();
+        if ($deleted->isNotEmpty()) {
+            $deleted->each->forceDelete();
+        }
+        return response()->json([
+            'message' => __('messages.force_delete_success', ['name' => 'Customers']),
+            'deleted' => $deleted
         ]);
     }
 }

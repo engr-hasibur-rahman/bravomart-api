@@ -131,6 +131,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::get('details/{slug}', [AdminProductManageController::class, 'show']);
                 Route::post('update', [AdminProductManageController::class, 'update']);
                 Route::delete('remove/{id?}', [AdminProductManageController::class, 'destroy']);
+                Route::get('trash-list', [AdminProductManageController::class, 'getTrashList'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCTS_TRASH_MANAGEMENT->value);
+                Route::post('trash-restore', [AdminProductManageController::class, 'restoreTrashed'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCTS_TRASH_MANAGEMENT->value);
+                Route::post('trash-delete', [AdminProductManageController::class, 'deleteTrashed'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCTS_TRASH_MANAGEMENT->value);
                 Route::post('approve', [AdminProductManageController::class, 'approveProductRequests']);
                 Route::get('request', [AdminProductManageController::class, 'productRequests'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_PRODUCT_APPROVAL_REQ->value);
                 Route::post('export', [AdminProductManageController::class, 'export'])->middleware('permission:' . PermissionKey::ADMIN_PRODUCT_PRODUCT_BULK_EXPORT->value);
@@ -155,6 +158,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('change-status', [AdminStoreManageController::class, 'changeStatus']);
                 Route::delete('remove/{id}', [AdminStoreManageController::class, 'destroy']);
                 Route::get('deleted-records', [AdminStoreManageController::class, 'deletedRecords']);
+                Route::get('trash-list', [AdminStoreManageController::class, 'getTrashList'])->middleware('permission:' . PermissionKey::ADMIN_STORE_TRASH_MANAGEMENT->value);
+                Route::get('trash-restore', [AdminStoreManageController::class, 'restoreTrashed'])->middleware('permission:' . PermissionKey::ADMIN_STORE_TRASH_MANAGEMENT->value);
+                Route::get('trash-delete', [AdminStoreManageController::class, 'deleteTrashed'])->middleware('permission:' . PermissionKey::ADMIN_STORE_TRASH_MANAGEMENT->value);
             });
             // Store Approval Request Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_APPROVAL->value]], function () {
@@ -215,8 +221,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('update-profile', [AdminCustomerManageController::class, 'updateProfile']);
                 Route::post('suspend', [AdminCustomerManageController::class, 'suspend']);
                 Route::post('remove', [AdminCustomerManageController::class, 'destroy']);
-                Route::get('trash-list', [AdminCustomerManageController::class, 'getTrashList']);
-                Route::post('trash-restore', [AdminCustomerManageController::class, 'restoreTrashed']);
+                Route::get('trash-list', [AdminCustomerManageController::class, 'getTrashList'])->middleware('permission:' . PermissionKey::ADMIN_CUSTOMER_TRASH_MANAGEMENT->value);
+                Route::post('trash-restore', [AdminCustomerManageController::class, 'restoreTrashed'])->middleware('permission:' . PermissionKey::ADMIN_CUSTOMER_TRASH_MANAGEMENT->value);
+                Route::post('trash-delete', [AdminCustomerManageController::class, 'deleteTrashed'])->middleware('permission:' . PermissionKey::ADMIN_CUSTOMER_TRASH_MANAGEMENT->value);
             });
             // Newsletter
             Route::group(['permission:' . PermissionKey::ADMIN_CUSTOMER_MANAGEMENT_LIST->value], function () {
@@ -249,6 +256,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('change-status', [AdminSellerManageController::class, 'changeStatus']);
             Route::post('change-password', [AdminSellerManageController::class, 'changePassword']);
             Route::post('remove', [AdminSellerManageController::class, 'destroy']);
+            Route::post('trash-list', [AdminSellerManageController::class, 'getTrashList'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);;
+            Route::post('trash-restore', [AdminSellerManageController::class, 'restoreTrashed'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);;
+            Route::post('trash-delete', [AdminSellerManageController::class, 'deleteTrashed'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);;
         });
         // Department manage
         Route::group(['prefix' => 'department/'], function () {
@@ -476,7 +486,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_DELIVERYMAN_MANAGE_LIST->value]], function () {
                 Route::get('list', [AdminDeliverymanManageController::class, 'index']);
                 Route::get('list-dropdown', [AdminDeliverymanManageController::class, 'deliverymanDropdownList']);
-                Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest'])->middleware(['permission:'.PermissionKey::ADMIN_DELIVERYMAN_REQUEST->value]);
+                Route::get('request', [AdminDeliverymanManageController::class, 'deliverymanRequest'])->middleware(['permission:' . PermissionKey::ADMIN_DELIVERYMAN_REQUEST->value]);
                 Route::post('add', [AdminDeliverymanManageController::class, 'store']);
                 Route::post('change-password', [AdminDeliverymanManageController::class, 'changePassword']);
                 Route::get('details/{id}', [AdminDeliverymanManageController::class, 'show']);
@@ -485,6 +495,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('verification', [AdminDeliverymanManageController::class, 'deliverymanVerification']);
                 Route::post('handle-request', [AdminDeliverymanManageController::class, 'handleRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
+                Route::get('trash-list', [AdminDeliverymanManageController::class, 'getTrashList'])->middleware('permission:'.PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);
+                Route::post('trash-restore', [AdminDeliverymanManageController::class, 'restoreTrashed'])->middleware('permission:'.PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);
+                Route::post('trash-delete', [AdminDeliverymanManageController::class, 'deleteTrashed'])->middleware('permission:'.PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);
                 Route::get('history/{id}', [AdminDeliverymanManageController::class, 'deliverymanDashboard']);
             });
             //vehicle-types
@@ -518,6 +531,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['prefix' => 'wallet/', PermissionKey::ADMIN_WALLET_MANAGE->value], function () {
                 Route::match(['get', 'post'], 'settings', [WalletManageAdminController::class, 'depositSettings'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_SETTINGS->value]);
                 Route::get('list', [WalletManageAdminController::class, 'index']);
+                Route::get('trash-list', [WalletManageAdminController::class, 'getTrashList'])->middleware('permission:'.PermissionKey::ADMIN_WALLET_TRASH_MANAGEMENT->value);
+                Route::post('trash-restore', [WalletManageAdminController::class, 'restoreTrashed'])->middleware('permission:'.PermissionKey::ADMIN_WALLET_TRASH_MANAGEMENT->value);
+                Route::post('trash-delete', [WalletManageAdminController::class, 'deleteTrashed'])->middleware('permission:'.PermissionKey::ADMIN_WALLET_TRASH_MANAGEMENT->value);
                 Route::post('status', [WalletManageAdminController::class, 'status']);
                 Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
                 Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_TRANSACTION->value]);

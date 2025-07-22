@@ -186,6 +186,8 @@ return [
     'restore_success' => ':name restored successfully!',
     'restore_failed' => ':name restore failed!',
 
+    'force_delete_success' => ':name deleted permanently!',
+
 ];
 
 

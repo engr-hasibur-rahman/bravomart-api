@@ -13,6 +13,7 @@ use App\Services\TrashService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Modules\Wallet\app\Models\Wallet;
 
 class CustomerManageController extends Controller
 {
@@ -285,9 +286,33 @@ class CustomerManageController extends Controller
     {
         $ids = $request->ids;
         $restored = $this->trashService->restore('customer', $ids);
+        $wallets = Wallet::where('owner_type', Customer::class)
+            ->whereIn('owner_id', $ids)
+            ->onlyTrashed()
+            ->get();
+        if ($wallets->isNotEmpty()) {
+            $wallets->each->restore();
+        }
         return response()->json([
-            'message' => __('messages.restore_success', ['name' => 'Customer']),
+            'message' => __('messages.restore_success', ['name' => 'Customers']),
             'restored' => $restored,
+        ]);
+    }
+
+    public function deleteTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $deleted = $this->trashService->forceDelete('customer', $ids);
+        $wallets = Wallet::where('owner_type', Customer::class)
+            ->whereIn('owner_id', $ids)
+            ->onlyTrashed()
+            ->get();
+        if ($wallets->isNotEmpty()) {
+            $wallets->each->forceDelete();
+        }
+        return response()->json([
+            'message' => __('messages.force_delete_success', ['name' => 'Customers']),
+            'deleted' => $deleted
         ]);
     }
 }

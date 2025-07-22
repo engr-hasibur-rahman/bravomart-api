@@ -23,6 +23,8 @@ class TrashService
             'sentMessages',
             'receivedMessages',
         ],
+        'chat' => ['messages'],
+        'ticket' => ['messages'],
         'seller' => [
             'stores',
         ],
@@ -42,7 +44,6 @@ class TrashService
             'variants',
             'queries',
         ],
-        // Define other models if needed
     ];
 
     protected array $models = [
@@ -104,7 +105,8 @@ class TrashService
                 continue;
             }
 
-            $relatedItems = $item->$relation()->withTrashed()->get();
+            $relationInstance = $item->$relation();
+            $relatedItems = $relationInstance->withTrashed()->get();
 
             foreach ($relatedItems as $relatedItem) {
                 if (method_exists($relatedItem, 'restore') && $relatedItem->trashed()) {
@@ -141,7 +143,8 @@ class TrashService
                 continue;
             }
 
-            $relatedItems = $item->$relation()->withTrashed()->get();
+            $relationInstance = $item->$relation();
+            $relatedItems = $relationInstance->withTrashed()->get();
 
             foreach ($relatedItems as $relatedItem) {
                 $relatedType = $this->guessExplicitRelatedType($type, $relation);
@@ -159,10 +162,13 @@ class TrashService
 
     protected function guessExplicitRelatedType(string $parentType, string $relation): ?string
     {
-        // Match from the original relatedRelations config
         foreach ($this->relatedRelations as $type => $relations) {
-            if ($type === $parentType && in_array($relation, $relations, true)) {
-                return $this->resolveRelationType($parentType, $relation);
+            if ($type === $relation) {
+                return $relation; // direct match
+            }
+
+            if ($parentType === $type && in_array($relation, $relations, true)) {
+                return $this->inferTypeFromRelationName($relation); // fallback
             }
         }
 
@@ -189,5 +195,17 @@ class TrashService
         ];
 
         return $map[$relation] ?? null;
+    }
+
+
+    protected function inferTypeFromRelationName(string $relation): string
+    {
+        return match ($relation) {
+            'wallet' => 'wallet',
+            'chats' => 'chat',
+            'tickets' => 'ticket',
+            'messages' => 'message', // fallback if you need
+            default => $relation,
+        };
     }
 }

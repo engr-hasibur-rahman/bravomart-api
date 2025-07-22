@@ -13,23 +13,29 @@ use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
 use App\Http\Resources\Admin\AdminVehicleTypeDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Customer\CustomerResource;
 use App\Http\Resources\Dashboard\DeliverymanDashboardResource;
 use App\Http\Resources\Deliveryman\DeliverymanDropdownResource;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Mail\DynamicEmail;
+use App\Models\Customer;
 use App\Models\DeliveryMan;
 use App\Models\EmailTemplate;
 use App\Models\User;
+use App\Services\TrashService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Modules\Wallet\app\Models\Wallet;
 
 class AdminDeliverymanManageController extends Controller
 {
-    public function __construct(protected DeliverymanManageInterface $deliverymanRepo)
-    {
+    private $trashService;
 
+    public function __construct(protected DeliverymanManageInterface $deliverymanRepo, TrashService $trashService)
+    {
+        $this->trashService = $trashService;
     }
 
     public function changePassword(Request $request)
@@ -396,6 +402,49 @@ class AdminDeliverymanManageController extends Controller
         }
         return response()->json([
             'message' => __('messages.update_success', ['name' => 'Deliveryman verification status'])
+        ]);
+    }
+
+    public function getTrashList(Request $request)
+    {
+        $trash = $this->trashService->listTrashed('deliveryman', $request->per_page ?? 10);
+        return response()->json([
+            'data' => CustomerResource::collection($trash),
+            'meta' => new PaginationResource($trash)
+        ]);
+    }
+
+    public function restoreTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $restored = $this->trashService->restore('deliveryman', $ids);
+        $wallets = Wallet::where('owner_type', User::class)
+            ->whereIn('owner_id', $ids)
+            ->onlyTrashed()
+            ->get();
+        if ($wallets->isNotEmpty()) {
+            $wallets->each->restore();
+        }
+        return response()->json([
+            'message' => __('messages.restore_success', ['name' => 'Deliverymen']),
+            'restored' => $restored,
+        ]);
+    }
+
+    public function deleteTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $deleted = $this->trashService->forceDelete('deliveryman', $ids);
+        $wallets = Wallet::where('owner_type', User::class)
+            ->whereIn('owner_id', $ids)
+            ->onlyTrashed()
+            ->get();
+        if ($wallets->isNotEmpty()) {
+            $wallets->each->forceDelete();
+        }
+        return response()->json([
+            'message' => __('messages.force_delete_success', ['name' => 'Deliverymen']),
+            'deleted' => $deleted
         ]);
     }
 }
