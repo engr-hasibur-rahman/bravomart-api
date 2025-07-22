@@ -149,6 +149,17 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCTS_TRASH_MANAGEMENT->value,
+                                    'PermissionTitle' => 'Trash',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => 'Trash',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Trash',
+                                        'ar' => 'نفاية'
+                                    ]
+                                ],
+                                [
                                     'PermissionName' => PermissionKey::ADMIN_PRODUCT_PRODUCT_APPROVAL_REQ->value,
                                     'PermissionTitle' => 'Product Approval Request',
                                     'activity_scope' => 'system_level',
@@ -351,6 +362,17 @@ class PermissionAdminSeeder extends Seeder
                                     ]
                                 ],
                                 [
+                                    'PermissionName' => PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value,
+                                    'PermissionTitle' => 'Trash',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => 'Trash',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Trash',
+                                        'ar' => 'نفاية'
+                                    ]
+                                ],
+                                [
                                     'PermissionName' => PermissionKey::ADMIN_SELLER_REGISTRATION->value,
                                     'PermissionTitle' => 'Register A Seller',
                                     'activity_scope' => 'system_level',
@@ -382,6 +404,17 @@ class PermissionAdminSeeder extends Seeder
                                     'translations' => [
                                         'en' => 'Store List',
                                         'ar' => 'قائمة المتاجر'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_STORE_TRASH_MANAGEMENT->value,
+                                    'PermissionTitle' => 'Trash',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => 'Trash',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Trash',
+                                        'ar' => 'نفاية'
                                     ]
                                 ],
                                 [
@@ -601,6 +634,17 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' => PermissionKey::ADMIN_WALLET_TRASH_MANAGEMENT->value,
+                            'PermissionTitle' => 'Trash',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Trash',
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Trash',
+                                'ar' => 'نفاية'
+                            ]
+                        ],
+                        [
                             'PermissionName' => PermissionKey::ADMIN_WALLET_TRANSACTION->value,
                             'PermissionTitle' => 'Transaction History',
                             'activity_scope' => 'system_level',
@@ -666,6 +710,17 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
+                            'PermissionName' => PermissionKey::ADMIN_DELIVERYMAN_TRASH_MANAGEMENT->value,
+                            'PermissionTitle' => 'Trash',
+                            'activity_scope' => 'system_level',
+                            'icon' => 'Trash',
+                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                            'translations' => [
+                                'en' => 'Trash',
+                                'ar' => 'نفاية'
+                            ]
+                        ],
+                        [
                             'PermissionName' => PermissionKey::ADMIN_DELIVERYMAN_REQUEST->value,
                             'PermissionTitle' => 'Deliveryman Requests',
                             'activity_scope' => 'system_level',
@@ -711,6 +766,17 @@ class PermissionAdminSeeder extends Seeder
                                     'translations' => [
                                         'en' => 'Customers',
                                         'ar' => 'عملاء'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_CUSTOMER_TRASH_MANAGEMENT->value,
+                                    'PermissionTitle' => 'Trash',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => 'Trash',
+                                    'options' => ['view', 'insert', 'update', 'delete', 'others'],
+                                    'translations' => [
+                                        'en' => 'Trash',
+                                        'ar' => 'نفاية'
                                     ]
                                 ],
                                 [
