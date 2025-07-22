@@ -391,7 +391,7 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
 
         $recentCompletedOrders = $this->getRecentCompletedOrders($filters);
 
-        $topCategories = $this->getTopCategories();
+        $topCategories = $this->getTopCategories($filters);
 
         return [
             'top_rated_products' => $topRatedProducts,
@@ -401,10 +401,19 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
         ];
     }
 
-    public function getTopCategories()
+    public function getTopCategories(array $filters = [])
     {
-        $topCategoryIds = Product::select('category_id')
-            ->whereNotNull('category_id')
+        $productQuery = Product::query()
+            ->select('category_id')
+            ->whereNotNull('category_id');
+
+        if (!empty($filters['store_type'])) {
+            $productQuery->whereHas('store', function ($query) use ($filters) {
+                $query->where('type', $filters['store_type']);
+            });
+        }
+
+        $topCategoryIds = $productQuery
             ->groupBy('category_id')
             ->orderByRaw('SUM(order_count) DESC')
             ->limit(10)
@@ -416,7 +425,7 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             ->sortBy(function ($category) use ($topCategoryIds) {
                 return array_search($category->id, $topCategoryIds->toArray());
             })
-            ->values(); // To reindex the collection properly
+            ->values();
     }
 
     public function getTopRatedProducts($filters = [])
