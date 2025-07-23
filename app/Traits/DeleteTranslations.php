@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+
 trait DeleteTranslations
 {
     public static function bootDeleteTranslations()
