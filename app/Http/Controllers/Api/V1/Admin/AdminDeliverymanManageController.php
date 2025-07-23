@@ -418,13 +418,6 @@ class AdminDeliverymanManageController extends Controller
     {
         $ids = $request->ids;
         $restored = $this->trashService->restore('deliveryman', $ids);
-        $wallets = Wallet::where('owner_type', User::class)
-            ->whereIn('owner_id', $ids)
-            ->onlyTrashed()
-            ->get();
-        if ($wallets->isNotEmpty()) {
-            $wallets->each->restore();
-        }
         return response()->json([
             'message' => __('messages.restore_success', ['name' => 'Deliverymen']),
             'restored' => $restored,
@@ -435,13 +428,6 @@ class AdminDeliverymanManageController extends Controller
     {
         $ids = $request->ids;
         $deleted = $this->trashService->forceDelete('deliveryman', $ids);
-        $wallets = Wallet::where('owner_type', User::class)
-            ->whereIn('owner_id', $ids)
-            ->onlyTrashed()
-            ->get();
-        if ($wallets->isNotEmpty()) {
-            $wallets->each->forceDelete();
-        }
         return response()->json([
             'message' => __('messages.force_delete_success', ['name' => 'Deliverymen']),
             'deleted' => $deleted

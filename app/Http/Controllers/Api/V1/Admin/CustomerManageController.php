@@ -286,13 +286,6 @@ class CustomerManageController extends Controller
     {
         $ids = $request->ids;
         $restored = $this->trashService->restore('customer', $ids);
-        $wallets = Wallet::where('owner_type', Customer::class)
-            ->whereIn('owner_id', $ids)
-            ->onlyTrashed()
-            ->get();
-        if ($wallets->isNotEmpty()) {
-            $wallets->each->restore();
-        }
         return response()->json([
             'message' => __('messages.restore_success', ['name' => 'Customers']),
             'restored' => $restored,
@@ -303,13 +296,6 @@ class CustomerManageController extends Controller
     {
         $ids = $request->ids;
         $deleted = $this->trashService->forceDelete('customer', $ids);
-        $wallets = Wallet::where('owner_type', Customer::class)
-            ->whereIn('owner_id', $ids)
-            ->onlyTrashed()
-            ->get();
-        if ($wallets->isNotEmpty()) {
-            $wallets->each->forceDelete();
-        }
         return response()->json([
             'message' => __('messages.force_delete_success', ['name' => 'Customers']),
             'deleted' => $deleted

@@ -287,7 +287,6 @@ class CustomerManageRepository implements CustomerManageInterface
             return false;
         }
         DB::transaction(function () use ($customer) {
-            $wallet = Wallet::where('owner_id', $customer->id)->where('owner_type', Customer::class)->first();
             // Delete support ticket files
             foreach ($customer->tickets as $ticket) {
                 foreach ($ticket->messages as $message) {
@@ -309,10 +308,6 @@ class CustomerManageRepository implements CustomerManageInterface
             $customer->addresses()->delete();
             $customer->userOtps()->delete();
             $customer->notifications()->delete();
-            if ($wallet) {
-                $wallet->delete();
-            }
-
             // Delete profile image if used MediaService
             $imgId[] = $customer->image;
             if ($customer->image) {

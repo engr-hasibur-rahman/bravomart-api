@@ -299,7 +299,7 @@ class SystemManagementController extends Controller
             $setting_options = SettingOption::whereIn('option_name', $fields)->get(['id']);
 
             foreach ($setting_options as $com_option) {
-                $this->transRepo->storeTranslation($request, $com_option->id, 'App\Models\SettingOption', [$com_option->option_name]);
+                createOrUpdateTranslation($request, $com_option->id, 'App\Models\SettingOption', [$com_option->option_name]);
             }
 
             return $this->success(translate('messages.update_success', ['name' => 'Maintenance Settings']));
