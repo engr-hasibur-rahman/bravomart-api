@@ -34,8 +34,8 @@ return [
     'status_change_success' => 'Status has been successfully changed!',
     'status_change_failed' => 'Failed to Delete :name',
 
-    'login_success' => ':name logged in successfully!',
-    'login_failed' => ':name log in failed!',
+    'login_success' => 'Logged in successfully!',
+    'login_failed' => 'Log in failed!',
 
     'registration_success' => ':name registered successfully!',
     'registration_failed' => ':name registration failed!',

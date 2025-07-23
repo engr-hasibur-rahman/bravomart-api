@@ -393,7 +393,7 @@ class UserController extends Controller
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
-                "message" => __('messages.login_success', ['name' => 'Admin']),
+                "message" => __('messages.login_success'),
                 "token" => $token->plainTextToken,
                 'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                 "email_verified" => $email_verified,
