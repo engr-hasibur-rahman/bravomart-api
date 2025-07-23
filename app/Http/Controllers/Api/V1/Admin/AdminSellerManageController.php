@@ -271,7 +271,7 @@ class AdminSellerManageController extends Controller
     {
         $trash = $this->trashService->listTrashed('seller', $request->per_page ?? 10);
         return response()->json([
-            'data' => CustomerResource::collection($trash),
+            'data' => SellerResource::collection($trash),
             'meta' => new PaginationResource($trash)
         ]);
     }
