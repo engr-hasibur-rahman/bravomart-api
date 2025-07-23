@@ -431,7 +431,7 @@ class AdminProductManageController extends Controller
     {
         $trash = $this->trashService->listTrashed('product', $request->per_page ?? 10);
         return response()->json([
-            'data' => CustomerResource::collection($trash),
+            'data' => ProductListResource::collection($trash),
             'meta' => new PaginationResource($trash)
         ]);
     }

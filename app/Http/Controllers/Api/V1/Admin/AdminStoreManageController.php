@@ -178,7 +178,7 @@ class AdminStoreManageController extends Controller
     {
         $trash = $this->trashService->listTrashed('store', $request->per_page ?? 10);
         return response()->json([
-            'data' => CustomerResource::collection($trash),
+            'data' => StoreListResource::collection($trash),
             'meta' => new PaginationResource($trash)
         ]);
     }

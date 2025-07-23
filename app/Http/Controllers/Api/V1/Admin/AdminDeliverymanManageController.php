@@ -409,7 +409,7 @@ class AdminDeliverymanManageController extends Controller
     {
         $trash = $this->trashService->listTrashed('deliveryman', $request->per_page ?? 10);
         return response()->json([
-            'data' => CustomerResource::collection($trash),
+            'data' => AdminDeliverymanResource::collection($trash),
             'meta' => new PaginationResource($trash)
         ]);
     }
