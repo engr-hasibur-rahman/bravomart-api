@@ -1400,17 +1400,6 @@ class PermissionAdminSeeder extends Seeder
                                         'en' => 'Footer Customization',
                                         'ar' => 'تخصيص التذييل'
                                     ]
-                                ],
-                                [
-                                    'PermissionName' => PermissionKey::MAINTENANCE_SETTINGS->value,
-                                    'PermissionTitle' => 'Maintenance Settings',
-                                    'activity_scope' => 'system_level',
-                                    'icon' => '',
-                                    'options' => ['view', 'update'],
-                                    'translations' => [
-                                        'en' => 'Maintenance Settings',
-                                        'ar' => 'إعدادات الصيانة'
-                                    ]
                                 ]
                             ]
                         ],
@@ -1552,26 +1541,51 @@ class PermissionAdminSeeder extends Seeder
                                 ]
                             ]
                         ],
+
                         [
-                            'PermissionName' => PermissionKey::CACHE_MANAGEMENT->value,
-                            'PermissionTitle' => 'Cache Management',
+                            'PermissionName' => '',
+                            'PermissionTitle' => 'Maintenance Tools',
                             'activity_scope' => 'system_level',
-                            'icon' => 'DatabaseZap',
-                            'options' => ['view', 'update'],
+                            'icon' => 'Blocks',
+                            'options' => ['view'],
                             'translations' => [
-                                'en' => 'Cache Management',
-                                'ar' => 'إدارة ذاكرة التخزين المؤقت'
-                            ]
-                        ],
-                        [
-                            'PermissionName' => PermissionKey::DATABASE_UPDATE_CONTROLS->value,
-                            'PermissionTitle' => 'Database Update',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'Database',
-                            'options' => ['view', 'update'],
-                            'translations' => [
-                                'en' => 'Database Update',
-                                'ar' => 'تحديث قاعدة البيانات'
+                                'en' => 'Maintenance Tools',
+                                'ar' => 'أدوات الصيانة'
+                            ],
+                            'submenu' => [
+                                [
+                                    'PermissionName' => PermissionKey::MAINTENANCE_SETTINGS->value,
+                                    'PermissionTitle' => 'Maintenance Mode',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => '',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Maintenance Mode',
+                                        'ar' => 'وضع الصيانة'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::CACHE_MANAGEMENT->value,
+                                    'PermissionTitle' => 'Cache Management',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => 'DatabaseZap',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Cache Management',
+                                        'ar' => 'إدارة ذاكرة التخزين المؤقت'
+                                    ]
+                                ],
+                                [
+                                    'PermissionName' => PermissionKey::DATABASE_UPDATE_CONTROLS->value,
+                                    'PermissionTitle' => 'Database Update',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => 'Database',
+                                    'options' => ['view', 'update'],
+                                    'translations' => [
+                                        'en' => 'Database Update',
+                                        'ar' => 'تحديث قاعدة البيانات'
+                                    ]
+                                ]
                             ]
                         ]
                     ]

@@ -10,14 +10,22 @@ use App\Http\Resources\Order\AdminOrderResource;
 use App\Http\Resources\Order\OrderSummaryResource;
 use App\Interfaces\DeliverymanManageInterface;
 use App\Models\Order;
+use App\Services\Order\OrderManageNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class DeliverymanOrderManageController extends Controller
 {
-    public function __construct(protected DeliverymanManageInterface $deliverymanRepo)
-    {
 
+    protected OrderManageNotificationService $orderManageNotificationService;
+    protected DeliverymanManageInterface $deliverymanRepo;
+
+    public function __construct(
+        DeliverymanManageInterface $deliverymanRepo,
+        OrderManageNotificationService $orderManageNotificationService
+    ) {
+        $this->deliverymanRepo = $deliverymanRepo;
+        $this->orderManageNotificationService = $orderManageNotificationService;
     }
 
     public function getMyOrders(Request $request)
@@ -234,6 +242,8 @@ class DeliverymanOrderManageController extends Controller
                 'message' => __('messages.order_is_not_accepted')
             ]);
         }
+
+        $this->orderManageNotificationService->createOrderNotification($order->id, 'deliveryman_order_status_psd');
 
         if ($success === 'delivered') {
             return response()->json([
