@@ -485,9 +485,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::group(['prefix' => 'wallet/', PermissionKey::ADMIN_WALLET_MANAGE->value], function () {
                 Route::match(['get', 'post'], 'settings', [WalletManageAdminController::class, 'depositSettings'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_SETTINGS->value]);
                 Route::get('list', [WalletManageAdminController::class, 'index']);
-                Route::get('trash-list', [WalletManageAdminController::class, 'getTrashList'])->middleware('permission:'.PermissionKey::ADMIN_WALLET_TRASH_MANAGEMENT->value);
-                Route::post('trash-restore', [WalletManageAdminController::class, 'restoreTrashed'])->middleware('permission:'.PermissionKey::ADMIN_WALLET_TRASH_MANAGEMENT->value);
-                Route::post('trash-delete', [WalletManageAdminController::class, 'deleteTrashed'])->middleware('permission:'.PermissionKey::ADMIN_WALLET_TRASH_MANAGEMENT->value);
                 Route::post('status', [WalletManageAdminController::class, 'status']);
                 Route::post('deposit', [WalletManageAdminController::class, 'depositCreateByAdmin']);
                 Route::get('transactions', [WalletManageAdminController::class, 'transactionRecords'])->middleware(['permission:' . PermissionKey::ADMIN_WALLET_TRANSACTION->value]);

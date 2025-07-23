@@ -519,7 +519,6 @@ class StoreManageRepository implements StoreManageInterface
                 });
 
                 $store->notifications()->delete();
-                $store->wallet()?->delete();
                 $store->subscriptions()->update(['status' => 0]);
             }
         });
