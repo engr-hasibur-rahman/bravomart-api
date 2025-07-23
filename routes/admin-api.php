@@ -252,7 +252,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
             Route::post('change-status', [AdminSellerManageController::class, 'changeStatus']);
             Route::post('change-password', [AdminSellerManageController::class, 'changePassword']);
             Route::post('remove', [AdminSellerManageController::class, 'destroy']);
-            Route::post('trash-list', [AdminSellerManageController::class, 'getTrashList'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);;
+            Route::get('trash-list', [AdminSellerManageController::class, 'getTrashList'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);;
             Route::post('trash-restore', [AdminSellerManageController::class, 'restoreTrashed'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);;
             Route::post('trash-delete', [AdminSellerManageController::class, 'deleteTrashed'])->middleware('permission:' . PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);;
         });
@@ -449,9 +449,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::post('verification', [AdminDeliverymanManageController::class, 'deliverymanVerification']);
                 Route::post('handle-request', [AdminDeliverymanManageController::class, 'handleRequest']);
                 Route::delete('remove/{id}', [AdminDeliverymanManageController::class, 'destroy']);
-                Route::get('trash-list', [AdminDeliverymanManageController::class, 'getTrashList'])->middleware('permission:'.PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);
-                Route::post('trash-restore', [AdminDeliverymanManageController::class, 'restoreTrashed'])->middleware('permission:'.PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);
-                Route::post('trash-delete', [AdminDeliverymanManageController::class, 'deleteTrashed'])->middleware('permission:'.PermissionKey::ADMIN_SELLER_TRASH_MANAGEMENT->value);
+                Route::get('trash-list', [AdminDeliverymanManageController::class, 'getTrashList'])->middleware('permission:'.PermissionKey::ADMIN_DELIVERYMAN_TRASH_MANAGEMENT->value);
+                Route::post('trash-restore', [AdminDeliverymanManageController::class, 'restoreTrashed'])->middleware('permission:'.PermissionKey::ADMIN_DELIVERYMAN_TRASH_MANAGEMENT->value);
+                Route::post('trash-delete', [AdminDeliverymanManageController::class, 'deleteTrashed'])->middleware('permission:'.PermissionKey::ADMIN_DELIVERYMAN_TRASH_MANAGEMENT->value);
                 Route::get('history/{id}', [AdminDeliverymanManageController::class, 'deliverymanDashboard']);
             });
             //vehicle-types
