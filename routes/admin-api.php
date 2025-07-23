@@ -155,8 +155,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum']], functi
                 Route::delete('remove/{id}', [AdminStoreManageController::class, 'destroy']);
                 Route::get('deleted-records', [AdminStoreManageController::class, 'deletedRecords']);
                 Route::get('trash-list', [AdminStoreManageController::class, 'getTrashList'])->middleware('permission:' . PermissionKey::ADMIN_STORE_TRASH_MANAGEMENT->value);
-                Route::get('trash-restore', [AdminStoreManageController::class, 'restoreTrashed'])->middleware('permission:' . PermissionKey::ADMIN_STORE_TRASH_MANAGEMENT->value);
-                Route::get('trash-delete', [AdminStoreManageController::class, 'deleteTrashed'])->middleware('permission:' . PermissionKey::ADMIN_STORE_TRASH_MANAGEMENT->value);
+                Route::post('trash-restore', [AdminStoreManageController::class, 'restoreTrashed'])->middleware('permission:' . PermissionKey::ADMIN_STORE_TRASH_MANAGEMENT->value);
+                Route::post('trash-delete', [AdminStoreManageController::class, 'deleteTrashed'])->middleware('permission:' . PermissionKey::ADMIN_STORE_TRASH_MANAGEMENT->value);
             });
             // Store Approval Request Routes
             Route::group(['middleware' => ['permission:' . PermissionKey::ADMIN_STORE_APPROVAL->value]], function () {
