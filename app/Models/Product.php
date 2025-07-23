@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,7 +11,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes,DeleteTranslations;
 
     protected $appends = ['wishlist', 'rating', 'review_count', 'reviews'];
     protected $dates = ['deleted_at'];
@@ -81,25 +82,6 @@ class Product extends Model
             });
         }
     }
-
-    // Only fetch those products which store have subscription_type commission and if subscription then within the order limit for frontend
-//    public function scopeWithValidStore($query)
-//    {
-//        return $query->whereHas('store', function ($storeQuery) {
-//            $storeQuery->where(function ($q) {
-//                $q->where('subscription_type', 'commission')
-//                    ->orWhere(function ($q2) {
-//                        $q2->where('subscription_type', 'subscription')
-//                            ->whereHas('subscriptions', function ($subQuery) {
-//                                $subQuery->where('status', 1)
-//                                    ->whereDate('expire_date', '>=', now())
-//                                    ->where('order_limit', '>', 0);
-//                            });
-//                    });
-//            });
-//        });
-//    }
-
 
     public function category()
     {

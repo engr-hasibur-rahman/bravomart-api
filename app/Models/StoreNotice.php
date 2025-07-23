@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class StoreNotice extends Model
 {
+    use DeleteTranslations;
     protected $fillable = [
         'type',
         'title',
@@ -19,6 +21,11 @@ class StoreNotice extends Model
         'title',
         'message',
     ];
+
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
 
     public function recipients()
     {

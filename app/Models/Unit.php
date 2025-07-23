@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class Unit extends Model
 {
+    use DeleteTranslations;
     protected $fillable = [
         "name",
         "order",

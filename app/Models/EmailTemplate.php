@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class EmailTemplate extends Model
 {
+    use DeleteTranslations;
     protected $fillable = ['type', 'name', 'subject', 'body', 'status'];
 
     protected $casts = [
@@ -17,6 +19,10 @@ class EmailTemplate extends Model
         'subject',
         'body',
     ];
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')

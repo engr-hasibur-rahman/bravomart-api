@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
 class StoreArea extends Model
 {
-    use HasFactory;
+    use HasFactory,DeleteTranslations;
 
     //Will Manage Shop Area
     protected $table = 'store_areas';

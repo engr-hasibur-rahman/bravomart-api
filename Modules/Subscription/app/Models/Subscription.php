@@ -3,12 +3,13 @@
 namespace Modules\Subscription\app\Models;
 
 use App\Models\Translation;
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Subscription extends Model
 {
-    use HasFactory;
+    use HasFactory,DeleteTranslations;
 
     protected $fillable = [
         'name',
@@ -50,7 +51,10 @@ class Subscription extends Model
         'chat_support' => 'boolean',
         'status' => 'integer',
     ];
-
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
     public function related_translations()
     {
         return $this->hasMany(Translation::class, 'translatable_id')
