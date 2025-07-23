@@ -17,15 +17,19 @@ class AdminDashboardController extends Controller
 
     }
 
-    public function summaryData()
+    public function summaryData(Request $request)
     {
-        $data = $this->adminRepo->getSummaryData();
+        $filters = [
+            'store_type' => $request->store_type
+        ];
+        $data = $this->adminRepo->getSummaryData(null, $filters);
         return response()->json(new SummaryResource((object)$data));
     }
 
     public function salesSummaryData(Request $request)
     {
         $filters = [
+            "store_type" => $request->store_type,
             "this_week" => $request->this_week,
             "this_month" => $request->this_month,
             "this_year" => $request->this_year,
@@ -35,15 +39,22 @@ class AdminDashboardController extends Controller
         $data = $this->adminRepo->getSalesSummaryData($filters);
         return response()->json(new SalesSummaryResource($data));
     }
-    public function orderGrowthData()
+
+    public function orderGrowthData(Request $request)
     {
-        $data = $this->adminRepo->getOrderGrowthData();
+        $filters = [
+            'store_type' => $request->store_type
+        ];
+        $data = $this->adminRepo->getOrderGrowthData($filters);
         return response()->json(new OrderGrowthSummaryResource($data));
     }
 
-    public function otherSummaryData()
+    public function otherSummaryData(Request $request)
     {
-        $data = $this->adminRepo->getOtherSummaryData();
+        $filters = [
+            'store_type' => $request->store_type
+        ];
+        $data = $this->adminRepo->getOtherSummaryData($filters);
         return response()->json(new AdminOtherSummaryResource((object)$data));
     }
 }

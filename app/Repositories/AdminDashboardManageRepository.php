@@ -37,37 +37,50 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
     }
 
     /* <-------------------------------------------------------- User Analytics Start --------------------------------------------------------> */
-    public function getSummaryData(?int $store_id = null)
+    public function getSummaryData(?int $store_id = null, $filters = [])
     {
-        $total_store = Store::count();
-        $total_seller = User::where('store_owner', 1)->count();
-        $total_product = Product::count();
-        $total_customer = Customer::count();
-        $total_staff = User::where('activity_scope', 'store_level')
+        $storeQuery = Store::query();
+        $userQuery = User::query();
+        $orderQuery = Order::query();
+
+        // Apply filter if provided
+        if (!empty($filters['store_type'])) {
+            $storeQuery->where('store_type', $filters['store_type']);
+            $userQuery->whereHas('stores', function ($q) use ($filters) {
+                $q->where('store_type', $filters['store_type']);
+            });
+            $orderQuery->whereHas('store', function ($q) use ($filters) {
+                $q->where('store_type', $filters['store_type']);
+            });
+        }
+
+        $total_store = $storeQuery->count();
+        $total_seller = (clone $userQuery)->where('store_owner', 1)->count();
+        $total_staff = (clone $userQuery)
+            ->where('activity_scope', 'store_level')
             ->where('store_owner', '!=', 1)
             ->count();
 
+        $total_product = Product::count();
+        $total_customer = Customer::count();
+
+        $baseOrderQuery = $orderQuery;
         if ($store_id) {
-            $total_order = Order::where('store_id', $store_id)->count();
-            $pending_orders = Order::where('store_id', $store_id)->where('status', 'pending')->count();
-            $confirmed_orders = Order::where('store_id', $store_id)->where('status', 'confirmed')->count();
-            $processing_orders = Order::where('store_id', $store_id)->where('status', 'processing')->count();
-            $shipped_orders = Order::where('store_id', $store_id)->where('status', 'shipped')->count();
-            $completed_orders = Order::where('store_id', $store_id)->where('status', 'delivered')->count();
-            $cancelled_orders = Order::where('store_id', $store_id)->where('status', 'cancelled')->count();
-            $deliveryman_not_assigned_orders = Order::where('store_id', $store_id)->where('status', 'processing')->whereNull('confirmed_by')->count();
-            $refunded_orders = Order::where('store_id', $store_id)->where('refund_status', 'refunded')->count();
-        } else {
-            $total_order = Order::count();
-            $pending_orders = Order::where('status', 'pending')->count();
-            $confirmed_orders = Order::where('status', 'confirmed')->count();
-            $processing_orders = Order::where('status', 'processing')->count();
-            $shipped_orders = Order::where('status', 'shipped')->count();
-            $completed_orders = Order::where('status', 'delivered')->count();
-            $cancelled_orders = Order::where('status', 'cancelled')->count();
-            $deliveryman_not_assigned_orders = Order::where('status', 'processing')->whereNull('confirmed_by')->count();
-            $refunded_orders = Order::where('refund_status', 'refunded')->count();
+            $baseOrderQuery->where('store_id', $store_id);
         }
+
+        $total_order = (clone $baseOrderQuery)->count();
+        $pending_orders = (clone $baseOrderQuery)->where('status', 'pending')->count();
+        $confirmed_orders = (clone $baseOrderQuery)->where('status', 'confirmed')->count();
+        $processing_orders = (clone $baseOrderQuery)->where('status', 'processing')->count();
+        $shipped_orders = (clone $baseOrderQuery)->where('status', 'shipped')->count();
+        $completed_orders = (clone $baseOrderQuery)->where('status', 'delivered')->count();
+        $cancelled_orders = (clone $baseOrderQuery)->where('status', 'cancelled')->count();
+        $deliveryman_not_assigned_orders = (clone $baseOrderQuery)
+            ->where('status', 'processing')
+            ->whereNull('confirmed_by')
+            ->count();
+        $refunded_orders = (clone $baseOrderQuery)->where('refund_status', 'refunded')->count();
 
         $total_areas = StoreArea::count();
         $total_deliverymen = User::where('activity_scope', 'delivery_level')->count();
@@ -78,18 +91,25 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
         $total_pages = Page::count();
         $total_blogs = Blog::count();
         $total_tickets = Ticket::count();
-        $total_earnings = Order::whereHas('orderMaster', function ($q) {
+
+        // Earnings calculation
+        $earningsQuery = (clone $baseOrderQuery)->whereHas('orderMaster', function ($q) {
             $q->where('payment_status', 'paid');
-        })
-            ->where(function ($q) {
-                $q->where('refund_status', '!=', 'refunded')
-                    ->orWhereNull('refund_status');
-            })
-            ->sum('order_amount');
-        $total_refunds = Order::where('refund_status', 'refunded')->sum('order_amount');
+        })->where(function ($q) {
+            $q->where('refund_status', '!=', 'refunded')
+                ->orWhereNull('refund_status');
+        });
+        $total_earnings = $earningsQuery->sum('order_amount');
+
+        $total_refunds = (clone $baseOrderQuery)->where('refund_status', 'refunded')->sum('order_amount');
+
         $total_withdrawals = WalletWithdrawalsTransaction::where('status', 'approved')->sum('amount');
-        $total_subscription_earnings = SubscriptionHistory::where('status', 1)->where('payment_status', 'paid')->sum('price');
-        $total_tax = OrderDetail::whereHas('order', function ($orderQuery) {
+
+        $total_subscription_earnings = SubscriptionHistory::where('status', 1)
+            ->where('payment_status', 'paid')
+            ->sum('price');
+
+        $total_tax = OrderDetail::whereHas('order', function ($orderQuery) use ($filters) {
             $orderQuery->where(function ($q) {
                 $q->where('refund_status', '!=', 'refunded')
                     ->orWhereNull('refund_status');
@@ -97,14 +117,21 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
                 ->whereHas('orderMaster', function ($masterQuery) {
                     $masterQuery->where('payment_status', 'paid');
                 });
+
+            if (!empty($filters['store_type'])) {
+                $orderQuery->whereHas('store', function ($q) use ($filters) {
+                    $q->where('store_type', $filters['store_type']);
+                });
+            }
         })->sum('total_tax_amount');
-        $total_admin_commission_amount = Order::whereHas('orderMaster', function ($q) {
-            $q->where('payment_status', 'paid');
-        })
-            ->where(function ($q) {
-                $q->WhereNull('refund_status');
+
+        $total_admin_commission_amount = (clone $baseOrderQuery)
+            ->whereHas('orderMaster', function ($q) {
+                $q->where('payment_status', 'paid');
             })
+            ->whereNull('refund_status')
             ->sum('order_amount_admin_commission');
+
         $total_order_revenue = $total_earnings - $total_refunds;
         $total_revenue = ($total_order_revenue + $total_admin_commission_amount + $total_subscription_earnings) - $total_tax;
 
@@ -144,6 +171,8 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             'total_revenue' => $total_revenue,
         ];
     }
+
+
     public function getSummaryDataWithFilters(array $filters): array
     {
         $orderQuery = Order::query();
@@ -297,7 +326,6 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
     }
 
 
-
     public function getSalesSummaryData(array $filters)
     {
         $query = Order::query();
@@ -319,6 +347,11 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
         if (isset($startDate) && isset($endDate)) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
+        if (!empty($filters['store_type'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('store_type', $filters['store_type']);
+            });
+        }
 
         return $query
             ->where('status', 'delivered')
@@ -328,12 +361,18 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             ->get();
     }
 
-    public function getOrderGrowthData()
+    public function getOrderGrowthData(array $filters = [])
     {
         $year = Carbon::now()->year;
-
+        $query = Order::query();
+        if (!empty($filters['store_type'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('store_type', $filters['store_type']);
+            });
+        }
         // Fetch order counts per month
-        $monthlyData = Order::whereYear('created_at', $year)
+        $monthlyData = $query
+            ->whereYear('created_at', $year)
             ->groupBy(DB::raw('MONTH(created_at)'))
             ->select(
                 DB::raw('MONTH(created_at) as month'),
@@ -344,15 +383,15 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
         return collect(range(1, 12))->mapWithKeys(fn($month) => [$month => $monthlyData->get($month, 0)]);
     }
 
-    public function getOtherSummaryData()
+    public function getOtherSummaryData(array $filters = [])
     {
-        $topRatedProducts = $this->getTopRatedProducts();
+        $topRatedProducts = $this->getTopRatedProducts($filters);
 
-        $topSellingStores = $this->getTopSellingStores();
+        $topSellingStores = $this->getTopSellingStores($filters);
 
-        $recentCompletedOrders = $this->getRecentCompletedOrders();
+        $recentCompletedOrders = $this->getRecentCompletedOrders($filters);
 
-        $topCategories = $this->getTopCategories();
+        $topCategories = $this->getTopCategories($filters);
 
         return [
             'top_rated_products' => $topRatedProducts,
@@ -362,10 +401,19 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
         ];
     }
 
-    public function getTopCategories()
+    public function getTopCategories(array $filters = [])
     {
-        $topCategoryIds = Product::select('category_id')
-            ->whereNotNull('category_id')
+        $productQuery = Product::query()
+            ->select('category_id')
+            ->whereNotNull('category_id');
+
+        if (!empty($filters['store_type'])) {
+            $productQuery->whereHas('store', function ($query) use ($filters) {
+                $query->where('type', $filters['store_type']);
+            });
+        }
+
+        $topCategoryIds = $productQuery
             ->groupBy('category_id')
             ->orderByRaw('SUM(order_count) DESC')
             ->limit(10)
@@ -377,12 +425,19 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             ->sortBy(function ($category) use ($topCategoryIds) {
                 return array_search($category->id, $topCategoryIds->toArray());
             })
-            ->values(); // To reindex the collection properly
+            ->values();
     }
 
-    public function getTopRatedProducts()
+    public function getTopRatedProducts($filters = [])
     {
-        return Product::with(['variants', 'store'])
+        $query = Product::query();
+        if (!empty($filters['store_type'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('store_type', $filters['store_type']);
+            });
+        }
+        return $query
+            ->with(['variants', 'store'])
             ->where('products.status', 'approved')
             ->whereNull('products.deleted_at')
             ->leftJoin('reviews', function ($join) {
@@ -412,9 +467,16 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             ->get();
     }
 
-    public function getTopSellingStores()
+    public function getTopSellingStores($filters = [])
     {
-        return Order::with('store')
+        $query = Order::query();
+        if (!empty($filters['store_type'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('store_type', $filters['store_type']);
+            });
+        }
+        return $query
+            ->with('store')
             ->where('status', 'delivered')
             ->selectRaw('store_id, SUM(order_amount) as total_sales')
             ->groupBy('store_id')
@@ -423,9 +485,16 @@ class AdminDashboardManageRepository implements AdminDashboardManageInterface
             ->get();
     }
 
-    public function getRecentCompletedOrders()
+    public function getRecentCompletedOrders($filters = [])
     {
-        return Order::with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
+        $query = Order::query();
+        if (!empty($filters['store_type'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('store_type', $filters['store_type']);
+            });
+        }
+        return $query
+            ->with(['orderMaster.customer', 'orderDetail', 'orderMaster', 'store', 'deliveryman', 'orderMaster.shippingAddress'])
             ->where('status', 'delivered')
             ->orderByDesc('delivery_completed_at')
             ->limit(5)

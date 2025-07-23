@@ -11,6 +11,7 @@ use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\Admin\ProductRequestResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Customer\CustomerResource;
 use App\Http\Resources\Product\LowStockProductResource;
 use App\Http\Resources\Product\OutOfStockProductResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
@@ -18,8 +19,10 @@ use App\Http\Resources\Product\ProductListResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Store;
+use App\Services\TrashService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -27,11 +30,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Subscription\app\Models\StoreSubscription;
+use Modules\Wallet\app\Models\Wallet;
 
 class AdminProductManageController extends Controller
 {
-    public function __construct(protected ProductManageInterface $productRepo, protected ProductVariantInterface $variantRepo)
+    protected $trashService;
+    public function __construct(protected ProductManageInterface $productRepo, protected ProductVariantInterface $variantRepo,TrashService $trashService)
     {
+        $this->trashService = $trashService;
     }
 
     public function index(Request $request)
@@ -419,5 +425,34 @@ class AdminProductManageController extends Controller
         return response()->json([
             'message' => __('messages.product_featured_added_successfully')
         ], 200);
+    }
+
+    public function getTrashList(Request $request)
+    {
+        $trash = $this->trashService->listTrashed('product', $request->per_page ?? 10);
+        return response()->json([
+            'data' => ProductListResource::collection($trash),
+            'meta' => new PaginationResource($trash)
+        ]);
+    }
+
+    public function restoreTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $restored = $this->trashService->restore('product', $ids);
+        return response()->json([
+            'message' => __('messages.restore_success', ['name' => 'Products']),
+            'restored' => $restored,
+        ]);
+    }
+
+    public function deleteTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $deleted = $this->trashService->forceDelete('product', $ids);
+        return response()->json([
+            'message' => __('messages.force_delete_success', ['name' => 'Products']),
+            'deleted' => $deleted
+        ]);
     }
 }

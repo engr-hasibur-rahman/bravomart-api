@@ -5,21 +5,27 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Admin\SellerListForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Http\Resources\Customer\CustomerResource;
 use App\Http\Resources\Dashboard\SellerStoreSummaryResource;
 use App\Http\Resources\Seller\SellerDetailsResource;
 use App\Http\Resources\Seller\SellerResource;
 use App\Interfaces\StoreManageInterface;
+use App\Models\Customer;
 use App\Models\Media;
 use App\Models\Store;
 use App\Models\User;
+use App\Services\TrashService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Modules\Wallet\app\Models\Wallet;
 
 class AdminSellerManageController extends Controller
 {
-    public function __construct(protected StoreManageInterface $storeRepo)
-    {
+    private $trashService;
 
+    public function __construct(protected StoreManageInterface $storeRepo, TrashService $trashService)
+    {
+        $this->trashService = $trashService;
     }
 
     public function getSellerList(Request $request)
@@ -259,5 +265,50 @@ class AdminSellerManageController extends Controller
         }
         $data = $this->storeRepo->getSummaryData($request->slug, $request->id);
         return response()->json(new SellerStoreSummaryResource((object)$data));
+    }
+
+    public function getTrashList(Request $request)
+    {
+        $trash = $this->trashService->listTrashed('seller', $request->per_page ?? 10);
+        return response()->json([
+            'data' => SellerResource::collection($trash),
+            'meta' => new PaginationResource($trash)
+        ]);
+    }
+
+    public function restoreTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $restored = $this->trashService->restore('seller', $ids);
+        $storeIds = Store::whereIn('store_seller_id', $ids)->pluck('id');
+        $wallets = Wallet::where('owner_type', Store::class)
+            ->whereIn('owner_id', $storeIds)
+            ->onlyTrashed()
+            ->get();
+        if ($wallets->isNotEmpty()) {
+            $wallets->each->restore();
+        }
+        return response()->json([
+            'message' => __('messages.restore_success', ['name' => 'Sellers']),
+            'restored' => $restored,
+        ]);
+    }
+
+    public function deleteTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $deleted = $this->trashService->forceDelete('seller', $ids);
+        $storeIds = Store::whereIn('store_seller_id', $ids)->pluck('id');
+        $wallets = Wallet::where('owner_type', Store::class)
+            ->whereIn('owner_id', $storeIds)
+            ->onlyTrashed()
+            ->get();
+        if ($wallets->isNotEmpty()) {
+            $wallets->each->forceDelete();
+        }
+        return response()->json([
+            'message' => __('messages.force_delete_success', ['name' => 'Sellers']),
+            'deleted' => $deleted,
+        ]);
     }
 }

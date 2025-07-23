@@ -6,7 +6,6 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Wallet\app\Models\Wallet;
 
@@ -24,8 +23,10 @@ class TrashService
             'sentMessages',
             'receivedMessages',
         ],
+        'chat' => ['messages'],
+        'ticket' => ['messages'],
         'seller' => [
-            'stores'
+            'stores',
         ],
         'store' => [
             'wallet',
@@ -42,9 +43,9 @@ class TrashService
             'reviews',
             'variants',
             'queries',
-        ]
-        // Add others later as needed
+        ],
     ];
+
     protected array $models = [
         'customer' => Customer::class,
         'seller' => User::class,
@@ -64,13 +65,12 @@ class TrashService
         $model = $this->models[$type] ?? null;
 
         if (!$model) {
-            throw new \Exception("Invalid model type: {$type}");
+            throw new \InvalidArgumentException("Invalid model type: {$type}");
         }
 
         $query = $model::onlyTrashed();
 
-        // Apply activity_scope filtering for shared models
-        if (in_array($type, ['seller', 'deliveryman']) && isset($this->scopes[$type])) {
+        if (isset($this->scopes[$type])) {
             $query->where('activity_scope', $this->scopes[$type]);
         }
 
@@ -88,7 +88,6 @@ class TrashService
         $restored = $query->restore();
 
         $modelClass = $this->models[$type];
-        $related = $this->relatedRelations[$type] ?? [];
 
         foreach ($modelClass::withTrashed()->whereIn('id', $ids)->get() as $item) {
             $this->restoreRelations($type, $item);
@@ -106,15 +105,15 @@ class TrashService
                 continue;
             }
 
-            $relatedItems = $item->$relation()->withTrashed()->get();
+            $relationInstance = $item->$relation();
+            $relatedItems = $relationInstance->withTrashed()->get();
 
             foreach ($relatedItems as $relatedItem) {
                 if (method_exists($relatedItem, 'restore') && $relatedItem->trashed()) {
                     $relatedItem->restore();
                 }
 
-                // Recursively restore related data for next-level model type (if mapped)
-                $relatedType = $this->guessRelatedType(get_class($relatedItem));
+                $relatedType = $this->guessExplicitRelatedType($type, $relation);
                 if ($relatedType) {
                     $this->restoreRelations($relatedType, $relatedItem);
                 }
@@ -122,30 +121,91 @@ class TrashService
         }
     }
 
-    protected function guessRelatedType(string $className): ?string
+    public function forceDelete(string $type, array $ids): int
     {
-        foreach ($this->models as $key => $modelClass) {
-            if ($className === $modelClass) {
-                return $key;
+        $modelClass = $this->models[$type];
+        $items = $modelClass::withTrashed()->whereIn('id', $ids)->get();
+
+        foreach ($items as $item) {
+            $this->forceDeleteRelations($type, $item);
+            $item->forceDelete();
+        }
+
+        return count($items);
+    }
+
+    protected function forceDeleteRelations(string $type, Model $item): void
+    {
+        $relations = $this->relatedRelations[$type] ?? [];
+
+        foreach ($relations as $relation) {
+            if (!method_exists($item, $relation)) {
+                continue;
+            }
+
+            $relationInstance = $item->$relation();
+            $relatedItems = $relationInstance->withTrashed()->get();
+
+            foreach ($relatedItems as $relatedItem) {
+                $relatedType = $this->guessExplicitRelatedType($type, $relation);
+
+                if ($relatedType) {
+                    $this->forceDeleteRelations($relatedType, $relatedItem);
+                }
+
+                if (method_exists($relatedItem, 'forceDelete')) {
+                    $relatedItem->forceDelete();
+                }
+            }
+        }
+    }
+
+    protected function guessExplicitRelatedType(string $parentType, string $relation): ?string
+    {
+        foreach ($this->relatedRelations as $type => $relations) {
+            if ($type === $relation) {
+                return $relation; // direct match
+            }
+
+            if ($parentType === $type && in_array($relation, $relations, true)) {
+                return $this->inferTypeFromRelationName($relation); // fallback
             }
         }
 
         return null;
     }
 
-    protected function restoreNestedStoreRelations(Model $store): void
+    protected function resolveRelationType(string $parentType, string $relation): ?string
     {
-        $storeRelations = $this->relatedRelations['store'] ?? [];
+        // Static map to resolve relation => type (can be extended or automated later)
+        $map = [
+            'stores' => 'store',
+            'wallet' => 'wallet',
+            'products' => 'product',
+            'variants' => null, // If variant is not in $models, skip
+            'reviews' => null,
+            'queries' => null,
+            'chats' => null,
+            'sentMessages' => null,
+            'receivedMessages' => null,
+            'tickets' => null,
+            'addresses' => null,
+            'productQueries' => null,
+            'blogComments' => null,
+        ];
 
-        foreach ($storeRelations as $relation) {
-            if (method_exists($store, $relation)) {
-                $store->$relation()->onlyTrashed()->restore();
-            }
-        }
+        return $map[$relation] ?? null;
     }
 
-    public function forceDelete(string $type, array $ids): int
+
+    protected function inferTypeFromRelationName(string $relation): string
     {
-        return $this->getQueryBuilder($type)->whereIn('id', $ids)->forceDelete();
+        return match ($relation) {
+            'wallet' => 'wallet',
+            'chats' => 'chat',
+            'tickets' => 'ticket',
+            'messages' => 'message', // fallback if you need
+            default => $relation,
+        };
     }
 }

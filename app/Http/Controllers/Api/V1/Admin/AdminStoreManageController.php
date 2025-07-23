@@ -9,17 +9,23 @@ use App\Http\Resources\Admin\AdminStoreRequestResource;
 use App\Http\Resources\Admin\SellerWiseStoreForDropdownResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
 use App\Http\Resources\Com\Store\StoreListResource;
+use App\Http\Resources\Customer\CustomerResource;
 use App\Interfaces\StoreManageInterface;
+use App\Models\Customer;
 use App\Models\Store;
+use App\Services\TrashService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Modules\Wallet\app\Models\Wallet;
 
 class AdminStoreManageController extends Controller
 {
-    public function __construct(protected StoreManageInterface $storeRepo)
-    {
+    private $trashService;
 
+    public function __construct(protected StoreManageInterface $storeRepo, TrashService $trashService)
+    {
+        $this->trashService = $trashService;
     }
 
     public function index(Request $request)
@@ -166,5 +172,48 @@ class AdminStoreManageController extends Controller
         } else {
             return $this->failed(__('messages.update_failed', ['name' => 'Stores status']));
         }
+    }
+
+    public function getTrashList(Request $request)
+    {
+        $trash = $this->trashService->listTrashed('store', $request->per_page ?? 10);
+        return response()->json([
+            'data' => StoreListResource::collection($trash),
+            'meta' => new PaginationResource($trash)
+        ]);
+    }
+
+    public function restoreTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $restored = $this->trashService->restore('store', $ids);
+        $wallets = Wallet::where('owner_type', Store::class)
+            ->whereIn('owner_id', $ids)
+            ->onlyTrashed()
+            ->get();
+        if ($wallets->isNotEmpty()) {
+            $wallets->each->restore();
+        }
+        return response()->json([
+            'message' => __('messages.restore_success', ['name' => 'Stores']),
+            'restored' => $restored,
+        ]);
+    }
+
+    public function deleteTrashed(Request $request)
+    {
+        $ids = $request->ids;
+        $deleted = $this->trashService->forceDelete('store', $ids);
+        $wallets = Wallet::where('owner_type', Store::class)
+            ->whereIn('owner_id', $ids)
+            ->onlyTrashed()
+            ->get();
+        if ($wallets->isNotEmpty()) {
+            $wallets->each->forceDelete();
+        }
+        return response()->json([
+            'message' => __('messages.force_delete_success', ['name' => 'Stores']),
+            'deleted' => $deleted
+        ]);
     }
 }

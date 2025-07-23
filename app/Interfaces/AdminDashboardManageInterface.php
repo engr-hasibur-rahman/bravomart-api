@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 interface AdminDashboardManageInterface
 {
-    public function getSummaryData(?int $store_id);
+    public function getSummaryData(?int $store_id, $filters = []);
 
     public function getSummaryDataWithFilters(array $filters): array;
 
     public function getSalesSummaryData(array $filters);
 
-    public function getOtherSummaryData();
+    public function getOtherSummaryData(array $filters = []);
 
-    public function getOrderGrowthData();
+    public function getOrderGrowthData(array $filters = []);
 }

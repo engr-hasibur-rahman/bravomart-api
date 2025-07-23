@@ -34,6 +34,7 @@ enum PermissionKey: string
     //                                  Admin Product Permissions                                     //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_PRODUCTS_MANAGE = '/admin/product/list';
+    case ADMIN_PRODUCTS_TRASH_MANAGEMENT = '/admin/product/trash-list';
     case ADMIN_PRODUCT_PRODUCT_APPROVAL_REQ = '/admin/product/request';
     case ADMIN_PRODUCT_STOCK_REPORT = '/admin/product/stock-report';
     case ADMIN_PRODUCT_PRODUCT_BULK_IMPORT = '/admin/product/import';
@@ -50,6 +51,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_STORE_LIST = '/admin/store/list';
     case ADMIN_STORE_ADD = '/admin/store/add';
+    case ADMIN_STORE_TRASH_MANAGEMENT = '/admin/store/trash-list';
     case ADMIN_STORE_RECOMMENDED = '/admin/store/recommended';
     case ADMIN_STORE_APPROVAL = '/admin/store/approval';
 
@@ -133,6 +135,7 @@ enum PermissionKey: string
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_DELIVERYMAN_VEHICLE_TYPE = '/admin/deliveryman/vehicle-types/list';
     case ADMIN_DELIVERYMAN_MANAGE_LIST = '/admin/deliveryman/list';
+    case ADMIN_DELIVERYMAN_TRASH_MANAGEMENT = '/admin/deliveryman/trash-list';
     case ADMIN_DELIVERYMAN_REQUEST = '/admin/deliveryman/request';
     case ADMIN_DELIVERYMAN_MANAGE_REVIEW = '/admin/deliveryman/review';
 
@@ -140,12 +143,14 @@ enum PermissionKey: string
     //                          Customer management                                             //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_CUSTOMER_MANAGEMENT_LIST = '/admin/customer/list';
+    case ADMIN_CUSTOMER_TRASH_MANAGEMENT = '/admin/customer/trash-list';
     case ADMIN_CUSTOMER_SUBSCRIBED_MAIL_LIST = '/admin/customer/subscriber-list';
     case ADMIN_CUSTOMER_CONTACT_MESSAGES = '/admin/customer/contact-messages';
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     //                          Seller management                                             //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_SELLER_MANAGEMENT = '/admin/seller/list';
+    case ADMIN_SELLER_TRASH_MANAGEMENT = '/admin/seller/trash-list';
     case ADMIN_SELLER_REGISTRATION = '/admin/seller/registration';
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -262,6 +267,7 @@ enum PermissionKey: string
     //              Wallet Management                                                        //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     case ADMIN_WALLET_MANAGE = '/admin/wallet/list';
+    case ADMIN_WALLET_TRASH_MANAGEMENT = '/admin/wallet/trash-list';
     case ADMIN_WALLET_TRANSACTION = '/admin/wallet/transactions';
     case ADMIN_WALLET_SETTINGS = '/admin/wallet/settings';
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
