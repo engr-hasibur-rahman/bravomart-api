@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class Page extends Model
 {
+    use DeleteTranslations;
     protected $fillable = [
         'page_type',
         'layout',

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Coupon extends Model
 {
-    use HasFactory;
+    use HasFactory,DeleteTranslations;
 
     protected $fillable = [
         'title',
@@ -20,6 +21,11 @@ class Coupon extends Model
         'title',
         'description'
     ];
+
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
 
     public function creator()
     {

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 
 class Blog extends Model
 {
+    use DeleteTranslations;
     protected $fillable = [
         'admin_id',
         'category_id',
