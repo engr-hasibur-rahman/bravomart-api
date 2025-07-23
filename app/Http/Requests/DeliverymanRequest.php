@@ -32,7 +32,7 @@ class DeliverymanRequest extends FormRequest
             'status' => 'nullable|integer',
             'vehicle_type_id' => 'nullable|exists:vehicle_types,id',
             'store_id' => 'nullable|exists:stores,id',
-            'area_id' => 'nullable|exists:areas,id',
+            'area_id' => 'nullable|exists:store_areas,id',
             'identification_type' => 'nullable|string|in:nid,passport,driving_license',
             'identification_number' => 'nullable|string',
             'address' => 'nullable|string|max:255',
