@@ -14,12 +14,21 @@ use App\Http\Resources\Order\OrderSummaryResource;
 use App\Models\CouponLine;
 use App\Models\Order;
 use App\Models\OrderMaster;
+use App\Services\Order\OrderManageNotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerOrderController extends Controller
 {
+
+    protected OrderManageNotificationService $orderManageNotificationService;
+
+    public function __construct(OrderManageNotificationService $orderManageNotificationService)
+    {
+        $this->orderManageNotificationService = $orderManageNotificationService;
+    }
+
     public function myOrders(Request $request)
     {
         $customer_id = auth()->guard('api_customer')->user()->id;
@@ -104,13 +113,15 @@ class CustomerOrderController extends Controller
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
         $customer_id = auth()->guard('api_customer')->user()->id;
-        $order_master_ids = OrderMaster::where('customer_id', $customer_id)->pluck('id');
-        $order = Order::where('id', $request->order_id)
-            ->whereIn('order_master_id', $order_master_ids)
+
+        $order = Order::with('orderMaster')
+            ->where('id', $request->order_id)
             ->first();
 
         if (!$order) {
@@ -118,6 +129,14 @@ class CustomerOrderController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
+
+        // check right customer order
+        if ($order->orderMaster?->customer_id !== $customer_id) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+
         if ($order->status === 'cancelled') {
             return response()->json([
                 'message' => __('messages.order_already_cancelled')
@@ -134,6 +153,9 @@ class CustomerOrderController extends Controller
         $order->cancelled_at = Carbon::now();
         $order->status = 'cancelled';
         $success = $order->save();
+
+        // notification send
+        $this->orderManageNotificationService->createOrderNotification($order->id, 'customer_order_status_cancelled');
 
         if ($success) {
             return response()->json([

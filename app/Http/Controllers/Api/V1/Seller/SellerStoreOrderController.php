@@ -188,8 +188,8 @@ class SellerStoreOrderController extends Controller
         }
 
         if ($order->orderMaster) {
-            $order->customer = $order->orderMaster->customer;
-            $order->shipping_address = $order->orderMaster->shippingAddress;
+            $order->customer = $order->orderMaster?->customer;
+            $order->shipping_address = $order->orderMaster?->shippingAddress;
         }
         if (!$order) {
             return response()->json(['message' => __('messages.data_not_found')], 404);
@@ -245,7 +245,7 @@ class SellerStoreOrderController extends Controller
 
         // Notify seller and customer
         $order = [$order->id];
-        $this->orderManageNotificationService->createOrderNotification($order);
+        $this->orderManageNotificationService->createOrderNotification($order, 'seller_order_status_pcpps');
 
         try {
             // Dispatch the email job asynchronously
@@ -303,7 +303,7 @@ class SellerStoreOrderController extends Controller
 
         // Notify seller and customer
         $order = [$order->id];
-        $this->orderManageNotificationService->createOrderNotification($order, 'order-cancelled');
+        $this->orderManageNotificationService->createOrderNotification($order, 'seller_order_cancelled');
 
         if ($success) {
             return response()->json([

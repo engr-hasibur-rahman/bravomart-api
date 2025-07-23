@@ -27,12 +27,9 @@ class PlaceOrderController extends Controller
     public function placeOrder(PlaceOrderRequest $request): JsonResponse
     {
         $data = $request->validated();
-
+        $user = auth()->guard('api_customer')->user();
         // login check
-        if (!auth()->guard('api_customer')->user()
-            && isset($data['guest_info'])
-            && isset($data['guest_info']['guest_order'])
-            && $data['guest_info']['guest_order'] === false) {
+        if (!$user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Please login to proceed with the order.',
