@@ -532,6 +532,9 @@ class SystemManagementController extends Controller
                     'message' => __('messages.data_not_found')
                 ], 404);
             }
+            $json_decoded = json_decode($settings->option_value, true);
+            $content = jsonImageModifierFormatter($json_decoded);
+            $settings->option_value = $content;
 
             return response()->json([
                 'data' => new GdprPublicResource($settings),
@@ -544,6 +547,7 @@ class SystemManagementController extends Controller
 
 
         $settings = SettingOption::where('option_name', 'gdpr_data')->first();
+        $translationKeys = ['content'];
 
         if (!empty($settings)) {
             $settings->update([
@@ -557,7 +561,7 @@ class SystemManagementController extends Controller
             ]);
         }
 
-        createOrUpdateTranslationJson($request, $settings->id, 'App\Models\SettingOption', $this->translationKeysGdpr());
+        createOrUpdateTranslationJson($request, $settings->id, 'App\Models\SettingOption', $translationKeys);
 
         return response()->json([
             'success' => true,
