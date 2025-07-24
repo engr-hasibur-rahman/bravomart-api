@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +17,7 @@ use Modules\Wallet\app\Models\Wallet;
 //class Customer extends Model
 class Customer extends Authenticatable // Extend Authenticatable instead of Model
 {
-    use HasFactory, HasApiTokens, SoftDeletes;
+    use HasFactory, HasApiTokens, SoftDeletes,HasMedia;
 
     protected $fillable = [
         'first_name',

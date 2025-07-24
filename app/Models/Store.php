@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\DeleteTranslations;
+use App\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +15,7 @@ use Modules\Wallet\app\Models\Wallet;
 
 class Store extends Model
 {
-    use HasFactory, SoftDeletes,DeleteTranslations;
+    use HasFactory, SoftDeletes, DeleteTranslations, HasMedia;
 
     protected $dates = ['deleted_at'];
     protected $table = 'stores';

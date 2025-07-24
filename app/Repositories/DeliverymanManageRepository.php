@@ -225,7 +225,6 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
         if ($deliveryman) {
             $deliveryman->delete();
         }
-        $user->wallet()->delete();
         $user->delete();
 
         DB::commit();

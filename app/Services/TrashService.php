@@ -13,7 +13,6 @@ class TrashService
 {
     protected array $relatedRelations = [
         'customer' => [
-            'wallet',
             'addresses',
             'reviews',
             'tickets',
@@ -29,16 +28,13 @@ class TrashService
             'stores',
         ],
         'store' => [
-            'wallet',
             'chats',
             'sentMessages',
             'receivedMessages',
             'products',
             'tickets',
         ],
-        'deliveryman' => [
-            'wallet',
-        ],
+        'deliveryman',
         'product' => [
             'reviews',
             'variants',
@@ -52,7 +48,6 @@ class TrashService
         'store' => Store::class,
         'deliveryman' => User::class,
         'product' => Product::class,
-        'wallet' => Wallet::class,
     ];
 
     protected array $scopes = [
