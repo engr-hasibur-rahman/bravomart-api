@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Storage;
 
 class Media extends Model
 {
+    use HasFactory;
 
     protected $table = 'media';
-    use HasFactory;
     protected $fillable = [
         'user_id',
         'user_type',
@@ -22,8 +23,13 @@ class Media extends Model
         'dimensions'
     ];
 
+//    public function fileable(): MorphTo
+//    {
+//        return $this->morphTo();
+//    }
     public function fileable(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo(null, 'user_type', 'user_id');
     }
+
 }
