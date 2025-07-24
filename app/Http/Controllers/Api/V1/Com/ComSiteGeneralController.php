@@ -87,6 +87,9 @@ class ComSiteGeneralController extends Controller
                 'message' => __('messages.data_not_found')
             ], 404);
         }
+        $json_decoded = json_decode($settings->option_value, true);
+        $content = jsonImageModifierFormatter($json_decoded);
+        $settings->option_value = $content;
 
         return response()->json([
             'data' => new GdprPublicResource($settings),
