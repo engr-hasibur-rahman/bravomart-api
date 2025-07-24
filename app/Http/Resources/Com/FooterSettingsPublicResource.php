@@ -21,7 +21,7 @@ class FooterSettingsPublicResource extends JsonResource
         return [
             "content" => !empty($translation) && $translation->where('key', 'content')->first()
                 ? jsonImageModifierFormatter(json_decode($translation->where('key', 'content')->first()->value, true))
-                : jsonImageModifierFormatter($this->content),
+                : $this->content,
         ];
 
     }
