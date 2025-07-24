@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Com;
 
+use App\Http\Resources\Translation\SettingsTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,12 +18,11 @@ class GdprPublicResource extends JsonResource
         // Get the requested language from the query parameter
         $language = $request->input('language', 'en');
         // Get the translation for the requested language
-        $translation = $this->related_translations->where('language', $language);
+        $translation = $this->translations->where('language', $language);
 
         return [
-            "content" => !empty($translation) && $translation->where('key', 'option_value')->first()
-                ? json_decode($translation->where('key', 'option_value')->first()->value, true)
-                : json_decode($this->option_value),
+            "content" => $this->option_value,
+            "translations" => SettingsTranslationResource::collection($this->translations->groupBy('language'))
         ];
     }
 }
