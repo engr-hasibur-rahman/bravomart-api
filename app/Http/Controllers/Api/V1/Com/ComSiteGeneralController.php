@@ -81,7 +81,6 @@ class ComSiteGeneralController extends Controller
         $settings = SettingOption::with('related_translations')
             ->where('option_name', 'gdpr_data')
             ->first();
-
         if (!$settings) {
             return response()->json([
                 'message' => __('messages.data_not_found')
