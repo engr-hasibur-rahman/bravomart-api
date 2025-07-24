@@ -6,7 +6,6 @@ use App\Enums\PermissionKey;
 use App\Models\Translation;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Modules\Chat\app\Traits\ChatSeederMenu;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Permission as ModelsPermission;
 use Spatie\Permission\Models\Role;
@@ -202,20 +201,19 @@ class PermissionAdminSeeder extends Seeder
                                         'en' => 'Bulk Export',
                                         'ar' => 'التصدير بالجملة'
                                     ]
+                                ],
+                                // Product Inventory report
+                                [
+                                    'PermissionName' => PermissionKey::ADMIN_PRODUCT_INVENTORY->value,
+                                    'PermissionTitle' => 'Product Inventory',
+                                    'activity_scope' => 'system_level',
+                                    'icon' => 'SquareChartGantt',
+                                    'options' => ['view'],
+                                    'translations' => [
+                                        'en' => 'Product Inventory',
+                                        'ar' => 'مخزون المنتج'
+                                    ]
                                 ]
-                            ]
-                        ],
-
-                        // Product Inventory report
-                        [
-                            'PermissionName' => PermissionKey::ADMIN_PRODUCT_INVENTORY->value,
-                            'PermissionTitle' => 'Product Inventory',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'SquareChartGantt',
-                            'options' => ['view'],
-                            'translations' => [
-                                'en' => 'Product Inventory',
-                                'ar' => 'مخزون المنتج'
                             ]
                         ],
 

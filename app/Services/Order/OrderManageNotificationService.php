@@ -19,7 +19,7 @@ class OrderManageNotificationService
     public function createOrderNotification($last_order_ids, $otherCheckData = null)
     {
 
-//        try {
+        try {
             if (empty($last_order_ids)) {
                 return;
             }
@@ -216,7 +216,7 @@ class OrderManageNotificationService
 
             }
 
-//        }catch (\Exception $exception){}
+        }catch (\Exception $exception){}
 
 
     }
