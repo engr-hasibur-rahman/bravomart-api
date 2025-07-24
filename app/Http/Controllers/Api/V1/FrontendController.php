@@ -2264,9 +2264,9 @@ class FrontendController extends Controller
             return response()->json(new ContactUsPublicResource($setting));
         }
 
-        if ($page === 'become_a_seller') {
+        if ($page === 'become-a-seller') {
             $setting = Page::with('related_translations')
-                ->where('slug', 'become_a_seller')
+                ->where('slug', 'become-a-seller')
                 ->where('status', 'publish')
                 ->first();
 
