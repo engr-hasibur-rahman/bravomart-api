@@ -102,7 +102,7 @@ class EmailTemplateManageController extends Controller
             'name' => [
                 'required',
                 'string',
-                Rule::unique('email_templates', 'name')->ignore($request->id),
+                Rule::unique('email_templates', 'name')->ignore($request->id, 'id'),
             ],
             'subject' => 'sometimes|required|string',
             'body' => 'sometimes|required|string',
