@@ -6,6 +6,7 @@ use App\Actions\ImageModifier;
 use App\Actions\MultipleImageModifier;
 use App\Http\Resources\Admin\AdminBecomeSellerResource;
 use App\Http\Resources\Admin\AdminFooterSettingsResource;
+use App\Http\Resources\Admin\AdminGdprResource;
 use App\Http\Resources\Com\GdprPublicResource;
 use App\Interfaces\TranslationInterface;
 use App\Models\SettingOption;
@@ -537,7 +538,7 @@ class SystemManagementController extends Controller
             $settings->option_value = $content;
 
             return response()->json([
-                'data' => new GdprPublicResource($settings),
+                'data' => new AdminGdprResource($settings),
             ]);
         }
 
