@@ -374,18 +374,22 @@ if (!function_exists('translate')) {
             $imageModifier = new \App\Actions\MultipleImageModifier();
             foreach ($data as $key => $value) {
                 if (is_array($value)) {
-                    // If the value is an array, recursively process it
+                    // Recursively process nested arrays
                     $data[$key] = jsonImageModifierFormatter($value);
                 } elseif (isImageKey($key)) {
-                    // If it's an image field, apply ImageModifier
                     $data[$key] = $value;
-                    if (isMultipleImageValue($value)) {
-                        // Use MultipleImageModifier for comma-separated IDs
-                        $data[$key . '_urls'] = !empty($value) ? $imageModifier->multipleImageModifier($value) : [];
+
+                    // Safe check for multiple image value
+                    if (is_string($value) && isMultipleImageValue($value)) {
+                        $data[$key . '_urls'] = !empty($value)
+                            ? $imageModifier->multipleImageModifier($value)
+                            : [];
                     }
+
                     $data[$key . '_url'] = \App\Actions\ImageModifier::generateImageUrl($value);
                 }
             }
+
             return $data;
         }
     }
@@ -398,7 +402,7 @@ if (!function_exists('translate')) {
     if (!function_exists('isMultipleImageValue')) {
         function isMultipleImageValue(string $value): bool
         {
-            return str_contains($value, ',') && !empty(trim($value));
+            return is_string($value) && str_contains($value, ',') && !empty(trim($value));
         }
     }
 
