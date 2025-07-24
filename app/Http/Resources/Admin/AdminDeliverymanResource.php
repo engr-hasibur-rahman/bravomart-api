@@ -21,7 +21,7 @@ class AdminDeliverymanResource extends JsonResource
         $translation = $this->vehicle_type?->related_translations->where('language', $language);
         $area_translation = $this->area?->related_translations->where('language', $language);
         return array_merge(parent::toArray($request), [
-            'full_name' => $this->user?->full_name,  // Add your custom variable here
+            'full_name' => $this->user?->full_name ?? "{$this->first_name} {$this->last_name}",  // Add your custom variable here
             'vehicle_type' => $this->vehicle_type
                 ? array_merge(
                     $this->vehicle_type->toArray(), // convert model to array first
