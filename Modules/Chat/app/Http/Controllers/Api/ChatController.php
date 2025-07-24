@@ -145,7 +145,6 @@ class ChatController extends Controller
 
         $data = [
             'receiver_chat_id' => $receiver_chat->id,
-//            'sender_id' => $authUser->id,
             'sender_id' => $authType == 'store' ? $authStore->id : $authUser->id,
             'sender_type' => $authType,
             'receiver_id' => $receiver->id,
@@ -198,6 +197,12 @@ class ChatController extends Controller
                     ->where('store_seller_id', $authUser->id)
                     ->update(['online_at' => (new \DateTime())->format("Y-m-d H:i:s")]);
             }
+        } catch (\Exception $e) {
+        }
+
+        try {
+            //  broadcast with Pusher
+            event(new \App\Events\MessageSent($message));
         } catch (\Exception $e) {
         }
 
