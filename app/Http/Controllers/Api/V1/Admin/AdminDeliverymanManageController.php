@@ -8,6 +8,7 @@ use App\Http\Requests\VehicleTypeRequest;
 use App\Http\Resources\Admin\AdminDeliverymanDetailsResource;
 use App\Http\Resources\Admin\AdminDeliverymanRequestResource;
 use App\Http\Resources\Admin\AdminDeliverymanResource;
+use App\Http\Resources\Admin\AdminDeliverymanTrashList;
 use App\Http\Resources\Admin\AdminVehicleDetailsResource;
 use App\Http\Resources\Admin\AdminVehicleRequestResource;
 use App\Http\Resources\Admin\AdminVehicleResource;
@@ -407,9 +408,9 @@ class AdminDeliverymanManageController extends Controller
 
     public function getTrashList(Request $request)
     {
-        $trash = $this->trashService->listTrashed('deliveryman', $request->per_page ?? 10);
+        $trash = $this->trashService->listTrashed('deliveryman', $request->per_page ?? 10, ['deliveryman']);
         return response()->json([
-            'data' => AdminDeliverymanResource::collection($trash),
+            'data' => AdminDeliverymanTrashList::collection($trash),
             'meta' => new PaginationResource($trash)
         ]);
     }
