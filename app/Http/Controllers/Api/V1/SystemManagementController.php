@@ -522,7 +522,6 @@ class SystemManagementController extends Controller
 
     public function gdprCookieSettings(Request $request)
     {
-
         if ($request->isMethod('GET')) {
             $settings = SettingOption::with('related_translations')
                 ->where('option_name', 'gdpr_data')

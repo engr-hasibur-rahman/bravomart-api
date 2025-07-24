@@ -36,7 +36,7 @@ class PagesManageController extends Controller
             $request['slug'] = MultilangSlug::makeSlug(Page::class, $request->title, 'slug');
         }
         try {
-            if (in_array($request->slug, ['about', 'contact', 'become_a_seller'])) {
+            if (in_array($request->slug, ['about', 'contact', 'become-a-seller'])) {
                 // Validate input data
 
                 $validatedData = Validator::make($request->all(), [
@@ -44,7 +44,7 @@ class PagesManageController extends Controller
                     'slug' => 'required|unique:pages,slug',
                     'about' => 'nullable|array',
                     'content' => 'nullable|array',
-                    'become_a_seller' => 'nullable|array',
+                    'become-a-seller' => 'nullable|array',
                     'translations' => 'nullable|array',
                 ]);
 
@@ -61,7 +61,7 @@ class PagesManageController extends Controller
                 $page_title = match ($slug) {
                     'about' => 'About Page',
                     'contact' => 'Contact Page',
-                    'become_a_seller' => 'Become A Seller',
+                    'become-a-seller' => 'Become A Seller',
                     default => 'Custom Page',
                 };
 
