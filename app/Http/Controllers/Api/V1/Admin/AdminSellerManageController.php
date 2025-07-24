@@ -280,14 +280,6 @@ class AdminSellerManageController extends Controller
     {
         $ids = $request->ids;
         $restored = $this->trashService->restore('seller', $ids);
-        $storeIds = Store::whereIn('store_seller_id', $ids)->pluck('id');
-        $wallets = Wallet::where('owner_type', Store::class)
-            ->whereIn('owner_id', $storeIds)
-            ->onlyTrashed()
-            ->get();
-        if ($wallets->isNotEmpty()) {
-            $wallets->each->restore();
-        }
         return response()->json([
             'message' => __('messages.restore_success', ['name' => 'Sellers']),
             'restored' => $restored,
@@ -298,14 +290,6 @@ class AdminSellerManageController extends Controller
     {
         $ids = $request->ids;
         $deleted = $this->trashService->forceDelete('seller', $ids);
-        $storeIds = Store::whereIn('store_seller_id', $ids)->pluck('id');
-        $wallets = Wallet::where('owner_type', Store::class)
-            ->whereIn('owner_id', $storeIds)
-            ->onlyTrashed()
-            ->get();
-        if ($wallets->isNotEmpty()) {
-            $wallets->each->forceDelete();
-        }
         return response()->json([
             'message' => __('messages.force_delete_success', ['name' => 'Sellers']),
             'deleted' => $deleted,

@@ -205,7 +205,7 @@ class UserOtpController extends Controller
         return response()->json([
             "status" => true,
             "status_code" => 200,
-            "message" => __('smsgateway::messages.login_success', ['name' => 'Customer']),
+            "message" => __('smsgateway::messages.login_success'),
             "token" => $token->plainTextToken,
             'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
             "email_verified" => (bool)$user->email_verified, // shorthand of -> $token->email_verified ? true : false

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class Banner extends Model
 {
+    use DeleteTranslations;
     protected $fillable = [
         'user_id',
         'store_id',

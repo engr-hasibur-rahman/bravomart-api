@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class StoreType extends Model
 {
+    use DeleteTranslations;
     protected $guarded = ['type'];
     protected $fillable = [
         'name',

@@ -10,6 +10,7 @@ use App\Models\EmailTemplate;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class EmailTemplateManageController extends Controller
 {
@@ -98,7 +99,12 @@ class EmailTemplateManageController extends Controller
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:email_templates,id',
-            'name' => 'required|string|unique:email_templates,name,' . $request->id,
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('email_templates', 'name')
+                    ->ignore($request->id, 'id'),
+            ],
             'subject' => 'sometimes|required|string',
             'body' => 'sometimes|required|string',
         ]);

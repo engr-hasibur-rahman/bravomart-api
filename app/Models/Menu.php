@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
+    use DeleteTranslations;
     protected $fillable = [
         'page_id',
         'name',
@@ -22,6 +24,10 @@ class Menu extends Model
     public $translationKeys = [
         'name',
     ];
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
 
     public function related_translations()
     {

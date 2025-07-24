@@ -102,7 +102,7 @@ class PartnerLoginController extends Controller
         ]);
         return [
             "success" => true,
-            "message" => __('messages.login_success', ['name' => 'Seller']),
+            "message" => __('messages.login_success'),
             "token" => $token->plainTextToken,
             'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
             'first_name' => $user->first_name,

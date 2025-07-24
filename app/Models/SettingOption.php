@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SettingOption extends Model
 {
-    use HasFactory;
+    use HasFactory,DeleteTranslations;
 
     // Specify the table associated with the model
     protected $table = 'setting_options';

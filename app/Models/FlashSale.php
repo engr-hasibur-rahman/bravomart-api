@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FlashSale extends Model
 {
-    use HasFactory;
+    use HasFactory,DeleteTranslations;
 
     protected $fillable = [
         'title',
@@ -68,5 +69,9 @@ class FlashSale extends Model
     {
         return $this->hasMany(Translation::class, 'translatable_id')
             ->where('translatable_type', self::class);
+    }
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
     }
 }

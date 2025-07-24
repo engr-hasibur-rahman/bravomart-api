@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources\Com;
 
-use App\Http\Resources\Translation\SettingsTranslationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class GdprPublicResource extends JsonResource
+class FooterSettingsPublicResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,7 +21,7 @@ class GdprPublicResource extends JsonResource
         return [
             "content" => !empty($translation) && $translation->where('key', 'content')->first()
                 ? jsonImageModifierFormatter(json_decode($translation->where('key', 'content')->first()->value, true))
-                : $this->option_value,
+                : $this->content,
         ];
 
     }

@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Enums\FuelType;
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class VehicleType extends Model
 {
+    use DeleteTranslations;
     protected $fillable = [
         'name',
         'capacity',
@@ -22,6 +24,10 @@ class VehicleType extends Model
         'name',
         'description',
     ];
+    public function translations()
+    {
+        return $this->morphMany(Translation::class, 'translatable');
+    }
 
     public function related_translations()
     {

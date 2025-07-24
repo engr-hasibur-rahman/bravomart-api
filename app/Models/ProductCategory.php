@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\DeleteTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -14,7 +15,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProductCategory extends Model
 {
-    use HasFactory;
+    use HasFactory,DeleteTranslations;
 
     protected $table = 'product_category';
 
