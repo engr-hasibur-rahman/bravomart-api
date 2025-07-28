@@ -8,6 +8,7 @@ use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -145,7 +146,6 @@ class ChatController extends Controller
 
         $data = [
             'receiver_chat_id' => $receiver_chat->id,
-//            'sender_id' => $authUser->id,
             'sender_id' => $authType == 'store' ? $authStore->id : $authUser->id,
             'sender_type' => $authType,
             'receiver_id' => $receiver->id,
@@ -199,6 +199,26 @@ class ChatController extends Controller
                     ->update(['online_at' => (new \DateTime())->format("Y-m-d H:i:s")]);
             }
         } catch (\Exception $e) {
+        }
+
+        try {
+
+            Log::info('Triggering MessageSent event for Pusher', [
+                'message_id' => $message->id,
+                'sender_id' => $data['sender_id'],
+                'receiver_id' => $data['receiver_id'],
+                'receiver_type' => $data['receiver_type'],
+                'chat_id' => $data['chat_id'],
+            ]);
+
+            //  broadcast with Pusher
+            event(new \App\Events\MessageSent($message));
+        } catch (\Exception $e) {
+            Log::error('Pusher Broadcast Failed', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
         }
 
         return response()->json([

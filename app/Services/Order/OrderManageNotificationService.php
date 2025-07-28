@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\RawMessageFromArray;
 use Kreait\Firebase\Messaging\WebPushConfig;
 
 class OrderManageNotificationService
 {
+    private bool $adminNotified = false;
+
     public function createOrderNotification($last_order_ids, $otherCheckData = null)
     {
 
@@ -54,35 +57,163 @@ class OrderManageNotificationService
                 $this->notifyCustomer($order_details, $messages['title'], $messages['customer'], $data);
                 $this->notifyDeliveryman($order_details, $messages['title'], $messages['deliveryman'], $data);
 
-                // Customer notification
-                $this->sendOrderNotification(
-                    $order_details->orderMaster?->customer,
-                    'customer_id',
-                    $order_details->orderMaster?->customer_id ?? 0,
-                    $last_order_id,
-                    $messages['title'],
-                    $messages['customer']
-                );
+                // admin change order status
+                if ($otherCheckData === 'admin_order_status_cpps' || $otherCheckData === 'admin_order_status_delivery') {
+                    // Customer notification
+                    $this->sendOrderNotification(
+                        $order_details->orderMaster?->customer,
+                        'customer_id',
+                        $order_details->orderMaster?->customer_id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['customer']
+                    );
 
-                // Seller notification
-                $this->sendOrderNotification(
-                    $order_details->store?->seller,
-                    'seller_id',
-                    $order_details->store?->store_seller_id ?? 0,
-                    $last_order_id,
-                    $messages['title'],
-                    $messages['store']
-                );
+                    // Seller notification
+                    $this->sendOrderNotification(
+                        $order_details->store?->seller,
+                        'seller_id',
+                        $order_details->store?->store_seller_id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['store']
+                    );
 
-                // Deliveryman notification
-                $this->sendOrderNotification(
-                    $order_details->deliveryman,
-                    'deliveryman_id',
-                    $order_details->deliveryman?->id ?? 0,
-                    $last_order_id,
-                    $messages['title'],
-                    $messages['deliveryman']
-                );
+                    // Deliveryman notification
+                    $this->sendOrderNotification(
+                        $order_details->deliveryman,
+                        'deliveryman_id',
+                        $order_details->deliveryman?->id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['deliveryman']
+                    );
+
+                }elseif($otherCheckData === 'admin_order_status_cancelled'){
+                    // Customer notification
+                    $this->sendOrderNotification(
+                        $order_details->orderMaster?->customer,
+                        'customer_id',
+                        $order_details->orderMaster?->customer_id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['customer']
+                    );
+
+                    // Seller notification
+                    $this->sendOrderNotification(
+                        $order_details->store?->seller,
+                        'seller_id',
+                        $order_details->store?->store_seller_id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['store']
+                    );
+                }elseif($otherCheckData === 'admin_order_assign_deliveryman'){
+                    // Deliveryman notification
+                    $this->sendOrderNotification(
+                        $order_details->deliveryman,
+                        'deliveryman_id',
+                        $order_details->deliveryman?->id ?? 0,
+                        $last_order_id,
+                        $messages['title'] = "New Order Assigned: #{$last_order_id}",
+                        $messages['deliveryman'] = "You have been assigned to deliver Order #{$last_order_id}. Please check the details and proceed with the delivery."
+                    );
+
+                    // Seller notification
+                    $this->sendOrderNotification(
+                        $order_details->store?->seller,
+                        'seller_id',
+                        $order_details->store?->store_seller_id ?? 0,
+                        $last_order_id,
+                        $messages['title'] = "Deliveryman Assigned for Order: #{$last_order_id}",
+                        $messages['store'] = "A deliveryman has been assigned to Order #{$last_order_id}. You can now track the order progress."
+                    );
+                }elseif($otherCheckData === 'seller_order_status_pcpps' || $otherCheckData === 'seller_order_cancelled'){
+                    // Customer notification
+                    $this->sendOrderNotification(
+                        $order_details->orderMaster?->customer,
+                        'customer_id',
+                        $order_details->orderMaster?->customer_id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['customer']
+                    );
+
+                    //  Admin  notification
+                    $this->sendAdminNotification(
+                        $order_details,
+                        $messages['title'],
+                        $messages['admin']
+                    );
+
+                }elseif($otherCheckData === 'customer_order_status_cancelled'){
+                    // Seller notification
+                    $this->sendOrderNotification(
+                        $order_details->store?->seller,
+                        'seller_id',
+                        $order_details->store?->store_seller_id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['store']
+                    );
+
+                    //  Admin  notification
+                    $this->sendAdminNotification(
+                        $order_details,
+                        $messages['title'],
+                        $messages['admin']
+                    );
+
+                }elseif($otherCheckData === 'deliveryman_order_status_psd'){
+
+                    // Customer notification
+                    $this->sendOrderNotification(
+                        $order_details->orderMaster?->customer,
+                        'customer_id',
+                        $order_details->orderMaster?->customer_id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['customer']
+                    );
+
+                    // Seller notification
+                    $this->sendOrderNotification(
+                        $order_details->store?->seller,
+                        'seller_id',
+                        $order_details->store?->store_seller_id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['store']
+                    );
+
+                    //  Admin  notification
+                    $this->sendAdminNotification(
+                        $order_details,
+                        $messages['title'],
+                        $messages['admin']
+                    );
+
+                }else{
+                    // Seller notification
+                    $this->sendOrderNotification(
+                        $order_details->store?->seller,
+                        'seller_id',
+                        $order_details->store?->store_seller_id ?? 0,
+                        $last_order_id,
+                        $messages['title'],
+                        $messages['store']
+                    );
+
+                    // Send admin notification only once
+                    $this->sendAdminNotification(
+                        $order_details,
+                        $messages['title'],
+                        $messages['admin']
+                    );
+                }
+
+
             }
 
         }catch (\Exception $exception){}
@@ -90,35 +221,15 @@ class OrderManageNotificationService
 
     }
 
-    private function sendOrderNotification($recipient, $idKey, $idValue, $orderId, $title, $body)
+    private function sendOrderNotification($recipient_user, $idKey, $idValue, $orderId, $title, $body)
     {
-
-        if (empty($recipient)) {
+        if (empty($recipient_user)) {
             return;
         }
 
-        // super admin token
-        $super_admin = User::where('activity_scope', 'system_level')
-            ->where('slug', 'system-admin-1')
-            ->first();
+        $user_firebase_token = [$recipient_user->firebase_token];
+        $tokens = array_filter(array_unique($user_firebase_token));
 
-        $fcm_web_token = $super_admin->firebase_token;
-        $user_firebase_token = $recipient->firebase_token;
-
-        // Collect tokens (add web token and recipient's token)
-        // Start with the web token
-        $token = [$fcm_web_token];
-
-        // If the recipient has a firebase_token (Flutter token), add it
-        if (!empty($user_firebase_token)) {
-            $flutterToken = is_array($user_firebase_token) ? $user_firebase_token : [$user_firebase_token];
-
-            // Merge Flutter tokens with Web token
-            $tokens = array_merge($token, $flutterToken);
-        }
-
-        // empty check
-        $tokens = array_filter($tokens);
         if (!empty($tokens)) {
             $notification_data = [
                 "title" => $title,
@@ -139,11 +250,45 @@ class OrderManageNotificationService
     }
 
 
+    private function sendAdminNotification(Order $order_details, string $title, string $body): void
+    {
+
+        if ($this->adminNotified) return;
+
+        $super_admin = User::where('activity_scope', 'system_level')
+            ->where('slug', 'super_admin')
+            ->first();
+
+        if (!$super_admin || empty($super_admin->firebase_token)) return;
+
+        $tokens = is_array($super_admin->firebase_token)
+            ? $super_admin->firebase_token
+            : [$super_admin->firebase_token];
+
+        $tokens = array_filter(array_unique($tokens));
+
+        $notification_data = [
+            "title" => $title,
+            "detailed_title" => "-",
+            "order_id" => $order_details->id,
+            "body" => $body,
+            "description" => "-",
+            "type" => "order",
+            "sound" => "default",
+            "screen" => "-",
+        ];
+
+        $this->sendFirebaseNotification($tokens, $title, $body, $notification_data);
+
+        $this->adminNotified = true;
+    }
+
+
     // Notify Admins
     protected function notifyAdmin($title, $message, $data)
     {
         $admin = User::whereHas('roles', function ($query) {
-            $query->where('name', 'Super Admin');
+            $query->where('slug', 'super_admin');
         })->first();
 
         if ($admin) {
@@ -187,7 +332,6 @@ class OrderManageNotificationService
             'status'         => 'unread',
         ]);
     }
-
 
     public function sendFirebaseNotification(array $firebaseTokens, $title, $body, $data)
     {
@@ -237,44 +381,20 @@ class OrderManageNotificationService
                 ],
             ]);
 
+            $firebaseTokens = array_unique($firebaseTokens);
 
-//            // Construct the CloudMessage with notification and data payloads
-//            $message = CloudMessage::new()
-//                ->withNotification($notification)  // Pass the Notification object
-//                ->withData($dataToSend)
-//                ->withWebPushConfig($webPushConfig); // Required for web
-//
-//
-//            // Send the notification to multiple tokens
-//            $messaging->sendMulticast($message, $firebaseTokens);
-//===================================
+            // Construct the CloudMessage with notification and data payloads
+            $message = CloudMessage::new()
+                ->withNotification($notification)  // Pass the Notification object
+                ->withData($dataToSend)
+                ->withWebPushConfig($webPushConfig); // Required for web
 
-            foreach ($firebaseTokens as $token) {
-                $message = CloudMessage::fromArray([
-                    'token' => 'cRL-u0zaO7UN0YWFbL717R:APA91bGlCIxlXbc41dH0t7hytZtXUtISsBJFV8rBaMXzkQKIOtwl_I-naG1hSdwNN4mGT4DNzqP7f6Ud4KF6ayHAWfSz2HbGA6GaRi_wJq93dLi7SQ50H7Q',
-                    'notification' => $notification->jsonSerialize(), // convert to array
-                    'data' => $dataToSend,
-                    'webpush' => $webPushConfig->jsonSerialize(), // convert to array
-                ]);
-
-                try {
-                    $messaging->send($message);
-                } catch (\Throwable $e) {
-                    \Log::error("Failed to send FCM to token {$token}: " . $e->getMessage());
-                }
-            }
-
-
-//            $firebaseTokens = ['dMaD-PMBkw813WeMdORiOZ:APA91bHX15HXBp56hSEm1HbaWuB6QAL8QDZH1ZsF2qisp_Z5auDgkekhumzsE_fLQ3LbrBDSLYYaFORGQHPsnuyiuAq5uWu35UetgXkAKdQs9hSG8HdLE_8'];
-//            $firebaseTokens = ['fGjZQXwSQGKgOhPe8xhj2Y:APA91bG6WhwKuGKTAftwogrtyakyEA_o56HmvZ5ESFbsBqNoMJiDCzMt6rsKDCL-wRW-L7lt64noNu7Ta7VcYqJ-cIjZ6ITexaOnf2vdpZtji8dQZJnF2g4'];
-//            $response = $messaging->sendMulticast($message, $firebaseTokens);
-//            foreach ($response->failures() as $failure) {
-//                Log::error(' FCM Error: ' . $failure->error()->getMessage());
-//                Log::error(' Token: ' . $failure->target()->value());
-//            }
+            // Send the notification to multiple tokens
+            $messaging->sendMulticast($message, $firebaseTokens);
 
 
         }catch (\Exception $exception){}
     }
+
 
 }

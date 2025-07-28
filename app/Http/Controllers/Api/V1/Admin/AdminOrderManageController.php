@@ -167,7 +167,7 @@ class AdminOrderManageController extends Controller
             $success = $order->save();
 
             // Notification + Email
-            $this->sendOrderDeliveredNotifications($order, null);
+            $this->sendOrderDeliveredNotifications($order, null,'admin_order_status_cancelled');
 
             return response()->json([
                 'message' => __($success ? 'messages.update_success' : 'messages.update_failed', ['name' => 'Order status'])
@@ -211,7 +211,7 @@ class AdminOrderManageController extends Controller
             $success = $order->save();
 
             // Notification + Email
-            $this->sendOrderDeliveredNotifications($order, $deliveryHistory);
+            $this->sendOrderDeliveredNotifications($order, $deliveryHistory, 'admin_order_status_delivery');
 
             return response()->json([
                 'message' => __($success ? 'messages.update_success' : 'messages.update_failed', ['name' => 'Order status'])
@@ -221,6 +221,9 @@ class AdminOrderManageController extends Controller
         // Other status updates
         $order->status = $request->status;
         $success = $order->save();
+
+        // if order status confirmed, processing, pickup, shipped
+        $this->sendOrderDeliveredNotifications($order, null, 'admin_order_status_cpps');
 
         return response()->json([
             'message' => __($success ? 'messages.update_success' : 'messages.update_failed', ['name' => 'Order status'])
@@ -268,9 +271,11 @@ class AdminOrderManageController extends Controller
         }
     }
 
-    protected function sendOrderDeliveredNotifications(Order $order, $deliveryHistory)
+    protected function sendOrderDeliveredNotifications(Order $order, $deliveryHistory = null, $type = null)
     {
-        $this->orderManageNotificationService->createOrderNotification($order->id);
+
+        // check if change admin order  status
+        $this->orderManageNotificationService->createOrderNotification($order->id, $type);
 
         try {
 
@@ -408,6 +413,9 @@ class AdminOrderManageController extends Controller
             $success = $order->update([
                 'confirmed_by' => $request->delivery_man_id
             ]);
+
+            // Notification + Email
+            $this->sendOrderDeliveredNotifications($order, null, 'admin_order_assign_deliveryman');
 
             if ($success) {
                 return response()->json([
