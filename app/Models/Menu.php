@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     use DeleteTranslations;
+
     protected $fillable = [
         'page_id',
         'name',
@@ -18,12 +19,17 @@ class Menu extends Model
         'parent_id',
         'menu_level',
         'menu_path',
-        'parent_path'
+        'parent_path',
+        'menu_content',
+    ];
+    protected $casts = [
+        'menu_content' => 'json'
     ];
 
     public $translationKeys = [
         'name',
     ];
+
     public function translations()
     {
         return $this->morphMany(Translation::class, 'translatable');
