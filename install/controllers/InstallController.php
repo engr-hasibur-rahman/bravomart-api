@@ -165,6 +165,7 @@ class InstallController
 
             // Update the .env key for cache store
             $this->updateEnvKey('CACHE_STORE', 'database');
+            exec('php artisan migrate --force 2>&1', $outputMigrate, $codeMigrate);
 
             // Clear caches
             exec('php artisan config:clear 2>&1');
