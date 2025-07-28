@@ -59,16 +59,20 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
 
     public function getAllDeliveryman(array $filters)
     {
-        $query = DeliveryMan::with([
-            'user',
-            'vehicle_type.related_translations',
-            'area.related_translations',
-            'creator',
-            'updater'
-        ]);
-        if (isset($filters['search'])) {
-            $searchTerms = preg_split('/\s+/', trim($filters['search'])); // Split by space
-            $query->whereHas('user', function ($q) use ($searchTerms) {
+        $query = User::with([
+            'deliveryman',
+            'deliveryman.vehicle_type.related_translations',
+            'deliveryman.area.related_translations',
+            'deliveryman.creator',
+            'deliveryman.updater'
+        ])
+            ->where('activity_scope', 'delivery_level')
+            ->whereNull('deleted_at');
+
+        // Search on User name
+        if (!empty($filters['search'])) {
+            $searchTerms = preg_split('/\s+/', trim($filters['search']));
+            $query->where(function ($q) use ($searchTerms) {
                 foreach ($searchTerms as $term) {
                     $q->where(function ($subQ) use ($term) {
                         $subQ->where('first_name', 'like', "%$term%")
@@ -78,31 +82,30 @@ class DeliverymanManageRepository implements DeliverymanManageInterface
             });
         }
 
-        if (isset($filters['vehicle_type_id'])) {
-            $query->where('vehicle_type_id', $filters['vehicle_type_id']);
-        }
+        // Filters from related DeliveryMan model
+        $query->whereHas('deliveryman', function ($q) use ($filters) {
+            if (!empty($filters['vehicle_type_id'])) {
+                $q->where('vehicle_type_id', $filters['vehicle_type_id']);
+            }
 
-        if (isset($filters['area_id'])) {
-            $query->where('area_id', $filters['area_id']);
-        }
+            if (!empty($filters['area_id'])) {
+                $q->where('area_id', $filters['area_id']);
+            }
 
-        if (isset($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
+            if (isset($filters['status'])) {
+                $q->where('status', $filters['status']);
+            }
 
-        if (isset($filters['identification_type'])) {
-            $query->where('identification_type', 'like', '%' . $filters['identification_type'] . '%');
-        }
+            if (!empty($filters['identification_type'])) {
+                $q->where('identification_type', 'like', '%' . $filters['identification_type'] . '%');
+            }
 
-        if (isset($filters['created_by'])) {
-            $query->where('created_by', $filters['created_by']);
-        }
-        $deliverymen = $query
-            ->whereHas('user', fn($q) => $q->whereNull('deleted_at'))
-            ->latest()
-            ->paginate($filters['per_page'] ?? 10);
+            if (!empty($filters['created_by'])) {
+                $q->where('created_by', $filters['created_by']);
+            }
+        });
 
-        return $deliverymen;
+        return $query->latest()->paginate($filters['per_page'] ?? 10);
     }
 
     public function store(array $data)

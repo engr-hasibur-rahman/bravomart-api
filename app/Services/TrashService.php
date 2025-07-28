@@ -34,7 +34,9 @@ class TrashService
             'products',
             'tickets',
         ],
-        'deliveryman',
+        'deliveryman' => [
+            'deliveryman'
+        ],
         'product' => [
             'reviews',
             'variants',
