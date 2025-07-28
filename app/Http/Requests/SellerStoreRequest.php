@@ -28,7 +28,7 @@ class SellerStoreRequest extends FormRequest
             'subscription_type' => 'required|in:subscription,commission',
             'subscription_id' => 'nullable|exists:subscriptions,id',
             'payment_gateway' => 'nullable',
-            'area_id' => 'nullable|exists:areas,id',
+            'area_id' => 'nullable|exists:store_areas,id',
             'id' => 'nullable|exists:stores,id',
             'store_type' => 'required|in:' . $this->getEnumValues(StoreType::class),
             'name' => 'required|string|max:255',

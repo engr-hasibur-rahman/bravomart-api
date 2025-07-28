@@ -28,6 +28,7 @@ class MenuPublicDetailsResource extends JsonResource
             'parent_path' => $this->parent_path,
             'menu_level' => $this->menu_level,
             'menu_path' => $this->menu_path,
+            'menu_content' => json_decode($this->menu_content),
             'childrenRecursive' => MenuPublicViewResource::collection($this->whenLoaded('childrenRecursive')),
             'status' => $this->status,
             "translations" => MenuTranslationResource::collection($this->related_translations->groupBy('language'))

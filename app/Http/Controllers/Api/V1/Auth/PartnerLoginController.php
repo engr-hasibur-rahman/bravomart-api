@@ -45,7 +45,7 @@ class PartnerLoginController extends Controller
                 "status" => false,
                 "status_code" => 422,
                 "message" => 'User is not a seller!',
-            ]);
+            ],422);
         }
 
 

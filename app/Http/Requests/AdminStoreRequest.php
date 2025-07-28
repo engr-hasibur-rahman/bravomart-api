@@ -28,7 +28,7 @@ class AdminStoreRequest extends FormRequest
             'subscription_type' => 'nullable|string|max:50',
             'subscription_id' => 'nullable|exists:subscriptions,id',
             'payment_gateway' => 'payment_gateway',
-            'area_id' => 'nullable|exists:areas,id',
+            'area_id' => 'nullable|exists:store_areas,id',
             'store_seller_id' => 'nullable|exists:store_sellers,user_id',
             'store_type' => 'required|in:' . $this->getEnumValues(StoreType::class),
             'name' => 'required|string|max:255',

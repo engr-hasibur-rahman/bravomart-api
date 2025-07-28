@@ -1,4 +1,15 @@
 <?php
+// Laravel Boot
+require_once realpath(__DIR__ . '/../../vendor/autoload.php');
+$app = require_once realpath(__DIR__ . '/../../bootstrap/app.php');
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$kernel->bootstrap();
+
+use App\Models\User;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class InstallController
 {
@@ -154,6 +165,7 @@ class InstallController
 
             // Update the .env key for cache store
             $this->updateEnvKey('CACHE_STORE', 'database');
+            exec('php artisan migrate --force 2>&1', $outputMigrate, $codeMigrate);
 
             // Clear caches
             exec('php artisan config:clear 2>&1');
@@ -254,9 +266,9 @@ class InstallController
                 $env['DB_PASSWORD']
             );
 
-            $stmt = $pdo->prepare("INSERT INTO users (id, first_name, last_name, slug, phone, email, password, activity_scope,email_verified)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)");
-            $stmt->execute([1, $first_name, $last_name, $slug, $phone, $email, $password, 'system_level', 1]);
+            $stmt = $pdo->prepare("INSERT INTO users (id, first_name, last_name, slug, phone, email, password, activity_scope,email_verified,status)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?)");
+            $stmt->execute([8, $first_name, $last_name, $slug, $phone, $email, $password, 'system_level', 1, 1]);
 
             header('Location: index.php?step=finish');
             exit;

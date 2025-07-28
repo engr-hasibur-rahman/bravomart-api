@@ -34,7 +34,9 @@ class TrashService
             'products',
             'tickets',
         ],
-        'deliveryman',
+        'deliveryman' => [
+            'deliveryman'
+        ],
         'product' => [
             'reviews',
             'variants',
@@ -72,9 +74,9 @@ class TrashService
         return $query;
     }
 
-    public function listTrashed(string $type, int $perPage = 10)
+    public function listTrashed(string $type, int $perPage = 10, array $with = [])
     {
-        return $this->getQueryBuilder($type)->paginate($perPage);
+        return $this->getQueryBuilder($type)->with($with)->paginate($perPage);
     }
 
     public function restore(string $type, array $ids): int

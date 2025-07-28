@@ -1687,16 +1687,18 @@ class PermissionAdminSeeder extends Seeder
             }
         }
 
-        $user = auth('api')->user();
-        if ($user && $user->activity_scope == 'system_level') {
-            //Assign PermissionKey to Super Admin Role
-            $role = Role::where(['available_for' => 'system_level'])->first();
-            //PermissionKey::firstOrCreate(['name'  => 'all'], ['name'  => 'all', 'guard_name' => 'api']);
-            $role->givePermissionTo(Permission::whereIn('available_for', ['system_level', 'COMMON'])->get());
-            $user->assignRole($role);
+        $user = \App\Models\User::where('activity_scope', 'system_level')->first(); // or use email: User::where('email', 'admin@example.com')->first();
 
-            // Update View Option For All permission
-            DB::table('role_has_permissions')->update(['view' => true]);
+        if ($user && $user->activity_scope == 'system_level') {
+            $role = Role::where('available_for', 'system_level')->first();
+
+            if ($role) {
+                $permissions = Permission::whereIn('available_for', ['system_level', 'COMMON'])->get();
+                $role->givePermissionTo($permissions);
+                $user->assignRole($role);
+
+                DB::table('role_has_permissions')->update(['view' => true]);
+            }
         }
     }
 }
