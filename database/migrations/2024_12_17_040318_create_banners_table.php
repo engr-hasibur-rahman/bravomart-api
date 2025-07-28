@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->string('button_color')->nullable();
             $table->string('redirect_url')->nullable();
             $table->string('location')->default('home_page')->comment('the location of the banner Home Page or Store Page');
-            $table->string('type')->nullable()->comment('Ex: Banner-1, Banner-2, Banner-3');
+            $table->string('type')->nullable()->comment('banner_one, banner_two, banner_three');
             $table->integer('status')->default(0)->comment('0=inactive, 1=active');
             $table->timestamps();
         });
