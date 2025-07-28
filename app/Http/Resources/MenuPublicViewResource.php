@@ -36,6 +36,9 @@ class MenuPublicViewResource extends JsonResource
             'parent_path' => $this->parent_path,
             'menu_level' => $this->menu_level,
             'menu_path' => $this->menu_path,
+            'menu_content' => !empty($translation) && $translation->where('key', 'menu_content')->first()
+                ? json_decode($translation->where('key', 'menu_content')->first()->value)
+                : json_decode($this->menu_content),
             'childrenRecursive' => MenuPublicViewResource::collection($this->whenLoaded('childrenRecursive')),
             'status' => $this->status,
             'created_at' => $this->created_at,

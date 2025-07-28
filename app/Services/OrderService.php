@@ -279,6 +279,7 @@ class OrderService
 
                         // store and admin discount calculate per product wise
                         $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100.00) : $flash_sale_discount_amount;
+                        $flash_sale_admin_discount = shouldRound()? round($flash_sale_admin_discount): $flash_sale_admin_discount;
                         $finalPrice = $basePrice - $flash_sale_admin_discount;
                         $after_any_discount_final_price = $finalPrice;
 
@@ -433,6 +434,7 @@ class OrderService
                                 $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage')
                                     ? ($basePrice * $flash_sale_discount_amount / 100.00)
                                     : $flash_sale_discount_amount;
+                                $flash_sale_admin_discount = shouldRound() ? round($flash_sale_admin_discount) : $flash_sale_admin_discount;
                             }
                         } else {
                             $flash_sale_admin_discount = 0;
@@ -561,9 +563,9 @@ class OrderService
 
                     /// Update Order
                     $package->order_additional_charge_name = $order_additional_charge_name;
-                    $package->order_additional_charge_amount = $order_additional_charge_amount;
-                    $package->order_admin_additional_charge_commission = $order_admin_additional_charge_commission;
-                    $package->order_additional_charge_store_amount = $order_additional_charge_store_amount;
+                    $package->order_additional_charge_amount = shouldRound() ? round($order_additional_charge_amount) : $order_additional_charge_amount;
+                    $package->order_admin_additional_charge_commission = shouldRound() ? round($order_admin_additional_charge_commission) : $order_admin_additional_charge_commission;
+                    $package->order_additional_charge_store_amount = shouldRound() ? round($order_additional_charge_store_amount) : $order_additional_charge_store_amount;
 
                     /// Update Order Master
                     $order_master->additional_charge_amount += $order_additional_charge_amount;

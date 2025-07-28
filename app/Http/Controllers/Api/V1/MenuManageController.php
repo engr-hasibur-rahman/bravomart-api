@@ -79,11 +79,12 @@ class  MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'required|integer',
+            'position' => 'nullable|integer',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id',
             'parent_path' => 'nullable|string',
             'menu_path' => 'nullable|string',
+            'menu_content' => 'nullable|json',
             'translations' => 'nullable|array',
             'translations.*.language' => 'nullable|string',
             'translations.*.value' => 'nullable|string',
@@ -105,6 +106,7 @@ class  MenuManageController extends Controller
                 'parent_path' => $request->parent_path,
                 'menu_path' => $request->menu_path,
                 'menu_level' => $request->parent_id ? Menu::find($request->parent_id)->menu_level + 1 : 0,
+                'menu_content' => $request->menu_content,
             ]);
 
             // Save translations
@@ -153,11 +155,12 @@ class  MenuManageController extends Controller
             'name' => 'required|string|max:255',
             'url' => 'nullable|string',
             'icon' => 'nullable|string',
-            'position' => 'required|integer',
+            'position' => 'nullable|integer',
             'is_visible' => 'boolean',
             'parent_id' => 'nullable|exists:menus,id|not_in:' . $request->id,
             'parent_path' => 'nullable|string',
             'menu_path' => 'nullable|string',
+            'menu_content' => 'nullable|json',
             'translations' => 'nullable|array',
             'translations.*.language' => 'nullable|string',
             'translations.*.value' => 'nullable|string',
@@ -182,6 +185,7 @@ class  MenuManageController extends Controller
                 'parent_path' => $request->parent_path,
                 'menu_path' => $request->menu_path,
                 'menu_level' => $request->parent_id ? Menu::find($request->parent_id)->menu_level + 1 : 0,
+                'menu_content' => $request->menu_content,
             ]);
             if ($request->has('translations')) {
                 createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
