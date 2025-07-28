@@ -112,6 +112,7 @@ class  MenuManageController extends Controller
             // Save translations
             if ($request->has('translations')) {
                 createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
+                createOrUpdateTranslationJson($request, $menu->id, 'App\Models\Menu', ['menu_content']);
             }
 
             return response()->json([
@@ -189,6 +190,7 @@ class  MenuManageController extends Controller
             ]);
             if ($request->has('translations')) {
                 createOrUpdateTranslation($request, $menu->id, 'App\Models\Menu', $this->translationKeys());
+                createOrUpdateTranslationJson($request, $menu->id, 'App\Models\Menu', ['menu_content']);
             }
 
             return response()->json([
