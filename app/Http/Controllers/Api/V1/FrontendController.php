@@ -1874,20 +1874,24 @@ class FrontendController extends Controller
 
     public function index(Request $request)
     {
-        if (isset($request->language)) {
-            $language = $request->language;
-            // Define the base query for the Banner model
-            $banner = Banner::query()->with(['related_translations' => function ($query) use ($language) {
-                $query->where('language', $language)
-                    ->whereIn('key', ['title', 'description', 'button_text']);
-            }]);
-        }
-        $banner = $banner->where('status', 1)
+        $language = $request->language ?? 'en';
+
+        // Fetch banners with translation eager-loaded
+        $banners = Banner::with(['related_translations' => function ($query) use ($language) {
+            $query->where('language', $language)
+                ->whereIn('key', ['title', 'description', 'button_text']);
+        }])
+            ->where('status', 1)
             ->where('location', 'home_page')
-            ->latest()
             ->get();
-        return BannerPublicResource::collection($banner);
+
+        // Transform and group by type
+        $transformed = BannerPublicResource::collection($banners)->toArray($request);
+        $grouped = collect($transformed)->groupBy('type');
+
+        return response()->json($grouped);
     }
+
 
 
     public function areaList()
