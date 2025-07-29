@@ -133,7 +133,24 @@ class FrontendController extends Controller
                     ->where('reviewable_type', Product::class)
                     ->where('status', 'approved')
             ])->orderByDesc('rating');
-            $query->having('rating', '>=', 2); // Set your threshold
+            $query->having('rating', '>=', 2);
+        }
+        // Limit
+        if ($request->filled('limit')) {
+            $stores = $query
+                ->with(['area', 'seller', 'related_translations', 'products'])
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->limit($request->limit)
+                ->get();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => __('messages.data_found'),
+                'data' => StorePublicListResource::collection($stores),
+                'meta' => null
+            ]);
         }
         // Pagination
         $perPage = $request->get('per_page', 10);
@@ -142,19 +159,14 @@ class FrontendController extends Controller
             ->where('status', 1)
             ->where('deleted_at', null)
             ->paginate($perPage);
-        if (!empty($stores)) {
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => __('messages.data_found'),
-                'data' => StorePublicListResource::collection($stores),
-                'meta' => new PaginationResource($stores)
-            ]);
-        } else {
-            return response()->json([
-                'message' => __('messages.data_not_found')
-            ], 404);
-        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => __('messages.data_found'),
+            'data' => StorePublicListResource::collection($stores),
+            'meta' => new PaginationResource($stores)
+        ]);
     }
 
     public function getStoresDropdown(Request $request)
@@ -1891,7 +1903,6 @@ class FrontendController extends Controller
 
         return response()->json($grouped);
     }
-
 
 
     public function areaList()
