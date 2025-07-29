@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class OrderDetail extends Model
 {
     use RoundNumericFields;
+
     protected $fillable = [
         'order_id',
         'store_id',
@@ -33,6 +34,10 @@ class OrderDetail extends Model
         'admin_commission_rate',
         'admin_commission_amount',
         'coupon_discount_amount',
+    ];
+
+    protected $casts = [
+        'quantity' => 'integer',
     ];
 
     public function order()
