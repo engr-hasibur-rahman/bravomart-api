@@ -1544,7 +1544,7 @@ class PermissionAdminSeeder extends Seeder
                             'PermissionName' => '',
                             'PermissionTitle' => 'Maintenance Tools',
                             'activity_scope' => 'system_level',
-                            'icon' => 'Blocks',
+                            'icon' => 'Wrench',
                             'options' => ['view'],
                             'translations' => [
                                 'en' => 'Maintenance Tools',
