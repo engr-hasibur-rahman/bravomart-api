@@ -35,7 +35,7 @@ class MediaService
             $base_path = 'uploads/media-uploader';
             $folder_path = "{$base_path}/{$folder_type}";
 
-            if ($type == 'deliveryman'){
+            if ($type == 'deliveryman') {
                 $base_path = 'uploads/deliveryman';
                 $folder_path = "{$base_path}/{$folder_type}";
             }
@@ -65,7 +65,6 @@ class MediaService
 
             // Save images to storage
             $resize_full_image->save(storage_path("app/public/{$folder_path}/{$image_db}"));
-
 
 
             $user_id = auth('sanctum')->id();
@@ -104,24 +103,24 @@ class MediaService
         $user_type = '';
 
         // check only store
-        if($user->activity_scope === 'store_level' && !empty($request->store_id)){
-                $store = Store::where('id', $request->store_id)
-                    ->where('store_seller_id', $user_id)
-                    ->first();
+        if ($user->activity_scope === 'store_level' && !empty($request->store_id)) {
+            $store = Store::where('id', $request->store_id)
+                ->where('store_seller_id', $user_id)
+                ->first();
 
-                if ($store) {
-                    $user_id = $store->id;
-                    $user_type = Store::class;
-                }
+            if ($store) {
+                $user_id = $store->id;
+                $user_type = Store::class;
+            }
             // check for admin and deliveryman and seller
-        }elseif(
+        } elseif (
             $user->activity_scope === 'system_level' ||
             $user->activity_scope === 'delivery_level' ||
             ($user->activity_scope === 'store_level' && empty($request->store_id))
-        ){
-           $user_type = User::class;
-        } else{
-           $user_type = 'App\Models\Customer';
+        ) {
+            $user_type = User::class;
+        } else {
+            $user_type = 'App\Models\Customer';
         }
 
 
@@ -191,19 +190,8 @@ class MediaService
             ];
         }
 
-        $folder_path = dirname($get_image_details->path);
-        $base_path = storage_path('app/public/uploads/media-uploader/');
-
+        $base_path = storage_path('app/public/');
         $image_path = $base_path . $get_image_details->path;
-        $image_variants = ['grid-', 'large-', 'semi-large-', 'thumb-'];
-
-        // Delete image variants if they exist
-        foreach ($image_variants as $variant) {
-            $variant_path = $base_path . $folder_path . '/' . $variant . basename($get_image_details->path);
-            if (file_exists($variant_path)) {
-                unlink($variant_path);
-            }
-        }
 
         // Delete the main image if it exists
         if (file_exists($image_path)) {
@@ -229,57 +217,9 @@ class MediaService
     }
 
 
-    public function admin_delete_media_image($request)
-    {
-        $get_image_details = Media::find($request->id);
-
-        // Check if the image exists
-        if (!$get_image_details) {
-            return [
-                'msg' => 'Image not found',
-                'success' => false,
-            ];
-        }
-
-        $folder_path = dirname($get_image_details->path);
-        $base_path = storage_path('app/public/uploads/media-uploader/');
-
-        $image_path = $base_path . $get_image_details->path;
-        $image_variants = ['grid-', 'large-', 'semi-large-', 'thumb-'];
-
-        // Delete image variants if they exist
-        foreach ($image_variants as $variant) {
-            $variant_path = $base_path . $folder_path . '/' . $variant . basename($get_image_details->path);
-            if (file_exists($variant_path)) {
-                unlink($variant_path);
-            }
-        }
-
-        // Delete the main image if it exists
-        if (file_exists($image_path)) {
-            unlink($image_path);
-        }
-
-        // Delete the image record from the database
-        $image_find = Media::where('id', $request->id)->delete();
-
-        if ($image_find) {
-            return [
-                'msg' => 'Image and its variants deleted successfully',
-                'success' => true,
-            ];
-        } else {
-            return [
-                'msg' => 'Failed to delete the image',
-                'success' => false,
-            ];
-        }
-    }
-
     public function bulkDeleteMediaImages(array $ids): array
     {
-        $base_path = storage_path('app/public/uploads/media-uploader/');
-        $image_variants = ['grid-', 'large-', 'semi-large-', 'thumb-'];
+        $base_path = storage_path('app/public/');
 
         $deleted = 0;
         $failed = 0;
@@ -292,20 +232,12 @@ class MediaService
                 continue;
             }
 
-            $folder_path = dirname($media->path);
-            $full_image_path = $base_path . $media->path;
+            $folder_path = $media->path;
 
-            // Delete image variants
-            foreach ($image_variants as $variant) {
-                $variant_path = $base_path . $folder_path . '/' . $variant . basename($media->path);
-                if (file_exists($variant_path)) {
-                    @unlink($variant_path);
-                }
-            }
-
-            // Delete main image
-            if (file_exists($full_image_path)) {
-                dd(file_exists($full_image_path));
+            // Delete image
+            $variant_path = $base_path . $folder_path;
+            if (file_exists($variant_path)) {
+                @unlink($variant_path);
             }
 
             // Delete DB record
@@ -325,7 +257,6 @@ class MediaService
             'failed' => $failed,
         ];
     }
-
 
 
 }

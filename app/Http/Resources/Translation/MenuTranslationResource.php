@@ -17,7 +17,7 @@ class MenuTranslationResource extends JsonResource
         return [
             "language_code" => $this->first()->language,
             "name" => $this->where('key', 'name')->first()?->value,
-            "menu_content" => json_decode($this->where('key', 'menu_content')->first()?->value),
+            "menu_content" => json_decode(json_decode($this->where('key', 'menu_content')->first()?->value)),
         ];
     }
 }
