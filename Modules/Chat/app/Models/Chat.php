@@ -13,7 +13,7 @@ use Modules\Subscription\app\Models\StoreSubscription;
 
 class Chat extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -35,6 +35,7 @@ class Chat extends Model
     {
         return $this->hasOne(StoreSubscription::class, 'store_id', 'user_id');
     }
+
     public function scopeWithActiveStoreSubscription(Builder $query): Builder
     {
         return $query->where(function ($q) {
@@ -48,22 +49,35 @@ class Chat extends Model
                 });
         });
     }
+
     public function scopeWithLiveChatEnabledStoreSubscription(Builder $query): Builder
     {
         return $query->where(function ($q) {
             $q->where('user_type', '!=', 'store')
                 ->orWhere(function ($q2) {
                     $q2->where('user_type', 'store')
-                        ->whereHas('storeSubscription', function ($q3) {
-                            $q3->where('payment_status', 'paid')
-                                ->where('status', 1)
-                                ->where('live_chat', 1)
-                                ->whereHas('store', function ($q4) {
-                                    $q4->where('subscription_type', 'subscription');
-                                });
+                        ->where(function ($q3) {
+                            // 1. Stores with paid, active, live chat subscription
+                            $q3->whereHas('storeSubscription', function ($q4) {
+                                $q4->where('payment_status', 'paid')
+                                    ->where('status', 1)
+                                    ->where('live_chat', 1)
+                                    ->whereHas('store', function ($q5) {
+                                        $q5->where('subscription_type', 'subscription');
+                                    });
+                            })
+                                // 2. OR: Store model has subscription_type = 'commission'
+                                ->orWhereHasMorph(
+                                    'user',
+                                    [\App\Models\Store::class],
+                                    function ($q6) {
+                                        $q6->where('subscription_type', 'commission');
+                                    }
+                                );
                         });
                 });
         });
     }
+
 
 }
