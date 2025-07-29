@@ -21,10 +21,10 @@ class AdminFlashSaleDetailsResource extends JsonResource
             "id" => $this->id,
             "products" => $this->products->map(function ($flashSaleProduct) {
                 return [
-                    'id' => $flashSaleProduct->product->id,
-                    'value' => $flashSaleProduct->product->id,
-                    'label' => $flashSaleProduct->product->name,
-                    'image' => ImageModifier::generateImageUrl($flashSaleProduct->product->image),
+                    'id' => $flashSaleProduct?->product?->id,
+                    'value' => $flashSaleProduct?->product?->id,
+                    'label' => $flashSaleProduct?->product?->name,
+                    'image' => ImageModifier::generateImageUrl($flashSaleProduct?->product?->image),
                 ];
             }),
             "title" => $this->title,
