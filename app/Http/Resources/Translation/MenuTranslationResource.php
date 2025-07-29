@@ -19,7 +19,7 @@ class MenuTranslationResource extends JsonResource
         return [
             "language_code" => $this->first()?->language,
             "name" => $this->where('key', 'name')->first()?->value,
-            "menu_content" => is_string($menuContent) ? json_decode($menuContent, true) : $menuContent,
+            "menu_content" => is_string($menuContent) ? json_decode($menuContent, true) : json_decode(json_decode($menuContent)),
         ];
     }
 }
