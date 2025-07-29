@@ -14,10 +14,12 @@ class MenuTranslationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $menuContent = $this->where('key', 'menu_content')->first()?->value;
+
         return [
-            "language_code" => $this->first()->language,
+            "language_code" => $this->first()?->language,
             "name" => $this->where('key', 'name')->first()?->value,
-            "menu_content" => json_decode(json_decode($this->where('key', 'menu_content')->first()?->value)),
+            "menu_content" => is_string($menuContent) ? json_decode($menuContent, true) : $menuContent,
         ];
     }
 }
