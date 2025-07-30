@@ -15,13 +15,10 @@ class AdminChatController extends Controller
 {
     public function adminChatList(Request $request)
     {
-
         $auth_user = auth()->guard('api')->user();
-        $auth_id = $auth_user->id;
-        $auth_type = 'admin';
 
-        $chat = Chat::where('user_id', $auth_id)
-            ->where('user_type', $auth_type)
+        $chat = Chat::where('user_id', $auth_user->id)
+            ->where('user_type', 'admin')
             ->first();
 
         if (!$chat) {
@@ -31,54 +28,51 @@ class AdminChatController extends Controller
             ]);
         }
 
-
         $query = Chat::with('user')
             ->where('user_type', '!=', 'admin')
             ->withLiveChatEnabledStoreSubscription();
 
-        $name = $request->input('search');
-        if ($name) {
-            $query->where(function ($q) use ($name) {
-
-                // For user_type = customer (Customer model)
-                $q->orWhere(function ($q2) use ($name) {
-                    $q2->where('user_type', 'customer')
-                        ->whereHasMorph('user', ['customer'], function ($q3) use ($name) {
-                            $q3->where('first_name', 'like', "%{$name}%")
-                                ->orWhere('last_name', 'like', "%{$name}%");
-                        });
-                });
-
-
-                // Deliveryman (User model with first_name / last_name)
-                $q->orWhere(function ($q2) use ($name) {
-                    $q2->where('user_type', 'deliveryman')
-                        ->whereHasMorph('user', ['deliveryman'], function ($q3) use ($name) {
-                            $q3->where('first_name', 'like', "%{$name}%")
-                                ->orWhere('last_name', 'like', "%{$name}%");
-                        });
-                });
-
-                // For user_type = store (Store model)
-                $q->orWhere(function ($q2) use ($name) {
-                    $q2->where('user_type', 'store')
-                        ->whereHasMorph('user', ['store'], function ($q3) use ($name) {
-                            $q3->where('name', 'like', "%{$name}%");
-                        });
-                });
-            });
-
-        }
-
+        // Filter by user_type
         $type = $request->input('type');
-
         if (!empty($type) && $type !== 'all') {
             $query->where('user_type', $type);
         }
 
-        // Paginate
-        $chats = $query->paginate(20);
+        // Filter by name
+        $search = $request->input('search');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->when(true, function ($q2) use ($search) {
+                    // Customer
+                    $q2->orWhere(function ($q3) use ($search) {
+                        $q3->where('user_type', 'customer')
+                            ->whereHasMorph('user', ['customer'], function ($q4) use ($search) {
+                                $q4->where('first_name', 'like', "%{$search}%")
+                                    ->orWhere('last_name', 'like', "%{$search}%");
+                            });
+                    });
 
+                    // Deliveryman
+                    $q2->orWhere(function ($q3) use ($search) {
+                        $q3->where('user_type', 'deliveryman')
+                            ->whereHasMorph('user', ['deliveryman'], function ($q4) use ($search) {
+                                $q4->where('first_name', 'like', "%{$search}%")
+                                    ->orWhere('last_name', 'like', "%{$search}%");
+                            });
+                    });
+
+                    // Store
+                    $q2->orWhere(function ($q3) use ($search) {
+                        $q3->where('user_type', 'store')
+                            ->whereHasMorph('user', ['store'], function ($q4) use ($search) {
+                                $q4->where('name', 'like', "%{$search}%");
+                            });
+                    });
+                });
+            });
+        }
+
+        $chats = $query->paginate($request->input('per_page', 20));
 
         return response()->json([
             'success' => true,
@@ -86,6 +80,7 @@ class AdminChatController extends Controller
             'meta' => new PaginationResource($chats)
         ]);
     }
+
 
     public function chatWiseFetchMessages(Request $request)
     {
