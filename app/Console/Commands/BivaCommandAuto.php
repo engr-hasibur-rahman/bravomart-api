@@ -24,21 +24,21 @@ class BivaCommandAuto extends Command
      *
      * @var string
      */
-    protected $signature = 'biva:autoinstall';
+    protected $signature = 'bravo:autoinstall';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Installing Biva Dependencies';
+    protected $description = 'Installing Bravo Dependencies';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        info('Installing Biva Dependencies...');
+        info('Installing Bravo Dependencies...');
         info('If you have already run this command or migrated tables then be aware.');
         info('Do you want to seed dummy data?');
 
@@ -56,7 +56,7 @@ class BivaCommandAuto extends Command
         info('Settings import is completed.');
 
         info('Provide admin credentials info to create an admin user for you.');
-        $first_name = 'BivaMart Admin';
+        $first_name = 'BravoMart Admin';
 
         // Manually validate the email input
         do {

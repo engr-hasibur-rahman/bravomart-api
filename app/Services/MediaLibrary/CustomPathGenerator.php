@@ -8,10 +8,6 @@ use Spatie\MediaLibrary\Support\PathGenerator\PathGenerator as BasePathGenerator
 class CustomPathGenerator implements BasePathGenerator
 {
 
-    /*
-        return $this->getBasePath($media).'/';
-        return $prefix.'/'.$media->getKey();
-    */
     private function getFilePath(Media $media, ?string $extra = null): string
     {
 

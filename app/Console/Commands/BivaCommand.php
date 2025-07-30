@@ -2,11 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\PermissionKey as UserPermission;
-use App\Enums\Role as UserRole;
 use Illuminate\Console\Command;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\DB;
 
@@ -19,21 +15,21 @@ class BivaCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'biva:install';
+    protected $signature = 'bravo:install';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Installing Biva Dependencies';
+    protected $description = 'Installing Bravo Dependencies';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        info('Installing Biva Dependencies...');
+        info('Installing Bravo Dependencies...');
         info('If you have already run this command or migrated tables then be aware.');
         info('Do you want to seed dummy data?');
         
@@ -59,11 +55,11 @@ class BivaCommand extends Command
             info('Do you want to seed dummy Settings data?');
             info('If "yes", then please follow next steps carefully.');
             if (confirm('Are you sure!')) {
-                $this->call('biva:setting-seed');
+                $this->call('bravo:setting-seed');
             }
         }
 
-        $this->call('biva:create-admin'); // creating Admin
+        $this->call('bravo:create-admin'); // creating Admin
 
         info('Everything is successful. Now clearing all cached...');
         $this->call('optimize:clear');

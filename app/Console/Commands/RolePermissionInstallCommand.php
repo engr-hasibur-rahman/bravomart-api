@@ -2,10 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Database\Seeders\ModelHasRolesSeeder;
-use Database\Seeders\PermissionAdminSeeder;
-use Database\Seeders\PermissionStoreSeeder;
-use Database\Seeders\RolesSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 

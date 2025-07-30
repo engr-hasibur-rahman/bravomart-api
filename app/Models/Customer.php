@@ -4,8 +4,6 @@ namespace App\Models;
 
 use App\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,7 +12,6 @@ use Modules\Chat\app\Models\ChatMessage;
 use Modules\SmsGateway\app\Models\UserOtp;
 use Modules\Wallet\app\Models\Wallet;
 
-//class Customer extends Model
 class Customer extends Authenticatable // Extend Authenticatable instead of Model
 {
     use HasFactory, HasApiTokens, SoftDeletes,HasMedia;

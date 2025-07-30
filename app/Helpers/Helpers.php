@@ -220,7 +220,6 @@ if (!function_exists('verifyGoogleToken')) {
             return $userData;
 
         } catch (\Exception $e) {
-            // You can log: $e->getMessage() or $e->getResponse()->getBody()->getContents()
             return null;
         }
     }

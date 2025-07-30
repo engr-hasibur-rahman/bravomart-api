@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\PermissionKey as UserPermission;
-use App\Enums\Role as UserRole;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +13,7 @@ use function Laravel\Prompts\{text, confirm, info, password, error};
 
 class CreateUserCommand extends Command
 {
-    protected $signature = 'biva:create-admin';
+    protected $signature = 'bravo:create-admin';
 
     protected $description = 'Create an admin user.';
     public function handle()
