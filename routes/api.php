@@ -54,6 +54,13 @@ Route::post('contact-us', [ContactManageController::class, 'store']);
 
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['prefix' => 'v1/'], function () {
+    Route::group(['prefix' => 'seller/'], function () {
+        Route::post('registration', [UserController::class, 'StoreOwnerRegistration']);
+        // password reset
+        Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
+        Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
+        Route::post('reset-password', [SellerManageController::class, 'resetPassword']);
+    });
     // media cleanup
     Route::get('get-media',[\App\Http\Controllers\Api\V1\MediaCleanUpController::class, 'getMedia']);
     // For customer register and login
@@ -63,14 +70,6 @@ Route::group(['prefix' => 'v1/'], function () {
         Route::post('forget-password', [CustomerManageController::class, 'forgetPassword']);
         Route::post('verify-token', [CustomerManageController::class, 'verifyToken']);
         Route::post('reset-password', [CustomerManageController::class, 'resetPassword']);
-    });
-
-    Route::group(['prefix' => 'seller/'], function () {
-        Route::post('registration', [UserController::class, 'StoreOwnerRegistration']);
-        // password reset
-        Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
-        Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
-        Route::post('reset-password', [SellerManageController::class, 'resetPassword']);
     });
 
     Route::group(['prefix' => 'auth/'], function () {

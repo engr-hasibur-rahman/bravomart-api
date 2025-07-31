@@ -12,14 +12,14 @@ class ApiAuthMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         // Check if the request is for login (POST) or any other non-authenticated routes
         $req_url = $request->path();
         // List of prefixes where authentication is required
-        $authRequiredPrefixes = ['api/v1/customer', 'api/v1/seller', 'api/v1/admin', 'api/v1/delivery-man','api/user'];
+        $authRequiredPrefixes = ['api/v1/customer', 'api/v1/seller', 'api/v1/admin', 'api/v1/delivery-man', 'api/user'];
 
         // Check if the request path starts with one of the required prefixes
         foreach ($authRequiredPrefixes as $prefix) {
@@ -29,14 +29,17 @@ class ApiAuthMiddleware
                 $req_url === 'api/v1/customer/login' ||
                 $req_url === 'api/v1/customer/google' ||
                 $req_url === 'api/v1/customer/google/callback' ||
-                $req_url === 'api/v1/customer/registration'||
-                $req_url === 'api/v1/customer/forget-password'||
-                $req_url === 'api/v1/customer/verify-token'||
-                $req_url === 'api/v1/customer/reset-password'||
-                $req_url === 'api/v1/seller/registration'||
-                $req_url === 'api/partner/login'||
+                $req_url === 'api/v1/customer/registration' ||
+                $req_url === 'api/v1/customer/forget-password' ||
+                $req_url === 'api/v1/customer/verify-token' ||
+                $req_url === 'api/v1/customer/reset-password' ||
+                $req_url === 'api/v1/seller/registration' ||
+                $req_url === 'api/v1/seller/forget-password' ||
+                $req_url === 'api/v1/seller/verify-token' ||
+                $req_url === 'api/v1/seller/reset-password' ||
+                $req_url === 'api/partner/login' ||
                 $req_url === 'api/token'
-            ){
+            ) {
                 return $next($request);
             }
 
