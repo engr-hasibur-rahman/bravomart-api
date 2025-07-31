@@ -6,9 +6,11 @@ use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Seller\SellerProfileResource;
 use App\Interfaces\SellerManageInterface;
 use App\Interfaces\StoreManageInterface;
+use App\Mail\EmailVerificationMail;
 use App\Models\Media;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class SellerManageController extends Controller

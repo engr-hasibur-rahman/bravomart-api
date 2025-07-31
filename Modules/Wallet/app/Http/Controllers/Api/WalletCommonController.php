@@ -48,7 +48,7 @@ class WalletCommonController extends Controller
         $wallet_settings = com_option_get('max_deposit_per_transaction');
 
         return response()->json([
-            'wallets' => $wallets ? new UserWalletDetailsResource($wallets) : [],
+            'wallets' => $wallets ? new UserWalletDetailsResource($wallets) : null,
             'max_deposit_per_transaction' => $wallet_settings,
         ]);
     }

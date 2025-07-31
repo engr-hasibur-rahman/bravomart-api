@@ -40,18 +40,18 @@ class SellerManageRepository implements SellerManageInterface
     // Send email verification link
     public function sendVerificationEmail(string $email)
     {
-        $seller = $this->seller->where('email', $email)->first();
+        $user = User::where('email', $email)->first();
 
-        if (!$seller) {
+        if (!$user) {
             return false;
         }
 
         try {
-            $token = Str::random(10);
-            $seller->email_verify_token = $token;
-            $seller->save();
+            $token = rand(100000, 999999);
+            $user->email_verify_token = $token;
+            $user->save();
             // Send email verification
-            Mail::to($seller->email)->send(new EmailVerificationMail($seller));
+            Mail::to($user->email)->send(new EmailVerificationMail($user));
 
             return true;
         } catch (\Exception $e) {
