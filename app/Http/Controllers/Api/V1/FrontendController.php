@@ -2307,6 +2307,31 @@ class FrontendController extends Controller
         return response()->json(new PrivacyPolicyResource($page));
     }
 
+    public function becomeASeller()
+    {
+        $page = Page::with('related_translations')
+            ->where('slug', 'become-a-seller')
+            ->where('status', 'publish')
+            ->first();
+
+        if (!$page) {
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
+        }
+
+        $content = $page->content;
+
+        if (is_string($content)) {
+            $content = json_decode($content, true);
+        }
+
+        $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+        $page->content = $content;
+
+        return response()->json(new BecomeSellerPublicResource($page));
+    }
+
     public function allPage(Request $request)
     {
         $pages = Page::with('related_translations')
