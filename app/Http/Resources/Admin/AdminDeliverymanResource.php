@@ -71,8 +71,8 @@ class AdminDeliverymanResource extends JsonResource
             'full_name' => $this->full_name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'status' => (int)$this->status,
             'verification' => (bool)$this->verification,
+            'identification_type' => $this->deliveryman?->identification_type,
             'vehicle_type' => $this->deliveryman?->vehicle_type
                 ? array_merge(
                     $this->deliveryman?->vehicle_type->toArray(), // convert model to array first
@@ -91,6 +91,7 @@ class AdminDeliverymanResource extends JsonResource
             'image_url' => ImageModifier::generateImageUrl($this->image),
             'identification_photo_front_url' => asset('storage/' . $this->deliveryman?->identification_photo_front),
             'identification_photo_back_url' => asset('storage/' . $this->deliveryman?->identification_photo_back),
+            'status' => $this->deliveryman?->status,
         ];
     }
 }
