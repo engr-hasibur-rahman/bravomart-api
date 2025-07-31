@@ -47,6 +47,7 @@ class StoreChatController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Chats not found',
+                'data' => []
             ]);
         }
 
@@ -170,10 +171,10 @@ class StoreChatController extends Controller
         $auth_id = auth()->guard('api')->user()->id;
 
         $sellerStores = Store::where('store_seller_id', $auth_id)->pluck('id');
-        if (!$sellerStores->contains($request->store_id)){
+        if (!$sellerStores->contains($request->store_id)) {
             return response()->json([
                 'messages' => __('chat::messages.store.doesnt.belongs.to.seller'),
-            ],422);
+            ], 422);
         }
         $chat = Chat::where('user_id', $auth_id)->first();
 
