@@ -46,15 +46,16 @@ class StoreManageRepository implements StoreManageInterface
     }
 
     public function getAllStores(
-        int|string $limit,
+        int|string      $limit,
         int|string|null $status,
-        int $page,
-        string $language,
-        string $search,
-        string $sortField,
-        string $sort,
-        array $filters
-    ) {
+        int             $page,
+        string          $language,
+        string          $search,
+        string          $sortField,
+        string          $sort,
+        array           $filters
+    )
+    {
         $store = Store::query()
             ->leftJoin('translations as name_translations', function ($join) use ($language) {
                 $join->on('stores.id', '=', 'name_translations.translatable_id')
@@ -76,7 +77,7 @@ class StoreManageRepository implements StoreManageInterface
 
         // ✅ Filter by status (including 0)
         if (is_numeric($status)) {
-            $store->where('stores.status', (int) $status);
+            $store->where('stores.status', (int)$status);
         }
 
         // ✅ Pagination & Sorting
@@ -423,7 +424,6 @@ class StoreManageRepository implements StoreManageInterface
 
     public function delete(int|string $id): bool
     {
-
         try {
             $store = Store::findOrFail($id);
             $this->deleteTranslation($store->id, Store::class);
