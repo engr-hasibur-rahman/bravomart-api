@@ -47,7 +47,9 @@ if (!function_exists('runningOrderExists')) {
         }
 
         if ($storeId) {
-            return Order::where('store_id', $storeId)->exists();
+            return Order::where('store_id', $storeId)
+                ->whereNotIn('status', ['cancelled', 'delivered'])
+                ->exists();
         }
 
         if ($sellerId) {
@@ -55,7 +57,9 @@ if (!function_exists('runningOrderExists')) {
             if ($storeIds->isEmpty()) {
                 return false;
             }
-            return Order::whereIn('store_id', $storeIds)->exists();
+            return Order::whereIn('store_id', $storeIds)
+                ->whereNotIn('status', ['cancelled', 'delivered'])
+                ->exists();
         }
 
         return false;
