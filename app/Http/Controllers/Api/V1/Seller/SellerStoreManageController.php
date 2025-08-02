@@ -84,6 +84,11 @@ class SellerStoreManageController extends Controller
 
     public function destroy($id)
     {
+        if (runningOrderExists($id)) {
+            return response()->json([
+                'message' => __('messages.has_running_orders', ['name' => 'Store'])
+            ]);
+        }
         $this->storeRepo->delete($id);
         return $this->success(translate('messages.delete_success'));
     }

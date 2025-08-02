@@ -349,6 +349,12 @@ class SellerManageController extends Controller
         if (!auth('api')->check()) {
             unauthorized_response();
         }
+        $userId = auth('api')->user()->id;
+        if (runningOrderExists($userId)) {
+            return response()->json([
+                'message' => __('messages.has_running_orders', ['name' => 'Seller'])
+            ]);
+        }
         $success = $this->sellerRepo->deactivateAccount();
         if ($success) {
             return response()->json([
@@ -369,6 +375,12 @@ class SellerManageController extends Controller
     {
         if (!auth('api')->check()) {
             unauthorized_response();
+        }
+        $userId = auth('api')->user()->id;
+        if (runningOrderExists($userId)) {
+            return response()->json([
+                'message' => __('messages.has_running_orders', ['name' => 'Seller'])
+            ]);
         }
         $success = $this->storeRepo->deleteSellerRelatedAllData(auth('api')->user()->id);
         if ($success) {
