@@ -80,7 +80,7 @@ class WalletCommonController extends Controller
         if (shouldRound() && is_float($request->amount)) {
             return response()->json([
                 'message' => __('wallet::messages.should_round', ['name' => strtoupper($request->amount)])
-            ]);
+            ], 422);
         }
 
         $validated = $validator->validated();
