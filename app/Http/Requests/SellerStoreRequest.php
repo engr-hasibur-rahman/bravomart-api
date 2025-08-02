@@ -35,7 +35,7 @@ class SellerStoreRequest extends FormRequest
             'slug' => ($this->id ? 'nullable' : 'required') . '|string|unique:stores,slug,' . $this->id,
             'phone' => 'nullable|string|max:15',
             'email' => 'nullable|email|max:255',
-            'logo' => 'nullable|string|max:255',
+            'logo' => 'nullable|max:255',
             'banner' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'latitude' => 'required|numeric|between:-90,90',
