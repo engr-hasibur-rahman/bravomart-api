@@ -3,16 +3,10 @@
 namespace App\Http\Resources\Product;
 
 use App\Actions\ImageModifier;
-use App\Actions\MultipleImageModifier;
-use App\Http\Resources\Com\Product\ProductBrandPublicResource;
-use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
-use App\Http\Resources\Com\Product\ProductUnitPublicResource;
-use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use App\Http\Resources\Store\StoreDetailsForOrderResource;
-use App\Http\Resources\Tag\TagPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
+use function Symfony\Component\String\s;
 
 class ProductPublicResource extends JsonResource
 {
@@ -64,7 +58,6 @@ class ProductPublicResource extends JsonResource
                 : 0,
             'flash_sale' => $this->isInFlashDeal(),
             'is_featured' => (bool)$this->is_featured
-
         ];
     }
 }
