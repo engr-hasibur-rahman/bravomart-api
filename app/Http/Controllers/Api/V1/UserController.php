@@ -314,7 +314,7 @@ class UserController extends Controller
             }
 
             // Generate a Sanctum token for the new user
-            $token = $user->createToken('social_auth_token');
+            $token = $newUser->createToken('social_auth_token');
             $accessToken = $token->accessToken;
             $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
             $accessToken->save();
