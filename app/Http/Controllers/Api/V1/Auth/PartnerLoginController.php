@@ -108,6 +108,7 @@ class PartnerLoginController extends Controller
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
+            "email_verification_settings" => com_option_get('com_user_email_verification') ?? 'off',
             'phone' => $user->phone,
             'image_url' => ImageModifier::generateImageUrl($user->image),
             "email_verified" => $email_verified,

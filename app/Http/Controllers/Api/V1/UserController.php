@@ -131,6 +131,8 @@ class UserController extends Controller
                     'slug' => username_slug_generator($name),
                     'facebook_id' => $facebook_id,
                     'password' => Hash::make('123456dummy'), // Dummy password
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
             } elseif ($role == 'seller') {
                 $newUser = User::create([
@@ -142,6 +144,8 @@ class UserController extends Controller
                     'activity_scope' => 'store_level',
                     'store_owner' => 1,
                     'status' => 1,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
             } elseif ($role == 'deliveryman') {
                 $newUser = User::create([
@@ -153,6 +157,8 @@ class UserController extends Controller
                     'activity_scope' => 'delivery_level',
                     'store_owner' => 0,
                     'status' => 0,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
             } else {
                 $newUser = User::create([
@@ -164,6 +170,8 @@ class UserController extends Controller
                     'activity_scope' => null,
                     'store_owner' => 0,
                     'status' => 1,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
             }
 
@@ -277,6 +285,7 @@ class UserController extends Controller
                     'slug' => username_slug_generator($name),
                     'google_id' => $google_id,
                     'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                     'password' => Hash::make('123456dummy'),
                 ]);
             } elseif ($role == 'seller') {
@@ -288,6 +297,8 @@ class UserController extends Controller
                     'password' => Hash::make('123456dummy'),
                     'activity_scope' => 'store_level',
                     'store_owner' => 1,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                     'status' => 1,
                 ]);
             } elseif ($role == 'deliveryman') {
@@ -299,6 +310,8 @@ class UserController extends Controller
                     'password' => Hash::make('123456dummy'),
                     'activity_scope' => 'delivery_level',
                     'store_owner' => 0,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                     'status' => 1,
                 ]);
             } else {
@@ -547,6 +560,7 @@ class UserController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'email' => $request->email,
+                "email_verification_settings" => com_option_get('com_user_email_verification') ?? 'off',
                 'phone' => $request->phone,
                 "permissions" => $user->getPermissionNames(),
                 "role" => $user->getRoleNames(),
