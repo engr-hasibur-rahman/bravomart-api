@@ -276,6 +276,7 @@ class UserController extends Controller
                     'email' => $google_email,
                     'slug' => username_slug_generator($name),
                     'google_id' => $google_id,
+                    'email_verified' => 1,
                     'password' => Hash::make('123456dummy'),
                 ]);
             } elseif ($role == 'seller') {
@@ -952,7 +953,7 @@ class UserController extends Controller
                         'area_id' => $request->area_id,
                         'identification_type' => $request->identification_type,
                         'identification_number' => $request->identification_number,
-                        'identification_photo_front'=> $storedPaths['identification_photo_front'] ?? null,
+                        'identification_photo_front' => $storedPaths['identification_photo_front'] ?? null,
                         'identification_photo_back' => $storedPaths['identification_photo_back'] ?? null,
                     ]);
                     return response()->json([

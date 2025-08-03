@@ -3,16 +3,10 @@
 namespace App\Http\Resources\Product;
 
 use App\Actions\ImageModifier;
-use App\Actions\MultipleImageModifier;
-use App\Http\Resources\Com\Product\ProductBrandPublicResource;
-use App\Http\Resources\Com\Product\ProductCategoryPublicResource;
-use App\Http\Resources\Com\Product\ProductUnitPublicResource;
-use App\Http\Resources\Com\Translation\ProductTranslationResource;
 use App\Http\Resources\Store\StoreDetailsForOrderResource;
-use App\Http\Resources\Tag\TagPublicResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
+use function Symfony\Component\String\s;
 
 class ProductPublicResource extends JsonResource
 {
@@ -56,15 +50,14 @@ class ProductPublicResource extends JsonResource
                     ? optional($firstVariant)->special_price
                     : optional($firstVariant)->price
                 ),
-            'price' => optional($firstVariant)->price,
-            'special_price' => optional($firstVariant)->special_price,
+            'price' => shouldRound() ? round(optional($firstVariant)->price) : round(optional($firstVariant)->price, 2),
+            'special_price' => shouldRound() ? round(optional($firstVariant)->special_price) : round(optional($firstVariant)->special_price, 2),
             'singleVariant' => $this->variants->count() === 1 ? [$firstVariant] : [],
             'discount_percentage' => $firstVariant && $firstVariant->price > 0 && $firstVariant->special_price > 0
                 ? round((($firstVariant->price - $firstVariant->special_price) / $firstVariant->price) * 100, 2)
                 : 0,
             'flash_sale' => $this->isInFlashDeal(),
             'is_featured' => (bool)$this->is_featured
-
         ];
     }
 }

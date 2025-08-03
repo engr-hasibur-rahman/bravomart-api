@@ -131,7 +131,7 @@ class CustomerOrderController extends Controller
         }
 
         // check right customer order
-        if ($order->orderMaster?->customer_id != $customer_id) {
+        if ($order->orderMaster?->customer_id !== $customer_id) {
             return response()->json([
                 'message' => __('messages.data_not_found')
             ], 404);

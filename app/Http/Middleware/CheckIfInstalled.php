@@ -29,12 +29,12 @@ class CheckIfInstalled
             }
         }
 
-        if (env('INSTALLED') !== true) {
-            return response()->json([
-                'message' => 'Installation is not completed yet.',
-                'success' => false
-            ], 403);
-        }
+//        if (env('INSTALLED') !== true) {
+//            return response()->json([
+//                'message' => 'Installation is not completed yet.',
+//                'success' => false
+//            ], 403);
+//        }
 
         return $next($request);
     }

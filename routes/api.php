@@ -22,9 +22,9 @@ use App\Http\Controllers\Api\V1\Seller\SellerManageController;
 use App\Http\Controllers\Api\V1\TaxInfoController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Middleware\ApiAuthMiddleware;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/* Admin Login */
 Route::post('/token', [UserController::class, 'token']);
 Route::post('/refresh-token', [UserController::class, 'refreshToken']);
 Route::post('/customer/refresh-token', [CustomerManageController::class, 'refreshToken']);

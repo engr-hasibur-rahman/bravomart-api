@@ -1256,39 +1256,6 @@ class FrontendController extends Controller
         }
 
         $query = Product::query();
-        // Location wise product filter
-        $userLat = $request->user_lat;
-        $userLng = $request->user_lng;
-        $useLocationFilter = false;
-
-        if ($userLat && $userLng) {
-            $radius = $request->radius ?? 10;
-
-            // Clone the base query to apply location filter
-            $locationQuery = clone $query;
-
-            $locationQuery->join('stores', 'stores.id', '=', 'products.store_id')
-                ->select('products.*')
-                ->selectRaw('
-            (6371 * acos(
-                cos(radians(?)) *
-                cos(radians(stores.latitude)) *
-                cos(radians(stores.longitude) - radians(?)) +
-                sin(radians(?)) *
-                sin(radians(stores.latitude))
-            )) AS distance
-        ', [$userLat, $userLng, $userLat])
-                ->having('distance', '<', $radius)
-                ->orderBy('distance');
-
-            // Test if location-filtered query returns any product
-            $testResults = (clone $locationQuery)->take(1)->get();
-
-            if ($testResults->isNotEmpty()) {
-                $query = $locationQuery;
-                $useLocationFilter = true;
-            }
-        }
 
         // Apply category filter (multiple categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
@@ -1433,53 +1400,96 @@ class FrontendController extends Controller
                     ->orWhere('products.description', 'like', '%' . $request->search . '%');
             });
         }
+        // Location wise product filter
+        $userLat = $request->user_lat;
+        $userLng = $request->user_lng;
+        $useLocationFilter = false;
 
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+
+            // Clone the base query to apply location filter
+            $locationQuery = clone $query;
+
+            $locationQuery->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
+
+            // Test if location-filtered query returns any product
+            $testResults = (clone $locationQuery)->take(1)->get();
+
+            if ($testResults->isNotEmpty()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            }
+        }
         // Pagination
         $perPage = $request->per_page ?? 10;
         $products = $query->with(['category', 'unit', 'tags', 'store', 'brand',
-            'variants' => function ($query) use ($request) {
+            'variants' => function ($query) {
+                $shouldRound = shouldRound();
+
+                $discountAmountExpr = $shouldRound
+                    ? 'ROUND(fs1.discount_amount)'
+                    : 'fs1.discount_amount';
+
+                $discountSpecialPricePercentExpr = $shouldRound
+                    ? 'ROUND(product_variants.special_price * fs1.discount_amount / 100)'
+                    : '(product_variants.special_price * fs1.discount_amount / 100)';
+
+                $discountBasePricePercentExpr = $shouldRound
+                    ? 'ROUND(product_variants.price * fs1.discount_amount / 100)'
+                    : '(product_variants.price * fs1.discount_amount / 100)';
+
+                $priceExpr = "
+        CASE
+            WHEN fsp1.id IS NOT NULL THEN
+                CASE fs1.discount_type
+                    WHEN 'amount' THEN 
+                        CASE 
+                            WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                                product_variants.special_price - $discountAmountExpr
+                            ELSE 
+                                product_variants.price - $discountAmountExpr
+                        END
+                    WHEN 'percentage' THEN 
+                        CASE 
+                            WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                                product_variants.special_price - $discountSpecialPricePercentExpr
+                            ELSE 
+                                product_variants.price - $discountBasePricePercentExpr
+                        END
+                    ELSE 
+                        CASE 
+                            WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                                product_variants.special_price
+                            ELSE 
+                                product_variants.price
+                        END
+                END
+            WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 AND product_variants.special_price < product_variants.price THEN 
+                product_variants.special_price
+            ELSE 
+                product_variants.price
+        END
+    ";
+
+                $finalExpr = $shouldRound ? "ROUND($priceExpr)" : "FORMAT($priceExpr, 2)";
+
                 $query->leftJoin('flash_sale_products as fsp1', 'fsp1.product_id', '=', 'product_variants.product_id')
                     ->leftJoin('flash_sales as fs1', 'fs1.id', '=', 'fsp1.flash_sale_id')
-                    ->select('product_variants.*', DB::raw('
-    CASE
-        WHEN fsp1.id IS NOT NULL THEN
-            CASE fs1.discount_type
-                WHEN "amount" THEN 
-                    CASE 
-                        WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
-                            product_variants.special_price - fs1.discount_amount
-                        ELSE 
-                            product_variants.price - fs1.discount_amount
-                    END
-                WHEN "percentage" THEN 
-                    CASE 
-                        WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
-                            product_variants.special_price - (product_variants.special_price * fs1.discount_amount / 100)
-                        ELSE 
-                            product_variants.price - (product_variants.price * fs1.discount_amount / 100)
-                    END
-                ELSE 
-                    CASE 
-                        WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
-                            product_variants.special_price
-                        ELSE 
-                            product_variants.price
-                    END
-            END
-
-        WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 AND product_variants.special_price < product_variants.price THEN 
-            product_variants.special_price
-
-        ELSE 
-            product_variants.price
-    END as effective_price
-'));
-
-                if ($request->sort === "price_low_high") {
-                    $query->orderBy('effective_price', 'asc')->limit(1);
-                } elseif ($request->sort === "price_high_low") {
-                    $query->orderBy('effective_price', 'desc')->limit(1);
-                }
+                    ->select('product_variants.*')
+                    ->selectRaw("$finalExpr as effective_price");
             }
             , 'related_translations'])
             ->where('products.status', 'approved')
@@ -1487,16 +1497,15 @@ class FrontendController extends Controller
             ->paginate($perPage);
         // Extract unique attributes from variants
         $uniqueAttributes = $this->getUniqueAttributesFromVariants($products, $request->input('language', 'en'));
-        return response()->json([
-            'messages' => __('messages.data_found'),
+        return response()->json(['messages' => __('messages.data_found'),
             'data' => ProductPublicResource::collection($products),
             'meta' => new PaginationResource($products),
             'filters' => $uniqueAttributes,
-            'locationFilter' => $useLocationFilter
-        ]);
+            'locationFilter' => $useLocationFilter]);
     }
 
-    protected function getUniqueAttributesFromVariants($products, ?string $languageCode = 'en')
+    protected
+    function getUniqueAttributesFromVariants($products, ?string $languageCode = 'en')
     {
         $attributes = [];
 
@@ -1560,7 +1569,8 @@ class FrontendController extends Controller
     }
 
 
-    public function productDetails(Request $request, $product_slug)
+    public
+    function productDetails(Request $request, $product_slug)
     {
         $product = Product::with([
             'store' => function ($query) {
@@ -1622,7 +1632,8 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    public function getNewArrivals(Request $request)
+    public
+    function getNewArrivals(Request $request)
     {
         $query = Product::query();
 
@@ -1669,7 +1680,8 @@ class FrontendController extends Controller
 
     }
 
-    public function getTopRatedProducts(Request $request)
+    public
+    function getTopRatedProducts(Request $request)
     {
         $query = Product::query();
 
@@ -1737,7 +1749,8 @@ class FrontendController extends Controller
 
     }
 
-    public function productCategoryList(Request $request)
+    public
+    function productCategoryList(Request $request)
     {
         try {
             $per_page = $request->per_page ?? 100;
@@ -1793,7 +1806,8 @@ class FrontendController extends Controller
         }
     }
 
-    public function categoryWiseProducts(Request $request)
+    public
+    function categoryWiseProducts(Request $request)
     {
         try {
             $query = Product::query();
@@ -1861,7 +1875,8 @@ class FrontendController extends Controller
         }
     }
 
-    public function allSliders(Request $request)
+    public
+    function allSliders(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'platform' => 'required|in:web,mobile',
@@ -1884,7 +1899,8 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    public function index(Request $request)
+    public
+    function index(Request $request)
     {
         $language = $request->language ?? 'en';
 
@@ -1905,25 +1921,29 @@ class FrontendController extends Controller
     }
 
 
-    public function areaList()
+    public
+    function areaList()
     {
         $areas = StoreArea::where('status', 1)->latest()->get();
         return response()->json(ComAreaListForDropdownResource::collection($areas));
     }
 
-    public function tagList()
+    public
+    function tagList()
     {
         $tags = Tag::all();
         return TagPublicResource::collection($tags);
     }
 
-    public function productAttributeList()
+    public
+    function productAttributeList()
     {
         $attributes = ProductAttribute::where('status', 1)->get();
         return response()->json(ProductAttributeResource::collection($attributes));
     }
 
-    public function brandList(Request $request)
+    public
+    function brandList(Request $request)
     {
         // If request has limit
         $limit = $request->limit ?? 10;
@@ -1959,13 +1979,15 @@ class FrontendController extends Controller
         return response()->json(ProductBrandPublicResource::collection($brands));
     }
 
-    public function storeTypeList()
+    public
+    function storeTypeList()
     {
         $storeTypes = StoreType::where('status', 1)->get();
         return response()->json(StoreTypeDropdownPublicResource::collection($storeTypes));
     }
 
-    public function behaviourList()
+    public
+    function behaviourList()
     {
         $behaviours = collect(Behaviour::cases())->map(function ($behaviour) {
             return [
@@ -1976,13 +1998,15 @@ class FrontendController extends Controller
         return response()->json(BehaviourPublicResource::collection($behaviours));
     }
 
-    public function unitList()
+    public
+    function unitList()
     {
         $units = Unit::all();
         return response()->json(ProductUnitPublicResource::collection($units));
     }
 
-    public function customerList(Request $request)
+    public
+    function customerList(Request $request)
     {
         $query = Customer::where('status', 1);
 
@@ -1998,7 +2022,8 @@ class FrontendController extends Controller
         return response()->json(CustomerPublicResource::collection($customers));
     }
 
-    public function allOrderRefundReason(Request $request)
+    public
+    function allOrderRefundReason(Request $request)
     {
         $filters = [
             'per_page' => $request->per_page,
@@ -2012,7 +2037,8 @@ class FrontendController extends Controller
     }
 
     /* ----------------------------------------------------------> Blog <------------------------------------------------------ */
-    public function blogs(Request $request)
+    public
+    function blogs(Request $request)
     {
         $blogsQuery = Blog::with(['category', 'related_translations'])
             ->where(function ($query) {
@@ -2056,7 +2082,8 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    public function blogDetails(Request $request)
+    public
+    function blogDetails(Request $request)
     {
         $blog = Blog::with('category')
             ->where('slug', $request->slug)
@@ -2157,7 +2184,8 @@ class FrontendController extends Controller
         ], 200);
     }
 
-    public function couponList(Request $request)
+    public
+    function couponList(Request $request)
     {
         $query = CouponLine::query();
 
@@ -2235,7 +2263,8 @@ class FrontendController extends Controller
     }
 
 
-    public function getPage(Request $request, $slug)
+    public
+    function getPage(Request $request, $slug)
     {
         $page = Page::with('related_translations')
             ->where('slug', $slug)
@@ -2307,7 +2336,8 @@ class FrontendController extends Controller
         return response()->json(new PrivacyPolicyResource($page));
     }
 
-    public function becomeASeller()
+    public
+    function becomeASeller()
     {
         $page = Page::with('related_translations')
             ->where('slug', 'become-a-seller')
@@ -2332,7 +2362,8 @@ class FrontendController extends Controller
         return response()->json(new BecomeSellerPublicResource($page));
     }
 
-    public function allPage(Request $request)
+    public
+    function allPage(Request $request)
     {
         $pages = Page::with('related_translations')
             ->where('status', 'publish')
@@ -2343,7 +2374,8 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function getStoreWiseProducts(Request $request)
+    public
+    function getStoreWiseProducts(Request $request)
     {
         // Base query
         $query = Product::with('store') // Eager load the store relationship
@@ -2381,7 +2413,8 @@ class FrontendController extends Controller
         }
     }
 
-    public function getCheckOutPageExtraInfo(Request $request)
+    public
+    function getCheckOutPageExtraInfo(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'product_ids' => 'nullable|array',
