@@ -23,7 +23,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         Route::post('/alt', [MediaController::class, 'alt_change']);
         Route::post('/delete', [MediaController::class, 'delete_media']);
     });
-    Route::group(['middleware' => ['check.email.verification.option']], function () {
+    Route::group(['middleware' => ['check.email.verification.option:customer']], function () {
         Route::get('/', [CustomerManageController::class, 'getDashboard']);
 
         Route::group(['prefix' => 'profile/'], function () {
