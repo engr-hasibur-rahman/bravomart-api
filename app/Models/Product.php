@@ -11,7 +11,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes,DeleteTranslations;
+    use HasFactory, SoftDeletes, DeleteTranslations;
 
     protected $appends = ['wishlist', 'rating', 'review_count', 'reviews'];
     protected $dates = ['deleted_at'];
@@ -261,7 +261,7 @@ class Product extends Model
             return [
                 'flash_sale_id' => $flashSaleProduct->flashSale->id,
                 'discount_type' => $flashSaleProduct->flashSale->discount_type,
-                'discount_amount' => $flashSaleProduct->flashSale->discount_amount,
+                'discount_amount' => shouldRound() ? round($flashSaleProduct->flashSale->discount_amount) : round($flashSaleProduct->flashSale->discount_amount, 2),
                 'purchase_limit' => $flashSaleProduct->flashSale->purchase_limit,
             ];
         }
