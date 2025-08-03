@@ -11,7 +11,6 @@ use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\Admin\ProductRequestResource;
 use App\Http\Resources\Com\Pagination\PaginationResource;
-use App\Http\Resources\Customer\CustomerResource;
 use App\Http\Resources\Product\LowStockProductResource;
 use App\Http\Resources\Product\OutOfStockProductResource;
 use App\Http\Resources\Product\ProductDetailsPublicResource;
@@ -19,7 +18,6 @@ use App\Http\Resources\Product\ProductListResource;
 use App\Imports\ProductImport;
 use App\Interfaces\ProductManageInterface;
 use App\Interfaces\ProductVariantInterface;
-use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Store;
 use App\Services\TrashService;
@@ -30,7 +28,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Subscription\app\Models\StoreSubscription;
-use Modules\Wallet\app\Models\Wallet;
 
 class AdminProductManageController extends Controller
 {

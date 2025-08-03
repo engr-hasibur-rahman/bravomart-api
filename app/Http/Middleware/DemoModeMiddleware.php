@@ -21,6 +21,7 @@ class DemoModeMiddleware
         'api/v1/seller/store/settings*',
 
         // for customer
+        'api/v1/media-upload/delete',
     ];
 
     public function handle(Request $request, Closure $next): Response

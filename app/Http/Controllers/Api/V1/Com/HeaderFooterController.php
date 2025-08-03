@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Com;
 
-use App\Actions\MultipleImageModifier;
 use App\Http\Controllers\Api\V1\Controller;
-use App\Http\Resources\Admin\AdminFooterSettingsResource;
-use App\Http\Resources\Com\FooterInfoResource;
 use App\Http\Resources\Com\FooterSettingsPublicResource;
 use App\Models\SettingOption;
 

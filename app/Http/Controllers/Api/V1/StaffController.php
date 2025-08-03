@@ -310,7 +310,7 @@ class StaffController extends Controller
                 }
 
                 // Delete permissions (assuming hasMany or belongsToMany)
-                $user->permissions()->delete(); // or $user->permissions()->detach()
+                $user->permissions()->delete();
 
                 // Delete user
                 $user->delete();

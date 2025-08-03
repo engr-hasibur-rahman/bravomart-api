@@ -2414,7 +2414,7 @@ class FrontendController extends Controller
                 ];
             })
                 ->unique('flash_sale_id') // keep only unique flash sales
-                ->values(), // <--- this reindexes the collection,
+                ->values(),
             'flash_sale_products' => FlashSaleAllProductPublicResource::collection($flashDealProducts),
             'additional_charge' => $additionalCharge,
             'order_include_tax_amount' => $systemCommissionSettings->order_include_tax_amount,

@@ -26,6 +26,4 @@ class PaymentGateway extends Model
 
 
 
-
-
 }

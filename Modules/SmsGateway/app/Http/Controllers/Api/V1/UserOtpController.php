@@ -37,7 +37,6 @@ class UserOtpController extends Controller
 
     public function sendOtp(Request $request): Response
     {
-//        dd($request->all());
         $validator = Validator::make($request->all(), [
             'region' => 'required|string',
             'phone' => 'required|string',
