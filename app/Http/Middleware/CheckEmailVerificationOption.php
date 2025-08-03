@@ -29,9 +29,10 @@ class CheckEmailVerificationOption
         if (!$customerIsEmailVerified && $emailVerificationEnabled !== null) {
             return response()->json([
                 'status' => false,
-                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'status_code' => Response::HTTP_FORBIDDEN,
+                'email_verified' => false,
                 'message' => 'Email verification is not completed.',
-            ], 403);
+            ]);
         }
         // Proceed if enabled
         return $next($request);
