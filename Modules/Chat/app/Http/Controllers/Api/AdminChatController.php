@@ -4,6 +4,10 @@ namespace Modules\Chat\app\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\Pagination\PaginationResource;
+use App\Models\Customer;
+use App\Models\Store;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Modules\Chat\app\Models\Chat;
@@ -13,13 +17,14 @@ use Modules\Chat\app\Transformers\ChatMessageDetailsResource;
 
 class AdminChatController extends Controller
 {
+
     public function adminChatList(Request $request)
     {
-
         $auth_user = auth()->guard('api')->user();
         $auth_id = $auth_user->id;
         $auth_type = 'admin';
 
+        // Make sure admin has an existing chat
         $chat = Chat::where('user_id', $auth_id)
             ->where('user_type', $auth_type)
             ->first();
@@ -31,59 +36,66 @@ class AdminChatController extends Controller
             ]);
         }
 
+        $name = $request->input('search');
+        $type = $request->input('type');
 
-        $query = Chat::with('user')
+        // Main query
+        $query = Chat::query()
+            ->with('user')
             ->where('user_type', '!=', 'admin')
             ->withLiveChatEnabledStoreSubscription();
 
-        $name = $request->input('search');
+        // Apply search filter
         if ($name) {
-            $query->where(function ($q) use ($name) {
+            // Get matching chat IDs separately to avoid complex polymorphic issues
+            $matchingChatIds = collect();
 
-                // For user_type = customer (Customer model)
-                $q->orWhere(function ($q2) use ($name) {
-                    $q2->where('user_type', 'customer')
-                        ->whereHasMorph('user', ['customer'], function ($q3) use ($name) {
-                            $q3->where('first_name', 'like', "%{$name}%")
-                                ->orWhere('last_name', 'like', "%{$name}%");
-                        });
-                });
+            // Customer matches
+            $customerChats = Chat::where('user_type', 'customer')
+                ->whereHasMorph('user', ['customer'], function ($q) use ($name) {
+                    $q->where('first_name', 'like', "%{$name}%")
+                        ->orWhere('last_name', 'like', "%{$name}%");
+                })->pluck('id');
+            $matchingChatIds = $matchingChatIds->merge($customerChats);
 
+            // Deliveryman matches - direct database query
+            $deliverymanChats = Chat::where('user_type', 'deliveryman')
+                ->join('users', 'chats.user_id', '=', 'users.id')
+                ->where(function ($q) use ($name) {
+                    $q->where('users.first_name', 'like', "%{$name}%")
+                        ->orWhere('users.last_name', 'like', "%{$name}%")
+                        ->orWhereRaw("LOWER(CONCAT(users.first_name, ' ', users.last_name)) LIKE ?", ["%" . strtolower($name) . "%"]);
+                })
+                ->pluck('chats.id');
+            $matchingChatIds = $matchingChatIds->merge($deliverymanChats);
 
-                // Deliveryman (User model with first_name / last_name)
-                $q->orWhere(function ($q2) use ($name) {
-                    $q2->where('user_type', 'deliveryman')
-                        ->whereHasMorph('user', ['deliveryman'], function ($q3) use ($name) {
-                            $q3->where('first_name', 'like', "%{$name}%")
-                                ->orWhere('last_name', 'like', "%{$name}%");
-                        });
-                });
+            // Store matches
+            $storeChats = Chat::where('user_type', 'store')
+                ->whereHasMorph('user', ['store'], function ($q) use ($name) {
+                    $q->where('name', 'like', "%{$name}%");
+                })->pluck('id');
+            $matchingChatIds = $matchingChatIds->merge($storeChats);
 
-                // For user_type = store (Store model)
-                $q->orWhere(function ($q2) use ($name) {
-                    $q2->where('user_type', 'store')
-                        ->whereHasMorph('user', ['store'], function ($q3) use ($name) {
-                            $q3->where('name', 'like', "%{$name}%");
-                        });
-                });
-            });
-
+            // Filter main query by matching IDs
+            if ($matchingChatIds->isNotEmpty()) {
+                $query->whereIn('id', $matchingChatIds->toArray());
+            } else {
+                // No matches found
+                $query->whereRaw('1 = 0'); // Force empty result
+            }
         }
 
-        $type = $request->input('type');
-
+        // Apply type filter
         if (!empty($type) && $type !== 'all') {
             $query->where('user_type', $type);
         }
 
-        // Paginate
         $chats = $query->paginate(20);
-
 
         return response()->json([
             'success' => true,
             'data' => ChatListResource::collection($chats),
-            'meta' => new PaginationResource($chats)
+            'meta' => new PaginationResource($chats),
         ]);
     }
 

@@ -23,7 +23,7 @@ class Chat extends Model
     // The owner of the chat (customer, deliveryman, admin, store.)
     public function user(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo(__FUNCTION__, 'user_type', 'user_id');
     }
 
     public function messages(): HasMany
