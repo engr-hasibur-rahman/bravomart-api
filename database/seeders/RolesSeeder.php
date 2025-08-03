@@ -77,17 +77,5 @@ class RolesSeeder extends Seeder
             ]
         );
 
-        DB::table('roles')->updateOrInsert(
-            ['name' => 'Fitter Man', 'guard_name' => 'api'],
-            [
-                'available_for' => 'fitting_level',
-                'name' => 'Fitter Man',
-                'guard_name' => 'api',
-                'locked' => false,
-                'created_at' => '2023-08-11 11:57:33',
-                'updated_at' => '2023-08-11 11:57:33',
-            ]
-        );
-
     }
 }
