@@ -54,8 +54,15 @@ Route::post('contact-us', [ContactManageController::class, 'store']);
 
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['prefix' => 'v1/'], function () {
+    Route::group(['prefix' => 'seller/'], function () {
+        Route::post('registration', [UserController::class, 'StoreOwnerRegistration']);
+        // password reset
+        Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
+        Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
+        Route::post('reset-password', [SellerManageController::class, 'resetPassword']);
+    });
     // media cleanup
-    Route::get('get-media',[\App\Http\Controllers\Api\V1\MediaCleanUpController::class, 'getMedia']);
+    Route::get('get-media', [\App\Http\Controllers\Api\V1\MediaCleanUpController::class, 'getMedia']);
     // For customer register and login
     Route::group(['prefix' => 'customer/'], function () {
         Route::post('registration', [CustomerManageController::class, 'register']);
@@ -63,14 +70,6 @@ Route::group(['prefix' => 'v1/'], function () {
         Route::post('forget-password', [CustomerManageController::class, 'forgetPassword']);
         Route::post('verify-token', [CustomerManageController::class, 'verifyToken']);
         Route::post('reset-password', [CustomerManageController::class, 'resetPassword']);
-    });
-
-    Route::group(['prefix' => 'seller/'], function () {
-        Route::post('registration', [UserController::class, 'StoreOwnerRegistration']);
-        // password reset
-        Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
-        Route::post('verify-token', [SellerManageController::class, 'verifyToken']);
-        Route::post('reset-password', [SellerManageController::class, 'resetPassword']);
     });
 
     Route::group(['prefix' => 'auth/'], function () {
@@ -129,6 +128,7 @@ Route::group(['prefix' => 'v1/'], function () {
     Route::get('/blogs', [FrontendController::class, 'blogs']);
     Route::get('/blog/{slug}', [FrontendController::class, 'blogDetails']);
     Route::get('/pages/{slug}', [FrontendController::class, 'getPage']);
+    Route::get('/become-a-seller', [FrontendController::class, 'becomeASeller']);
     Route::get('/all/pages', [FrontendController::class, 'allPage']);
     Route::get('/store-wise-products', [FrontendController::class, 'getStoreWiseProducts']);
     Route::get('/get-check-out-page-extra-info', [FrontendController::class, 'getCheckOutPageExtraInfo']);

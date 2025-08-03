@@ -632,17 +632,6 @@ class PermissionAdminSeeder extends Seeder
                             ]
                         ],
                         [
-                            'PermissionName' => PermissionKey::ADMIN_WALLET_TRASH_MANAGEMENT->value,
-                            'PermissionTitle' => 'Trash',
-                            'activity_scope' => 'system_level',
-                            'icon' => 'Trash',
-                            'options' => ['view', 'insert', 'update', 'delete', 'others'],
-                            'translations' => [
-                                'en' => 'Trash',
-                                'ar' => 'نفاية'
-                            ]
-                        ],
-                        [
                             'PermissionName' => PermissionKey::ADMIN_WALLET_TRANSACTION->value,
                             'PermissionTitle' => 'Transaction History',
                             'activity_scope' => 'system_level',

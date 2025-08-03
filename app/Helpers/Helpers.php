@@ -2,6 +2,7 @@
 
 use App\Models\Customer;
 use App\Models\DeliveryMan;
+use App\Models\Order;
 use App\Models\SettingOption;
 use App\Models\CouponLine;
 use App\Models\Media;
@@ -36,6 +37,32 @@ if (!function_exists('checkSubscription')) {
         }
 
         return $query->exists();
+    }
+}
+if (!function_exists('runningOrderExists')) {
+    function runningOrderExists($storeId = null, $sellerId = null): bool
+    {
+        if (!$storeId && !$sellerId) {
+            return false;
+        }
+
+        if ($storeId) {
+            return Order::where('store_id', $storeId)
+                ->whereNotIn('status', ['cancelled', 'delivered'])
+                ->exists();
+        }
+
+        if ($sellerId) {
+            $storeIds = \App\Models\Store::where('store_seller_id', $sellerId)->pluck('id');
+            if ($storeIds->isEmpty()) {
+                return false;
+            }
+            return Order::whereIn('store_id', $storeIds)
+                ->whereNotIn('status', ['cancelled', 'delivered'])
+                ->exists();
+        }
+
+        return false;
     }
 }
 

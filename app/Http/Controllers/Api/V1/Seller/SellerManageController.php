@@ -6,9 +6,11 @@ use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Seller\SellerProfileResource;
 use App\Interfaces\SellerManageInterface;
 use App\Interfaces\StoreManageInterface;
+use App\Mail\EmailVerificationMail;
 use App\Models\Media;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class SellerManageController extends Controller
@@ -347,6 +349,12 @@ class SellerManageController extends Controller
         if (!auth('api')->check()) {
             unauthorized_response();
         }
+        $userId = auth('api')->user()->id;
+        if (runningOrderExists($userId)) {
+            return response()->json([
+                'message' => __('messages.has_running_orders', ['name' => 'Seller'])
+            ]);
+        }
         $success = $this->sellerRepo->deactivateAccount();
         if ($success) {
             return response()->json([
@@ -367,6 +375,12 @@ class SellerManageController extends Controller
     {
         if (!auth('api')->check()) {
             unauthorized_response();
+        }
+        $userId = auth('api')->user()->id;
+        if (runningOrderExists($userId)) {
+            return response()->json([
+                'message' => __('messages.has_running_orders', ['name' => 'Seller'])
+            ]);
         }
         $success = $this->storeRepo->deleteSellerRelatedAllData(auth('api')->user()->id);
         if ($success) {

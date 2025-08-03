@@ -18,7 +18,7 @@ class SenderDetailsResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->first_name ? $this->getFullNameAttribute() : ($this->name ?? null),
-            'image_url' => ImageModifier::generateImageUrl($this->image)
+            'image_url' => ImageModifier::generateImageUrl($this->logo)
         ];
     }
 }

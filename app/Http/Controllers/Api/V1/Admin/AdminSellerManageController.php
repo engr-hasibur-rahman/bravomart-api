@@ -149,10 +149,15 @@ class AdminSellerManageController extends Controller
         }
 
         $failed = [];
+        $runningOrderExists = [];
         foreach ($request->seller_ids as $seller_id) {
             $seller = User::find($seller_id);
             if (!$seller) {
                 $failed[] = $seller_id;
+                continue;
+            }
+            if (runningOrderExists(null, $seller_id)) {
+                $runningOrderExists[] = $seller_id;
                 continue;
             }
 
@@ -168,11 +173,15 @@ class AdminSellerManageController extends Controller
                 'failed_ids' => $failed,
             ], 207); // 207 Multi-Status (partial success)
         }
+        if (count($runningOrderExists)) {
+            return response()->json([
+                'message' => __('messages.has_running_orders', ['name' => implode(', ', $runningOrderExists) . 'sellers'])
+            ]);
+        }
 
         return response()->json([
             'message' => __('messages.delete_success', ['name' => 'Sellers']),
         ]);
-
     }
 
     public function changePassword(Request $request)
