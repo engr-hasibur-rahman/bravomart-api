@@ -5,11 +5,9 @@ namespace App\Services\Order;
 use App\Models\Order;
 use App\Models\UniversalNotification;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
-use Kreait\Firebase\Messaging\RawMessageFromArray;
 use Kreait\Firebase\Messaging\WebPushConfig;
 
 class OrderManageNotificationService

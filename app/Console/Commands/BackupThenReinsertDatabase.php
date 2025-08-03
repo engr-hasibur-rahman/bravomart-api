@@ -44,8 +44,8 @@ class BackupThenReinsertDatabase extends Command
         $this->info('Database backup completed successfully.');
 
         // Run the next command - biva:autoinstall
-        $this->info('Starting Biva auto install...');
-        Artisan::call('biva:autoinstall');
-        $this->info('Biva auto install completed successfully.');
+        $this->info('Starting Bravo auto install...');
+        Artisan::call('bravo:autoinstall');
+        $this->info('Bravo auto install completed successfully.');
     }
 }

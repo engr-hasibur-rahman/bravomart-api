@@ -1676,7 +1676,7 @@ class PermissionAdminSeeder extends Seeder
             }
         }
 
-        $user = \App\Models\User::where('activity_scope', 'system_level')->first(); // or use email: User::where('email', 'admin@example.com')->first();
+        $user = \App\Models\User::where('activity_scope', 'system_level')->first();
 
         if ($user && $user->activity_scope == 'system_level') {
             $role = Role::where('available_for', 'system_level')->first();

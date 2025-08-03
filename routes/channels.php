@@ -12,6 +12,5 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 // Private channel for live chat
 Broadcast::channel('chat.{receiverId}', function ($user, $receiverId) {
-    Log::info("Auth broadcast request", ['user_id' => $user->id, 'channel_id' => $receiverId]);
     return (int) $user->id === (int) $receiverId;
 });

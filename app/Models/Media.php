@@ -23,10 +23,6 @@ class Media extends Model
         'dimensions'
     ];
 
-//    public function fileable(): MorphTo
-//    {
-//        return $this->morphTo();
-//    }
     public function fileable(): MorphTo
     {
         return $this->morphTo(null, 'user_type', 'user_id');

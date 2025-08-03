@@ -6,7 +6,6 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\Review;
 use App\Models\ReviewReaction;
-use App\Models\User;
 
 class ReviewService
 {

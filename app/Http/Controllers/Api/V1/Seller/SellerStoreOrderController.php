@@ -183,14 +183,15 @@ class SellerStoreOrderController extends Controller
         }
         $seller_id = auth('api')->user()->id;
         $seller_stores = Store::where('store_seller_id', $seller_id)->pluck('id');
+
         if (!$seller_stores->contains($order->store_id)) {
             return response()->json(['message' => __('messages.order_does_not_belong_to_seller')], 422);
         }
 
-        if ($order->orderMaster) {
-            $order->customer = $order->orderMaster?->customer;
-            $order->shipping_address = $order->orderMaster?->shippingAddress;
-        }
+        // InvoiceResource expects customer/shipping_address directly
+        $order->setRelation('customer', $order->orderMaster?->customer);
+        $order->setRelation('shipping_address', $order->orderMaster?->shippingAddress);
+
         if (!$order) {
             return response()->json(['message' => __('messages.data_not_found')], 404);
         }

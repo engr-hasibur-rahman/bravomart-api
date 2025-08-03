@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 
 class RefreshDemoDatabase extends Command
 {
@@ -17,9 +16,8 @@ class RefreshDemoDatabase extends Command
         $sqlPath = base_path('database/bravo_fresh.sql');
 
         if (!File::exists($sqlPath)) {
-            $message = "❌ SQL file not found at: {$sqlPath}";
+            $message = "SQL file not found at: {$sqlPath}";
             $this->error($message);
-            Log::error($message);
             return Command::FAILURE;
         }
 
@@ -32,14 +30,12 @@ class RefreshDemoDatabase extends Command
             DB::unprepared($sql);
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-            $message = '✅ Demo database refreshed successfully using SQL file.';
+            $message = 'Demo database refreshed successfully using SQL file.';
             $this->info($message);
-            Log::info($message);
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $message = '❌ Error while refreshing database: ' . $e->getMessage();
+            $message = 'Error while refreshing database: ' . $e->getMessage();
             $this->error($message);
-            Log::error($message);
             return Command::FAILURE;
         }
     }
@@ -56,6 +52,6 @@ class RefreshDemoDatabase extends Command
         }
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $this->info('✅ All existing tables dropped.');
+        $this->info('All existing tables dropped.');
     }
 }
