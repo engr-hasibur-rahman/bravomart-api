@@ -17,23 +17,23 @@ class CheckEmailVerificationOption
      */
     public function handle(Request $request, Closure $next)
     {
-//        $authCustomer = auth('api_customer')->user();
-//        $customerIsEmailVerified = Customer::where('email', $authCustomer->email)
-//            ->where('email_verified', 1)
-//            ->first();
-//
-//        // Fetch the option value from the database
-//        $emailVerificationEnabled = DB::table('setting_options')
-//            ->where('option_name', 'com_user_email_verification') // Ensure you're checking the correct key
-//            ->value('option_value');
-//        if (!$customerIsEmailVerified && $emailVerificationEnabled !== null) {
-//            return response()->json([
-//                'status' => false,
-//                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY,
-//                'message' => 'Email verification is not completed.',
-//            ], 403);
-//        }
-//        // Proceed if enabled
+        $authCustomer = auth('api_customer')->user();
+        $customerIsEmailVerified = Customer::where('email', $authCustomer->email)
+            ->where('email_verified', 1)
+            ->first();
+
+        // Fetch the option value from the database
+        $emailVerificationEnabled = DB::table('setting_options')
+            ->where('option_name', 'com_user_email_verification') // Ensure you're checking the correct key
+            ->value('option_value');
+        if (!$customerIsEmailVerified && $emailVerificationEnabled !== null) {
+            return response()->json([
+                'status' => false,
+                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'message' => 'Email verification is not completed.',
+            ], 403);
+        }
+        // Proceed if enabled
         return $next($request);
     }
 }

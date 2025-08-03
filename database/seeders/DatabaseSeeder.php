@@ -11,47 +11,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // customer and user
         $this->call(UserSeeder::class);
-        $this->call(CustomerSeeder::class);
         // role & permission
         $this->call(RolesSeeder::class);
         $this->call(ModelHasRolesSeeder::class);
         $this->call(PermissionAdminSeeder::class);
         $this->call(PermissionStoreSeeder::class);
         $this->call(PermissionDeliverymanSeeder::class);
-        // location
-        $this->call(LocationSeeder::class);
-        $this->call(StoreAreaSeeder::class);
-        // store
-        $this->call(StoreSellerSeeder::class);
-        $this->call(StoreSeeder::class);
-        $this->call(StoreTypeSeeder::class);
-        $this->call(StoreAreaSettingsSeeder::class);
-        $this->call(StoreAreaSettingRangeChargeSeeder::class);
-        $this->call(StoreAreaSettingStoreTypeSeeder::class);
-
-        // unit brand
-        $this->call(BrandSeeder::class);
-        $this->call(UnitSeeder::class);
-        // Product
-        $this->call(ProductAttributeSeeder::class);
-        $this->call(ProductCategorySeeder::class);
-        $this->call(ProductSeeder::class);
-        // payment
-        $this->call(PaymentGatewaySeeder::class);
-        // subscription
-        $this->call(SubscriptionPackageSeeder::class);
         // system commission
         $this->call(SystemCommissionSeeder::class);
-        // wallet
-        $this->call(WalletSeeder::class);
-        // others
-        $this->call(DepartmentSeeder::class);
-        $this->call(BannerSeeder::class);
-        $this->call(CouponSeeder::class);
-        $this->call(ReviewSeeder::class);
-        $this->call(EmailTemplateSeeder::class);
         $this->call(MenuSeeder::class);
     }
 }

@@ -2,20 +2,10 @@
 
 namespace App\Services;
 
-
-use App\Enums\StoreType;
-use App\Events\OrderPlaced;
 use App\Helpers\DeliveryChargeHelper;
 use App\Jobs\DispatchOrderEmails;
-use App\Mail\DynamicEmail;
-use App\Models\Area;
-use App\Models\EmailTemplate;
 use App\Models\OrderAddress;
-use App\Models\SettingOption;
 use App\Models\Store;
-use App\Models\StoreArea;
-use App\Models\Coupon;
-use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Models\Order;
 use App\Models\OrderDetail;
@@ -23,13 +13,8 @@ use App\Models\OrderMaster;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\SystemCommission;
-use App\Models\User;
 use App\Services\Order\OrderManageNotificationService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\ValidationException;
 use Modules\Subscription\app\Models\StoreSubscription;
 
 class OrderService

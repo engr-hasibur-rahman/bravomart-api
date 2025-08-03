@@ -16,11 +16,10 @@ class DemoModeMiddleware
         'api/v1/admin/payment-gateways*',
         'api/v1/admin/system-management*',
         'api/v1/admin/sms-provider/settings*',
-
         // for seller
         'api/v1/seller/store/settings*',
-
         // for customer
+        'api/v1/media-upload/delete',
     ];
 
     public function handle(Request $request, Closure $next): Response
