@@ -73,10 +73,22 @@ class WalletCommonController extends Controller
 
         // Check if validation failed
         if ($validator->fails()) {
+            $errors = [];
+            foreach ($validator->errors()->messages() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errors[] = [
+                        'field' => $field,
+                        'message' => $message,
+                    ];
+                }
+            }
             return response()->json([
-                'message' => $validator->errors()
+                'status' => false,
+                'message' => 'Validation failed',
+                'errors' => $errors,
             ], 422);
         }
+
         if (shouldRound() && is_float($request->amount)) {
             return response()->json([
                 'message' => __('wallet::messages.should_round', ['name' => strtoupper($request->amount)])
