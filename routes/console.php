@@ -10,6 +10,6 @@ Artisan::command('inspire', function () {
 
 Schedule::command('subscription:expire')->everyMinute();
 
-if (env('DEMO_MODE', false)) {
-    Schedule::command('bravo:refresh-database')->hourly();
+if (env('DEMO_MODE', true)) {
+    Schedule::command('bravo:refresh-database')->everyFiveMinutes();
 }
