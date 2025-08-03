@@ -38,6 +38,9 @@ class FlashSale extends Model
         'description',
         'button_text'
     ];
+    protected $casts = [
+        'discount_amount' => 'float',
+    ];
 
     protected static function booted()
     {
