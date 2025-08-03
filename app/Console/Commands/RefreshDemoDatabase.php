@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\File;
 
 class RefreshDemoDatabase extends Command
 {
-    protected $signature = 'bravo:refresh-database';
+    protected $signature = 'bravo:db-refresh';
     protected $description = 'Refresh the database with the demo SQL file';
 
     public function handle(): int
