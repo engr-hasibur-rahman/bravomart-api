@@ -484,7 +484,7 @@ class CustomerManageController extends Controller
             return unauthorized_response();
         }
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:customers,email',
+            'email' => 'required|email',
         ]);
         if ($validator->fails()) {
             return response()->json([
