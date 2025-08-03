@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => ['auth:api_customer', 'check.customer.account.status']], function () {
 
-    Route::get('/', [CustomerManageController::class, 'getDashboard']);
     // media manage
     Route::group(['prefix' => 'media-upload'], function () {
         Route::post('/store', [MediaController::class, 'mediaUpload']);
@@ -25,6 +24,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'customer/', 'middleware' => 
         Route::post('/delete', [MediaController::class, 'delete_media']);
     });
     Route::group(['middleware' => ['check.email.verification.option']], function () {
+        Route::get('/', [CustomerManageController::class, 'getDashboard']);
+
         Route::group(['prefix' => 'profile/'], function () {
             Route::get('/', [CustomerManageController::class, 'getProfile']);
             Route::post('/update', [CustomerManageController::class, 'updateProfile']);

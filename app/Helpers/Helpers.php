@@ -112,6 +112,8 @@ if (!function_exists('socialLogin')) {
                     'email' => $email,
                     'slug' => username_slug_generator($name),
                     $socialColumn => $socialId,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                     'firebase_token' => $firebaseToken,
                     'password' => Hash::make(Str::random(8)), // Never use dummy passwords
                 ]);
@@ -173,6 +175,8 @@ if (!function_exists('socialLogin')) {
                     'activity_scope' => 'delivery_level',
                     'store_owner' => 0,
                     'status' => 0,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
                 $deliverymanDetails = Deliveryman::create([
                     'user_id' => $user->id,
