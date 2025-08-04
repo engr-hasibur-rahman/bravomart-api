@@ -38,6 +38,7 @@ class CustomerManageController extends Controller
                 "message" => __('messages.registration_success', ['name' => 'Customer']),
                 "token" => $token,
                 "email" => $customer->email,
+                "email_verified" => (bool)$customer->email_verified,
                 "email_verification_settings" => com_option_get('com_user_email_verification',null,false) ?? 'off',
             ], 200);
         } catch (\Exception $e) {
