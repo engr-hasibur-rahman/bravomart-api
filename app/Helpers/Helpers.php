@@ -586,18 +586,29 @@ if (!function_exists('translate')) {
 
     }
 
-    function com_option_get($key, $default = null)
+    function com_option_get($key, $default = null, $cache = true)
     {
         $option_name = $key;
-        $value = \Illuminate\Support\Facades\Cache::remember($option_name, 600, function () use ($option_name) {
+
+        if ($cache) {
+            $value = \Illuminate\Support\Facades\Cache::remember($option_name, 600, function () use ($option_name) {
+                try {
+                    return SettingOption::where('option_name', $option_name)->first();
+                } catch (\Exception $e) {
+                    return null;
+                }
+            });
+        } else {
             try {
-                return SettingOption::where('option_name', $option_name)->first();
+                $value = SettingOption::where('option_name', $option_name)->first();
             } catch (\Exception $e) {
-                return null;
+                $value = null;
             }
-        });
+        }
+
         return $value->option_value ?? $default;
     }
+
 
     function com_get_footer_copyright()
     {

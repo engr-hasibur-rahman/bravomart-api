@@ -55,6 +55,11 @@ Route::post('contact-us', [ContactManageController::class, 'store']);
 /*--------------------- Route without auth  ----------------------------*/
 Route::group(['prefix' => 'v1/'], function () {
     Route::group(['prefix' => 'seller/'], function () {
+        // verify email
+        Route::post('send-verification-email', [SellerManageController::class, 'sendVerificationEmail']);
+        Route::post('verify-email', [SellerManageController::class, 'verifyEmail']);
+        Route::post('resend-verification-email', [SellerManageController::class, 'resendVerificationEmail']);
+
         Route::post('registration', [UserController::class, 'StoreOwnerRegistration']);
         // password reset
         Route::post('forget-password', [SellerManageController::class, 'forgetPassword']);
