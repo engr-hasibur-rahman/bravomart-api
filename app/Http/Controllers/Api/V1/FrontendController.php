@@ -1432,7 +1432,7 @@ class FrontendController extends Controller
         // Pagination
         $perPage = $request->per_page ?? 10;
         $products = $query->with(['category', 'unit', 'tags', 'store', 'brand',
-            'variants' => function ($query) {
+            'variants' => function ($query) use ($request) {
                 $shouldRound = shouldRound();
 
                 $discountAmountExpr = $shouldRound
@@ -1486,6 +1486,15 @@ class FrontendController extends Controller
                     ->leftJoin('flash_sales as fs1', 'fs1.id', '=', 'fsp1.flash_sale_id')
                     ->select('product_variants.*')
                     ->selectRaw("$finalExpr as effective_price");
+
+                // 👇 Here's the fix:
+                if ($request->sort === 'price_low_high') {
+                    $query->orderByRaw("$finalExpr ASC");
+                } elseif ($request->sort === 'price_high_low') {
+                    $query->orderByRaw("$finalExpr DESC");
+                }
+
+                $query->limit(1); // 👈 Only return the best-matching variant
             }
             , 'related_translations'])
             ->where('products.status', 'approved')
