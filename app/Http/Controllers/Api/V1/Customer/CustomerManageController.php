@@ -38,7 +38,7 @@ class CustomerManageController extends Controller
                 "message" => __('messages.registration_success', ['name' => 'Customer']),
                 "token" => $token,
                 "email" => $customer->email,
-                "email_verification_settings" => com_option_get('com_user_email_verification') ?? 'off',
+                "email_verification_settings" => com_option_get('com_user_email_verification',null,false) ?? 'off',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -128,7 +128,7 @@ class CustomerManageController extends Controller
                 "email" => $customer->email,
                 'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                 "email_verified" => (bool)$customer->email_verified, // shorthand of -> $token->email_verified ? true : false
-                "email_verification_settings" => com_option_get('com_user_email_verification') ?? 'off',
+                "email_verification_settings" => com_option_get('com_user_email_verification',null,false) ?? 'off',
                 "account_status" => $customer->deactivated_at ? 'deactivated' : 'active',
                 "marketing_email" => (bool)$customer->marketing_email,
                 "activity_notification" => (bool)$customer->activity_notification,
