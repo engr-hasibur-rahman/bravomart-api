@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     });
 
     // Customer Wallet
-    Route::group(['prefix' => 'customer/wallet','middleware' => ['check.email.verification.option:seller']], function () {
+    Route::group(['prefix' => 'customer/wallet','middleware' => ['check.email.verification.option:customer']], function () {
         Route::get('/', [WalletCommonController::class, 'myWallet']);
         Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
         Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
