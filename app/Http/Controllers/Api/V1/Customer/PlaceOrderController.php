@@ -161,12 +161,14 @@ class PlaceOrderController extends Controller
         return true;
     }
 
-    private function updateWallet($order_amount): bool
+    private function updateWallet($order_amount)
     {
         $customer = auth()->guard('api_customer')->user();
 
         if (!$customer) {
-            return false;
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ],404);
         }
 
         $wallet = Wallet::where('owner_id', $customer->id)
@@ -174,12 +176,14 @@ class PlaceOrderController extends Controller
             ->first();
 
         if (!$wallet || $wallet->balance <= 0 || $wallet->balance < $order_amount) {
-            return false;
+            return response()->json([
+                'message' => __('messages.insufficient_balance')
+            ],422);
         }
 
         $wallet->balance -= $order_amount;
         $wallet->save();
 
-        return true;
+        return $wallet;
     }
 }
