@@ -111,7 +111,7 @@ class PartnerLoginController extends Controller
             "email_verification_settings" => com_option_get('com_user_email_verification') ?? 'off',
             'phone' => $user->phone,
             'image_url' => ImageModifier::generateImageUrl($user->image),
-            "email_verified" => $user->email_verified,
+            "email_verified" => (bool)$user->email_verified,
             "store_owner" => $user->store_owner,
             "store_seller_id" => $user->store_seller_id,
             "stores" => $stores,
