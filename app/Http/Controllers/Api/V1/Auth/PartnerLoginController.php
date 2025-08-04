@@ -116,6 +116,7 @@ class PartnerLoginController extends Controller
             "store_seller_id" => $user->store_seller_id,
             "stores" => $stores,
             "role" => $user->getRoleNames()
+
         ];
     }
 
