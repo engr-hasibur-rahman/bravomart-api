@@ -202,15 +202,6 @@ class ChatController extends Controller
         }
 
         try {
-
-            Log::info('Triggering MessageSent event for Pusher', [
-                'message_id' => $message->id,
-                'sender_id' => $data['sender_id'],
-                'receiver_id' => $data['receiver_id'],
-                'receiver_type' => $data['receiver_type'],
-                'chat_id' => $data['chat_id'],
-            ]);
-
             //  broadcast with Pusher
             event(new \App\Events\MessageSent($message));
         } catch (\Exception $e) {
@@ -224,8 +215,14 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'message_id' => $message->id,
+            'sender_id' => $message->sender_id,
+            'receiver_id' => $message->receiver_id,
+            'receiver_type' => $message->receiver_type,
+            'message_text' => $message->message,
+            'file_url' => $message->file ? asset('storage/' . $message->file) : null,
             'message' => 'Message sent Successfully',
         ]);
+
     }
 
 }
