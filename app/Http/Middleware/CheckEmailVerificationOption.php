@@ -43,7 +43,7 @@ class CheckEmailVerificationOption
                     'status_code' => Response::HTTP_FORBIDDEN,
                     'email_verified' => false,
                     'message' => 'Email verification is not completed.',
-                ], 403);
+                ]);
             }
         }
 
