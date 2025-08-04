@@ -27,7 +27,7 @@ Route::middleware(['auth:sanctum','online.track'])->prefix('v1/admin/chat/')->gr
 });
 
 //  Seller Chat manage
-Route::middleware(['auth:sanctum','online.track'])->prefix('v1/seller/store/')->group(function () {
+Route::middleware(['auth:sanctum','online.track','check.email.verification.option:seller'])->prefix('v1/seller/store/')->group(function () {
     Route::prefix('chat')->middleware(['permission:' . PermissionKey::SELLER_CHAT_MANAGE->value])->group(function () {
         Route::get('list', [StoreChatController::class, 'chatList']);
         Route::post('send', [ChatController::class, 'sendMessage']);
@@ -37,7 +37,7 @@ Route::middleware(['auth:sanctum','online.track'])->prefix('v1/seller/store/')->
 });
 
 //  Customer Chat manage
-Route::middleware(['auth:sanctum','online.track'])->prefix('v1/customer/chat/')->group(function () {
+Route::middleware(['auth:sanctum','online.track','check.email.verification.option:customer'])->prefix('v1/customer/chat/')->group(function () {
     Route::get('list/', [CustomerChatController::class, 'customerChatList']);
     Route::post('send', [CustomerChatController::class, 'customerSendMessage']);
     Route::get('messages-details', [CustomerChatController::class, 'chatWiseFetchMessages']);

@@ -7,7 +7,7 @@ use Modules\Wallet\app\Http\Controllers\Api\WalletCommonController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // seller wallet routes
-    Route::prefix('seller/store/financial/')->middleware(['permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value])->group(function () {
+    Route::prefix('seller/store/financial/')->middleware(['check.email.verification.option:seller','permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WALLET->value])->group(function () {
         // seller wallet
         Route::group(['prefix' => 'wallet/'], function () {
             Route::get('/', [WalletCommonController::class, 'myWallet']);
@@ -15,7 +15,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
             Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
         });
         // withdraw history
-        Route::group(['prefix' => 'withdraw/', 'middleware' => 'permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value], function () {
+        Route::group(['prefix' => 'withdraw/', 'middleware' => ['check.email.verification.option:seller','permission:' . PermissionKey::SELLER_STORE_FINANCIAL_WITHDRAWALS->value]], function () {
             Route::get('/', [SellerAndDeliverymanWithdrawController::class, 'withdrawAllList']);
             Route::get('details/{id?}', [SellerAndDeliverymanWithdrawController::class, 'withdrawDetails']);
             Route::post('withdraw-request', [SellerAndDeliverymanWithdrawController::class, 'withdrawRequest']);
@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     });
 
     // Customer Wallet
-    Route::group(['prefix' => 'customer/wallet'], function () {
+    Route::group(['prefix' => 'customer/wallet','middleware' => ['check.email.verification.option:customer']], function () {
         Route::get('/', [WalletCommonController::class, 'myWallet']);
         Route::post('deposit', [WalletCommonController::class, 'depositCreate']);
         Route::get('transactions', [WalletCommonController::class, 'transactionRecords']);
