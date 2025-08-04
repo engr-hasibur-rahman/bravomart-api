@@ -264,7 +264,7 @@ class OrderService
 
                         // store and admin discount calculate per product wise
                         $flash_sale_admin_discount = ($flash_sale_discount_type === 'percentage') ? ($basePrice * $flash_sale_discount_amount / 100.00) : $flash_sale_discount_amount;
-                        $flash_sale_admin_discount = shouldRound()? round($flash_sale_admin_discount): $flash_sale_admin_discount;
+                        $flash_sale_admin_discount = shouldRound() ? round($flash_sale_admin_discount) : $flash_sale_admin_discount;
                         $finalPrice = $basePrice - $flash_sale_admin_discount;
                         $after_any_discount_final_price = $finalPrice;
 
@@ -456,7 +456,7 @@ class OrderService
                             $total_tax_amount = 0;
                         }
                         // Final line total price based on quantity
-                        $line_total_price = $line_total_excluding_tax + $total_tax_amount;
+                        $line_total_price = shouldRound() ? round($line_total_excluding_tax + $total_tax_amount) : round($line_total_excluding_tax + $total_tax_amount, 2);
 
                         // Initialize commission variables
                         $system_commission_type = null;
@@ -650,7 +650,11 @@ class OrderService
                         'line_total_excluding_tax' => $detail->line_total_price_with_qty - $discount,
                         'tax_amount' => ($detail->line_total_price_with_qty / 100 * $detail->tax_rate) / $detail->quantity,
                         'total_tax_amount' => $detail->line_total_price_with_qty / 100 * $detail->tax_rate,
-                        'line_total_price' => ($detail->line_total_price_with_qty - $discount) + ($detail->line_total_price_with_qty / 100 * $detail->tax_rate),
+
+                        'line_total_price' => ($detail->line_total_price_with_qty - $discount) +
+                            (shouldRound() ? round($detail->line_total_price_with_qty / 100 * $detail->tax_rate) :
+                                round($detail->line_total_price_with_qty / 100 * $detail->tax_rate, 2)),
+
                         'admin_commission_amount' => $detail->admin_commission_type == 'percentage'
                             ? $detail->line_total_price_with_qty / 100 * $detail->admin_commission_rate
                             : $detail->admin_commission_rate,

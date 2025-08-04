@@ -36,7 +36,10 @@ class CustomerManageController extends Controller
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.registration_success', ['name' => 'Customer']),
-                "token" => $token
+                "token" => $token,
+                "email" => $customer->email,
+                "email_verified" => (bool)$customer->email_verified,
+                "email_verification_settings" => com_option_get('com_user_email_verification',null,false) ?? 'off',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -123,8 +126,10 @@ class CustomerManageController extends Controller
                 "status_code" => 200,
                 "message" => __('messages.login_success'),
                 "token" => $token->plainTextToken,
+                "email" => $customer->email,
                 'expires_at' => $accessToken->expires_at->format('Y-m-d H:i:s'),
                 "email_verified" => (bool)$customer->email_verified, // shorthand of -> $token->email_verified ? true : false
+                "email_verification_settings" => com_option_get('com_user_email_verification',null,false) ?? 'off',
                 "account_status" => $customer->deactivated_at ? 'deactivated' : 'active',
                 "marketing_email" => (bool)$customer->marketing_email,
                 "activity_notification" => (bool)$customer->activity_notification,
@@ -480,7 +485,7 @@ class CustomerManageController extends Controller
             return unauthorized_response();
         }
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:customers,email',
+            'email' => 'required|email',
         ]);
         if ($validator->fails()) {
             return response()->json([

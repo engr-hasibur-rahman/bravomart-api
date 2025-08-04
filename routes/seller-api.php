@@ -24,15 +24,10 @@ use App\Http\Controllers\Api\V1\StaffController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::group(['namespace' => 'Api\V1', 'middleware' => 'auth:sanctum'], function () {
+Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'check.email.verification.option:seller']], function () {
     Route::group(['prefix' => 'seller/'], function () {
         Route::get('store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
-
-        // verify email
-        Route::post('send-verification-email', [SellerManageController::class, 'sendVerificationEmail']);
-        Route::post('verify-email', [SellerManageController::class, 'verifyEmail']);
-        Route::post('resend-verification-email', [SellerManageController::class, 'resendVerificationEmail']);
 
         // profile manage
         Route::group(['prefix' => 'profile/'], function () {

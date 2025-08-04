@@ -112,6 +112,8 @@ if (!function_exists('socialLogin')) {
                     'email' => $email,
                     'slug' => username_slug_generator($name),
                     $socialColumn => $socialId,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                     'firebase_token' => $firebaseToken,
                     'password' => Hash::make(Str::random(8)), // Never use dummy passwords
                 ]);
@@ -173,6 +175,8 @@ if (!function_exists('socialLogin')) {
                     'activity_scope' => 'delivery_level',
                     'store_owner' => 0,
                     'status' => 0,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
                 $deliverymanDetails = Deliveryman::create([
                     'user_id' => $user->id,
@@ -582,18 +586,29 @@ if (!function_exists('translate')) {
 
     }
 
-    function com_option_get($key, $default = null)
+    function com_option_get($key, $default = null, $cache = true)
     {
         $option_name = $key;
-        $value = \Illuminate\Support\Facades\Cache::remember($option_name, 600, function () use ($option_name) {
+
+        if ($cache) {
+            $value = \Illuminate\Support\Facades\Cache::remember($option_name, 600, function () use ($option_name) {
+                try {
+                    return SettingOption::where('option_name', $option_name)->first();
+                } catch (\Exception $e) {
+                    return null;
+                }
+            });
+        } else {
             try {
-                return SettingOption::where('option_name', $option_name)->first();
+                $value = SettingOption::where('option_name', $option_name)->first();
             } catch (\Exception $e) {
-                return null;
+                $value = null;
             }
-        });
+        }
+
         return $value->option_value ?? $default;
     }
+
 
     function com_get_footer_copyright()
     {

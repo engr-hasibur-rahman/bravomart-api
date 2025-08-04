@@ -13,6 +13,7 @@ use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
 use App\Models\DeliveryMan;
 use App\Models\EmailTemplate;
+use App\Models\SettingOption;
 use App\Models\StoreSeller;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -131,6 +132,8 @@ class UserController extends Controller
                     'slug' => username_slug_generator($name),
                     'facebook_id' => $facebook_id,
                     'password' => Hash::make('123456dummy'), // Dummy password
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
             } elseif ($role == 'seller') {
                 $newUser = User::create([
@@ -142,6 +145,8 @@ class UserController extends Controller
                     'activity_scope' => 'store_level',
                     'store_owner' => 1,
                     'status' => 1,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
             } elseif ($role == 'deliveryman') {
                 $newUser = User::create([
@@ -153,6 +158,8 @@ class UserController extends Controller
                     'activity_scope' => 'delivery_level',
                     'store_owner' => 0,
                     'status' => 0,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
             } else {
                 $newUser = User::create([
@@ -164,6 +171,8 @@ class UserController extends Controller
                     'activity_scope' => null,
                     'store_owner' => 0,
                     'status' => 1,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                 ]);
             }
 
@@ -277,6 +286,7 @@ class UserController extends Controller
                     'slug' => username_slug_generator($name),
                     'google_id' => $google_id,
                     'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                     'password' => Hash::make('123456dummy'),
                 ]);
             } elseif ($role == 'seller') {
@@ -288,6 +298,8 @@ class UserController extends Controller
                     'password' => Hash::make('123456dummy'),
                     'activity_scope' => 'store_level',
                     'store_owner' => 1,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                     'status' => 1,
                 ]);
             } elseif ($role == 'deliveryman') {
@@ -299,6 +311,8 @@ class UserController extends Controller
                     'password' => Hash::make('123456dummy'),
                     'activity_scope' => 'delivery_level',
                     'store_owner' => 0,
+                    'email_verified' => 1,
+                    'email_verified_at' => Carbon::now(),
                     'status' => 1,
                 ]);
             } else {
@@ -474,9 +488,11 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|confirmed',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
 
         try {
             // By default role
@@ -538,16 +554,17 @@ class UserController extends Controller
                 }
             } catch (\Exception $th) {
             }
-
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
                 "message" => __('messages.registration_success', ['name' => 'Seller']),
                 "token" => $user->createToken('auth_token')->plainTextToken,
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'email' => $request->email,
-                'phone' => $request->phone,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'email_verified' => $seller->user?->email_verified,
+                "email_verification_settings" => com_option_get('com_user_email_verification', null, false) ?? 'off',
+                'phone' => $user->phone,
                 "permissions" => $user->getPermissionNames(),
                 "role" => $user->getRoleNames(),
                 "store_owner" => $user->store_owner,
@@ -1081,6 +1098,7 @@ class UserController extends Controller
                 'error' => $e->getMessage(),
             ]);
         }
+
     }
 
     public function deactivateAccount()

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\Order\PlaceOrderRequest;
 use App\Http\Resources\Order\PlaceOrderDetailsResource;
 use App\Http\Resources\Order\PlaceOrderMasterResource;
+use App\Models\Order;
 use App\Models\OrderMaster;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -65,13 +66,15 @@ class PlaceOrderController extends Controller
                             'payment_gateway' => 'wallet',
                             'payment_status' => 'paid',
                         ]);
+                        Order::where('order_master_id', $order_master['id'])->update([
+                            'payment_status' => 'paid',
+                        ]);
                     } else {
                         OrderMaster::where('id', $order_master['id'])->update([
                             'payment_gateway' => 'wallet',
                             'payment_status' => 'pending',
                         ]);
                     }
-
                 }
                 return response()->json([
                     'success' => true,
@@ -161,12 +164,14 @@ class PlaceOrderController extends Controller
         return true;
     }
 
-    private function updateWallet($order_amount): bool
+    private function updateWallet($order_amount)
     {
         $customer = auth()->guard('api_customer')->user();
 
         if (!$customer) {
-            return false;
+            return response()->json([
+                'message' => __('messages.data_not_found')
+            ], 404);
         }
 
         $wallet = Wallet::where('owner_id', $customer->id)
@@ -174,12 +179,14 @@ class PlaceOrderController extends Controller
             ->first();
 
         if (!$wallet || $wallet->balance <= 0 || $wallet->balance < $order_amount) {
-            return false;
+            return response()->json([
+                'message' => __('messages.insufficient_balance')
+            ], 422);
         }
 
         $wallet->balance -= $order_amount;
         $wallet->save();
 
-        return true;
+        return $wallet;
     }
 }
