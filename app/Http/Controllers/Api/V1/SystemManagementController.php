@@ -245,6 +245,7 @@ class SystemManagementController extends Controller
 
     public function footerCustomization(Request $request)
     {
+
         if ($request->isMethod('POST')) {
             $this->validate($request, [
                 'content' => 'array',
