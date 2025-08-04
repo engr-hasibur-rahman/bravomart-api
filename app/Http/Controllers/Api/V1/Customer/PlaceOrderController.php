@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\Order\PlaceOrderRequest;
 use App\Http\Resources\Order\PlaceOrderDetailsResource;
 use App\Http\Resources\Order\PlaceOrderMasterResource;
+use App\Models\Order;
 use App\Models\OrderMaster;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -63,6 +64,9 @@ class PlaceOrderController extends Controller
                     if ($success) {
                         OrderMaster::where('id', $order_master['id'])->update([
                             'payment_gateway' => 'wallet',
+                            'payment_status' => 'paid',
+                        ]);
+                        Order::where('order_master_id', $order_master['id'])->update([
                             'payment_status' => 'paid',
                         ]);
                     } else {
