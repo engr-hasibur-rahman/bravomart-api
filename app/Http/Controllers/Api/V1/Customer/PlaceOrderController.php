@@ -75,7 +75,6 @@ class PlaceOrderController extends Controller
                             'payment_status' => 'pending',
                         ]);
                     }
-
                 }
                 return response()->json([
                     'success' => true,
@@ -172,7 +171,7 @@ class PlaceOrderController extends Controller
         if (!$customer) {
             return response()->json([
                 'message' => __('messages.data_not_found')
-            ],404);
+            ], 404);
         }
 
         $wallet = Wallet::where('owner_id', $customer->id)
@@ -182,7 +181,7 @@ class PlaceOrderController extends Controller
         if (!$wallet || $wallet->balance <= 0 || $wallet->balance < $order_amount) {
             return response()->json([
                 'message' => __('messages.insufficient_balance')
-            ],422);
+            ], 422);
         }
 
         $wallet->balance -= $order_amount;

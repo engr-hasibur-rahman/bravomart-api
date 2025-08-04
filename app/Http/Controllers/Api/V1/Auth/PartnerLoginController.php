@@ -45,7 +45,7 @@ class PartnerLoginController extends Controller
                 "status" => false,
                 "status_code" => 422,
                 "message" => 'User is not a seller!',
-            ],422);
+            ], 422);
         }
 
 
@@ -93,7 +93,7 @@ class PartnerLoginController extends Controller
 
         $token = $user->createToken('auth_token');
         $accessToken = $token->accessToken;
-        $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION',60));
+        $accessToken->expires_at = Carbon::now()->addMinutes((int)env('SANCTUM_EXPIRATION', 60));
         $accessToken->save();
 
         // update firebase device token
@@ -111,7 +111,7 @@ class PartnerLoginController extends Controller
             "email_verification_settings" => com_option_get('com_user_email_verification') ?? 'off',
             'phone' => $user->phone,
             'image_url' => ImageModifier::generateImageUrl($user->image),
-            "email_verified" => $email_verified,
+            "email_verified" => $user->email_verified,
             "store_owner" => $user->store_owner,
             "store_seller_id" => $user->store_seller_id,
             "stores" => $stores,
