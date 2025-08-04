@@ -27,6 +27,7 @@ class User extends Authenticatable
         'slug',
         'phone',
         'email',
+        'email_verified',
         'image',
         'activity_scope',
         'password',
@@ -52,6 +53,7 @@ class User extends Authenticatable
         'remember_token',
     ];
     protected $casts = [
+        'email_verified' => 'boolean',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'stores' => 'array',

@@ -554,7 +554,6 @@ class UserController extends Controller
                 }
             } catch (\Exception $th) {
             }
-
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
@@ -563,7 +562,7 @@ class UserController extends Controller
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'email' => $user->email,
-                'email_verified' => $user->email_verified,
+                'email_verified' => $seller->user?->email_verified,
                 "email_verification_settings" => com_option_get('com_user_email_verification', null, false) ?? 'off',
                 'phone' => $user->phone,
                 "permissions" => $user->getPermissionNames(),
