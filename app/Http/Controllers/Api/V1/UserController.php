@@ -492,11 +492,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $systemSettings = SettingOption::where('option_name', 'com_user_email_verification')
-            ->where('option_value', 'on')->first();
-        if (!$systemSettings) {
-            $systemSettings = "off";
-        }
+
 
         try {
             // By default role
@@ -568,7 +564,7 @@ class UserController extends Controller
                 'last_name' => $user->last_name,
                 'email' => $user->email,
                 'email_verified' => $user->email_verified,
-                "email_verification_settings" => com_option_get('com_user_email_verification') ?? 'off',
+                "email_verification_settings" => com_option_get('com_user_email_verification', null, false) ?? 'off',
                 'phone' => $user->phone,
                 "permissions" => $user->getPermissionNames(),
                 "role" => $user->getRoleNames(),
@@ -1103,6 +1099,7 @@ class UserController extends Controller
                 'error' => $e->getMessage(),
             ]);
         }
+
     }
 
     public function deactivateAccount()

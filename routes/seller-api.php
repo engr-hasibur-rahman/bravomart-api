@@ -29,11 +29,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware' => ['auth:sanctum', 'check.e
         Route::get('store-fetch-list', [SellerStoreManageController::class, 'ownerWiseStore']);
         Route::get('attributes/type-wise', [ProductAttributeController::class, 'typeWiseAttributes']);
 
-        // verify email
-        Route::post('send-verification-email', [SellerManageController::class, 'sendVerificationEmail']);
-        Route::post('verify-email', [SellerManageController::class, 'verifyEmail']);
-        Route::post('resend-verification-email', [SellerManageController::class, 'resendVerificationEmail']);
-
         // profile manage
         Route::group(['prefix' => 'profile/'], function () {
             Route::get('/', [SellerManageController::class, 'getProfile']);
