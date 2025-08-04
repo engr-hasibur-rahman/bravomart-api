@@ -1099,6 +1099,7 @@ class UserController extends Controller
                 'error' => $e->getMessage(),
             ]);
         }
+
     }
 
     public function deactivateAccount()
