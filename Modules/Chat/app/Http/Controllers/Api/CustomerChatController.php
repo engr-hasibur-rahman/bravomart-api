@@ -189,6 +189,11 @@ class CustomerChatController extends Controller
         return response()->json([
             'success' => true,
             'message_id' => $message->id,
+            'sender_id' => $message->sender_id,
+            'receiver_id' => $message->receiver_id,
+            'receiver_type' => $message->receiver_type,
+            'message_text' => $message->message,
+            'file_url' => $message->file ? asset('storage/' . $message->file) : null,
             'message' => 'Message sent Successfully',
         ]);
     }
