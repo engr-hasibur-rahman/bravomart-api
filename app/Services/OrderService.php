@@ -650,7 +650,11 @@ class OrderService
                         'line_total_excluding_tax' => $detail->line_total_price_with_qty - $discount,
                         'tax_amount' => ($detail->line_total_price_with_qty / 100 * $detail->tax_rate) / $detail->quantity,
                         'total_tax_amount' => $detail->line_total_price_with_qty / 100 * $detail->tax_rate,
-                        'line_total_price' => ($detail->line_total_price_with_qty - $discount) + ($detail->line_total_price_with_qty / 100 * $detail->tax_rate),
+
+                        'line_total_price' => ($detail->line_total_price_with_qty - $discount) +
+                            (shouldRound() ? round($detail->line_total_price_with_qty / 100 * $detail->tax_rate) :
+                                round($detail->line_total_price_with_qty / 100 * $detail->tax_rate, 2)),
+
                         'admin_commission_amount' => $detail->admin_commission_type == 'percentage'
                             ? $detail->line_total_price_with_qty / 100 * $detail->admin_commission_rate
                             : $detail->admin_commission_rate,
