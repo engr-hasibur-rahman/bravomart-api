@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Com;
 
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\Com\FooterSettingsPublicResource;
+use App\Http\Resources\Translation\SettingsTranslationResource;
 use App\Models\SettingOption;
 
 
@@ -26,5 +27,7 @@ class  HeaderFooterController extends Controller
         return response()->json([
             'data' => new FooterSettingsPublicResource($footer_settings)
         ]);
+
+
     }
 }
