@@ -13,6 +13,7 @@ use App\Mail\EmailVerificationMail;
 use App\Models\Customer;
 use App\Models\DeliveryMan;
 use App\Models\EmailTemplate;
+use App\Models\SettingOption;
 use App\Models\StoreSeller;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -487,8 +488,14 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|confirmed',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
+        }
+        $systemSettings = SettingOption::where('option_name', 'com_user_email_verification')
+            ->where('option_value', 'on')->first();
+        if (!$systemSettings) {
+            $systemSettings = "off";
         }
 
         try {
@@ -560,6 +567,7 @@ class UserController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'email' => $request->email,
+                'email_verified' => $request->email_verified,
                 "email_verification_settings" => com_option_get('com_user_email_verification') ?? 'off',
                 'phone' => $request->phone,
                 "permissions" => $user->getPermissionNames(),
