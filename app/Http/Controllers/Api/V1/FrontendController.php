@@ -1256,6 +1256,39 @@ class FrontendController extends Controller
         }
 
         $query = Product::query();
+        // Location wise product filter
+        $userLat = $request->user_lat;
+        $userLng = $request->user_lng;
+        $useLocationFilter = false;
+
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+
+            // Clone the base query to apply location filter
+            $locationQuery = clone $query;
+
+            $locationQuery->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
+
+            // Test if location-filtered query returns any product
+            $testResults = (clone $locationQuery)->take(1)->get();
+
+            if ($testResults->isNotEmpty()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            }
+        }
 
         // Apply category filter (multiple categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
@@ -1399,39 +1432,6 @@ class FrontendController extends Controller
                 $q->where('products.name', 'like', '%' . $request->search . '%')
                     ->orWhere('products.description', 'like', '%' . $request->search . '%');
             });
-        }
-        // Location wise product filter
-        $userLat = $request->user_lat;
-        $userLng = $request->user_lng;
-        $useLocationFilter = false;
-
-        if ($userLat && $userLng) {
-            $radius = $request->radius ?? 10;
-
-            // Clone the base query to apply location filter
-            $locationQuery = clone $query;
-
-            $locationQuery->join('stores', 'stores.id', '=', 'products.store_id')
-                ->select('products.*')
-                ->selectRaw('
-            (6371 * acos(
-                cos(radians(?)) *
-                cos(radians(stores.latitude)) *
-                cos(radians(stores.longitude) - radians(?)) +
-                sin(radians(?)) *
-                sin(radians(stores.latitude))
-            )) AS distance
-        ', [$userLat, $userLng, $userLat])
-                ->having('distance', '<', $radius)
-                ->orderBy('distance');
-
-            // Test if location-filtered query returns any product
-            $testResults = (clone $locationQuery)->take(1)->get();
-
-            if ($testResults->isNotEmpty()) {
-                $query = $locationQuery;
-                $useLocationFilter = true;
-            }
         }
         // Pagination
         $perPage = $request->per_page ?? 10;
