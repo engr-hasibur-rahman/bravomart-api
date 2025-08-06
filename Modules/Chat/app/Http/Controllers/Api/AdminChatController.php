@@ -43,6 +43,7 @@ class AdminChatController extends Controller
         $query = Chat::query()
             ->with('user')
             ->where('user_type', '!=', 'admin')
+            ->where('user_type', '!=', 'customer')
             ->withLiveChatEnabledStoreSubscription();
 
         // Apply search filter
