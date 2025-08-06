@@ -2279,8 +2279,7 @@ class FrontendController extends Controller
             ->where('slug', $slug)
             ->where('status', 'publish')
             ->first();
-
-        if ($page === 'about') {
+        if ($page->slug === 'about') {
             $setting = Page::with('related_translations')
                 ->where('slug', 'about')
                 ->where('status', 'publish')
@@ -2292,14 +2291,18 @@ class FrontendController extends Controller
                 ], 404);
             }
 
-            $content = $setting->content ? json_decode($setting->content, true) : [];
+            $content = is_string($setting->content)
+                ? json_decode($setting->content, true)
+                : $setting->content;
+
             $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+
             $setting->content = $content;
 
             return response()->json(new AboutUsPublicResource($setting));
         }
 
-        if ($page === 'contact') {
+        if ($page->slug === 'contact') {
             $setting = Page::with('related_translations')
                 ->where('slug', 'contact')
                 ->where('status', 'publish')
@@ -2310,14 +2313,18 @@ class FrontendController extends Controller
                     'message' => __('messages.data_not_found')
                 ], 404);
             }
-            $content = $setting->content ? json_decode($setting->content, true) : [];
+            $content = is_string($setting->content)
+                ? json_decode($setting->content, true)
+                : $setting->content;
+
             $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+
             $setting->content = $content;
 
             return response()->json(new ContactUsPublicResource($setting));
         }
 
-        if ($page === 'become-a-seller') {
+        if ($page->slug === 'become-a-seller') {
             $setting = Page::with('related_translations')
                 ->where('slug', 'become-a-seller')
                 ->where('status', 'publish')
@@ -2329,8 +2336,12 @@ class FrontendController extends Controller
                 ], 404);
             }
 
-            $content = $setting->content ? json_decode($setting->content, true) : [];
+            $content = is_string($setting->content)
+                ? json_decode($setting->content, true)
+                : $setting->content;
+
             $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+
             $setting->content = $content;
 
             return response()->json(new BecomeSellerPublicResource($setting));
