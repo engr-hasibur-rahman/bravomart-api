@@ -122,7 +122,7 @@ class CustomerAddressManageController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => __('messages.update_success', ['name' => 'Default address'])
+                'message' => __('messages.update_success', ['name' => 'Address'])
             ], 200);
         } catch (\Exception $e) {
             // Log the error or handle it as needed

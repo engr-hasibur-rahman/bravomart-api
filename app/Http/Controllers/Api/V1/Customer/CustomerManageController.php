@@ -35,7 +35,7 @@ class CustomerManageController extends Controller
             return response()->json([
                 "status" => true,
                 "status_code" => 200,
-                "message" => __('messages.registration_success', ['name' => 'Customer']),
+                "message" => __('messages.register_successful'),
                 "token" => $token,
                 "email" => $customer->email,
                 "email_verified" => (bool)$customer->email_verified,
@@ -454,7 +454,7 @@ class CustomerManageController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
-                    'message' => __('messages.update_success', ['name' => 'Customer']),
+                    'message' => __('messages.update_successful'),
                 ]);
             } else {
                 return response()->json([
@@ -537,7 +537,7 @@ class CustomerManageController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
-                    'message' => __('messages.update_success', ['name' => 'Customer']),
+                    'message' => __('messages.update_successful'),
                 ]);
             } else {
                 return response()->json([
@@ -634,7 +634,7 @@ class CustomerManageController extends Controller
 
         if ($customer->hasRunningOrders()) {
             return response()->json([
-                'message' => __('messages.has_running_orders', ['name' => 'Customer'])
+                'message' => __('messages.has_running_orders', ['name' => 'User'])
             ], 422);
         }
 
