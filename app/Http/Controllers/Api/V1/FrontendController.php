@@ -1257,33 +1257,9 @@ class FrontendController extends Controller
 
         $query = Product::query();
         // Location wise product filter
-        $useLocationFilter = false;
-
         $userLat = $request->user_lat;
         $userLng = $request->user_lng;
-
-
-//        if ($userLat && $userLng) {
-//            $radius = $request->radius ?? 10;
-//
-//            // Join stores and calculate distance, apply having clause and order
-//            $query->join('stores', 'stores.id', '=', 'products.store_id')
-//                ->select('products.*')
-//                ->selectRaw('
-//            (6371 * acos(
-//                cos(radians(?)) *
-//                cos(radians(stores.latitude)) *
-//                cos(radians(stores.longitude) - radians(?)) +
-//                sin(radians(?)) *
-//                sin(radians(stores.latitude))
-//            )) AS distance
-//        ', [$userLat, $userLng, $userLat])
-//                ->whereNull('stores.deleted_at')
-//                ->having('distance', '<', $radius)
-//                ->orderBy('distance');
-//
-//            $useLocationFilter = true;
-//        }
+        $useLocationFilter = false;
 
 
         // Apply category filter (multiple categories)
@@ -1428,6 +1404,34 @@ class FrontendController extends Controller
                 $q->where('products.name', 'like', '%' . $request->search . '%')
                     ->orWhere('products.description', 'like', '%' . $request->search . '%');
             });
+        }
+
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+            $baseQuery = clone $query;
+            $locationQuery = $query
+                ->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
+
+            if ($locationQuery->take(1)->exists()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            } else {
+                // fallback to default query (don't override $query)
+                $query = $baseQuery;
+                $useLocationFilter = false;
+            }
         }
         // Pagination
         $perPage = $request->per_page ?? 10;
