@@ -189,6 +189,11 @@ return [
     'force_delete_success' => ':name deleted permanently!',
     'insufficient_balance' => 'Insufficient balance!',
 
+
+    'login_successful' => 'Successfully logged in!',
+    'register_successful' => 'Successfully registered!',
+    'update_successful' => 'Successfully updated!',
+
 ];
 
 
