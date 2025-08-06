@@ -639,9 +639,9 @@ class OrderService
 
                     // Last item gets the remaining to avoid rounding errors
                     if ($index === $orderDetails->count() - 1) {
-                        $discount = round($remainingDiscount - $distributedTotal, 2);
+                        $discount = $remainingDiscount - $distributedTotal;
                     } else {
-                        $discount = round(($lineTotal / $totalLineAmount) * $orderMaster->coupon_discount_amount_admin, 2);
+                        $discount = ($lineTotal / $totalLineAmount) * $orderMaster->coupon_discount_amount_admin;
                         $distributedTotal += $discount;
                     }
 
