@@ -39,7 +39,7 @@ class StoreDetailsForOrderResource extends JsonResource
             "longitude" => $this->area?->center_longitude,
             "rating" => $this->rating,
             "additional_charge_name" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_name : null,
-            "additional_charge_amount" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_amount : 0,
+            "additional_charge_amount" => $store_type_info->additional_charge_enable_disable ? round($store_type_info->additional_charge_amount) : 0,
             "additional_charge_type" => $store_type_info->additional_charge_enable_disable ? $store_type_info->additional_charge_type : 'fixed',
             "type" => "store",
             "live_chat" => checkSubscription($this->id, 'live_chat'),

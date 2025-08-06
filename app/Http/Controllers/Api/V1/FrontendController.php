@@ -1261,34 +1261,6 @@ class FrontendController extends Controller
         $userLng = $request->user_lng;
         $useLocationFilter = false;
 
-        if ($userLat && $userLng) {
-            $radius = $request->radius ?? 10;
-
-            // Clone the base query to apply location filter
-            $locationQuery = clone $query;
-
-            $locationQuery->join('stores', 'stores.id', '=', 'products.store_id')
-                ->select('products.*')
-                ->selectRaw('
-            (6371 * acos(
-                cos(radians(?)) *
-                cos(radians(stores.latitude)) *
-                cos(radians(stores.longitude) - radians(?)) +
-                sin(radians(?)) *
-                sin(radians(stores.latitude))
-            )) AS distance
-        ', [$userLat, $userLng, $userLat])
-                ->having('distance', '<', $radius)
-                ->orderBy('distance');
-
-            // Test if location-filtered query returns any product
-            $testResults = (clone $locationQuery)->take(1)->get();
-
-            if ($testResults->isNotEmpty()) {
-                $query = $locationQuery;
-                $useLocationFilter = true;
-            }
-        }
 
         // Apply category filter (multiple categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
@@ -1377,33 +1349,33 @@ class FrontendController extends Controller
                     CASE
                 WHEN flash_sale_products.id IS NOT NULL THEN
                     CASE flash_sales.discount_type
-                        WHEN 'amount' THEN 
-                            CASE 
-                                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                        WHEN 'amount' THEN
+                            CASE
+                                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN
                                     product_variants.special_price - flash_sales.discount_amount
-                                ELSE 
+                                ELSE
                                     product_variants.price - flash_sales.discount_amount
                             END
-                        WHEN 'percentage' THEN 
-                            CASE 
-                                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                        WHEN 'percentage' THEN
+                            CASE
+                                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN
                                     product_variants.special_price - (product_variants.special_price * flash_sales.discount_amount / 100)
-                                ELSE 
+                                ELSE
                                     product_variants.price - (product_variants.price * flash_sales.discount_amount / 100)
                             END
-                        ELSE 
-                            CASE 
-                                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN 
+                        ELSE
+                            CASE
+                                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 THEN
                                     product_variants.special_price
-                                ELSE 
+                                ELSE
                                     product_variants.price
                             END
                     END
 
-                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 AND product_variants.special_price < product_variants.price THEN 
+                WHEN product_variants.special_price IS NOT NULL AND product_variants.special_price > 0 AND product_variants.special_price < product_variants.price THEN
                     product_variants.special_price
 
-                ELSE 
+                ELSE
                     product_variants.price
             END
         )")
@@ -1433,10 +1405,38 @@ class FrontendController extends Controller
                     ->orWhere('products.description', 'like', '%' . $request->search . '%');
             });
         }
+
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+            $baseQuery = clone $query;
+            $locationQuery = $query
+                ->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
+
+            if ($locationQuery->take(1)->exists()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            } else {
+                // fallback to default query (don't override $query)
+                $query = $baseQuery;
+                $useLocationFilter = false;
+            }
+        }
         // Pagination
         $perPage = $request->per_page ?? 10;
         $products = $query->with(['category', 'unit', 'tags', 'store', 'brand',
-            'variants' => function ($query) {
+            'variants' => function ($query) use ($request) {
                 $shouldRound = shouldRound();
 
                 $discountAmountExpr = $shouldRound
@@ -1490,6 +1490,15 @@ class FrontendController extends Controller
                     ->leftJoin('flash_sales as fs1', 'fs1.id', '=', 'fsp1.flash_sale_id')
                     ->select('product_variants.*')
                     ->selectRaw("$finalExpr as effective_price");
+
+                // 👇 Here's the fix:
+                if ($request->sort === 'price_low_high') {
+                    $query->orderByRaw("$finalExpr ASC");
+                } elseif ($request->sort === 'price_high_low') {
+                    $query->orderByRaw("$finalExpr DESC");
+                }
+
+                $query->limit(1); // 👈 Only return the best-matching variant
             }
             , 'related_translations'])
             ->where('products.status', 'approved')
@@ -2270,8 +2279,7 @@ class FrontendController extends Controller
             ->where('slug', $slug)
             ->where('status', 'publish')
             ->first();
-
-        if ($page === 'about') {
+        if ($page->slug === 'about') {
             $setting = Page::with('related_translations')
                 ->where('slug', 'about')
                 ->where('status', 'publish')
@@ -2283,14 +2291,18 @@ class FrontendController extends Controller
                 ], 404);
             }
 
-            $content = $setting->content ? json_decode($setting->content, true) : [];
+            $content = is_string($setting->content)
+                ? json_decode($setting->content, true)
+                : $setting->content;
+
             $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+
             $setting->content = $content;
 
             return response()->json(new AboutUsPublicResource($setting));
         }
 
-        if ($page === 'contact') {
+        if ($page->slug === 'contact') {
             $setting = Page::with('related_translations')
                 ->where('slug', 'contact')
                 ->where('status', 'publish')
@@ -2301,14 +2313,18 @@ class FrontendController extends Controller
                     'message' => __('messages.data_not_found')
                 ], 404);
             }
-            $content = $setting->content ? json_decode($setting->content, true) : [];
+            $content = is_string($setting->content)
+                ? json_decode($setting->content, true)
+                : $setting->content;
+
             $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+
             $setting->content = $content;
 
             return response()->json(new ContactUsPublicResource($setting));
         }
 
-        if ($page === 'become-a-seller') {
+        if ($page->slug === 'become-a-seller') {
             $setting = Page::with('related_translations')
                 ->where('slug', 'become-a-seller')
                 ->where('status', 'publish')
@@ -2320,8 +2336,12 @@ class FrontendController extends Controller
                 ], 404);
             }
 
-            $content = $setting->content ? json_decode($setting->content, true) : [];
+            $content = is_string($setting->content)
+                ? json_decode($setting->content, true)
+                : $setting->content;
+
             $content = is_array($content) ? jsonImageModifierFormatter($content) : [];
+
             $setting->content = $content;
 
             return response()->json(new BecomeSellerPublicResource($setting));

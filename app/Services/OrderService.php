@@ -622,6 +622,67 @@ class OrderService
 
     public function distributeCouponDiscount(OrderMaster $orderMaster): void
     {
+//        DB::transaction(function () use ($orderMaster) {
+//
+//            $orderDetails = $orderMaster->orders()->with('orderDetail')->get()->flatMap->orderDetail;
+//            $totalLineAmount = $orderDetails->sum('line_total_price_with_qty');
+//
+//            $hasValidDiscount = $totalLineAmount > 0 && $orderMaster->coupon_discount_amount_admin > 0;
+//
+//            if ($hasValidDiscount) {
+//                $remainingDiscount = $orderMaster->coupon_discount_amount_admin;
+//                $distributedTotal = 0;
+//
+//                // Step 1: Distribute coupon discount to each OrderDetail
+//                foreach ($orderDetails as $index => $detail) {
+//                    $lineTotal = $detail->line_total_price_with_qty;
+//
+//                    // Last item gets the remaining to avoid rounding errors
+//                    if ($index === $orderDetails->count() - 1) {
+//                        $discount = $remainingDiscount - $distributedTotal;
+//                    } else {
+//                        $discount = ($lineTotal / $totalLineAmount) * $orderMaster->coupon_discount_amount_admin;
+//                        $distributedTotal += $discount;
+//                    }
+//                    $detail->update([
+//                        'coupon_discount_amount' => $discount,
+//                        'line_total_excluding_tax' => $detail->line_total_price_with_qty - $discount,
+//                        'tax_amount' => ($detail->line_total_price_with_qty / 100 * $detail->tax_rate) / $detail->quantity,
+//                        'total_tax_amount' => $detail->line_total_price_with_qty / 100 * $detail->tax_rate,
+//                        'line_total_price' => ($detail->line_total_price_with_qty - $discount) +
+//                            (shouldRound() ? round($detail->line_total_price_with_qty / 100 * $detail->tax_rate) :
+//                                round($detail->line_total_price_with_qty / 100 * $detail->tax_rate, 2)),
+//                        'admin_commission_amount' => $detail->admin_commission_type == 'percentage'
+//                            ? $detail->line_total_price_with_qty / 100 * $detail->admin_commission_rate
+//                            : $detail->admin_commission_rate,
+//                    ]);
+//                }
+//            }
+//
+//            // Step 2: Distribute per Order (always executes)
+//            foreach ($orderMaster->orders as $order) {
+//                $sumCoupon = $order->orderDetail->sum('coupon_discount_amount');
+//                $sumLineTotal = $order->orderDetail->sum('line_total_price');
+//                $shipping = $order->shipping_charge;
+//                $addCharge = $order->order_additional_charge_amount;
+//                $commission = $order->order_amount_admin_commission;
+//                $storeAddCharge = $order->order_additional_charge_store_amount;
+//
+//                $orderDiscount = shouldRound() ? round($sumCoupon) : $sumCoupon;
+//                $orderAmount = shouldRound()
+//                    ? (round($sumLineTotal) + round($shipping) + round($addCharge))
+//                    : ($sumLineTotal + $shipping + $addCharge);
+//
+//                $orderAmountStoreValue = max($sumLineTotal - $commission + $storeAddCharge, 0);
+//
+//
+//                $order->update([
+//                    'order_amount_store_value' => $orderAmountStoreValue,
+//                    'order_amount' => $orderAmount,
+//                    'coupon_discount_amount_admin' => $orderDiscount,
+//                ]);
+//            }
+//        });
         DB::transaction(function () use ($orderMaster) {
 
             $orderDetails = $orderMaster->orders()->with('orderDetail')->get()->flatMap->orderDetail;
@@ -637,32 +698,30 @@ class OrderService
                 foreach ($orderDetails as $index => $detail) {
                     $lineTotal = $detail->line_total_price_with_qty;
 
-                    // Last item gets the remaining to avoid rounding errors
                     if ($index === $orderDetails->count() - 1) {
-                        $discount = round($remainingDiscount - $distributedTotal, 2);
+                        $discount = $remainingDiscount - $distributedTotal;
                     } else {
-                        $discount = round(($lineTotal / $totalLineAmount) * $orderMaster->coupon_discount_amount_admin, 2);
+                        $discount = ($lineTotal / $totalLineAmount) * $orderMaster->coupon_discount_amount_admin;
                         $distributedTotal += $discount;
                     }
 
                     $detail->update([
                         'coupon_discount_amount' => $discount,
-                        'line_total_excluding_tax' => $detail->line_total_price_with_qty - $discount,
-                        'tax_amount' => ($detail->line_total_price_with_qty / 100 * $detail->tax_rate) / $detail->quantity,
-                        'total_tax_amount' => $detail->line_total_price_with_qty / 100 * $detail->tax_rate,
-
-                        'line_total_price' => ($detail->line_total_price_with_qty - $discount) +
-                            (shouldRound() ? round($detail->line_total_price_with_qty / 100 * $detail->tax_rate) :
-                                round($detail->line_total_price_with_qty / 100 * $detail->tax_rate, 2)),
-
-                        'admin_commission_amount' => $detail->admin_commission_type == 'percentage'
-                            ? $detail->line_total_price_with_qty / 100 * $detail->admin_commission_rate
+                        'line_total_excluding_tax' => $lineTotal - $discount,
+                        'tax_amount' => ($lineTotal / 100 * $detail->tax_rate) / $detail->quantity,
+                        'total_tax_amount' => $lineTotal / 100 * $detail->tax_rate,
+                        'line_total_price' => ($lineTotal - $discount) + round($lineTotal / 100 * $detail->tax_rate, 2),
+                        'admin_commission_amount' => $detail->admin_commission_type === 'percentage'
+                            ? $lineTotal / 100 * $detail->admin_commission_rate
                             : $detail->admin_commission_rate,
                     ]);
                 }
             }
 
-            // Step 2: Distribute per Order (always executes)
+            // 🔄 REFRESH orderMaster with fresh relations after updates
+            $orderMaster->load(['orders.orderDetail']);
+
+            // Step 2: Distribute per Order
             foreach ($orderMaster->orders as $order) {
                 $sumCoupon = $order->orderDetail->sum('coupon_discount_amount');
                 $sumLineTotal = $order->orderDetail->sum('line_total_price');
@@ -677,7 +736,6 @@ class OrderService
                     : ($sumLineTotal + $shipping + $addCharge);
 
                 $orderAmountStoreValue = max($sumLineTotal - $commission + $storeAddCharge, 0);
-
 
                 $order->update([
                     'order_amount_store_value' => $orderAmountStoreValue,

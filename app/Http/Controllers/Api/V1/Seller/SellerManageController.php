@@ -150,11 +150,7 @@ class SellerManageController extends Controller
             'token' => 'required',
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                "status" => false,
-                "status_code" => 500,
-                "message" => $validator->errors()
-            ]);
+            return response()->json($validator->errors(), 422);
         }
 
         $result = $this->sellerRepo->verifyEmail($request->token);

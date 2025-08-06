@@ -9,8 +9,12 @@ trait RoundNumericFields
         $data = [];
 
         foreach ($this->getAttributes() as $key => $value) {
-            if (is_numeric($value) && $this->isFillable($key)) {
-                $data[$key] = round($value); // 👈 No precision passed = round to nearest int
+            if (
+                is_numeric($value) &&
+                $this->isFillable($key) &&
+                !in_array($key, $this->excludedFieldsFromRounding ?? [], true) // <- ✅ safe access
+            ) {
+                $data[$key] = round($value); // Default: round to nearest integer
             }
         }
 
@@ -19,7 +23,7 @@ trait RoundNumericFields
 
     public function isFillable($key)
     {
-        return in_array($key, $this->getFillable());
+        return in_array($key, $this->getFillable(), true);
     }
 
     public function applyRoundedFields(): static
@@ -28,3 +32,4 @@ trait RoundNumericFields
         return $this;
     }
 }
+

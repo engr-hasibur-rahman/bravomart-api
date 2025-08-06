@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Customer\CustomerAddressManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerBlogController;
-use App\Http\Controllers\Api\V1\Customer\CustomerManageController as CustomerManageController;
+use App\Http\Controllers\Api\V1\Customer\CustomerManageController;
 use App\Http\Controllers\Api\V1\Customer\CustomerOrderController;
 use App\Http\Controllers\Api\V1\Customer\CustomerOrderRefundController;
 use App\Http\Controllers\Api\V1\Customer\CustomerProductQueryController;
