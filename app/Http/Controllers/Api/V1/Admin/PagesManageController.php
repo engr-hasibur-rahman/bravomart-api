@@ -48,6 +48,7 @@ class PagesManageController extends Controller
                     'translations' => 'nullable|array',
                 ]);
 
+
                 if ($validatedData->fails()) {
                     return response()->json([
                         'status' => false,

@@ -24,5 +24,6 @@ class AboutUsPublicResource extends JsonResource
                 ? jsonImageModifierFormatter(json_decode($translation->where('key', 'content')->first()->value, true))
                 : jsonImageModifierFormatter($this->content),
         ];
+
     }
 }
