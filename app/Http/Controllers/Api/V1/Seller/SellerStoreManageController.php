@@ -30,7 +30,7 @@ class SellerStoreManageController extends Controller
             $request->language ?? DEFAULT_LANGUAGE,
             $request->search ?? "",
             $request->sortField ?? 'id',
-            $request->sort ?? 'asc',
+            $request->sort ?? 'desc',
             []
         );
 
