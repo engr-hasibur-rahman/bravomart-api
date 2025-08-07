@@ -1336,6 +1336,33 @@ class FrontendController extends Controller
             })
                 ->where('product_ratings.average_rating', '>=', $minRating);
         }
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+            $baseQuery = clone $query;
+            $locationQuery = $query
+                ->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
+
+            if ($locationQuery->take(1)->exists()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            } else {
+                // fallback to default query (don't override $query)
+                $query = $baseQuery;
+                $useLocationFilter = false;
+            }
+        }
 
         if (isset($request->sort)) {
             switch ($request->sort) {
@@ -1406,33 +1433,7 @@ class FrontendController extends Controller
             });
         }
 
-        if ($userLat && $userLng) {
-            $radius = $request->radius ?? 10;
-            $baseQuery = clone $query;
-            $locationQuery = $query
-                ->join('stores', 'stores.id', '=', 'products.store_id')
-                ->select('products.*')
-                ->selectRaw('
-            (6371 * acos(
-                cos(radians(?)) *
-                cos(radians(stores.latitude)) *
-                cos(radians(stores.longitude) - radians(?)) +
-                sin(radians(?)) *
-                sin(radians(stores.latitude))
-            )) AS distance
-        ', [$userLat, $userLng, $userLat])
-                ->having('distance', '<', $radius)
-                ->orderBy('distance');
 
-            if ($locationQuery->take(1)->exists()) {
-                $query = $locationQuery;
-                $useLocationFilter = true;
-            } else {
-                // fallback to default query (don't override $query)
-                $query = $baseQuery;
-                $useLocationFilter = false;
-            }
-        }
         // Pagination
         $perPage = $request->per_page ?? 10;
         $products = $query->with(['category', 'unit', 'tags', 'store', 'brand',
