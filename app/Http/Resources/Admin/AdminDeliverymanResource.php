@@ -71,7 +71,7 @@ class AdminDeliverymanResource extends JsonResource
             'full_name' => $this->full_name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'verification' => (bool)$this->verification,
+            'verification' => (bool)$this->is_verified,
             'identification_type' => $this->deliveryman?->identification_type,
             'vehicle_type' => $this->deliveryman?->vehicle_type
                 ? array_merge(

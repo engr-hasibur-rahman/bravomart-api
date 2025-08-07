@@ -1098,25 +1098,35 @@ class FrontendController extends Controller
         if ($userLat && $userLng) {
             $radius = $request->radius ?? 10;
 
-            // Build a subquery that checks distance from store
-            $locationFilteredFlashSaleIds = FlashSaleProduct::whereHas('product.store', function ($query) use ($userLat, $userLng, $radius) {
-                $query->selectRaw('
+            // Base query backup
+            $baseQuery = clone $query;
+
+            // Build location-aware flash sale product filter
+            $locationQuery = $query
+                ->join('products', 'products.id', '=', 'flash_sale_products.product_id')
+                ->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('flash_sale_products.*')
+                ->selectRaw('
             (6371 * acos(
                 cos(radians(?)) *
-                cos(radians(latitude)) *
-                cos(radians(longitude) - radians(?)) +
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
                 sin(radians(?)) *
-                sin(radians(latitude))
+                sin(radians(stores.latitude))
             )) AS distance
         ', [$userLat, $userLng, $userLat])
-                    ->having('distance', '<', $radius);
-            })->pluck('id');
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
 
-            if ($locationFilteredFlashSaleIds->isNotEmpty()) {
-                $query->whereIn('id', $locationFilteredFlashSaleIds);
+            if ($locationQuery->take(1)->exists()) {
+                $query = $locationQuery;
                 $useLocationFilter = true;
+            } else {
+                $query = $baseQuery;
+                $useLocationFilter = false;
             }
         }
+
 
 
         // Apply category filter (multiple categories)
@@ -1261,7 +1271,6 @@ class FrontendController extends Controller
         $userLng = $request->user_lng;
         $useLocationFilter = false;
 
-
         // Apply category filter (multiple categories)
         if (!empty($request->category_id) && is_array($request->category_id)) {
             // Fetch all child categories for the given category IDs
@@ -1288,11 +1297,9 @@ class FrontendController extends Controller
                 $query->whereIn('category_id', $allCategoryIds);
             }
         }
-
         if (!empty($request->brand_id) && is_array($request->brand_id)) {
             $query->whereIn('brand_id', $request->brand_id);
         }
-
         // Apply price range filter
         if (isset($request->min_price) && isset($request->max_price)) {
             $minPrice = $request->min_price;
@@ -1302,7 +1309,6 @@ class FrontendController extends Controller
                 $q->whereBetween('price', [$minPrice, $maxPrice]);
             });
         }
-
         // Apply availability filter
         if (isset($request->availability)) {
             $availability = $request->availability;
@@ -1336,7 +1342,33 @@ class FrontendController extends Controller
             })
                 ->where('product_ratings.average_rating', '>=', $minRating);
         }
+        if ($userLat && $userLng) {
+            $radius = $request->radius ?? 10;
+            $baseQuery = clone $query;
+            $locationQuery = $query
+                ->join('stores', 'stores.id', '=', 'products.store_id')
+                ->select('products.*')
+                ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(stores.latitude)) *
+                cos(radians(stores.longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(stores.latitude))
+            )) AS distance
+        ', [$userLat, $userLng, $userLat])
+                ->having('distance', '<', $radius)
+                ->orderBy('distance');
 
+            if ($locationQuery->take(1)->exists()) {
+                $query = $locationQuery;
+                $useLocationFilter = true;
+            } else {
+                // fallback to default query (don't override $query)
+                $query = $baseQuery;
+                $useLocationFilter = false;
+            }
+        }
         if (isset($request->sort)) {
             switch ($request->sort) {
                 case 'price_low_high':
@@ -1398,40 +1430,11 @@ class FrontendController extends Controller
                     $query->latest('products.created_at');
             }
         }
-
         if (!empty($request->search)) {
             $query->where(function ($q) use ($request) {
                 $q->where('products.name', 'like', '%' . $request->search . '%')
                     ->orWhere('products.description', 'like', '%' . $request->search . '%');
             });
-        }
-
-        if ($userLat && $userLng) {
-            $radius = $request->radius ?? 10;
-            $baseQuery = clone $query;
-            $locationQuery = $query
-                ->join('stores', 'stores.id', '=', 'products.store_id')
-                ->select('products.*')
-                ->selectRaw('
-            (6371 * acos(
-                cos(radians(?)) *
-                cos(radians(stores.latitude)) *
-                cos(radians(stores.longitude) - radians(?)) +
-                sin(radians(?)) *
-                sin(radians(stores.latitude))
-            )) AS distance
-        ', [$userLat, $userLng, $userLat])
-                ->having('distance', '<', $radius)
-                ->orderBy('distance');
-
-            if ($locationQuery->take(1)->exists()) {
-                $query = $locationQuery;
-                $useLocationFilter = true;
-            } else {
-                // fallback to default query (don't override $query)
-                $query = $baseQuery;
-                $useLocationFilter = false;
-            }
         }
         // Pagination
         $perPage = $request->per_page ?? 10;
@@ -1483,9 +1486,7 @@ class FrontendController extends Controller
                 product_variants.price
         END
     ";
-
                 $finalExpr = $shouldRound ? "ROUND($priceExpr)" : "FORMAT($priceExpr, 2)";
-
                 $query->leftJoin('flash_sale_products as fsp1', 'fsp1.product_id', '=', 'product_variants.product_id')
                     ->leftJoin('flash_sales as fs1', 'fs1.id', '=', 'fsp1.flash_sale_id')
                     ->select('product_variants.*')
@@ -1497,7 +1498,6 @@ class FrontendController extends Controller
                 } elseif ($request->sort === 'price_high_low') {
                     $query->orderByRaw("$finalExpr DESC");
                 }
-
                 $query->limit(1); // 👈 Only return the best-matching variant
             }
             , 'related_translations'])
@@ -1512,9 +1512,7 @@ class FrontendController extends Controller
             'filters' => $uniqueAttributes,
             'locationFilter' => $useLocationFilter]);
     }
-
-    protected
-    function getUniqueAttributesFromVariants($products, ?string $languageCode = 'en')
+    protected function getUniqueAttributesFromVariants($products, ?string $languageCode = 'en')
     {
         $attributes = [];
 
