@@ -1,0 +1,52 @@
+image: lorisleiva/laravel-docker:8.1
+
+stages:
+  - build
+  - test
+  - deploy
+
+# Build Stage: Prepare the Laravel application for deployment
+composer:
+  stage: build
+  script:
+    - composer install --no-ansi --no-interaction --no-progress --no-scripts --no-suggest
+    - cp .env.example .env
+    - php artisan key:generate
+  cache:
+    paths:
+      - vendor/
+
+# Test Stage: Run unit tests to ensure code integrity (optional)
+unit_test:
+  stage: test
+  dependencies:
+    - composer
+  cache:
+    paths:
+      - vendor/
+  script:
+    - vendor/bin/phpunit -v
+
+# Deploy Stage: Deploy the Laravel application using Envoy
+deploy:
+  stage: deploy
+  dependencies:
+    - composer
+  cache:
+    paths:
+      - vendor/
+  script:
+    - composer global require --prefer-dist laravel/envoy=~1.0 --no-interaction --prefer-dist --quiet
+    # Add the private SSH key to the build environment
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+    # Run Envoy
+    # Replace "backend" with the subdomain you created in cPanel.
+    - envoy run deploy --branch=master --domain=backend
+  only:
+    - master

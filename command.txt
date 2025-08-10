@@ -1,0 +1,47 @@
+Composer Up & Down
+----------------------------
+docker compose down
+docker compose up --build
+
+Clear Docker Cache
+------------------------
+docker system prune --all --force --volumes
+
+Rebuild Containers
+----------------------
+sail build --no-cache
+sail up -d
+
+Delete the vendor Directory
+------------------------
+rm -rf vendor
+
+Reinstall Composer Dependencies
+-----------------------------------
+composer install
+
+
+
+
+Common
+-------------------------
+composer install
+composer update
+composer dump-autoload
+
+php artisan serve (for project run)
+sail artisan migrade (for database table migration)
+sail artisan migrade:fresh (drop all table)
+
+composer dump-autoload
+sail artisan cache:clear
+sail artisan config:clear
+sail artisan optimize:clear
+php artisan serve
+
+
+php artisan biva:install
+php artisan biva:autoinstall
+
+
+npm cache clean --force

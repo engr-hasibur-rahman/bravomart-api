@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+
+    RewriteEngine On
+    
+    # Allow loading anything under /install/assets/ without redirection
+    RewriteCond %{REQUEST_URI} ^/install/assets/ [NC]
+    RewriteRule ^ - [L]
+    
+    # If the installed file does NOT exist
+    RewriteCond %{DOCUMENT_ROOT}/storage/installed !-f
+    
+    # Redirect everything else to /install/index.php
+    RewriteRule ^.*$ /install/index.php [L]
+
+
+    # Laravel public path routing
+    RewriteRule ^$ public/index.php [L]
+    RewriteRule ^((?!public/).*)$ public/$1 [L,NC]
+</IfModule>

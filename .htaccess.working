@@ -1,0 +1,12 @@
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteRule ^$ public/index.php [L]
+    RewriteRule ^((?!public/).*)$ public/$1 [L,NC]
+</IfModule>
+
+# Hide a specific file
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
