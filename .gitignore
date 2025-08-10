@@ -25,3 +25,7 @@ index.php
 logs
 vendor
 vendor/
+# Ignore database dumps
+*.sql
+database/*.sql
+install/database/*.sql
