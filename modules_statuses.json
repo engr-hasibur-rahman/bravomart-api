@@ -1,8 +1,0 @@
-{
-    "PaymentGateways": true,
-    "Wallet": true,
-    "Subscription": true,
-    "Chat": true,
-    "SmsProvider": true,
-    "SmsGateway": true
-}
